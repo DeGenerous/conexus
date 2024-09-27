@@ -104,6 +104,7 @@
             class="genres-list"
             style="display: {showGenres ? 'grid' : 'none'}"
             on:mouseleave={hideGenresFilter}
+            on:blur={hideGenresFilter}
           >
             <li class="genre" on:click={genreSelector}>Action</li>
             <li class="genre" on:click={genreSelector}>Romance</li>

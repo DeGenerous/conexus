@@ -19,7 +19,6 @@
   let showGenres: boolean = false;
   const showGenresFilter = () => (showGenres = true);
   const hideGenresFilter = () => (showGenres = false);
-  const genresFilterHandle = () => (showGenres = !showGenres);
 
   afterUpdate(() => {
     if (selectedGenres && !searchField && selectedGenres.length > 0) {

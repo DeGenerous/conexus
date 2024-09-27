@@ -6,15 +6,16 @@
   export let sectionName: string;
   export let filters: boolean = false;
 
-  let showGenres: boolean = false;
-  const genresFilterHandle = () => (showGenres = !showGenres);
-
   let tilesArray: any = stories.filter(
     (section) => section.section === sectionName
   )[0].subsection;
 
   const allStories = tilesArray[0].story;
+
+  let searchField: string;
   let selectedGenres: string[];
+  let showGenres: boolean = false;
+  const genresFilterHandle = () => (showGenres = !showGenres);
 
   afterUpdate(() => {
     if (selectedGenres && selectedGenres.length > 0) {
@@ -27,6 +28,15 @@
       });
       tilesArray[0].story = filteredTiles;
     } else tilesArray[0].story = allStories;
+
+    // if (searchField) {
+    //   resetGenresFilter();
+    //   let searchedTiles = allStories.filter((story: any) => {
+    //     if (story.title.toLowerCase().match(searchField.toLowerCase()))
+    //       return story;
+    //   });
+    //   tilesArray[0].story = searchedTiles;
+    // } else tilesArray[0].story = allStories;
   });
 
   function genreSelector(this: any) {
@@ -34,12 +44,22 @@
     if (this.className.match("selected"))
       this.style.color = "rgba(51, 226, 230)";
     else this.style.color = "inherit";
-
     selectedGenres = Array.from(document.querySelectorAll(".selected")).map(
       (genre) => {
         return genre.innerHTML;
       }
     );
+  }
+
+  function resetGenresFilter() {
+    const genresList = document.querySelectorAll(".genre");
+    selectedGenres = [];
+    genresList.forEach((genre: any) => {
+      if (Array.from(genre.classList).includes("selected")) {
+        genre.classList.remove("selected");
+        genre.style.color = "inherit";
+      }
+    });
   }
 </script>
 
@@ -87,7 +107,11 @@
 
         <div class="filter blur">
           <img class="filter-image" src="/icons/search.png" alt="Search" />
-          <input class="search-field" placeholder="Search story..." />
+          <input
+            bind:value={searchField}
+            class="search-field"
+            placeholder="Search story..."
+          />
         </div>
       </section>
     {/if}

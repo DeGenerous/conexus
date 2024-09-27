@@ -18,7 +18,7 @@
   const genresFilterHandle = () => (showGenres = !showGenres);
 
   afterUpdate(() => {
-    if (selectedGenres && selectedGenres.length > 0) {
+    if (selectedGenres && !searchField && selectedGenres.length > 0) {
       let filteredTiles = allStories.filter((story: any) => {
         let matchingTile: boolean = false;
         selectedGenres.map((genre) => {
@@ -27,19 +27,18 @@
         if (matchingTile) return story;
       });
       tilesArray[0].story = filteredTiles;
+    } else if (searchField) {
+      resetGenresFilter();
+      let searchedTiles = allStories.filter((story: any) => {
+        if (story.title.toLowerCase().match(searchField.toLowerCase()))
+          return story;
+      });
+      tilesArray[0].story = searchedTiles;
     } else tilesArray[0].story = allStories;
-
-    // if (searchField) {
-    //   resetGenresFilter();
-    //   let searchedTiles = allStories.filter((story: any) => {
-    //     if (story.title.toLowerCase().match(searchField.toLowerCase()))
-    //       return story;
-    //   });
-    //   tilesArray[0].story = searchedTiles;
-    // } else tilesArray[0].story = allStories;
   });
 
   function genreSelector(this: any) {
+    if (searchField) searchField = "";
     this.classList.toggle("selected");
     if (this.className.match("selected"))
       this.style.color = "rgba(51, 226, 230)";

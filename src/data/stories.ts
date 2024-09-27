@@ -1,4 +1,25 @@
-const stories = [
+interface Story {
+  title: string,
+  description: string,
+  storyLink: string,
+  primaryThumbnail: string,
+  secondaryThumbnail?: string,
+  descriptionImage: string,
+  genre?: string[]
+}
+
+interface Subsection {
+  name: string,
+  story: Story[]
+}
+
+interface Section {
+  section: string
+  subsection: Subsection[]
+}
+
+
+const stories: Section[] = [
   {
     section: 'Community Picks',
     subsection: [

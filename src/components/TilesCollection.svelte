@@ -13,6 +13,8 @@
   const allStories = tilesArray[0].story;
 
   let searchField: string;
+  let searchFilter: HTMLDivElement;
+  let genresFilter: HTMLDivElement;
   let selectedGenres: string[];
   let showGenres: boolean = false;
   const genresFilterHandle = () => (showGenres = !showGenres);
@@ -27,18 +29,24 @@
         if (matchingTile) return story;
       });
       tilesArray[0].story = filteredTiles;
+      genresFilter.style.backgroundColor = "rgba(45, 90, 216, 0.9)";
     } else if (searchField) {
-      resetGenresFilter();
+      resetFilter("genres");
       let searchedTiles = allStories.filter((story: any) => {
         if (story.title.toLowerCase().match(searchField.toLowerCase()))
           return story;
       });
       tilesArray[0].story = searchedTiles;
-    } else tilesArray[0].story = allStories;
+      searchFilter.style.backgroundColor = "rgba(45, 90, 216, 0.9)";
+    } else {
+      tilesArray[0].story = allStories;
+      resetFilter("genres");
+      resetFilter("search");
+    }
   });
 
   function genreSelector(this: any) {
-    if (searchField) searchField = "";
+    if (searchField) resetFilter("search");
     this.classList.toggle("selected");
     if (this.className.match("selected"))
       this.style.color = "rgba(51, 226, 230)";
@@ -50,15 +58,25 @@
     );
   }
 
-  function resetGenresFilter() {
-    const genresList = document.querySelectorAll(".genre");
-    selectedGenres = [];
-    genresList.forEach((genre: any) => {
-      if (Array.from(genre.classList).includes("selected")) {
-        genre.classList.remove("selected");
-        genre.style.color = "inherit";
+  function resetFilter(filter: "genres" | "search") {
+    switch (filter) {
+      case "genres": {
+        const genresList = document.querySelectorAll(".genre");
+        selectedGenres = [];
+        genresList.forEach((genre: any) => {
+          if (Array.from(genre.classList).includes("selected")) {
+            genre.classList.remove("selected");
+            genre.style.color = "inherit";
+          }
+        });
+        genresFilter.style.backgroundColor = "rgba(22, 30, 95, 0.75)";
+        break;
       }
-    });
+      case "search": {
+        searchField = "";
+        searchFilter.style.backgroundColor = "rgba(22, 30, 95, 0.75)";
+      }
+    }
   }
 </script>
 
@@ -74,13 +92,12 @@
       <section class="filters">
         <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions
         a11y-no-static-element-interactions -->
-        <div class="filter blur" on:click={genresFilterHandle}>
-          <img
-            class="filter-image"
-            id="genre-filter"
-            src="/icons/filter.png"
-            alt="Filter"
-          />
+        <div
+          bind:this={genresFilter}
+          class="filter blur"
+          on:click={genresFilterHandle}
+        >
+          <img class="filter-image" src="/icons/filter.png" alt="Filter" />
           <ul
             class="genres-list"
             style="display: {showGenres ? 'grid' : 'none'}"
@@ -104,7 +121,7 @@
           </ul>
         </div>
 
-        <div class="filter blur">
+        <div bind:this={searchFilter} class="filter blur">
           <img class="filter-image" src="/icons/search.png" alt="Search" />
           <input
             bind:value={searchField}
@@ -266,7 +283,6 @@
 
   .search-field:focus {
     width: 25vw;
-    background-color: rgba(51, 226, 230, 0.1);
   }
 
   @media only screen and (max-width: 600px) {

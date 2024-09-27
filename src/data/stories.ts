@@ -11,8 +11,8 @@ const stories = [
               Play as Achilles to shape the destiny of the Greeks and Trojans while fighting to claim justice for your fallen comrade Patroclus, and avenge the slight against your honor when the beautiful Helen is stolen.
             `,
             storyLink: '',
-            primaryThumbnail: '/src/data/titlePicture/CommunityPicks/TrojanWar.avif',
-            descriptionImage: '/src/data/descriptionPicture/CommunityPicks/TrojanWar.avif',
+            primaryThumbnail: './titlePicture/CommunityPicks/TrojanWar.avif',
+            descriptionImage: './descriptionPicture/CommunityPicks/TrojanWar.avif',
             genre: [
               'Action', 'History', 'Drama', 'War'
             ]

@@ -127,7 +127,7 @@ class Account {
 			const resp = await response.json();
 
 			authenticated.set({ user: resp.user, loggedIn: true });
-		} catch (error) {
+		} catch (error: any) {
 			new_error({ code: 500, error: error });
 		}
 	}
@@ -205,7 +205,7 @@ class Account {
 			const referralC = await response.json();
 
 			referralCodes.set(referralC.codes);
-		} catch (error) {
+		} catch (error: any) {
 			new_error({ code: 500, error: error });
 		}
 	}

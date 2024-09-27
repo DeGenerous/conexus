@@ -24,7 +24,7 @@
   let isLogged: boolean;
   let signUp: boolean;
 
-  let user;
+  let user: any;
   let loginMail: HTMLInputElement;
   let loginPassword: HTMLInputElement;
 
@@ -73,12 +73,12 @@
     Account.referraLCodes();
   }
 
-  let refCodes;
+  let refCodes: any;
   referralCodes.subscribe((codes) => {
     refCodes = codes;
   });
 
-  function copyRefCode(event) {
+  function copyRefCode(event: any) {
     navigator.clipboard.writeText(event.target.id);
   }
 
@@ -116,7 +116,7 @@
   const passwordInvisible = () => (passwordInput.type = "password");
 
   let isEditing: "username" | "password" | boolean = false;
-  function changeUserData() {
+  function changeUserData(this: any) {
     if (this.className.match("username")) {
       isEditing = "username";
     } else if (this.className.match("password")) {

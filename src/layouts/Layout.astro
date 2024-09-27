@@ -49,7 +49,10 @@ const { title, header, subheading, menuText, footerText, arrow } = Astro.props;
 
     <slot />
 
-    {footerText && footerText.map((text) => <p class="footer-text">{text}</p>)}
+    {
+      footerText &&
+        footerText.map((text: any) => <p class="footer-text">{text}</p>)
+    }
 
     <style>
       .header {

@@ -17,14 +17,14 @@
   });
 
   let showDeleteModal = writable<boolean>(false);
-  let selectedStory;
+  let selectedStory: any;
 
-  function openModal(story) {
+  function openModal(story: any) {
     selectedStory = story;
     showDeleteModal.set(true);
   }
 
-  function DeleteStory(story_id) {
+  function DeleteStory(story_id: any) {
     CoNexus.delete(story_id);
     showDeleteModal.set(false);
   }

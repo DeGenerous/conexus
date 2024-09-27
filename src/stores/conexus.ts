@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type CoNexus from "@lib/conexus";
+import type { CoNexus } from "../lib/conexus";
 
 export const story = writable<Nullable<CoNexus>>(null);
 export const loading = writable<boolean>(false);

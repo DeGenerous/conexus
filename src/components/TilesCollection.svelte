@@ -17,6 +17,8 @@
   let genresFilter: HTMLDivElement;
   let selectedGenres: string[];
   let showGenres: boolean = false;
+  const showGenresFilter = () => (showGenres = true);
+  const hideGenresFilter = () => (showGenres = false);
   const genresFilterHandle = () => (showGenres = !showGenres);
 
   afterUpdate(() => {
@@ -95,13 +97,13 @@
         <div
           bind:this={genresFilter}
           class="filter blur"
-          on:click={genresFilterHandle}
+          on:click={showGenresFilter}
         >
           <img class="filter-image" src="/icons/filter.png" alt="Filter" />
           <ul
             class="genres-list"
             style="display: {showGenres ? 'grid' : 'none'}"
-            on:pointerleave={genresFilterHandle}
+            on:mouseleave={hideGenresFilter}
           >
             <li class="genre" on:click={genreSelector}>Action</li>
             <li class="genre" on:click={genreSelector}>Romance</li>

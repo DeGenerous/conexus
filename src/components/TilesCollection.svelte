@@ -18,7 +18,7 @@
 
   afterUpdate(() => {
     if (selectedGenres && selectedGenres.length > 0) {
-      let filteredTiles = allStories.filter((story) => {
+      let filteredTiles = allStories.filter((story: any) => {
         let matchingTile: boolean = false;
         selectedGenres.map((genre) => {
           if (story.genre.includes(genre)) matchingTile = true;
@@ -29,7 +29,7 @@
     } else tilesArray[0].story = allStories;
   });
 
-  function genreSelector() {
+  function genreSelector(this: any) {
     this.classList.toggle("selected");
     if (this.className.match("selected"))
       this.style.color = "rgba(51, 226, 230)";

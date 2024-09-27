@@ -1,0 +1,224 @@
+---
+import "../styles/global.css";
+import { ViewTransitions } from "astro:transitions";
+import Profile from "../components/Profile.svelte";
+import ToastContainer from "../components/ToastContainer.svelte";
+
+const { title, header, subheading, menuText, footerText, arrow } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <title>{title}</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="/favicon.png" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="upgrade-insecure-requests"
+    />
+    <ViewTransitions />
+  </head>
+  <body>
+    <ToastContainer />
+    <section class="container">
+      {arrow && <a class="icon arrow" href="../" aria-label="back-arrow" />}
+      {
+        !arrow && (
+          <a
+            class="icon logo"
+            href="https://degenerousdao.com/"
+            target="_blank"
+            aria-label="dgrs-logo"
+          />
+        )
+      }
+      {
+        header === "CoNexus" ? (
+          <picture>
+            <source srcset="title.avif" type="image/avif" />
+            <img class="title blur" src="title.png" alt="CoNexus" />
+          </picture>
+        ) : (
+          <p class="header">{header}</p>
+        )
+      }
+      <Profile client:load />
+    </section>
+    <p class="subheading" set:html={subheading} />
+
+    <slot />
+
+    {footerText && footerText.map((text) => <p class="footer-text">{text}</p>)}
+
+    <style>
+      .header {
+        font-size: 5vw;
+        line-height: 5vw;
+        text-align: center;
+        margin: 3vw auto;
+        color: rgba(51, 226, 230, 0.85);
+        -webkit-text-stroke: 0.03vw #33e2e6;
+        filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.5));
+      }
+
+      .title {
+        width: 33%;
+        height: auto;
+        margin-inline: 31%;
+        margin-block: 2.5vw;
+        filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
+        background-color: rgba(51, 226, 230, 0.25);
+        padding: 1vw 2vw;
+        border: 0.05vw solid rgba(51, 226, 230, 0.5);
+        border-radius: 2vw;
+      }
+
+      .subheading {
+        font-size: 2vw;
+        line-height: 3vw;
+        text-align: center;
+        color: rgba(51, 226, 230, 0.85);
+        padding: 0 5vw 3vw 5vw;
+        text-shadow: 0 0 1vw #010020;
+        filter: drop-shadow(0 0 1vw #010020);
+      }
+
+      .footer-text {
+        font-size: 2vw;
+        line-height: 2.5vw;
+        text-align: center;
+        color: rgba(51, 226, 230, 0.85);
+        padding: 1vw 5vw;
+        text-shadow: 0 0 1vw #010020;
+        filter: drop-shadow(0 0 1vw #010020);
+      }
+
+      a {
+        position: absolute;
+        top: 2vw;
+        left: 2vw;
+        height: 7vw;
+        width: 7vw;
+        cursor: pointer;
+        z-index: 1;
+        background-size: contain;
+      }
+
+      .arrow {
+        background-image: url("/icons/backArrow.avif");
+        opacity: 0.4;
+      }
+
+      .arrow:hover,
+      .arrow:active {
+        filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.5));
+        opacity: 0.75;
+      }
+
+      .logo {
+        background-image: url("/logo.avif");
+        opacity: 0.7;
+      }
+
+      .logo:hover,
+      .logo:active {
+        opacity: 0.9;
+      }
+
+      .profile-icon {
+        position: absolute;
+        top: 2vw;
+        right: 2vw;
+        height: 7vw;
+        width: 7vw;
+        cursor: pointer;
+        background-image: url("/profileIcon.avif");
+        background-size: contain;
+        opacity: 0.4;
+        z-index: 1;
+      }
+
+      .profile-icon:hover,
+      .profile-icon:active {
+        filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.5));
+        opacity: 0.75;
+      }
+
+      @media only screen and (max-width: 600px) {
+        html {
+          padding-top: 25%;
+        }
+
+        .container {
+          position: fixed;
+          top: 0;
+          width: 100vw;
+          background-color: rgba(1, 0, 32, 0.75);
+          filter: drop-shadow(0 1vw 1vw rgba(1, 0, 32, 0.75));
+          -webkit-backdrop-filter: blur(2vw);
+          backdrop-filter: blur(2vw);
+          z-index: 2;
+        }
+
+        .header {
+          font-size: 1.5em;
+          line-height: 3em;
+          margin: 0.25em auto;
+        }
+
+        .title {
+          width: 50%;
+          padding: 2vw 4vw;
+          margin-inline: 20%;
+          margin-block: 4vw;
+        }
+
+        .subheading {
+          font-size: inherit;
+          line-height: 1.6em;
+          padding: 1em;
+          margin: 0 1em 1em 1em;
+          text-align: center;
+          background-color: rgba(22, 30, 95, 0.5);
+          -webkit-backdrop-filter: blur(2vw);
+          backdrop-filter: blur(2vw);
+          border: 0.1vw solid rgba(51, 226, 230, 0.5);
+          border-radius: 2.5vw;
+        }
+
+        .footer-text {
+          font-size: inherit;
+          line-height: 1.6em;
+          padding: 1em;
+          margin: 0 1em 1em 1em;
+          text-align: center;
+          background-color: rgba(22, 30, 95, 0.5);
+          -webkit-backdrop-filter: blur(2vw);
+          backdrop-filter: blur(2vw);
+          border: 0.1vw solid rgba(51, 226, 230, 0.5);
+          border-radius: 2.5vw;
+        }
+
+        a {
+          width: 3em;
+          height: 3em;
+          top: 1em;
+          left: 0.5em;
+        }
+
+        .profile-icon {
+          width: 3em;
+          height: 3em;
+          top: 1em;
+          right: 0.5em;
+        }
+      }
+    </style>
+  </body>
+</html>
+
+<!-- Copyright DeGenerous
+Society - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential -->

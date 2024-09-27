@@ -1,0 +1,14 @@
+---
+import Layout from "../layouts/Layout.astro";
+import TilesCollection from "../components/TilesCollection.svelte";
+
+const title = "Collabs | CoNexus";
+const header = "Collabs";
+const subheading = `
+Collabs are stories that are custom-written to add depth to the partners of DeGenerous DAO.`;
+const arrow = true;
+---
+
+<Layout {title} {header} {subheading} {arrow}>
+  <TilesCollection sectionName="Collabs" client:load />
+</Layout>

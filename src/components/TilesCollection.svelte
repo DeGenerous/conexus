@@ -43,51 +43,55 @@
   }
 </script>
 
-{#if filters}
-  <section class="filters">
-    <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions
-    a11y-no-static-element-interactions -->
-    <div class="filter blur" on:click={genresFilterHandle}>
-      <img
-        class="filter-image"
-        id="genre-filter"
-        src="/icons/filter.png"
-        alt="Filter"
-      />
-      <ul
-        class="genres-list"
-        style="display: {showGenres ? 'grid' : 'none'}"
-        on:pointerleave={genresFilterHandle}
-      >
-        <li class="genre" on:click={genreSelector}>Action</li>
-        <li class="genre" on:click={genreSelector}>Romance</li>
-        <li class="genre" on:click={genreSelector}>Sci-Fi</li>
-        <li class="genre" on:click={genreSelector}>Fantasy</li>
-        <li class="genre" on:click={genreSelector}>Horror</li>
-        <li class="genre" on:click={genreSelector}>Thriller</li>
-        <li class="genre" on:click={genreSelector}>Comedy</li>
-        <li class="genre" on:click={genreSelector}>History</li>
-        <li class="genre" on:click={genreSelector}>Drama</li>
-        <li class="genre" on:click={genreSelector}>Mystery</li>
-        <li class="genre" on:click={genreSelector}>Sport</li>
-        <li class="genre" on:click={genreSelector}>Biopic</li>
-        <li class="genre" on:click={genreSelector}>Psychological</li>
-        <li class="genre" on:click={genreSelector}>War</li>
-        <li class="genre" on:click={genreSelector}>Crime</li>
-      </ul>
-    </div>
-
-    <div class="filter blur">
-      <img class="filter-image" src="/icons/search.png" alt="Search" />
-      <input class="search-field" placeholder="Search story..." />
-    </div>
-  </section>
-{/if}
-
 {#each tilesArray as subsection}
-  <p class="tiles-collection-legend">
-    {subsection.name}
-  </p>
+  <div
+    class="collection-header"
+    style="align-items: {filters ? '' : 'flex-start'}"
+  >
+    <p class="tiles-collection-legend">
+      {subsection.name}
+    </p>
+    {#if filters}
+      <section class="filters">
+        <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions
+        a11y-no-static-element-interactions -->
+        <div class="filter blur" on:click={genresFilterHandle}>
+          <img
+            class="filter-image"
+            id="genre-filter"
+            src="/icons/filter.png"
+            alt="Filter"
+          />
+          <ul
+            class="genres-list"
+            style="display: {showGenres ? 'grid' : 'none'}"
+            on:pointerleave={genresFilterHandle}
+          >
+            <li class="genre" on:click={genreSelector}>Action</li>
+            <li class="genre" on:click={genreSelector}>Romance</li>
+            <li class="genre" on:click={genreSelector}>Sci-Fi</li>
+            <li class="genre" on:click={genreSelector}>Fantasy</li>
+            <li class="genre" on:click={genreSelector}>Horror</li>
+            <li class="genre" on:click={genreSelector}>Thriller</li>
+            <li class="genre" on:click={genreSelector}>Comedy</li>
+            <li class="genre" on:click={genreSelector}>History</li>
+            <li class="genre" on:click={genreSelector}>Drama</li>
+            <li class="genre" on:click={genreSelector}>Mystery</li>
+            <li class="genre" on:click={genreSelector}>Sport</li>
+            <li class="genre" on:click={genreSelector}>Biopic</li>
+            <li class="genre" on:click={genreSelector}>Psychological</li>
+            <li class="genre" on:click={genreSelector}>War</li>
+            <li class="genre" on:click={genreSelector}>Crime</li>
+          </ul>
+        </div>
+
+        <div class="filter blur">
+          <img class="filter-image" src="/icons/search.png" alt="Search" />
+          <input class="search-field" placeholder="Search story..." />
+        </div>
+      </section>
+    {/if}
+  </div>
   <section class="tiles-collection {filters ? 'big-collection' : ''} blur">
     {#each subsection.story as story}
       <StoryTile
@@ -113,7 +117,7 @@
     justify-content: flex-start;
     overflow-x: scroll;
     height: auto;
-    margin: 1vw 2.5vw;
+    margin: 1vw 2.5vw 3vw 2.5vw;
     padding: 2vw;
     background-image: radial-gradient(
       rgba(0, 0, 0, 0),
@@ -151,12 +155,18 @@
     overflow-x: hidden;
   }
 
+  .collection-header {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   .tiles-collection-legend {
     font-size: 3vw;
     line-height: 3vw;
-    padding-left: 7vw;
-    margin: 2vw auto 0 auto;
     color: rgba(51, 226, 230, 0.85);
+    margin-left: 4vw;
     -webkit-text-stroke: 0.03vw #33e2e6;
     text-shadow: 0 0 1vw rgba(51, 226, 230, 0.4);
   }
@@ -165,7 +175,7 @@
     display: flex;
     flex-flow: row nowrap;
     justify-content: flex-end;
-    margin-right: 1rem;
+    margin-right: 2vw;
   }
 
   .filter {
@@ -189,6 +199,7 @@
   }
 
   .genres-list {
+    z-index: 2;
     position: absolute;
     bottom: 0;
     right: 0;
@@ -236,6 +247,16 @@
   }
 
   @media only screen and (max-width: 600px) {
+    .tiles-collection {
+      margin-bottom: 2em;
+    }
+
+    .collection-header {
+      flex-flow: column nowrap;
+      margin-block: 1em;
+      gap: 0.5em;
+    }
+
     .tiles-collection-legend {
       font-size: 1.5em;
       line-height: 1.5em;
@@ -243,6 +264,12 @@
 
     .big-collection {
       grid-template-columns: 50% 50%;
+    }
+
+    .filters {
+      width: 95vw;
+      margin: 0 2.5vw;
+      justify-content: space-between;
     }
 
     .filter {
@@ -257,7 +284,7 @@
       font-size: 1em;
       line-height: 1.5em;
       margin-left: 0.5em;
-      width: 20vw;
+      width: 30vw;
     }
 
     .search-field:focus {
@@ -265,9 +292,12 @@
     }
 
     .genres-list {
-      bottom: -2.5em;
-      grid-template-columns: 25vw 25vw;
-      row-gap: 0.5em;
+      left: -0.2vw;
+      top: -0.2vw;
+      bottom: auto;
+      right: auto;
+      grid-template-columns: 40vw;
+      row-gap: 0.75em;
       padding: 0.5em;
     }
 

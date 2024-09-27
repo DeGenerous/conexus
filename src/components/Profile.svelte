@@ -1072,7 +1072,7 @@
     }
 
     .sign-lable {
-      font-size: 1em;
+      font-size: 0.9em;
       line-height: 1.5em;
     }
 
@@ -1083,7 +1083,7 @@
     }
 
     .signup-label {
-      font-size: 1.1em;
+      font-size: 1em;
       line-height: 1.5em;
       padding-inline: 5vw;
       margin-bottom: 1em;

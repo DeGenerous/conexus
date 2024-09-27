@@ -2,8 +2,8 @@
   export let sectionName: string;
   let sectionLink = sectionName.replace(/\s+/g, "");
 
-  const primaryThumbnail = `/src/data/titlePicture/${sectionLink}1.avif`;
-  const secondaryThumbnail = `/src//data/titlePicture/${sectionLink}2.avif`;
+  const primaryThumbnail = `/titlePicture/${sectionLink}1.avif`;
+  const secondaryThumbnail = `/titlePicture/${sectionLink}2.avif`;
 
   let isPrimary: boolean = true;
   function tileHover() {

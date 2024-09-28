@@ -1057,8 +1057,8 @@
     }
 
     .close-button {
-      padding: 0.5em;
-      font-size: 1.5em;
+      padding: 0.35em;
+      font-size: 1.35em;
       line-height: 1em;
     }
 
@@ -1068,11 +1068,11 @@
     }
 
     .sign-icon {
-      height: 1em;
+      height: 0.8em;
     }
 
     .sign-lable {
-      font-size: 0.9em;
+      font-size: 0.8em;
       line-height: 1.5em;
     }
 

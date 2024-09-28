@@ -25,15 +25,15 @@
 
   afterUpdate(() => {
     if (searchField) {
-      resetFilter("genres");
+      resetGenresFilter();
       filteredTiles = allStories.filter((story: any) => {
         if (story.title.toLowerCase().match(searchField.toLowerCase()))
           return story;
       });
     } else if (selectedGenres && selectedGenres.length == 0) {
       filteredTiles = allStories;
-      resetFilter("genres");
-      resetFilter("search");
+      resetGenresFilter();
+      searchField = "";
     }
     sortedTiles = filteredTiles.sort((a: any, b: any) => {
       if (isSorting) {
@@ -50,7 +50,7 @@
   });
 
   function genreSelector(this: HTMLElement) {
-    if (searchField) resetFilter("search");
+    if (searchField) searchField = "";
     this.classList.toggle("selected");
     if (this.className.match("selected"))
       this.style.color = "rgba(51, 226, 230)";
@@ -69,25 +69,16 @@
     });
   }
 
-  function resetFilter(filter: "genres" | "search") {
-    switch (filter) {
-      case "genres": {
-        const genresList = document.querySelectorAll(".genre");
-        selectedGenres = [];
-        genresList.forEach((genre: any) => {
-          if (Array.from(genre.classList).includes("selected")) {
-            genre.classList.remove("selected");
-            genre.style.color = "inherit";
-          }
-        });
-        break;
+  const resetGenresFilter = () => {
+    const genresList = document.querySelectorAll(".genre");
+    selectedGenres = [];
+    genresList.forEach((genre: any) => {
+      if (Array.from(genre.classList).includes("selected")) {
+        genre.classList.remove("selected");
+        genre.style.color = "inherit";
       }
-      case "search": {
-        searchField = "";
-        break;
-      }
-    }
-  }
+    });
+  };
 </script>
 
 {#each tilesArray as subsection}

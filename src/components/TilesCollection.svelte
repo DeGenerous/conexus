@@ -93,7 +93,12 @@
     <p class="tiles-collection-legend">
       {subsection.name}
       {#if bigCollection}
-        {tilesArray[0].story.length} Stories
+        {tilesArray[0].story.length}
+        {#if tilesArray[0].story.length === 1}
+          Story
+        {:else}
+          Stories
+        {/if}
       {/if}
     </p>
     {#if filters}

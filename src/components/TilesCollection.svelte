@@ -285,8 +285,8 @@
   .genres-list {
     z-index: 2;
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: -0.2vw;
+    right: -0.2vw;
     display: grid;
     grid-template-columns: 10vw 10vw 10vw;
     row-gap: 1vw;
@@ -361,6 +361,10 @@
 
     .filter-image {
       height: 1.5em;
+    }
+
+    .sort-genres-filters {
+      flex-direction: row-reverse;
     }
 
     .search-field {

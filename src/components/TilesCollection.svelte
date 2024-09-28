@@ -18,7 +18,9 @@
   let selectedGenres: string[];
   let showGenres: boolean = false;
   const showGenresFilter = () => (showGenres = true);
-  const hideGenresFilter = () => (showGenres = false);
+  const hideGenresFilter = () => {
+    if (showGenres) showGenres = false;
+  };
 
   let filteredTiles: any[] = allStories;
   let sortedTiles: any[];
@@ -81,6 +83,8 @@
   };
 </script>
 
+<svelte:window on:click={hideGenresFilter} />
+
 {#each tilesArray as subsection}
   <div
     class="collection-header"
@@ -113,7 +117,7 @@
         a11y-no-static-element-interactions -->
           <div
             class="filter blur"
-            on:click={showGenresFilter}
+            on:click|stopPropagation={showGenresFilter}
             style="background-color: {selectedGenres &&
             selectedGenres.length > 0
               ? 'rgba(45, 90, 216, 0.9)'

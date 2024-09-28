@@ -20,24 +20,17 @@
   const showGenresFilter = () => (showGenres = true);
   const hideGenresFilter = () => (showGenres = false);
 
+  let filteredTiles: any[];
   afterUpdate(() => {
     if (selectedGenres && !searchField && selectedGenres.length > 0) {
-      let filteredTiles = allStories.filter((story: any) => {
-        let matchingTile: boolean = false;
-        selectedGenres.map((genre) => {
-          if (story.genre.includes(genre)) matchingTile = true;
-        });
-        if (matchingTile) return story;
-      });
-      tilesArray[0].story = filteredTiles;
       genresFilter.style.backgroundColor = "rgba(45, 90, 216, 0.9)";
     } else if (searchField) {
       resetFilter("genres");
-      let searchedTiles = allStories.filter((story: any) => {
+      filteredTiles = allStories.filter((story: any) => {
         if (story.title.toLowerCase().match(searchField.toLowerCase()))
           return story;
       });
-      tilesArray[0].story = searchedTiles;
+      tilesArray[0].story = filteredTiles;
       searchFilter.style.backgroundColor = "rgba(45, 90, 216, 0.9)";
     } else {
       tilesArray[0].story = allStories;
@@ -57,6 +50,14 @@
         return genre.innerHTML;
       }
     );
+    filteredTiles = allStories.filter((story: any) => {
+      let matchingTile: boolean = false;
+      selectedGenres.map((genre) => {
+        if (story.genre.includes(genre)) matchingTile = true;
+      });
+      if (matchingTile) return story;
+    });
+    tilesArray[0].story = filteredTiles;
   }
 
   function resetFilter(filter: "genres" | "search") {

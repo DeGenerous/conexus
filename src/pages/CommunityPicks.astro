@@ -11,10 +11,16 @@ holders.`;
 const arrow = true;
 
 const filters = true;
+const bigCollection = true;
 
 let showGenres: boolean = false;
 ---
 
 <Layout {title} {header} {subheading} {arrow}>
-  <TilesCollection sectionName="Community Picks" {filters} client:load />
+  <TilesCollection
+    sectionName="Community Picks"
+    {filters}
+    {bigCollection}
+    client:load
+  />
 </Layout>

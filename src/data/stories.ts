@@ -1,4 +1,5 @@
 interface Story {
+  id?: number,
   title: string,
   description: string,
   storyLink: string,
@@ -27,6 +28,7 @@ const stories: Section[] = [
         name: '',
         story: [
           {
+            id: 1,
             title: 'Trojan War',
             description: `
               Play as Achilles to shape the destiny of the Greeks and Trojans while fighting to claim justice for your fallen comrade Patroclus, and avenge the slight against your honor when the beautiful Helen is stolen.
@@ -39,6 +41,7 @@ const stories: Section[] = [
             ]
           },
           {
+            id: 2,
             title: 'History',
             description: `
               History genre
@@ -51,6 +54,7 @@ const stories: Section[] = [
             ]
           },
           {
+            id: 3,
             title: 'Action Romance',
             description: `
               Action + Romance genre
@@ -63,6 +67,7 @@ const stories: Section[] = [
             ]
           },
           {
+            id: 4,
             title: 'Drama Romance',
             description: `
               Drama + Romance genre
@@ -75,6 +80,7 @@ const stories: Section[] = [
             ]
           },
           {
+            id: 5,
             title: 'Thriller',
             description: `
               Thriller genre
@@ -87,6 +93,7 @@ const stories: Section[] = [
             ]
           },
           {
+            id: 6,
             title: 'History Sport',
             description: `
               History + Sport genre
@@ -99,6 +106,7 @@ const stories: Section[] = [
             ]
           },
           {
+            id: 7,
             title: 'Action Biopic Crime',
             description: `
               Action + Biopic + Crime genre
@@ -111,6 +119,7 @@ const stories: Section[] = [
             ]
           },
           {
+            id: 8,
             title: 'War Psychological Fantasy Horror',
             description: `
               War + Psychological + Fantasy + Horror genre
@@ -123,6 +132,7 @@ const stories: Section[] = [
             ]
           },
           {
+            id: 9,
             title: 'Comedy Horror Thriller',
             description: `
               Comedy + Horror genre

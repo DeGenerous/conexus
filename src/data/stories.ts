@@ -15,14 +15,26 @@ interface Subsection {
 }
 
 interface Section {
+  category: string
   section: string
+  title: string
+  subheading: string
+  bigCollection?: boolean
+  filters?: boolean
   subsection: Subsection[]
 }
 
 
 const stories: Section[] = [
   {
+    category: 'CommunityPicks',
     section: 'Community Picks',
+    title: 'Community Picks | CoNexus',
+    subheading: `Community Picks are stories that aren't bound to any project or genre but have been demanded, written, or voted in by the
+    <a href="https://magiceden.io/collections/ethereum/0xfa511d5c4cce10321e6e86793cc083213c36278e" target="_blank">Potentials</a>
+    holders.`,
+    bigCollection: true,
+    filters: true,
     subsection: [
       {
         name: '',
@@ -149,7 +161,16 @@ const stories: Section[] = [
     ]
   },
   {
+    category: 'TheDischordianSaga',
     section: 'The Dischordian Saga',
+    title: 'Dischordian Saga | CoNexus',
+    subheading: `
+    The Dischordian Saga led to the creation of CoNexus and tells the epic narrative of wars between Artificial Intelligence and Humanity.
+    <a href="https://magiceden.io/collections/ethereum/0xfa511d5c4cce10321e6e86793cc083213c36278e" target="_blank">Potentials</a>
+    vote on
+    <a href="https://governance.degenerousdao.com/" target="_blank">story nodes</a>
+    weekly, thus activating CoNexus story games and guiding the franchise's direction.
+    `,
     subsection: [
       {
         name: 'FALL OF REALITY (prequel)',
@@ -344,7 +365,10 @@ const stories: Section[] = [
     ]
   },
   {
+    category: 'Collabs',
     section: 'Collabs',
+    title: 'Collabs | CoNexus',
+    subheading: 'Collabs are stories that are custom-written to add depth to the partners of DeGenerous DAO.',
     subsection: [
       {
         name: '',

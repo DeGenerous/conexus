@@ -11,13 +11,9 @@ const footerText = [
   "Your choices and actions will shape the course of your unique narratives.",
   "V2 will launch soon, allowing you to create your own stories.",
 ];
-const menuText = [
-  "A new world with no limits awaits you.",
-  "Within CoNexus, you will transcend the boundaries of reality as we know it.",
-];
 const arrow = false;
 ---
 
-<Layout {title} {header} {subheading} {menuText} {footerText} {arrow}>
+<Layout {title} {header} {subheading} {footerText} {arrow}>
   <Menu client:load />
 </Layout>

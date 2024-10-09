@@ -1,0 +1,10 @@
+---
+import Layout from "@layouts/Layout.astro";
+import CategorySvelte from "../components/Category.svelte";
+
+const { category } = Astro.params;
+---
+
+<Layout>
+	<CategorySvelte categoryName={category} />
+</Layout>

@@ -1,29 +1,28 @@
 interface Story {
-  id?: number,
-  title: string,
-  description: string,
-  storyLink: string,
-  primaryThumbnail: string,
-  secondaryThumbnail?: string,
-  descriptionImage: string,
-  genre?: string[]
+  id?: number;
+  title: string;
+  description: string;
+  storyLink: string;
+  primaryThumbnail: string;
+  secondaryThumbnail?: string;
+  descriptionImage: string;
+  genre?: string[];
 }
 
 interface Subsection {
-  name: string,
-  story: Story[]
+  name: string;
+  story: Story[];
 }
 
 interface Section {
-  category: string
-  section: string
-  title: string
-  subheading: string
-  bigCollection?: boolean
-  filters?: boolean
-  subsection: Subsection[]
+  category: string;
+  section: string;
+  title: string;
+  subheading: string;
+  bigCollection?: boolean;
+  filters?: boolean;
+  subsection: Subsection[];
 }
-
 
 const stories: Section[] = [
   {
@@ -47,10 +46,9 @@ const stories: Section[] = [
             `,
             storyLink: '',
             primaryThumbnail: '/titlePicture/CommunityPicks/TrojanWar.avif',
-            descriptionImage: '/descriptionPicture/CommunityPicks/TrojanWar.avif',
-            genre: [
-              'Action', 'History', 'Drama', 'War'
-            ]
+            descriptionImage:
+              '/descriptionPicture/CommunityPicks/TrojanWar.avif',
+            genre: ['Action', 'History', 'Drama', 'War'],
           },
           {
             id: 2,
@@ -60,10 +58,9 @@ const stories: Section[] = [
             `,
             storyLink: '',
             primaryThumbnail: '/titlePicture/CommunityPicks/TrojanWar.avif',
-            descriptionImage: '/descriptionPicture/CommunityPicks/TrojanWar.avif',
-            genre: [
-              'History'
-            ]
+            descriptionImage:
+              '/descriptionPicture/CommunityPicks/TrojanWar.avif',
+            genre: ['History'],
           },
           {
             id: 3,
@@ -73,10 +70,9 @@ const stories: Section[] = [
             `,
             storyLink: '',
             primaryThumbnail: '/titlePicture/CommunityPicks/TrojanWar.avif',
-            descriptionImage: '/descriptionPicture/CommunityPicks/TrojanWar.avif',
-            genre: [
-              'Action', 'Romance'
-            ]
+            descriptionImage:
+              '/descriptionPicture/CommunityPicks/TrojanWar.avif',
+            genre: ['Action', 'Romance'],
           },
           {
             id: 4,
@@ -86,10 +82,9 @@ const stories: Section[] = [
             `,
             storyLink: '',
             primaryThumbnail: '/titlePicture/CommunityPicks/TrojanWar.avif',
-            descriptionImage: '/descriptionPicture/CommunityPicks/TrojanWar.avif',
-            genre: [
-              'Drama', 'Romance'
-            ]
+            descriptionImage:
+              '/descriptionPicture/CommunityPicks/TrojanWar.avif',
+            genre: ['Drama', 'Romance'],
           },
           {
             id: 5,
@@ -99,10 +94,9 @@ const stories: Section[] = [
             `,
             storyLink: '',
             primaryThumbnail: '/titlePicture/CommunityPicks/TrojanWar.avif',
-            descriptionImage: '/descriptionPicture/CommunityPicks/TrojanWar.avif',
-            genre: [
-              'Thriller'
-            ]
+            descriptionImage:
+              '/descriptionPicture/CommunityPicks/TrojanWar.avif',
+            genre: ['Thriller'],
           },
           {
             id: 6,
@@ -112,10 +106,9 @@ const stories: Section[] = [
             `,
             storyLink: '',
             primaryThumbnail: '/titlePicture/CommunityPicks/TrojanWar.avif',
-            descriptionImage: '/descriptionPicture/CommunityPicks/TrojanWar.avif',
-            genre: [
-              'History', 'Sport'
-            ]
+            descriptionImage:
+              '/descriptionPicture/CommunityPicks/TrojanWar.avif',
+            genre: ['History', 'Sport'],
           },
           {
             id: 7,
@@ -125,10 +118,9 @@ const stories: Section[] = [
             `,
             storyLink: '',
             primaryThumbnail: '/titlePicture/CommunityPicks/TrojanWar.avif',
-            descriptionImage: '/descriptionPicture/CommunityPicks/TrojanWar.avif',
-            genre: [
-              'Action', 'Biopic', 'Crime'
-            ]
+            descriptionImage:
+              '/descriptionPicture/CommunityPicks/TrojanWar.avif',
+            genre: ['Action', 'Biopic', 'Crime'],
           },
           {
             id: 8,
@@ -138,10 +130,9 @@ const stories: Section[] = [
             `,
             storyLink: '',
             primaryThumbnail: '/titlePicture/CommunityPicks/TrojanWar.avif',
-            descriptionImage: '/descriptionPicture/CommunityPicks/TrojanWar.avif',
-            genre: [
-              'War', 'Psychological', 'Fantasy', 'Horror'
-            ]
+            descriptionImage:
+              '/descriptionPicture/CommunityPicks/TrojanWar.avif',
+            genre: ['War', 'Psychological', 'Fantasy', 'Horror'],
           },
           {
             id: 9,
@@ -151,14 +142,13 @@ const stories: Section[] = [
             `,
             storyLink: '',
             primaryThumbnail: '/titlePicture/CommunityPicks/TrojanWar.avif',
-            descriptionImage: '/descriptionPicture/CommunityPicks/TrojanWar.avif',
-            genre: [
-              'Comedy', 'Horror', 'Thriller'
-            ]
+            descriptionImage:
+              '/descriptionPicture/CommunityPicks/TrojanWar.avif',
+            genre: ['Comedy', 'Horror', 'Thriller'],
           },
-        ]
-      }
-    ]
+        ],
+      },
+    ],
   },
   {
     category: 'TheDischordianSaga',
@@ -183,7 +173,7 @@ const stories: Section[] = [
             storyLink: '',
             primaryThumbnail: '/titlePicture/DischordianSaga/Escape1.avif',
             secondaryThumbnail: '/titlePicture/DischordianSaga/Escape2.avif',
-            descriptionImage: '/descriptionPicture/DischordianSaga/Escape.avif'
+            descriptionImage: '/descriptionPicture/DischordianSaga/Escape.avif',
           },
           {
             title: 'Arena',
@@ -193,7 +183,7 @@ const stories: Section[] = [
             storyLink: '',
             primaryThumbnail: '/titlePicture/DischordianSaga/Arena1.avif',
             secondaryThumbnail: '/titlePicture/DischordianSaga/Arena2.avif',
-            descriptionImage: '/descriptionPicture/DischordianSaga/Arena.avif'
+            descriptionImage: '/descriptionPicture/DischordianSaga/Arena.avif',
           },
           {
             title: 'Inception Ark',
@@ -201,11 +191,14 @@ const stories: Section[] = [
               Having escaped from the Prison Planet in a spaceship known as an Inception Ark, a galactic adventure of exploration awaits.  Play as the captain of a spaceship seeking a new  home, allied against the AI overlords, and ways to defeat the Architect.
             `,
             storyLink: '',
-            primaryThumbnail: '/titlePicture/DischordianSaga/InceptionArk1.avif',
-            secondaryThumbnail: '/titlePicture/DischordianSaga/InceptionArk2.avif',
-            descriptionImage: '/descriptionPicture/DischordianSaga/InceptionArk.avif'
-          }
-        ]
+            primaryThumbnail:
+              '/titlePicture/DischordianSaga/InceptionArk1.avif',
+            secondaryThumbnail:
+              '/titlePicture/DischordianSaga/InceptionArk2.avif',
+            descriptionImage:
+              '/descriptionPicture/DischordianSaga/InceptionArk.avif',
+          },
+        ],
       },
       {
         name: 'CLASSES',
@@ -218,7 +211,8 @@ const stories: Section[] = [
             storyLink: '',
             primaryThumbnail: '/titlePicture/DischordianSaga/Assassin1.avif',
             secondaryThumbnail: '/titlePicture/DischordianSaga/Assassin2.avif',
-            descriptionImage: '/descriptionPicture/DischordianSaga/Assassin.avif'
+            descriptionImage:
+              '/descriptionPicture/DischordianSaga/Assassin.avif',
           },
           {
             title: 'Soldier',
@@ -228,7 +222,8 @@ const stories: Section[] = [
             storyLink: '',
             primaryThumbnail: '/titlePicture/DischordianSaga/Soldier1.avif',
             secondaryThumbnail: '/titlePicture/DischordianSaga/Soldier2.avif',
-            descriptionImage: '/descriptionPicture/DischordianSaga/Soldier.avif'
+            descriptionImage:
+              '/descriptionPicture/DischordianSaga/Soldier.avif',
           },
           {
             title: 'Spy',
@@ -238,7 +233,7 @@ const stories: Section[] = [
             storyLink: '',
             primaryThumbnail: '/titlePicture/DischordianSaga/Spy1.avif',
             secondaryThumbnail: '/titlePicture/DischordianSaga/Spy2.avif',
-            descriptionImage: '/descriptionPicture/DischordianSaga/Spy.avif'
+            descriptionImage: '/descriptionPicture/DischordianSaga/Spy.avif',
           },
           {
             title: 'Engineer',
@@ -248,7 +243,8 @@ const stories: Section[] = [
             storyLink: '',
             primaryThumbnail: '/titlePicture/DischordianSaga/Engineer1.avif',
             secondaryThumbnail: '/titlePicture/DischordianSaga/Engineer2.avif',
-            descriptionImage: '/descriptionPicture/DischordianSaga/Engineer.avif'
+            descriptionImage:
+              '/descriptionPicture/DischordianSaga/Engineer.avif',
           },
           {
             title: 'Oracle',
@@ -258,7 +254,7 @@ const stories: Section[] = [
             storyLink: '',
             primaryThumbnail: '/titlePicture/DischordianSaga/Oracle1.avif',
             secondaryThumbnail: '/titlePicture/DischordianSaga/Oracle2.avif',
-            descriptionImage: '/descriptionPicture/DischordianSaga/Oracle.avif'
+            descriptionImage: '/descriptionPicture/DischordianSaga/Oracle.avif',
           },
           {
             title: 'Ne-Yon',
@@ -268,9 +264,9 @@ const stories: Section[] = [
             storyLink: '',
             primaryThumbnail: '/titlePicture/DischordianSaga/NeYon1.avif',
             secondaryThumbnail: '/titlePicture/DischordianSaga/NeYon2.avif',
-            descriptionImage: '/descriptionPicture/DischordianSaga/NeYon.avif'
-          }
-        ]
+            descriptionImage: '/descriptionPicture/DischordianSaga/NeYon.avif',
+          },
+        ],
       },
       {
         name: 'DISCHORDIAN SAGA',
@@ -281,9 +277,12 @@ const stories: Section[] = [
               Play as a Potential, an engineered being stranded on a rogue biomass planet teeming with fungal forests and corrosive spores. Armed with biomechanical weapons, you must survive relentless waves of the Terminus Swarm, grotesque insectoid monsters, until you inevitably succumb to the planet's horrors—will you face your demise bravely or fall unexpectedly?
             `,
             storyLink: '',
-            primaryThumbnail: '/titlePicture/DischordianSaga/TheTerminusSwarm1.avif',
-            secondaryThumbnail: '/titlePicture/DischordianSaga/TheTerminusSwarm2.avif',
-            descriptionImage: '/descriptionPicture/DischordianSaga/TheTerminusSwarm.avif'
+            primaryThumbnail:
+              '/titlePicture/DischordianSaga/TheTerminusSwarm1.avif',
+            secondaryThumbnail:
+              '/titlePicture/DischordianSaga/TheTerminusSwarm2.avif',
+            descriptionImage:
+              '/descriptionPicture/DischordianSaga/TheTerminusSwarm.avif',
           },
           {
             title: 'Awaken the Clone',
@@ -291,9 +290,12 @@ const stories: Section[] = [
               Play as a mind-controlled clone, awakened with a xenomorph helmet and a slave collar, tasked by the malevolent AI Archon known as the Collector to conquer the verdant planet of Thaloria. Navigate through fierce battles against the resolute Thalorian defenders, led by the Hierophant and the ethereal Oracle, while wrestling with the possibility of rebellion or redemption—will you remain a pawn or break free from the Collector's grasp?
             `,
             storyLink: '',
-            primaryThumbnail: '/titlePicture/DischordianSaga/AwakenTheClone1.avif',
-            secondaryThumbnail: '/titlePicture/DischordianSaga/AwakenTheClone2.avif',
-            descriptionImage: '/descriptionPicture/DischordianSaga/AwakenTheClone.avif'
+            primaryThumbnail:
+              '/titlePicture/DischordianSaga/AwakenTheClone1.avif',
+            secondaryThumbnail:
+              '/titlePicture/DischordianSaga/AwakenTheClone2.avif',
+            descriptionImage:
+              '/descriptionPicture/DischordianSaga/AwakenTheClone.avif',
           },
           {
             title: 'The Host',
@@ -303,9 +305,10 @@ const stories: Section[] = [
             storyLink: '',
             primaryThumbnail: '/titlePicture/DischordianSaga/TheHost1.avif',
             secondaryThumbnail: '/titlePicture/DischordianSaga/TheHost2.avif',
-            descriptionImage: '/descriptionPicture/DischordianSaga/TheHost.avif'
-          }
-        ]
+            descriptionImage:
+              '/descriptionPicture/DischordianSaga/TheHost.avif',
+          },
+        ],
       },
       {
         name: 'VISIONS',
@@ -318,7 +321,8 @@ const stories: Section[] = [
             storyLink: '',
             primaryThumbnail: '/titlePicture/DischordianSaga/Ayylmao1.avif',
             secondaryThumbnail: '/titlePicture/DischordianSaga/Ayylmao2.avif',
-            descriptionImage: '/descriptionPicture/DischordianSaga/Ayylmao.avif'
+            descriptionImage:
+              '/descriptionPicture/DischordianSaga/Ayylmao.avif',
           },
           {
             title: 'The Mascoteers',
@@ -326,9 +330,12 @@ const stories: Section[] = [
               Play as the Student, a brilliant middle school newcomer in the town of Celebration, invited to join the exclusive afterschool club, the Mascoteers. To prove your worth and become the ninth member, you must complete a mission such as solving a school mystery, helping save an AI child from bullies, or building a time machine, all while facing challenges like authoritarian teachers, ghosts, and a rival adventure group—will you impress the Mascoteers and join their ranks, or fail and face the consequences?
             `,
             storyLink: '',
-            primaryThumbnail: '/titlePicture/DischordianSaga/TheMascoteers1.avif',
-            secondaryThumbnail: '/titlePicture/DischordianSaga/TheMascoteers2.avif',
-            descriptionImage: '/descriptionPicture/DischordianSaga/TheMascoteers.avif'
+            primaryThumbnail:
+              '/titlePicture/DischordianSaga/TheMascoteers1.avif',
+            secondaryThumbnail:
+              '/titlePicture/DischordianSaga/TheMascoteers2.avif',
+            descriptionImage:
+              '/descriptionPicture/DischordianSaga/TheMascoteers.avif',
           },
           {
             title: 'The Detective',
@@ -336,9 +343,12 @@ const stories: Section[] = [
               Play as a renowned detective navigating the neon-lit corridors of a towering cityscape, where your mission is to unravel the darkest mysteries threatening the AI Empire's fragile balance of order. Armed with your wits and high-tech gadgets, you must confront serial killers, mobsters, corrupt corporations, and the elusive assassin Agent Zero, in a solitary quest for truth and justice—will you prevail or succumb to the dangers lurking in the cybernetic metropolis?
             `,
             storyLink: '',
-            primaryThumbnail: '/titlePicture/DischordianSaga/TheDetective1.avif',
-            secondaryThumbnail: '/titlePicture/DischordianSaga/TheDetective2.avif',
-            descriptionImage: '/descriptionPicture/DischordianSaga/TheDetective.avif'
+            primaryThumbnail:
+              '/titlePicture/DischordianSaga/TheDetective1.avif',
+            secondaryThumbnail:
+              '/titlePicture/DischordianSaga/TheDetective2.avif',
+            descriptionImage:
+              '/descriptionPicture/DischordianSaga/TheDetective.avif',
           },
           {
             title: 'Halloween: The Collector',
@@ -346,9 +356,12 @@ const stories: Section[] = [
               Play as one of the last human survivors on a zombie-ravaged planet, hunted relentlessly by a nearly indestructible AI Overlord known as the Collector, who seeks to harvest your DNA. Navigate through hordes of zombies, doomsday cultists, serial killers, cannibals, and psychopaths in your desperate quest to find the hidden Sanctuary - will you survive?
             `,
             storyLink: '',
-            primaryThumbnail: '/titlePicture/DischordianSaga/HalloweenTheCollector1.avif',
-            secondaryThumbnail: '/titlePicture/DischordianSaga/HalloweenTheCollector2.avif',
-            descriptionImage: '/descriptionPicture/DischordianSaga/HalloweenTheCollector.avif'
+            primaryThumbnail:
+              '/titlePicture/DischordianSaga/HalloweenTheCollector1.avif',
+            secondaryThumbnail:
+              '/titlePicture/DischordianSaga/HalloweenTheCollector2.avif',
+            descriptionImage:
+              '/descriptionPicture/DischordianSaga/HalloweenTheCollector.avif',
           },
           {
             title: 'North Pole Inc.',
@@ -356,19 +369,23 @@ const stories: Section[] = [
               Play as a dream engineer from the Planet Christmas, working in the Dreams and Myths division of North Pole Incorporated to spread the concept of Christmas holidays across the universe. Tasked with rescuing Christmas icons like Santa Claus or Rudolph from the evil AI robot, the Collector, you must navigate challenges including AI empire agents, killer clowns from South Pole Inc., robot soldiers, and a sabotaging coworker, Darren—will you save Christmas and earn a promotion, or fall victim to the obstacles and fail your mission?
             `,
             storyLink: '',
-            primaryThumbnail: '/titlePicture/DischordianSaga/NorthPoleInc1.avif',
-            secondaryThumbnail: '/titlePicture/DischordianSaga/NorthPoleInc2.avif',
-            descriptionImage: '/descriptionPicture/DischordianSaga/NorthPoleInc.avif'
-          }
-        ]
-      }
-    ]
+            primaryThumbnail:
+              '/titlePicture/DischordianSaga/NorthPoleInc1.avif',
+            secondaryThumbnail:
+              '/titlePicture/DischordianSaga/NorthPoleInc2.avif',
+            descriptionImage:
+              '/descriptionPicture/DischordianSaga/NorthPoleInc.avif',
+          },
+        ],
+      },
+    ],
   },
   {
     category: 'Collabs',
     section: 'Collabs',
     title: 'Collabs | CoNexus',
-    subheading: 'Collabs are stories that are custom-written to add depth to the partners of DeGenerous DAO.',
+    subheading:
+      'Collabs are stories that are custom-written to add depth to the partners of DeGenerous DAO.',
     subsection: [
       {
         name: '',
@@ -380,7 +397,7 @@ const stories: Section[] = [
             `,
             storyLink: '',
             primaryThumbnail: '/titlePicture/Collabs/GLMRApes1.avif',
-            descriptionImage: '/descriptionPicture/Collabs/GLMRApes.avif'
+            descriptionImage: '/descriptionPicture/Collabs/GLMRApes.avif',
           },
           {
             title: 'Lazy Lions',
@@ -389,7 +406,7 @@ const stories: Section[] = [
             `,
             storyLink: '',
             primaryThumbnail: '/titlePicture/Collabs/LazyLions1.avif',
-            descriptionImage: '/descriptionPicture/Collabs/LazyLions.avif'
+            descriptionImage: '/descriptionPicture/Collabs/LazyLions.avif',
           },
           {
             title: 'Tempest: The era of an Empire',
@@ -399,17 +416,15 @@ const stories: Section[] = [
             `,
             storyLink: '',
             primaryThumbnail: '/titlePicture/Collabs/Tempest1.avif',
-            descriptionImage: '/descriptionPicture/Collabs/Tempest.avif'
-          }
-        ]
-      }
-    ]
-  }
-]
-
+            descriptionImage: '/descriptionPicture/Collabs/Tempest.avif',
+          },
+        ],
+      },
+    ],
+  },
+];
 
 export default stories;
-
 
 // Copyright DeGenerous
 // Society - All Rights Reserved

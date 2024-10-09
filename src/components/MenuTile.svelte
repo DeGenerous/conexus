@@ -1,6 +1,9 @@
 <script lang="ts">
   export let sectionName: string;
-  let sectionLink = sectionName.replace(/\s+/g, "");
+
+  let updatedSectionName = sectionName === '' ? 'Classes' : sectionName;
+
+  let sectionLink = updatedSectionName.replace(/\s+/g, '');
 
   const primaryThumbnail = `/titlePicture/${sectionLink}1.avif`;
   const secondaryThumbnail = `/titlePicture/${sectionLink}2.avif`;
@@ -13,7 +16,7 @@
 
 <a
   class="tile"
-  id={sectionName}
+  id={updatedSectionName}
   href="/{sectionLink}"
   on:mouseenter={tileHover}
   on:mouseleave={tileHover}
@@ -23,16 +26,16 @@
   <img
     class="tile-picture {isPrimary ? 'visible' : ''}"
     src={primaryThumbnail}
-    alt={sectionName}
+    alt={updatedSectionName}
     draggable="false"
   />
   <img
     class="tile-picture {!isPrimary ? 'visible' : ''}"
     src={secondaryThumbnail}
-    alt={sectionName}
+    alt={updatedSectionName}
     draggable="false"
   />
-  <p class="title">{sectionName}</p>
+  <p class="title">{updatedSectionName}</p>
 </a>
 
 <style>

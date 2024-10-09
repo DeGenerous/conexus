@@ -1,13 +1,13 @@
 <script lang="ts">
-  import Account from "../lib/auth";
-  import { CoNexus } from "../lib/conexus";
+  import Account from '../lib/auth';
+  import { CoNexus } from '../lib/conexus';
   import {
     authenticated,
     referralCodes,
     wallet,
     web3LoggedIn,
-  } from "../stores/account";
-  import { onMount } from "svelte";
+  } from '../stores/account';
+  import { onMount } from 'svelte';
 
   Account.me();
   Account.logged_in();
@@ -43,24 +43,24 @@
 
   const alternativeSignIn = {
     google: () => {
-      console.log("Sign in with Google");
+      console.log('Sign in with Google');
     },
     coinbaseWallet: () => {
-      console.log("Sign in with Coinbase Smart Wallet");
+      console.log('Sign in with Coinbase Smart Wallet');
     },
     browserWallet: () => {
-      console.log("Sign in with browser wallet");
+      console.log('Sign in with browser wallet');
     },
   };
   const alternativeSignUp = {
     google: () => {
-      console.log("Sign up with Google");
+      console.log('Sign up with Google');
     },
     coinbaseWallet: () => {
-      console.log("Sign up with Coinbase Smart Wallet");
+      console.log('Sign up with Coinbase Smart Wallet');
     },
     browserWallet: () => {
-      console.log("Sign up with browser wallet");
+      console.log('Sign up with browser wallet');
     },
   };
 
@@ -112,22 +112,22 @@
   let editPasswordBtn: HTMLButtonElement;
   let saveChangesBtn: HTMLButtonElement;
 
-  const passwordVisible = () => (passwordInput.type = "text");
-  const passwordInvisible = () => (passwordInput.type = "password");
+  const passwordVisible = () => (passwordInput.type = 'text');
+  const passwordInvisible = () => (passwordInput.type = 'password');
 
-  let isEditing: "username" | "password" | boolean = false;
+  let isEditing: 'username' | 'password' | boolean = false;
   function changeUserData(this: any) {
-    if (this.className.match("username")) {
-      isEditing = "username";
-    } else if (this.className.match("password")) {
-      isEditing = "password";
-    } else if (this.className.match("save")) {
-      if (isEditing === "password") {
+    if (this.className.match('username')) {
+      isEditing = 'username';
+    } else if (this.className.match('password')) {
+      isEditing = 'password';
+    } else if (this.className.match('save')) {
+      if (isEditing === 'password') {
         if (passwordInput.value != passwordConfirmInput.value) {
-          passwordMatchValidation.style.display = "block";
-          throw new Error("Passwords do not match!");
+          passwordMatchValidation.style.display = 'block';
+          throw new Error('Passwords do not match!');
         } else {
-          passwordMatchValidation.style.display = "none";
+          passwordMatchValidation.style.display = 'none';
         }
       }
       isEditing = false;
@@ -220,10 +220,10 @@
               id="password"
               type="password"
               value={user.password}
-              disabled={isEditing === "password" ? false : true}
-              style={isEditing === "password"
-                ? "border: 0.2vw solid rgba(51, 226, 230, 0.75)"
-                : ""}
+              disabled={isEditing === 'password' ? false : true}
+              style={isEditing === 'password'
+                ? 'border: 0.2vw solid rgba(51, 226, 230, 0.75)'
+                : ''}
             />
             <button
               class="password-visibility-button"
@@ -233,7 +233,7 @@
               on:touchend={passwordInvisible}
             />
           </div>
-          {#if isEditing === "password"}
+          {#if isEditing === 'password'}
             <label
               bind:this={passwordConfirmLabel}
               for="password-confirmation"
@@ -254,10 +254,10 @@
             id="first-name"
             type="text"
             value={user.first_name}
-            disabled={isEditing === "username" ? false : true}
-            style={isEditing === "username"
-              ? "border: 0.2vw solid rgba(51, 226, 230, 0.75)"
-              : ""}
+            disabled={isEditing === 'username' ? false : true}
+            style={isEditing === 'username'
+              ? 'border: 0.2vw solid rgba(51, 226, 230, 0.75)'
+              : ''}
           />
           <label for="last-name" class="user-prop">Last name</label>
           <input
@@ -266,10 +266,10 @@
             id="last-name"
             type="text"
             value={user.last_name}
-            disabled={isEditing === "username" ? false : true}
-            style={isEditing === "username"
-              ? "border: 0.2vw solid rgba(51, 226, 230, 0.75)"
-              : ""}
+            disabled={isEditing === 'username' ? false : true}
+            style={isEditing === 'username'
+              ? 'border: 0.2vw solid rgba(51, 226, 230, 0.75)'
+              : ''}
           />
         </div>
       </div>
@@ -354,7 +354,7 @@
       {:else}
         <button
           on:click={() => {
-            console.log("get codes");
+            console.log('get codes');
           }}
         >
           Get referral codes
@@ -362,7 +362,7 @@
       {/if}
     {:else if !isLogged}
       <section class="signin">
-        <p class="sign-title">{signUp ? "Sign up" : "Sign in"}</p>
+        <p class="sign-title">{signUp ? 'Sign up' : 'Sign in'}</p>
 
         <hr />
 
@@ -913,13 +913,13 @@
     margin-left: 1vw;
     width: 3vw;
     height: 3vw;
-    background-image: url("/icons/invisibleicon.png");
+    background-image: url('/icons/invisibleicon.png');
     background-size: contain;
     background-repeat: no-repeat;
   }
 
   .password-visibility-button:active {
-    background-image: url("/icons/visibleicon.png");
+    background-image: url('/icons/visibleicon.png');
   }
 
   .edit-buttons {
@@ -1005,13 +1005,13 @@
   .copy-button {
     width: 2vw;
     height: 2vw;
-    background-image: url("/icons/copyicon.png");
+    background-image: url('/icons/copyicon.png');
     background-size: contain;
     background-repeat: no-repeat;
   }
 
   .copy-button:active {
-    background-image: url("/icons/checkmark.png");
+    background-image: url('/icons/checkmark.png');
   }
 
   .used {
@@ -1033,7 +1033,7 @@
     height: 7vw;
     width: 7vw;
     cursor: pointer;
-    background-image: url("/icons/profileIcon.avif");
+    background-image: url('/icons/profileIcon.avif');
     background-size: contain;
     opacity: 0.4;
     z-index: 1;

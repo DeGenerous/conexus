@@ -4,16 +4,17 @@ import {
   background_image,
   story,
   loading,
+  categories,
 } from '../stores/conexus';
 
 const url = import.meta.env.PUBLIC_BACKEND;
 
-type Topic = {
+export type Topic = {
   name: string;
   available: boolean;
 };
 
-type Category = {
+export type Category = {
   name: string;
   topics: Topic[];
 };
@@ -96,6 +97,8 @@ export class CoNexus {
     }
 
     const available: Available = await response.json();
+
+    categories.set(available.categories);
 
     available.continuable ??= [];
 

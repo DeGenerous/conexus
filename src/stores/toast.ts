@@ -14,17 +14,21 @@ function createToastStore() {
 
   return {
     subscribe,
-    show: (message: string, type: ToastType = 'info', duration: number = 5000) => {
+    show: (
+      message: string,
+      type: ToastType = 'info',
+      duration: number = 5000,
+    ) => {
       const id = Date.now();
       update((toasts) => [...toasts, { id, message, type, duration }]);
 
       setTimeout(() => {
-        update((toasts) => toasts.filter(toast => toast.id !== id));
+        update((toasts) => toasts.filter((toast) => toast.id !== id));
       }, duration);
     },
     close: (id: number) => {
-      update((toasts) => toasts.filter(toast => toast.id !== id));
-    }
+      update((toasts) => toasts.filter((toast) => toast.id !== id));
+    },
   };
 }
 

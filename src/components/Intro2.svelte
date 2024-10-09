@@ -1,9 +1,6 @@
 <script lang="ts">
-  import stories from '../data/stories.ts';
+  import { categories } from '../stores/conexus';
   import MenuTile from './MenuTile.svelte';
-
-  const sections: string[] = [];
-  stories.map((story, i) => (sections[i] = story.section));
 
   const menuText: string[] = [
     'A new world with no limits awaits you.',
@@ -14,8 +11,10 @@
 <section class="conexus-menu-tiles blur">
   <p class="menu-text-0">{menuText[0]}</p>
 
-  {#each sections as sectionName}
-    <MenuTile {sectionName} />
+  {#each $categories as cat}
+    <div>
+      <MenuTile sectionName={cat.name} />
+    </div>
   {/each}
 
   <p class="menu-text-1">{menuText[1]}</p>

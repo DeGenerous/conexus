@@ -1,7 +1,22 @@
 ---
+import Layout from '@layouts/Layout.astro';
+import Topic from '@components/John/Story.svelte';
+import { CoNexus, type DynTopic } from '@lib/conexus';
 
+const { story } = Astro.params;
+
+if (!story) {
+  Astro.redirect('/');
+}
+
+let topic: DynTopic | null = null;
+try {
+  topic = await CoNexus.getTopic(story!);
+} catch (error) {
+  console.error('Failed to fetch topic:', error);
+}
 ---
 
-<div>
-    
-</div>
+<Layout>
+  <Topic topic={topic} />
+</Layout>

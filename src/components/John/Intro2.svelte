@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { categories } from '@stores/conexus';
-  import MenuTile from './MenuTile.svelte';
+  import { CoNexus } from '@lib/conexus';
+  import Categories from './Categories.svelte';
 
   const menuText: string[] = [
     'A new world with no limits awaits you.',
@@ -11,11 +11,17 @@
 <section class="conexus-menu-tiles blur">
   <p class="menu-text-0">{menuText[0]}</p>
 
-  {#each $categories as cat}
-    <div>
-      <MenuTile sectionName={cat.name} />
-    </div>
-  {/each}
+  {#await CoNexus.categories()}
+    <p class="continue-shaping-label">Loading Classes</p>
+  {:then categories}
+    {#each categories.categories as cat}
+      <div>
+        <Categories category={cat} />
+      </div>
+    {/each}
+  {:catch error}
+    <p class="continue-shaping-label">Error: {error.message}</p>
+  {/await}
 
   <p class="menu-text-1">{menuText[1]}</p>
 </section>

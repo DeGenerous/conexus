@@ -2,7 +2,7 @@
   import { writable } from 'svelte/store';
 
   import Intro from './Intro.svelte';
-  import Intro2 from './Intro2.svelte';
+  import Intro2 from './John/Intro2.svelte';
   import Modal from './Modal.svelte';
   import BackgroundMusic from './music/BackgroundMusic.svelte';
   import Tts from './music/Tts.svelte';

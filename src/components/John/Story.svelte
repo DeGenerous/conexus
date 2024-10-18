@@ -28,10 +28,7 @@
   alt={story.images[0].alt ?? ''}
   draggable="false"
   /> -->
-    <button
-      class="start-button"
-      on:click={() => CoNexus.start(topic.name)}
-    >
+    <button class="start-button" on:click={() => CoNexus.start(topic.name)}>
       Start
     </button>
   </div>

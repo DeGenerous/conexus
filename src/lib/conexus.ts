@@ -145,7 +145,7 @@ export class CoNexus {
 
     const topic = resp.topic;
 
-    return await topic
+    return await topic;
   }
 
   static async available(): Promise<Available> {

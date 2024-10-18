@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Writable } from 'svelte/store';
-  import type { VolumeControl } from '../../stores/types';
+  import type { VolumeControl } from '@stores/types';
 
   export let src: string;
   export let volume: Writable<VolumeControl>;

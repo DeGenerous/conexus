@@ -1,12 +1,12 @@
 <script lang="ts">
-  import Account from '../lib/auth';
-  import { CoNexus } from '../lib/conexus';
+  import Account from '@lib/auth';
+  import { CoNexus } from '@lib/conexus';
   import {
     authenticated,
     referralCodes,
     wallet,
     web3LoggedIn,
-  } from '../stores/account';
+  } from '@stores/account';
   import { onMount } from 'svelte';
 
   Account.me();

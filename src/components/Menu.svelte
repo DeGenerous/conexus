@@ -7,9 +7,9 @@
   import BackgroundMusic from './music/BackgroundMusic.svelte';
   import Tts from './music/Tts.svelte';
   import Step from './Step.svelte';
-  import { CoNexus } from '../lib/conexus';
-  import { story, loading } from '../stores/conexus';
-  // import { authenticated, web3LoggedIn } from "../stores/account";
+  import { CoNexus } from '@lib/conexus';
+  import { story, loading } from '@stores/conexus';
+  // import { authenticated, web3LoggedIn } from "@stores/account";
 
   let isLogged: boolean = true;
 

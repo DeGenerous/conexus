@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { background_music } from '../../stores/conexus';
-  import { background_volume, tts_volume } from '../../stores/volumes';
+  import { background_music } from '@stores/conexus';
+  import { background_volume, tts_volume } from '@stores/volumes';
   import { onMount } from 'svelte';
 
   let audio: HTMLAudioElement;

@@ -1,6 +1,5 @@
 <script lang="ts">
   export let sectionName: string;
-  import { category } from '@stores/conexus';
 
   let updatedSectionName = sectionName === '' ? 'Classes' : sectionName;
 
@@ -23,9 +22,8 @@
   on:mouseleave={tileHover}
   on:touchstart={tileHover}
   on:touchend={tileHover}
-  on:click={() => category.set(null)}
 >
-  <!-- <img
+  <img
     class="tile-picture {isPrimary ? 'visible' : ''}"
     src={primaryThumbnail}
     alt={updatedSectionName}
@@ -36,7 +34,7 @@
     src={secondaryThumbnail}
     alt={updatedSectionName}
     draggable="false"
-  /> -->
+  />
   <p class="title">{updatedSectionName}</p>
 </a>
 

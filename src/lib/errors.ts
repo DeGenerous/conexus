@@ -1,4 +1,4 @@
-import { toastStore } from '../stores/toast';
+import { toastStore } from '@stores/toast';
 
 export const new_error = (error: ConexusError) => {
   if (error.log) {

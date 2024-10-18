@@ -1,5 +1,5 @@
-import { storable } from '../lib/storable';
 import type { Writable } from 'svelte/store';
+import { storable } from '@lib/storable';
 
 export const background_volume: Writable<VolumeControl> = storable(
   'background_volume',

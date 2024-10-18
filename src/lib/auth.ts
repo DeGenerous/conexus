@@ -6,8 +6,8 @@ import {
   referralCodes,
   authenticated,
   wallet,
-} from '../stores/account';
-import { toastStore } from '../stores/toast';
+} from '@stores/account';
+import { toastStore } from '@stores/toast';
 
 const url = import.meta.env.PUBLIC_BACKEND;
 

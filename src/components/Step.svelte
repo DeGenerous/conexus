@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { fullscreen, story, loading } from '../stores/conexus';
-  import { background_volume, tts_volume } from '../stores/volumes';
-  import { storyTitle as _storyTitle } from '../lib/conexus';
-  import type { StepData } from '../lib/conexus';
+  import { fullscreen, story, loading } from '@stores/conexus';
+  import { background_volume, tts_volume } from '@stores/volumes';
+  import { storyTitle as _storyTitle } from '@lib/conexus';
+  import type { StepData } from '@lib/conexus';
 
   import Slider from './music/Slider.svelte';
 

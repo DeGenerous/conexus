@@ -8,3 +8,4 @@ export const background_image = writable<Nullable<string>>(null);
 export const fullscreen = writable<boolean>(false);
 
 export const categories = writable<Category[]>([]);
+export const category = writable<Nullable<Category>>(null);

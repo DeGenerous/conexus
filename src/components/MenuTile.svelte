@@ -1,5 +1,6 @@
 <script lang="ts">
   export let sectionName: string;
+  import { category } from '@stores/conexus';
 
   let updatedSectionName = sectionName === '' ? 'Classes' : sectionName;
 
@@ -17,13 +18,14 @@
 <a
   class="tile"
   id={updatedSectionName}
-  href="/{sectionLink}"
+  href="/category/{sectionLink}"
   on:mouseenter={tileHover}
   on:mouseleave={tileHover}
   on:touchstart={tileHover}
   on:touchend={tileHover}
+  on:click={() => category.set(null)}
 >
-  <img
+  <!-- <img
     class="tile-picture {isPrimary ? 'visible' : ''}"
     src={primaryThumbnail}
     alt={updatedSectionName}
@@ -34,7 +36,7 @@
     src={secondaryThumbnail}
     alt={updatedSectionName}
     draggable="false"
-  />
+  /> -->
   <p class="title">{updatedSectionName}</p>
 </a>
 
@@ -66,7 +68,7 @@
     transition: transform 0.15s ease-in-out;
   }
 
-  .tile-picture {
+  /* .tile-picture {
     display: none;
     object-fit: cover;
     width: 95%;
@@ -79,7 +81,7 @@
 
   .visible {
     display: block;
-  }
+  } */
 
   .title {
     font-size: 2.3vw;
@@ -98,10 +100,10 @@
       border-radius: 5vw;
     }
 
-    .tile-picture {
+    /* .tile-picture {
       width: 90%;
       border-radius: 4vw;
-    }
+    } */
 
     .title {
       font-size: 1.3em;

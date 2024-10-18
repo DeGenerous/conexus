@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { categories } from '../stores/conexus';
+  import { categories } from '@stores/conexus';
   import MenuTile from './MenuTile.svelte';
 
   const menuText: string[] = [

@@ -1,22 +1,16 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import { categories } from '../stores/conexus';
+  import { categories } from '@stores/conexus';
 
   export let categoryName: string | undefined;
 
   let category: Category | undefined;
 
-  const unsubscribe = categories.subscribe((value) => {
-    category = value.find((cat) => cat.name === categoryName);
-  });
+  // const unsubscribe = categories.subscribe((value) => {
+  //   category = value.find((cat) => cat.name === categoryName);
+  // });
 
-  onMount(() => {
-    console.log('Category mounted');
-  });
-
-  onDestroy(() => {
-    console.log('Category destroyed');
-  });
+  console.log("Category:", $categories);
 </script>
 
 <div class="category">

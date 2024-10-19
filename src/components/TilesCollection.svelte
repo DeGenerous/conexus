@@ -1,14 +1,14 @@
 <script lang="ts">
-  import stories from "../data/stories";
-  import StoryTile from "../components/StoryTile.svelte";
-  import { afterUpdate } from "svelte";
+  import stories from '../data/stories';
+  import StoryTile from '../components/StoryTile.svelte';
+  import { afterUpdate } from 'svelte';
 
   export let sectionName: string;
   export let filters: boolean = false;
   export let bigCollection: boolean = false;
 
   let tilesArray: any = stories.filter(
-    (section) => section.section === sectionName
+    (section) => section.section === sectionName,
   )[0].subsection;
 
   const allStories = tilesArray[0].story;
@@ -35,7 +35,7 @@
     } else if (selectedGenres && selectedGenres.length == 0) {
       filteredTiles = allStories;
       resetGenresFilter();
-      searchField = "";
+      searchField = '';
     }
     sortedTiles = filteredTiles.sort((a: any, b: any) => {
       if (isSorting) {
@@ -52,15 +52,15 @@
   });
 
   function genreSelector(this: HTMLElement) {
-    if (searchField) searchField = "";
-    this.classList.toggle("selected");
-    if (this.className.match("selected"))
-      this.style.color = "rgba(51, 226, 230)";
-    else this.style.color = "inherit";
-    selectedGenres = Array.from(document.querySelectorAll(".selected")).map(
+    if (searchField) searchField = '';
+    this.classList.toggle('selected');
+    if (this.className.match('selected'))
+      this.style.color = 'rgba(51, 226, 230)';
+    else this.style.color = 'inherit';
+    selectedGenres = Array.from(document.querySelectorAll('.selected')).map(
       (genre) => {
         return genre.innerHTML;
-      }
+      },
     );
     filteredTiles = allStories.filter((story: any) => {
       let matchingTile: boolean = false;
@@ -72,12 +72,12 @@
   }
 
   const resetGenresFilter = () => {
-    const genresList = document.querySelectorAll(".genre");
+    const genresList = document.querySelectorAll('.genre');
     selectedGenres = [];
     genresList.forEach((genre: any) => {
-      if (Array.from(genre.classList).includes("selected")) {
-        genre.classList.remove("selected");
-        genre.style.color = "inherit";
+      if (Array.from(genre.classList).includes('selected')) {
+        genre.classList.remove('selected');
+        genre.style.color = 'inherit';
       }
     });
   };

@@ -4,16 +4,16 @@ import {
   background_image,
   story,
   loading,
-} from '../stores/conexus';
+} from '@stores/conexus';
 
 const url = import.meta.env.PUBLIC_BACKEND;
 
-type Topic = {
+export type Topic = {
   name: string;
   available: boolean;
 };
 
-type Category = {
+export type Category = {
   name: string;
   topics: Topic[];
 };
@@ -42,6 +42,23 @@ export type StepData = {
   image?: string;
   choice?: number;
   tts?: Blob;
+};
+
+export type DynTopic = {
+  name: string;
+  image_prompt?: string;
+  description?: string;
+};
+
+export type DynCategoryImage = {
+  alt: string;
+  src: string;
+};
+
+export type DynCategory = {
+  id: number;
+  name: string;
+  images?: DynCategoryImage[];
 };
 
 export type GameData = {
@@ -86,6 +103,50 @@ export class CoNexus {
     this.step_data = {} as StepData;
   }
 
+  static async categories(): Promise<DynCategory[]> {
+    const response = await fetch(`${url}/categories`);
+
+    if (!response.ok) {
+      new_error({ code: response.status, error: await response.text() });
+    }
+
+    return await response.json();
+  }
+
+  static async categoryTopics(category: string): Promise<DynTopic[]> {
+    // const base = `${url}/topics/${category}`;
+    const base = `http://localhost:8080/topics/${category}`;
+
+    const response = await fetch(base);
+
+    if (!response.ok) {
+      new_error({ code: response.status, error: await response.text() });
+    }
+
+    const resp = await response.json();
+
+    const topics: DynTopic[] = resp.topics;
+
+    return topics;
+  }
+
+  static async getTopic(name: string): Promise<DynTopic> {
+    // const base = `${url}/topic/${name}`;
+    const base = `http://localhost:8080/topic/${name}`;
+
+    const response = await fetch(base);
+
+    if (!response.ok) {
+      new_error({ code: response.status, error: await response.text() });
+    }
+
+    const resp = await response.json();
+
+    const topic = resp.topic;
+
+    return await topic;
+  }
+
   static async available(): Promise<Available> {
     const response = await fetch(`${url}/available`, {
       method: 'POST',
@@ -103,6 +164,7 @@ export class CoNexus {
   }
 
   static async start(category: string): Promise<CoNexus> {
+    console.log('Starting story:', category);
     CoNexus.#play_music(category);
     CoNexus.#background_image(category);
     loading.set(true);

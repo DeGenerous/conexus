@@ -1,20 +1,23 @@
 <script lang="ts">
-  import { writable } from "svelte/store";
+  import { writable } from 'svelte/store';
 
-  import Intro from "./Intro.svelte";
-  import Modal from "./Modal.svelte";
-  import BackgroundMusic from "./music/BackgroundMusic.svelte";
-  import Tts from "./music/Tts.svelte";
-  import Step from "./Step.svelte";
-  import { CoNexus } from "../lib/conexus";
-  import { story, loading } from "../stores/conexus";
-  import { authenticated, web3LoggedIn } from "../stores/account";
+  import Intro from './Intro.svelte';
+  import Intro2 from './John/Intro2.svelte';
+  import Modal from './Modal.svelte';
+  import BackgroundMusic from './music/BackgroundMusic.svelte';
+  import Tts from './music/Tts.svelte';
+  import Step from './Step.svelte';
+  import { CoNexus } from '@lib/conexus';
+  import { story, loading } from '@stores/conexus';
+  // import { authenticated, web3LoggedIn } from "@stores/account";
 
-  let isLogged: boolean;
+  let isLogged: boolean = true;
 
-  authenticated.subscribe((value) => {
-    isLogged = value.loggedIn;
-  });
+  let web3LoggedIn: boolean = true;
+
+  // authenticated.subscribe((value) => {
+  //   isLogged = value.loggedIn;
+  // });
 
   let showDeleteModal = writable<boolean>(false);
   let selectedStory: any;
@@ -39,7 +42,7 @@
   {#if $story === null}
     <!-- We3b3 -->
 
-    {#if $web3LoggedIn}
+    {#if web3LoggedIn}
       {#await CoNexus.available()}
         <p class="continue-shaping-label">Loading unfinished stories...</p>
       {:then available}
@@ -56,7 +59,7 @@
                 <div id="continue-shaping">
                   <p>
                     {continuable.category} - {continuable.story_id.split(
-                      "-"
+                      '-',
                     )[0]}
                   </p>
                 </div>
@@ -69,6 +72,8 @@
             {/each}
           </form>
         </section>
+
+        <Intro2 />
 
         <!-- Delete Story Modal -->
 
@@ -93,7 +98,7 @@
     {/if}
 
     <!-- Intro -->
-    <Intro />
+    <!-- <Intro /> -->
   {:else}
     <!-- Story -->
 
@@ -101,7 +106,6 @@
   {/if}
 {:else}
   <!-- Intro -->
-
   <Intro />
 {/if}
 
@@ -183,12 +187,12 @@
   }
 
   .continue-shaping-delete {
-    background-image: url("/icons/delete.png");
+    background-image: url('/icons/delete.png');
     margin-left: 1vw;
   }
 
   .continue-shaping-play {
-    background-image: url("/icons/play.png");
+    background-image: url('/icons/play.png');
     margin-right: 1vw;
   }
 

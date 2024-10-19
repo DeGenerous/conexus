@@ -1,9 +1,6 @@
 <script lang="ts">
-  import stories from '../data/stories.ts';
-  import MenuTile from './MenuTile.svelte';
-
-  const sections: string[] = [];
-  stories.map((story, i) => (sections[i] = story.section));
+  import { CoNexus } from '@lib/conexus';
+  import Categories from './Categories.svelte';
 
   const menuText: string[] = [
     'A new world with no limits awaits you.',
@@ -14,9 +11,17 @@
 <section class="conexus-menu-tiles blur">
   <p class="menu-text-0">{menuText[0]}</p>
 
-  {#each sections as sectionName}
-    <MenuTile {sectionName} />
-  {/each}
+  {#await CoNexus.categories()}
+    <p class="continue-shaping-label">Loading Classes</p>
+  {:then categories}
+    {#each categories.categories as cat}
+      <div>
+        <Categories category={cat} />
+      </div>
+    {/each}
+  {:catch error}
+    <p class="continue-shaping-label">Error: {error.message}</p>
+  {/await}
 
   <p class="menu-text-1">{menuText[1]}</p>
 </section>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import PopupTile from "./PopupTile.svelte";
+  import PopupTile from './PopupTile.svelte';
 
   export let storyName: string;
   export let storyDescription: string;

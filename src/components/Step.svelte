@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { fullscreen, story, loading } from "../stores/conexus";
-  import { background_volume, tts_volume } from "../stores/volumes";
-  import { storyTitle as _storyTitle } from "../lib/conexus";
-  import type { StepData } from "../lib/conexus";
+  import { fullscreen, story, loading } from '@stores/conexus';
+  import { background_volume, tts_volume } from '@stores/volumes';
+  import { storyTitle as _storyTitle } from '@lib/conexus';
+  import type { StepData } from '@lib/conexus';
 
-  import Slider from "./music/Slider.svelte";
+  import Slider from './music/Slider.svelte';
 
   $: step = $story?.step_data as StepData;
 
-  let stepFont: string = "Verdana";
+  let stepFont: string = 'Verdana';
 
   let width: number;
 
@@ -41,7 +41,7 @@
     <div class="options-container blur">
       <button
         class="option menu-option"
-        on:click={() => window.open("/", "_self")}>Return to main menu</button
+        on:click={() => window.open('/', '_self')}>Return to main menu</button
       >
     </div>
   {:else}
@@ -61,9 +61,9 @@
           <span
             class={step.choice
               ? step.choice - 1 === i
-                ? "active-option"
-                : ""
-              : ""}>{option}</span
+                ? 'active-option'
+                : ''
+              : ''}>{option}</span
           >
         </button>
       {/each}
@@ -80,7 +80,7 @@
             <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
             <div
               class="quit-wrapper"
-              on:click={() => window.open("/", "_self")}
+              on:click={() => window.open('/', '_self')}
               role="button"
               tabindex="0"
             >
@@ -121,7 +121,7 @@
             <img class="previous-step" src="/icons/step-arrow.png" alt="Back" />
           </button>
           <p class="step-counter">
-            Step {`${step.step < 10 ? "0" : ""}${step.step}`}
+            Step {`${step.step < 10 ? '0' : ''}${step.step}`}
           </p>
           <button
             class="step-button"
@@ -143,7 +143,7 @@
           <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
           <div
             class="quit-wrapper"
-            on:click={() => window.open("/", "_self")}
+            on:click={() => window.open('/', '_self')}
             role="button"
             tabindex="0"
             style="background-color: rgba(1, 0, 32, 0.1)"
@@ -176,7 +176,7 @@
             />
           </button>
           <p class="step-counter" style="opacity: 0.5">
-            Step {`${step.step < 10 ? "0" : ""}${step.step}`}
+            Step {`${step.step < 10 ? '0' : ''}${step.step}`}
           </p>
           <button
             class="step-button"
@@ -217,7 +217,7 @@
           <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
           <div
             class="quit-wrapper"
-            on:click={() => window.open("/", "_self")}
+            on:click={() => window.open('/', '_self')}
             role="button"
             tabindex="0"
           >
@@ -237,7 +237,7 @@
               />
             </button>
             <p class="step-counter">
-              Step {`${step.step < 10 ? "0" : ""}${step.step}`}
+              Step {`${step.step < 10 ? '0' : ''}${step.step}`}
             </p>
             <button
               class="step-button"
@@ -263,9 +263,9 @@
             <img
               class="fullscreen"
               src={$fullscreen
-                ? "/icons/fullscreen-exit.png"
-                : "/icons/fullscreen.png"}
-              alt={($fullscreen ? "Exit" : "Enter") + " fullscreen mode"}
+                ? '/icons/fullscreen-exit.png'
+                : '/icons/fullscreen.png'}
+              alt={($fullscreen ? 'Exit' : 'Enter') + ' fullscreen mode'}
             />
           </div>
         </div>
@@ -297,7 +297,7 @@
   }
 
   button {
-    font-family: "PT Serif Caption", "serif";
+    font-family: 'PT Serif Caption', 'serif';
     cursor: pointer;
   }
 

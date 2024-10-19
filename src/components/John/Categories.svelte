@@ -1,12 +1,8 @@
 <script lang="ts">
-  export let sectionName: string;
+  import { CoNexus } from '@lib/conexus';
+  import type { DynCategory } from '@lib/conexus';
 
-  let updatedSectionName = sectionName === '' ? 'Classes' : sectionName;
-
-  let sectionLink = updatedSectionName.replace(/\s+/g, '');
-
-  const primaryThumbnail = `/titlePicture/${sectionLink}1.avif`;
-  const secondaryThumbnail = `/titlePicture/${sectionLink}2.avif`;
+  export let category: DynCategory | undefined;
 
   let isPrimary: boolean = true;
   function tileHover() {
@@ -16,26 +12,28 @@
 
 <a
   class="tile"
-  id={updatedSectionName}
-  href="/category/{sectionLink}"
+  id={category.name}
+  href="/category/{category.id}"
   on:mouseenter={tileHover}
   on:mouseleave={tileHover}
   on:touchstart={tileHover}
   on:touchend={tileHover}
 >
-  <img
-    class="tile-picture {isPrimary ? 'visible' : ''}"
-    src={primaryThumbnail}
-    alt={updatedSectionName}
-    draggable="false"
-  />
-  <img
-    class="tile-picture {!isPrimary ? 'visible' : ''}"
-    src={secondaryThumbnail}
-    alt={updatedSectionName}
-    draggable="false"
-  />
-  <p class="title">{updatedSectionName}</p>
+  {#if category.images}
+    <img
+      class="tile-picture {isPrimary ? 'visible' : ''}"
+      src={category.images[0].src ?? ''}
+      alt={category.images[0].alt ?? ''}
+      draggable="false"
+    />
+    <img
+      class="tile-picture {!isPrimary ? 'visible' : ''}"
+      src={category.images[1].src ?? ''}
+      alt={category.images[1].src ?? ''}
+      draggable="false"
+    />
+  {/if}
+  <p class="title">{category.name}</p>
 </a>
 
 <style>
@@ -67,19 +65,19 @@
   }
 
   /* .tile-picture {
-    display: none;
-    object-fit: cover;
-    width: 95%;
-    height: 80%;
-    margin: 2.5%;
-    margin-bottom: 0;
-    border: 0.05vw solid rgba(51, 226, 230, 0.75);
-    border-radius: 1vw;
-  }
+  display: none;
+  object-fit: cover;
+  width: 95%;
+  height: 80%;
+  margin: 2.5%;
+  margin-bottom: 0;
+  border: 0.05vw solid rgba(51, 226, 230, 0.75);
+  border-radius: 1vw;
+}
 
-  .visible {
-    display: block;
-  } */
+.visible {
+  display: block;
+} */
 
   .title {
     font-size: 2.3vw;
@@ -99,9 +97,9 @@
     }
 
     /* .tile-picture {
-      width: 90%;
-      border-radius: 4vw;
-    } */
+    width: 90%;
+    border-radius: 4vw;
+  } */
 
     .title {
       font-size: 1.3em;

@@ -1,8 +1,13 @@
-import { new_error } from "./errors";
-import { Web3Provider } from "./ethers";
-import { get_cookie } from "./cookies";
-import { web3LoggedIn, referralCodes, authenticated, wallet } from "../stores/account";
-import { toastStore } from "../stores/toast";
+import { new_error } from './errors';
+import { Web3Provider } from './ethers';
+import { get_cookie } from './cookies';
+import {
+  web3LoggedIn,
+  referralCodes,
+  authenticated,
+  wallet,
+} from '@stores/account';
+import { toastStore } from '@stores/toast';
 
 const url = import.meta.env.PUBLIC_BACKEND;
 
@@ -15,200 +20,204 @@ Nonce:
 ${nonce}`;
 
 class Account {
-	#username: string;
-	#admin: boolean;
+  #username: string;
+  #admin: boolean;
 
-	private constructor(username: string, admin: boolean) {
-		this.#username = username;
-		this.#admin = admin;
-	}
+  private constructor(username: string, admin: boolean) {
+    this.#username = username;
+    this.#admin = admin;
+  }
 
-	static async cookie(): Promise<void> {
-		const cookiePresent = get_cookie("logged") === "true";
+  static async cookie(): Promise<void> {
+    const cookiePresent = get_cookie('logged') === 'true';
 
-		web3LoggedIn.set(cookiePresent);
-	}
+    web3LoggedIn.set(cookiePresent);
+  }
 
-	static async logged_in(): Promise<boolean> {
-		// if (web3LoggedIn) {
-		// 	try {
-		// 		const response = await fetch(`${url}/logged-in`, {
-		// 			method: "POST",
-		// 		});
+  static async logged_in(): Promise<boolean> {
+    // if (web3LoggedIn) {
+    // 	try {
+    // 		const response = await fetch(`${url}/logged-in`, {
+    // 			method: "POST",
+    // 		});
 
-		// 		const logged_in = response.ok;
+    // 		const logged_in = response.ok;
 
-		// 		if (logged_in) {
-		// 			return true;
-		// 		}
-		// 		web3LoggedIn.set(false);
-		// 	} catch (error) {
-		// 		web3LoggedIn.set(false);
-		// 	}
-		// }
+    // 		if (logged_in) {
+    // 			return true;
+    // 		}
+    // 		web3LoggedIn.set(false);
+    // 	} catch (error) {
+    // 		web3LoggedIn.set(false);
+    // 	}
+    // }
 
-		return true;
-	}
+    return true;
+  }
 
-	static async log_in(): Promise<Account> {
-		const provider = await Web3Provider.init();
+  static async log_in(): Promise<Account> {
+    const provider = await Web3Provider.init();
 
-		const nonce = await Account.get_nonce();
+    const nonce = await Account.get_nonce();
 
-		const signature = await provider.sign(message(nonce));
+    const signature = await provider.sign(message(nonce));
 
-		const userWallet = await provider.userAddress();
+    const userWallet = await provider.userAddress();
 
-		const response = await fetch(`${url}/login`, {
-			method: "POST",
-			body: JSON.stringify({
-				wallet: userWallet,
-				signature: signature,
-			}),
-		});
+    const response = await fetch(`${url}/login`, {
+      method: 'POST',
+      body: JSON.stringify({
+        wallet: userWallet,
+        signature: signature,
+      }),
+    });
 
-		if (!response.ok) {
-			new_error({ code: response.status, error: await response.text() });
-		}
+    if (!response.ok) {
+      new_error({ code: response.status, error: await response.text() });
+    }
 
-		web3LoggedIn.set(true);
+    web3LoggedIn.set(true);
 
-		let maskedWallet = userWallet.slice(0, 6) + "..." + userWallet.slice(-4);
-		wallet.set(maskedWallet);
+    let maskedWallet = userWallet.slice(0, 6) + '...' + userWallet.slice(-4);
+    wallet.set(maskedWallet);
 
-		toastStore.show("Successfully logged in", "info");
-		
-		type Account = {
-			username: string;
-			admin: boolean;
-		};
+    toastStore.show('Successfully logged in', 'info');
 
-		// const {username, admin}: Account = await response.json();
+    type Account = {
+      username: string;
+      admin: boolean;
+    };
 
-		return new Account("username", false);
-	}
+    // const {username, admin}: Account = await response.json();
 
-	private static async get_nonce(): Promise<string> {
-		const provider = await Web3Provider.init();
+    return new Account('username', false);
+  }
 
-		const response = await fetch(`${url}/nonce`, {
-			method: "POST",
-			body: JSON.stringify({
-				wallet: await provider.userAddress(),
-			}),
-		});
+  private static async get_nonce(): Promise<string> {
+    const provider = await Web3Provider.init();
 
-		if (!response.ok) {
-			new_error({ code: response.status, error: await response.text() });
-		}
+    const response = await fetch(`${url}/nonce`, {
+      method: 'POST',
+      body: JSON.stringify({
+        wallet: await provider.userAddress(),
+      }),
+    });
 
-		return await response.text();
-	}
+    if (!response.ok) {
+      new_error({ code: response.status, error: await response.text() });
+    }
 
-	static async log_out(): Promise<void> {
-		await fetch(`${url}/logout`, {
-			method: "POST",
-		});
+    return await response.text();
+  }
 
-		web3LoggedIn.set(false);
-	}
+  static async log_out(): Promise<void> {
+    await fetch(`${url}/logout`, {
+      method: 'POST',
+    });
 
-	static async signin(data: SignIn): Promise<void> {
-		try {
-			const response = await fetch(`${url}/signin`, {
-				method: "POST",
-				body: JSON.stringify(data),
-			});
+    web3LoggedIn.set(false);
+  }
 
-			if (!response.ok) {
-				new_error({ code: response.status, error: await response.text() });
-			}
+  static async signin(data: SignIn): Promise<void> {
+    try {
+      const response = await fetch(`${url}/signin`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
 
-			const resp = await response.json();
+      if (!response.ok) {
+        new_error({ code: response.status, error: await response.text() });
+      }
 
-			authenticated.set({ user: resp.user, loggedIn: true });
-		} catch (error: any) {
-			new_error({ code: 500, error: error });
-		}
-	}
+      const resp = await response.json();
 
-	static async me() {
-		try {
-			const response = await fetch(`${url}/me`);
+      authenticated.set({ user: resp.user, loggedIn: true });
+    } catch (error: any) {
+      new_error({ code: 500, error: error });
+    }
+  }
 
-			if (!response.ok) {
-				new_error({ code: response.status, error: await response.text() });
-			}
+  static async me() {
+    try {
+      const response = await fetch(`${url}/me`);
 
-			const resp = await response.json();
+      if (!response.ok) {
+        new_error({ code: response.status, error: await response.text() });
+      }
 
-			authenticated.set({ user: resp.user, loggedIn: true });
-		} catch (error) {
-			new_error({ code: 500, error: `Error fetching user: ${error}`, log: false });
-		}
-	}
+      const resp = await response.json();
 
-	static async signup(data: SignUp): Promise<void> {
-		const response = await fetch(`${url}/signup`, {
-			method: "POST",
-			body: JSON.stringify(data),
-		});
+      authenticated.set({ user: resp.user, loggedIn: true });
+    } catch (error) {
+      new_error({
+        code: 500,
+        error: `Error fetching user: ${error}`,
+        log: false,
+      });
+    }
+  }
 
-		if (!response.ok) {
-			new_error({ code: response.status, error: await response.text() });
-		}
+  static async signup(data: SignUp): Promise<void> {
+    const response = await fetch(`${url}/signup`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
 
-		const resp = await response.json();
+    if (!response.ok) {
+      new_error({ code: response.status, error: await response.text() });
+    }
 
-		authenticated.set({ user: resp.user, loggedIn: true });
-	}
+    const resp = await response.json();
 
-	static async signupReferral(data: ReferralSignUp): Promise<void> {
-		const response = await fetch(`${url}/signup-referral`, {
-			method: "POST",
-			body: JSON.stringify(data),
-		});
+    authenticated.set({ user: resp.user, loggedIn: true });
+  }
 
-		if (!response.ok) {
-			new_error({ code: response.status, error: await response.text() });
-		}
+  static async signupReferral(data: ReferralSignUp): Promise<void> {
+    const response = await fetch(`${url}/signup-referral`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
 
-		const resp = await response.json();
+    if (!response.ok) {
+      new_error({ code: response.status, error: await response.text() });
+    }
 
-		authenticated.set({ user: resp.user, loggedIn: true });
-	}
+    const resp = await response.json();
 
-	static async signout(): Promise<void> {
-		await Account.log_out();
-		
-		const response = await fetch(`${url}/logout`, {
-			method: "POST",
-		});
+    authenticated.set({ user: resp.user, loggedIn: true });
+  }
 
-		if (!response.ok) {
-			new_error({ code: response.status, error: await response.text() });
-		}
+  static async signout(): Promise<void> {
+    await Account.log_out();
 
-		authenticated.set({ user: null, loggedIn: false });
-	}
+    const response = await fetch(`${url}/logout`, {
+      method: 'POST',
+    });
 
-	static async referraLCodes(): Promise<void> {
-		try {
-			const response = await fetch(`${url}/referral/get`, {
-				method: "GET",
-			});
+    if (!response.ok) {
+      new_error({ code: response.status, error: await response.text() });
+    }
 
-			if (!response.ok) {
-				new_error({ code: response.status, error: await response.text() });
-			}
+    authenticated.set({ user: null, loggedIn: false });
+  }
 
-			const referralC = await response.json();
+  static async referraLCodes(): Promise<void> {
+    try {
+      const response = await fetch(`${url}/referral/get`, {
+        method: 'GET',
+      });
 
-			referralCodes.set(referralC.codes);
-		} catch (error: any) {
-			new_error({ code: 500, error: error });
-		}
-	}
+      if (!response.ok) {
+        new_error({ code: response.status, error: await response.text() });
+      }
+
+      const referralC = await response.json();
+
+      referralCodes.set(referralC.codes);
+    } catch (error: any) {
+      new_error({ code: 500, error: error });
+    }
+  }
 }
 
 export default Account;

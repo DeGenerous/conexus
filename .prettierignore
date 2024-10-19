@@ -1,0 +1,9 @@
+# Ignore artifacts:
+build
+node_modules
+dist
+.env.local
+.github
+bun.lockb
+package-lock.json
+# astro.config.mjs

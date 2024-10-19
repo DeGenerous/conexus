@@ -10,7 +10,7 @@
   export let storyLink: string;
 
   function openGame() {
-    window.open(storyLink, "_blank");
+    window.open(storyLink, '_blank');
   }
 </script>
 

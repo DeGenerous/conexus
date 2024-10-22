@@ -1,52 +1,47 @@
 <script lang="ts">
   import type { DynTopic } from '@lib/conexus';
+  import StoryTile from '@components/StoryTile.svelte';
 
   export let topics: DynTopic[] | undefined;
+
+  const tempTitleImage1: string = '/titlePicture/DischordianSaga/Escape1.avif'
+  const tempTitleImage2: string = '/titlePicture/DischordianSaga/Escape2.avif'
 </script>
 
 <div class="topics-container">
   {#if topics}
-    {#each topics as topic}
-      <a href="/story/{topic.name}" class="topic">
-        <p class="topic-title">{topic.name}</p>
-      </a>
+    {#each topics as topic} 
+      <StoryTile
+        topicName={topic.name}
+        primaryThumbnail={tempTitleImage1}
+        secondaryThumbnail={tempTitleImage2}
+      />
     {/each}
   {:else}
-    <p>Loading...</p>
+    <p class="loading">Loading...</p>
   {/if}
 </div>
 
 <style>
   .topics-container {
     display: flex;
-    flex-wrap: wrap;
+    flex-flow: row wrap;
     justify-content: center;
     margin: 1vw;
   }
 
-  .topic {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 1vw 2.5vw;
-    padding: 2vw;
-    background-color: rgba(1, 0, 32, 0.75);
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 2.5vw;
-    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.25));
-    text-decoration: none;
-  }
-
-  .topic:hover {
-    background-color: rgba(51, 226, 230, 0.3);
-    color: #010020;
-    filter: drop-shadow(0 0 0.5vw #33e2e6);
-  }
-
-  .topic-title {
+  .loading {
     text-align: center;
     font-size: 2vw;
-    line-height: 2.5vw;
-    color: rgba(255, 255, 255, 0.75);
+    line-height: 2vw;
+    color: rgba(51, 226, 230, 0.5);
+    padding-block: 2vw;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .loading {
+      font-size: 1em;
+      line-height: 1em;
+    }
   }
 </style>

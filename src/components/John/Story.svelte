@@ -14,6 +14,7 @@
 
 {#if $story === null && topic !== null}
   <section class="story-container">
+    <!-- <img class="picture" src={topic.descriptionPicture} alt={topic?.name} draggable="false" /> -->
     <img class="picture" src={tempImage} alt={topic?.name} draggable="false" />
     
     <div class="story-info">
@@ -134,6 +135,11 @@
       font-size: 1.5em;
       line-height: 1.5em;
       padding: 0.25em 0.5em;
+    }
+
+    .error-message {
+      font-size: 1em;
+      line-height: 1em;
     }
   }
 </style>

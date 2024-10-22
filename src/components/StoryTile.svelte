@@ -1,67 +1,47 @@
 <script lang="ts">
-  import PopupTile from './PopupTile.svelte';
-
-  export let storyName: string;
-  export let storyDescription: string;
-  export let storyLink: string;
+  export let topicName: string;
+  const storyName: string = topicName.charAt(0).toUpperCase() + topicName.slice(1);
   export let primaryThumbnail: string;
-  export let secondaryThumbnail: string | undefined;
-  export let descriptionPicture: string;
-  export let storyGenre: string[] | undefined = undefined;
-  export let playButton: string;
+  export let secondaryThumbnail: string | null = null;
 
   let isPrimary: boolean = true;
   function tileHover() {
     isPrimary = !isPrimary;
   }
-
-  let showModal: boolean = false;
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<div
-  class="tile"
-  id={storyName}
-  data-genre={storyGenre}
-  on:mouseenter={tileHover}
-  on:mouseleave={tileHover}
-  on:click|stopPropagation={() => (showModal = true)}
-  on:touchstart={tileHover}
-  on:touchend={tileHover}
->
-  <img
-    class="tile-picture {secondaryThumbnail
-      ? isPrimary
-        ? 'visible'
-        : ''
-      : 'visible'}"
-    src={primaryThumbnail}
-    alt={storyName}
-    draggable="false"
-    height="1024"
-    width="1024"
-  />
-  {#if secondaryThumbnail}
+  <a
+    class="tile"
+    on:mouseenter={tileHover}
+    on:mouseleave={tileHover}
+    on:touchstart={tileHover}
+    on:touchend={tileHover}
+    href="/story/{topicName}"
+  >
     <img
-      class="tile-picture {!isPrimary ? 'visible' : ''}"
-      src={secondaryThumbnail}
+      class="tile-picture {secondaryThumbnail
+        ? isPrimary
+          ? 'visible'
+          : ''
+        : 'visible'}"
+      src={primaryThumbnail}
       alt={storyName}
       draggable="false"
       height="1024"
       width="1024"
     />
-  {/if}
-  <p class="title">{storyName}</p>
-</div>
-
-<PopupTile
-  {storyLink}
-  {storyDescription}
-  {descriptionPicture}
-  {playButton}
-  bind:showModal
-/>
+    {#if secondaryThumbnail}
+      <img
+        class="tile-picture {!isPrimary ? 'visible' : ''}"
+        src={secondaryThumbnail}
+        alt={storyName}
+        draggable="false"
+        height="1024"
+        width="1024"
+      />
+    {/if}
+    <p class="title">{storyName}</p>
+  </a>
 
 <style>
   .tile {

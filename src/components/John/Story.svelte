@@ -1,37 +1,34 @@
 <script lang="ts">
   import Step from '@components/Step.svelte';
   import { CoNexus } from '@lib/conexus';
-  import type { DynStory } from '@lib/conexus';
+  import type { DynTopic } from '@lib/conexus';
   import { fullscreen, story, background_image } from '@stores/conexus';
 
-  export let topic: DynStory;
+  export let topic: DynTopic | null;
 
-  let isPrimary: boolean = true;
-  function tileHover() {
-    isPrimary = !isPrimary;
-  }
+  const tempDescription: string = 'Play as a prisoner going through experiments in a guarded prison and try to escape the planet by defeating or fleeing from The Warden.';
+  const longTempDescription: string = `In the heart of the vast azure ocean lies the Enchanted Private Island, a hidden paradise ruled by the majestic Lazy Lions, who possess wisdom and regal grace. This utopia, with its lush landscapes and ancient secrets, faces a dire threat from Glitch, a former lion of the pride who seeks to conquer the island. As Glitch gathers his ruthless generals, the peaceful Lazy Lions must defend their home, not with violence, but by uncovering the island's forgotten mysteries. Embarking on a journey of bravery and discovery, they strive to protect the island's soul and preserve the harmony that defines their enchanted sanctuary.`;
+  const tempImage: string = '/descriptionPicture/DischordianSaga/Escape.avif';
+  const squareTempImage: string = '/descriptionPicture/Collabs/GLMRApes.avif';
 </script>
 
-{#if $story === null}
-  <div class="story-container">
-    <!-- name -->
-    <h1 class="story-title">{topic.name}</h1>
-    <!-- description -->
-    <p class="story-description">{topic.description}</p>
+{#if $story === null && topic !== null}
+  <section class="story-container">
+    <img class="picture" src={tempImage} alt={topic?.name} draggable="false" />
+    
+    <div class="story-info">
+      <h1 class="title">{topic.name.charAt(0).toUpperCase() + topic.name.slice(1)}</h1>
 
-    <!-- Start button -->
+      <!-- <p class="story-description">{topic.description}</p> -->
+      <p class="description">{tempDescription}</p>
 
-    <!-- image -->
-    <!-- <img
-  class="story-picture {isPrimary ? 'visible' : ''}"
-  src={story.images[0].src ?? ''}
-  alt={story.images[0].alt ?? ''}
-  draggable="false"
-  /> -->
-    <button class="start-button" on:click={() => CoNexus.start(topic.name)}>
-      Start
-    </button>
-  </div>
+      <button class="play-button blur" on:click={() => CoNexus.start(topic.name)}>
+        PLAY NOW
+      </button>
+    </div>
+  </section>
+{:else if topic === null}
+    <p class="error-message">Something went wrong...</p>
 {:else}
   <Step />
 {/if}
@@ -39,68 +36,104 @@
 <style>
   .story-container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-flow: row nowrap;
     justify-content: space-between;
-    width: 28vw;
-    height: 32vw;
-    margin: 1vw;
-    padding-bottom: 3%;
-    background-color: rgba(22, 30, 95, 0.75);
-    color: rgba(51, 226, 230, 0.75);
-    border: 0.05vw solid rgba(51, 226, 230, 0.75);
-    border-radius: 1.5vw;
-    filter: drop-shadow(0 0 0.1vw #010020);
-    cursor: pointer;
-    text-decoration: none;
+    align-items: center;
+    max-width: 75vw;
+    margin-inline: auto;
   }
 
-  .story-title {
+  .picture {
+    width: 30vw;
+    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
+    border-radius: 2vw;
+  }
+
+  .story-info {
+    min-height: 30vw;
+    padding-left: 2vw;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .title {
     text-align: center;
-    font-size: 2vw;
-    line-height: 2.5vw;
-    color: rgba(255, 255, 255, 0.75);
+    font-size: 3vw;
+    line-height: 3vw;
+    color: rgba(51, 226, 230, 0.75);
+    text-shadow: 0 0 0.25vw rgba(51, 226, 230, 0.5);
   }
 
-  .story-description {
+  .description {
     text-align: center;
     font-size: 1.5vw;
-    line-height: 2vw;
+    line-height: 2.5vw;
+    text-shadow: 0 0 0.5vw rgb(1, 0, 32);
     color: rgba(255, 255, 255, 0.75);
+    margin-block: 2vw;
   }
 
-  .start-button {
+  .play-button {
     width: 20vw;
     padding: 1vw 2vw;
-    margin-top: 1vw;
+    font-size: 2vw;
     color: rgba(51, 226, 230, 0.75);
     background-color: rgba(51, 226, 230, 0.1);
     border: 0.05vw solid rgba(51, 226, 230, 0.75);
     border-radius: 1.5vw;
-    cursor: pointer;
+    transition: all 0.15s ease-out;
   }
 
-  .start-button:hover {
+  .play-button:hover, .play-button:active {
+    text-shadow: 0 0 1vw rgba(1, 0, 32, 0.75);
     background-color: rgba(51, 226, 230, 0.3);
+    transform: matrix(1.05, 0, 0, 1.05, 0, 0);
+    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.5));
   }
 
-  /* .story-picture {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 1.5vw;
+  .error-message {
+    text-align: center;
+    font-size: 2vw;
+    line-height: 2vw;
+    color: rgba(51, 226, 230, 0.5);
+    padding-block: 2vw;
   }
 
-  .visible {
-    display: block;
-  }
+  @media only screen and (max-width: 600px) {
+    .story-container {
+      flex-direction: column;
+      width: 100vw;
+    }
 
-  .invisible {
-    display: none;
-  }
+    .picture {
+      width: 80vw;
+    }
 
-  .story:hover,
-  .story:active {
-    background-color: rgba(51, 226, 230, 0.3);
-  } */
+    .story-info {
+      min-height: auto;
+    }
+
+    .title {
+      position: fixed;
+      top: 0;
+      font-size: 2em;
+      line-height: 2.5em;
+    }
+
+    .description {
+      font-size: 1em;
+      line-height: 1.6em;
+      width: 95vw;
+      margin-block: 1em;
+    }
+
+    .play-button {
+      width: 80vw;
+      font-size: 1.5em;
+      line-height: 1.5em;
+      padding: 0.25em 0.5em;
+    }
+  }
 </style>

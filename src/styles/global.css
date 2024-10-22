@@ -162,3 +162,10 @@ a {
   -webkit-backdrop-filter: blur(1rem);
   backdrop-filter: blur(1rem);
 }
+
+img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  aspect-ratio: 1/1;
+}

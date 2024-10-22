@@ -83,10 +83,10 @@ class Account {
 
     toastStore.show('Successfully logged in', 'info');
 
-    type Account = {
-      username: string;
-      admin: boolean;
-    };
+    // type Account = {
+    //   username: string;
+    //   admin: boolean;
+    // };
 
     // const {username, admin}: Account = await response.json();
 

@@ -11,20 +11,21 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
-    "astro": "^4.15.12",
     "@astrojs/svelte": "^5.7.2",
-    "svelte": "^4.2.19"
+    "@sveltejs/vite-plugin-svelte": "^4.0.0-next.6",
+    "astro": "^4.16.7",
+    "svelte": "^5.0.5"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/vercel": "^7.8.1",
+    "@astrojs/vercel": "^7.8.2",
     "@metamask/detect-provider": "^2.0.0",
-    "@metamask/sdk": "^0.29.1",
-    "ethers": "^6.13.3",
+    "@metamask/sdk": "^0.30.1",
+    "ethers": "^6.13.4",
     "metamask": "^0.0.1-security",
-    "solc": "^0.8.27",
-    "typescript": "^5.6.2",
     "prettier": "^3.3.3",
-    "prettier-plugin-svelte": "^3.2.6"
+    "prettier-plugin-svelte": "^3.2.6",
+    "solc": "^0.8.28",
+    "typescript": "^5.6.3"
   }
 }

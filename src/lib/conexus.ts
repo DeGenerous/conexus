@@ -8,6 +8,8 @@ import {
 
 const url = import.meta.env.PUBLIC_BACKEND;
 
+const baseURL = import.meta.env.PUBLIC_BACKEND_URL;
+
 export type Topic = {
   name: string;
   available: boolean;
@@ -55,15 +57,10 @@ export type DynTopic = {
   description?: string;
 };
 
-export type DynCategoryImage = {
-  alt: string;
-  src: string;
-};
-
-export type DynCategory = {
-  id: number;
+export type DynSection = {
   name: string;
-  images?: DynCategoryImage[];
+  tile_image1: string;
+  tile_image2: string;
 };
 
 export type GameData = {
@@ -108,7 +105,7 @@ export class CoNexus {
     this.step_data = {} as StepData;
   }
 
-  static async sections(): Promise<string[]> {
+  static async sections(): Promise<DynSection[]> {
     const response = await fetch(`${url}/sections`);
 
     if (!response.ok) {
@@ -123,7 +120,7 @@ export class CoNexus {
   static async sectionCategories(
     section: string,
   ): Promise<DynSectionCategory[]> {
-    const base = `http://localhost:8080/sections/${section}`;
+    const base = `${baseURL}/sections/${section}`;
 
     const response = await fetch(base);
 
@@ -136,26 +133,9 @@ export class CoNexus {
     return resp.categories;
   }
 
-  static async categoryTopics(category: string): Promise<DynTopic[]> {
-    // const base = `${url}/topics/${category}`;
-    const base = `http://localhost:8080/topics/${category}`;
-
-    const response = await fetch(base);
-
-    if (!response.ok) {
-      new_error({ code: response.status, error: await response.text() });
-    }
-
-    const resp = await response.json();
-
-    const topics: DynTopic[] = resp.topics;
-
-    return topics;
-  }
-
   static async getTopic(name: string): Promise<DynTopic> {
     // const base = `${url}/topic/${name}`;
-    const base = `http://localhost:8080/topics/${name}`;
+    const base = `${baseURL}/topics/${name}`;
 
     const response = await fetch(base);
 
@@ -426,7 +406,7 @@ export class CoNexus {
 
   #clear_interval() {
     if (this.interval) {
-      clearInterval(this.interval);
+      clearInterval(this.interval as NodeJS.Timeout);
       this.interval = null;
     }
   }

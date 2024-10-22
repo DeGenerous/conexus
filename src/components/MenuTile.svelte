@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { CoNexus } from '@lib/conexus';
-  import type { DynCategory } from '@lib/conexus';
+  import type { DynSection } from '@lib/conexus';
 
-  export let section: string | undefined;
+  export let section: DynSection;
 
   let isPrimary: boolean = true;
   function tileHover() {
@@ -15,8 +14,8 @@
 
 <a
   class="tile"
-  id={section}
-  href="/{section}"
+  id={section.name}
+  href="/{section.name}"
   on:mouseenter={tileHover}
   on:mouseleave={tileHover}
   on:touchstart={tileHover}
@@ -24,29 +23,17 @@
 >
   <img
     class="tile-picture {isPrimary ? 'visible' : ''}"
-    src={tempTitleImage1}
-    alt={''}
+    src={section.tile_image1 ? section.tile_image1 : tempTitleImage1}
+    alt={section.name}
     draggable="false"
   />
   <img
     class="tile-picture {!isPrimary ? 'visible' : ''}"
-    src={tempTitleImage2}
-    alt={''}
+    src={section.tile_image2 ? section.tile_image2 : tempTitleImage2}
+    alt={section.name}
     draggable="false"
   />
-  <!-- <img
-    class="tile-picture {isPrimary ? 'visible' : ''}"
-    src={section?.images ? section.images[0].src : tempTitleImage1}
-    alt={section?.images ? section.images[0].alt : ''}
-    draggable="false"
-  />
-  <img
-    class="tile-picture {!isPrimary ? 'visible' : ''}"
-    src={section?.images ? section.images[0].src : tempTitleImage2}
-    alt={section?.images ? section.images[1].src : ''}
-    draggable="false"
-  /> -->
-  <p class="title">{section}</p>
+  <p class="title">{section.name}</p>
 </a>
 
 <style>

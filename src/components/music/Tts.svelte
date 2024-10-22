@@ -40,4 +40,4 @@
   });
 </script>
 
-<audio bind:this={audio} />
+<audio bind:this={audio}></audio>

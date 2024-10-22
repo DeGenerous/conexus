@@ -34,7 +34,13 @@
         </h1>
 
         <!-- <p class="story-description">{topic.description}</p> -->
-        <p class="description">{tempDescription}</p>
+        <p class="description">{topic.description ? topic.description : tempDescription}</p>
+
+        {#if topic.genres !== ''}
+          <p class="description">
+            Genres: {topic.genres}
+          </p>
+        {/if}
 
         <button
           class="play-button blur"

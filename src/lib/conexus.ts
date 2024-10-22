@@ -55,6 +55,7 @@ export type DynTopic = {
   name: string;
   image_prompt?: string;
   description?: string;
+  genres?: string;
 };
 
 export type DynSection = {

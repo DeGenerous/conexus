@@ -12,10 +12,11 @@
   const squareTempImage: string = '/descriptionPicture/Collabs/GLMRApes.avif';
 </script>
 
-{#if $story === null && topic !== null}
+{#if $story === null}
+  {#if topic !== null}
   <section class="story-container">
     <!-- <img class="picture" src={topic.descriptionPicture} alt={topic?.name} draggable="false" /> -->
-    <img class="picture" src={tempImage} alt={topic?.name} draggable="false" />
+    <img class="picture" src={tempImage} alt={topic?.name} draggable="false" width="1024" height="1024" />
     
     <div class="story-info">
       <h1 class="title">{topic.name.charAt(0).toUpperCase() + topic.name.slice(1)}</h1>
@@ -28,8 +29,9 @@
       </button>
     </div>
   </section>
-{:else if topic === null}
+  {:else}
     <p class="error-message">Something went wrong...</p>
+  {/if}
 {:else}
   <Step />
 {/if}
@@ -91,7 +93,7 @@
     text-shadow: 0 0 1vw rgba(1, 0, 32, 0.75);
     background-color: rgba(51, 226, 230, 0.3);
     transform: matrix(1.05, 0, 0, 1.05, 0, 0);
-    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.5));
+    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.5));
   }
 
   .error-message {

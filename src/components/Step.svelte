@@ -514,6 +514,7 @@
 
   .fullscreen {
     height: 2vw;
+    object-fit: contain;
   }
 
   .fullscreen-wrapper:hover,

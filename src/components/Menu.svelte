@@ -2,7 +2,6 @@
   import { writable } from 'svelte/store';
 
   import Intro from './Intro.svelte';
-  import Intro2 from './John/Intro2.svelte';
   import Modal from './Modal.svelte';
   import BackgroundMusic from './music/BackgroundMusic.svelte';
   import Tts from './music/Tts.svelte';
@@ -73,7 +72,7 @@
           </form>
         </section>
 
-        <Intro2 />
+        <Intro />
 
         <!-- Delete Story Modal -->
 
@@ -96,12 +95,9 @@
         {/if}
       {/await}
     {/if}
-
-    <!-- Intro -->
-    <!-- <Intro /> -->
+    
   {:else}
     <!-- Story -->
-
     <Step />
   {/if}
 {:else}

@@ -1,21 +1,24 @@
 <script lang="ts">
-  import type { DynTopic } from '@lib/conexus';
+  import type { DynSectionCategory } from '@lib/conexus';
   import StoryTile from '@components/StoryTile.svelte';
 
-  export let topics: DynTopic[] | undefined;
+  export let categories: DynSectionCategory[] | undefined;
 
-  const tempTitleImage1: string = '/titlePicture/DischordianSaga/Escape1.avif'
-  const tempTitleImage2: string = '/titlePicture/DischordianSaga/Escape2.avif'
+  const tempTitleImage1: string = '/titlePicture/DischordianSaga/Escape1.avif';
+  const tempTitleImage2: string = '/titlePicture/DischordianSaga/Escape2.avif';
 </script>
 
 <div class="topics-container">
-  {#if topics}
-    {#each topics as topic} 
-      <StoryTile
-        topicName={topic.name}
-        primaryThumbnail={tempTitleImage1}
-        secondaryThumbnail={tempTitleImage2}
-      />
+  {#if categories}
+    {#each categories as cat}
+      <h1>{cat.name}</h1>
+      {#each cat.topics as topic}
+        <StoryTile
+          topicName={topic.name}
+          primaryThumbnail={tempTitleImage1}
+          secondaryThumbnail={tempTitleImage2}
+        />
+      {/each}
     {/each}
   {:else}
     <p class="loading">Loading...</p>

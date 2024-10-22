@@ -1,12 +1,15 @@
 <script lang="ts">
+  import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
+  import Tts from '@components/music/Tts.svelte';
   import Step from '@components/Step.svelte';
   import { CoNexus } from '@lib/conexus';
   import type { DynTopic } from '@lib/conexus';
-  import { fullscreen, story, background_image } from '@stores/conexus';
+  import { story } from '@stores/conexus';
 
   export let topic: DynTopic | null;
 
-  const tempDescription: string = 'Play as a prisoner going through experiments in a guarded prison and try to escape the planet by defeating or fleeing from The Warden.';
+  const tempDescription: string =
+    'Play as a prisoner going through experiments in a guarded prison and try to escape the planet by defeating or fleeing from The Warden.';
   const longTempDescription: string = `In the heart of the vast azure ocean lies the Enchanted Private Island, a hidden paradise ruled by the majestic Lazy Lions, who possess wisdom and regal grace. This utopia, with its lush landscapes and ancient secrets, faces a dire threat from Glitch, a former lion of the pride who seeks to conquer the island. As Glitch gathers his ruthless generals, the peaceful Lazy Lions must defend their home, not with violence, but by uncovering the island's forgotten mysteries. Embarking on a journey of bravery and discovery, they strive to protect the island's soul and preserve the harmony that defines their enchanted sanctuary.`;
   const tempImage: string = '/descriptionPicture/DischordianSaga/Escape.avif';
   const squareTempImage: string = '/descriptionPicture/Collabs/GLMRApes.avif';
@@ -14,25 +17,40 @@
 
 {#if $story === null}
   {#if topic !== null}
-  <section class="story-container">
-    <!-- <img class="picture" src={topic.descriptionPicture} alt={topic?.name} draggable="false" /> -->
-    <img class="picture" src={tempImage} alt={topic?.name} draggable="false" width="1024" height="1024" />
-    
-    <div class="story-info">
-      <h1 class="title">{topic.name.charAt(0).toUpperCase() + topic.name.slice(1)}</h1>
+    <section class="story-container">
+      <!-- <img class="picture" src={topic.descriptionPicture} alt={topic?.name} draggable="false" /> -->
+      <img
+        class="picture"
+        src={tempImage}
+        alt={topic?.name}
+        draggable="false"
+        width="1024"
+        height="1024"
+      />
 
-      <!-- <p class="story-description">{topic.description}</p> -->
-      <p class="description">{tempDescription}</p>
+      <div class="story-info">
+        <h1 class="title">
+          {topic.name.charAt(0).toUpperCase() + topic.name.slice(1)}
+        </h1>
 
-      <button class="play-button blur" on:click={() => CoNexus.start(topic.name)}>
-        PLAY NOW
-      </button>
-    </div>
-  </section>
+        <!-- <p class="story-description">{topic.description}</p> -->
+        <p class="description">{tempDescription}</p>
+
+        <button
+          class="play-button blur"
+          on:click={() => CoNexus.start(topic.name)}
+        >
+          PLAY NOW
+        </button>
+      </div>
+    </section>
   {:else}
     <p class="error-message">Something went wrong...</p>
   {/if}
 {:else}
+  <BackgroundMusic />
+  <Tts />
+
   <Step />
 {/if}
 
@@ -89,7 +107,8 @@
     transition: all 0.15s ease-out;
   }
 
-  .play-button:hover, .play-button:active {
+  .play-button:hover,
+  .play-button:active {
     text-shadow: 0 0 1vw rgba(1, 0, 32, 0.75);
     background-color: rgba(51, 226, 230, 0.3);
     transform: matrix(1.05, 0, 0, 1.05, 0, 0);

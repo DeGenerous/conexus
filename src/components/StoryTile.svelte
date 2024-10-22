@@ -1,6 +1,7 @@
 <script lang="ts">
   export let topicName: string;
-  const storyName: string = topicName.charAt(0).toUpperCase() + topicName.slice(1);
+  const storyName: string =
+    topicName.charAt(0).toUpperCase() + topicName.slice(1);
   export let primaryThumbnail: string;
   export let secondaryThumbnail: string | null = null;
 
@@ -10,38 +11,38 @@
   }
 </script>
 
-  <a
-    class="tile"
-    on:mouseenter={tileHover}
-    on:mouseleave={tileHover}
-    on:touchstart={tileHover}
-    on:touchend={tileHover}
-    href="/story/{topicName}"
-  >
+<a
+  class="tile"
+  on:mouseenter={tileHover}
+  on:mouseleave={tileHover}
+  on:touchstart={tileHover}
+  on:touchend={tileHover}
+  href="/story/{topicName}"
+>
+  <img
+    class="tile-picture {secondaryThumbnail
+      ? isPrimary
+        ? 'visible'
+        : ''
+      : 'visible'}"
+    src={primaryThumbnail}
+    alt={storyName}
+    draggable="false"
+    height="1024"
+    width="1024"
+  />
+  {#if secondaryThumbnail}
     <img
-      class="tile-picture {secondaryThumbnail
-        ? isPrimary
-          ? 'visible'
-          : ''
-        : 'visible'}"
-      src={primaryThumbnail}
+      class="tile-picture {!isPrimary ? 'visible' : ''}"
+      src={secondaryThumbnail}
       alt={storyName}
       draggable="false"
       height="1024"
       width="1024"
     />
-    {#if secondaryThumbnail}
-      <img
-        class="tile-picture {!isPrimary ? 'visible' : ''}"
-        src={secondaryThumbnail}
-        alt={storyName}
-        draggable="false"
-        height="1024"
-        width="1024"
-      />
-    {/if}
-    <p class="title">{storyName}</p>
-  </a>
+  {/if}
+  <p class="title">{storyName}</p>
+</a>
 
 <style>
   .tile {

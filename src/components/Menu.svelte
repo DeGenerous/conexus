@@ -3,11 +3,8 @@
 
   import Intro from './Intro.svelte';
   import Modal from './Modal.svelte';
-  import BackgroundMusic from './music/BackgroundMusic.svelte';
-  import Tts from './music/Tts.svelte';
-  import Step from './Step.svelte';
   import { CoNexus } from '@lib/conexus';
-  import { story, loading } from '@stores/conexus';
+  import { loading } from '@stores/conexus';
   // import { authenticated, web3LoggedIn } from "@stores/account";
 
   let isLogged: boolean = true;
@@ -35,70 +32,59 @@
 <!-- Logged In -->
 
 {#if isLogged}
-  <BackgroundMusic />
-  <Tts />
+  <!-- We3b3 -->
 
-  {#if $story === null}
-    <!-- We3b3 -->
-
-    {#if web3LoggedIn}
-      {#await CoNexus.available()}
-        <p class="continue-shaping-label">Loading unfinished stories...</p>
-      {:then available}
-        <section class="unfinished-stories">
-          <p class="continue-shaping-label">Continue shaping:</p>
-          <form class="continue-shaping-container">
-            {#each available.continuable as continuable}
-              <div>
-                <button
-                  class="continue-shaping-delete"
-                  on:click|preventDefault={() => openModal(continuable)}
-                  disabled={$loading}
-                />
-                <div id="continue-shaping">
-                  <p>
-                    {continuable.category} - {continuable.story_id.split(
-                      '-',
-                    )[0]}
-                  </p>
-                </div>
-                <button
-                  class="continue-shaping-play"
-                  on:click|preventDefault={() => CoNexus.continue(continuable)}
-                  disabled={$loading}
-                />
+  {#if web3LoggedIn}
+    {#await CoNexus.available()}
+      <p class="continue-shaping-label">Loading unfinished stories...</p>
+    {:then available}
+      <section class="unfinished-stories">
+        <p class="continue-shaping-label">Continue shaping:</p>
+        <form class="continue-shaping-container">
+          {#each available.continuable as continuable}
+            <div>
+              <button
+                class="continue-shaping-delete"
+                on:click|preventDefault={() => openModal(continuable)}
+                disabled={$loading}
+              />
+              <div id="continue-shaping">
+                <p>
+                  {continuable.category} - {continuable.story_id.split('-')[0]}
+                </p>
               </div>
-            {/each}
-          </form>
-        </section>
+              <button
+                class="continue-shaping-play"
+                on:click|preventDefault={() => CoNexus.continue(continuable)}
+                disabled={$loading}
+              />
+            </div>
+          {/each}
+        </form>
+      </section>
 
-        <Intro />
+      <Intro />
 
-        <!-- Delete Story Modal -->
+      <!-- Delete Story Modal -->
 
-        {#if selectedStory}
-          <Modal bind:showModal={$showDeleteModal}>
-            <h2 class="modal-text">
-              Are you sure you want to delete this story?
-            </h2>
-            <hr />
-            <p class="modal-text">
-              This action is irreversible. You will lose all progress on this
-              story.
-            </p>
-            <button
-              class="modal-delete"
-              on:click={() => DeleteStory(selectedStory.story_id)}
-              >Delete story: {selectedStory.category}</button
-            >
-          </Modal>
-        {/if}
-      {/await}
-    {/if}
-    
-  {:else}
-    <!-- Story -->
-    <Step />
+      {#if selectedStory}
+        <Modal bind:showModal={$showDeleteModal}>
+          <h2 class="modal-text">
+            Are you sure you want to delete this story?
+          </h2>
+          <hr />
+          <p class="modal-text">
+            This action is irreversible. You will lose all progress on this
+            story.
+          </p>
+          <button
+            class="modal-delete"
+            on:click={() => DeleteStory(selectedStory.story_id)}
+            >Delete story: {selectedStory.category}</button
+          >
+        </Modal>
+      {/if}
+    {/await}
   {/if}
 {:else}
   <!-- Intro -->

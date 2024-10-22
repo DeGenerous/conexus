@@ -44,6 +44,11 @@ export type StepData = {
   tts?: Blob;
 };
 
+export type DynSectionCategory = {
+  name: string;
+  topics: { name: string; available: boolean }[];
+};
+
 export type DynTopic = {
   name: string;
   image_prompt?: string;
@@ -103,14 +108,32 @@ export class CoNexus {
     this.step_data = {} as StepData;
   }
 
-  static async categories(): Promise<DynCategory[]> {
-    const response = await fetch(`${url}/categories`);
+  static async sections(): Promise<string[]> {
+    const response = await fetch(`${url}/sections`);
 
     if (!response.ok) {
       new_error({ code: response.status, error: await response.text() });
     }
 
-    return await response.json();
+    const resp = await response.json();
+
+    return await resp.sections;
+  }
+
+  static async sectionCategories(
+    section: string,
+  ): Promise<DynSectionCategory[]> {
+    const base = `http://localhost:8080/sections/${section}`;
+
+    const response = await fetch(base);
+
+    if (!response.ok) {
+      new_error({ code: response.status, error: await response.text() });
+    }
+
+    const resp = await response.json();
+
+    return resp.categories;
   }
 
   static async categoryTopics(category: string): Promise<DynTopic[]> {
@@ -132,7 +155,7 @@ export class CoNexus {
 
   static async getTopic(name: string): Promise<DynTopic> {
     // const base = `${url}/topic/${name}`;
-    const base = `http://localhost:8080/topic/${name}`;
+    const base = `http://localhost:8080/topics/${name}`;
 
     const response = await fetch(base);
 

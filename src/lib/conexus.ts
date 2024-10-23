@@ -167,6 +167,20 @@ export class CoNexus {
     return available;
   }
 
+  static async storyContinuable(topic: string): Promise<ContinuableStory[]> {
+    const response = await fetch(`${baseURL}/continuable/${topic}`);
+
+    if (!response.ok) {
+      new_error({ code: response.status, error: await response.text() });
+    }
+
+    const cont = await response.json();
+
+    cont.continuable ??= [];
+
+    return cont.continuable;
+  }
+
   static async start(category: string): Promise<CoNexus> {
     console.log('Starting story:', category);
     CoNexus.#play_music(category);

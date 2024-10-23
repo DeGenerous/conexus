@@ -1,7 +1,7 @@
 ---
 import Layout from '@layouts/Layout.astro';
 import Topic from '@components/Story.svelte';
-import { CoNexus, type DynTopic } from '@lib/conexus';
+import { CoNexus, type DynTopic, type ContinuableStory } from '@lib/conexus';
 
 const { story } = Astro.params;
 
@@ -10,13 +10,21 @@ if (!story) {
 }
 
 let topic: DynTopic | null = null;
+let continuables: ContinuableStory[] = [];
+
 try {
   topic = await CoNexus.getTopic(story!);
 } catch (error) {
   console.error('Failed to fetch topic:', error);
 }
+
+try {
+  continuables = await CoNexus.storyContinuable(story!);
+} catch (error) {
+  console.error('Failed to fetch continuables:', error);
+}
 ---
 
 <Layout {story}>
-  <Topic topic={topic} client:load />
+  <Topic topic={topic} continuables={continuables} client:load />
 </Layout>

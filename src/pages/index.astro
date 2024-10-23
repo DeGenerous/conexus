@@ -1,19 +1,47 @@
 ---
-import Layout from "@layouts/Layout.astro";
-import Menu from "@components/Menu.svelte";
+import Layout from '@layouts/Layout.astro';
+import Menu from '@components/Menu.svelte';
 
-const title = "CoNexus | DeGenerous";
-const header = "CoNexus";
+const header = 'CoNexus';
 const subheading = `
 CoNexus is the gateway to a boundless multiverse with immersive and dynamic interactive Choose-Your-Adventure stories. Powered by cutting-edge artificial intelligence, CoNexus generates captivating narratives in real time, offering you an unparalleled journey into infinite and one-of-a-kind experiences.`;
 const footerText = [
-  "Personalized storylines with endless possibilities lie in your hands.",
-  "Your choices and actions will shape the course of your unique narratives.",
-  "V2 will launch soon, allowing you to create your own stories.",
+  'Personalized storylines with endless possibilities lie in your hands.',
+  'Your choices and actions will shape the course of your unique narratives.',
+  'V2 will launch soon, allowing you to create your own stories.',
 ];
 const arrow = false;
 ---
 
-<Layout {title} {header} {subheading} {footerText} {arrow}>
+<Layout {header} {subheading} {footerText} {arrow}>
   <Menu client:load />
 </Layout>
+
+{footerText.map((text: any) => <p class="footer-text">{text}</p>)}
+
+<style>
+  .footer-text {
+    font-size: 2vw;
+    line-height: 2.5vw;
+    text-align: center;
+    color: rgba(51, 226, 230, 0.85);
+    padding: 1vw 5vw;
+    text-shadow: 0 0 1vw #010020;
+    filter: drop-shadow(0 0 1vw #010020);
+  }
+
+  @media only screen and (max-width: 600px) {
+    .footer-text {
+      font-size: inherit;
+      line-height: 1.6em;
+      padding: 1em;
+      margin: 0 1em 1em 1em;
+      text-align: center;
+      background-color: rgba(22, 30, 95, 0.5);
+      -webkit-backdrop-filter: blur(2vw);
+      backdrop-filter: blur(2vw);
+      border: 0.1vw solid rgba(51, 226, 230, 0.5);
+      border-radius: 2.5vw;
+    }
+  }
+</style>

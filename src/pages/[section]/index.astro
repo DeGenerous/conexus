@@ -16,8 +16,32 @@ try {
 } catch (error) {
   console.error('Failed to fetch categories:', error);
 }
+
+let subheading: string = '';
+
+switch (section) {
+  case 'Community Picks': {
+    subheading = `Community Picks are stories that aren't bound to any project or genre but have been demanded, written, or voted in by the
+    <a href="https://magiceden.io/collections/ethereum/0xfa511d5c4cce10321e6e86793cc083213c36278e" target="_blank">Potentials</a>
+    holders.`;
+    break;
+  }
+  case 'Dischordian Saga': {
+    subheading = `The Dischordian Saga led to the creation of CoNexus and tells the epic narrative of wars between Artificial Intelligence and Humanity.
+    <a href="https://magiceden.io/collections/ethereum/0xfa511d5c4cce10321e6e86793cc083213c36278e" target="_blank">Potentials</a>
+    vote on
+    <a href="https://governance.degenerousdao.com/" target="_blank">story nodes</a>
+    weekly, thus activating CoNexus story games and guiding the franchise's direction.`;
+    break;
+  }
+  case 'Collabs': {
+    subheading =
+      'Collabs are stories that are custom-written to add depth to the partners of DeGenerous DAO.';
+    break;
+  }
+}
 ---
 
-<Layout arrow={true}>
-  <CategorySvelte {categories} {section} client:load />
+<Layout arrow={true} header={section} {subheading}>
+  <CategorySvelte {categories} client:load />
 </Layout>

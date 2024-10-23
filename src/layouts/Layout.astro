@@ -4,12 +4,12 @@ import { ViewTransitions } from 'astro:transitions';
 import Profile from '../components/Profile.svelte';
 import ToastContainer from '../components/ToastContainer.svelte';
 
-const { title, header, subheading, footerText, arrow } = Astro.props;
+const { header, subheading, arrow, story } = Astro.props;
 ---
 
 <html lang="en">
   <head>
-    <title>{title}</title>
+    <title>CoNexus | DeGenerous</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="/favicon.png" />
@@ -21,43 +21,38 @@ const { title, header, subheading, footerText, arrow } = Astro.props;
   </head>
   <body>
     <ToastContainer />
-    <section class="container">
-      {arrow && <a class="icon arrow" href="../" aria-label="back-arrow" />}
-      {
-        !arrow && (
-          <a
-            class="icon logo"
-            href="https://degenerousdao.com/"
-            target="_blank"
-            aria-label="dgrs-logo"
-          />
-        )
-      }
-      {
-        header === 'CoNexus' ? (
-          <picture>
-            <source srcset="title.avif" type="image/avif" />
-            <img
-              class="title blur"
-              src="title.png"
-              alt="CoNexus"
-              draggable="false"
+    {
+      !story && (
+        <section class="container">
+          {arrow && <a class="icon arrow" href="../" aria-label="back-arrow" />}
+          {!arrow && (
+            <a
+              class="icon logo"
+              href="https://degenerousdao.com/"
+              target="_blank"
+              aria-label="dgrs-logo"
             />
-          </picture>
-        ) : (
-          <p class="header">{header}</p>
-        )
-      }
-      <Profile client:load />
-    </section>
+          )}
+          {header === 'CoNexus' ? (
+            <picture>
+              <source srcset="title.avif" type="image/avif" />
+              <img
+                class="title blur"
+                src="title.png"
+                alt="CoNexus"
+                draggable="false"
+              />
+            </picture>
+          ) : (
+            <p class="header">{header}</p>
+          )}
+          <Profile client:load />
+        </section>
+      )
+    }
     {subheading && <p class="subheading" set:html={subheading} />}
 
     <slot />
-
-    {
-      footerText &&
-        footerText.map((text: any) => <p class="footer-text">{text}</p>)
-    }
 
     <style>
       .header {
@@ -90,16 +85,6 @@ const { title, header, subheading, footerText, arrow } = Astro.props;
         text-align: center;
         color: rgba(51, 226, 230, 0.85);
         padding: 0 5vw 3vw 5vw;
-        text-shadow: 0 0 1vw #010020;
-        filter: drop-shadow(0 0 1vw #010020);
-      }
-
-      .footer-text {
-        font-size: 2vw;
-        line-height: 2.5vw;
-        text-align: center;
-        color: rgba(51, 226, 230, 0.85);
-        padding: 1vw 5vw;
         text-shadow: 0 0 1vw #010020;
         filter: drop-shadow(0 0 1vw #010020);
       }
@@ -185,19 +170,6 @@ const { title, header, subheading, footerText, arrow } = Astro.props;
         }
 
         .subheading {
-          font-size: inherit;
-          line-height: 1.6em;
-          padding: 1em;
-          margin: 0 1em 1em 1em;
-          text-align: center;
-          background-color: rgba(22, 30, 95, 0.5);
-          -webkit-backdrop-filter: blur(2vw);
-          backdrop-filter: blur(2vw);
-          border: 0.1vw solid rgba(51, 226, 230, 0.5);
-          border-radius: 2.5vw;
-        }
-
-        .footer-text {
           font-size: inherit;
           line-height: 1.6em;
           padding: 1em;

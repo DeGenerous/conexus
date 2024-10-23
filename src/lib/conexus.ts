@@ -8,7 +8,7 @@ import {
 
 const url = import.meta.env.PUBLIC_BACKEND;
 
-const baseURL = import.meta.env.PUBLIC_BACKEND_URL;
+const baseURL = import.meta.env.VITE_API_URL;
 
 export type Topic = {
   name: string;

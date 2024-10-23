@@ -10,6 +10,9 @@
     "astro": "astro",
     "format": "prettier --write ."
   },
+  "overrides": {
+    "@sveltejs/vite-plugin-svelte": "^4.0.0-next.6"
+  },
   "devDependencies": {
     "@astrojs/svelte": "^5.7.2",
     "@sveltejs/vite-plugin-svelte": "^4.0.0-next.6",

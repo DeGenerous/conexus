@@ -14,9 +14,9 @@
   {#await CoNexus.sections()}
     <p class="error-message">Loading story sections...</p>
   {:then sections}
-    {#each sections as sect}
+    {#each sections as section}
       <div>
-        <MenuTile section={sect} />
+        <MenuTile {section} />
       </div>
     {/each}
   {:catch error}

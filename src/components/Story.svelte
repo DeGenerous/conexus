@@ -17,7 +17,11 @@
 
 {#if $story === null}
   {#if topic !== null}
-    <section class="story-container">
+    <h1 class="title">
+      {topic.name.charAt(0).toUpperCase() + topic.name.slice(1)}
+    </h1>
+
+    <div class="story-info blur">
       <!-- <img class="picture" src={topic.descriptionPicture} alt={topic?.name} draggable="false" /> -->
       <img
         class="picture"
@@ -27,29 +31,31 @@
         width="1024"
         height="1024"
       />
+          
+      <p class="description">{topic.description}</p>
+      <!-- <p class="description">{longTempDescription}</p> -->
+    </div>
 
-      <div class="story-info">
-        <h1 class="title">
-          {topic.name.charAt(0).toUpperCase() + topic.name.slice(1)}
-        </h1>
+    {#if topic.genres !== ''}
+      <p class="description">
+        Genres: {topic.genres}
+      </p>
+    {/if}
 
-        <!-- <p class="story-description">{topic.description}</p> -->
-        <p class="description">{topic.description ? topic.description : tempDescription}</p>
-
-        {#if topic.genres !== ''}
-          <p class="description">
-            Genres: {topic.genres}
-          </p>
-        {/if}
-
-        <button
-          class="play-button blur"
-          on:click={() => CoNexus.start(topic.name)}
-        >
-          PLAY NOW
-        </button>
-      </div>
-    </section>
+    <div class="buttons-container">
+      <button
+        class="blur"
+        on:click={() => window.history.back()}
+      >
+        QUIT
+      </button>
+      <button
+        class="blur"
+        on:click={() => CoNexus.start(topic.name)}
+      >
+        PLAY NOW
+      </button>
+    </div>
   {:else}
     <p class="error-message">Something went wrong...</p>
   {/if}
@@ -61,62 +67,68 @@
 {/if}
 
 <style>
-  .story-container {
+  .title {
+    font-size: 5vw;
+    line-height: 5vw;
+    text-align: center;
+    margin: 3vw auto;
+    color: rgba(51, 226, 230, 0.85);
+    -webkit-text-stroke: 0.03vw #33e2e6;
+    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.5));
+  }
+
+  .story-info {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
-    max-width: 75vw;
-    margin-inline: auto;
+    gap: 2vw;
+    padding: 2vw;
+    margin-inline: 5vw;
+    background-color: rgba(1, 0, 32, 0.5);
+    border: 0.05vw solid rgba(51, 226, 230, 0.5);
+    border-radius: 2.5vw;
   }
 
   .picture {
     width: 30vw;
     filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
-    border-radius: 2vw;
-  }
-
-  .story-info {
-    min-height: 30vw;
-    padding-left: 2vw;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .title {
-    text-align: center;
-    font-size: 3vw;
-    line-height: 3vw;
-    color: rgba(51, 226, 230, 0.75);
-    text-shadow: 0 0 0.25vw rgba(51, 226, 230, 0.5);
+    border-radius: 1.5vw;
   }
 
   .description {
     text-align: center;
     font-size: 1.5vw;
-    line-height: 2.5vw;
+    line-height: 3vw;
     text-shadow: 0 0 0.5vw rgb(1, 0, 32);
-    color: rgba(255, 255, 255, 0.75);
     margin-block: 2vw;
   }
 
-  .play-button {
-    width: 20vw;
+  .buttons-container {
+    width: 85vw;
+    margin: 2vw auto;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+  }
+
+  button {
+    width: 25vw;
     padding: 1vw 2vw;
     font-size: 2vw;
     color: rgba(51, 226, 230, 0.75);
     background-color: rgba(51, 226, 230, 0.1);
-    border: 0.05vw solid rgba(51, 226, 230, 0.75);
+    border: 0.05vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1.5vw;
     transition: all 0.15s ease-out;
   }
 
-  .play-button:hover,
-  .play-button:active {
+  button:hover,
+  button:active {
     text-shadow: 0 0 1vw rgba(1, 0, 32, 0.75);
     background-color: rgba(51, 226, 230, 0.3);
+    color: rgb(51, 226, 230);
+    border: 0.05vw solid rgb(51, 226, 230);
     transform: matrix(1.05, 0, 0, 1.05, 0, 0);
     filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.5));
   }
@@ -130,34 +142,46 @@
   }
 
   @media only screen and (max-width: 600px) {
-    .story-container {
-      flex-direction: column;
-      width: 100vw;
-    }
-
-    .picture {
-      width: 80vw;
-    }
-
-    .story-info {
-      min-height: auto;
+    :global(html) {
+      padding-top: 0;
     }
 
     .title {
-      position: fixed;
-      top: 0;
       font-size: 2em;
-      line-height: 2.5em;
+      line-height: 3em;
+      margin: 0.25em auto;
+    }
+
+    .story-info {
+      flex-direction: column;
+      margin: 0;
+      padding-block: 1.5em;
+      gap: 1.5em;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
+
+    .picture {
+      width: 90vw;
+      filter: drop-shadow(0 0 0.5em rgba(51, 226, 230, 0.25));
     }
 
     .description {
       font-size: 1em;
-      line-height: 1.6em;
-      width: 95vw;
-      margin-block: 1em;
+      line-height: 2em;
+      width: 90vw;
     }
 
-    .play-button {
+    .buttons-container {
+      width: 100vw;
+      flex-direction: column-reverse;
+      align-items: center;
+      gap: 1.5em;
+      margin-top: 1.5em;
+    }
+
+    button {
       width: 80vw;
       font-size: 1.5em;
       line-height: 1.5em;

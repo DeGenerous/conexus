@@ -73,7 +73,7 @@
     .menu-text-0,
     .menu-text-1 {
       font-size: inherit;
-      line-height: 1.6em;
+      line-height: 2em;
     }
 
     .error-message {

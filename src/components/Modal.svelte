@@ -37,7 +37,7 @@
   }
 
   dialog > div {
-    padding: 1em;
+    padding: 1vw;
   }
 
   dialog::backdrop {
@@ -50,6 +50,16 @@
 
   dialog[open]::backdrop {
     animation: fade 0.2s ease-out;
+  }
+
+  @media only screen and (max-width: 600px) {
+    dialog {
+      width: 90vw;
+    }
+
+    dialog > div {
+      padding: 1em;
+    }
   }
 
   @keyframes zoom {

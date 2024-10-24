@@ -69,25 +69,23 @@
       </button>
     </div>
 
-    <section class="unfinished-stories">
+    <section class="unfinished-stories blur">
       <p class="continue-shaping-label">Continue shaping:</p>
       <form class="continue-shaping-container">
         {#each continuables as continuable}
-          <div>
+          <div class="unfinished-story">
             <button
               aria-label="Delete story"
-              class="continue-shaping-delete"
+              class="continue-shaping-btn delete-button"
               on:click|preventDefault={() => openModal(continuable)}
               disabled={$loading}
             ></button>
-            <div id="continue-shaping">
-              <p>
-                {continuable.category} - {continuable.story_id.split('-')[0]}
-              </p>
-            </div>
+            <p>
+              {continuable.category} - {continuable.story_id.split('-')[0]}
+            </p>
             <button
               aria-label="Continue shaping"
-              class="continue-shaping-play"
+              class="continue-shaping-btn continue-button"
               on:click|preventDefault={() => CoNexus.continue(continuable)}
               disabled={$loading}
             ></button>
@@ -175,8 +173,8 @@
     width: 25vw;
     padding: 1vw 2vw;
     font-size: 2vw;
-    color: rgba(51, 226, 230, 0.75);
-    background-color: rgba(51, 226, 230, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(36, 65, 189, 0.75);
     border: 0.05vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1.5vw;
     transition: all 0.15s ease-out;
@@ -185,7 +183,7 @@
   button:hover,
   button:active {
     text-shadow: 0 0 1vw rgba(1, 0, 32, 0.75);
-    background-color: rgba(51, 226, 230, 0.3);
+    background-color: rgba(45, 90, 216, 0.9);
     color: rgb(51, 226, 230);
     border: 0.05vw solid rgb(51, 226, 230);
     transform: matrix(1.05, 0, 0, 1.05, 0, 0);
@@ -200,9 +198,122 @@
     padding-block: 2vw;
   }
 
+  .unfinished-stories {
+    max-width: 90vw;
+    margin-inline: auto;
+    background-color: rgba(51, 226, 230, 0.1);
+    border: 0.05vw solid rgba(51, 226, 230, 0.5);
+    border-radius: 2.5vw;
+    padding: 1vw;
+  }
+
+  .continue-shaping-container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    gap: 1vw;
+  }
+
+  .continue-shaping-label {
+    color: rgba(51, 226, 230, 0.75);
+    font-size: 2vw;
+    text-align: center;
+    padding-bottom: 1vw;
+  }
+
+  .unfinished-story {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: 1vw;
+    color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(36, 65, 189, 0.75);
+    border: 0.05vw solid rgba(51, 226, 230, 0.75);
+    border-radius: 1.5vw;
+    padding: 0.5vw;
+  }
+
+  .unfinished-story:hover,
+  .unfinished-story:active {
+    background-color: rgba(45, 90, 216, 0.9);
+    color: rgba(51, 226, 230, 0.9);
+    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
+    transform: scale(1.01);
+    transition: transform 0.15s ease-in-out;
+  }
+
+  .unfinished-story p {
+    text-align: center;
+    white-space: nowrap;
+    font-size: 1.5vw;
+    line-height: 1.5em;
+    cursor: default;
+  }
+
+  .continue-shaping-btn {
+    padding: 0;
+    margin: 0;
+    border: none !important;
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+    opacity: 0.75;
+    width: 3vw;
+    height: 3vw;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+
+  .continue-shaping-btn:hover,
+  .continue-shaping-btn:active{
+    background-color: rgba(0, 0, 0, 0);
+    color: rgba(0, 0, 0, 0);
+    opacity: 1;
+  }
+
+  .delete-button {
+    background-image: url('/icons/delete.png');
+  }
+
+  .continue-button {
+    background-image: url('/icons/play.png');
+  }
+
+  hr {
+    border: 0.05vw solid rgba(51, 226, 230, 0.5);
+    width: 90%;
+  }
+
+  .modal-text {
+    font-size: 2vw;
+    line-height: 3vw;
+    text-align: center;
+    padding-block: 1vw;
+  }
+
+  .modal-delete {
+    width: 70%;
+    margin-inline: 15%;
+    margin-block: 1vw;
+    padding-inline: 2vw;
+    border: 0.05vw solid rgba(51, 226, 230, 0.75);
+    border-radius: 2vw;
+    font-size: 2.5vw;
+    line-height: 4vw;
+    color: rgba(51, 226, 230, 0.75);
+    background-color: rgba(51, 226, 230, 0.1);
+    filter: drop-shadow(0 0 0.1vw rgba(51, 226, 230, 0.4));
+  }
+
+  .modal-delete:hover,
+  .modal-delete:active {
+    color: rgba(51, 226, 230, 1);
+    background-color: rgba(51, 226, 230, 0.5);
+    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.4));
+  }
+
   @media only screen and (max-width: 600px) {
     :global(html) {
-      padding-top: 0;
+      padding-block: 0 5em;
     }
 
     .title {
@@ -237,7 +348,7 @@
       flex-direction: column-reverse;
       align-items: center;
       gap: 1.5em;
-      margin-top: 1.5em;
+      margin-block: 1.5em;
     }
 
     button {
@@ -251,145 +362,42 @@
       font-size: 1em;
       line-height: 1em;
     }
-  }
 
-  .continue-shaping-delete,
-  .continue-shaping-play {
-    padding: 0;
-    margin: 0;
-    border: none;
-    border-radius: 0;
-    background-color: rgba(0, 0, 0, 0);
-    opacity: 0.75;
-  }
+    .unfinished-stories {
+      max-width: none;
+      width: 100vw;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+      padding: 1em;
+    }
 
-  .continue-shaping-delete:hover,
-  .continue-shaping-delete:active,
-  .continue-shaping-play:hover,
-  .continue-shaping-play:active {
-    filter: none;
-    background-color: rgba(0, 0, 0, 0);
-    color: rgba(0, 0, 0, 0);
-    opacity: 1;
-  }
-
-  .continue-shaping-label {
-    color: rgba(51, 226, 230, 0.75);
-    font-size: 2vw;
-    text-align: center;
-    padding: 2vw 0;
-  }
-
-  .continue-shaping-container {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: center;
-    gap: 2vw;
-  }
-
-  .continue-shaping-container > div {
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-    background-color: rgba(22, 30, 95, 0.75);
-    border: 0.05vw solid rgba(51, 226, 230, 0.75);
-    border-radius: 1.5vw;
-    color: rgba(51, 226, 230, 0.75);
-    padding: 1vw 0;
-  }
-
-  #continue-shaping {
-    text-align: center;
-    padding: 1vw 1vw;
-    font-size: 2vw;
-    line-height: 3vw;
-    outline: none;
-    border-radius: 2vw;
-    cursor: pointer;
-    width: 25vw;
-  }
-
-  #continue-shaping p {
-    text-align: center;
-    cursor: pointer;
-    font-size: 1em;
-    line-height: 1.5em;
-  }
-
-  .continue-shaping-delete,
-  .continue-shaping-play {
-    width: 5vw;
-    height: 5vw;
-    background-size: contain;
-    background-repeat: no-repeat;
-  }
-
-  .continue-shaping-delete {
-    background-image: url('/icons/delete.png');
-    margin-left: 1vw;
-  }
-
-  .continue-shaping-play {
-    background-image: url('/icons/play.png');
-    margin-right: 1vw;
-  }
-
-  .modal-text {
-    font-size: 2vw;
-    line-height: 4vw;
-    text-align: center;
-    padding: 1vw 0;
-  }
-
-  .modal-delete {
-    width: 70%;
-    margin-inline: 15%;
-    margin-block: 2vw 1vw;
-    padding: 1vw 2vw;
-    border: 0.05vw solid rgba(51, 226, 230, 0.75);
-    border-radius: 2vw;
-    font-size: 2.5vw;
-    line-height: 5vw;
-    color: rgba(51, 226, 230, 0.75);
-    background-color: rgba(51, 226, 230, 0.1);
-    filter: drop-shadow(0 0 0.1vw rgba(51, 226, 230, 0.4));
-  }
-
-  .modal-delete:hover,
-  .modal-delete:active {
-    color: rgba(51, 226, 230, 1);
-    background-color: rgba(51, 226, 230, 0.5);
-    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.4));
-  }
-
-  @media only screen and (max-width: 600px) {
     .continue-shaping-label {
+      font-size: 1.5em;
+      line-height: 2em;
+      padding-bottom: 1em;
+    }
+
+    .continue-shaping-container {
+      gap: 1em;
+    }
+
+    .unfinished-story {
+      gap: 1em;
+      padding: 0.25em;
+      width: 90vw;
+      justify-content: space-between;
+    }
+
+    .unfinished-story p {
       font-size: 1em;
+      line-height: 1.5em;
+      white-space: wrap;
     }
 
-    .continue-shaping-container > div {
-      margin-top: 0.5em;
-    }
-
-    #continue-shaping {
-      font-size: 1.1em;
-      line-height: 1.1em;
-      padding: 0.5em 1em;
-      margin: 0 0.5em;
-    }
-
-    .continue-shaping-delete,
-    .continue-shaping-play {
-      width: 3em;
-      height: 3em;
-    }
-
-    .continue-shaping-delete {
-      margin-left: 1em;
-    }
-
-    .continue-shaping-play {
-      margin-right: 1em;
+    .continue-shaping-btn {
+      width: 2em;
+      height: 2em;
     }
 
     .modal-text {
@@ -399,6 +407,8 @@
     }
 
     .modal-delete {
+      width: 90%;
+      margin-inline: 5%;
       font-size: 1.2em;
       line-height: 2em;
       margin-block: 1em 0;

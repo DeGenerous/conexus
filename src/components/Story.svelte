@@ -51,14 +51,14 @@
       />
 
       <p class="description">{topic.description}</p>
-      <!-- <p class="description">{longTempDescription}</p> -->
+      
+      {#if topic.genres !== ''}
+        <p class="description">
+          Genres: {topic.genres}
+        </p>
+      {/if}
     </div>
 
-    {#if topic.genres !== ''}
-      <p class="description">
-        Genres: {topic.genres}
-      </p>
-    {/if}
 
     <div class="buttons-container">
       <button class="blur" on:click={() => window.history.back()}>

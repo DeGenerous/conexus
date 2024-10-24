@@ -23,13 +23,13 @@
 >
   <img
     class="tile-picture {isPrimary ? 'visible' : ''}"
-    src={section.tile_image1 ? section.tile_image1 : tempTitleImage1}
+    src={section.tile_image1 ?? tempTitleImage1}
     alt={section.name}
     draggable="false"
   />
   <img
     class="tile-picture {!isPrimary ? 'visible' : ''}"
-    src={section.tile_image2 ? section.tile_image2 : tempTitleImage2}
+    src={section.tile_image2 ?? tempTitleImage2}
     alt={section.name}
     draggable="false"
   />

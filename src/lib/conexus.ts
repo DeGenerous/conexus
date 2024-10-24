@@ -65,8 +65,8 @@ export type DynTopic = {
 
 export type DynSection = {
   name: string;
-  tile_image1: string;
-  tile_image2: string;
+  tile_image1?: string;
+  tile_image2?: string;
 };
 
 export type GameData = {

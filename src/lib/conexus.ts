@@ -48,7 +48,12 @@ export type StepData = {
 
 export type DynSectionCategory = {
   name: string;
-  topics: { name: string; available: boolean }[];
+  topics: {
+    name: string;
+    available: boolean;
+    title_image1?: string;
+    title_image2?: string;
+  }[];
 };
 
 export type DynTopic = {

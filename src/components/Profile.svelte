@@ -141,7 +141,7 @@
   role="button"
   tabindex="0"
   on:click={() => (showModal = true)}
-/>
+></span>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
 <dialog
@@ -226,12 +226,13 @@
                 : ''}
             />
             <button
+              aria-label="Show password"
               class="password-visibility-button"
               on:mousedown={passwordVisible}
               on:mouseup={passwordInvisible}
               on:touchstart={passwordVisible}
               on:touchend={passwordInvisible}
-            />
+            ></button>
           </div>
           {#if isEditing === 'password'}
             <label
@@ -344,10 +345,11 @@
               />
               <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
               <button
+                aria-label="Copy code"
                 id={code.code}
                 class="copy-button"
                 on:click={copyRefCode}
-              />
+              ></button>
             </div>
           {/each}
         </div>

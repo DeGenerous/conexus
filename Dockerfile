@@ -13,6 +13,9 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+# copy public files
+COPY public ./app/public
+
 # Copy the rest of the application code to the working directory
 COPY . .
 

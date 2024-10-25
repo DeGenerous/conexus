@@ -8,8 +8,7 @@
     isPrimary = !isPrimary;
   }
 
-  const tempTitleImage1: string = '/titlePicture/TheDischordianSaga1.avif';
-  const tempTitleImage2: string = '/titlePicture/TheDischordianSaga2.avif';
+  const blankPicture: string = '/blank.avif'; // temp
 </script>
 
 <a
@@ -23,13 +22,13 @@
 >
   <img
     class="tile-picture {isPrimary ? 'visible' : ''}"
-    src={section.tile_image1 ?? tempTitleImage1}
+    src={section.tile_image1 ?? blankPicture}
     alt={section.name}
     draggable="false"
   />
   <img
     class="tile-picture {!isPrimary ? 'visible' : ''}"
-    src={section.tile_image2 ?? tempTitleImage2}
+    src={section.tile_image2 ?? blankPicture}
     alt={section.name}
     draggable="false"
   />

@@ -5,8 +5,7 @@
 
   export let category: DynSectionCategory;
 
-  const tempTitleImage1: string = '/titlePicture/DischordianSaga/Arena1.avif';
-  const tempTitleImage2: string = '/titlePicture/DischordianSaga/Arena2.avif';
+  const blankPicture: string = '/blank.avif'; // temp
 
   // export let sectionName: string;
   // export let filters: boolean = false;
@@ -171,8 +170,8 @@
   {#each category.topics as topic}
     <StoryTile
       topicName={topic.name}
-      primaryThumbnail={topic.title_image1 ?? tempTitleImage1}
-      secondaryThumbnail={topic.title_image2 ?? tempTitleImage2}
+      primaryThumbnail={topic.title_image1 ?? blankPicture}
+      secondaryThumbnail={topic.title_image2 ?? blankPicture}
     />
   {/each}
 </section>

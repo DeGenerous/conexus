@@ -31,11 +31,7 @@
     continuables = (await CoNexus.available()).continuable;
   }
 
-  const tempDescription: string =
-    'Play as a prisoner going through experiments in a guarded prison and try to escape the planet by defeating or fleeing from The Warden.';
-  const longTempDescription: string = `In the heart of the vast azure ocean lies the Enchanted Private Island, a hidden paradise ruled by the majestic Lazy Lions, who possess wisdom and regal grace. This utopia, with its lush landscapes and ancient secrets, faces a dire threat from Glitch, a former lion of the pride who seeks to conquer the island. As Glitch gathers his ruthless generals, the peaceful Lazy Lions must defend their home, not with violence, but by uncovering the island's forgotten mysteries. Embarking on a journey of bravery and discovery, they strive to protect the island's soul and preserve the harmony that defines their enchanted sanctuary.`;
-  const tempImage: string = '/descriptionPicture/DischordianSaga/Escape.avif';
-  const squareTempImage: string = '/descriptionPicture/Collabs/GLMRApes.avif';
+  const blankPicture: string = '/blank.avif'; // temp
 </script>
 
 {#if $story === null}
@@ -45,10 +41,9 @@
     </h1>
 
     <div class="story-info blur">
-      <!-- <img class="picture" src={topic.descriptionPicture} alt={topic?.name} draggable="false" /> -->
       <img
         class="picture"
-        src={tempImage}
+        src={topic.descriptionPicture ?? blankPicture}
         alt={topic?.name}
         draggable="false"
         width="1024"

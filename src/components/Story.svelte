@@ -50,13 +50,16 @@
         height="1024"
       />
 
-      <p class="description">{topic.description}</p>
-      
-      {#if topic.genres !== ''}
-        <p class="description">
-          Genres: {topic.genres}
-        </p>
-      {/if}
+      <article>
+        {#if topic.genres !== ''}
+          <div class="genres">
+            <p>Genres:</p>
+            <p class="genres-list">{topic.genres}</p>
+          </div>
+        {/if}
+
+        <p class="description">{topic.description}</p>
+      </article>
     </div>
 
 
@@ -153,8 +156,36 @@
     border-radius: 1.5vw;
   }
 
-  .description {
+  article {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-around;
+    align-items: flex-end;
+    min-height: 30vw;
+  }
+
+  .genres {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: 1vw;
+    font-size: 1.5vw;
+    line-height: 3vw;
+    color: rgba(51, 226, 230, 0.75)
+  }
+
+  .genres-list {
     text-align: center;
+    padding: 0.5vw 1vw;
+    background-color: rgba(51, 226, 230, 0.5);
+    border: 0.05vw solid rgba(51, 226, 230, 0.5);
+    border-radius: 1.5vw;
+    color: #010020;
+    text-shadow: 0 0 0.1vw #010020;
+  }
+
+  .description {
+    text-align: right;
     font-size: 1.5vw;
     line-height: 3vw;
     text-shadow: 0 0 0.5vw rgb(1, 0, 32);
@@ -337,7 +368,26 @@
       filter: drop-shadow(0 0 0.5em rgba(51, 226, 230, 0.25));
     }
 
+    article {
+      flex-direction: column-reverse;
+      min-height: none;
+    }
+
+    .genres {
+      flex-direction: column;
+      gap: 0.25em;
+      font-size: 1.2em;
+      line-height: 2em;
+      width: 90vw;
+    }
+
+    .genres-list {
+      padding: 0.25em 0.5em;
+      text-shadow: 0 0 0.1em #010020;
+    }
+
     .description {
+      text-align: center;
       font-size: 1em;
       line-height: 2em;
       width: 90vw;

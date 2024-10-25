@@ -60,6 +60,7 @@ export type DynTopic = {
   name: string;
   image_prompt?: string;
   description?: string;
+  description_image?: string;
   genres?: string;
 };
 

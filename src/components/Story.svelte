@@ -43,7 +43,7 @@
     <div class="story-info blur">
       <img
         class="picture"
-        src={topic.descriptionPicture ?? blankPicture}
+        src={topic.description_image ?? blankPicture}
         alt={topic?.name}
         draggable="false"
         width="1024"
@@ -61,7 +61,6 @@
         <p class="description">{topic.description}</p>
       </article>
     </div>
-
 
     <div class="buttons-container">
       <button class="blur" on:click={() => window.history.back()}>
@@ -100,22 +99,19 @@
     <!-- Delete Story Modal -->
 
     {#if selectedStory}
-    <Modal bind:showModal={$showDeleteModal}>
-      <h2 class="modal-text">
-        Are you sure you want to delete this story?
-      </h2>
-      <hr />
-      <p class="modal-text">
-        This action is irreversible. You will lose all progress on this
-        story.
-      </p>
-      <button
-        class="modal-delete"
-        on:click={() => DeleteStory(selectedStory.story_id)}
-        >Delete story: {selectedStory.category}</button
-      >
-    </Modal>
-  {/if}
+      <Modal bind:showModal={$showDeleteModal}>
+        <h2 class="modal-text">Are you sure you want to delete this story?</h2>
+        <hr />
+        <p class="modal-text">
+          This action is irreversible. You will lose all progress on this story.
+        </p>
+        <button
+          class="modal-delete"
+          on:click={() => DeleteStory(selectedStory.story_id)}
+          >Delete story: {selectedStory.category}</button
+        >
+      </Modal>
+    {/if}
   {:else}
     <p class="error-message">Something went wrong...</p>
   {/if}
@@ -171,7 +167,7 @@
     gap: 1vw;
     font-size: 1.5vw;
     line-height: 3vw;
-    color: rgba(51, 226, 230, 0.75)
+    color: rgba(51, 226, 230, 0.75);
   }
 
   .genres-list {
@@ -295,7 +291,7 @@
   }
 
   .continue-shaping-btn:hover,
-  .continue-shaping-btn:active{
+  .continue-shaping-btn:active {
     background-color: rgba(0, 0, 0, 0);
     color: rgba(0, 0, 0, 0);
     opacity: 1;

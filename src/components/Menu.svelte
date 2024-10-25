@@ -17,7 +17,7 @@
   <!-- We3b3 -->
 
   {#if web3LoggedIn}
-      <Intro />
+    <Intro />
   {/if}
 {:else}
   <!-- Intro -->

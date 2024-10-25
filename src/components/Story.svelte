@@ -21,9 +21,14 @@
     showDeleteModal.set(true);
   }
 
-  function DeleteStory(story_id: any) {
-    CoNexus.delete(story_id);
+  async function DeleteStory(story_id: any) {
+    await CoNexus.delete(story_id);
+    await fetchContinuableStories();
     showDeleteModal.set(false);
+  }
+
+  async function fetchContinuableStories() {
+    continuables = (await CoNexus.available()).continuable;
   }
 
   const tempDescription: string =

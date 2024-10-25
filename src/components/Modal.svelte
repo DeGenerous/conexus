@@ -5,6 +5,8 @@
 
   $: if (dialog && showModal) {
     dialog.showModal();
+  } else if (!showModal) {
+    dialog.close();
   }
 
   const closeDialog = () => {

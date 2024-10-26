@@ -5,6 +5,9 @@ APP_NAME=conexus-v1
 CONTAINER_NAME=conexus-v1-container
 POD_NAME=conexus-v1-pod
 
+# Export evnironment variables
+export $(grep -v '^#' .env | xargs)
+
 # Remove the existing container if it exists
 podman rm -f $CONTAINER_NAME
 

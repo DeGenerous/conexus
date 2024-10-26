@@ -6,9 +6,9 @@ import {
   loading,
 } from '@stores/conexus';
 
-const url = import.meta.env.PUBLIC_BACKEND;
+const url = import.meta.env.PUBLIC_BACKEND ?? '/api'
 
-const baseURL = import.meta.env.VITE_API_URL;
+const baseURL = import.meta.env.VITE_API_URL ?? '/api'
 
 export type Topic = {
   name: string;

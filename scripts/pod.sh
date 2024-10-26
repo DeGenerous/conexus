@@ -8,11 +8,11 @@ POD_NAME=conexus-v1-pod
 # Export evnironment variables
 export $(grep -v '^#' .env | xargs)
 
-# Remove the existing container if it exists
-podman rm -f $CONTAINER_NAME
-
 # Build the Docker image
 podman build -t $APP_NAME ..
+
+# Remove the existing container if it exists
+podman rm -f $CONTAINER_NAME
 
 # Remove the existing pod if it exists
 podman pod rm -f $POD_NAME

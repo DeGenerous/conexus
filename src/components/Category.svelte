@@ -1,8 +1,19 @@
 <script lang="ts">
-  import type { DynSectionCategory } from '@lib/conexus';
+  import { CoNexus, type DynSectionCategory } from '@lib/conexus';
   import StoryCollection from './StoryCollection.svelte';
+  import { onMount } from 'svelte';
 
-  export let categories: DynSectionCategory[] | undefined;
+  export let section: string;
+
+  let categories: DynSectionCategory[] = [];
+
+  onMount(async () => {
+    try {
+      categories = await CoNexus.sectionCategories(section!);
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+    }
+  });
 </script>
 
 {#if categories}

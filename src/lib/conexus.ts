@@ -6,11 +6,7 @@ import {
   loading,
 } from '@stores/conexus';
 
-const url = import.meta.env.PUBLIC_BACKEND
-
-const baseURL = import.meta.env.VITE_API_URL ?? 'http://localhost:8001'
-
-console.log('API URL:', baseURL);
+const url = import.meta.env.PUBLIC_BACKEND;
 
 export type Topic = {
   name: string;
@@ -129,7 +125,7 @@ export class CoNexus {
   static async sectionCategories(
     section: string,
   ): Promise<DynSectionCategory[]> {
-    const base = `${baseURL}/sections/${section}`;
+    const base = `${url}/sections/${section}`;
 
     const response = await fetch(base);
 
@@ -144,7 +140,7 @@ export class CoNexus {
 
   static async getTopic(name: string): Promise<DynTopic> {
     // const base = `${url}/topic/${name}`;
-    const base = `${baseURL}/topics/${name}`;
+    const base = `${url}/topics/${name}`;
 
     const response = await fetch(base);
 
@@ -176,7 +172,7 @@ export class CoNexus {
   }
 
   static async storyContinuable(topic: string): Promise<ContinuableStory[]> {
-    const response = await fetch(`${baseURL}/continuable/${topic}`);
+    const response = await fetch(`${url}/continuable/${topic}`);
 
     if (!response.ok) {
       new_error({ code: response.status, error: await response.text() });

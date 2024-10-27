@@ -1,20 +1,11 @@
 ---
 import CategorySvelte from '@components/Category.svelte';
 import Layout from '@layouts/Layout.astro';
-import { CoNexus } from '@lib/conexus';
-import type { DynSectionCategory } from '@lib/conexus';
 
 const { section } = Astro.params;
 
 if (!section) {
   Astro.redirect('/');
-}
-
-let categories: DynSectionCategory[] = [];
-try {
-  categories = await CoNexus.sectionCategories(section!);
-} catch (error) {
-  console.error('Failed to fetch categories:', error);
 }
 
 let subheading: string = '';
@@ -43,5 +34,5 @@ switch (section) {
 ---
 
 <Layout arrow={true} header={section} {subheading}>
-  <CategorySvelte {categories} client:load />
+  <CategorySvelte {section} client:load />
 </Layout>

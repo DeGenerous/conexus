@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
 
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
@@ -10,8 +11,25 @@
 
   import Modal from './Modal.svelte';
 
-  export let topic: DynTopic | null;
-  export let continuables: ContinuableStory[] = [];
+  export let story_name: string;
+
+  let topic: DynTopic | null = null;
+  let continuables: ContinuableStory[] = [];
+
+  onMount(async () => {
+    try {
+      topic = await CoNexus.getTopic(story_name!);
+    } catch (error) {
+      topic = null;
+    }
+
+    try {
+      continuables = await CoNexus.storyContinuable(story_name!);
+    } catch (error) {
+      console.error('Failed to fetch continuables:', error);
+      continuables = [];
+    }
+  });
 
   let showDeleteModal = writable<boolean>(false);
   let selectedStory: any;
@@ -28,7 +46,7 @@
   }
 
   async function fetchContinuableStories() {
-    continuables = (await CoNexus.available()).continuable;
+    continuables = await CoNexus.storyContinuable(story_name!);
   }
 
   const blankPicture: string = '/blank.avif'; // temp
@@ -66,7 +84,7 @@
       <button class="blur" on:click={() => window.history.back()}>
         QUIT
       </button>
-      <button class="blur" on:click={() => CoNexus.start(topic.name)}>
+      <button class="blur" on:click={() => topic && CoNexus.start(topic.name)}>
         PLAY NOW
       </button>
     </div>

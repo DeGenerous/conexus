@@ -6,9 +6,11 @@ import {
   loading,
 } from '@stores/conexus';
 
-const url = import.meta.env.PUBLIC_BACKEND ?? '/api'
+const url = import.meta.env.PUBLIC_BACKEND
 
-const baseURL = import.meta.env.VITE_API_URL ?? '/api'
+const baseURL = import.meta.env.VITE_API_URL ?? 'http://localhost:8001'
+
+console.log('API URL:', baseURL);
 
 export type Topic = {
   name: string;

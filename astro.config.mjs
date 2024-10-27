@@ -8,16 +8,16 @@ export default defineConfig({
   integrations: [svelte()],
   output: 'server',
   adapter: vercel(),
-  vite: {
-    server: {
-      proxy: {
-        '/api': {
-          target: import.meta.env.VITE_API_URL,
-          changeOrigin: true,
-          secure: false,
-          rewrite: (path) => path.replace(/^\/api/, ''),
-        },
-      },
-    },
-  },
+  // vite: {
+  //   server: {
+  //     proxy: {
+  //       '/api': {
+  //         target: import.meta.env.VITE_API_URL,
+  //         changeOrigin: true,
+  //         secure: false,
+  //         rewrite: (path) => path.replace(/^\/api/, ''),
+  //       },
+  //     },
+  //   },
+  // },
 });

@@ -82,7 +82,7 @@
 
     <div class="buttons-container">
       <button class="blur" on:click={() => window.history.back()}>
-        QUIT
+        GO BACK
       </button>
       <button class="blur" on:click={() => topic && CoNexus.start(topic.name)}>
         PLAY NOW

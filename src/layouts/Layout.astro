@@ -34,15 +34,17 @@ const { header, subheading, arrow, story } = Astro.props;
             />
           )}
           {header === 'CoNexus' ? (
-            <picture>
-              <source srcset="title.avif" type="image/avif" />
-              <img
-                class="title blur"
-                src="title.png"
-                alt="CoNexus"
-                draggable="false"
-              />
-            </picture>
+            <div class="title">
+              <picture>
+                <source srcset="title.avif" type="image/avif" />
+                <img
+                  class="blur"
+                  src="title.png"
+                  alt="CoNexus"
+                  draggable="false"
+                />
+              </picture>
+            </div>
           ) : (
             <p class="header">{header}</p>
           )}
@@ -66,17 +68,20 @@ const { header, subheading, arrow, story } = Astro.props;
       }
 
       .title {
+        width: 100vw;
+        text-align: center;
+      }
+
+      .title img {
         width: 33%;
         height: auto;
-        margin-inline: 31%;
-        margin-block: 2.5vw;
         filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
         background-color: rgba(51, 226, 230, 0.25);
         padding: 1vw 2vw;
+        margin-block: 2.5vw;
         border: 0.05vw solid rgba(51, 226, 230, 0.5);
         border-radius: 2vw;
         aspect-ratio: initial;
-        pointer-events: none;
       }
 
       .subheading {
@@ -162,11 +167,10 @@ const { header, subheading, arrow, story } = Astro.props;
           margin: 0.25em auto;
         }
 
-        .title {
+        .title img {
           width: 50%;
           padding: 2vw 4vw;
-          margin-inline: 20%;
-          margin-block: 4vw;
+          margin-block: 1.25em;
         }
 
         .subheading {

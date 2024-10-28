@@ -1,82 +1,82 @@
 <script lang="ts">
   import type { DynSectionCategory } from '@lib/conexus';
   import StoryTile from '../components/StoryTile.svelte';
-  import { CoNexus } from '@lib/conexus';
+  // import { CoNexus } from '@lib/conexus';
 
   export let category: DynSectionCategory;
   // export let bigCollection: boolean = false;
 
   const blankPicture: string = '/blank.avif'; // temp
 
-  let isSorting: boolean = false;
-  let searchField: string;
-  let selectedGenres: string[] = [];
-  let showGenres: boolean = false;
-  const showGenresFilter = () => (showGenres = true);
-  const hideGenresFilter = () => {
-    if (showGenres) showGenres = false;
-  };
+  // let isSorting: boolean = false;
+  // let searchField: string;
+  // let selectedGenres: string[] = [];
+  // let showGenres: boolean = false;
+  // const showGenresFilter = () => (showGenres = true);
+  // const hideGenresFilter = () => {
+  //   if (showGenres) showGenres = false;
+  // };
 
-  let filteredStories: any[] = category.topics;
-  let sortedStories: any[];
+  // let filteredStories: any[] = category.topics;
+  // let sortedStories: any[];
 
-  function genreSelector(this: HTMLElement) {
-    if (searchField) searchField = '';
+  // function genreSelector(this: HTMLElement) {
+  //   if (searchField) searchField = '';
 
-    this.classList.toggle('selected');
-    if (this.className.match('selected'))
-      this.style.color = 'rgba(51, 226, 230)';
-    else this.style.color = 'inherit';
+  //   this.classList.toggle('selected');
+  //   if (this.className.match('selected'))
+  //     this.style.color = 'rgba(51, 226, 230)';
+  //   else this.style.color = 'inherit';
 
-    selectedGenres = Array.from(document.querySelectorAll('.selected')).map(
-      (genre) => {
-        return genre.innerHTML;
-      },
-    );
-    filteredStories = category.topics.filter(async (topic) => {
-      const story = await CoNexus.getTopic(topic.name);
-      let matchingStory: boolean = false;
-      selectedGenres.map((genre) => {
-        if (story.genres!.match(genre)) matchingStory = true;
-      });
-      console.log(story.name + ' ' + matchingStory);
-      if (matchingStory) return story;
-    });
+  //   selectedGenres = Array.from(document.querySelectorAll('.selected')).map(
+  //     (genre) => {
+  //       return genre.innerHTML;
+  //     },
+  //   );
+  //   filteredStories = category.topics.filter(async (topic) => {
+  //     const story = await CoNexus.getTopic(topic.name);
+  //     let matchingStory: boolean = false;
+  //     selectedGenres.map((genre) => {
+  //       if (story.genres!.match(genre)) matchingStory = true;
+  //     });
+  //     console.log(story.name + ' ' + matchingStory);
+  //     if (matchingStory) return story;
+  //   });
 
-    if (isSorting) handleSorting();
-  }
+  //   if (isSorting) handleSorting();
+  // }
 
-  const resetGenresFilter = () => {
-    const genresList = document.querySelectorAll('.genre');
-    selectedGenres = [];
-    genresList.forEach((genre: any) => {
-      if (Array.from(genre.classList).includes('selected')) {
-        genre.classList.remove('selected');
-        genre.style.color = 'inherit';
-      }
-    });
-  };
+  // const resetGenresFilter = () => {
+  //   const genresList = document.querySelectorAll('.genre');
+  //   selectedGenres = [];
+  //   genresList.forEach((genre: any) => {
+  //     if (Array.from(genre.classList).includes('selected')) {
+  //       genre.classList.remove('selected');
+  //       genre.style.color = 'inherit';
+  //     }
+  //   });
+  // };
 
-  const handleSearch = () => {
-    if (selectedGenres.length > 0) resetGenresFilter();
-    filteredStories = category.topics.filter((story: any) => {
-      if (story.name.toLowerCase().match(searchField.toLowerCase()))
-        return story;
-    });
-    if (isSorting) handleSorting();
-  };
+  // const handleSearch = () => {
+  //   if (selectedGenres.length > 0) resetGenresFilter();
+  //   filteredStories = category.topics.filter((story: any) => {
+  //     if (story.name.toLowerCase().match(searchField.toLowerCase()))
+  //       return story;
+  //   });
+  //   if (isSorting) handleSorting();
+  // };
 
-  const handleSorting = () => {
-    sortedStories = filteredStories.sort((a: any, b: any) => {
-      if (a.name < b.name) return -1;
-      if (a.name > b.name) return 1;
-      return 0;
-    });
-    filteredStories = sortedStories;
-  };
+  // const handleSorting = () => {
+  //   sortedStories = filteredStories.sort((a: any, b: any) => {
+  //     if (a.name < b.name) return -1;
+  //     if (a.name > b.name) return 1;
+  //     return 0;
+  //   });
+  //   filteredStories = sortedStories;
+  // };
 </script>
 
-<svelte:window on:click={hideGenresFilter} />
+<!-- <svelte:window on:click={hideGenresFilter} /> -->
 
 <div class="collection-header">
   <p class="tiles-collection-legend">
@@ -90,8 +90,7 @@
       {/if}
     {/if} -->
   </p>
-  <section class="filters">
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- <section class="filters">
     <div class="sort-genres-filters">
       <div
         class="filter blur"
@@ -117,7 +116,6 @@
         tabindex="0"
       >
         <img class="filter-image" src="/icons/filter.png" alt="Filter" />
-        <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
         <ul
           class="genres-list"
           style="display: {showGenres ? 'grid' : 'none'}"
@@ -157,10 +155,10 @@
         placeholder="Search story..."
       />
     </div>
-  </section>
+  </section> -->
 </div>
 <section class="tiles-collection blur">
-  {#each filteredStories as topic}
+  {#each category.topics as topic}
     <StoryTile
       topicName={topic.name}
       primaryThumbnail={topic.title_image1 ?? blankPicture}
@@ -230,7 +228,7 @@
     text-shadow: 0 0 1vw rgba(51, 226, 230, 0.4);
   }
 
-  .filters {
+  /* .filters {
     display: flex;
     flex-flow: row nowrap;
     justify-content: flex-end;
@@ -306,7 +304,7 @@
 
   .search-field:focus {
     width: 25vw;
-  }
+  } */
 
   @media only screen and (max-width: 600px) {
     .tiles-collection {
@@ -329,7 +327,7 @@
       grid-template-columns: 50% 50%;
     } */
 
-    .filters {
+    /* .filters {
       width: 95vw;
       margin: 0 2.5vw;
       justify-content: space-between;
@@ -371,6 +369,6 @@
     .genre {
       font-size: 0.9em;
       line-height: 1.5em;
-    }
+    } */
   }
 </style>

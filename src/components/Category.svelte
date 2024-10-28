@@ -6,8 +6,19 @@
   export let section: string;
 
   let categories: DynSectionCategory[] = [];
-
   let genres: string[] = [];
+
+  let filteredStories: DynSectionCategory[] = [];
+  let showGenres: boolean = false;
+  const showGenresFilter = () => (showGenres = true);
+  const hideGenresFilter = () => {
+    if (showGenres) showGenres = false;
+  };
+
+  let isSorting: boolean = false;
+  let sortedStories: DynSectionCategory[] = [];
+
+  let searchField: string;
 
   onMount(async () => {
     try {
@@ -23,13 +34,87 @@
     }
   });
 
-  async function getGenre(genre_name: string) {
-    categories = await CoNexus.getGenreTopics(genre_name);
+  async function getGenre(this: HTMLElement) {
+    const genre_name: string = this.innerHTML;
+    filteredStories = await CoNexus.getGenreTopics(genre_name);
+    if (filteredStories && filteredStories.length > 0) categories = filteredStories;
+    console.log(filteredStories) // check
   }
+
+  const handleSearch = () => {
+    // filteredStories = category.topics.filter((category: any) => {
+    //   if (story.name.toLowerCase().match(searchField.toLowerCase()))
+    //     return story;
+    // });
+    // if (isSorting) handleSorting();
+  };
+
+  const handleSorting = () => {
+    // sortedStories = filteredStories.sort((a: any, b: any) => {
+    //   if (a.name < b.name) return -1;
+    //   if (a.name > b.name) return 1;
+    //   return 0;
+    // });
+    // filteredStories = sortedStories;
+  };
 </script>
 
+<svelte:window on:click={hideGenresFilter} />
+
 {#if categories}
-  <!-- Genre selector -->
+<section class="filters">
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <div class="sort-genres-filters">
+    <div
+      class="filter blur"
+      on:click={() => {
+        isSorting = !isSorting;
+      }}
+      style="background-color: {isSorting
+        ? 'rgba(45, 90, 216, 0.9)'
+        : 'rgba(22, 30, 95, 0.75)'}"
+      role="button"
+      tabindex="0"
+    >
+      <img class="filter-image" src="/icons/sort.png" alt="Sort" />
+    </div>
+
+    <div
+      class="filter blur"
+      on:click|stopPropagation={showGenresFilter}
+      role="button"
+      tabindex="0"
+    >
+      <img class="filter-image" src="/icons/filter.png" alt="Filter" />
+      <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+      <ul
+        class="genres-list"
+        style="display: {showGenres ? 'grid' : 'none'}"
+        on:mouseleave={hideGenresFilter}
+        on:blur={hideGenresFilter}
+      >
+      {#each genres as genre}
+        <li class="genre" value={genre} on:click={getGenre}>{genre}</li>
+      {/each}
+      </ul>
+    </div>
+  </div>
+
+  <div
+    class="filter blur"
+    style="background-color: {searchField
+      ? 'rgba(45, 90, 216, 0.9)'
+      : 'rgba(22, 30, 95, 0.75)'}"
+  >
+    <img class="filter-image" src="/icons/search.png" alt="Search" />
+    <input
+      bind:value={searchField}
+      on:input={handleSearch}
+      class="search-field"
+      placeholder="Search story..."
+    />
+  </div>
+</section>
   {#each categories as category}
     <StoryCollection {category} />
   {/each}
@@ -46,10 +131,132 @@
     padding-block: 2vw;
   }
 
+  .filters {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+    margin-right: 2vw;
+  }
+
+  .filter {
+    z-index: 1;
+    position: relative;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    padding: 0.5vw 1vw;
+    margin-inline: 0.25rem;
+    background-color: rgba(22, 30, 95, 0.75);
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
+    border-radius: 1vw;
+    cursor: pointer;
+  }
+
+  .filter-image {
+    height: 2vw;
+    width: auto;
+    opacity: 0.8;
+  }
+
+  .sort-genres-filters {
+    display: flex;
+  }
+
+  .genres-list {
+    z-index: 2;
+    position: absolute;
+    bottom: -0.2vw;
+    right: -0.2vw;
+    display: grid;
+    grid-template-columns: 10vw 10vw 10vw;
+    row-gap: 1vw;
+    justify-items: center;
+    padding: 1vw;
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
+    border-radius: 1vw;
+    background-color: #010020;
+  }
+
+  .genre {
+    font-size: 1.5vw;
+    line-height: 2vw;
+  }
+
+  .genre:hover,
+  .genre:active {
+    color: rgb(51, 226, 230);
+    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.25));
+  }
+
+  .search-field {
+    margin-left: 1vw;
+    font-size: 2vw;
+    line-height: 2.5vw;
+    color: rgba(51, 226, 230, 0.9);
+    background-color: rgba(1, 0, 32, 0.4);
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
+    border-radius: 0.5vw;
+    outline: none;
+    width: 15vw;
+    transition: all 0.15s ease-in-out;
+  }
+
+  .search-field::placeholder {
+    color: rgba(51, 226, 230, 0.5);
+  }
+
+  .search-field:focus {
+    width: 25vw;
+  }
+
   @media only screen and (max-width: 600px) {
     .loading {
       font-size: 1em;
       line-height: 1em;
+    }
+
+    .filters {
+      width: 95vw;
+      margin: 0 2.5vw;
+      justify-content: space-between;
+    }
+
+    .filter {
+      padding: 0.5em;
+    }
+
+    .filter-image {
+      height: 1.5em;
+    }
+
+    .sort-genres-filters {
+      flex-direction: row-reverse;
+    }
+
+    .search-field {
+      font-size: 1em;
+      line-height: 1.5em;
+      margin-left: 0.5em;
+      width: 30vw;
+    }
+
+    .search-field:focus {
+      width: 50vw;
+    }
+
+    .genres-list {
+      left: -0.2vw;
+      top: -0.2vw;
+      bottom: auto;
+      right: auto;
+      grid-template-columns: 40vw;
+      row-gap: 0.75em;
+      padding: 0.5em;
+    }
+
+    .genre {
+      font-size: 0.9em;
+      line-height: 1.5em;
     }
   }
 </style>

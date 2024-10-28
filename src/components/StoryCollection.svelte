@@ -22,23 +22,25 @@
 
   function genreSelector(this: HTMLElement) {
     if (searchField) searchField = '';
+
     this.classList.toggle('selected');
     if (this.className.match('selected'))
       this.style.color = 'rgba(51, 226, 230)';
     else this.style.color = 'inherit';
+
     selectedGenres = Array.from(document.querySelectorAll('.selected')).map(
       (genre) => {
         return genre.innerHTML;
       },
     );
-
     filteredStories = category.topics.filter(async (topic) => {
       const story = await CoNexus.getTopic(topic.name);
-      let matchingTile: boolean = false;
+      let matchingStory: boolean = false;
       selectedGenres.map((genre) => {
-        if (story.genres!.match(genre)) matchingTile = true;
+        if (story.genres!.match(genre)) matchingStory = true;
       });
-      if (matchingTile) return story;
+      console.log(matchingStory)
+      if (matchingStory) return story;
     })
 
     if (isSorting) handleSorting();

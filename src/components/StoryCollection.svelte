@@ -1,93 +1,76 @@
 <script lang="ts">
   import type { DynSectionCategory } from '@lib/conexus';
   import StoryTile from '../components/StoryTile.svelte';
-  // import { afterUpdate } from 'svelte';
 
   export let category: DynSectionCategory;
+  // export let bigCollection: boolean = false;
 
   const blankPicture: string = '/blank.avif'; // temp
 
-  // export let sectionName: string;
-  // export let filters: boolean = false;
-  // export let bigCollection: boolean = false;
+  let isSorting: boolean = false;
+  let searchField: string;
+  let selectedGenres: string[] = [];
+  let showGenres: boolean = false;
+  const showGenresFilter = () => (showGenres = true);
+  const hideGenresFilter = () => {
+    if (showGenres) showGenres = false;
+  };
 
-  // let tilesArray: any = stories.filter(
-  //   (section) => section.section === sectionName,
-  // )[0].subsection;
+  let filteredStories: any[] = category.topics;
+  let sortedStories: any[];
 
-  // const allStories = tilesArray[0].story;
+  function genreSelector(this: HTMLElement) {
+    if (searchField) searchField = '';
+    this.classList.toggle('selected');
+    if (this.className.match('selected'))
+      this.style.color = 'rgba(51, 226, 230)';
+    else this.style.color = 'inherit';
+    selectedGenres = Array.from(document.querySelectorAll('.selected')).map(
+      (genre) => {
+        return genre.innerHTML;
+      },
+    );
+    // filteredStories = category.topics.filter((story: any) => {
+    //   let matchingTile: boolean = false;
+    //   selectedGenres.map((genre) => {
+    //     if (story.genres.match(genre)) matchingTile = true;
+    //   });
+    //   if (matchingTile) return story;
+    // });
+    if (isSorting) handleSorting();
+  }
 
-  // let isSorting: boolean = false;
-  // let searchField: string;
-  // let selectedGenres: string[];
-  // let showGenres: boolean = false;
-  // const showGenresFilter = () => (showGenres = true);
-  // const hideGenresFilter = () => {
-  //   if (showGenres) showGenres = false;
-  // };
+  const resetGenresFilter = () => {
+    const genresList = document.querySelectorAll('.genre');
+    selectedGenres = [];
+    genresList.forEach((genre: any) => {
+      if (Array.from(genre.classList).includes('selected')) {
+        genre.classList.remove('selected');
+        genre.style.color = 'inherit';
+      }
+    });
+  };
 
-  // let filteredTiles: any[] = allStories;
-  // let sortedTiles: any[];
+  const handleSearch = () => {
+    if (selectedGenres.length > 0) resetGenresFilter();
+    filteredStories = category.topics.filter((story: any) => {
+      if (story.name.toLowerCase().match(searchField.toLowerCase()))
+        return story;
+    });
+    if (isSorting) handleSorting();
+  }
 
-  // afterUpdate(() => {
-  //   if (searchField) {
-  //     resetGenresFilter();
-  //     filteredTiles = allStories.filter((story: any) => {
-  //       if (story.title.toLowerCase().match(searchField.toLowerCase()))
-  //         return story;
-  //     });
-  //   } else if (selectedGenres && selectedGenres.length == 0) {
-  //     filteredTiles = allStories;
-  //     resetGenresFilter();
-  //     searchField = '';
-  //   }
-  //   sortedTiles = filteredTiles.sort((a: any, b: any) => {
-  //     if (isSorting) {
-  //       if (a.title < b.title) return -1;
-  //       if (a.title > b.title) return 1;
-  //     } else {
-  //       if (a.id < b.id) return -1;
-  //       if (a.id > b.id) return 1;
-  //     }
-  //     return 0;
-  //   });
-  //   filteredTiles = sortedTiles;
-  //   tilesArray[0].story = filteredTiles;
-  // });
-
-  // function genreSelector(this: HTMLElement) {
-  //   if (searchField) searchField = '';
-  //   this.classList.toggle('selected');
-  //   if (this.className.match('selected'))
-  //     this.style.color = 'rgba(51, 226, 230)';
-  //   else this.style.color = 'inherit';
-  //   selectedGenres = Array.from(document.querySelectorAll('.selected')).map(
-  //     (genre) => {
-  //       return genre.innerHTML;
-  //     },
-  //   );
-  //   filteredTiles = allStories.filter((story: any) => {
-  //     let matchingTile: boolean = false;
-  //     selectedGenres.map((genre) => {
-  //       if (story.genre.includes(genre)) matchingTile = true;
-  //     });
-  //     if (matchingTile) return story;
-  //   });
-  // }
-
-  // const resetGenresFilter = () => {
-  //   const genresList = document.querySelectorAll('.genre');
-  //   selectedGenres = [];
-  //   genresList.forEach((genre: any) => {
-  //     if (Array.from(genre.classList).includes('selected')) {
-  //       genre.classList.remove('selected');
-  //       genre.style.color = 'inherit';
-  //     }
-  //   });
-  // };
+  const handleSorting = () => {
+    sortedStories = filteredStories.sort((a: any, b: any) => {
+      if (a.name < b.name) return -1;
+      if (a.name > b.name) return 1;
+      return 0;
+    });
+    filteredStories = sortedStories;
+  }
 </script>
 
-<!-- <svelte:window on:click={hideGenresFilter} /> -->
+<svelte:window on:click={hideGenresFilter} />
 
 <div class="collection-header">
   <p class="tiles-collection-legend">
@@ -101,8 +84,8 @@
       {/if}
     {/if} -->
   </p>
-  <!-- {#if filters}
     <section class="filters">
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
       <div class="sort-genres-filters">
         <div
           class="filter blur"
@@ -112,6 +95,8 @@
           style="background-color: {isSorting
             ? 'rgba(45, 90, 216, 0.9)'
             : 'rgba(22, 30, 95, 0.75)'}"
+          role="button"
+          tabindex="0"
         >
           <img class="filter-image" src="/icons/sort.png" alt="Sort" />
         </div>
@@ -123,8 +108,11 @@
           selectedGenres.length > 0
             ? 'rgba(45, 90, 216, 0.9)'
             : 'rgba(22, 30, 95, 0.75)'}"
+          role="button"
+          tabindex="0"
         >
           <img class="filter-image" src="/icons/filter.png" alt="Filter" />
+          <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
           <ul
             class="genres-list"
             style="display: {showGenres ? 'grid' : 'none'}"
@@ -159,15 +147,15 @@
         <img class="filter-image" src="/icons/search.png" alt="Search" />
         <input
           bind:value={searchField}
+          on:input={handleSearch}
           class="search-field"
           placeholder="Search story..."
         />
       </div>
     </section>
-  {/if} -->
 </div>
 <section class="tiles-collection blur">
-  {#each category.topics as topic}
+  {#each filteredStories as topic}
     <StoryTile
       topicName={topic.name}
       primaryThumbnail={topic.title_image1 ?? blankPicture}
@@ -214,12 +202,12 @@
     border-radius: 1vw;
   }
 
-  .big-collection {
+  /* .big-collection {
     display: grid;
     grid-template-columns: 25% 25% 25% 25%;
     justify-items: center;
     overflow-x: hidden;
-  }
+  } */
 
   .collection-header {
     display: flex;
@@ -332,9 +320,9 @@
       line-height: 1.5em;
     }
 
-    .big-collection {
+    /* .big-collection {
       grid-template-columns: 50% 50%;
-    }
+    } */
 
     .filters {
       width: 95vw;

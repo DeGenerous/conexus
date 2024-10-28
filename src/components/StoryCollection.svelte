@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { DynSectionCategory } from '@lib/conexus';
   import StoryTile from '../components/StoryTile.svelte';
+  import { CoNexus } from '@lib/conexus';
 
   export let category: DynSectionCategory;
   // export let bigCollection: boolean = false;
@@ -30,13 +31,16 @@
         return genre.innerHTML;
       },
     );
-    // filteredStories = category.topics.filter((story: any) => {
-    //   let matchingTile: boolean = false;
-    //   selectedGenres.map((genre) => {
-    //     if (story.genres.match(genre)) matchingTile = true;
-    //   });
-    //   if (matchingTile) return story;
-    // });
+
+    filteredStories = category.topics.filter(async (topic) => {
+      const story = await CoNexus.getTopic(topic.name);
+      let matchingTile: boolean = false;
+      selectedGenres.map((genre) => {
+        if (story.genres!.match(genre)) matchingTile = true;
+      });
+      if (matchingTile) return story;
+    })
+
     if (isSorting) handleSorting();
   }
 

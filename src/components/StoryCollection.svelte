@@ -39,9 +39,9 @@
       selectedGenres.map((genre) => {
         if (story.genres!.match(genre)) matchingStory = true;
       });
-      console.log(story.name + ' ' + matchingStory)
+      console.log(story.name + ' ' + matchingStory);
       if (matchingStory) return story;
-    })
+    });
 
     if (isSorting) handleSorting();
   }
@@ -64,7 +64,7 @@
         return story;
     });
     if (isSorting) handleSorting();
-  }
+  };
 
   const handleSorting = () => {
     sortedStories = filteredStories.sort((a: any, b: any) => {
@@ -73,7 +73,7 @@
       return 0;
     });
     filteredStories = sortedStories;
-  }
+  };
 </script>
 
 <svelte:window on:click={hideGenresFilter} />
@@ -90,75 +90,74 @@
       {/if}
     {/if} -->
   </p>
-    <section class="filters">
-      <!-- svelte-ignore a11y_click_events_have_key_events -->
-      <div class="sort-genres-filters">
-        <div
-          class="filter blur"
-          on:click={() => {
-            isSorting = !isSorting;
-          }}
-          style="background-color: {isSorting
-            ? 'rgba(45, 90, 216, 0.9)'
-            : 'rgba(22, 30, 95, 0.75)'}"
-          role="button"
-          tabindex="0"
-        >
-          <img class="filter-image" src="/icons/sort.png" alt="Sort" />
-        </div>
-
-        <div
-          class="filter blur"
-          on:click|stopPropagation={showGenresFilter}
-          style="background-color: {selectedGenres &&
-          selectedGenres.length > 0
-            ? 'rgba(45, 90, 216, 0.9)'
-            : 'rgba(22, 30, 95, 0.75)'}"
-          role="button"
-          tabindex="0"
-        >
-          <img class="filter-image" src="/icons/filter.png" alt="Filter" />
-          <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-          <ul
-            class="genres-list"
-            style="display: {showGenres ? 'grid' : 'none'}"
-            on:mouseleave={hideGenresFilter}
-            on:blur={hideGenresFilter}
-          >
-            <li class="genre" on:click={genreSelector}>Action</li>
-            <li class="genre" on:click={genreSelector}>Romance</li>
-            <li class="genre" on:click={genreSelector}>Sci-Fi</li>
-            <li class="genre" on:click={genreSelector}>Fantasy</li>
-            <li class="genre" on:click={genreSelector}>Horror</li>
-            <li class="genre" on:click={genreSelector}>Thriller</li>
-            <li class="genre" on:click={genreSelector}>Comedy</li>
-            <li class="genre" on:click={genreSelector}>History</li>
-            <li class="genre" on:click={genreSelector}>Drama</li>
-            <li class="genre" on:click={genreSelector}>Mystery</li>
-            <li class="genre" on:click={genreSelector}>Sport</li>
-            <li class="genre" on:click={genreSelector}>Biopic</li>
-            <li class="genre" on:click={genreSelector}>Psychological</li>
-            <li class="genre" on:click={genreSelector}>War</li>
-            <li class="genre" on:click={genreSelector}>Crime</li>
-          </ul>
-        </div>
+  <section class="filters">
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <div class="sort-genres-filters">
+      <div
+        class="filter blur"
+        on:click={() => {
+          isSorting = !isSorting;
+        }}
+        style="background-color: {isSorting
+          ? 'rgba(45, 90, 216, 0.9)'
+          : 'rgba(22, 30, 95, 0.75)'}"
+        role="button"
+        tabindex="0"
+      >
+        <img class="filter-image" src="/icons/sort.png" alt="Sort" />
       </div>
 
       <div
         class="filter blur"
-        style="background-color: {searchField
+        on:click|stopPropagation={showGenresFilter}
+        style="background-color: {selectedGenres && selectedGenres.length > 0
           ? 'rgba(45, 90, 216, 0.9)'
           : 'rgba(22, 30, 95, 0.75)'}"
+        role="button"
+        tabindex="0"
       >
-        <img class="filter-image" src="/icons/search.png" alt="Search" />
-        <input
-          bind:value={searchField}
-          on:input={handleSearch}
-          class="search-field"
-          placeholder="Search story..."
-        />
+        <img class="filter-image" src="/icons/filter.png" alt="Filter" />
+        <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+        <ul
+          class="genres-list"
+          style="display: {showGenres ? 'grid' : 'none'}"
+          on:mouseleave={hideGenresFilter}
+          on:blur={hideGenresFilter}
+        >
+          <li class="genre" on:click={genreSelector}>Action</li>
+          <li class="genre" on:click={genreSelector}>Romance</li>
+          <li class="genre" on:click={genreSelector}>Sci-Fi</li>
+          <li class="genre" on:click={genreSelector}>Fantasy</li>
+          <li class="genre" on:click={genreSelector}>Horror</li>
+          <li class="genre" on:click={genreSelector}>Thriller</li>
+          <li class="genre" on:click={genreSelector}>Comedy</li>
+          <li class="genre" on:click={genreSelector}>History</li>
+          <li class="genre" on:click={genreSelector}>Drama</li>
+          <li class="genre" on:click={genreSelector}>Mystery</li>
+          <li class="genre" on:click={genreSelector}>Sport</li>
+          <li class="genre" on:click={genreSelector}>Biopic</li>
+          <li class="genre" on:click={genreSelector}>Psychological</li>
+          <li class="genre" on:click={genreSelector}>War</li>
+          <li class="genre" on:click={genreSelector}>Crime</li>
+        </ul>
       </div>
-    </section>
+    </div>
+
+    <div
+      class="filter blur"
+      style="background-color: {searchField
+        ? 'rgba(45, 90, 216, 0.9)'
+        : 'rgba(22, 30, 95, 0.75)'}"
+    >
+      <img class="filter-image" src="/icons/search.png" alt="Search" />
+      <input
+        bind:value={searchField}
+        on:input={handleSearch}
+        class="search-field"
+        placeholder="Search story..."
+      />
+    </div>
+  </section>
 </div>
 <section class="tiles-collection blur">
   {#each filteredStories as topic}

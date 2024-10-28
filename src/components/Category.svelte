@@ -7,16 +7,29 @@
 
   let categories: DynSectionCategory[] = [];
 
+  let genres: string[] = [];
+
   onMount(async () => {
     try {
       categories = await CoNexus.sectionCategories(section!);
     } catch (error) {
       console.error('Failed to fetch categories:', error);
     }
+
+    try {
+      genres = await CoNexus.getGenres();
+    } catch (error) {
+      console.error('Failed to fetch genres:', error);
+    }
   });
+
+  async function getGenre(genre_name: string) {
+    categories = await CoNexus.getGenreTopics(genre_name);
+  }
 </script>
 
 {#if categories}
+  <!-- Genre selector -->
   {#each categories as category}
     <StoryCollection {category} />
   {/each}

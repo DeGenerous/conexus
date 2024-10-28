@@ -46,11 +46,13 @@ export type StepData = {
 
 export type DynSectionCategory = {
   name: string;
+  created_at?: Date;
   topics: {
     name: string;
     available: boolean;
     title_image1?: string;
     title_image2?: string;
+    created_at?: Date;
   }[];
 };
 
@@ -126,6 +128,32 @@ export class CoNexus {
     section: string,
   ): Promise<DynSectionCategory[]> {
     const base = `${url}/sections/${section}`;
+
+    const response = await fetch(base);
+
+    if (!response.ok) {
+      new_error({ code: response.status, error: await response.text() });
+    }
+
+    const resp = await response.json();
+
+    return resp.categories;
+  }
+
+  static async getGenres(): Promise<string[]> {
+    const response = await fetch(`${url}/genres`);
+
+    if (!response.ok) {
+      new_error({ code: response.status, error: await response.text() });
+    }
+
+    const resp = await response.json();
+
+    return resp.genres;
+  }
+
+  static async getGenreTopics(genre: string): Promise<DynSectionCategory[]> {
+    const base = `${url}/genres/${genre}`;
 
     const response = await fetch(base);
 

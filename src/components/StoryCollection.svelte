@@ -39,7 +39,7 @@
       selectedGenres.map((genre) => {
         if (story.genres!.match(genre)) matchingStory = true;
       });
-      console.log(matchingStory)
+      console.log(story.name + ' ' + matchingStory)
       if (matchingStory) return story;
     })
 

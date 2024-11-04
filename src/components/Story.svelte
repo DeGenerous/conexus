@@ -61,7 +61,7 @@
     <div class="story-info blur">
       <img
         class="picture"
-        src={topic.description_image ?? blankPicture}
+        src={topic.description_image != '' ? topic.description_image : blankPicture}
         alt={topic?.name}
         draggable="false"
         width="1024"

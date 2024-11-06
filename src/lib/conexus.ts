@@ -140,7 +140,7 @@ export class CoNexus {
     return resp.categories;
   }
 
-  static async getGenres(): Promise<string[]> {
+  static async getGenres(): Promise<{id: number; name:string}[]> {
     const response = await fetch(`${url}/genres`);
 
     if (!response.ok) {

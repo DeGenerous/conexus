@@ -1,24 +1,18 @@
 <script lang="ts">
-  import { CoNexus, type DynSectionCategory } from '@lib/conexus';
-  import StoryCollection from './StoryCollection.svelte';
   import { onMount } from 'svelte';
+
+  import {
+    CoNexus,
+    type DynSectionCategory,
+    type DynTopic,
+  } from '@lib/conexus';
+
+  import StoryCollection from './StoryCollection.svelte';
 
   export let section: string;
 
   let categories: DynSectionCategory[] = [];
-  let genres: string[] = [];
-
-  let filteredStories: DynSectionCategory[] = [];
-  let showGenres: boolean = false;
-  const showGenresFilter = () => (showGenres = true);
-  const hideGenresFilter = () => {
-    if (showGenres) showGenres = false;
-  };
-
-  let isSorting: boolean = false;
-  let sortedStories: DynSectionCategory[] = [];
-
-  let searchField: string;
+  let genres: { id: number; name: string }[] = [];
 
   onMount(async () => {
     try {
@@ -34,88 +28,124 @@
     }
   });
 
-  async function getGenre(this: HTMLElement) {
-    const genre_name: string = this.innerHTML;
-    filteredStories = await CoNexus.getGenreTopics(genre_name);
-    if (filteredStories && filteredStories.length > 0) categories = filteredStories;
-    console.log(filteredStories) // check
-  }
+  // Search and Filter
+  let filteredCategories: DynSectionCategory[];
+  let isSorting: boolean = false;
+  let sortedStories: DynSectionCategory[] = [];
+
+  let searchField: string;
+
+  $: filteredCategories = categories;
 
   const handleSearch = () => {
-    // filteredStories = category.topics.filter((category: any) => {
-    //   if (story.name.toLowerCase().match(searchField.toLowerCase()))
-    //     return story;
-    // });
-    // if (isSorting) handleSorting();
+    if (!searchField) {
+      filteredCategories = categories;
+      return;
+    }
+
+    filteredCategories = categories
+      .map((category: DynSectionCategory) => {
+        // Filter to get all topics in the category that match the search field
+        const matchingTopics = category.topics.filter((topic: DynTopic) =>
+          topic.name.toLowerCase().includes(searchField.toLowerCase()),
+        );
+
+        // If there are any matching topics, include them in the results
+        return matchingTopics.length > 0
+          ? { ...category, topics: matchingTopics }
+          : null;
+      })
+      .filter((category) => category !== null); // Remove categories with no matches
+
+    if (isSorting) handleSorting();
   };
 
   const handleSorting = () => {
-    // sortedStories = filteredStories.sort((a: any, b: any) => {
-    //   if (a.name < b.name) return -1;
-    //   if (a.name > b.name) return 1;
-    //   return 0;
-    // });
-    // filteredStories = sortedStories;
+    sortedStories = filteredCategories.sort(
+      (a: DynSectionCategory, b: DynSectionCategory) => {
+        if (a.name < b.name) return -1;
+        if (a.name > b.name) return 1;
+        return 0;
+      },
+    );
+    filteredCategories = sortedStories;
   };
+
+  // Genres
+  let showGenres: boolean = false;
+
+  const showGenresFilter = () => (showGenres = true);
+  const hideGenresFilter = () => {
+    if (showGenres) showGenres = false;
+  };
+
+  async function getGenre(this: HTMLElement) {
+    // const genre_name: string = this.innerHTML;
+    // filteredStories = await CoNexus.getGenreTopics(genre_name);
+    // if (filteredStories && filteredStories.length > 0)
+    //   categories = filteredStories;
+    // console.log(filteredStories); // check
+  }
 </script>
 
 <svelte:window on:click={hideGenresFilter} />
 
 {#if categories}
-<section class="filters">
-  <!-- svelte-ignore a11y_click_events_have_key_events -->
-  <div class="sort-genres-filters">
+  <section class="filters">
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <div class="sort-genres-filters">
+      <div
+        class="filter blur"
+        on:click={() => {
+          isSorting = !isSorting;
+        }}
+        style="background-color: {isSorting
+          ? 'rgba(45, 90, 216, 0.9)'
+          : 'rgba(22, 30, 95, 0.75)'}"
+        role="button"
+        tabindex="0"
+      >
+        <img class="filter-image" src="/icons/sort.png" alt="Sort" />
+      </div>
+
+      <div
+        class="filter blur"
+        on:click|stopPropagation={showGenresFilter}
+        role="button"
+        tabindex="0"
+      >
+        <img class="filter-image" src="/icons/filter.png" alt="Filter" />
+        <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+        <ul
+          class="genres-list"
+          style="display: {showGenres ? 'grid' : 'none'}"
+          on:mouseleave={hideGenresFilter}
+          on:blur={hideGenresFilter}
+        >
+          {#each genres as genre (genre.id)}
+            <li class="genre" value={genre.name} on:click={getGenre}>{genre.name}</li>
+          {/each}
+        </ul>
+      </div>
+    </div>
+
     <div
       class="filter blur"
-      on:click={() => {
-        isSorting = !isSorting;
-      }}
-      style="background-color: {isSorting
+      style="background-color: {searchField
         ? 'rgba(45, 90, 216, 0.9)'
         : 'rgba(22, 30, 95, 0.75)'}"
-      role="button"
-      tabindex="0"
     >
-      <img class="filter-image" src="/icons/sort.png" alt="Sort" />
+      <img class="filter-image" src="/icons/search.png" alt="Search" />
+      <input
+        bind:value={searchField}
+        on:input={handleSearch}
+        class="search-field"
+        placeholder="Search story..."
+      />
     </div>
+  </section>
 
-    <div
-      class="filter blur"
-      on:click|stopPropagation={showGenresFilter}
-      role="button"
-      tabindex="0"
-    >
-      <img class="filter-image" src="/icons/filter.png" alt="Filter" />
-      <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-      <ul
-        class="genres-list"
-        style="display: {showGenres ? 'grid' : 'none'}"
-        on:mouseleave={hideGenresFilter}
-        on:blur={hideGenresFilter}
-      >
-      {#each genres as genre}
-        <li class="genre" value={genre} on:click={getGenre}>{genre}</li>
-      {/each}
-      </ul>
-    </div>
-  </div>
-
-  <div
-    class="filter blur"
-    style="background-color: {searchField
-      ? 'rgba(45, 90, 216, 0.9)'
-      : 'rgba(22, 30, 95, 0.75)'}"
-  >
-    <img class="filter-image" src="/icons/search.png" alt="Search" />
-    <input
-      bind:value={searchField}
-      on:input={handleSearch}
-      class="search-field"
-      placeholder="Search story..."
-    />
-  </div>
-</section>
-  {#each categories as category}
+  {#each filteredCategories as category (category.name)}
     <StoryCollection {category} />
   {/each}
 {:else}

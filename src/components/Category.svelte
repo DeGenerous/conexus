@@ -31,7 +31,7 @@
   // Search and Filter
   let filteredCategories: DynSectionCategory[];
   let isSorting: boolean = false;
-  let sortedStories: DynSectionCategory[] = [];
+  let sortedCategories: DynSectionCategory[] = [];
 
   let searchField: string;
 
@@ -61,14 +61,18 @@
   };
 
   const handleSorting = () => {
-    sortedStories = filteredCategories.sort(
-      (a: DynSectionCategory, b: DynSectionCategory) => {
+    console.log(filteredCategories) // check before sorting
+    sortedCategories = filteredCategories.map((category: DynSectionCategory) => {
+      category.topics = category.topics.sort((a: DynTopic, b: DynTopic) => {
+      // Sorting all topics in the category
         if (a.name < b.name) return -1;
         if (a.name > b.name) return 1;
         return 0;
-      },
-    );
-    filteredCategories = sortedStories;
+      });
+      return category;
+    })
+    console.log(sortedCategories) // check after sorting
+    filteredCategories = sortedCategories;
   };
 
   // Genres
@@ -98,6 +102,11 @@
         class="filter blur"
         on:click={() => {
           isSorting = !isSorting;
+          if (isSorting) handleSorting();
+          else {
+            searchField = '';
+            handleSearch();
+          }
         }}
         style="background-color: {isSorting
           ? 'rgba(45, 90, 216, 0.9)'

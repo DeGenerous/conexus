@@ -145,9 +145,11 @@
     </div>
   </section>
 
-  {#each filteredCategories as category (category.name)}
-    <StoryCollection {category} />
-  {/each}
+  {#key filteredCategories}
+    {#each filteredCategories as category (category.name)}
+      <StoryCollection {category} />
+    {/each}
+  {/key}
 {:else}
   <p class="loading">Loading...</p>
 {/if}

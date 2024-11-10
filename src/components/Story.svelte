@@ -131,7 +131,7 @@
       </Modal>
     {/if}
   {:else}
-    <p class="error-message">Something went wrong...</p>
+    <p class="error-message">...</p>
   {/if}
 {:else}
   <BackgroundMusic />

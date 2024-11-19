@@ -84,11 +84,8 @@
   };
 
   async function getGenre(this: HTMLElement) {
-    // const genre_name: string = this.innerHTML;
-    // filteredStories = await CoNexus.getGenreTopics(genre_name);
-    // if (filteredStories && filteredStories.length > 0)
-    //   categories = filteredStories;
-    // console.log(filteredStories); // check
+    const genre_name: string = this.innerHTML;
+    filteredCategories = await CoNexus.getGenreTopics(genre_name);
   }
 </script>
 

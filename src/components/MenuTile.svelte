@@ -8,6 +8,11 @@
     isPrimary = !isPrimary;
   }
 
+  // sectionImage is the name of the section but remove the spaces
+  const imageName: string = section.name.replace(/\s/g, '');
+
+  const sectionImage: string = `https://media.degenerousdao.com/conexus-sections/${imageName}.avif`
+
   const blankPicture: string = '/blank.avif'; // temp
 </script>
 
@@ -22,13 +27,13 @@
 >
   <img
     class="tile-picture {isPrimary ? 'visible' : ''}"
-    src={section.tile_image1 ?? blankPicture}
+    src={sectionImage ?? blankPicture}
     alt={section.name}
     draggable="false"
   />
   <img
     class="tile-picture {!isPrimary ? 'visible' : ''}"
-    src={section.tile_image2 ?? blankPicture}
+    src={sectionImage ?? blankPicture}
     alt={section.name}
     draggable="false"
   />

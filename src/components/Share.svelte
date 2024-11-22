@@ -14,18 +14,21 @@
 
     url = url || window.location.href;
 
-    const message = `Check out the current story I'm playing on Conexus!`;
+    const message = `Check out the current story I'm playing on Conexus! \n ${url}`;
 
     switch (option) {
       case 'copy':
         await navigator.clipboard.writeText(`${message}`);
         alert('Copied to clipboard!');
         break;
-      case 'discord':
-        window.open(`https://discord.com/channels/@me`, '_blank');
+        case 'discord':
+          const discordShareUrl = `https://discord.com/channels/@me`;
+          await navigator.clipboard.writeText(`${message}`);
+          alert('Copied to clipboard!');
+        window.open(discordShareUrl, '_blank');
         break;
       case 'twitter':
-        const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(url)}`;
+        const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
         window.open(shareUrl, '_blank');
         break;
     }

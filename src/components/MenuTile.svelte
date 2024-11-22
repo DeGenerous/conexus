@@ -11,7 +11,7 @@
   // sectionImage is the name of the section but remove the spaces
   const imageName: string = section.name.replace(/\s/g, '');
 
-  const sectionImage: string = `https://media.degenerousdao.com/conexus-sections/${imageName}.avif`
+  const sectionImage: string = `https://media.degenerousdao.com/conexus-sections/${imageName.toLocaleLowerCase()}.avif`
 
   const blankPicture: string = '/blank.avif'; // temp
 </script>

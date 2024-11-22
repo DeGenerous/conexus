@@ -12,7 +12,9 @@
     showOptions = false;
     onClick();
 
-    const message = `Check out the current story I'm playing on ${url}!`;
+    url = url || window.location.href;
+
+    const message = `Check out the current story I'm playing on Conexus!`;
 
     switch (option) {
       case 'copy':
@@ -23,7 +25,7 @@
         window.open(`https://discord.com/channels/@me`, '_blank');
         break;
       case 'twitter':
-        const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
+        const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(url)}`;
         window.open(shareUrl, '_blank');
         break;
     }

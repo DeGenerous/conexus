@@ -7,8 +7,18 @@ const { story } = Astro.params;
 if (!story) {
   Astro.redirect('/');
 }
+
+const storyImage = story?.replace(/%20/g, '');
+const storyName = story?.replace(/%20/g, ' ');
+
+const meta = {
+  title: `Welcome to Conexus - play ${storyName}`,
+  description: `Play the best ${storyName} has to offer`,
+  image: `/favicon.png`,
+  url: `https://conexus-v1-test.degenerousdao.com/story/${story}`,
+};
 ---
 
-<Layout {story}>
+<Layout {story} {...meta}>
   <Topic story_name={story} client:load />
 </Layout>

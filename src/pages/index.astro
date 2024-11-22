@@ -11,9 +11,16 @@ const footerText = [
   'V2 will launch soon, allowing you to create your own stories.',
 ];
 const arrow = false;
+
+const meta = {
+  title: "Welcome to Conexus",
+  description: "Explore the best stories in the multiverse",
+  image: "/favicon.png",
+  url: "https://conexus-v1-test.degenerousdao.com/",
+};
 ---
 
-<Layout {header} {subheading} {footerText} {arrow}>
+<Layout {header} {subheading} {footerText} {arrow} {...meta}>
   <Menu client:load />
 </Layout>
 

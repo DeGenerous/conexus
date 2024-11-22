@@ -4,7 +4,7 @@ import { ViewTransitions } from 'astro:transitions';
 import Profile from '../components/Profile.svelte';
 import ToastContainer from '../components/ToastContainer.svelte';
 
-const { header, subheading, arrow, story } = Astro.props;
+const { header, subheading, arrow, story, title, description, image, url, type = "website" } = Astro.props;
 ---
 
 <html lang="en">
@@ -17,6 +17,18 @@ const { header, subheading, arrow, story } = Astro.props;
       http-equiv="Content-Security-Policy"
       content="upgrade-insecure-requests"
     />
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <meta property="og:url" content={url} />
+    <meta property="og:type" content={type} />
+
+    <!-- Twitter Card Meta Tags (optional for better previews) -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
     <ViewTransitions />
   </head>
   <body>

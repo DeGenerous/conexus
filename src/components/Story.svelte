@@ -10,6 +10,7 @@
   import { loading, story } from '@stores/conexus';
 
   import Modal from './Modal.svelte';
+  import Share from './Share.svelte';
 
   export let story_name: string;
 
@@ -84,6 +85,7 @@
       <button class="blur" on:click={() => window.history.back()}>
         GO BACK
       </button>
+      <Share />
       <button class="blur" on:click={() => topic && CoNexus.start(topic.name)}>
         PLAY NOW
       </button>

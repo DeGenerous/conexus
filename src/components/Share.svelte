@@ -1,8 +1,6 @@
 <script>
-  import { onMount } from 'svelte';
-
-  export let url;
-  export let onClick;
+  export let url = '';
+  export let onClick = () => {};
 
   let showOptions = false;
 
@@ -32,100 +30,107 @@
   };
 </script>
 
-<div class="relative">
-  <button
-    class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
+<section >
+  <button 
+    class="share-button"
     on:click={handleShareClick}
   >
-    Share
+    Share <img src="/icons/share.png" alt="Share" />
   </button>
 
   {#if showOptions}
-    <div class="absolute mt-2 bg-white shadow-lg rounded flex flex-col">
+    <div class="options blur">
       <button
-        class="py-2 px-4 text-left hover:bg-gray-100 text-black transition"
-        on:click={() => handleOptionClick('copy')}
-      >
-        Copy
-      </button>
-      <button
-        class="py-2 px-4 text-left hover:bg-gray-100 text-black transition"
         on:click={() => handleOptionClick('discord')}
       >
-        Discord
+        <img src="/icons/discord.png" alt="Share" />
       </button>
       <button
-        class="py-2 px-4 text-left hover:bg-gray-100 text-black transition"
         on:click={() => handleOptionClick('twitter')}
       >
-        Twitter
+        <img src="/icons/twitter.png" alt="Share" />
       </button>
     </div>
+    <button
+      class="copy-button"
+      on:click={() => handleOptionClick('copy')}
+    >
+      <img src="/icons/copyicon.png" alt="Share" />
+    </button>
   {/if}
-</div>
+</section>
 
 <style>
-  .relative {
+  section {
     position: relative;
-  }
-
-  .absolute {
-    position: absolute;
-  }
-
-  .bg-blue-500 {
-    background-color: #4299e1;
-  }
-
-  .hover\:bg-blue-600:hover {
-    background-color: #3182ce;
-  }
-
-  .hover\:bg-gray-100:hover {
-    background-color: #f7fafc;
-  }
-
-  .text-white {
-    color: white;
-  }
-
-  .rounded {
-    border-radius: 0.375rem;
-  }
-
-  .transition {
-    transition: all 0.2s ease-in-out;
-  }
-
-  .py-2 {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-  }
-
-  .px-4 {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  .text-black {
-    color: black;
-  }
-
-  .shadow-lg {
-    box-shadow:
-      0 10px 15px -3px rgba(0, 0, 0, 0.1),
-      0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  }
-
-  .flex {
     display: flex;
   }
 
-  .flex-col {
-    flex-direction: column;
+  button {
+    background-color: rgba(0, 0, 0, 0);
+    opacity: 0.75;
   }
 
-  .mt-2 {
-    margin-top: 0.5rem;
+  button:hover,
+  button:active {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
+  }
+
+  img {
+    width: 2.5vw;
+  }
+
+  .share-button {
+    display: flex;
+    align-items: center;
+    gap: 1vw;
+    font-size: 2vw;
+    color: rgba(51, 226, 230, 0.9);
+  }
+
+  .share-button img {
+    width: 3vw;
+  }
+
+  .options {
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 0.5vw;
+    background-color: rgba(51, 226, 230, 0.1);
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
+    border-radius: 1vw;
+    padding-inline: 1vw;
+    margin-inline: 1vw;
+  }
+
+  .copy-button img {
+    width: 2vw;
+  }
+
+  @media only screen and (max-width: 600px) {
+    img {
+      width: 2em;
+    }
+
+    .share-button {
+      font-size: 1.5em;
+      gap: 0.5em;
+    }
+
+    .share-button img {
+      width: 1.5em;
+    }
+
+    .copy-button img {
+      width: 1.5em;
+    }
+
+    .options {
+      gap: 0.5em;
+      padding: 0.25em 0.5em;
+      margin-inline: 0.5em;
+      border-radius: 0.5em;
+    }
   }
 </style>

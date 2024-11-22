@@ -32,7 +32,7 @@ switch (section) {
   }
 }
 
-const sectionImage = section?.replace(/%20/g, '');
+const sectionImage = section?.split(' ').join('');
 const sectionName = section?.replace(/%20/g, ' ');
 
 const meta = {

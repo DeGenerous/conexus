@@ -32,17 +32,13 @@ switch (section) {
   }
 }
 
-// section image comes like this Community%20Picks sometimes it might be community%20picks I want it as CommunityPicks
-// split on %20, capitalize the first letter of each word and join them
-const sectionImage = section?.split('%20').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('');
-
-// const sectionImage = section?.replace(/%20/g, '');
+const sectionImage = section?.replace(/%20/g, '');
 const sectionName = section?.replace(/%20/g, ' ');
 
 const meta = {
   title: `Welcome to Conexus - ${sectionName}`,
   description: `Explore the best ${sectionName} has to offer`,
-  image: `https://media.degenerousdao.com/conexus-sections/${sectionImage}.avif`,
+  image: `https://media.degenerousdao.com/conexus-sections/${sectionImage?.toLocaleLowerCase()}.avif`,
   imageType: 'image/avif',
   url: `https://conexus-v1-test.degenerousdao.com/${section}`,
 };

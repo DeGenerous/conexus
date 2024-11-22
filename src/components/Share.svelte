@@ -30,31 +30,21 @@
   };
 </script>
 
-<section >
-  <button 
-    class="share-button"
-    on:click={handleShareClick}
-  >
+<section>
+  <button class="share-button" on:click={handleShareClick}>
     Share <img src="/icons/share.png" alt="Share" />
   </button>
 
   {#if showOptions}
     <div class="options blur">
-      <button
-        on:click={() => handleOptionClick('discord')}
-      >
+      <button on:click={() => handleOptionClick('discord')}>
         <img src="/icons/discord.png" alt="Share" />
       </button>
-      <button
-        on:click={() => handleOptionClick('twitter')}
-      >
+      <button on:click={() => handleOptionClick('twitter')}>
         <img src="/icons/twitter.png" alt="Share" />
       </button>
     </div>
-    <button
-      class="copy-button"
-      on:click={() => handleOptionClick('copy')}
-    >
+    <button class="copy-button" on:click={() => handleOptionClick('copy')}>
       <img src="/icons/copyicon.png" alt="Share" />
     </button>
   {/if}

@@ -61,17 +61,19 @@
   };
 
   const handleSorting = () => {
-    console.log(filteredCategories) // check before sorting
-    sortedCategories = filteredCategories.map((category: DynSectionCategory) => {
-      category.topics = category.topics.sort((a: DynTopic, b: DynTopic) => {
-      // Sorting all topics in the category
-        if (a.name < b.name) return -1;
-        if (a.name > b.name) return 1;
-        return 0;
-      });
-      return category;
-    })
-    console.log(sortedCategories) // check after sorting
+    console.log(filteredCategories); // check before sorting
+    sortedCategories = filteredCategories.map(
+      (category: DynSectionCategory) => {
+        category.topics = category.topics.sort((a: DynTopic, b: DynTopic) => {
+          // Sorting all topics in the category
+          if (a.name < b.name) return -1;
+          if (a.name > b.name) return 1;
+          return 0;
+        });
+        return category;
+      },
+    );
+    console.log(sortedCategories); // check after sorting
     filteredCategories = sortedCategories;
   };
 
@@ -129,7 +131,9 @@
           on:blur={hideGenresFilter}
         >
           {#each genres as genre (genre.id)}
-            <li class="genre" value={genre.name} on:click={getGenre}>{genre.name}</li>
+            <li class="genre" value={genre.name} on:click={getGenre}>
+              {genre.name}
+            </li>
           {/each}
         </ul>
       </div>

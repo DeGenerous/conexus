@@ -324,7 +324,7 @@ export class CoNexus {
   static async fetchRandomMusicUrl(category: string) {
     const formattedFileName = CoNexus.#formatFileName(category);
 
-    const folderURL = `/conexus-categories/music/${formattedFileName}`;
+    const folderURL = `https://media.degenerousdao.com/conexus-categories/music/${formattedFileName}`;
 
     const response = await fetch(folderURL);
 
@@ -380,23 +380,31 @@ export class CoNexus {
     });
   }
 
-  static async #background_image(category: string) {
+  static async fetch_background_image(category: string): Promise<string | null> {
     let formattedFileName = CoNexus.#formatFileName(category);
-    let folderUrl = `/conexus-categories/images/${formattedFileName}`;
+    let folderUrl = `https://media.degenerousdao.com/conexus-categories/images/${formattedFileName}/backgrounds`;
 
-    // Fetch the list of files in the folder (assuming you have a server-side endpoint that returns this)
     let response = await fetch(folderUrl);
     let files = await response.json();
 
     if (Array.isArray(files) && files.length > 0) {
-      // Randomly pick a file from the list
       let randomFile = files[Math.floor(Math.random() * files.length)];
       let url = `${folderUrl}/${randomFile.name}`;
 
       let valid = await CoNexus.#isValidImageUrl(url);
       if (valid) {
-        background_image.set(url);
+        return url;
       }
+    }
+
+    return null;
+  }
+
+  static async #background_image(category: string) {
+    let url = await CoNexus.fetch_background_image(category);
+
+    if (url) {
+      background_image.set(url);
     }
   }
 

@@ -1,4 +1,8 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
+  import { CoNexus } from '@lib/conexus';
+
   export let topicName: string;
   const storyName: string =
     topicName.charAt(0).toUpperCase() + topicName.slice(1);
@@ -9,6 +13,11 @@
   function tileHover() {
     isPrimary = !isPrimary;
   }
+
+  let storyImage: string | null = null;
+  onMount(async () => {
+    storyImage = await CoNexus.fetch_background_image(topicName!);
+  });
 </script>
 
 <a
@@ -25,7 +34,7 @@
         ? 'visible'
         : ''
       : 'visible'}"
-    src={primaryThumbnail}
+    src={storyImage ?? primaryThumbnail}
     alt={storyName}
     draggable="false"
     height="1024"
@@ -34,7 +43,7 @@
   {#if secondaryThumbnail}
     <img
       class="tile-picture {!isPrimary ? 'visible' : ''}"
-      src={secondaryThumbnail}
+      src={storyImage ?? secondaryThumbnail}
       alt={storyName}
       draggable="false"
       height="1024"

@@ -50,6 +50,11 @@
     continuables = await CoNexus.storyContinuable(story_name!);
   }
 
+  let storyImage: string | null = null;
+  onMount(async () => {
+    storyImage = await CoNexus.fetch_background_image(story_name!);
+  });
+
   const blankPicture: string = '/blank.avif'; // temp
 </script>
 
@@ -62,8 +67,8 @@
     <div class="story-info blur">
       <img
         class="picture"
-        src={topic.description_image != ''
-          ? topic.description_image
+        src={storyImage != ''
+          ? storyImage
           : blankPicture}
         alt={topic?.name}
         draggable="false"

@@ -16,7 +16,7 @@
 
   let storyImage: string | null = null;
   onMount(async () => {
-    storyImage = await CoNexus.fetch_background_image(topicName!);
+    storyImage = await CoNexus.fetch_story_image(topicName!, 'tile');
   });
 </script>
 

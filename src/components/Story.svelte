@@ -52,7 +52,7 @@
 
   let storyImage: string | null = null;
   onMount(async () => {
-    storyImage = await CoNexus.fetch_background_image(story_name!);
+    storyImage = await CoNexus.fetch_story_image(story_name!, 'description');
   });
 
   const blankPicture: string = '/blank.avif'; // temp

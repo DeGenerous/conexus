@@ -380,6 +380,19 @@ export class CoNexus {
     });
   }
 
+  static async fetch_story_image(category: string, type: 'tile'| 'description'): Promise<string | null> {
+
+    let formattedFileName = CoNexus.#formatFileName(category);
+    let folderUrl = `https://media.degenerousdao.com/conexus-categories/images/${formattedFileName}/description/${type}.avif`;
+
+    let valid = await CoNexus.#isValidImageUrl(folderUrl);
+    if (valid) {
+      return folderUrl;
+    }
+
+    return null;
+  }
+
   static async fetch_background_image(category: string): Promise<string | null> {
     let formattedFileName = CoNexus.#formatFileName(category);
     let folderUrl = `https://media.degenerousdao.com/conexus-categories/images/${formattedFileName}/backgrounds`;

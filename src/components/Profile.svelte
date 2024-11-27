@@ -43,7 +43,7 @@
 
   const alternativeSignIn = {
     google: () => {
-      console.log('Sign in with Google');
+      Account.google_login();
     },
     coinbaseWallet: () => {
       Account.log_in('coinbase');

@@ -118,6 +118,22 @@ class Account {
     web3LoggedIn.set(false);
   }
 
+  static async google_login(): Promise<void> {
+    try {
+      const response = await fetch(`${url}/google/login`, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        new_error({ code: response.status, error: await response.text() });
+      }
+
+      web3LoggedIn.set(true);
+    } catch (error: any) {
+      new_error({ code: 500, error: error });
+    }
+  }
+
   static async signin(data: SignIn): Promise<void> {
     try {
       const response = await fetch(`${url}/signin`, {

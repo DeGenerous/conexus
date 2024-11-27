@@ -46,10 +46,10 @@
       console.log('Sign in with Google');
     },
     coinbaseWallet: () => {
-      console.log('Sign in with Coinbase Smart Wallet');
+      Account.log_in('coinbase');
     },
     browserWallet: () => {
-      console.log('Sign in with browser wallet');
+      Account.log_in('metamask');
     },
   };
   const alternativeSignUp = {

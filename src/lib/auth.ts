@@ -55,10 +55,10 @@ class Account {
     return true;
   }
 
-  static async log_in(): Promise<Account> {
-    const provider = await Web3Provider.init();
+  static async log_in(walletProvider: 'metamask' | 'coinbase' = 'metamask'): Promise<Account> {
+    const provider = await Web3Provider.init(walletProvider);
 
-    const nonce = await Account.get_nonce();
+    const nonce = await Account.get_nonce(walletProvider);
 
     const signature = await provider.sign(message(nonce));
 
@@ -93,8 +93,8 @@ class Account {
     return new Account('username', false);
   }
 
-  private static async get_nonce(): Promise<string> {
-    const provider = await Web3Provider.init();
+  private static async get_nonce(walletProvider: 'metamask' | 'coinbase' = 'metamask'): Promise<string> {
+    const provider = await Web3Provider.init(walletProvider);
 
     const response = await fetch(`${url}/nonce`, {
       method: 'POST',

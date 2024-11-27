@@ -1,5 +1,6 @@
 import { BrowserProvider } from 'ethers';
 import detectProvider from '@metamask/detect-provider';
+import { createCoinbaseWalletSDK } from '@coinbase/wallet-sdk';
 
 export class Web3Provider {
   #provider: BrowserProvider;
@@ -8,14 +9,49 @@ export class Web3Provider {
     this.#provider = provider;
   }
 
-  static async init(): Promise<Web3Provider> {
+  static async init(
+    preferredWallet: 'metamask' | 'coinbase',
+  ): Promise<Web3Provider> {
+    let ethereumProvider: any;
+
+    // Detect MetaMask
     const metamaskProvider = (await detectProvider()) as any;
 
-    if (metamaskProvider === null) {
-      throw new Error('Metamask not installed');
+    // Initialize Coinbase Wallet SDK
+    const coinbaseWallet = createCoinbaseWalletSDK({
+      appName: 'Degenerous DAO',
+      appLogoUrl: '/logo.png',
+      appChainIds: [8453],
+      preference: {
+        options: 'smartWalletOnly',
+        attribution: {
+          auto: true,
+        },
+      },
+    });
+
+    const coinbaseProvider = coinbaseWallet.getProvider();
+
+    if (preferredWallet === 'metamask') {
+
+      if (metamaskProvider) {
+        ethereumProvider = metamaskProvider;
+      } else if (coinbaseProvider) {
+        ethereumProvider = coinbaseProvider;
+      } else {
+        throw new Error('No wallet detected.');
+      }
+
+    } else if (preferredWallet === 'coinbase') {
+      ethereumProvider = coinbaseWallet.getProvider();
+    } else {
+      throw new Error('Unsupported wallet selected.');
     }
 
-    const provider = new BrowserProvider(metamaskProvider, 'any');
+    // Request user accounts to ensure permission
+    await ethereumProvider.request({ method: 'eth_requestAccounts' });
+
+    const provider = new BrowserProvider(ethereumProvider, 'any');
 
     return new Web3Provider(provider);
   }

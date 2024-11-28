@@ -10,6 +10,7 @@ import {
 import { toastStore } from '@stores/toast';
 
 const url = import.meta.env.PUBLIC_BACKEND;
+const domain = import.meta.env.PUBLIC_DOMAIN;
 
 const message = (nonce: string) => `
 Sign this message to prove you're an Inception Ark NFT holder.
@@ -124,7 +125,7 @@ class Account {
 
   static async google_login(): Promise<void> {
     try {
-      const response = await fetch(`${url}/google/login`, {
+      const response = await fetch(`${url}/google/login?redirect_uri=${domain}`, {
         method: 'GET',
       });
 

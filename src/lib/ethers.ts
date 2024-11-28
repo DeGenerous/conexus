@@ -20,8 +20,8 @@ export class Web3Provider {
     // Initialize Coinbase Wallet SDK
     const coinbaseWallet = createCoinbaseWalletSDK({
       appName: 'Degenerous DAO',
-      appLogoUrl: '/logo.png',
-      appChainIds: [8453],
+      appLogoUrl: 'https://media.degenerousdao.com/assets/logo.png',
+      // appChainIds: [8453],
       preference: {
         options: 'smartWalletOnly',
         attribution: {

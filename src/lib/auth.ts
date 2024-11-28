@@ -55,7 +55,9 @@ class Account {
     return true;
   }
 
-  static async log_in(walletProvider: 'metamask' | 'coinbase' = 'metamask'): Promise<Account> {
+  static async log_in(
+    walletProvider: 'metamask' | 'coinbase' = 'metamask',
+  ): Promise<Account> {
     const provider = await Web3Provider.init(walletProvider);
 
     const nonce = await Account.get_nonce(walletProvider);
@@ -93,7 +95,9 @@ class Account {
     return new Account('username', false);
   }
 
-  private static async get_nonce(walletProvider: 'metamask' | 'coinbase' = 'metamask'): Promise<string> {
+  private static async get_nonce(
+    walletProvider: 'metamask' | 'coinbase' = 'metamask',
+  ): Promise<string> {
     const provider = await Web3Provider.init(walletProvider);
 
     const response = await fetch(`${url}/nonce`, {
@@ -124,11 +128,15 @@ class Account {
         method: 'GET',
       });
 
+      if (response.status === 307) {
+        const resp = await response.json();
+
+        window.location.href = resp.url;
+      }
+
       if (!response.ok) {
         new_error({ code: response.status, error: await response.text() });
       }
-
-      web3LoggedIn.set(true);
     } catch (error: any) {
       new_error({ code: 500, error: error });
     }

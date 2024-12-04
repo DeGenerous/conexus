@@ -2,12 +2,15 @@
   import Intro from './Intro.svelte';
   // import { authenticated, web3LoggedIn } from "@stores/account";
 
-  let isLogged: boolean = true;
-
-  let web3LoggedIn: boolean = true;
+  let isLogged: boolean = false;
+  let isWeb3LoggedIn: boolean = false;
 
   // authenticated.subscribe((value) => {
   //   isLogged = value.loggedIn;
+  // });
+
+  // web3LoggedIn.subscribe((value) => {
+  //   isWeb3LoggedIn = value;
   // });
 </script>
 
@@ -15,11 +18,9 @@
 
 {#if isLogged}
   <!-- We3b3 -->
-
-  {#if web3LoggedIn}
+  {#if isWeb3LoggedIn}
     <Intro />
   {/if}
 {:else}
-  <!-- Intro -->
-  <Intro />
+  <!-- Intro Logged out -->
 {/if}

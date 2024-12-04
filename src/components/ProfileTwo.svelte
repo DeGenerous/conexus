@@ -88,10 +88,6 @@
     walletAddress = value;
   });
 
-  function connectWallet() {
-    Account.log_in();
-  }
-
   let mandatoryCheckbox: HTMLInputElement;
   let createAccountButton: HTMLButtonElement;
   function validate() {
@@ -148,7 +144,7 @@
   let email = '';
 
   // Debounce timeout reference
-  let debounceTimeout;
+  let debounceTimeout: NodeJS.Timeout;
 
   // Function to validate the referral code
   async function validateReferralCode() {
@@ -390,14 +386,6 @@
         </div>
       </div>
 
-      <!-- <hr />
-  
-        <div class="google-connect">
-          <p class="user-prop">Web2 account:</p>
-  
-          <button class="google-button"> Connect Google </button>
-        </div> -->
-
       <hr />
 
       <p class="refferal-codes-legend">Your referral codes</p>
@@ -432,7 +420,7 @@
           Get referral codes
         </button>
       {/if}
-    {:else if !isLogged}
+    {:else}
       <section class="signin">
         <p class="sign-title">{signUp ? 'Sign up' : 'Sign in'}</p>
 
@@ -470,7 +458,7 @@
                   Account.signin({
                     email: loginMail.value,
                     password: loginPassword.value,
-                  })}>Sign in</button
+                  }).then(() => location.reload())}>Sign in</button
               >
               <a class="forgot-password" href="/">Forgot password?</a>
             </form>
@@ -498,44 +486,11 @@
                 <img class="sign-icon" src="/icons/email.png" alt="Google" />
                 <p class="sign-lable">with email</p>
               </button>
-              <!-- <button
-                  class="sign-button"
-                  on:click={alternativeSignIn.coinbaseWallet}
-                >
-                  <img class="sign-icon" src="/icons/coinbase.png" alt="Google" />
-                  <p class="sign-lable">with Coinbase Smart Wallet</p></button
-                >
-                <button
-                  class="sign-button"
-                  on:click={alternativeSignIn.browserWallet}
-                >
-                  <img
-                    class="sign-icon"
-                    src="/icons/walletconnect.png"
-                    alt="Google"
-                  />
-                  <p class="sign-lable">with browser wallet</p></button
-                > -->
             </div>
           {/if}
-
-          <hr />
-
-          <!-- <p class="signup-label">Don't have an existing CoNexus account?</p>
-  
-            <div class="buttons-container">
-              <button
-                class="sign-button"
-                on:click={() => {
-                  signUp = true;
-                }}
-              >
-                <p class="sign-lable">Sign Up</p>
-              </button>
-            </div> -->
         {:else}
           <!-- SIGNUP WINDOW -->
-          <!-- {#if signUpWithEmail} -->
+
           <form class="signup-form">
             <label class="input-label" for="new-user-mail">Mail</label>
             <input
@@ -660,152 +615,6 @@
               disabled={isFormValid ? false : true}>Create account</button
             >
           </form>
-          <!-- {/if} -->
-
-          <!-- {#if signUpWithEmail}
-              <form class="signup-form">
-                <label class="input-label" for="new-user-mail">Mail</label>
-                <input
-                  class="user-input"
-                  type="email"
-                  id="new-user-mail"
-                  placeholder="Your email"
-                  required
-                />
-                <label class="input-label" for="new-user-password">Password</label
-                >
-                <input
-                  class="user-input"
-                  type="password"
-                  id="new-user-password"
-                  placeholder="Your password"
-                  minlength="8"
-                  required
-                />
-                <input
-                  class="user-input"
-                  type="password"
-                  id="confirm-new-user-password"
-                  placeholder="Confirm password"
-                  required
-                />
-                <label class="input-label" for="user-first-name">First name</label
-                >
-                <input
-                  class="user-input"
-                  type="text"
-                  id="user-first-name"
-                  placeholder="Your First name"
-                />
-                <label class="input-label" for="user-last-name">Last name</label>
-                <input
-                  class="user-input"
-                  type="text"
-                  id="user-last-name"
-                  placeholder="Your Last name"
-                />
-                <label class="input-label" for="user-ref-code">Referral code</label>
-                <input
-                  class="user-input"
-                  type="text"
-                  id="user-ref-code"
-                  placeholder="A11A7528D9C82915"
-                  minlength="16"
-                  maxlength="16"
-                  required
-                />
-                <div class="agreements-container">
-                  <div class="agreement">
-                    <input
-                      bind:this={mandatoryCheckbox}
-                      type="checkbox"
-                      id="terms"
-                      on:click={validate}
-                    />
-                    <label for="terms" class="terms">
-                      * I have read and agree to the <a
-                        href="https://docs.google.com/document/d/1fEemq6HVM_h8ZTbc_Fl_k3RvlPdjYd70TI1iloT5gXA/edit?usp=sharing"
-                        target="_blank"
-                      >
-                        Terms of Service</a
-                      >.
-                    </label>
-                  </div>
-                  <div class="agreement">
-                    <input type="checkbox" id="newsletter" />
-                    <label for="newsletter" class="newsletter">
-                      I'd like to receive news 1-4 times a month.
-                    </label>
-                  </div>
-                </div>
-                <p class="validation-check">Fill in all required fields!</p>
-                <button
-                  bind:this={createAccountButton}
-                  class="submit-button"
-                  on:click={() => {
-                    isLogged = true;
-                  }}
-                  disabled>Create account</button
-                >
-              </form>
-            {:else if signUpRefCodeEntered}
-              <div class="buttons-container">
-                <button class="sign-button" on:click={alternativeSignUp.google}>
-                  <img class="sign-icon" src="/icons/google.png" alt="Google" />
-                  <p class="sign-lable">with Google</p>
-                </button>
-                <button
-                  class="sign-button"
-                  on:click={() => {
-                    signUpWithEmail = true;
-                  }}
-                >
-                  <img class="sign-icon" src="/icons/email.png" alt="Google" />
-                  <p class="sign-lable">with email</p>
-                </button>
-                <button
-                  class="sign-button"
-                  on:click={alternativeSignUp.coinbaseWallet}
-                >
-                  <img class="sign-icon" src="/icons/coinbase.png" alt="Google" />
-                  <p class="sign-lable">with Coinbase Smart Wallet</p></button
-                >
-                <button
-                  class="sign-button"
-                  on:click={alternativeSignUp.browserWallet}
-                >
-                  <img
-                    class="sign-icon"
-                    src="/icons/walletconnect.png"
-                    alt="Google"
-                  />
-                  <p class="sign-lable">with browser wallet</p></button
-                >
-              </div>
-            {:else}
-              <form class="ref-code-form">
-                <p class="signup-label">Enter your referral code:</p>
-                <input
-                  class="user-input"
-                  type="text"
-                  id="refferal-code"
-                  placeholder="A11A7528D9C82915 "
-                  minlength="16"
-                  maxlength="16"
-                  required
-                />
-                <p class="signup-label">
-                  Don't have one yet? Find yours <a
-                    href="https://discord.gg/349FgMSUK8">here</a
-                  >!
-                </p>
-                <button
-                  class="submit-button"
-                  type="submit"
-                  on:click={() => (signUpRefCodeEntered = true)}>Done</button
-                >
-        </form>
-        {/if} -->
         {/if}
       </section>
     {/if}
@@ -974,8 +783,7 @@
   /* SIGNIN with EMAIL */
 
   .login-form,
-  .signup-form,
-  .ref-code-form {
+  .signup-form {
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
@@ -1017,8 +825,7 @@
   }
 
   .user-profile-info,
-  .wallet-connect,
-  .google-connect {
+  .wallet-connect {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-around;
@@ -1062,17 +869,6 @@
   }
 
   /* SIGNIN */
-
-  .signup-label {
-    text-align: center;
-    color: #bebebe;
-    font-size: 2vw;
-    margin-block: 1vw 3vw;
-  }
-
-  .signup-label a {
-    color: rgba(255, 255, 255, 0.9);
-  }
 
   #refferal-code {
     text-align: center;
@@ -1297,13 +1093,6 @@
       text-align: center;
       color: #dedede;
       font-size: 1.5em;
-    }
-
-    .signup-label {
-      font-size: 1em;
-      line-height: 1.5em;
-      padding-inline: 5vw;
-      margin-bottom: 1em;
     }
 
     .validation-check {

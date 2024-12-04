@@ -21,10 +21,10 @@
         await navigator.clipboard.writeText(`${message}`);
         alert('Copied to clipboard!');
         break;
-        case 'discord':
-          const discordShareUrl = `https://discord.com/channels/@me`;
-          await navigator.clipboard.writeText(`${message}`);
-          alert('Copied to clipboard!');
+      case 'discord':
+        const discordShareUrl = `https://discord.com/channels/@me`;
+        await navigator.clipboard.writeText(`${message}`);
+        alert('Copied to clipboard!');
         window.open(discordShareUrl, '_blank');
         break;
       case 'twitter':

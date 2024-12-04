@@ -13,7 +13,7 @@ const url = import.meta.env.PUBLIC_BACKEND;
 const domain = import.meta.env.PUBLIC_DOMAIN;
 
 const message = (nonce: string) => `
-Sign this message to prove you're an Inception Ark NFT holder.
+Sign this message to prove you're an Potential NFT holder.
 
 It will not cause a blockchain transaction, nor any gas fees.
 
@@ -125,9 +125,12 @@ class Account {
 
   static async google_login(): Promise<void> {
     try {
-      const response = await fetch(`${url}/google/login?redirect_uri=${domain}`, {
-        method: 'GET',
-      });
+      const response = await fetch(
+        `${url}/google/login?redirect_uri=${domain}`,
+        {
+          method: 'GET',
+        },
+      );
 
       if (response.status === 307) {
         const resp = await response.json();
@@ -164,7 +167,11 @@ class Account {
 
   static async me() {
     try {
-      const response = await fetch(`${url}/me`);
+      const response = await fetch(`${url}/me`, {
+        method: 'GET',
+        credentials: 'include', // Ensure cookies are sent with the request
+        headers: { 'Content-Type': 'application/json' },
+      });
 
       if (!response.ok) {
         new_error({ code: response.status, error: await response.text() });
@@ -241,6 +248,46 @@ class Account {
       referralCodes.set(referralC.codes);
     } catch (error: any) {
       new_error({ code: 500, error: error });
+    }
+  }
+
+  static async userReferralCode(code: string): Promise<void> {
+    try {
+      const response = await fetch(`${url}/referral/use?code=${code}`, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        new_error({ code: response.status, error: await response.text() });
+      }
+
+      const referralC = await response.json();
+
+      console.log(referralC.message);
+    } catch (error: any) {
+      new_error({ code: 500, error: error });
+    }
+  }
+
+  static async validateReferralCode(
+    code: string,
+  ): Promise<ReferralCode | null> {
+    try {
+      const response = await fetch(`${url}/referral/validate?code=${code}`, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        // Log or handle the error as appropriate
+        new_error({ code: response.status, error: await response.text() });
+        return null;
+      }
+
+      const referralC = await response.json();
+      return referralC.referral as ReferralCode;
+    } catch (error: any) {
+      new_error({ code: 500, error }); // Handle unexpected errors
+      return null;
     }
   }
 }

@@ -380,8 +380,10 @@ export class CoNexus {
     });
   }
 
-  static async fetch_story_image(category: string, type: 'tile'| 'description'): Promise<string | null> {
-
+  static async fetch_story_image(
+    category: string,
+    type: 'tile' | 'description',
+  ): Promise<string | null> {
     let formattedFileName = CoNexus.#formatFileName(category);
     let folderUrl = `https://media.degenerousdao.com/conexus-categories/images/${formattedFileName}/description/${type}.avif`;
 
@@ -393,7 +395,9 @@ export class CoNexus {
     return null;
   }
 
-  static async fetch_background_image(category: string): Promise<string | null> {
+  static async fetch_background_image(
+    category: string,
+  ): Promise<string | null> {
     let formattedFileName = CoNexus.#formatFileName(category);
     let folderUrl = `https://media.degenerousdao.com/conexus-categories/images/${formattedFileName}/backgrounds`;
 

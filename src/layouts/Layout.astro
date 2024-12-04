@@ -1,10 +1,22 @@
 ---
 import '../styles/global.css';
 import { ViewTransitions } from 'astro:transitions';
-import Profile from '../components/Profile.svelte';
+
+import Profile from '../components/ProfileTwo.svelte';
 import ToastContainer from '../components/ToastContainer.svelte';
 
-const { header, subheading, arrow, story, title, description, image, imageType, url, type = "website" } = Astro.props;
+const {
+  header,
+  subheading,
+  arrow,
+  story,
+  title,
+  description,
+  image,
+  imageType,
+  url,
+  type = 'website',
+} = Astro.props;
 ---
 
 <html lang="en">
@@ -21,7 +33,7 @@ const { header, subheading, arrow, story, title, description, image, imageType, 
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={image} />
-    <meta property="og:image:type" content={imageType ?? "image/png"} />
+    <meta property="og:image:type" content={imageType ?? 'image/png'} />
     <meta property="og:url" content={url} />
     <meta property="og:type" content={type} />
 

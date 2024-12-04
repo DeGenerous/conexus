@@ -33,7 +33,6 @@ export class Web3Provider {
     const coinbaseProvider = coinbaseWallet.getProvider();
 
     if (preferredWallet === 'metamask') {
-
       if (metamaskProvider) {
         ethereumProvider = metamaskProvider;
       } else if (coinbaseProvider) {
@@ -41,7 +40,6 @@ export class Web3Provider {
       } else {
         throw new Error('No wallet detected.');
       }
-
     } else if (preferredWallet === 'coinbase') {
       ethereumProvider = coinbaseWallet.getProvider();
     } else {

@@ -167,11 +167,7 @@ class Account {
 
   static async me() {
     try {
-      const response = await fetch(`${url}/me`, {
-        method: 'GET',
-        credentials: 'include', // Ensure cookies are sent with the request
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const response = await fetch(`${url}/me`);
 
       if (!response.ok) {
         new_error({ code: response.status, error: await response.text() });
@@ -189,23 +185,28 @@ class Account {
     }
   }
 
-  static async signup(data: SignUp): Promise<void> {
-    const response = await fetch(`${url}/signup`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
+  static async middlewareAuthme(): Promise<User | null> {
+    try {
+      const response = await fetch(`${url}/me`, {
+        method: 'GET',
+      });
 
-    if (!response.ok) {
-      new_error({ code: response.status, error: await response.text() });
+      if (!response.ok) {
+        new_error({ code: response.status, error: await response.text() });
+        return null;
+      }
+
+      const resp = await response.json();
+
+      return resp.user as User;
+    } catch (error: any) {
+      new_error({ code: 500, error: error });
+      return null;
     }
-
-    const resp = await response.json();
-
-    authenticated.set({ user: resp.user, loggedIn: true });
   }
 
   static async signupReferral(data: ReferralSignUp): Promise<void> {
-    const response = await fetch(`${url}/signup-referral`, {
+    const response = await fetch(`${url}/referral/signup`, {
       method: 'POST',
       body: JSON.stringify(data),
     });
@@ -222,7 +223,7 @@ class Account {
   static async signout(): Promise<void> {
     await Account.log_out();
 
-    const response = await fetch(`${url}/logout`, {
+    const response = await fetch(`${url}/signout`, {
       method: 'POST',
     });
 
@@ -231,6 +232,7 @@ class Account {
     }
 
     authenticated.set({ user: null, loggedIn: false });
+    web3LoggedIn.set(false);
   }
 
   static async referraLCodes(): Promise<void> {

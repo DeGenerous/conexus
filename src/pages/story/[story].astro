@@ -14,8 +14,9 @@ const storyName = story?.replace(/%20/g, ' ');
 const meta = {
   title: `Welcome to Conexus - play ${storyName}`,
   description: `Play the best ${storyName} has to offer`,
-  image: `/favicon.png`,
-  // image: `https://media.degenerousdao.com/conexus-categories/images/${storyName}/description/description.avif`,
+  image:
+    `https://media.degenerousdao.com/conexus-categories/images/${storyName}/description/description.avif` ||
+    '/favicon.png',
   url: `https://conexus-v1-test.degenerousdao.com/story/${story}`,
 };
 ---

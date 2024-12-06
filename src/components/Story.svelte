@@ -8,28 +8,43 @@
   import { CoNexus } from '@lib/conexus';
   import type { DynTopic, ContinuableStory } from '@lib/conexus';
   import { loading, story } from '@stores/conexus';
+  import { checkUserState } from '@utils/route-guard';
 
   import Modal from './Modal.svelte';
   import Share from './Share.svelte';
 
   export let story_name: string;
 
+  onMount(async () => {
+    await checkUserState('/story');
+  });
+
   let topic: DynTopic | null = null;
   let continuables: ContinuableStory[] = [];
 
-  onMount(async () => {
+  // Fetch the topic
+  async function fetchTopic() {
     try {
       topic = await CoNexus.getTopic(story_name!);
     } catch (error) {
+      console.error('Failed to fetch topic:', error);
       topic = null;
     }
+  }
 
+  // Fetch continuable stories
+  async function fetchContinuables() {
     try {
       continuables = await CoNexus.storyContinuable(story_name!);
     } catch (error) {
       console.error('Failed to fetch continuables:', error);
       continuables = [];
     }
+  }
+
+  onMount(async () => {
+    await fetchTopic();
+    await fetchContinuables();
   });
 
   let showDeleteModal = writable<boolean>(false);

@@ -52,17 +52,6 @@
       Account.log_in('metamask');
     },
   };
-  const alternativeSignUp = {
-    google: () => {
-      console.log('Sign up with Google');
-    },
-    coinbaseWallet: () => {
-      console.log('Sign up with Coinbase Smart Wallet');
-    },
-    browserWallet: () => {
-      console.log('Sign up with browser wallet');
-    },
-  };
 
   authenticated.subscribe((value) => {
     user = value.user;
@@ -182,6 +171,20 @@
     password &&
     confirmPassword &&
     referralCodeValid; // Update button state
+
+  function referralSignup() {
+    Account.signupReferral({
+      user: {
+        first_name,
+        last_name,
+        email,
+        password,
+        referred: referralCodeValid,
+        role: Roles.USER,
+      },
+      referral_code: referralCode,
+    });
+  }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
@@ -472,6 +475,7 @@
               <p class="sign-lable">Sign up</p>
             </button>
           {:else}
+            <!-- Sign in -->
             <div class="buttons-container">
               <button class="sign-button" on:click={alternativeSignIn.google}>
                 <img class="sign-icon" src="/icons/google.png" alt="Google" />
@@ -609,9 +613,7 @@
             <button
               bind:this={createAccountButton}
               class="submit-button"
-              on:click={() => {
-                isLogged = true;
-              }}
+              on:click={referralSignup}
               disabled={isFormValid ? false : true}>Create account</button
             >
           </form>

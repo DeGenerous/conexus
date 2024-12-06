@@ -6,10 +6,15 @@
     type DynSectionCategory,
     type DynTopic,
   } from '@lib/conexus';
+  import { checkUserState } from '@utils/route-guard';
 
   import StoryCollection from './StoryCollection.svelte';
 
   export let section: string;
+
+  onMount(async () => {
+    await checkUserState(`/${section}`);
+  });
 
   let categories: DynSectionCategory[] = [];
   let genres: { id: number; name: string }[] = [];

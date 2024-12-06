@@ -22,6 +22,7 @@ interface User extends SignUp {
   oauth_id?: string;
   email_confirmed?: boolean;
   referral_count?: number;
+  referred: boolean;
 }
 
 interface SignIn {

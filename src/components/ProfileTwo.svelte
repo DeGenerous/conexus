@@ -414,9 +414,7 @@
         </div>
       {:else}
         <button
-          on:click={() => {
-            console.log('get codes');
-          }}
+          on:click={Account.generateReferralCode}
         >
           Get referral codes
         </button>

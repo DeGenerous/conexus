@@ -1,6 +1,14 @@
 <script lang="ts">
   import { CoNexus } from '@lib/conexus';
+  import { web3LoggedIn } from '@stores/account';
+
   import MenuTile from './MenuTile.svelte';
+
+  let isWeb3LoggedIn: boolean = false;
+
+  web3LoggedIn.subscribe((value) => {
+    isWeb3LoggedIn = value;
+  });
 
   const menuText: string[] = [
     'A new world with no limits awaits you.',
@@ -15,9 +23,15 @@
     <p class="error-message">Loading story sections...</p>
   {:then sections}
     {#each sections as section}
-      <div>
-        <MenuTile {section} />
-      </div>
+      {#if !isWeb3LoggedIn && section.name === 'Community Picks'}
+        <div>
+          <MenuTile {section} />
+        </div>
+      {:else if isWeb3LoggedIn}
+        <div>
+          <MenuTile {section} />
+        </div>
+      {/if}
     {/each}
   {:catch error}
     <p class="error-message">Error: {error.message}</p>

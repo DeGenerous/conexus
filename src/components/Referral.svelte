@@ -11,8 +11,6 @@
   };
 
   const useReferralCode = async () => {
-    console.log('Referral code: ', code);
-
     try {
       await Account.userReferralCode(code);
       toastStore.show('Referral code submitted successfully!');

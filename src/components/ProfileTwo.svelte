@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+  
   import Account from '@lib/auth';
   import { CoNexus } from '@lib/conexus';
   import {
@@ -7,7 +9,6 @@
     wallet,
     web3LoggedIn,
   } from '@stores/account';
-  import { onMount } from 'svelte';
 
   Account.me();
   Account.logged_in();
@@ -78,14 +79,6 @@
   });
 
   let mandatoryCheckbox: HTMLInputElement;
-  let createAccountButton: HTMLButtonElement;
-  function validate() {
-    if (mandatoryCheckbox.checked) {
-      createAccountButton.disabled = false;
-    } else {
-      createAccountButton.disabled = true;
-    }
-  }
 
   let firstNameInput: HTMLInputElement;
   let lastNameInput: HTMLInputElement;
@@ -170,10 +163,12 @@
     email &&
     password &&
     confirmPassword &&
-    referralCodeValid; // Update button state
+    password === confirmPassword &&
+    referralCodeValid &&
+    mandatoryCheckbox.checked;
 
-  function referralSignup() {
-    Account.signupReferral({
+  const referralSignup = async () => {
+    await Account.signupReferral({
       user: {
         first_name,
         last_name,
@@ -184,7 +179,7 @@
       },
       referral_code: referralCode,
     });
-  }
+  };
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
@@ -591,7 +586,6 @@
                   bind:this={mandatoryCheckbox}
                   type="checkbox"
                   id="terms"
-                  on:click={validate}
                 />
                 <label for="terms" class="terms">
                   * I have read and agree to the <a
@@ -611,7 +605,6 @@
             </div>
             <p class="validation-check">Fill in all required fields!</p>
             <button
-              bind:this={createAccountButton}
               class="submit-button"
               on:click={referralSignup}
               disabled={isFormValid ? false : true}>Create account</button

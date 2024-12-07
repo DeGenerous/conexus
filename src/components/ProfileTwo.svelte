@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  
-  import Account from '@lib/auth';
+
+  import Account, { Roles } from '@lib/auth';
   import { CoNexus } from '@lib/conexus';
   import {
     authenticated,
@@ -167,7 +167,10 @@
     referralCodeValid &&
     mandatoryCheckbox.checked;
 
-  const referralSignup = async () => {
+  
+
+  const referralSignup = async (event: Event) => {
+    event.preventDefault();
     await Account.signupReferral({
       user: {
         first_name,

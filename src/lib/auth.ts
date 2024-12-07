@@ -18,7 +18,13 @@ Sign this message to prove you're an Potential NFT holder.
 It will not cause a blockchain transaction, nor any gas fees.
 
 Nonce:
-${nonce}`;
+${nonce}`
+
+export enum Roles {
+  ADMIN = 'admin',
+  USER = 'user',
+  ARTIST = 'artist',
+};
 
 class Account {
   #username: string;

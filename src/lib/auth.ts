@@ -241,6 +241,24 @@ class Account {
     web3LoggedIn.set(false);
   }
 
+  static async generateReferralCode(): Promise<void> {
+    try {
+      const response = await fetch(`${url}/referral/generate`, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        new_error({ code: response.status, error: await response.text() });
+      }
+
+      const referralC = await response.json();
+
+      referralCodes.set(referralC.codes);
+    } catch (error: any) {
+      new_error({ code: 500, error: error });
+    }
+  }
+
   static async referraLCodes(): Promise<void> {
     try {
       const response = await fetch(`${url}/referral/get`, {

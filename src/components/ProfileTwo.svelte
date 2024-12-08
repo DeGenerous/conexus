@@ -24,21 +24,17 @@
 
   let isLogged: boolean;
   let signUp: boolean;
+  let signInWithEmail: boolean;
 
   let user: any;
   let loginMail: HTMLInputElement;
   let loginPassword: HTMLInputElement;
 
-  let signInWithEmail: boolean;
-  let signUpRefCodeEntered: boolean;
-  let signUpWithEmail: boolean;
   function closeProfileWindow() {
     dialog.close();
     if (!isLogged) {
       signUp = false;
       signInWithEmail = false;
-      signUpRefCodeEntered = false;
-      signUpWithEmail = false;
     }
   }
 
@@ -166,8 +162,6 @@
     password === confirmPassword &&
     referralCodeValid &&
     mandatoryCheckbox.checked;
-
-  
 
   const referralSignup = async (event: Event) => {
     event.preventDefault();
@@ -549,39 +543,11 @@
               required
             />
             {#if isCheckingCode}
-              <span
-                style="
-                color: white;
-                display: block;
-                text-align: center;
-                font-size: 1.5vw;
-                margin-bottom: 2vw;"
-              >
-                Checking referral code...
-              </span>
+              <p class="validation">Checking referral code...</p>
             {:else if referralCode.length === 16 && referralCodeValid}
-              <span
-                style="
-                color: green;
-                display: block;
-                text-align: center;
-                font-size: 1.5vw;
-                margin-bottom: 2vw;"
-              >
-                Referral code valid
-              </span>
+              <p class="validation confirm-msg">Referral code valid</p>
             {:else if referralCode.length === 16 && !referralCodeValid && !isCheckingCode}
-              <span
-                class="error"
-                style="
-                color: red;
-                display: block;
-                text-align: center;
-                font-size: 1.5vw;
-                margin-bottom: 2vw;"
-              >
-                Invalid referral code
-              </span>
+              <p class="validation">Invalid referral code</p>
             {/if}
             <div class="agreements-container">
               <div class="agreement">
@@ -606,7 +572,6 @@
                 </label>
               </div>
             </div>
-            <p class="validation-check">Fill in all required fields!</p>
             <button
               class="submit-button"
               on:click={referralSignup}
@@ -659,13 +624,14 @@
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
   }
 
-  .validation-check {
-    display: none;
+  .validation, .confirm-msg {
     text-align: center;
     font-size: 1.5vw;
-    margin-bottom: 2vw;
-    margin-top: 1vw;
     color: rgba(255, 50, 50, 0.8);
+  }
+
+  .confirm-msg {
+    color: rgba(0, 185, 55, 0.8);
   }
 
   /* Reset button styling for icons */
@@ -1107,7 +1073,7 @@
       font-size: 1.5em;
     }
 
-    .validation-check {
+    .validation, .confirm-msg {
       font-size: 0.9em;
       margin: 0.5em 0;
     }

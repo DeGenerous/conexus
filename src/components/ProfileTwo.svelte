@@ -124,44 +124,41 @@
   // Debounce timeout reference
   let debounceTimeout: NodeJS.Timeout;
 
+  // Form validation variables
+  $: mandatoryFields = email && first_name && last_name;
+  $: passwordsMatch = (password && confirmPassword) ? password == confirmPassword : true;
+  let termsAccepted: boolean = false;
+  
+  $: isFormValid = mandatoryFields && passwordsMatch && termsAccepted && referralCodeValid;
+
   // Function to validate the referral code
   async function validateReferralCode() {
-    if (referralCode.length === 16) {
-      isCheckingCode = true;
-
-      // Call the Account method to validate the referral code
-      const referralObject: ReferralCode | null =
-        await Account.validateReferralCode(referralCode);
-
-      if (referralObject) {
-        referralCodeValid = true;
-        referralObj = referralObject; // Assign validated referral data
-      } else {
-        referralCodeValid = false; // Invalid code or error during validation
-      }
-
-      isCheckingCode = false; // Reset checking status
-    } else {
+    if (referralCode.length < 16) {
       referralCodeValid = false; // Reset validity if code length is invalid
+      return;
     }
+
+    isCheckingCode = true;
+
+    // Call the Account method to validate the referral code
+    const referralObject: ReferralCode | null =
+      await Account.validateReferralCode(referralCode);
+
+    if (referralObject) {
+      referralCodeValid = true;
+      referralObj = referralObject; // Assign validated referral data
+    } else {
+      referralCodeValid = false; // Invalid code or error during validation
+    }
+
+    isCheckingCode = false; // Reset checking status
   }
 
   // Watch the referral code and debounce validation
-  $: if (referralCode) {
-    clearTimeout(debounceTimeout); // Clear any existing timeout
-    debounceTimeout = setTimeout(validateReferralCode, 3000); // Debounce for 3 seconds
-  }
-
-  // Reactive form validation
-  $: isFormValid =
-    first_name &&
-    last_name &&
-    email &&
-    password &&
-    confirmPassword &&
-    password === confirmPassword &&
-    referralCodeValid &&
-    mandatoryCheckbox.checked;
+  // $: if (referralCode) {
+  //   clearTimeout(debounceTimeout); // Clear any existing timeout
+  //   debounceTimeout = setTimeout(validateReferralCode, 1000); // Debounce for 3 seconds
+  // }
 
   const referralSignup = async (event: Event) => {
     event.preventDefault();
@@ -538,14 +535,26 @@
               minlength="16"
               maxlength="16"
               bind:value={referralCode}
+              on:input={validateReferralCode}
               required
             />
-            {#if isCheckingCode}
-              <p class="validation">Checking referral code...</p>
-            {:else if referralCode.length === 16 && referralCodeValid}
-              <p class="validation confirm-msg">Referral code valid</p>
-            {:else if referralCode.length === 16 && !referralCodeValid && !isCheckingCode}
-              <p class="validation">Invalid referral code</p>
+            {#if !mandatoryFields}
+              <p class="validation">Fill all required fields.</p>
+            {/if}
+            {#if referralCode}
+              {#if isCheckingCode}
+                <p class="validation">Checking referral code...</p>
+              {:else if referralCodeValid}
+                <p class="validation confirm-msg">Referral code valid</p>
+              {:else}
+                <p class="validation">Invalid referral code</p>
+              {/if}
+            {/if}
+            {#if !passwordsMatch}
+              <p class="validation">Passwords do not match!</p>
+            {/if}
+            {#if !termsAccepted}
+              <p class="validation">Please accept our Terms of Service.</p>
             {/if}
             <div class="agreements-container">
               <div class="agreement">
@@ -553,6 +562,7 @@
                   bind:this={mandatoryCheckbox}
                   type="checkbox"
                   id="terms"
+                  on:change={(event: any) => {termsAccepted = event.target?.checked}}
                 />
                 <label for="terms" class="terms">
                   * I have read and agree to the <a

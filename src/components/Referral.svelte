@@ -49,7 +49,11 @@
         rel="noopener noreferrer">here</a
       >!
     </p>
-    <button class="submit-button" on:click={useReferralCode} disabled={!isValid}>
+    <button
+      class="submit-button"
+      on:click={useReferralCode}
+      disabled={!isValid}
+    >
       Use Referral Code
     </button>
   </div>

@@ -407,9 +407,7 @@
           {/each}
         </div>
       {:else}
-        <button
-          on:click={Account.generateReferralCode}
-        >
+        <button on:click={Account.generateReferralCode}>
           Get referral codes
         </button>
       {/if}
@@ -454,7 +452,7 @@
                   }).then(() => location.reload())}>Sign in</button
               >
               <a class="forgot-password" href="/">Forgot password?</a>
-              <hr>
+              <hr />
               <p>Don't have an account yet?</p>
               <button
                 class="sign-button"
@@ -624,7 +622,8 @@
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
   }
 
-  .validation, .confirm-msg {
+  .validation,
+  .confirm-msg {
     text-align: center;
     font-size: 1.5vw;
     color: rgba(255, 50, 50, 0.8);
@@ -1073,7 +1072,8 @@
       font-size: 1.5em;
     }
 
-    .validation, .confirm-msg {
+    .validation,
+    .confirm-msg {
       font-size: 0.9em;
       margin: 0.5em 0;
     }

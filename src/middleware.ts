@@ -1,10 +1,9 @@
 import { defineMiddleware } from 'astro:middleware';
 
 export const onRequest = defineMiddleware(async (context, next) => {
-    
-    // Proceed with the next middleware or the requested route
-    return next();
-})
+  // Proceed with the next middleware or the requested route
+  return next();
+});
 // const url = import.meta.env.VITE_API_URL;
 
 // export const onRequest = defineMiddleware(async (context, next) => {
@@ -79,8 +78,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
 //   // Proceed with the next middleware or the requested route
 //   return next();
 // });
-
-
 
 // // import Account from '@lib/auth';
 // // import { defineMiddleware } from 'astro:middleware';

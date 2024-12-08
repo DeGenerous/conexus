@@ -2,22 +2,22 @@
 import Layout from '@layouts/Layout.astro';
 import Topic from '@components/Story.svelte';
 
-const { story } = Astro.params;
+const { section, story } = Astro.params;
 
 if (!story) {
   Astro.redirect('/');
 }
 
-const storyImage = story?.replace(/%20/g, '');
 const storyName = story?.replace(/%20/g, ' ');
+const storyImage = storyName?.replace(/[\s.\-\/]+/g, '')
 
 const meta = {
   title: `Welcome to Conexus - play ${storyName}`,
   description: `Play the best ${storyName} has to offer`,
   image:
-    `https://media.degenerousdao.com/conexus-categories/images/${storyName}/description/description.avif` ||
+    `https://media.degenerousdao.com/conexus-categories/images/${storyImage}/description/description.avif` ||
     '/favicon.png',
-  url: `https://conexus-v1-test.degenerousdao.com/story/${story}`,
+  url: `https://conexus-v1-test.degenerousdao.com/${section}/${story}`,
 };
 ---
 

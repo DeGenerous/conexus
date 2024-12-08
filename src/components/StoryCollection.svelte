@@ -4,6 +4,7 @@
   // import { CoNexus } from '@lib/conexus';
 
   export let category: DynSectionCategory;
+  export let section: string;
   // export let bigCollection: boolean = false;
 
   const blankPicture: string = '/blank.avif'; // temp
@@ -160,6 +161,7 @@
 <section class="tiles-collection blur">
   {#each category.topics as topic}
     <StoryTile
+      {section}
       topicName={topic.name}
       primaryThumbnail={topic.title_image1 ?? blankPicture}
       secondaryThumbnail={topic.title_image2 ?? blankPicture}

@@ -39,3 +39,10 @@ export async function checkUserState(path: string): Promise<void> {
     }
   }
 }
+
+export function checkWeb3LoginState(loggedIn: boolean, path: string): void {
+  if (!loggedIn && path !== 'Community Picks') {
+    redirectTo('/');
+    return;
+  }
+}

@@ -1,7 +1,27 @@
 <script lang="ts">
   import type { DynSection } from '@lib/conexus';
+  import { web3LoggedIn } from '@stores/account';
+
+  import Modal from './Modal.svelte';
 
   export let section: DynSection;
+
+  let isWeb3LoggedIn: boolean = false;
+  let showDialog = false;
+
+  web3LoggedIn.subscribe((value) => {
+    isWeb3LoggedIn = value;
+  });
+
+  const handleClick = (event: MouseEvent, href: string) => {
+    if (!isWeb3LoggedIn && section.name !== 'Community Picks') {
+      event.preventDefault(); // Prevent the default navigation
+      showDialog = true; // Show the dialog
+    } else {
+      // Allow navigation to proceed
+      window.location.href = href;
+    }
+  };
 
   let isPrimary: boolean = true;
   function tileHover() {
@@ -20,6 +40,7 @@
   class="tile"
   id={section.name}
   href="/{section.name}"
+  on:click={(event) => handleClick(event, `/${section.name}`)}
   on:mouseenter={tileHover}
   on:mouseleave={tileHover}
   on:touchstart={tileHover}
@@ -39,6 +60,17 @@
   />
   <p class="title">{section.name}</p>
 </a>
+
+{#if showDialog}
+  <Modal bind:showModal={showDialog}>
+    <div class="modal-content">
+      <p>Connect your wallet to access this section.</p>
+      <button class="close-modal" on:click={() => (showDialog = false)}
+        >Close</button
+      >
+    </div>
+  </Modal>
+{/if}
 
 <style>
   .tile {
@@ -109,5 +141,44 @@
       line-height: 2em;
       padding-block: 0.25em;
     }
+  }
+
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    margin-inline: 10%;
+    margin-block: 10%;
+    padding-inline: 2vw;
+    border: 0.05vw solid rgba(51, 226, 230, 0.75);
+    border-radius: 2vw;
+    font-size: 2.5vw;
+    line-height: 4vw;
+    color: rgba(51, 226, 230, 0.75);
+    background-color: rgba(51, 226, 230, 0.1);
+    filter: drop-shadow(0 0 0.1vw rgba(51, 226, 230, 0.4));
+  }
+
+  .close-modal {
+    width: 70%;
+    margin-inline: 15%;
+    margin-block: 1vw;
+    padding-inline: 2vw;
+    border: 0.05vw solid rgba(51, 226, 230, 0.75);
+    border-radius: 2vw;
+    font-size: 2.5vw;
+    line-height: 4vw;
+    color: rgba(51, 226, 230, 0.75);
+    background-color: rgba(51, 226, 230, 0.1);
+    filter: drop-shadow(0 0 0.1vw rgba(51, 226, 230, 0.4));
+  }
+
+  .close-modal:hover,
+  .close-modal:active {
+    color: rgba(51, 226, 230, 1);
+    background-color: rgba(51, 226, 230, 0.5);
+    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.4));
   }
 </style>

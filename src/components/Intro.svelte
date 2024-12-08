@@ -23,15 +23,7 @@
     <p class="error-message">Loading story sections...</p>
   {:then sections}
     {#each sections as section}
-      {#if !isWeb3LoggedIn && section.name === 'Community Picks'}
-        <div>
-          <MenuTile {section} />
-        </div>
-      {:else if isWeb3LoggedIn}
-        <div>
-          <MenuTile {section} />
-        </div>
-      {/if}
+      <MenuTile {section} />
     {/each}
   {:catch error}
     <p class="error-message">Error: {error.message}</p>

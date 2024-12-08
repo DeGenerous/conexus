@@ -126,10 +126,12 @@
 
   // Form validation variables
   $: mandatoryFields = email && first_name && last_name;
-  $: passwordsMatch = (password && confirmPassword) ? password == confirmPassword : true;
+  $: passwordsMatch =
+    password && confirmPassword ? password == confirmPassword : true;
   let termsAccepted: boolean = false;
-  
-  $: isFormValid = mandatoryFields && passwordsMatch && termsAccepted && referralCodeValid;
+
+  $: isFormValid =
+    mandatoryFields && passwordsMatch && termsAccepted && referralCodeValid;
 
   // Function to validate the referral code
   async function validateReferralCode() {
@@ -562,7 +564,9 @@
                   bind:this={mandatoryCheckbox}
                   type="checkbox"
                   id="terms"
-                  on:change={(event: any) => {termsAccepted = event.target?.checked}}
+                  on:change={(event: any) => {
+                    termsAccepted = event.target?.checked;
+                  }}
                 />
                 <label for="terms" class="terms">
                   * I have read and agree to the <a

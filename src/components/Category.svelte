@@ -6,14 +6,23 @@
     type DynSectionCategory,
     type DynTopic,
   } from '@lib/conexus';
-  import { checkUserState } from '@utils/route-guard';
+  import { checkUserState, checkWeb3LoginState } from '@utils/route-guard';
+  import { web3LoggedIn } from '@stores/account';
 
   import StoryCollection from './StoryCollection.svelte';
 
   export let section: string;
 
+  let isWeb3LoggedIn: boolean = false;
+
   onMount(async () => {
     await checkUserState(`/${section}`);
+
+    web3LoggedIn.subscribe((value) => {
+      isWeb3LoggedIn = value;
+    });
+
+    checkWeb3LoginState(isWeb3LoggedIn, section);
   });
 
   let categories: DynSectionCategory[] = [];
@@ -162,7 +171,7 @@
 
   {#key filteredCategories}
     {#each filteredCategories as category (category.name)}
-      <StoryCollection {category} />
+      <StoryCollection {category} {section} />
     {/each}
   {/key}
 {:else}

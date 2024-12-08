@@ -3,6 +3,7 @@
 
   import { CoNexus } from '@lib/conexus';
 
+  export let section: string;
   export let topicName: string;
   const storyName: string =
     topicName.charAt(0).toUpperCase() + topicName.slice(1);
@@ -26,7 +27,7 @@
   on:mouseleave={tileHover}
   on:touchstart={tileHover}
   on:touchend={tileHover}
-  href="/story/{topicName}"
+  href="/{section}/{topicName}"
 >
   <img
     class="tile-picture {secondaryThumbnail

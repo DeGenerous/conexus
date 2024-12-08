@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { authenticated, web3LoggedIn } from '@stores/account';
+  import { authenticated } from '@stores/account';
 
   import Intro from './Intro.svelte';
 

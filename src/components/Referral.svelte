@@ -77,7 +77,8 @@
   }
 
   .signup-label {
-    font-size: 1.2rem;
+    font-size: 1.5vw;
+    line-height: 2vw;
     color: rgba(51, 226, 230, 0.75);
     text-align: center;
   }
@@ -96,6 +97,8 @@
   }
 
   .validation {
+    font-size: 1.25vw;
+    line-height: 1.5vw;
     color: rgba(255, 50, 50, 0.8);
   }
 
@@ -127,5 +130,37 @@
     background-color: rgba(51, 226, 230, 0.1);
     filter: drop-shadow(0 0 0.1vw rgba(51, 226, 230, 0.4));
     cursor: not-allowed;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .ref-code-form {
+      width: 85vw;
+      padding: 1em;
+      border-radius: 1em;
+      gap: 1em;
+    }
+
+    .signup-label {
+      font-size: 1em;
+      line-height: 1.5em;
+    }
+
+    .user-input {
+      width: 70vw;
+      font-size: 1.25em;
+      line-height: 1.5em;
+    }
+
+    .validation {
+      font-size: 1em;
+      line-height: 1.5em;
+    }
+
+    .submit-button {
+      font-size: 1.25em;
+      line-height: 1.5em;
+      padding: 0.25em 1em;
+      border-radius: 0.5em;
+    }
   }
 </style>

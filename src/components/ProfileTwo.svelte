@@ -460,16 +460,18 @@
                   }).then(() => location.reload())}>Sign in</button
               >
               <a class="forgot-password" href="/">Forgot password?</a>
+              <hr>
+              <p>Don't have an account yet?</p>
+              <button
+                class="sign-button"
+                on:click={() => {
+                  signUp = true;
+                }}
+              >
+                <img class="sign-icon" src="/icons/email.png" alt="Google" />
+                Sign up with email
+              </button>
             </form>
-            <button
-              class="sign-button"
-              on:click={() => {
-                signUp = true;
-              }}
-            >
-              <img class="sign-icon" src="/icons/email.png" alt="Google" />
-              <p class="sign-lable">Sign up</p>
-            </button>
           {:else}
             <!-- Sign in -->
             <div class="buttons-container">
@@ -618,10 +620,14 @@
 </dialog>
 
 <style>
+  hr {
+    width: 100%;
+  }
+
   button {
     padding: 1vw 2vw;
     border: 0.05vw solid rgba(51, 226, 230, 0.75);
-    border-radius: 2vw;
+    border-radius: 1.5vw;
     font-size: 2vw;
     line-height: 3vw;
     color: rgba(51, 226, 230, 0.75);
@@ -692,7 +698,7 @@
     height: 90%;
     background-color: rgba(1, 0, 32, 0.75);
     border: 0.05vw solid rgba(51, 226, 230, 0.75);
-    border-radius: 2.5vw;
+    border-radius: 2vw;
     overflow-x: hidden;
   }
 
@@ -757,6 +763,7 @@
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
+    gap: 1vw;
   }
 
   .sign-icon {
@@ -784,12 +791,18 @@
     flex-flow: column nowrap;
     align-items: center;
     justify-content: space-between;
+    gap: 1.5vw;
+  }
+
+  .login-form p {
+    color: #dedede;
+    font-size: 2vw;
+    line-height: 2vw;
   }
 
   .input-label {
     font-size: 1.5vw;
     line-height: 1.5vw;
-    margin-bottom: 0.5vw;
     color: rgba(255, 255, 255, 0.5);
   }
 
@@ -798,7 +811,6 @@
     font-size: 2vw;
     line-height: 2.5vw;
     padding: 2vw;
-    margin-bottom: 2vw;
     color: rgba(51, 226, 230, 0.75);
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
     border-radius: 2.5vw;
@@ -809,7 +821,6 @@
   .forgot-password {
     color: rgba(51, 226, 230, 0.65);
     font-size: 1.5vw;
-    padding-top: 2vw;
   }
 
   .submit-button {
@@ -1056,13 +1067,14 @@
 
   @media only screen and (max-width: 600px) {
     hr {
-      margin: 2em 0;
+      margin: 1em 0;
     }
 
     button {
       font-size: 1.4em;
       line-height: 1.4em;
       padding: 0.25em 1em;
+      border-radius: 0.5em;
     }
 
     .close-button {
@@ -1074,6 +1086,10 @@
     .buttons-container {
       gap: 1em;
       padding-inline: 5vw;
+    }
+
+    .sign-button {
+      gap: 0.5em;
     }
 
     .sign-icon {
@@ -1107,6 +1123,16 @@
       height: 65%;
       border-radius: 1em;
       overflow-y: scroll;
+    }
+
+    .login-form {
+      gap: 0.25em;
+    }
+
+    .login-form p {
+      font-size: 1em;
+      line-height: 2em;
+      margin-bottom: 0.5em;
     }
 
     .input-label {

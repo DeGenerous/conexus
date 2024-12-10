@@ -9,7 +9,7 @@ if (!story) {
 }
 
 const storyName = story?.replace(/%20/g, ' ');
-const storyImage = storyName?.replace(/[\s.\-\/]+/g, '')
+const storyImage = storyName?.toLocaleLowerCase().replace(/[\s.\-\/]+/g, '')
 
 const meta = {
   title: `Welcome to Conexus - play ${storyName}`,

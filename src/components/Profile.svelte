@@ -1,5 +1,7 @@
 <script lang="ts">
-  import Account from '@lib/auth';
+  import { onMount } from 'svelte';
+
+  import Account, { Roles } from '@lib/auth';
   import { CoNexus } from '@lib/conexus';
   import {
     authenticated,
@@ -7,7 +9,6 @@
     wallet,
     web3LoggedIn,
   } from '@stores/account';
-  import { onMount } from 'svelte';
 
   Account.me();
   Account.logged_in();
@@ -19,26 +20,47 @@
   let showModal: boolean;
   let dialog: HTMLDialogElement;
 
-  $: if (dialog && showModal) dialog.showModal();
-
-  let isLogged: boolean;
-  let signUp: boolean;
-
-  let user: any;
-  let loginMail: HTMLInputElement;
-  let loginPassword: HTMLInputElement;
-
-  let signInWithEmail: boolean;
-  let signUpRefCodeEntered: boolean;
-  let signUpWithEmail: boolean;
-  function closeProfileWindow() {
+  $: if (dialog && showModal) {
+    dialog.showModal();
+  } else if (dialog) {
     dialog.close();
     if (!isLogged) {
       signUp = false;
       signInWithEmail = false;
-      signUpRefCodeEntered = false;
-      signUpWithEmail = false;
     }
+  }
+
+  const handleBackArrow = () => {
+    if (signUp) {
+      signUp = false;
+      return;
+    }
+    if (signInWithEmail) {
+      signInWithEmail = false;
+      return;
+    }
+    showModal = false;
+  }
+
+  let isLogged: boolean;
+  let signUp: boolean;
+  let signInWithEmail: boolean;
+
+  let user: any;
+  let loginMail: HTMLInputElement;
+  let loginPassword: HTMLInputElement;
+  let invalidCredentials: boolean = false;
+
+  const handleSignIn = async () => {
+    try {
+      await Account.signin({
+        email: loginMail.value,
+        password: loginPassword.value,
+      }).then(() => location.reload())
+    } catch (error) {
+      invalidCredentials = true;
+    }
+    
   }
 
   const alternativeSignIn = {
@@ -52,17 +74,6 @@
       Account.log_in('metamask');
     },
   };
-  const alternativeSignUp = {
-    google: () => {
-      console.log('Sign up with Google');
-    },
-    coinbaseWallet: () => {
-      console.log('Sign up with Coinbase Smart Wallet');
-    },
-    browserWallet: () => {
-      console.log('Sign up with browser wallet');
-    },
-  };
 
   authenticated.subscribe((value) => {
     user = value.user;
@@ -73,66 +84,120 @@
     Account.referraLCodes();
   }
 
-  let refCodes: any;
-  referralCodes.subscribe((codes) => {
-    refCodes = codes;
-  });
-
   function copyRefCode(event: any) {
     navigator.clipboard.writeText(event.target.id);
   }
 
-  let walletAddress: string;
+  let isEditing: string | null = null;
+  let editFirstName: string;
+  let editLastName: string;
+  let editPassword: string;
+  let editPasswordConfirm: string;
+  let editPasswordVisible: boolean = false;
+  $: editPasswordMatch = editPassword === editPasswordConfirm;
+  $: editValidation = isEditing === 'password'
+    ? !editPasswordMatch
+    : isEditing === 'username'
+      ? !editFirstName
+      : false
 
-  wallet.subscribe((value) => {
-    walletAddress = value;
-  });
-
-  function connectWallet() {
-    Account.log_in();
-  }
-
-  let mandatoryCheckbox: HTMLInputElement;
-  let createAccountButton: HTMLButtonElement;
-  function validate() {
-    if (mandatoryCheckbox.checked) {
-      createAccountButton.disabled = false;
-    } else {
-      createAccountButton.disabled = true;
-    }
-  }
-
-  let firstNameInput: HTMLInputElement;
-  let lastNameInput: HTMLInputElement;
-  let passwordInput: HTMLInputElement;
-  let passwordConfirmInput: HTMLInputElement;
-  let passwordConfirmLabel: HTMLLabelElement;
-  let passwordMatchValidation: HTMLParagraphElement;
-  let editUsernameBtn: HTMLButtonElement;
-  let editPasswordBtn: HTMLButtonElement;
-  let saveChangesBtn: HTMLButtonElement;
-
-  const passwordVisible = () => (passwordInput.type = 'text');
-  const passwordInvisible = () => (passwordInput.type = 'password');
-
-  let isEditing: 'username' | 'password' | boolean = false;
-  function changeUserData(this: any) {
-    if (this.className.match('username')) {
-      isEditing = 'username';
-    } else if (this.className.match('password')) {
-      isEditing = 'password';
-    } else if (this.className.match('save')) {
-      if (isEditing === 'password') {
-        if (passwordInput.value != passwordConfirmInput.value) {
-          passwordMatchValidation.style.display = 'block';
-          throw new Error('Passwords do not match!');
-        } else {
-          passwordMatchValidation.style.display = 'none';
+  function changeUserData(state: string | null) {
+    let savingData: string | null = null;
+    if (state === 'save') savingData = isEditing;
+    isEditing = state;
+    if (!isEditing) return;
+    switch (isEditing) {
+      case 'save': {
+        if (savingData === 'password') {
+          console.log(`save: ${editPassword}`);
+          // CHANGE USER PASSWORD
+        } else if (savingData === 'username') {
+          console.log(`save first name: ${editFirstName}`)
+          if (editLastName) console.log(`save last name: ${editLastName}`)
+          // CHANGE USERNAME
         }
+        isEditing = null;
+        break;
       }
-      isEditing = false;
+      case 'username': {
+        console.log('change username');
+        break;
+      }
+      case 'password': {
+        console.log('change password');
+        break;
+      }
     }
   }
+
+  // Form state variables
+  let referralCode = '';
+  let referralCodeValid = false;
+  let referralObj: ReferralCode;
+  let isCheckingCode = false; // To show a loading indicator during validation
+
+  // Track other form fields
+  let first_name = '';
+  let last_name = '';
+  let password = '';
+  let confirmPassword = '';
+  let email = '';
+
+  // Debounce timeout reference
+  let debounceTimeout: NodeJS.Timeout;
+
+  // Form validation variables
+  $: mandatoryFields = email && first_name;
+  $: passwordsMatch =
+    password && confirmPassword ? password == confirmPassword : true;
+  let termsAccepted: boolean = false;
+
+  $: isFormValid =
+    mandatoryFields && passwordsMatch && termsAccepted && referralCodeValid;
+
+  // Function to validate the referral code
+  async function validateReferralCode() {
+    if (referralCode.length < 16) {
+      referralCodeValid = false; // Reset validity if code length is invalid
+      return;
+    }
+
+    isCheckingCode = true;
+
+    // Call the Account method to validate the referral code
+    const referralObject: ReferralCode | null =
+      await Account.validateReferralCode(referralCode);
+
+    if (referralObject) {
+      referralCodeValid = true;
+      referralObj = referralObject; // Assign validated referral data
+    } else {
+      referralCodeValid = false; // Invalid code or error during validation
+    }
+
+    isCheckingCode = false; // Reset checking status
+  }
+
+  // Watch the referral code and debounce validation
+  // $: if (referralCode) {
+  //   clearTimeout(debounceTimeout); // Clear any existing timeout
+  //   debounceTimeout = setTimeout(validateReferralCode, 1000); // Debounce for 3 seconds
+  // }
+
+  const referralSignup = async (event: Event) => {
+    event.preventDefault();
+    await Account.signupReferral({
+      user: {
+        first_name,
+        last_name,
+        email,
+        password,
+        referred: referralCodeValid,
+        role: Roles.USER,
+      },
+      referral_code: referralCode,
+    });
+  };
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
@@ -145,20 +210,14 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
 <dialog
-  class="profile-container blur"
+  class="blur"
   bind:this={dialog}
   on:close={() => (showModal = false)}
-  on:click|self={closeProfileWindow}
+  on:click|self={() => (showModal = false)}
 >
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div on:click|stopPropagation>
-    <div class="profile-navigation">
-      <button
-        class="close-button"
-        on:click|stopPropagation={closeProfileWindow}
-      >
-        ❌
-      </button>
+    <header>
       {#if isLogged}
         <button
           class="login-button"
@@ -166,265 +225,190 @@
             Account.signout();
           }}>Log out</button
         >
+      {:else}
+        <button class="back-arrow" on:click|stopPropagation={handleBackArrow}>
+          <img src="/icons/quit-fullscreen.png" alt="Back" />
+        </button>
       {/if}
-    </div>
+      <button
+        class="close-button"
+        on:click|stopPropagation={() => (showModal = false)}
+      >
+        ❌
+      </button>
+    </header>
 
+    <!-- USER PROFILE -->
     {#if isLogged}
-      <!-- USER PROFILE -->
-      {#if $web3LoggedIn}
+      <section class="profile-window">
         <hr />
-        {#await CoNexus.available()}
-          <div class="story-games-container">
-            <p class="story-games-number-label">Available story games...</p>
-          </div>
-        {:then available}
-          <div class="story-games-container">
-            <p class="story-games-number-label">
-              You have used
-              <span class="story-games-number"
-                >{available.used} / {available.available} weekly</span
-              >
-              stories
-            </p>
 
-            {#if available.bonus > 0}
-              <p class="story-games-number-label">
-                You have
-                <span class="story-games-number">
-                  {available.bonus} bonus
-                </span>
-                lives
-              </p>
+        {#if $web3LoggedIn}
+          {#await CoNexus.available()}
+            <div class="story-games-container">
+              <h3>Available story games...</h3>
+            </div>
+
+            <hr />
+          {:then available}
+            <div class="story-games-container">
+              <h3>You have used 
+                <strong>{available.used} / {available.available} weekly</strong>
+                stories
+              </h3>
+
+              {#if available.bonus > 0}
+                <h3>You have
+                  <strong>{available.bonus} bonus</strong>
+                  lives
+                </h3>
+              {/if}
+            </div>
+
+            <hr />
+          {/await}
+        {/if}
+
+        <div class="user-profile-info">
+          <div class="input-container">
+            <label for="mail">Email</label>
+            <input
+              class="user-input"
+              type="email"
+              value={user.email}
+              disabled
+            />
+          </div>
+          
+          {#if isEditing === 'password'}
+            <div class="input-container">
+            <label for="password">Password</label>
+              <div class="password-container">
+                <input
+                  class="user-input highlighted-input"
+                  type={editPasswordVisible ? "text" : "password"}
+                  placeholder="Provide new password"
+                  bind:value={editPassword}
+                  style={ editPassword
+                    ? ''
+                    : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
+                  }
+                />
+                <button
+                  aria-label="Show password"
+                  class="password-visibility-button non-hover-btn"
+                  on:pointerdown={() => (editPasswordVisible = true)}
+                  on:pointerup={() => (editPasswordVisible = false)}
+                  on:pointerleave={() => (editPasswordVisible = false)}
+                ></button>
+              </div>
+            </div>
+            <div class="input-container">
+              <label for="password-confirmation">Confirm password</label
+              >
+              <input
+                class="user-input highlighted-input"
+                type={editPasswordVisible ? "text" : "password"}
+                placeholder="Confirm new password"
+                bind:value={editPasswordConfirm}
+                style={ editPassword === editPasswordConfirm
+                  ? ''
+                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
+                }
+              />
+            </div>  
+          {/if}
+
+          {#if isEditing === 'username'}
+            <div class="input-container">
+              <label for="first-name">First name</label>
+              <input
+                class="user-input highlighted-input"
+                type="text"
+                placeholder="Provide new First name"
+                bind:value={editFirstName}
+                style={ editFirstName
+                  ? ''
+                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
+                }
+              />
+            </div>
+            <div class="input-container">
+              <label for="last-name">Last name</label>
+              <input
+                class="user-input highlighted-input"
+                type="text"
+                placeholder="Provide new Last name (optional)"
+                bind:value={editLastName}
+              />
+            </div>
+          {:else}
+            <div class="input-container">
+              <label for="first-name">First name</label>
+              <input
+                class="user-input"
+                type="text"
+                value={user.first_name}
+                disabled={true}
+              />
+            </div>
+            <div class="input-container">
+              <label for="last-name">Last name</label>
+              <input
+                class="user-input"
+                type="text"
+                value={user.last_name}
+                disabled={true}
+              />
+            </div>
+          {/if}
+
+          {#if isEditing === 'password'}
+            {#if !editPassword}
+              <p class="validation red">Provide new password</p>
+            {:else if !editPasswordConfirm}
+              <p class="validation red">Confirm new password</p>
+            {:else if editPasswordConfirm && !editPasswordMatch}
+              <p class="validation red">Passwords do not match!</p>
+            {/if}
+          {:else if isEditing === 'username'}
+            {#if !editFirstName}
+              <p class="validation red">Provide first name</p>
+            {/if}
+          {/if}
+
+          <div class="edit-buttons">
+            {#if isEditing}
+              <button on:click={() => changeUserData(null)}>
+                Cancel
+              </button>
+              <button on:click={() => changeUserData('save')} disabled={editValidation}>
+                Save
+              </button>
+            {:else}
+              <button on:click={() => changeUserData('username')}>
+                Change name
+              </button>
+              <button on:click={() => changeUserData('password')}>
+                Change password
+              </button>
             {/if}
           </div>
-        {/await}
-      {/if}
-
-      <hr />
-
-      <div class="user-profile-info">
-        <div class="user-properties">
-          <label for="mail" class="user-prop">Email</label>
-          <input
-            class="user-prop-value"
-            id="mail"
-            type="email"
-            value={user.email}
-            disabled
-          />
-          <label for="password" class="user-prop">Password</label>
-          <div class="password-container">
-            <input
-              bind:this={passwordInput}
-              class="user-prop-value"
-              id="password"
-              type="password"
-              value={user.password}
-              disabled={isEditing === 'password' ? false : true}
-              style={isEditing === 'password'
-                ? 'border: 0.2vw solid rgba(51, 226, 230, 0.75)'
-                : ''}
-            />
-            <button
-              aria-label="Show password"
-              class="password-visibility-button"
-              on:mousedown={passwordVisible}
-              on:mouseup={passwordInvisible}
-              on:touchstart={passwordVisible}
-              on:touchend={passwordInvisible}
-            ></button>
-          </div>
-          {#if isEditing === 'password'}
-            <label
-              bind:this={passwordConfirmLabel}
-              for="password-confirmation"
-              class="user-prop"
-              id="password-confirmation-label">Confirm password</label
-            >
-            <input
-              bind:this={passwordConfirmInput}
-              class="user-prop-value"
-              id="password-confirmation"
-              type="password"
-            />
-          {/if}
-          <label for="first-name" class="user-prop">First name</label>
-          <input
-            bind:this={firstNameInput}
-            class="user-prop-value"
-            id="first-name"
-            type="text"
-            value={user.first_name}
-            disabled={isEditing === 'username' ? false : true}
-            style={isEditing === 'username'
-              ? 'border: 0.2vw solid rgba(51, 226, 230, 0.75)'
-              : ''}
-          />
-          <label for="last-name" class="user-prop">Last name</label>
-          <input
-            bind:this={lastNameInput}
-            class="user-prop-value"
-            id="last-name"
-            type="text"
-            value={user.last_name}
-            disabled={isEditing === 'username' ? false : true}
-            style={isEditing === 'username'
-              ? 'border: 0.2vw solid rgba(51, 226, 230, 0.75)'
-              : ''}
-          />
         </div>
-      </div>
-
-      <p bind:this={passwordMatchValidation} class="validation-check">
-        Passwords do not match!
-      </p>
-
-      <div class="edit-buttons">
-        {#if isEditing}
-          <button
-            bind:this={saveChangesBtn}
-            class="save-changes"
-            on:click={changeUserData}
-          >
-            Save
-          </button>
-        {:else}
-          <button
-            bind:this={editUsernameBtn}
-            class="edit-username"
-            on:click={changeUserData}
-          >
-            Change name
-          </button>
-          <button
-            bind:this={editPasswordBtn}
-            class="edit-password"
-            on:click={changeUserData}
-          >
-            Change password
-          </button>
-        {/if}
-      </div>
-
-      <hr />
-
-      <div class="wallet-connect">
-        <p class="user-prop">Web3 account:</p>
-
-        <button class="wallet-button" on:click={connectWallet}>
-          {#if !$web3LoggedIn}
-            Connect Wallet
-          {:else if $web3LoggedIn}
-            {walletAddress}
-          {/if}
-        </button>
-      </div>
-
-      <hr />
-
-      <div class="google-connect">
-        <p class="user-prop">Web2 account:</p>
-
-        <button class="google-button"> Connect Google </button>
-      </div>
-
-      <hr />
-
-      <p class="refferal-codes-legend">Your referral codes</p>
-      {#if refCodes != null}
-        <div class="refferal-codes">
-          {#each refCodes as code}
-            <div class="ref-code-container">
-              <input
-                class="ref-code"
-                id={code.code}
-                class:used={code.is_used}
-                class:not-used={!code.is_used}
-                value={code.code}
-                disabled
-              />
-              <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
-              <button
-                aria-label="Copy code"
-                id={code.code}
-                class="copy-button"
-                on:click={copyRefCode}
-              ></button>
-            </div>
-          {/each}
-        </div>
-      {:else}
-        <button
-          on:click={() => {
-            console.log('get codes');
-          }}
-        >
-          Get referral codes
-        </button>
-      {/if}
-    {:else if !isLogged}
-      <section class="signin">
-        <p class="sign-title">{signUp ? 'Sign up' : 'Sign in'}</p>
 
         <hr />
 
-        {#if !signUp}
-          <!-- SIGNIN WINDOW -->
+        <div class="wallet-connect">
+          <h2>{$web3LoggedIn ? '' : 'Connect'} Web3 account:</h2>
 
-          {#if signInWithEmail}
-            <form class="login-form">
-              <label class="input-label" for="user-mail">Email</label>
-              <input
-                bind:this={loginMail}
-                class="user-input"
-                type="email"
-                id="user-mail"
-                placeholder="Enter your email"
-                required
-              />
-              <label class="input-label" for="user-password">Password</label>
-              <input
-                bind:this={loginPassword}
-                class="user-input"
-                type="password"
-                id="user-password"
-                placeholder="Enter your password"
-                minlength="8"
-                required
-              />
-              <p class="validation-check">Invalid credentials!</p>
-              <button
-                class="submit-button"
-                type="submit"
-                on:click={() =>
-                  Account.signin({
-                    email: loginMail.value,
-                    password: loginPassword.value,
-                  })}>Sign in</button
-              >
-              <a class="forgot-password" href="/">Forgot password?</a>
-            </form>
-          {:else}
-            <div class="buttons-container">
-              <button class="sign-button" on:click={alternativeSignIn.google}>
-                <img class="sign-icon" src="/icons/google.png" alt="Google" />
-                <p class="sign-lable">with Google</p>
-              </button>
-              <button
-                class="sign-button"
-                on:click={() => {
-                  signInWithEmail = true;
-                }}
-              >
-                <img class="sign-icon" src="/icons/email.png" alt="Google" />
-                <p class="sign-lable">with email</p>
-              </button>
+          <div class="buttons-container">
+            {#if !$web3LoggedIn}
               <button
                 class="sign-button"
                 on:click={alternativeSignIn.coinbaseWallet}
               >
                 <img class="sign-icon" src="/icons/coinbase.png" alt="Google" />
-                <p class="sign-lable">with Coinbase Smart Wallet</p></button
+                <p class="sign-lable">Coinbase Smart Wallet</p></button
               >
               <button
                 class="sign-button"
@@ -435,162 +419,263 @@
                   src="/icons/walletconnect.png"
                   alt="Google"
                 />
-                <p class="sign-lable">with browser wallet</p></button
+                <p class="sign-lable">browser wallet</p></button
               >
+            {:else if $web3LoggedIn}
+              <h2 class="user-wallet">{$wallet}</h2>
+            {/if}
+          </div>
+        </div>
+
+        <hr />
+
+        <h2>Your referral codes</h2>
+        {#if $referralCodes != null}
+          {#key $referralCodes}
+            <div class="referral-codes">
+              {#each $referralCodes as code}
+                <div class="ref-code-container">
+                  <input
+                    class="ref-code"
+                    id={code.code}
+                    class:used={code.is_used}
+                    class:not-used={!code.is_used}
+                    value={code.code}
+                    disabled
+                  />
+                  <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
+                  <button
+                    aria-label="Copy code"
+                    id={code.code}
+                    class="copy-button non-hover-btn"
+                    on:click={copyRefCode}
+                  ></button>
+                </div>
+              {/each}
+            </div>
+          {/key}
+        {:else}
+          <button on:click={Account.generateReferralCode}>
+            Get referral codes
+          </button>
+        {/if}
+        <h2>Your referrals: {user.referral_count}</h2>
+      </section>
+    {:else}
+      <section class="sign-container">
+        <h1>{signUp ? 'Sign up' : 'Sign in'}</h1>
+        <hr />
+
+        {#if !signUp}
+          <!-- SIGN-IN window -->
+          {#if signInWithEmail}
+            <form class="login-form">
+              <div class="input-container">
+                <label for="user-mail">Email</label>
+                <input
+                  bind:this={loginMail}
+                  class="user-input"
+                  type="email"
+                  id="user-mail"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+              <div class="input-container">
+                <label for="user-password">Password</label>
+                <input
+                  bind:this={loginPassword}
+                  class="user-input"
+                  type="password"
+                  id="user-password"
+                  placeholder="Enter your password"
+                  minlength="8"
+                  required
+                />
+              </div>
+              {#if invalidCredentials}
+                <p class="validation red">Invalid credentials!</p>
+              {/if}
+              <button class="sign-button" on:click={handleSignIn}>
+                Sign in
+              </button>
+              <a href="/">Forgot password?</a>
+              <!-- svelte-ignore a11y_missing_attribute -->
+              <a href="/" on:click={(event) => {
+                event.preventDefault();
+                signUp = true;
+              }}>Create account</a>
+            </form>
+          {:else}
+            <!-- SIGN-IN general window -->
+            <div class="buttons-container">
+              <button on:click={alternativeSignIn.google}>
+                <img class="sign-icon" src="/icons/google.png" alt="Google" />
+                <p class="sign-lable">with Google</p>
+              </button>
+              <button on:click={() => {signInWithEmail = true}}>
+                <img class="sign-icon" src="/icons/email.png" alt="Google" />
+                <p class="sign-lable">with email</p>
+              </button>
+            </div>
+            <hr />
+            <h3>Don't have an account yet?</h3>
+            <div class="buttons-container">
+              <button on:click={() => {signUp = true}}>
+                <img class="sign-icon" src="/icons/email.png" alt="Google" />
+                <p class="sign-lable">Sign up with email</p>
+              </button>
             </div>
           {/if}
-
-          <hr />
-
-          <p class="signup-label">Don't have an existing CoNexus account?</p>
-
-          <div class="buttons-container">
-            <button
-              class="sign-button"
-              on:click={() => {
-                signUp = true;
-              }}
-            >
-              <p class="sign-lable">Sign Up</p>
-            </button>
-          </div>
         {:else}
-          <!-- SIGNUP WINDOW -->
+          <!-- SIGN-UP window -->
 
-          {#if signUpWithEmail}
-            <form class="signup-form">
-              <label class="input-label" for="new-user-mail">Mail</label>
+          <form class="signup-form">
+            <div class="input-container">
+              <label for="new-user-mail">Mail</label>
               <input
                 class="user-input"
                 type="email"
                 id="new-user-mail"
-                placeholder="Your email"
+                placeholder="Enter email"
+                bind:value={email}
                 required
+                style={ email
+                  ? ''
+                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
+                }
               />
-              <label class="input-label" for="new-user-password">Password</label
-              >
+            </div>
+            <div class="input-container">
+              <label for="new-user-password">Password</label>
               <input
                 class="user-input"
                 type="password"
                 id="new-user-password"
-                placeholder="Your password"
+                placeholder="Enter password"
                 minlength="8"
+                bind:value={password}
                 required
+                style={ password
+                  ? ''
+                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
+                }
               />
               <input
                 class="user-input"
                 type="password"
                 id="confirm-new-user-password"
                 placeholder="Confirm password"
+                bind:value={confirmPassword}
                 required
+                style={ passwordsMatch
+                  ? ''
+                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
+                }
               />
-              <label class="input-label" for="user-first-name">First name</label
-              >
+            </div>
+            <div class="input-container">
+              <label for="user-first-name">First name</label>
               <input
                 class="user-input"
                 type="text"
                 id="user-first-name"
-                placeholder="Your First name"
+                placeholder="Enter First name"
+                bind:value={first_name}
+                style={ first_name
+                  ? ''
+                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
+                }
               />
-              <label class="input-label" for="user-last-name">Last name</label>
+            </div>
+            <div class="input-container">
+              <label for="user-last-name">Last name</label>
               <input
                 class="user-input"
                 type="text"
                 id="user-last-name"
-                placeholder="Your Last name"
+                placeholder="Enter Last name (optional)"
+                bind:value={last_name}
               />
-              <div class="agreements-container">
-                <div class="agreement">
-                  <input
-                    bind:this={mandatoryCheckbox}
-                    type="checkbox"
-                    id="terms"
-                    on:click={validate}
-                  />
-                  <label for="terms" class="terms">
-                    * I have read and agree to the <a
-                      href="https://docs.google.com/document/d/1fEemq6HVM_h8ZTbc_Fl_k3RvlPdjYd70TI1iloT5gXA/edit?usp=sharing"
-                      target="_blank"
-                    >
-                      Terms of Service</a
-                    >.
-                  </label>
-                </div>
-                <div class="agreement">
-                  <input type="checkbox" id="newsletter" />
-                  <label for="newsletter" class="newsletter">
-                    I'd like to receive news 1-4 times a month.
-                  </label>
-                </div>
-              </div>
-              <p class="validation-check">Fill in all required fields!</p>
-              <button
-                bind:this={createAccountButton}
-                class="submit-button"
-                on:click={() => {
-                  isLogged = true;
-                }}
-                disabled>Create account</button
-              >
-            </form>
-          {:else if signUpRefCodeEntered}
-            <div class="buttons-container">
-              <button class="sign-button" on:click={alternativeSignUp.google}>
-                <img class="sign-icon" src="/icons/google.png" alt="Google" />
-                <p class="sign-lable">with Google</p>
-              </button>
-              <button
-                class="sign-button"
-                on:click={() => {
-                  signUpWithEmail = true;
-                }}
-              >
-                <img class="sign-icon" src="/icons/email.png" alt="Google" />
-                <p class="sign-lable">with email</p>
-              </button>
-              <button
-                class="sign-button"
-                on:click={alternativeSignUp.coinbaseWallet}
-              >
-                <img class="sign-icon" src="/icons/coinbase.png" alt="Google" />
-                <p class="sign-lable">with Coinbase Smart Wallet</p></button
-              >
-              <button
-                class="sign-button"
-                on:click={alternativeSignUp.browserWallet}
-              >
-                <img
-                  class="sign-icon"
-                  src="/icons/walletconnect.png"
-                  alt="Google"
-                />
-                <p class="sign-lable">with browser wallet</p></button
-              >
             </div>
-          {:else}
-            <form class="ref-code-form">
-              <p class="signup-label">Enter your referral code:</p>
+            <div class="input-container">
+              <label for="user-ref-code">Referral code</label>
               <input
                 class="user-input"
                 type="text"
-                id="refferal-code"
-                placeholder="A11A7528D9C82915 "
+                id="user-ref-code"
+                placeholder="A11A7528D9C82915"
                 minlength="16"
                 maxlength="16"
+                bind:value={referralCode}
+                on:input={validateReferralCode}
                 required
+                style={ referralCode
+                  ? ''
+                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
+                }
               />
-              <p class="signup-label">
-                Don't have one yet? Find yours <a
-                  href="https://discord.gg/349FgMSUK8">here</a
-                >!
-              </p>
-              <button
-                class="submit-button"
-                type="submit"
-                on:click={() => (signUpRefCodeEntered = true)}>Done</button
-              >
-            </form>
-          {/if}
+            </div>
+            {#if !mandatoryFields}
+              <p class="validation red">Fill all required fields</p>
+            {/if}
+            {#if referralCode}
+              {#if isCheckingCode}
+                <p class="validation red">Checking referral code...</p>
+              {:else if referralCodeValid}
+                <p class="validation green">Referral code is valid</p>
+              {:else}
+                {#if referralCode.length !== 16}
+                  <p class="validation red">Code should contain 16 characters</p>
+                {:else}
+                  <p class="validation red">Invalid referral code</p>
+                {/if}
+              {/if}
+            {/if}
+            {#if password && !confirmPassword}
+              <p class="validation red">Please confirm your password</p>
+            {/if}
+            {#if !passwordsMatch}
+              <p class="validation red">Passwords do not match</p>
+            {/if}
+            {#if !termsAccepted}
+              <p class="validation red">Please accept our Terms of Service</p>
+            {/if}
+            <div class="agreements-container">
+              <div class="agreement">
+                <input
+                  type="checkbox"
+                  id="terms"
+                  on:change={(event: any) => {
+                    termsAccepted = event.target?.checked;
+                  }}
+                  style={ termsAccepted
+                  ? ''
+                  : 'outline: 0.1vw solid rgba(255, 50, 50, 0.75);'
+                }
+                />
+                <label for="terms" class="terms">
+                  * I have read and agree to the <a
+                    href="https://docs.google.com/document/d/1fEemq6HVM_h8ZTbc_Fl_k3RvlPdjYd70TI1iloT5gXA/edit?usp=sharing"
+                    target="_blank"
+                  >
+                    Terms of Service</a
+                  >.
+                </label>
+              </div>
+              <div class="agreement">
+                <input type="checkbox" id="newsletter" />
+                <label for="newsletter" class="newsletter">
+                  I'd like to receive news twice a month.
+                </label>
+              </div>
+            </div>
+            <button
+              class="sign-button"
+              on:click={referralSignup}
+              disabled={isFormValid ? false : true}>Create account</button
+            >
+          </form>
         {/if}
       </section>
     {/if}
@@ -598,48 +683,50 @@
 </dialog>
 
 <style>
-  button {
-    padding: 1vw 2vw;
+  dialog {
+    width: 65vw;
+    height: 90%;
+    background-color: rgba(1, 0, 32, 0.75);
     border: 0.05vw solid rgba(51, 226, 230, 0.75);
-    border-radius: 2vw;
-    font-size: 2vw;
-    line-height: 3vw;
-    color: rgba(51, 226, 230, 0.75);
-    background-color: rgba(51, 226, 230, 0.1);
-    filter: drop-shadow(0 0 0.1vw rgba(51, 226, 230, 0.4));
+    border-radius: 1.5vw;
+    overflow-x: hidden;
   }
 
-  button:hover,
-  button:active {
-    color: rgba(51, 226, 230, 1);
-    background-color: rgba(51, 226, 230, 0.5);
-    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.4));
-    transform: scale(1.05);
-    transition: transform 0.15s ease-in-out;
+  dialog::-webkit-scrollbar {
+    width: 0.5vw;
   }
 
-  button:disabled,
-  button:disabled:hover,
-  button:disabled:active {
-    opacity: 0.5;
-    color: rgba(51, 226, 230, 0.75);
-    background-color: rgba(51, 226, 230, 0.1);
-    filter: drop-shadow(0 0 0.1vw rgba(51, 226, 230, 0.4));
-    cursor: not-allowed;
+  dialog::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0);
   }
 
-  hr {
-    margin: 2vw 0;
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
+  dialog::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0),
+      rgba(51, 226, 230, 0.5),
+      rgba(0, 0, 0, 0)
+    );
+    border-radius: 0.5vw;
   }
 
-  .validation-check {
-    display: none;
-    text-align: center;
-    font-size: 1.5vw;
-    margin-bottom: 2vw;
-    margin-top: 1vw;
-    color: rgba(255, 50, 50, 0.8);
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.75);
+  }
+
+  dialog[open] {
+    animation: zoom 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  dialog[open]::backdrop {
+    animation: fade 0.25s ease-out;
+  }
+
+  dialog > div {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    padding: 1vw;
   }
 
   /* Reset button styling for icons */
@@ -654,89 +741,51 @@
     opacity: 0.75;
   }
 
-  .password-visibility-button:hover,
-  .password-visibility-button:active,
-  .copy-button:hover,
-  .copy-button:active {
-    filter: none;
-    background-color: rgba(0, 0, 0, 0);
-    color: rgba(0, 0, 0, 0);
-    opacity: 1;
-  }
+  /* Control buttons */
 
-  /* Profile dialog window */
-
-  .profile-container {
-    padding: 1.5vw;
-    width: 65vw;
-    height: 90%;
-    background-color: rgba(1, 0, 32, 0.75);
-    border: 0.05vw solid rgba(51, 226, 230, 0.75);
-    border-radius: 2.5vw;
-    overflow-x: hidden;
-  }
-
-  .profile-container::-webkit-scrollbar {
-    width: 0.5vw;
-  }
-
-  .profile-container::-webkit-scrollbar-track {
-    background-color: rgba(0, 0, 0, 0);
-  }
-
-  .profile-container::-webkit-scrollbar-thumb {
-    background: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0),
-      rgba(51, 226, 230, 0.5),
-      rgba(0, 0, 0, 0)
-    );
-    border-radius: 0.5vw;
-  }
-
-  .profile-container::backdrop {
-    background: rgba(0, 0, 0, 0.75);
-  }
-
-  .profile-container[open] {
-    animation: zoom 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .profile-container[open]::backdrop {
-    animation: fade 0.25s ease-out;
-  }
-
-  .profile-container > div {
-    display: flex;
-    flex-flow: column nowrap;
-  }
-
-  .profile-navigation {
+  header {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .back-arrow {
+    padding: 0.5vw;
+  }
+
+  .back-arrow img {
+    width: 3vw;
+    height: auto;
+    opacity: 0.75;
   }
 
   .close-button {
-    padding: 1.5vw;
-    font-size: 2vw;
-    line-height: 2vw;
+    padding: 1vw;
+  }
+
+  /* SIGN-IN window */
+
+  .sign-container{
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5vw;
   }
 
   .buttons-container {
-    position: relative;
     display: flex;
     flex-flow: column nowrap;
-    gap: 2vw;
-    padding-inline: 10vw;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
   }
 
-  .sign-button {
-    display: flex;
-    flex-flow: row nowrap;
+  .buttons-container button {
+    width: 50vw;
     justify-content: space-between;
-    align-items: center;
+    gap: 1vw;
   }
 
   .sign-icon {
@@ -746,153 +795,93 @@
   }
 
   .sign-lable {
-    font-size: 2vw;
     width: 100%;
-  }
-
-  .sign-title {
-    text-align: center;
-    color: #dedede;
-    font-size: 3vw;
   }
 
   /* SIGNIN with EMAIL */
 
   .login-form,
-  .signup-form,
-  .ref-code-form {
+  .signup-form {
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
     justify-content: space-between;
+    gap: 1.5vw;
   }
 
-  .input-label {
-    font-size: 1.5vw;
-    line-height: 1.5vw;
-    margin-bottom: 0.5vw;
-    color: rgba(255, 255, 255, 0.5);
+  .sign-button {
+    width: 30vw !important;
+  }
+
+  .input-container {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5vw;
   }
 
   .user-input {
     width: 30vw;
     font-size: 2vw;
-    line-height: 2.5vw;
-    padding: 2vw;
-    margin-bottom: 2vw;
+    line-height: 2vw;
+    padding: 1.5vw 2vw;
     color: rgba(51, 226, 230, 0.75);
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 2.5vw;
-    background-color: rgba(1, 0, 32, 0.75);
-    outline: none;
-  }
-
-  .forgot-password {
-    color: rgba(51, 226, 230, 0.65);
-    font-size: 1.5vw;
-    padding-top: 2vw;
-  }
-
-  .submit-button {
-    min-width: 30vw;
-    padding: 1vw 2vw;
-    color: rgba(51, 226, 230, 0.75);
+    border-radius: 1vw;
     background-color: rgba(51, 226, 230, 0.1);
-    cursor: pointer;
+    outline: none;
+    text-align: center;
   }
 
-  .user-profile-info,
-  .wallet-connect,
-  .google-connect {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-around;
-    align-items: center;
+  .user-input:disabled {
+    opacity: 1; /* for iOS */
   }
 
   .agreements-container {
     display: flex;
     flex-flow: column nowrap;
-    width: 85%;
-    padding-bottom: 2vw;
+    width: 100%;
   }
 
   .agreement {
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
-    justify-content: baseline;
+    justify-content: center;
     padding: 1vw;
+    gap: 1vw;
   }
 
   #terms,
   #newsletter {
-    -webkit-transform: scale(3);
-    transform: scale(3);
+    -webkit-transform: scale(2);
+    transform: scale(2);
     flex: 1;
     accent-color: rgba(51, 226, 230, 0.75);
   }
 
-  .terms,
-  .newsletter {
-    font-size: 1.75vw;
-    line-height: 3vw;
-    padding-left: 1vw;
-    flex: 10;
+  .terms > a {
     color: rgba(255, 255, 255, 0.65);
   }
 
-  .terms > a {
-    color: rgba(255, 255, 255, 0.75);
-  }
+  /* USER PROFILE window */
 
-  /* SIGNIN */
-
-  .signup-label {
-    text-align: center;
-    color: #bebebe;
-    font-size: 2vw;
-    margin-block: 1vw 3vw;
-  }
-
-  .signup-label a {
-    color: rgba(255, 255, 255, 0.9);
-  }
-
-  #refferal-code {
-    text-align: center;
-  }
-
-  /* User logged in */
-
-  .user-properties {
+  .profile-window {
     display: flex;
     flex-flow: column nowrap;
+    justify-content: center;
     align-items: center;
+    gap: 1.5vw;
+    padding-block: 1vw;
   }
 
-  .user-prop {
-    font-size: 2vw;
-    line-height: 4vw;
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .user-prop-value {
-    text-align: center;
-    width: 45vw;
-    height: 5vw;
-    font-size: 2vw;
-    line-height: 4vw;
-    border: 0.05vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 2.5vw;
-    outline: none;
-    color: rgba(255, 255, 255, 0.7);
-    background-color: rgba(51, 226, 230, 0.05);
-    margin-bottom: 1vw;
-  }
-
-  .user-prop-value:disabled {
-    opacity: 1; /* for iOS */
+  .user-profile-info {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
   }
 
   .password-container {
@@ -903,12 +892,8 @@
     margin-bottom: 1vw;
   }
 
-  #password {
-    margin-bottom: 0;
-  }
-
-  #password-confirmation {
-    border: 0.2vw solid rgba(51, 226, 230, 0.75);
+  .highlighted-input {
+    border: 0.1vw solid rgba(51, 226, 230, 0.9);
   }
 
   .password-visibility-button {
@@ -926,16 +911,9 @@
 
   .edit-buttons {
     display: flex;
+    flex-flow: row nowrap;
     justify-content: center;
-    margin-inline: auto;
-  }
-
-  .edit-username,
-  .edit-password,
-  .save-changes {
-    margin: 2vw 1vw;
-    font-size: 1.75vw;
-    line-height: 2vw;
+    gap: 1vw;
   }
 
   /* Story games number */
@@ -944,38 +922,43 @@
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
+    gap: 1.5vw;
   }
 
-  .story-games-number-label {
-    margin: 1vw 0;
+  .story-games-container h3 {
     color: rgba(51, 226, 230, 0.65);
-    font-size: 1.5vw;
   }
 
-  .story-games-number {
+  .story-games-container strong {
     color: rgba(51, 226, 230, 0.9);
-    font-size: 1.6vw;
+  }
+
+  /* Web3 wallet section */
+
+  .wallet-connect {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2vw;
+  }
+
+  .user-wallet {
+    color: rgba(51, 226, 230, 0.75);
   }
 
   /* Referral codes container */
 
-  .refferal-codes-legend {
-    text-align: center;
-    font-size: 2vw;
-    line-height: 4vw;
-    color: rgba(255, 255, 255, 0.7);
-  }
-
-  .refferal-codes {
+  .referral-codes {
     width: 90%;
-    padding: 2vw;
+    padding: 1vw 2vw;
     margin-inline: auto;
     display: grid;
     grid-template-columns: 50% 50%;
     justify-content: center;
     gap: 1vw;
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 2.5vw;
+    border-radius: 1vw;
     background-color: rgba(51, 226, 230, 0.1);
   }
 
@@ -985,16 +968,14 @@
     align-items: center;
     justify-content: space-between;
     background-color: rgba(0, 0, 0, 0.1);
-    border: 0.05vw solid rgba(51, 226, 230, 0.25);
-    border-radius: 1.5vw;
-    padding: 0.5vw 1vw;
+    border: 0.1vw solid rgba(51, 226, 230, 0.25);
+    border-radius: 1vw;
+    padding: 1vw;
   }
 
   .ref-code {
-    text-align: ridht;
-    font-size: 1.8vw;
-    line-height: 4vw;
-    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.5vw;
+    line-height: 1.5vw;
     border: none;
     outline: none;
     background-color: rgba(0, 0, 0, 0);
@@ -1048,90 +1029,67 @@
   }
 
   @media only screen and (max-width: 600px) {
-    hr {
-      margin: 2em 0;
+    dialog {
+      width: 100vw;
+      height: 100%;
+      border-radius: 1em;
+      overflow-y: scroll;
     }
 
-    button {
-      font-size: 1.4em;
-      line-height: 1.4em;
-      padding: 0.25em 1em;
+    dialog > div {
+      padding: 1em;
+    }
+
+    .back-arrow {
+      padding: 0.35em;
+    }
+
+    .back-arrow img {
+      width: 1.25em;
     }
 
     .close-button {
-      padding: 0.35em;
-      font-size: 1.35em;
-      line-height: 1em;
+      padding: 0.25em 0.5em;
+    }
+
+    .sign-container {
+      gap: 1em;
     }
 
     .buttons-container {
+      gap: 0.75em;
+    }
+
+    .buttons-container button {
+      width: 75vw;
       gap: 1em;
-      padding-inline: 5vw;
     }
 
     .sign-icon {
       height: 0.8em;
     }
 
-    .sign-lable {
-      font-size: 0.8em;
-      line-height: 1.5em;
+    .login-form,
+    .signup-form {
+      gap: 1em;
     }
 
-    .sign-title {
-      text-align: center;
-      color: #dedede;
-      font-size: 1.5em;
+    .sign-button {
+      width: 70vw !important;
     }
 
-    .signup-label {
-      font-size: 1em;
-      line-height: 1.5em;
-      padding-inline: 5vw;
-      margin-bottom: 1em;
-    }
-
-    .validation-check {
-      font-size: 0.9em;
-      margin: 0.5em 0;
-    }
-
-    .forgot-password {
-      font-size: 0.9em;
-      padding-top: 1.5em;
-    }
-
-    .profile-container {
-      padding: 1em;
-      width: 85vw;
-      height: 65%;
-      border-radius: 1em;
-      overflow-y: scroll;
-    }
-
-    .input-label {
-      font-size: 0.9em;
-      line-height: 0.9em;
-      padding-bottom: 0.5em;
+    .input-container {
+      gap: 0.25em;
     }
 
     .user-input {
-      width: 80vw;
-      font-size: 1.4em;
-      line-height: 1.6em;
-      margin-bottom: 1em;
-    }
-
-    .agreements-container {
-      width: 95%;
-      padding-bottom: 1em;
-    }
-
-    .terms,
-    .newsletter {
-      font-size: 1em;
+      width: 70vw;
+      font-size: 1.25em;
       line-height: 1.5em;
-      padding-left: 1em;
+    }
+
+    .agreement {
+      gap: 1em;
     }
 
     #terms,
@@ -1140,30 +1098,13 @@
       transform: scale(1.5);
     }
 
-    .submit-button {
-      width: 50vw;
+    .profile-window {
+      gap: 0.5em;
+      padding-block: 0.5em;
     }
 
-    .story-games-number-label {
-      margin: 0.5em 0 1em 0;
-      font-size: 0.9em;
-    }
-
-    .story-games-number {
-      font-size: 1em;
-    }
-
-    .user-prop,
-    .user-prop-value,
-    .refferal-codes-legend {
-      font-size: 1em;
-      line-height: 2.5em;
-    }
-
-    .user-prop-value {
-      width: 70vw;
-      height: 2.5em;
-      margin-bottom: 0.5em;
+    .user-profile-info {
+      gap: 1em;
     }
 
     .password-container {
@@ -1177,29 +1118,31 @@
       margin-left: 0.25em;
     }
 
-    .edit-username,
-    .edit-password,
-    .save-changes {
-      margin: 1em 0.5em;
-      font-size: 1em;
-      line-height: 2em;
+    .edit-buttons {
+      flex-direction: column;
+      gap: 1em;
     }
 
-    .refferal-codes {
+    .wallet-connect {
+      flex-direction: column;
+    }
+
+    .referral-codes {
       grid-template-columns: 100%;
       gap: 0.5em;
-      padding: 0.5em;
-      width: 95%;
+      padding: 1em;
+      width: 100%;
     }
 
     .ref-code-container {
-      padding: 0 1em;
+      padding: 0.5em 1em;
       border-radius: 0.5em;
     }
 
     .ref-code {
-      font-size: 1.2em;
-      line-height: 3em;
+      font-size: 1em;
+      line-height: 1em;
+      padding: 0.25em 0.5em;
     }
 
     .copy-button {

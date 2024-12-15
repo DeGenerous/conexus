@@ -3,11 +3,11 @@
   import { toastStore } from '@stores/toast';
 
   let code: string = '';
-  let isValid: boolean = false;
+  let tooShort: boolean = true;
 
   // Validate the referral code's length
-  const validateCode = () => {
-    isValid = code.length === 16; // Ensure it's exactly 16 characters
+  const validateCode = async () => {
+    tooShort = code.length !== 16; // Ensure it's exactly 16 characters
   };
 
   const useReferralCode = async () => {
@@ -38,8 +38,17 @@
       on:input={validateCode}
       required
     />
-    {#if isValid}
-      <p class="validation">Invalid referral code</p>
+    {#if code.length === 16}
+      {#await Account.userReferralCode(code)}
+        <p class="validation">Checking referral code...</p>
+      {:then}
+        <p class="validation green">Referral code is valid</p>
+      {:catch}
+        <p class="validation red">Invalid referral code</p>
+      {/await}
+    {/if}
+    {#if code && tooShort}
+      <p class="validation red">Code should contain 16 characters</p>
     {/if}
     <p class="signup-label">
       Don't have one yet? Find yours
@@ -52,7 +61,7 @@
     <button
       class="submit-button"
       on:click={useReferralCode}
-      disabled={!isValid}
+      disabled={tooShort}
     >
       Use Referral Code
     </button>
@@ -98,12 +107,6 @@
     border-radius: 1.5vw;
     background-color: rgba(1, 0, 32, 0.75);
     outline: none;
-  }
-
-  .validation {
-    font-size: 1.25vw;
-    line-height: 1.5vw;
-    color: rgba(255, 50, 50, 0.8);
   }
 
   .submit-button {
@@ -152,11 +155,6 @@
     .user-input {
       width: 70vw;
       font-size: 1.25em;
-      line-height: 1.5em;
-    }
-
-    .validation {
-      font-size: 1em;
       line-height: 1.5em;
     }
 

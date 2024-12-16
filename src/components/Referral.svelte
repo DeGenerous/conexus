@@ -32,7 +32,7 @@
 <h2>Please provide a referral code to complete your registration.</h2>
 
 <div class="referral-container">
-  <div class="ref-code-form">
+  <div class="ref-code-form blur">
     <label class="signup-label" for="referral-code">
       Enter your referral code:
     </label>

@@ -59,11 +59,6 @@
   let provider: BrowserProvider;
   $: if (isLogged && !$wallet) {
     getUserAddress();
-  } else if (isLogged) {
-    toastStore.show(`
-    Welcome back, ${user.first_name ? user.first_name : user.email}!
-    You're logged in.
-    `)
   }
   const getUserAddress = async () => {
     const metamaskProvider = await detectProvider() as any;
@@ -447,12 +442,12 @@
               {/each}
             </div>
           {/key}
+          <h2>Your referrals: {user.referral_count}</h2>
         {:else}
           <button on:click={Account.generateReferralCode}>
             Get referral codes
           </button>
         {/if}
-        <h2>Your referrals: {user.referral_count}</h2>
       </section>
     {:else}
       <section class="sign-container">
@@ -824,6 +819,15 @@
     align-items: center;
     justify-content: space-between;
     gap: 1.5vw;
+  }
+
+  .login-form a {
+    color: rgba(51, 226, 230, 0.65);
+  }
+
+  .login-form a:hover,
+  .login-form a:active {
+    color: rgb(51, 226, 230);
   }
 
   .sign-button {

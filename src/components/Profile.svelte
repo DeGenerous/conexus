@@ -11,6 +11,9 @@
   } from '@stores/account';
   import { showProfile } from '@stores/modal';
 
+  import detectProvider from '@metamask/detect-provider';
+  import { BrowserProvider } from "ethers";
+
   Account.me();
   Account.logged_in();
 
@@ -51,6 +54,21 @@
   let loginMail: HTMLInputElement;
   let loginPassword: HTMLInputElement;
   let invalidCredentials: boolean = false;
+
+  let provider: BrowserProvider;
+  $: if (isLogged && !$wallet) {
+    getUserAddress();
+  }
+  const getUserAddress = async () => {
+    const metamaskProvider = await detectProvider() as any;
+    if (metamaskProvider === null) {
+        return null;
+    }
+    provider = new BrowserProvider(metamaskProvider, "any");
+    const signer = await provider.getSigner();
+    const address = await signer.getAddress();
+    $wallet = address.slice(0, 6) + "..." + address.slice(-4);
+  }
 
   const handleSignIn = async (event: Event) => {
     event.preventDefault();

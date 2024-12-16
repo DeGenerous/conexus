@@ -6,6 +6,17 @@
 
   import Slider from './music/Slider.svelte';
 
+  import { afterUpdate } from 'svelte';
+
+  let fullWidthImage: boolean = false;
+  let imageWrapper: HTMLDivElement;
+
+  afterUpdate(() => {
+    if (width <= 600)
+      imageWrapper.style.height = fullWidthImage ? 'auto' : '512px';
+    else imageWrapper.style.height = 'auto';
+  });
+
   $: step = $story?.step_data as StepData;
 
   let stepFont: string = 'Verdana';
@@ -19,15 +30,26 @@
 <svelte:window bind:outerWidth={width} />
 
 <div class="step-wrapper" style="font-family: {stepFont}">
-  <div class="image-wrapper blur">
+  <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions a11y-no-static-element-interactions -->
+  <div
+    class="image-wrapper"
+    bind:this={imageWrapper}
+    on:click={() => (fullWidthImage = !fullWidthImage)}
+  >
     {#if step.image}
       <img class="image" src={`data:image/png;base64,${step.image}`} alt="" />
     {:else}
-      <img class="image loading-image" src="/icons/loading.svg" alt="" />
+      <img class="image loading-image" src="/icons/loading.png" alt="" />
+      {#if width <= 600}
+        <p class="click-hint">Click to change image size</p>
+      {/if}
     {/if}
   </div>
 
-  <p class="story-text">{step.story}</p>
+  <!-- <p class="story-text">{step.story}</p> -->
+  {#each step.story.split('\n') as paragraph}
+    <p class="story-text">{paragraph}</p>
+  {/each}
 
   {#if $story?.step_data?.end}
     <hr />
@@ -38,7 +60,7 @@
 
     <h2 class="trait">AI identified you as <strong>{step.trait}</strong></h2>
 
-    <div class="options-container blur">
+    <div class="options-container">
       <button
         class="option menu-option"
         on:click={() => window.open('/', '_self')}>Return to main menu</button
@@ -212,7 +234,7 @@
 
       <!-- MOBILE VIEW -->
     {:else}
-      <div class="control-bar blur">
+      <div class="control-bar">
         <div class="mobile-controls">
           <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
           <div
@@ -224,7 +246,7 @@
             <img class="quit" src="/icons/quit.png" alt="Quit" />
           </div>
 
-          <div class="step-bar blur">
+          <div class="step-bar">
             <button
               class="step-button"
               on:click={() => $story?.loadStep(step.step - 1)}
@@ -302,6 +324,7 @@
   }
 
   .image-wrapper {
+    position: relative;
     align-self: center;
     width: 95%;
     height: auto;
@@ -310,6 +333,8 @@
     border: 0.05vw solid rgba(51, 226, 230, 0.25);
     border-radius: 1em;
     filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
+    -webkit-backdrop-filter: blur(1em);
+    backdrop-filter: blur(1em);
     background-color: rgba(51, 226, 230, 0.05);
     transition: cubic-bezier(0.19, 1, 0.22, 1) 1s;
   }
@@ -322,8 +347,29 @@
   }
 
   .loading-image {
-    height: 53.4375vw;
     object-fit: contain;
+    animation: pulse 5s linear infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .click-hint {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    bottom: 1em;
+    color: rgb(51, 226, 230);
+    animation: pulse 5s linear infinite;
   }
 
   .story-text,
@@ -362,6 +408,8 @@
     border: 0.05vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1em;
     background-color: rgba(51, 226, 230, 0.05);
+    -webkit-backdrop-filter: blur(1em);
+    backdrop-filter: blur(1em);
   }
 
   .option {
@@ -434,6 +482,8 @@
     background-color: rgba(36, 65, 189, 0.75);
     border: 0.05vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1em;
+    -webkit-backdrop-filter: blur(1em);
+    backdrop-filter: blur(1em);
   }
 
   .control-bar {
@@ -514,7 +564,6 @@
 
   .fullscreen {
     height: 2vw;
-    object-fit: contain;
   }
 
   .fullscreen-wrapper:hover,
@@ -537,10 +586,6 @@
     }
 
     .image-wrapper {
-      height: 512px;
-    }
-
-    .loading-image {
       height: 512px;
     }
 
@@ -663,10 +708,6 @@
     .image-wrapper {
       width: 100rem;
       margin-block: 2rem 1rem;
-    }
-
-    .loading-image {
-      height: 56.25rem;
     }
 
     .story-text,

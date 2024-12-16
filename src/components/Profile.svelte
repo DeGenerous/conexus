@@ -10,6 +10,7 @@
     web3LoggedIn,
   } from '@stores/account';
   import { showProfile } from '@stores/modal';
+  import { toastStore } from '@stores/toast';
 
   import detectProvider from '@metamask/detect-provider';
   import { BrowserProvider } from "ethers";
@@ -58,6 +59,11 @@
   let provider: BrowserProvider;
   $: if (isLogged && !$wallet) {
     getUserAddress();
+  } else if (isLogged) {
+    toastStore.show(`
+    Welcome back, ${user.first_name ? user.first_name : user.email}!
+    You're logged in.
+    `)
   }
   const getUserAddress = async () => {
     const metamaskProvider = await detectProvider() as any;

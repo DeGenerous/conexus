@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-
   import {
     CoNexus,
     type DynSectionCategory,
@@ -8,33 +7,26 @@
   } from '@lib/conexus';
   import { checkUserState, checkWeb3LoginState } from '@utils/route-guard';
   import { web3LoggedIn } from '@stores/account';
-
   import StoryCollection from './StoryCollection.svelte';
 
   export let section: string;
-
   let isWeb3LoggedIn: boolean = false;
-
-  onMount(async () => {
-    await checkUserState(`/${section}`);
-
-    web3LoggedIn.subscribe((value) => {
-      isWeb3LoggedIn = value;
-    });
-
-    checkWeb3LoginState(isWeb3LoggedIn, section);
-  });
 
   let categories: DynSectionCategory[] = [];
   let genres: { id: number; name: string }[] = [];
 
   onMount(async () => {
+    await checkUserState(`/${section}`);
+    web3LoggedIn.subscribe((value) => {
+      isWeb3LoggedIn = value;
+    });
+    checkWeb3LoginState(isWeb3LoggedIn, section);
+
     try {
       categories = await CoNexus.sectionCategories(section!);
     } catch (error) {
       console.error('Failed to fetch categories:', error);
     }
-
     try {
       genres = await CoNexus.getGenres();
     } catch (error) {
@@ -46,7 +38,6 @@
   let filteredCategories: DynSectionCategory[];
   let isSorting: boolean = false;
   let sortedCategories: DynSectionCategory[] = [];
-
   let searchField: string;
 
   $: filteredCategories = categories;
@@ -63,7 +54,6 @@
         const matchingTopics = category.topics.filter((topic: DynTopic) =>
           topic.name.toLowerCase().includes(searchField.toLowerCase()),
         );
-
         // If there are any matching topics, include them in the results
         return matchingTopics.length > 0
           ? { ...category, topics: matchingTopics }
@@ -122,8 +112,8 @@
           }
         }}
         style="background-color: {isSorting
-          ? 'rgba(45, 90, 216, 0.9)'
-          : 'rgba(22, 30, 95, 0.75)'}"
+          ? 'rgba(56, 117, 250, 0.9)'
+          : 'rgba(56, 117, 250, 0.5)'}"
         role="button"
         tabindex="0"
       >
@@ -156,8 +146,8 @@
     <div
       class="filter blur"
       style="background-color: {searchField
-        ? 'rgba(45, 90, 216, 0.9)'
-        : 'rgba(22, 30, 95, 0.75)'}"
+        ? 'rgba(56, 117, 250, 0.9)'
+        : 'rgba(56, 117, 250, 0.5)'}"
     >
       <img class="filter-image" src="/icons/search.png" alt="Search" />
       <input
@@ -170,28 +160,27 @@
   </section>
 
   {#key filteredCategories}
-    {#each filteredCategories as category (category.name)}
-      <StoryCollection {category} {section} />
-    {/each}
+    <div class="categories-wrapper">
+      {#each filteredCategories as category (category.name)}
+        <StoryCollection {category} {section} />
+      {/each}
+    </div>
   {/key}
 {:else}
-  <p class="loading">Loading...</p>
+  <p class="validation green">Loading data...</p>
 {/if}
 
 <style>
-  .loading {
-    text-align: center;
-    font-size: 2vw;
-    line-height: 2vw;
-    color: rgba(51, 226, 230, 0.5);
-    padding-block: 2vw;
+  img {
+    cursor: pointer;
   }
 
   .filters {
+    width: 95vw;
     display: flex;
     flex-flow: row nowrap;
     justify-content: flex-end;
-    margin-right: 2vw;
+    gap: 1vw;
   }
 
   .filter {
@@ -200,22 +189,25 @@
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
-    padding: 0.5vw 1vw;
-    margin-inline: 0.25rem;
-    background-color: rgba(22, 30, 95, 0.75);
+    gap: 0.5vw;
+    padding: 0.25vw;
+    background-color: rgba(56, 117, 250, 0.5);
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 1vw;
+    border-radius: 0.5vw;
     cursor: pointer;
   }
 
   .filter-image {
-    height: 2vw;
+    height: 2.5vw;
     width: auto;
-    opacity: 0.8;
+    opacity: 0.9;
+    padding: 0.5vw;
   }
 
   .sort-genres-filters {
     display: flex;
+    flex-flow: row nowrap;
+    gap: 1vw;
   }
 
   .genres-list {
@@ -245,13 +237,13 @@
   }
 
   .search-field {
-    margin-left: 1vw;
-    font-size: 2vw;
-    line-height: 2.5vw;
+    font-size: 1.5vw;
+    line-height: 2vw;
+    padding-inline: 0.5vw;
     color: rgba(51, 226, 230, 0.9);
     background-color: rgba(1, 0, 32, 0.4);
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 0.5vw;
+    border-radius: 0.25vw;
     outline: none;
     width: 15vw;
     transition: all 0.15s ease-in-out;
@@ -265,34 +257,39 @@
     width: 25vw;
   }
 
-  @media only screen and (max-width: 600px) {
-    .loading {
-      font-size: 1em;
-      line-height: 1em;
-    }
+  .categories-wrapper {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    gap: 2vw;
+  }
 
+  @media only screen and (max-width: 600px) {
     .filters {
-      width: 95vw;
-      margin: 0 2.5vw;
       justify-content: space-between;
+      gap: 0.5em;
     }
 
     .filter {
-      padding: 0.5em;
+      gap: 0.5em;
+      padding: 0.25em;
+      border-radius: 0.5em;
     }
 
     .filter-image {
       height: 1.5em;
+      padding: 0.25em;
     }
 
     .sort-genres-filters {
       flex-direction: row-reverse;
+      gap: 0.5em;
     }
 
     .search-field {
       font-size: 1em;
       line-height: 1.5em;
-      margin-left: 0.5em;
+      padding-inline: 0.5em;
       width: 30vw;
     }
 
@@ -313,6 +310,10 @@
     .genre {
       font-size: 0.9em;
       line-height: 1.5em;
+    }
+
+    .categories-wrapper {
+      gap: 1em;
     }
   }
 </style>

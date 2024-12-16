@@ -61,7 +61,6 @@
     align-items: center;
     justify-content: space-between;
     width: 20vw;
-    margin: 1vw;
     background-color: rgba(36, 65, 189, 0.75);
     color: rgba(255, 255, 255, 0.6);
     border: 0.05vw solid rgba(51, 226, 230, 0.75);
@@ -109,6 +108,7 @@
   @media only screen and (max-width: 600px) {
     .tile {
       width: 40vw;
+      border-radius: 1em;
     }
 
     .tile-picture {

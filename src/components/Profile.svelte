@@ -221,7 +221,7 @@
         class="close-button"
         on:click|stopPropagation={() => ($showProfile = false)}
       >
-        ❌
+        <img src="/icons/close.png" alt="Close" />
       </button>
     </header>
 
@@ -757,19 +757,20 @@
     align-items: center;
   }
 
-  .back-arrow {
+  .back-arrow, .close-button {
     padding: 0.5vw;
   }
 
-  .back-arrow img {
+  .back-arrow img, .close-button img {
     width: 3vw;
+    padding: 0.25vw;
+    opacity: 0.9;
     height: auto;
-    opacity: 0.75;
     cursor: pointer;
   }
 
-  .close-button {
-    padding: 1vw;
+  .back-arrow img {
+    opacity: 0.75;
   }
 
   /* SIGN-IN window */

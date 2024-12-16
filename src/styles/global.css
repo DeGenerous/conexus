@@ -185,6 +185,10 @@ hr {
   border: 0.1vw solid rgba(51, 226, 230, 0.5);
 }
 
+input {
+  cursor: text;
+}
+
 button {
   font-family: inherit;
   cursor: pointer;
@@ -273,6 +277,14 @@ a:hover, a:active {
   color: rgba(0, 185, 55, 0.75);
 }
 
+main {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 2vw;
+}
+
 @media only screen and (max-width: 600px) {
   hr {
     width: 100%;
@@ -303,5 +315,9 @@ a:hover, a:active {
   .validation {
     font-size: 1em;
     line-height: 1.5em;
+  }
+
+  main {
+    gap: 1em;
   }
 }

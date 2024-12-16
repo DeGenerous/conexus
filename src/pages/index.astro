@@ -23,22 +23,13 @@ const meta = {
 <main>
   <Layout {header} {subheading} {footerText} {arrow} {...meta}>
     <Menu client:load />
+    <footer>
+      {footerText.map((text: any) => <p class="footer-text">{text}</p>)}
+    </footer>
   </Layout>
-
-  <footer>
-    {footerText.map((text: any) => <p class="footer-text">{text}</p>)}
-  </footer>
 </main>
 
 <style>
-  main {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 2vw;
-  }
-
   footer {
     width: 90%;
     display: flex;
@@ -58,10 +49,6 @@ const meta = {
   }
 
   @media only screen and (max-width: 600px) {
-    main {
-      gap: 1em;
-    }
-
     footer {
       gap: 0.5em;
     }

@@ -44,6 +44,8 @@ const meta = {
 };
 ---
 
-<Layout arrow={true} header={section} {subheading} {...meta}>
-  <CategorySvelte {section} client:load />
-</Layout>
+<main>
+  <Layout arrow={true} header={section} {subheading} {...meta}>
+    <CategorySvelte {section} client:load />
+  </Layout>
+</main>

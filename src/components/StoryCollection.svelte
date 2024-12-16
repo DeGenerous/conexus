@@ -8,31 +8,42 @@
   const blankPicture: string = '/blank.avif'; // temp
 </script>
 
-<div class="collection-header">
-  <p class="tiles-collection-legend">
-    {category.name}
-  </p>
-</div>
+<section>
+  <div class="collection-header">
+    <p class="tiles-collection-legend">
+      {category.name}
+    </p>
+  </div>
 
-<section class="tiles-collection blur">
-  {#each category.topics as topic}
-    <StoryTile
-      {section}
-      topicName={topic.name}
-      primaryThumbnail={topic.title_image1 ?? blankPicture}
-      secondaryThumbnail={topic.title_image2 ?? blankPicture}
-    />
-  {/each}
+  <div class="tiles-collection blur">
+    {#each category.topics as topic}
+      <StoryTile
+        {section}
+        topicName={topic.name}
+        primaryThumbnail={topic.title_image1 ?? blankPicture}
+        secondaryThumbnail={topic.title_image2 ?? blankPicture}
+      />
+    {/each}
+  </div>
 </section>
 
 <style>
+  section {
+    width: 100vw;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    gap: 1vw;
+  }
+
   .tiles-collection {
+    width: 100%;
+    height: auto;
     display: flex;
     flex-flow: row nowrap;
     justify-content: flex-start;
     overflow-x: scroll;
-    height: auto;
-    margin: 1vw 2.5vw 3vw 2.5vw;
+    gap: 1vw;
     padding: 2vw;
     background-image: radial-gradient(
       rgba(0, 0, 0, 0),
@@ -74,26 +85,28 @@
     font-size: 3vw;
     line-height: 3vw;
     color: rgba(51, 226, 230, 0.85);
-    margin-left: 4vw;
     -webkit-text-stroke: 0.03vw #33e2e6;
     text-shadow: 0 0 1vw rgba(51, 226, 230, 0.4);
   }
 
   @media only screen and (max-width: 600px) {
-    .tiles-collection {
-      margin-bottom: 2em;
+    section {
+      gap: 0.5em;
     }
 
     .collection-header {
       flex-flow: column-reverse nowrap;
       align-items: flex-start;
-      margin-block: 1em;
       gap: 0.5em;
     }
 
     .tiles-collection-legend {
       font-size: 1.5em;
       line-height: 1.5em;
+    }
+
+    .tiles-collection {
+      gap: 0.5em;
     }
   }
 </style>

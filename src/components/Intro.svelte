@@ -16,75 +16,56 @@
   ];
 </script>
 
-<section class="conexus-menu-tiles blur">
-  <p class="menu-text-0">{menuText[0]}</p>
+<section class="blur">
+  <h3>{menuText[0]}</h3>
 
   {#await CoNexus.sections()}
-    <p class="error-message">Loading story sections...</p>
+    <p class="validation green">Loading story sections...</p>
   {:then sections}
-    {#each sections as section}
-      <MenuTile {section} />
-    {/each}
+    <div class="conexus-menu-tiles">
+      {#each sections as section}
+        <MenuTile {section} />
+      {/each}
+    </div>
   {:catch error}
-    <p class="error-message">Error: {error.message}</p>
+    <p class="validation">Error: {error.message}</p>
   {/await}
 
-  <p class="menu-text-1">{menuText[1]}</p>
+  <h3>{menuText[1]}</h3>
 </section>
 
 <style>
-  .conexus-menu-tiles {
+  section {
     display: flex;
-    flex-direction: row;
+    flex-flow: column nowrap;
+    justify-content: center;
     align-items: center;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    margin: 1vw 2.5vw;
-    margin-bottom: 3vw;
+    gap: 2vw;
     padding: 2vw;
     background-color: rgba(1, 0, 32, 0.75);
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 2.5vw;
+    border-radius: 1.5vw;
     filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.25));
   }
 
-  .menu-text-0,
-  .menu-text-1 {
-    text-align: center;
-    font-size: 2vw;
-    line-height: 2.5vw;
-    color: rgba(255, 255, 255, 0.75);
-  }
-
-  .menu-text-0 {
-    margin: 1vw 15vw;
-    margin-bottom: 3vw;
-  }
-
-  .menu-text-1 {
-    margin: 1vw;
-    margin-top: 3vw;
-  }
-
-  .error-message {
-    display: block;
-    text-align: center;
-    font-size: 2vw;
-    line-height: 2vw;
-    color: rgba(51, 226, 230, 0.5);
-    padding-block: 2vw;
+  .conexus-menu-tiles {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2vw;
   }
 
   @media only screen and (max-width: 600px) {
-    .menu-text-0,
-    .menu-text-1 {
-      font-size: inherit;
-      line-height: 2em;
+    section {
+      width: 95%;
+      gap: 1em;
+      padding: 0.5em;
+      border-radius: 1em;
     }
 
-    .error-message {
-      font-size: 1em;
-      line-height: 1em;
+    .conexus-menu-tiles {
+      border-radius: 1em;
     }
   }
 </style>

@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { writable } from 'svelte/store';
 
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
   import Tts from '@components/music/Tts.svelte';
@@ -11,6 +10,7 @@
   import { checkUserState } from '@utils/route-guard';
 
   import Modal from './Modal.svelte';
+  import { showModal } from "@stores/modal";
   import Share from './Share.svelte';
 
   export let story_name: string;
@@ -47,18 +47,17 @@
     await fetchContinuables();
   });
 
-  let showDeleteModal = writable<boolean>(false);
   let selectedStory: any;
 
   function openModal(story: any) {
     selectedStory = story;
-    showDeleteModal.set(true);
+    $showModal = true;
   }
 
   async function DeleteStory(story_id: any) {
     await CoNexus.delete(story_id);
     await fetchContinuableStories();
-    showDeleteModal.set(false);
+    $showModal = false;
   }
 
   async function fetchContinuableStories() {
@@ -139,7 +138,7 @@
     <!-- Delete Story Modal -->
 
     {#if selectedStory}
-      <Modal bind:showModal={$showDeleteModal}>
+      <Modal>
         <h2 class="modal-text">Are you sure you want to delete this story?</h2>
         <hr />
         <p class="modal-text">

@@ -138,6 +138,10 @@
 }
 
 /* General */
+:where(*) {
+  cursor: default;
+}
+
 * {
   font-size: inherit;
   line-height: inherit;
@@ -190,8 +194,8 @@ button {
   align-items: center;
   gap: 0.5vw;
   padding: 1vw;
-  font-size: 2vw;
-  line-height: 2vw;
+  font-size: 1.5vw;
+  line-height: 1.5vw;
   color: #dedede;
   background-color: rgba(56, 117, 250, 0.5);
   border: 0.1vw solid rgba(51, 226, 230, 0.5);
@@ -213,8 +217,10 @@ button:disabled:hover,
 button:disabled:active {
   opacity: 0.5;
   color: #dedede;
+  border-color: rgba(51, 226, 230, 0.5);
   background-color: rgba(56, 117, 250, 0.5);
   filter: none;
+  transform: none;
   cursor: not-allowed;
 }
 
@@ -246,8 +252,9 @@ h3, label, a {
 }
 
 a {
-  color: rgba(51, 226, 230, 0.65);
+  color: rgba(51, 226, 230, 0.9);
   text-decoration: none;
+  cursor: pointer;
 }
 
 a:hover, a:active {
@@ -259,9 +266,6 @@ a:hover, a:active {
   text-align: center;
   font-size: 1.25vw;
   line-height: 1.5vw;
-}
-
-.red {
   color: rgba(255, 50, 50, 0.75);
 }
 
@@ -275,8 +279,8 @@ a:hover, a:active {
   }
 
   button {
-    font-size: 1.25em;
-    line-height: 1.5em;
+    font-size: 1em;
+    line-height: 1.75em;
     padding: 0.25em 1em;
     border-radius: 0.5em;
   }
@@ -293,7 +297,7 @@ a:hover, a:active {
 
   h3, label, a {
     font-size: 1em;
-    line-height: 1.25em;
+    line-height: 1.5em;
   }
 
   .validation {

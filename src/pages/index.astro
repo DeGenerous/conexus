@@ -13,42 +13,68 @@ const footerText = [
 const arrow = false;
 
 const meta = {
-  title: "Welcome to Conexus",
-  description: "Explore the best stories in the multiverse",
-  image: "/favicon.png",
-  url: "https://conexus-v1-test.degenerousdao.com/",
+  title: 'Welcome to Conexus',
+  description: 'Explore the best stories in the multiverse',
+  image: '/favicon.png',
+  url: 'https://conexus-v1-test.degenerousdao.com/',
 };
 ---
 
-<Layout {header} {subheading} {footerText} {arrow} {...meta}>
-  <Menu client:load />
-</Layout>
+<main>
+  <Layout {header} {subheading} {footerText} {arrow} {...meta}>
+    <Menu client:load />
+  </Layout>
 
-{footerText.map((text: any) => <p class="footer-text">{text}</p>)}
+  <footer>
+    {footerText.map((text: any) => <p class="footer-text">{text}</p>)}
+  </footer>
+</main>
 
 <style>
+  main {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2vw;
+  }
+
+  footer {
+    width: 90%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
+  }
+
   .footer-text {
-    font-size: 2vw;
-    line-height: 2.5vw;
     text-align: center;
-    color: rgba(51, 226, 230, 0.85);
-    padding: 1vw 5vw;
+    font-size: 1.5vw;
+    line-height: 2.5vw;
+    color: rgba(51, 226, 230, 0.75);
     text-shadow: 0 0 1vw #010020;
     filter: drop-shadow(0 0 1vw #010020);
   }
 
   @media only screen and (max-width: 600px) {
+    main {
+      gap: 1em;
+    }
+
+    footer {
+      gap: 0.5em;
+    }
+
     .footer-text {
       font-size: inherit;
       line-height: 2em;
       padding: 1em;
-      margin: 0 1em 1em 1em;
-      text-align: center;
       background-color: rgba(22, 30, 95, 0.5);
       -webkit-backdrop-filter: blur(2vw);
       backdrop-filter: blur(2vw);
       border: 0.1vw solid rgba(51, 226, 230, 0.5);
-      border-radius: 2.5vw;
+      border-radius: 1em;
     }
   }
 </style>

@@ -1,17 +1,19 @@
 <script lang="ts">
-  export let showModal: boolean;
+  import { showModal } from "@stores/modal.ts";
 
+  export let secondButton: string = '';
+  export let handleSecondButton: any = () => ($showModal = false);
   let dialog: HTMLDialogElement;
 
-  $: if (dialog && showModal) {
+  $: if (dialog && $showModal) {
     dialog.showModal();
-  } else if (!showModal) {
-    dialog.close();
+  } else if (!$showModal) {
+    closeDialog();
   }
 
   const closeDialog = () => {
-    showModal = false;
-    dialog.close();
+    $showModal = false;
+    dialog?.close();
   };
 </script>
 
@@ -25,21 +27,36 @@
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div on:click|stopPropagation>
     <slot />
+    <section>
+      <button on:click={() => ($showModal = false)}>
+        Close
+      </button>
+      {#if secondButton}
+        <button on:click={handleSecondButton}>
+          {secondButton}
+        </button>
+      {/if}
+    </section>
   </div>
 </dialog>
 
 <style>
   dialog {
-    width: 80vw;
+    max-width: 80vw;
     border: none;
     color: inherit;
     background-color: rgba(1, 0, 32, 0.75);
     border: 0.05vw solid rgba(51, 226, 230, 0.75);
-    border-radius: 2.5vw;
+    border-radius: 1.5vw;
   }
 
   dialog > div {
-    padding: 1vw;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2vw;
+    padding: 2vw;
   }
 
   dialog::backdrop {
@@ -54,9 +71,18 @@
     animation: fade 0.2s ease-out;
   }
 
+  section {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
+  }
+
   @media only screen and (max-width: 600px) {
     dialog {
       width: 90vw;
+      border-radius: 1em;
     }
 
     dialog > div {

@@ -3,12 +3,7 @@
   import { toastStore } from '@stores/toast';
 
   let code: string = '';
-  let tooShort: boolean = true;
-
-  // Validate the referral code's length
-  const validateCode = async () => {
-    tooShort = code.length !== 16; // Ensure it's exactly 16 characters
-  };
+  $: tooShort = code.length !== 16;;
 
   const useReferralCode = async () => {
     try {
@@ -20,7 +15,21 @@
       toastStore.show('Failed to use referral code. Please try again.');
     }
   };
+
+  $: if (code.length === 16) validateReferralCode();
+  let referralCodeValid = false;
+  async function validateReferralCode() {
+    const referralObject: ReferralCode | null =
+      await Account.validateReferralCode(code);
+    if (referralObject) {
+      referralCodeValid = true;
+    } else {
+      referralCodeValid = false;
+    }
+  }
 </script>
+
+<h2>Please provide a referral code to complete your registration.</h2>
 
 <div class="referral-container">
   <div class="ref-code-form">
@@ -35,21 +44,25 @@
       minlength="16"
       maxlength="16"
       bind:value={code}
-      on:input={validateCode}
       required
     />
+
     {#if code.length === 16}
-      {#await Account.userReferralCode(code)}
+      {#await Account.validateReferralCode(code)}
         <p class="validation">Checking referral code...</p>
-      {:then}
-        <p class="validation green">Referral code is valid</p>
+      {:then referralObject}
+        {#if referralObject}
+          <p class="validation green">Referral code is valid</p>
+        {:else}
+          <p class="validation">Referral code is invalid</p>
+        {/if}
       {:catch}
-        <p class="validation red">Invalid referral code</p>
+        <p class="validation">Some error occured...</p>
       {/await}
+    {:else if code}
+      <p class="validation">Code should contain 16 characters</p>
     {/if}
-    {#if code && tooShort}
-      <p class="validation red">Code should contain 16 characters</p>
-    {/if}
+
     <p class="signup-label">
       Don't have one yet? Find yours
       <a
@@ -69,6 +82,11 @@
 </div>
 
 <style>
+  h2 {
+    margin-bottom: 2vw;
+    text-shadow: 0 0 0.5vw #010020;
+  }
+
   .referral-container {
     width: 100%;
     height: auto;
@@ -85,7 +103,7 @@
     gap: 1.5vw;
     background-color: rgba(1, 0, 32, 0.75);
     border: 0.05vw solid rgba(51, 226, 230, 0.75);
-    border-radius: 2vw;
+    border-radius: 1.5vw;
     padding: 2vw 3vw;
   }
 
@@ -97,49 +115,24 @@
   }
 
   .user-input {
-    text-align: center;
     width: 30vw;
-    font-size: 2vw;
-    line-height: 1vw;
-    padding: 1vw 2vw;
-    color: rgba(51, 226, 230, 0.75);
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 1.5vw;
-    background-color: rgba(1, 0, 32, 0.75);
-    outline: none;
-  }
-
-  .submit-button {
-    padding: 1vw 2vw;
-    border: 0.05vw solid rgba(51, 226, 230, 0.75);
-    border-radius: 1.5vw;
     font-size: 1.5vw;
     line-height: 1.5vw;
+    padding: 1.5vw 2vw;
     color: rgba(51, 226, 230, 0.75);
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
+    border-radius: 1vw;
     background-color: rgba(51, 226, 230, 0.1);
-    filter: drop-shadow(0 0 0.1vw rgba(51, 226, 230, 0.4));
-    transition: transform 0.15s ease-in-out;
-  }
-
-  .submit-button:hover,
-  .submit-button:active {
-    color: rgba(51, 226, 230, 1);
-    background-color: rgba(51, 226, 230, 0.5);
-    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.4));
-    transform: scale(1.05);
-  }
-
-  .submit-button:disabled,
-  .submit-button:disabled:hover,
-  .submit-button:disabled:active {
-    opacity: 0.5;
-    color: rgba(51, 226, 230, 0.75);
-    background-color: rgba(51, 226, 230, 0.1);
-    filter: drop-shadow(0 0 0.1vw rgba(51, 226, 230, 0.4));
-    cursor: not-allowed;
+    outline: none;
+    text-align: center;
+    cursor: text;
   }
 
   @media only screen and (max-width: 600px) {
+    h2 {
+      margin-bottom: 2em;
+    }
+
     .ref-code-form {
       width: 85vw;
       padding: 1em;
@@ -156,13 +149,6 @@
       width: 70vw;
       font-size: 1.25em;
       line-height: 1.5em;
-    }
-
-    .submit-button {
-      font-size: 1.25em;
-      line-height: 1.5em;
-      padding: 0.25em 1em;
-      border-radius: 0.5em;
     }
   }
 </style>

@@ -9,6 +9,7 @@
     wallet,
     web3LoggedIn,
   } from '@stores/account';
+  import { showProfile } from '@stores/modal';
 
   Account.me();
   Account.logged_in();
@@ -17,16 +18,16 @@
     Account.cookie();
   });
 
-  let showModal: boolean;
   let dialog: HTMLDialogElement;
 
-  $: if (dialog && showModal) {
+  $: if (dialog && $showProfile) {
     dialog.showModal();
   } else if (dialog) {
     dialog.close();
     if (!isLogged) {
       signUp = false;
       signInWithEmail = false;
+      invalidCredentials = false;
     }
   }
 
@@ -39,7 +40,7 @@
       signInWithEmail = false;
       return;
     }
-    showModal = false;
+    $showProfile = false;
   }
 
   let isLogged: boolean;
@@ -51,16 +52,19 @@
   let loginPassword: HTMLInputElement;
   let invalidCredentials: boolean = false;
 
-  const handleSignIn = async () => {
+  const handleSignIn = async (event: Event) => {
+    event.preventDefault();
     try {
       await Account.signin({
         email: loginMail.value,
         password: loginPassword.value,
-      }).then(() => location.reload())
+      })
     } catch (error) {
       invalidCredentials = true;
     }
-    
+    setTimeout(() => {
+      if (!$web3LoggedIn) invalidCredentials = true;
+    })
   }
 
   const alternativeSignIn = {
@@ -94,6 +98,7 @@
   let editPassword: string;
   let editPasswordConfirm: string;
   let editPasswordVisible: boolean = false;
+  let passwordVisible: boolean = false;
   $: editPasswordMatch = editPassword === editPasswordConfirm;
   $: editValidation = isEditing === 'password'
     ? !editPasswordMatch
@@ -106,48 +111,30 @@
     if (state === 'save') savingData = isEditing;
     isEditing = state;
     if (!isEditing) return;
-    switch (isEditing) {
-      case 'save': {
-        if (savingData === 'password') {
-          console.log(`save: ${editPassword}`);
-          // CHANGE USER PASSWORD
-        } else if (savingData === 'username') {
-          console.log(`save first name: ${editFirstName}`)
-          if (editLastName) console.log(`save last name: ${editLastName}`)
-          // CHANGE USERNAME
-        }
-        isEditing = null;
-        break;
+    if (isEditing == 'save') {
+      if (savingData === 'password') {
+        console.log(`save: ${editPassword}`);
+        // CHANGE USER PASSWORD
+      } else if (savingData === 'username') {
+        console.log(`save first name: ${editFirstName}`)
+        if (editLastName) console.log(`save last name: ${editLastName}`)
+        // CHANGE USERNAME
       }
-      case 'username': {
-        console.log('change username');
-        break;
-      }
-      case 'password': {
-        console.log('change password');
-        break;
-      }
+      isEditing = null;
     }
   }
 
   // Form state variables
   let referralCode = '';
   let referralCodeValid = false;
-  let referralObj: ReferralCode;
-  let isCheckingCode = false; // To show a loading indicator during validation
-
-  // Track other form fields
   let first_name = '';
   let last_name = '';
   let password = '';
   let confirmPassword = '';
   let email = '';
 
-  // Debounce timeout reference
-  let debounceTimeout: NodeJS.Timeout;
-
   // Form validation variables
-  $: mandatoryFields = email && first_name;
+  $: mandatoryFields = email && first_name && password;
   $: passwordsMatch =
     password && confirmPassword ? password == confirmPassword : true;
   let termsAccepted: boolean = false;
@@ -155,34 +142,16 @@
   $: isFormValid =
     mandatoryFields && passwordsMatch && termsAccepted && referralCodeValid;
 
-  // Function to validate the referral code
+  $: if (referralCode.length === 16) validateReferralCode();
   async function validateReferralCode() {
-    if (referralCode.length < 16) {
-      referralCodeValid = false; // Reset validity if code length is invalid
-      return;
-    }
-
-    isCheckingCode = true;
-
-    // Call the Account method to validate the referral code
     const referralObject: ReferralCode | null =
       await Account.validateReferralCode(referralCode);
-
     if (referralObject) {
       referralCodeValid = true;
-      referralObj = referralObject; // Assign validated referral data
     } else {
-      referralCodeValid = false; // Invalid code or error during validation
+      referralCodeValid = false;
     }
-
-    isCheckingCode = false; // Reset checking status
   }
-
-  // Watch the referral code and debounce validation
-  // $: if (referralCode) {
-  //   clearTimeout(debounceTimeout); // Clear any existing timeout
-  //   debounceTimeout = setTimeout(validateReferralCode, 1000); // Debounce for 3 seconds
-  // }
 
   const referralSignup = async (event: Event) => {
     event.preventDefault();
@@ -205,15 +174,15 @@
   class="profile-icon"
   role="button"
   tabindex="0"
-  on:click={() => (showModal = true)}
+  on:click={() => ($showProfile = true)}
 ></span>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
 <dialog
   class="blur"
   bind:this={dialog}
-  on:close={() => (showModal = false)}
-  on:click|self={() => (showModal = false)}
+  on:close={() => ($showProfile = false)}
+  on:click|self={() => ($showProfile = false)}
 >
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div on:click|stopPropagation>
@@ -232,7 +201,7 @@
       {/if}
       <button
         class="close-button"
-        on:click|stopPropagation={() => (showModal = false)}
+        on:click|stopPropagation={() => ($showProfile = false)}
       >
         ❌
       </button>
@@ -365,15 +334,15 @@
 
           {#if isEditing === 'password'}
             {#if !editPassword}
-              <p class="validation red">Provide new password</p>
+              <p class="validation">Provide new password</p>
             {:else if !editPasswordConfirm}
-              <p class="validation red">Confirm new password</p>
+              <p class="validation">Confirm new password</p>
             {:else if editPasswordConfirm && !editPasswordMatch}
-              <p class="validation red">Passwords do not match!</p>
+              <p class="validation">Passwords do not match!</p>
             {/if}
           {:else if isEditing === 'username'}
             {#if !editFirstName}
-              <p class="validation red">Provide first name</p>
+              <p class="validation">Provide first name</p>
             {/if}
           {/if}
 
@@ -494,7 +463,7 @@
                 />
               </div>
               {#if invalidCredentials}
-                <p class="validation red">Invalid credentials!</p>
+                <p class="validation">Invalid credentials!</p>
               {/if}
               <button class="sign-button" on:click={handleSignIn}>
                 Sign in
@@ -546,34 +515,45 @@
                 }
               />
             </div>
+
             <div class="input-container">
               <label for="new-user-password">Password</label>
+              <div class="password-container">
+                <input
+                  class="user-input"
+                  id="new-user-password"
+                  placeholder="Enter password"
+                  minlength="8"
+                  type={passwordVisible ? "text" : "password"}
+                  bind:value={password}
+                  required
+                  style={ password
+                    ? ''
+                    : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
+                  }
+                />
+                <button
+                  aria-label="Show password"
+                  class="password-visibility-button non-hover-btn"
+                  on:pointerdown={() => (passwordVisible = true)}
+                  on:pointerup={() => (passwordVisible = false)}
+                  on:pointerleave={() => (passwordVisible = false)}
+                ></button>
+              </div>
               <input
                 class="user-input"
-                type="password"
-                id="new-user-password"
-                placeholder="Enter password"
-                minlength="8"
-                bind:value={password}
-                required
-                style={ password
-                  ? ''
-                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
-                }
-              />
-              <input
-                class="user-input"
-                type="password"
                 id="confirm-new-user-password"
                 placeholder="Confirm password"
                 bind:value={confirmPassword}
                 required
+                type={passwordVisible ? "text" : "password"}
                 style={ passwordsMatch
                   ? ''
                   : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
                 }
               />
             </div>
+
             <div class="input-container">
               <label for="user-first-name">First name</label>
               <input
@@ -608,39 +588,43 @@
                 minlength="16"
                 maxlength="16"
                 bind:value={referralCode}
-                on:input={validateReferralCode}
                 required
-                style={ referralCode
+                style={ referralCodeValid
                   ? ''
                   : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
                 }
               />
             </div>
+            
             {#if !mandatoryFields}
-              <p class="validation red">Fill all required fields</p>
+              <p class="validation">Fill all required fields</p>
             {/if}
-            {#if referralCode}
-              {#if isCheckingCode}
-                <p class="validation red">Checking referral code...</p>
-              {:else if referralCodeValid}
-                <p class="validation green">Referral code is valid</p>
-              {:else}
-                {#if referralCode.length !== 16}
-                  <p class="validation red">Code should contain 16 characters</p>
+
+            {#if referralCode.length === 16}
+              {#await Account.validateReferralCode(referralCode)}
+                <p class="validation">Checking referral code...</p>
+              {:then referralObject}
+                {#if referralObject}
+                  <p class="validation green">Referral code is valid</p>
                 {:else}
-                  <p class="validation red">Invalid referral code</p>
+                  <p class="validation">Referral code is invalid</p>
                 {/if}
-              {/if}
+              {:catch}
+                <p class="validation">Some error occured...</p>
+              {/await}
+            {:else if referralCode}
+              <p class="validation">Code should contain 16 characters</p>
+            {:else}
+              <p class="validation">Enter referral code</p>
             {/if}
+
             {#if password && !confirmPassword}
-              <p class="validation red">Please confirm your password</p>
+              <p class="validation">Please confirm your password</p>
             {/if}
             {#if !passwordsMatch}
-              <p class="validation red">Passwords do not match</p>
+              <p class="validation">Passwords do not match</p>
             {/if}
-            {#if !termsAccepted}
-              <p class="validation red">Please accept our Terms of Service</p>
-            {/if}
+
             <div class="agreements-container">
               <div class="agreement">
                 <input
@@ -649,15 +633,20 @@
                   on:change={(event: any) => {
                     termsAccepted = event.target?.checked;
                   }}
-                  style={ termsAccepted
-                  ? ''
-                  : 'outline: 0.1vw solid rgba(255, 50, 50, 0.75);'
-                }
                 />
-                <label for="terms" class="terms">
+                <label for="terms" class="terms"
+                style={ termsAccepted
+                  ? ''
+                  : 'color: rgba(255, 50, 50, 0.75);'
+                }
+                >
                   * I have read and agree to the <a
                     href="https://docs.google.com/document/d/1fEemq6HVM_h8ZTbc_Fl_k3RvlPdjYd70TI1iloT5gXA/edit?usp=sharing"
                     target="_blank"
+                    style={ termsAccepted
+                      ? ''
+                      : 'color: rgba(255, 50, 50, 0.9);'
+                    }
                   >
                     Terms of Service</a
                   >.
@@ -758,6 +747,7 @@
     width: 3vw;
     height: auto;
     opacity: 0.75;
+    cursor: pointer;
   }
 
   .close-button {
@@ -792,10 +782,12 @@
     opacity: 0.9;
     height: 2.5vw;
     width: auto;
+    cursor: pointer;
   }
 
   .sign-lable {
     width: 100%;
+    cursor: pointer;
   }
 
   /* SIGNIN with EMAIL */
@@ -823,8 +815,8 @@
 
   .user-input {
     width: 30vw;
-    font-size: 2vw;
-    line-height: 2vw;
+    font-size: 1.75vw;
+    line-height: 1.75vw;
     padding: 1.5vw 2vw;
     color: rgba(51, 226, 230, 0.75);
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
@@ -832,6 +824,7 @@
     background-color: rgba(51, 226, 230, 0.1);
     outline: none;
     text-align: center;
+    cursor: text;
   }
 
   .user-input:disabled {
@@ -853,12 +846,17 @@
     gap: 1vw;
   }
 
+  .agreement label {
+    cursor: pointer;
+  }
+
   #terms,
   #newsletter {
     -webkit-transform: scale(2);
     transform: scale(2);
     flex: 1;
     accent-color: rgba(51, 226, 230, 0.75);
+    cursor: pointer;
   }
 
   .terms > a {
@@ -1010,16 +1008,13 @@
   /* Profile icon */
 
   .profile-icon {
-    position: absolute;
-    top: 2vw;
-    right: 2vw;
     height: 7vw;
     width: 7vw;
-    cursor: pointer;
     background-image: url('/icons/profileIcon.avif');
     background-size: contain;
     opacity: 0.4;
     z-index: 1;
+    cursor: pointer;
   }
 
   .profile-icon:hover,
@@ -1085,7 +1080,7 @@
     .user-input {
       width: 70vw;
       font-size: 1.25em;
-      line-height: 1.5em;
+      line-height: 1.75em;
     }
 
     .agreement {
@@ -1141,7 +1136,7 @@
 
     .ref-code {
       font-size: 1em;
-      line-height: 1em;
+      line-height: 1.5em;
       padding: 0.25em 0.5em;
     }
 
@@ -1153,8 +1148,6 @@
     .profile-icon {
       width: 3em;
       height: 3em;
-      top: 1em;
-      right: 0.5em;
     }
   }
 

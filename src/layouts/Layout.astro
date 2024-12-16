@@ -48,7 +48,7 @@ const {
     <ToastContainer />
     {
       !story && (
-        <section class="container">
+        <header class="container">
           {arrow && <a class="icon arrow" href="../" aria-label="back-arrow" />}
           {!arrow && (
             <a
@@ -59,22 +59,20 @@ const {
             />
           )}
           {header === 'CoNexus' ? (
-            <div class="title">
-              <picture>
-                <source srcset="title.avif" type="image/avif" />
-                <img
-                  class="blur"
-                  src="title.png"
-                  alt="CoNexus"
-                  draggable="false"
-                />
-              </picture>
-            </div>
+            <picture>
+              <source srcset="title.avif" type="image/avif" />
+              <img
+                class="blur"
+                src="title.png"
+                alt="CoNexus"
+                draggable="false"
+              />
+            </picture>
           ) : (
-            <p class="header">{header}</p>
+            <h1 class="header">{header}</h1>
           )}
           <Profile client:load />
-        </section>
+        </header>
       )
     }
     {subheading && <p class="subheading" set:html={subheading} />}
@@ -82,50 +80,47 @@ const {
     <slot />
 
     <style>
+      .container {
+        width: 100vw;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: center;
+        padding: 2vw;
+      }
+
       .header {
         font-size: 5vw;
         line-height: 5vw;
         text-align: center;
-        margin: 3vw auto;
         color: rgba(51, 226, 230, 0.85);
-        -webkit-text-stroke: 0.03vw #33e2e6;
-        filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.5));
+        filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.5));
       }
 
-      .title {
-        width: 100vw;
-        text-align: center;
-      }
-
-      .title img {
-        width: 33%;
+      img {
+        width: 33vw;
         height: auto;
         filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
         background-color: rgba(51, 226, 230, 0.25);
         padding: 1vw 2vw;
-        margin-block: 2.5vw;
         border: 0.05vw solid rgba(51, 226, 230, 0.5);
-        border-radius: 2vw;
+        border-radius: 1.5vw;
         aspect-ratio: initial;
       }
 
       .subheading {
-        font-size: 2vw;
-        line-height: 3vw;
+        width: 90%;
+        font-size: 1.5vw;
+        line-height: 2.5vw;
         text-align: center;
-        color: rgba(51, 226, 230, 0.85);
-        padding: 0 5vw 3vw 5vw;
+        color: rgba(51, 226, 230, 0.75);
         text-shadow: 0 0 1vw #010020;
         filter: drop-shadow(0 0 1vw #010020);
       }
 
       a {
-        position: absolute;
-        top: 2vw;
-        left: 2vw;
         height: 7vw;
         width: 7vw;
-        cursor: pointer;
         z-index: 1;
         background-size: contain;
       }
@@ -151,25 +146,6 @@ const {
         opacity: 0.9;
       }
 
-      .profile-icon {
-        position: absolute;
-        top: 2vw;
-        right: 2vw;
-        height: 7vw;
-        width: 7vw;
-        cursor: pointer;
-        background-image: url('/profileIcon.avif');
-        background-size: contain;
-        opacity: 0.4;
-        z-index: 1;
-      }
-
-      .profile-icon:hover,
-      .profile-icon:active {
-        filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.5));
-        opacity: 0.75;
-      }
-
       @media only screen and (max-width: 600px) {
         html {
           padding-top: 25%;
@@ -178,7 +154,6 @@ const {
         .container {
           position: fixed;
           top: 0;
-          width: 100vw;
           background-color: rgba(1, 0, 32, 0.75);
           filter: drop-shadow(0 1vw 1vw rgba(1, 0, 32, 0.75));
           -webkit-backdrop-filter: blur(2vw);
@@ -189,40 +164,32 @@ const {
         .header {
           font-size: 1.5em;
           line-height: 3em;
-          margin: 0.25em auto;
         }
 
-        .title img {
-          width: 50%;
+        img {
+          width: 40vw;
           padding: 2vw 4vw;
-          margin-block: 1.25em;
         }
 
         .subheading {
           font-size: inherit;
           line-height: 2em;
           padding: 1em;
-          margin: 0 1em 1em 1em;
-          text-align: center;
           background-color: rgba(22, 30, 95, 0.5);
           -webkit-backdrop-filter: blur(2vw);
           backdrop-filter: blur(2vw);
           border: 0.1vw solid rgba(51, 226, 230, 0.5);
-          border-radius: 2.5vw;
+          border-radius: 1em;
         }
 
         a {
           width: 3em;
           height: 3em;
-          top: 1em;
-          left: 0.5em;
         }
 
         .profile-icon {
           width: 3em;
           height: 3em;
-          top: 1em;
-          right: 0.5em;
         }
       }
     </style>

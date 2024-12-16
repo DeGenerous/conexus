@@ -246,7 +246,6 @@
     border-radius: 0.25vw;
     outline: none;
     width: 15vw;
-    transition: all 0.15s ease-in-out;
   }
 
   .search-field::placeholder {

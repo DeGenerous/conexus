@@ -336,7 +336,6 @@
     -webkit-backdrop-filter: blur(1em);
     backdrop-filter: blur(1em);
     background-color: rgba(51, 226, 230, 0.05);
-    transition: cubic-bezier(0.19, 1, 0.22, 1) 1s;
   }
 
   .image {

@@ -79,7 +79,6 @@
     filter: drop-shadow(0 0 0.1vw #010020);
     cursor: pointer;
     text-decoration: none;
-    transition: all 0.15s ease-in-out;
   }
 
   .tile:hover,

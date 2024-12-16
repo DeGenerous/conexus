@@ -243,7 +243,6 @@
     background-color: rgba(36, 65, 189, 0.75);
     border: 0.05vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1.5vw;
-    transition: all 0.15s ease-out;
   }
 
   button:hover,
@@ -305,7 +304,6 @@
     color: rgba(51, 226, 230, 0.9);
     filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
     transform: scale(1.01);
-    transition: transform 0.15s ease-in-out;
   }
 
   .unfinished-story p {

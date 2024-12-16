@@ -77,7 +77,6 @@
     color: rgba(51, 226, 230, 0.9);
     filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.5));
     transform: scale(1.01);
-    transition: transform 0.15s ease-in-out;
   }
 
   .tile-picture {

@@ -1068,16 +1068,12 @@
       padding: 1em;
     }
 
-    .back-arrow {
+    .back-arrow, .close-button {
       padding: 0.35em;
     }
 
-    .back-arrow img {
+    .back-arrow img, .close-button img {
       width: 1.25em;
-    }
-
-    .close-button {
-      padding: 0.25em 0.5em;
     }
 
     .sign-container {

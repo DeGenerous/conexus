@@ -66,6 +66,7 @@
 
     .conexus-menu-tiles {
       border-radius: 1em;
+      gap: 1em;
     }
   }
 </style>

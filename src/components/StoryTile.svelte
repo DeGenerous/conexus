@@ -82,6 +82,7 @@
 
     .tile-picture {
       height: 38vw;
+      border-radius: 0.75em;
     }
 
     .title {

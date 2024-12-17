@@ -93,7 +93,7 @@
 
     .collection-header {
       flex-flow: column-reverse nowrap;
-      align-items: flex-start;
+      align-items: center;
       justify-content: center;
       padding: 0;
       gap: 0.5em;
@@ -105,7 +105,11 @@
     }
 
     .tiles-collection {
-      gap: 0.5em;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+      gap: 1em;
+      padding: 1em;
     }
   }
 </style>

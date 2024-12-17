@@ -186,6 +186,7 @@
   }
 
   .filters {
+    z-index: 100;
     width: 95vw;
     display: flex;
     flex-flow: row nowrap;
@@ -279,12 +280,19 @@
 
   @media only screen and (max-width: 600px) {
     .filters {
+      width: 90%;
       justify-content: space-between;
       gap: 0.5em;
     }
 
+    .filter {
+      border-radius: 0.5em;
+      padding: 0.25em;
+    }
+
     .filter-image {
-      height: 1.5em;
+      height: 2em;
+      padding: 0.25em;
     }
 
     .sort-genres-filters {
@@ -292,15 +300,24 @@
       gap: 0.5em;
     }
 
-    .search-field {
+    .search-wrapper {
+      padding: 0.25em;
+      border-radius: 0.5em;
+      gap: 0.25em;
       font-size: 1em;
       line-height: 1.5em;
-      padding-inline: 0.5em;
+    }
+
+    .search-field {
+      font-size: inherit;
+      line-height: inherit;
+      border-radius: 0.25em;
+      padding: 0.25em 0.5em;
       width: 30vw;
     }
 
     .search-field:focus {
-      width: 50vw;
+      width: 45vw;
     }
 
     .genres-list {
@@ -311,6 +328,7 @@
       grid-template-columns: 40vw;
       row-gap: 0.75em;
       padding: 0.5em;
+      border-radius: 0.5em;
     }
 
     .genre {
@@ -319,6 +337,7 @@
     }
 
     .categories-wrapper {
+      width: 100vw;
       gap: 1em;
     }
   }

@@ -12,6 +12,7 @@
   import Modal from './Modal.svelte';
   import { showModal } from "@stores/modal";
   import Share from './Share.svelte';
+  import Profile from './Profile.svelte';
 
   export let story_name: string;
 
@@ -74,11 +75,14 @@
 
 {#if $story === null}
   {#if topic !== null}
-    <h1 class="title">
-      {topic.name.charAt(0).toUpperCase() + topic.name.slice(1)}
-    </h1>
-
-    <div class="story-info blur">
+    <!-- svelte-ignore a11y_invalid_attribute -->
+    <header>
+      <a class="arrow" href="javascript:history.back()" aria-label="Back arrow"></a>
+      <h1>{topic.name.charAt(0).toUpperCase() + topic.name.slice(1)}</h1>
+      <Profile />
+    </header>
+    
+    <div class="story-container blur">
       <img
         class="picture"
         src={storyImage ?? blankPicture}
@@ -88,31 +92,29 @@
         height="1024"
       />
 
-      <article>
-        {#if topic.genres !== ''}
-          <div class="genres">
-            <p>Genres:</p>
-            <p class="genres-list">{topic.genres}</p>
-          </div>
-        {/if}
+      <section class="story-info">
+        <article>
+          {#if topic.genres !== ''}
+            <div class="genres">
+              <p>Genres:</p>
+              <p class="genres-list">{topic.genres}</p>
+            </div>
+          {/if}
 
-        <p class="description">{topic.description}</p>
-      </article>
-    </div>
-
-    <div class="buttons-container">
-      <button class="blur" on:click={() => window.history.back()}>
-        GO BACK
-      </button>
-      <Share />
-      <button class="blur" on:click={() => topic && CoNexus.start(topic.name)}>
-        PLAY NOW
-      </button>
+          <p class="description">{topic.description}</p>
+        </article>
+        <div class="buttons-container">
+          <Share />
+          <button on:click={() => topic && CoNexus.start(topic.name)}>
+            PLAY NOW
+          </button>
+        </div>
+      </section>
     </div>
 
     <section class="unfinished-stories blur">
-      <p class="continue-shaping-label">Continue shaping:</p>
-      <form class="continue-shaping-container">
+      <h3>Continue shaping:</h3>
+      <div class="continue-shaping-container">
         {#each continuables as continuable}
           <div class="unfinished-story">
             <button
@@ -121,9 +123,9 @@
               on:click|preventDefault={() => openModal(continuable)}
               disabled={$loading}
             ></button>
-            <p>
+            <h3>
               {continuable.category} - {continuable.story_id.split('-')[0]}
-            </p>
+            </h3>
             <button
               aria-label="Continue shaping"
               class="continue-shaping-btn continue-button"
@@ -132,27 +134,21 @@
             ></button>
           </div>
         {/each}
-      </form>
+      </div>
     </section>
 
     <!-- Delete Story Modal -->
 
     {#if selectedStory}
-      <Modal>
-        <h2 class="modal-text">Are you sure you want to delete this story?</h2>
-        <hr />
-        <p class="modal-text">
+      <Modal secondButton="Delete story: {selectedStory.category}" handleSecondButton={() => DeleteStory(selectedStory.story_id)}>
+        <h2>Are you sure you want to delete this story?</h2>
+        <h3>
           This action is irreversible. You will lose all progress on this story.
-        </p>
-        <button
-          class="modal-delete"
-          on:click={() => DeleteStory(selectedStory.story_id)}
-          >Delete story: {selectedStory.category}</button
-        >
+        </h3>
       </Modal>
     {/if}
   {:else}
-    <p class="error-message">...</p>
+    <h2 class="loading-message">...</h2>
   {/if}
 {:else}
   <BackgroundMusic />
@@ -162,41 +158,71 @@
 {/if}
 
 <style>
-  .title {
-    font-size: 5vw;
-    line-height: 5vw;
-    text-align: center;
-    margin: 3vw auto;
-    color: rgba(51, 226, 230, 0.85);
-    -webkit-text-stroke: 0.03vw #33e2e6;
-    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.5));
-  }
-
-  .story-info {
+  header {
+    width: 100vw;
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
+    padding: 2vw;
+  }
+
+  h1 {
+    font-size: 5vw;
+    line-height: 5vw;
+    text-align: center;
+    color: rgba(51, 226, 230, 0.85);
+    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.5));
+  }
+
+  .arrow {
+    height: 7vw;
+    width: 7vw;
+    z-index: 1;
+    background-size: contain;
+    background-image: url('/icons/backArrow.avif');
+    opacity: 0.4;
+  }
+
+  .arrow:hover,
+  .arrow:active {
+    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.5));
+    opacity: 0.75;
+  }
+
+  .story-container {
+    max-width: 95%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
     gap: 2vw;
     padding: 2vw;
-    margin-inline: 5vw;
     background-color: rgba(1, 0, 32, 0.5);
     border: 0.05vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 2.5vw;
+    border-radius: 1.5vw;
+  }
+
+  .story-info {
+    min-height: 25vw;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    gap: 2vw;
   }
 
   .picture {
-    width: 30vw;
+    width: 25vw;
     filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
-    border-radius: 1.5vw;
+    border-radius: 1vw;
   }
 
   article {
     display: flex;
     flex-flow: column nowrap;
-    justify-content: space-around;
-    align-items: flex-end;
-    min-height: 30vw;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2vw;
   }
 
   .genres {
@@ -214,88 +240,65 @@
     padding: 0.5vw 1vw;
     background-color: rgba(51, 226, 230, 0.5);
     border: 0.05vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 1.5vw;
+    border-radius: 1vw;
     color: #010020;
     text-shadow: 0 0 0.1vw #010020;
   }
 
   .description {
-    text-align: right;
     font-size: 1.5vw;
     line-height: 3vw;
     text-shadow: 0 0 0.5vw rgb(1, 0, 32);
-    margin-block: 2vw;
   }
 
   .buttons-container {
-    width: 85vw;
-    margin: 2vw auto;
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
+    align-items: center;
+    gap: 2vw;
   }
 
-  button {
-    width: 25vw;
-    padding: 1vw 2vw;
-    font-size: 2vw;
-    color: rgba(255, 255, 255, 0.6);
-    background-color: rgba(36, 65, 189, 0.75);
-    border: 0.05vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 1.5vw;
-  }
-
-  button:hover,
-  button:active {
-    text-shadow: 0 0 1vw rgba(1, 0, 32, 0.75);
-    background-color: rgba(45, 90, 216, 0.9);
-    color: rgb(51, 226, 230);
-    border: 0.05vw solid rgb(51, 226, 230);
-    transform: matrix(1.05, 0, 0, 1.05, 0, 0);
-    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.5));
-  }
-
-  .error-message {
-    text-align: center;
-    font-size: 2vw;
-    line-height: 2vw;
+  .loading-message {
     color: rgba(51, 226, 230, 0.5);
-    padding-block: 2vw;
   }
 
   .unfinished-stories {
-    max-width: 90vw;
-    margin-inline: auto;
+    max-width: 95%;
     background-color: rgba(51, 226, 230, 0.1);
     border: 0.05vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 2.5vw;
+    border-radius: 1.5vw;
     padding: 1vw;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
   }
 
   .continue-shaping-container {
     display: flex;
     flex-flow: row wrap;
     justify-content: center;
+    align-items: center;
     gap: 1vw;
-  }
-
-  .continue-shaping-label {
-    color: rgba(51, 226, 230, 0.75);
-    font-size: 2vw;
-    text-align: center;
-    padding-bottom: 1vw;
   }
 
   .unfinished-story {
     display: flex;
     flex-flow: row nowrap;
+    justify-content: center;
     align-items: center;
     gap: 1vw;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.5);
     background-color: rgba(36, 65, 189, 0.75);
     border: 0.05vw solid rgba(51, 226, 230, 0.75);
     border-radius: 1.5vw;
     padding: 0.5vw;
+  }
+
+  h3 {
+    color: inherit;
   }
 
   .unfinished-story:hover,
@@ -303,24 +306,16 @@
     background-color: rgba(45, 90, 216, 0.9);
     color: rgba(51, 226, 230, 0.9);
     filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
-    transform: scale(1.01);
-  }
-
-  .unfinished-story p {
-    text-align: center;
-    white-space: nowrap;
-    font-size: 1.5vw;
-    line-height: 1.5em;
-    cursor: default;
+    transform: scale(1.05);
   }
 
   .continue-shaping-btn {
     padding: 0;
     margin: 0;
-    border: none !important;
+    border: none;
     border-radius: 0;
     background-color: rgba(0, 0, 0, 0);
-    opacity: 0.75;
+    opacity: 0.9;
     width: 3vw;
     height: 3vw;
     background-size: contain;
@@ -342,55 +337,31 @@
     background-image: url('/icons/play.png');
   }
 
-  hr {
-    border: 0.05vw solid rgba(51, 226, 230, 0.5);
-    width: 90%;
-  }
-
-  .modal-text {
-    font-size: 2vw;
-    line-height: 3vw;
-    text-align: center;
-    padding-block: 1vw;
-  }
-
-  .modal-delete {
-    width: 70%;
-    margin-inline: 15%;
-    margin-block: 1vw;
-    padding-inline: 2vw;
-    border: 0.05vw solid rgba(51, 226, 230, 0.75);
-    border-radius: 2vw;
-    font-size: 2.5vw;
-    line-height: 4vw;
-    color: rgba(51, 226, 230, 0.75);
-    background-color: rgba(51, 226, 230, 0.1);
-    filter: drop-shadow(0 0 0.1vw rgba(51, 226, 230, 0.4));
-  }
-
-  .modal-delete:hover,
-  .modal-delete:active {
-    color: rgba(51, 226, 230, 1);
-    background-color: rgba(51, 226, 230, 0.5);
-    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.4));
-  }
-
   @media only screen and (max-width: 600px) {
-    :global(html) {
-      padding-block: 0 5em;
+    header {
+      position: fixed;
+      top: 0;
+      background-color: rgba(1, 0, 32, 0.75);
+      filter: drop-shadow(0 1vw 1vw rgba(1, 0, 32, 0.75));
+      -webkit-backdrop-filter: blur(2vw);
+      backdrop-filter: blur(2vw);
+      z-index: 2;
     }
 
-    .title {
-      font-size: 2em;
-      line-height: 3em;
-      margin: 0.25em auto;
+    h1 {
+      font-size: 1.5em;
     }
 
-    .story-info {
+    .arrow {
+      width: 3em;
+      height: 3em;
+    }
+
+    .story-container {
+      max-width: 100%;
       flex-direction: column;
-      margin: 0;
-      padding-block: 1.5em;
       gap: 1.5em;
+      padding-top: 1.5em; 
       border-radius: 0;
       border-left: none;
       border-right: none;
@@ -404,6 +375,7 @@
     article {
       flex-direction: column-reverse;
       min-height: none;
+      align-items: center;
     }
 
     .genres {
@@ -417,6 +389,7 @@
     .genres-list {
       padding: 0.25em 0.5em;
       text-shadow: 0 0 0.1em #010020;
+      border-radius: 1em;
     }
 
     .description {
@@ -441,24 +414,13 @@
       padding: 0.25em 0.5em;
     }
 
-    .error-message {
-      font-size: 1em;
-      line-height: 1em;
-    }
-
     .unfinished-stories {
-      max-width: none;
-      width: 100vw;
+      max-width: 100%;
       border-radius: 0;
       border-left: none;
       border-right: none;
       padding: 1em;
-    }
-
-    .continue-shaping-label {
-      font-size: 1.5em;
-      line-height: 2em;
-      padding-bottom: 1em;
+      gap: 1em;
     }
 
     .continue-shaping-container {
@@ -470,31 +432,12 @@
       padding: 0.25em;
       width: 90vw;
       justify-content: space-between;
-    }
-
-    .unfinished-story p {
-      font-size: 1em;
-      line-height: 1.5em;
-      white-space: wrap;
+      border-radius: 1em;
     }
 
     .continue-shaping-btn {
       width: 2em;
       height: 2em;
-    }
-
-    .modal-text {
-      font-size: 1em;
-      line-height: 1.5em;
-      padding: 0.5em;
-    }
-
-    .modal-delete {
-      width: 90%;
-      margin-inline: 5%;
-      font-size: 1.2em;
-      line-height: 2em;
-      margin-block: 1em 0;
     }
   }
 </style>

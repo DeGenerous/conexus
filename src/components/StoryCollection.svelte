@@ -4,8 +4,6 @@
 
   export let category: DynSectionCategory;
   export let section: string;
-
-  const blankPicture: string = '/blank.avif'; // temp
 </script>
 
 <section>
@@ -20,8 +18,6 @@
       <StoryTile
         {section}
         topicName={topic.name}
-        primaryThumbnail={topic.title_image1 ?? blankPicture}
-        secondaryThumbnail={topic.title_image2 ?? blankPicture}
       />
     {/each}
   </div>
@@ -29,7 +25,7 @@
 
 <style>
   section {
-    width: 100vw;
+    width: 100%;
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
@@ -79,6 +75,7 @@
     flex-flow: row nowrap;
     align-items: center;
     justify-content: space-between;
+    padding-inline: 2.5vw;
   }
 
   .tiles-collection-legend {
@@ -97,6 +94,8 @@
     .collection-header {
       flex-flow: column-reverse nowrap;
       align-items: flex-start;
+      justify-content: center;
+      padding: 0;
       gap: 0.5em;
     }
 

@@ -16,7 +16,7 @@
 {#if isLogged}
   <Intro />
 {:else}
-  <section>
+  <section class="blur">
     <h3>Please</h3>
     <button on:click={() => ($showProfile = true)}>
       Sign in your Profile

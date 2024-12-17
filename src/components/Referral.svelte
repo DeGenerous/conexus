@@ -3,7 +3,6 @@
   import { toastStore } from '@stores/toast';
 
   let code: string = '';
-  $: tooShort = code.length !== 16;;
 
   const useReferralCode = async () => {
     try {
@@ -74,7 +73,7 @@
     <button
       class="submit-button"
       on:click={useReferralCode}
-      disabled={tooShort}
+      disabled={!referralCodeValid}
     >
       Use Referral Code
     </button>

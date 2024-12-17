@@ -23,11 +23,6 @@
     }
   };
 
-  let isPrimary: boolean = true;
-  function tileHover() {
-    isPrimary = !isPrimary;
-  }
-
   // sectionImage is the name of the section but remove the spaces
   const imageName: string = section.name.replace(/\s/g, '');
 
@@ -41,19 +36,9 @@
   id={section.name}
   href="/{section.name}"
   on:click={(event) => handleClick(event, `/${section.name}`)}
-  on:mouseenter={tileHover}
-  on:mouseleave={tileHover}
-  on:touchstart={tileHover}
-  on:touchend={tileHover}
 >
   <img
-    class="tile-picture {isPrimary ? 'visible' : ''}"
-    src={sectionImage ?? blankPicture}
-    alt={section.name}
-    draggable="false"
-  />
-  <img
-    class="tile-picture {!isPrimary ? 'visible' : ''}"
+    class="tile-picture"
     src={sectionImage ?? blankPicture}
     alt={section.name}
     draggable="false"
@@ -75,7 +60,7 @@
     background-color: rgba(22, 30, 95, 0.75);
     color: rgba(51, 226, 230, 0.75);
     border: 0.05vw solid rgba(51, 226, 230, 0.75);
-    border-radius: 1.5vw;
+    border-radius: 2.5vw;
     filter: drop-shadow(0 0 0.1vw #010020);
     cursor: pointer;
     text-decoration: none;
@@ -90,20 +75,15 @@
   }
 
   .tile-picture {
-    display: none;
     object-fit: cover;
     width: 95%;
     height: 80%;
     margin: 2.5%;
     margin-bottom: 0;
     border: 0.05vw solid rgba(51, 226, 230, 0.75);
-    border-radius: 1vw;
+    border-radius: 2vw;
     background-color: black;
     cursor: pointer;
-  }
-
-  .visible {
-    display: block;
   }
 
   .title {

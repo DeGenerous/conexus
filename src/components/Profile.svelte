@@ -122,7 +122,7 @@
   $: editValidation = isEditing === 'password'
     ? !editPasswordMatch
     : isEditing === 'username'
-      ? !editFirstName
+      ? !editFirstName || !editLastName
       : false
 
   function changeUserData(state: string | null) {
@@ -153,7 +153,7 @@
   let email = '';
 
   // Form validation variables
-  $: mandatoryFields = email && first_name && password;
+  $: mandatoryFields = email && first_name && last_name && password;
   $: passwordsMatch =
     password && confirmPassword ? password == confirmPassword : true;
   let termsAccepted: boolean = false;
@@ -326,8 +326,12 @@
               <input
                 class="user-input highlighted-input"
                 type="text"
-                placeholder="Provide new Last name (optional)"
+                placeholder="Provide new Last name"
                 bind:value={editLastName}
+                style={ editLastName
+                  ? ''
+                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
+                }
               />
             </div>
           {:else}
@@ -358,10 +362,6 @@
               <p class="validation">Confirm new password</p>
             {:else if editPasswordConfirm && !editPasswordMatch}
               <p class="validation">Passwords do not match!</p>
-            {/if}
-          {:else if isEditing === 'username'}
-            {#if !editFirstName}
-              <p class="validation">Provide first name</p>
             {/if}
           {/if}
 
@@ -595,6 +595,10 @@
                 id="user-last-name"
                 placeholder="Enter Last name (optional)"
                 bind:value={last_name}
+                style={ last_name
+                  ? ''
+                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
+                }
               />
             </div>
             <div class="input-container">

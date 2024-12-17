@@ -7,50 +7,23 @@
   export let topicName: string;
   const storyName: string =
     topicName.charAt(0).toUpperCase() + topicName.slice(1);
-  export let primaryThumbnail: string;
-  export let secondaryThumbnail: string | null = null;
-
-  let isPrimary: boolean = true;
-  function tileHover() {
-    isPrimary = !isPrimary;
-  }
 
   let storyImage: string | null = null;
+  const blankPicture = '/blank.avif';
   onMount(async () => {
     storyImage = await CoNexus.fetch_story_image(topicName!, 'tile');
   });
 </script>
 
-<a
-  class="tile"
-  on:mouseenter={tileHover}
-  on:mouseleave={tileHover}
-  on:touchstart={tileHover}
-  on:touchend={tileHover}
-  href="/{section}/{topicName}"
->
+<a class="tile" href="/{section}/{topicName}">
   <img
-    class="tile-picture {secondaryThumbnail
-      ? isPrimary
-        ? 'visible'
-        : ''
-      : 'visible'}"
-    src={storyImage ?? primaryThumbnail}
+    class="tile-picture"
+    src={storyImage ?? blankPicture}
     alt={storyName}
     draggable="false"
     height="1024"
     width="1024"
   />
-  {#if secondaryThumbnail}
-    <img
-      class="tile-picture {!isPrimary ? 'visible' : ''}"
-      src={storyImage ?? secondaryThumbnail}
-      alt={storyName}
-      draggable="false"
-      height="1024"
-      width="1024"
-    />
-  {/if}
   <p class="title">{storyName}</p>
 </a>
 
@@ -80,7 +53,6 @@
   }
 
   .tile-picture {
-    display: none;
     object-fit: cover;
     width: 95%;
     height: 19vw;
@@ -90,10 +62,7 @@
     border-radius: 1vw;
     flex: 1;
     background-color: rgba(0, 0, 0, 0.9);
-  }
-
-  .visible {
-    display: block;
+    cursor: pointer;
   }
 
   .title {
@@ -102,6 +71,7 @@
     font-size: 2vw;
     line-height: 3vw;
     text-shadow: 0 0 1vw rgba(1, 0, 32, 0.4);
+    cursor: pointer;
   }
 
   @media only screen and (max-width: 600px) {

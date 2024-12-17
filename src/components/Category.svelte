@@ -64,6 +64,20 @@
     if (isSorting) handleSorting();
   };
 
+  let searchInput: HTMLInputElement | null;
+  let mobileSearch = false;
+  const handleSearchFocus = () => {
+    if (!searchInput) return;
+    if (!mobileSearch) {
+      searchInput.focus();
+      mobileSearch = false;
+    }
+    if (mobileSearch) {
+      searchInput.blur();
+      mobileSearch = true;
+    }
+  };
+
   const handleSorting = () => {
     console.log(filteredCategories); // check before sorting
     sortedCategories = filteredCategories.map(
@@ -99,9 +113,8 @@
 
 {#if categories}
   <section class="filters">
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
     <div class="sort-genres-filters">
-      <div
+      <button
         class="filter blur"
         on:click={() => {
           isSorting = !isSorting;
@@ -114,20 +127,15 @@
         style="background-color: {isSorting
           ? 'rgba(56, 117, 250, 0.9)'
           : 'rgba(56, 117, 250, 0.5)'}"
-        role="button"
-        tabindex="0"
       >
         <img class="filter-image" src="/icons/sort.png" alt="Sort" />
-      </div>
-
-      <div
+        </button>
+      <button
         class="filter blur"
         on:click|stopPropagation={showGenresFilter}
-        role="button"
-        tabindex="0"
       >
         <img class="filter-image" src="/icons/filter.png" alt="Filter" />
-        <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+        <!-- svelte-ignore a11y_no_noninteractive_element_interactions a11y_click_events_have_key_events -->
         <ul
           class="genres-list"
           style="display: {showGenres ? 'grid' : 'none'}"
@@ -140,17 +148,19 @@
             </li>
           {/each}
         </ul>
-      </div>
+      </button>
     </div>
 
+    <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
     <div
-      class="filter blur"
+      class="filter search-wrapper blur"
       style="background-color: {searchField
         ? 'rgba(56, 117, 250, 0.9)'
         : 'rgba(56, 117, 250, 0.5)'}"
     >
-      <img class="filter-image" src="/icons/search.png" alt="Search" />
+      <img class="filter-image" src="/icons/search.png" alt="Search" on:click={handleSearchFocus} role="button" tabindex="0" />
       <input
+        bind:this={searchInput}
         bind:value={searchField}
         on:input={handleSearch}
         class="search-field"
@@ -184,24 +194,13 @@
   }
 
   .filter {
-    z-index: 1;
-    position: relative;
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-    gap: 0.5vw;
-    padding: 0.25vw;
-    background-color: rgba(56, 117, 250, 0.5);
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 0.5vw;
-    cursor: pointer;
+    padding: 0 1vw;
   }
 
   .filter-image {
-    height: 2.5vw;
+    height: 2vw;
     width: auto;
     opacity: 0.9;
-    padding: 0.5vw;
   }
 
   .sort-genres-filters {
@@ -228,6 +227,7 @@
   .genre {
     font-size: 1.5vw;
     line-height: 2vw;
+    cursor: pointer;
   }
 
   .genre:hover,
@@ -236,16 +236,29 @@
     filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.25));
   }
 
+  .search-wrapper {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: 1vw;
+    padding: 0.5vw;
+    padding-left: 1vw;
+    font-size: 1.5vw;
+    background-color: rgba(56, 117, 250, 0.5);
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
+    border-radius: 0.5vw;
+  }
+
   .search-field {
     font-size: 1.5vw;
-    line-height: 2vw;
+    line-height: 3vw;
     padding-inline: 0.5vw;
     color: rgba(51, 226, 230, 0.9);
     background-color: rgba(1, 0, 32, 0.4);
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
     border-radius: 0.25vw;
     outline: none;
-    width: 15vw;
+    width: 20vw;
   }
 
   .search-field::placeholder {
@@ -253,10 +266,11 @@
   }
 
   .search-field:focus {
-    width: 25vw;
+    width: 30vw;
   }
 
   .categories-wrapper {
+    width: 95vw;
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
@@ -269,15 +283,8 @@
       gap: 0.5em;
     }
 
-    .filter {
-      gap: 0.5em;
-      padding: 0.25em;
-      border-radius: 0.5em;
-    }
-
     .filter-image {
       height: 1.5em;
-      padding: 0.25em;
     }
 
     .sort-genres-filters {

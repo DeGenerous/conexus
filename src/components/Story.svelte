@@ -10,7 +10,7 @@
   import { checkUserState } from '@utils/route-guard';
 
   import Modal from './Modal.svelte';
-  import { showModal } from "@stores/modal";
+  import { showModal } from '@stores/modal';
   import Share from './Share.svelte';
   import Profile from './Profile.svelte';
 
@@ -77,11 +77,12 @@
   {#if topic !== null}
     <!-- svelte-ignore a11y_invalid_attribute -->
     <header>
-      <a class="arrow" href="javascript:history.back()" aria-label="Back arrow"></a>
+      <a class="arrow" href="javascript:history.back()" aria-label="Back arrow"
+      ></a>
       <h1>{topic.name.charAt(0).toUpperCase() + topic.name.slice(1)}</h1>
       <Profile />
     </header>
-    
+
     <div class="story-container blur">
       <img
         class="picture"
@@ -142,7 +143,10 @@
     <!-- Delete Story Modal -->
 
     {#if selectedStory}
-      <Modal secondButton="Delete story: {selectedStory.category}" handleSecondButton={() => DeleteStory(selectedStory.story_id)}>
+      <Modal
+        secondButton="Delete story: {selectedStory.category}"
+        handleSecondButton={() => DeleteStory(selectedStory.story_id)}
+      >
         <h2>Are you sure you want to delete this story?</h2>
         <h3>
           This action is irreversible. You will lose all progress on this story.
@@ -363,7 +367,7 @@
       max-width: 100%;
       flex-direction: column;
       gap: 1.5em;
-      padding-top: 1.5em; 
+      padding-top: 1.5em;
       border-radius: 0;
       border-left: none;
       border-right: none;

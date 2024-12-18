@@ -15,10 +15,7 @@
 
   <div class="tiles-collection blur">
     {#each category.topics as topic}
-      <StoryTile
-        {section}
-        topicName={topic.name}
-      />
+      <StoryTile {section} topicName={topic.name} />
     {/each}
   </div>
 </section>

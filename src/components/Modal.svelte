@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { showModal } from "@stores/modal.ts";
+  import { showModal } from '@stores/modal.ts';
 
   export let secondButton: string = '';
   export let handleSecondButton: any = () => ($showModal = false);
@@ -28,9 +28,7 @@
   <div on:click|stopPropagation>
     <slot />
     <section>
-      <button on:click={() => ($showModal = false)}>
-        Close
-      </button>
+      <button on:click={() => ($showModal = false)}> Close </button>
       {#if secondButton}
         <button on:click={handleSecondButton}>
           {secondButton}

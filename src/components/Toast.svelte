@@ -28,7 +28,9 @@
     <div>{message}</div>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div class="close-btn" role="button" tabindex="0" on:click={closeToast}>✖</div>
+    <div class="close-btn" role="button" tabindex="0" on:click={closeToast}>
+      ✖
+    </div>
   </div>
 {/if}
 

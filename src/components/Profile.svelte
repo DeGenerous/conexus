@@ -13,7 +13,7 @@
   import { toastStore } from '@stores/toast';
 
   import detectProvider from '@metamask/detect-provider';
-  import { BrowserProvider } from "ethers";
+  import { BrowserProvider } from 'ethers';
 
   Account.me();
   Account.logged_in();
@@ -45,7 +45,7 @@
       return;
     }
     $showProfile = false;
-  }
+  };
 
   let isLogged: boolean;
   let signUp: boolean;
@@ -61,15 +61,15 @@
     getUserAddress();
   }
   const getUserAddress = async () => {
-    const metamaskProvider = await detectProvider() as any;
+    const metamaskProvider = (await detectProvider()) as any;
     if (metamaskProvider === null) {
-        return null;
+      return null;
     }
-    provider = new BrowserProvider(metamaskProvider, "any");
+    provider = new BrowserProvider(metamaskProvider, 'any');
     const signer = await provider.getSigner();
     const address = await signer.getAddress();
-    $wallet = address.slice(0, 6) + "..." + address.slice(-4);
-  }
+    $wallet = address.slice(0, 6) + '...' + address.slice(-4);
+  };
 
   const handleSignIn = async (event: Event) => {
     event.preventDefault();
@@ -77,14 +77,14 @@
       await Account.signin({
         email: loginMail.value,
         password: loginPassword.value,
-      })
+      });
       setTimeout(() => {
         if (!$web3LoggedIn) invalidCredentials = true;
-      })
+      });
     } catch (error) {
       invalidCredentials = true;
     }
-  }
+  };
 
   const alternativeSignIn = {
     google: () => {
@@ -119,11 +119,12 @@
   let editPasswordVisible: boolean = false;
   let passwordVisible: boolean = false;
   $: editPasswordMatch = editPassword === editPasswordConfirm;
-  $: editValidation = isEditing === 'password'
-    ? !editPasswordMatch
-    : isEditing === 'username'
-      ? !editFirstName || !editLastName
-      : false
+  $: editValidation =
+    isEditing === 'password'
+      ? !editPasswordMatch
+      : isEditing === 'username'
+        ? !editFirstName || !editLastName
+        : false;
 
   function changeUserData(state: string | null) {
     let savingData: string | null = null;
@@ -135,8 +136,8 @@
         console.log(`save: ${editPassword}`);
         // CHANGE USER PASSWORD
       } else if (savingData === 'username') {
-        console.log(`save first name: ${editFirstName}`)
-        if (editLastName) console.log(`save last name: ${editLastName}`)
+        console.log(`save first name: ${editFirstName}`);
+        if (editLastName) console.log(`save last name: ${editLastName}`);
         // CHANGE USERNAME
       }
       isEditing = null;
@@ -240,13 +241,15 @@
             <hr />
           {:then available}
             <div class="story-games-container">
-              <h3>You have used 
+              <h3>
+                You have used
                 <strong>{available.used} / {available.available} weekly</strong>
                 stories
               </h3>
 
               {#if available.bonus > 0}
-                <h3>You have
+                <h3>
+                  You have
                   <strong>{available.bonus} bonus</strong>
                   lives
                 </h3>
@@ -267,20 +270,19 @@
               disabled
             />
           </div>
-          
+
           {#if isEditing === 'password'}
             <div class="input-container">
-            <label for="password">Password</label>
+              <label for="password">Password</label>
               <div class="password-container">
                 <input
                   class="user-input highlighted-input"
-                  type={editPasswordVisible ? "text" : "password"}
+                  type={editPasswordVisible ? 'text' : 'password'}
                   placeholder="Provide new password"
                   bind:value={editPassword}
-                  style={ editPassword
+                  style={editPassword
                     ? ''
-                    : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
-                  }
+                    : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
                 />
                 <button
                   aria-label="Show password"
@@ -292,19 +294,17 @@
               </div>
             </div>
             <div class="input-container">
-              <label for="password-confirmation">Confirm password</label
-              >
+              <label for="password-confirmation">Confirm password</label>
               <input
                 class="user-input highlighted-input"
-                type={editPasswordVisible ? "text" : "password"}
+                type={editPasswordVisible ? 'text' : 'password'}
                 placeholder="Confirm new password"
                 bind:value={editPasswordConfirm}
-                style={ editPassword === editPasswordConfirm
+                style={editPassword === editPasswordConfirm
                   ? ''
-                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
-                }
+                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
               />
-            </div>  
+            </div>
           {/if}
 
           {#if isEditing === 'username'}
@@ -315,10 +315,9 @@
                 type="text"
                 placeholder="Provide new First name"
                 bind:value={editFirstName}
-                style={ editFirstName
+                style={editFirstName
                   ? ''
-                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
-                }
+                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
               />
             </div>
             <div class="input-container">
@@ -328,10 +327,9 @@
                 type="text"
                 placeholder="Provide new Last name"
                 bind:value={editLastName}
-                style={ editLastName
+                style={editLastName
                   ? ''
-                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
-                }
+                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
               />
             </div>
           {:else}
@@ -367,10 +365,11 @@
 
           <div class="edit-buttons">
             {#if isEditing}
-              <button on:click={() => changeUserData(null)}>
-                Cancel
-              </button>
-              <button on:click={() => changeUserData('save')} disabled={editValidation}>
+              <button on:click={() => changeUserData(null)}> Cancel </button>
+              <button
+                on:click={() => changeUserData('save')}
+                disabled={editValidation}
+              >
                 Save
               </button>
             {:else}
@@ -489,10 +488,13 @@
               </button>
               <a href="/">Forgot password?</a>
               <!-- svelte-ignore a11y_missing_attribute -->
-              <a href="/" on:click={(event) => {
-                event.preventDefault();
-                signUp = true;
-              }}>Create account</a>
+              <a
+                href="/"
+                on:click={(event) => {
+                  event.preventDefault();
+                  signUp = true;
+                }}>Create account</a
+              >
             </form>
           {:else}
             <!-- SIGN-IN general window -->
@@ -501,7 +503,11 @@
                 <img class="sign-icon" src="/icons/google.png" alt="Google" />
                 <p class="sign-lable">with Google</p>
               </button>
-              <button on:click={() => {signInWithEmail = true}}>
+              <button
+                on:click={() => {
+                  signInWithEmail = true;
+                }}
+              >
                 <img class="sign-icon" src="/icons/email.png" alt="Google" />
                 <p class="sign-lable">with email</p>
               </button>
@@ -509,7 +515,11 @@
             <hr />
             <h3>Don't have an account yet?</h3>
             <div class="buttons-container">
-              <button on:click={() => {signUp = true}}>
+              <button
+                on:click={() => {
+                  signUp = true;
+                }}
+              >
                 <img class="sign-icon" src="/icons/email.png" alt="Google" />
                 <p class="sign-lable">Sign up with email</p>
               </button>
@@ -528,10 +538,9 @@
                 placeholder="Enter email"
                 bind:value={email}
                 required
-                style={ email
+                style={email
                   ? ''
-                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
-                }
+                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
               />
             </div>
 
@@ -543,13 +552,12 @@
                   id="new-user-password"
                   placeholder="Enter password"
                   minlength="8"
-                  type={passwordVisible ? "text" : "password"}
+                  type={passwordVisible ? 'text' : 'password'}
                   bind:value={password}
                   required
-                  style={ password
+                  style={password
                     ? ''
-                    : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
-                  }
+                    : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
                 />
                 <button
                   aria-label="Show password"
@@ -565,11 +573,10 @@
                 placeholder="Confirm password"
                 bind:value={confirmPassword}
                 required
-                type={passwordVisible ? "text" : "password"}
-                style={ passwordsMatch
+                type={passwordVisible ? 'text' : 'password'}
+                style={passwordsMatch
                   ? ''
-                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
-                }
+                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
               />
             </div>
 
@@ -581,10 +588,9 @@
                 id="user-first-name"
                 placeholder="Enter First name"
                 bind:value={first_name}
-                style={ first_name
+                style={first_name
                   ? ''
-                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
-                }
+                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
               />
             </div>
             <div class="input-container">
@@ -595,10 +601,9 @@
                 id="user-last-name"
                 placeholder="Enter Last name (optional)"
                 bind:value={last_name}
-                style={ last_name
+                style={last_name
                   ? ''
-                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
-                }
+                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
               />
             </div>
             <div class="input-container">
@@ -612,13 +617,12 @@
                 maxlength="16"
                 bind:value={referralCode}
                 required
-                style={ referralCodeValid
+                style={referralCodeValid
                   ? ''
-                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
-                }
+                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
               />
             </div>
-            
+
             {#if !mandatoryFields}
               <p class="validation">Fill all required fields</p>
             {/if}
@@ -657,19 +661,17 @@
                     termsAccepted = event.target?.checked;
                   }}
                 />
-                <label for="terms" class="terms"
-                style={ termsAccepted
-                  ? ''
-                  : 'color: rgba(255, 50, 50, 0.75);'
-                }
+                <label
+                  for="terms"
+                  class="terms"
+                  style={termsAccepted ? '' : 'color: rgba(255, 50, 50, 0.75);'}
                 >
                   * I have read and agree to the <a
                     href="https://docs.google.com/document/d/1fEemq6HVM_h8ZTbc_Fl_k3RvlPdjYd70TI1iloT5gXA/edit?usp=sharing"
                     target="_blank"
-                    style={ termsAccepted
+                    style={termsAccepted
                       ? ''
-                      : 'color: rgba(255, 50, 50, 0.9);'
-                    }
+                      : 'color: rgba(255, 50, 50, 0.9);'}
                   >
                     Terms of Service</a
                   >.
@@ -762,11 +764,13 @@
     align-items: center;
   }
 
-  .back-arrow, .close-button {
+  .back-arrow,
+  .close-button {
     padding: 0.5vw;
   }
 
-  .back-arrow img, .close-button img {
+  .back-arrow img,
+  .close-button img {
     width: 3vw;
     padding: 0.25vw;
     opacity: 0.9;
@@ -780,7 +784,7 @@
 
   /* SIGN-IN window */
 
-  .sign-container{
+  .sign-container {
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
@@ -1068,11 +1072,13 @@
       padding: 1em;
     }
 
-    .back-arrow, .close-button {
+    .back-arrow,
+    .close-button {
       padding: 0.35em;
     }
 
-    .back-arrow img, .close-button img {
+    .back-arrow img,
+    .close-button img {
       width: 1.25em;
     }
 

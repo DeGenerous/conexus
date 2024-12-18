@@ -17,7 +17,7 @@
   });
 
   $: if ($fullscreen) document.documentElement.requestFullscreen();
-    else if (document.fullscreenElement) document.exitFullscreen();
+  else if (document.fullscreenElement) document.exitFullscreen();
 
   $: step = $story?.step_data as StepData;
 
@@ -106,7 +106,7 @@
           <div class="controls">
             <Slider src="/icons/volume.png" volume={background_volume} />
             <Slider src="/icons/voice.png" volume={tts_volume} restartable />
-            <button class="fullscreen" on:click={() => $fullscreen = true}>
+            <button class="fullscreen" on:click={() => ($fullscreen = true)}>
               <img src="/icons/fullscreen.png" alt="Enter fullscreen mode" />
             </button>
           </div>
@@ -126,7 +126,11 @@
             on:click={() => $story?.loadStep(step.step + 1)}
             disabled={step.step === $story?.maxStep}
           >
-            <img src="/icons/step-arrow.png" alt="Next" style="transform: rotate(180deg)"/>
+            <img
+              src="/icons/step-arrow.png"
+              alt="Next"
+              style="transform: rotate(180deg)"
+            />
           </button>
         </div>
 
@@ -134,7 +138,10 @@
       {:else}
         <div class="control-bar-fullscreen">
           <div class="story-info-container">
-            <button class="quit fullscreen-btn" on:click={() => window.open('/', '_self')}>
+            <button
+              class="quit fullscreen-btn"
+              on:click={() => window.open('/', '_self')}
+            >
               <img src="/icons/quit-fullscreen.png" alt="Quit" />
             </button>
             <h3 style="color: rgba(51, 226, 230, 0.5)">{storyTitle}</h3>
@@ -148,18 +155,27 @@
             >
               <img src="/icons/step-arrow-fullscreen.png" alt="Back" />
             </button>
-            <h3 style="color: rgba(51, 226, 230, 0.5)">Step {`${step.step < 10 ? '0' : ''}${step.step}`}</h3>
+            <h3 style="color: rgba(51, 226, 230, 0.5)">
+              Step {`${step.step < 10 ? '0' : ''}${step.step}`}
+            </h3>
             <button
               class="step-button fullscreen-btn"
               on:click={() => $story?.loadStep(step.step + 1)}
               style="background-color: rgba(1, 0, 32, 0.1)"
               disabled={step.step === $story?.maxStep}
             >
-              <img src="/icons/step-arrow-fullscreen.png" alt="Next" style="transform: rotate(180deg)" />
+              <img
+                src="/icons/step-arrow-fullscreen.png"
+                alt="Next"
+                style="transform: rotate(180deg)"
+              />
             </button>
           </div>
 
-          <button class="fullscreen fullscreen-btn" on:click={() => $fullscreen = false}>
+          <button
+            class="fullscreen fullscreen-btn"
+            on:click={() => ($fullscreen = false)}
+          >
             <img src="/icons/fullscreen-exit.png" alt="Exit fullscreen mode" />
           </button>
         </div>
@@ -179,7 +195,7 @@
               on:click={() => $story?.loadStep(step.step - 1)}
               disabled={step.step === 1}
             >
-              <img src="/icons/step-arrow.png" alt="Back"/>
+              <img src="/icons/step-arrow.png" alt="Back" />
             </button>
             <h3>Step {`${step.step < 10 ? '0' : ''}${step.step}`}</h3>
             <button
@@ -187,11 +203,18 @@
               on:click={() => $story?.loadStep(step.step + 1)}
               disabled={step.step === $story?.maxStep}
             >
-              <img src="/icons/step-arrow.png" alt="Next" style="transform: rotate(180deg)" />
+              <img
+                src="/icons/step-arrow.png"
+                alt="Next"
+                style="transform: rotate(180deg)"
+              />
             </button>
           </div>
 
-          <button class="fullscreen" on:click={() => fullscreen.update((old) => !old)}>
+          <button
+            class="fullscreen"
+            on:click={() => fullscreen.update((old) => !old)}
+          >
             <img
               src={$fullscreen
                 ? '/icons/fullscreen-exit-mobile.png'

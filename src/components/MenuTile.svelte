@@ -46,9 +46,15 @@
   <p class="title">{section.name}</p>
 </a>
 
-  <Modal secondButton="Connect wallet" handleSecondButton={() => {$showModal = false; $showProfile = true;}}>
-    <h2>Connect your wallet to access this section.</h2>
-  </Modal>
+<Modal
+  secondButton="Connect wallet"
+  handleSecondButton={() => {
+    $showModal = false;
+    $showProfile = true;
+  }}
+>
+  <h2>Connect your wallet to access this section.</h2>
+</Modal>
 
 <style>
   .tile {

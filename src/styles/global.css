@@ -242,7 +242,8 @@ button img {
   cursor: inherit;
 }
 
-h1, h2 {
+h1,
+h2 {
   text-align: center;
   color: #dedede;
   font-size: 3vw;
@@ -254,7 +255,9 @@ h2 {
   line-height: 2vw;
 }
 
-h3, label, a {
+h3,
+label,
+a {
   text-align: center;
   color: rgba(255, 255, 255, 0.5);
   font-size: 1.5vw;
@@ -267,7 +270,8 @@ a {
   cursor: pointer;
 }
 
-a:hover, a:active {
+a:hover,
+a:active {
   color: rgb(51, 226, 230);
   text-decoration: underline;
 }
@@ -313,7 +317,9 @@ main {
     line-height: 1.5em;
   }
 
-  h3, label, a {
+  h3,
+  label,
+  a {
     font-size: 1em;
     line-height: 1.5em;
   }

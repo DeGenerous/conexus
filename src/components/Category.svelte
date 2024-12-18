@@ -129,11 +129,8 @@
           : 'rgba(56, 117, 250, 0.5)'}"
       >
         <img class="filter-image" src="/icons/sort.png" alt="Sort" />
-        </button>
-      <button
-        class="filter blur"
-        on:click|stopPropagation={showGenresFilter}
-      >
+      </button>
+      <button class="filter blur" on:click|stopPropagation={showGenresFilter}>
         <img class="filter-image" src="/icons/filter.png" alt="Filter" />
         <!-- svelte-ignore a11y_no_noninteractive_element_interactions a11y_click_events_have_key_events -->
         <ul
@@ -158,7 +155,14 @@
         ? 'rgba(56, 117, 250, 0.9)'
         : 'rgba(56, 117, 250, 0.5)'}"
     >
-      <img class="filter-image" src="/icons/search.png" alt="Search" on:click={handleSearchFocus} role="button" tabindex="0" />
+      <img
+        class="filter-image"
+        src="/icons/search.png"
+        alt="Search"
+        on:click={handleSearchFocus}
+        role="button"
+        tabindex="0"
+      />
       <input
         bind:this={searchInput}
         bind:value={searchField}

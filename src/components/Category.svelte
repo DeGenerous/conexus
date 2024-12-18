@@ -247,7 +247,7 @@
     font-size: 1.5vw;
     background-color: rgba(56, 117, 250, 0.5);
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 0.5vw;
+    border-radius: 1vw;
   }
 
   .search-field {
@@ -257,7 +257,7 @@
     color: rgba(51, 226, 230, 0.9);
     background-color: rgba(1, 0, 32, 0.4);
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 0.25vw;
+    border-radius: 0.5vw;
     outline: none;
     width: 20vw;
   }

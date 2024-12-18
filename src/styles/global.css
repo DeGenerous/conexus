@@ -236,6 +236,12 @@ button:disabled:active {
   opacity: 1;
 }
 
+button img {
+  height: 100%;
+  width: auto;
+  cursor: inherit;
+}
+
 h1, h2 {
   text-align: center;
   color: #dedede;

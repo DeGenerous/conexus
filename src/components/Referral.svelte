@@ -101,7 +101,7 @@
     align-items: center;
     gap: 1.5vw;
     background-color: rgba(1, 0, 32, 0.75);
-    border: 0.05vw solid rgba(51, 226, 230, 0.75);
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1.5vw;
     padding: 2vw 3vw;
   }

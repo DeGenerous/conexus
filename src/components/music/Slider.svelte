@@ -25,7 +25,7 @@
 </script>
 
 <div>
-  <button class="c" on:click={mute}>
+  <button on:click={mute}>
     <img {src} alt="Adjust volume" />
   </button>
   <input
@@ -37,7 +37,7 @@
     on:change={update}
   />
   {#if restartable}
-    <button class="c" on:click={restart}>
+    <button on:click={restart}>
       <img src="/icons/replay.png" alt="Adjust volume" />
     </button>
   {/if}
@@ -52,23 +52,16 @@
     padding: 0.5vw 1vw;
     gap: 1vw;
     background-color: rgba(1, 0, 32, 0.5);
-    border: 0.05vw solid rgba(51, 226, 230, 0.5);
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1em;
   }
 
-  img {
-    height: 2vw;
-    width: auto;
-  }
-
   button {
-    cursor: pointer;
+    height: 1.5vw;
+    width: 1.5vw;
+    padding: 0;
     background-color: rgba(0, 0, 0, 0);
     border: none;
-  }
-
-  button:hover {
-    opacity: 0.5;
   }
 
   input {
@@ -80,27 +73,31 @@
   @media screen and (max-width: 600px) {
     div {
       height: 2em;
-      padding: 0.1em 0.5em;
+      padding: 0.25em 0.5em;
       border-radius: 0.5em;
+      gap: 0.5em;
     }
 
-    img {
+    button {
       height: 1em;
+      width: 1em;
     }
 
     input {
+      height: 1vw;
       width: 26vw;
     }
   }
 
   @media screen and (min-width: 1920px) {
     div {
-      height: 2rem;
+      height: 3.5rem;
       padding: 0.5rem 1rem;
     }
 
-    img {
+    button {
       height: 1.5rem;
+      width: 1.5rem;
     }
 
     input {

@@ -112,30 +112,32 @@
       </section>
     </div>
 
-    <section class="unfinished-stories blur">
-      <h3>Continue shaping:</h3>
-      <div class="continue-shaping-container">
-        {#each continuables as continuable}
-          <div class="unfinished-story">
-            <button
-              aria-label="Delete story"
-              class="continue-shaping-btn delete-button"
-              on:click|preventDefault={() => openModal(continuable)}
-              disabled={$loading}
-            ></button>
-            <h3>
-              {continuable.category} - {continuable.story_id.split('-')[0]}
-            </h3>
-            <button
-              aria-label="Continue shaping"
-              class="continue-shaping-btn continue-button"
-              on:click|preventDefault={() => CoNexus.continue(continuable)}
-              disabled={$loading}
-            ></button>
-          </div>
-        {/each}
-      </div>
-    </section>
+    {#if continuables.length > 0}
+      <section class="unfinished-stories blur">
+        <h3>Continue Shaping:</h3>
+        <div class="continue-shaping-container">
+          {#each continuables as continuable}
+            <div class="unfinished-story">
+              <button
+                aria-label="Delete story"
+                class="continue-shaping-btn delete-button"
+                on:click|preventDefault={() => openModal(continuable)}
+                disabled={$loading}
+              ></button>
+              <h3>
+                {continuable.category} - {continuable.story_id.split('-')[0]}
+              </h3>
+              <button
+                aria-label="Continue shaping"
+                class="continue-shaping-btn continue-button"
+                on:click|preventDefault={() => CoNexus.continue(continuable)}
+                disabled={$loading}
+              ></button>
+            </div>
+          {/each}
+        </div>
+      </section>
+    {/if}
 
     <!-- Delete Story Modal -->
 
@@ -292,7 +294,7 @@
     gap: 1vw;
     color: rgba(255, 255, 255, 0.5);
     background-color: rgba(36, 65, 189, 0.75);
-    border: 0.05vw solid rgba(51, 226, 230, 0.75);
+    border: 0.05vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1.5vw;
     padding: 0.5vw;
   }

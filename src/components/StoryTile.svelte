@@ -36,7 +36,7 @@
     width: 20vw;
     background-color: rgba(36, 65, 189, 0.75);
     color: rgba(255, 255, 255, 0.6);
-    border: 0.05vw solid rgba(51, 226, 230, 0.75);
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1.5vw;
     filter: drop-shadow(0 0 0.1vw #010020);
     cursor: pointer;
@@ -58,7 +58,7 @@
     height: 19vw;
     margin: 2.5%;
     margin-bottom: 0;
-    border: 0.05vw solid rgba(51, 226, 230, 0.75);
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1vw;
     flex: 1;
     background-color: rgba(0, 0, 0, 0.9);

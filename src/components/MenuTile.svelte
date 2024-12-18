@@ -59,7 +59,7 @@
     width: 28vw;
     background-color: rgba(22, 30, 95, 0.75);
     color: rgba(51, 226, 230, 0.75);
-    border: 0.05vw solid rgba(51, 226, 230, 0.75);
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
     border-radius: 2.5vw;
     filter: drop-shadow(0 0 0.1vw #010020);
     cursor: pointer;
@@ -80,7 +80,7 @@
     height: 80%;
     margin: 2.5%;
     margin-bottom: 0;
-    border: 0.05vw solid rgba(51, 226, 230, 0.75);
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
     border-radius: 2vw;
     background-color: black;
     cursor: pointer;

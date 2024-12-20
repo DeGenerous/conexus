@@ -49,6 +49,7 @@ export type DynSectionCategory = {
   created_at?: Date;
   topics: {
     name: string;
+    order: number;
     available: boolean;
     title_image1?: string;
     title_image2?: string;

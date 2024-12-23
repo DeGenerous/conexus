@@ -41,6 +41,8 @@
     class="tile-picture"
     src={sectionImage ?? blankPicture}
     alt={section.name}
+    width="1024"
+    height="1024"
     draggable="false"
   />
   <p class="title">{section.name}</p>

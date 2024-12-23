@@ -24,7 +24,6 @@
       case 'discord':
         const discordShareUrl = `https://discord.com/channels/@me`;
         await navigator.clipboard.writeText(`${message}`);
-        alert('Copied to clipboard!');
         window.open(discordShareUrl, '_blank');
         break;
       case 'twitter':
@@ -35,24 +34,18 @@
   };
 </script>
 
+<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
 <section>
-  <button class="share-button" on:click={handleShareClick}>
-    Share <img src="/icons/share.png" alt="Share" />
+  <button class="share-button" style={showOptions ? 'justify-content: space-between;' : ''} on:click={handleShareClick}>
+    {#if showOptions}
+        <span>SHARE:</span>
+        <img src="/icons/discord.png" alt="Share" on:click={() => handleOptionClick('discord')} role="button" tabindex="0" />
+        <img src="/icons/twitter.png" alt="Share" on:click={() => handleOptionClick('twitter')} role="button" tabindex="0" />
+        <img src="/icons/copyicon.png" alt="Share" on:click={() => handleOptionClick('copy')} role="button" tabindex="0" />
+    {:else}
+      SHARE
+    {/if}
   </button>
-
-  {#if showOptions}
-    <div class="options blur">
-      <button on:click={() => handleOptionClick('discord')}>
-        <img src="/icons/discord.png" alt="Share" />
-      </button>
-      <button on:click={() => handleOptionClick('twitter')}>
-        <img src="/icons/twitter.png" alt="Share" />
-      </button>
-    </div>
-    <button class="copy-button" on:click={() => handleOptionClick('copy')}>
-      <img src="/icons/copyicon.png" alt="Share" />
-    </button>
-  {/if}
 </section>
 
 <style>
@@ -61,71 +54,33 @@
     display: flex;
   }
 
-  button {
-    background-color: rgba(0, 0, 0, 0);
-    border: none;
-    opacity: 0.75;
-  }
-
-  button:hover,
-  button:active {
-    opacity: 0.9;
-    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
-  }
-
   img {
-    width: 2vw;
+    height: 1.5vw;
+    filter: drop-shadow(0 0 0.1vw #010020);
+    margin-inline: 0.5vw;
+  }
+
+  img:hover,
+  img:active {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0.15vw 0.25vw #010020);
+  }
+
+  span {
     cursor: pointer;
-  }
-
-  .share-button {
-    display: flex;
-    align-items: center;
-    gap: 1vw;
-    font-size: 1.5vw;
-    color: rgba(51, 226, 230, 0.9);
-  }
-
-  .share-button img {
-    width: 2.5vw;
-  }
-
-  .options {
-    display: flex;
-    flex-flow: row nowrap;
-    background-color: rgba(51, 226, 230, 0.1);
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 1vw;
-    padding-inline: 0.5vw;
-    margin-inline: 1vw;
-  }
-
-  .copy-button img {
-    width: 2vw;
+    margin-right: 1vw;
   }
 
   @media only screen and (max-width: 600px) {
+    button {
+      width: 80vw;
+      font-size: 1.5em;
+      line-height: 1.5em;
+      padding: 0.25em 0.5em;
+    }
+
     img {
-      width: 1.75em;
-    }
-
-    .share-button {
-      font-size: 1.25em;
-      gap: 0.5em;
-    }
-
-    .share-button img {
-      width: 1.25em;
-    }
-
-    .copy-button img {
-      width: 1.25em;
-    }
-
-    .options {
-      gap: 0.25em;
-      padding: 0.25em;
-      border-radius: 0.5em;
+      height: 1.25em;
     }
   }
 </style>

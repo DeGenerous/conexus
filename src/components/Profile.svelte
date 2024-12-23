@@ -251,7 +251,7 @@
                 <h3>
                   You have
                   <strong>{available.bonus} bonus</strong>
-                  lives
+                  stories
                 </h3>
               {/if}
             </div>
@@ -871,6 +871,7 @@
   .agreements-container {
     display: flex;
     flex-flow: column nowrap;
+    align-items: flex-start;
     width: 100%;
   }
 

@@ -198,6 +198,7 @@
 
   .story-container {
     max-width: 95%;
+    min-width: 75%;
     display: flex;
     flex-flow: row nowrap;
     justify-content: flex-start;

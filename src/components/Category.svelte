@@ -82,10 +82,15 @@
     console.log(filteredCategories); // check before sorting
     sortedCategories = filteredCategories.map(
       (category: DynSectionCategory) => {
-        category.topics = category.topics.sort((a: DynTopic, b: DynTopic) => {
+        category.topics = category.topics.sort((a, b) => {
           // Sorting all topics in the category
-          if (a.name < b.name) return -1;
-          if (a.name > b.name) return 1;
+          if (isSorting) {
+            if (a.name < b.name) return -1;
+            if (a.name > b.name) return 1;
+          } else {
+            if (a.order < b.order) return -1;
+            if (a.order > b.order) return 1;
+          }
           return 0;
         });
         return category;
@@ -118,11 +123,12 @@
         class="filter blur"
         on:click={() => {
           isSorting = !isSorting;
-          if (isSorting) handleSorting();
-          else {
-            searchField = '';
-            handleSearch();
-          }
+          handleSorting();
+          // if (isSorting) handleSorting();
+          // else {
+          //   searchField = '';
+          //   handleSearch();
+          // }
         }}
         style="background-color: {isSorting
           ? 'rgba(56, 117, 250, 0.9)'

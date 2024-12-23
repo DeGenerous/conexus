@@ -361,14 +361,18 @@
             {#if !$web3LoggedIn}
               <button
                 class="sign-button"
-                on:click={() => {Account.log_in('coinbase')}}
+                on:click={() => {
+                  Account.log_in('coinbase');
+                }}
               >
                 <img class="sign-icon" src="/icons/coinbase.png" alt="Google" />
                 <p class="sign-lable">Coinbase Smart Wallet</p></button
               >
               <button
                 class="sign-button"
-                on:click={() => {Account.log_in('metamask')}}
+                on:click={() => {
+                  Account.log_in('metamask');
+                }}
               >
                 <img
                   class="sign-icon"
@@ -468,7 +472,11 @@
           {:else}
             <!-- SIGN-IN general window -->
             <div class="buttons-container">
-              <button on:click={() => {Account.google_login()}}>
+              <button
+                on:click={() => {
+                  Account.google_login();
+                }}
+              >
                 <img class="sign-icon" src="/icons/google.png" alt="Google" />
                 <p class="sign-lable">with Google</p>
               </button>

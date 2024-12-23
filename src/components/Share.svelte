@@ -36,12 +36,34 @@
 
 <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
 <section>
-  <button class="share-button" style={showOptions ? 'justify-content: space-between;' : ''} on:click={handleShareClick}>
+  <button
+    class="share-button"
+    style={showOptions ? 'justify-content: space-between;' : ''}
+    on:click={handleShareClick}
+  >
     {#if showOptions}
-        <span>SHARE:</span>
-        <img src="/icons/discord.png" alt="Share" on:click={() => handleOptionClick('discord')} role="button" tabindex="0" />
-        <img src="/icons/twitter.png" alt="Share" on:click={() => handleOptionClick('twitter')} role="button" tabindex="0" />
-        <img src="/icons/copyicon.png" alt="Share" on:click={() => handleOptionClick('copy')} role="button" tabindex="0" />
+      <span>SHARE:</span>
+      <img
+        src="/icons/discord.png"
+        alt="Share"
+        on:click={() => handleOptionClick('discord')}
+        role="button"
+        tabindex="0"
+      />
+      <img
+        src="/icons/twitter.png"
+        alt="Share"
+        on:click={() => handleOptionClick('twitter')}
+        role="button"
+        tabindex="0"
+      />
+      <img
+        src="/icons/copyicon.png"
+        alt="Share"
+        on:click={() => handleOptionClick('copy')}
+        role="button"
+        tabindex="0"
+      />
     {:else}
       SHARE
     {/if}

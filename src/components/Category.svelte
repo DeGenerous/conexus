@@ -112,6 +112,49 @@
     const genre_name: string = this.innerHTML;
     filteredCategories = await CoNexus.getGenreTopics(genre_name);
   }
+
+  // let selectedGenres: string[];
+
+  // function genreSelector(this: HTMLElement) {
+  //   if (searchField) searchField = '';
+  //   this.classList.toggle('selected');
+  //   if (this.className.match('selected'))
+  //     this.style.color = 'rgba(51, 226, 230)';
+  //   else this.style.color = 'inherit';
+  //   selectedGenres = Array.from(document.querySelectorAll('.selected')).map(
+  //     (genre) => {
+  //       return genre.innerHTML;
+  //     },
+  //   );
+  //   filteredCategories = categories
+  //     .map((category: DynSectionCategory) => {
+  //       // Filter to get all topics in the category that match selected genres
+  //       const matchingTopics = category.topics.filter((topic: DynTopic) => {
+  //         let matchingStory: boolean = false;
+  //         selectedGenres.map((genre) => {
+  //           if (topic.genres?.includes(genre)) matchingStory = true;
+  //         });
+  //         if (matchingStory) return topic;
+  //       });
+  //       // If there are any matching topics, include them in the results
+  //       return matchingTopics.length > 0
+  //         ? { ...category, topics: matchingTopics }
+  //         : null;
+  //     })
+  //     .filter((category) => category !== null); // Remove categories with no matches
+  //   if (isSorting) handleSorting();
+  // }
+
+  // const resetGenresFilter = () => {
+  //   const genresList = document.querySelectorAll('.genre');
+  //   selectedGenres = [];
+  //   genresList.forEach((genre: any) => {
+  //     if (Array.from(genre.classList).includes('selected')) {
+  //       genre.classList.remove('selected');
+  //       genre.style.color = 'inherit';
+  //     }
+  //   });
+  // };
 </script>
 
 <svelte:window on:click={hideGenresFilter} />

@@ -90,6 +90,8 @@ class Account {
     let maskedWallet = userWallet.slice(0, 6) + '...' + userWallet.slice(-4);
     wallet.set(maskedWallet);
 
+    localStorage.setItem('wallet', maskedWallet);
+
     toastStore.show('Successfully logged in', 'info');
 
     // type Account = {
@@ -127,6 +129,8 @@ class Account {
     });
 
     web3LoggedIn.set(false);
+
+    localStorage.removeItem('wallet');
   }
 
   static async google_login(): Promise<void> {

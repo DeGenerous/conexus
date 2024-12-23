@@ -10,10 +10,6 @@
     web3LoggedIn,
   } from '@stores/account';
   import { showProfile } from '@stores/modal';
-  import { toastStore } from '@stores/toast';
-
-  import detectProvider from '@metamask/detect-provider';
-  import { BrowserProvider } from 'ethers';
 
   Account.me();
   Account.logged_in();
@@ -56,21 +52,6 @@
   let loginPassword: HTMLInputElement;
   let invalidCredentials: boolean = false;
 
-  let provider: BrowserProvider;
-  $: if (isLogged && !$wallet) {
-    getUserAddress();
-  }
-  const getUserAddress = async () => {
-    const metamaskProvider = (await detectProvider()) as any;
-    if (metamaskProvider === null) {
-      return null;
-    }
-    provider = new BrowserProvider(metamaskProvider, 'any');
-    const signer = await provider.getSigner();
-    const address = await signer.getAddress();
-    $wallet = address.slice(0, 6) + '...' + address.slice(-4);
-  };
-
   const handleSignIn = async (event: Event) => {
     event.preventDefault();
     try {
@@ -84,18 +65,6 @@
     } catch (error) {
       invalidCredentials = true;
     }
-  };
-
-  const alternativeSignIn = {
-    google: () => {
-      Account.google_login();
-    },
-    coinbaseWallet: () => {
-      Account.log_in('coinbase');
-    },
-    browserWallet: () => {
-      Account.log_in('metamask');
-    },
   };
 
   authenticated.subscribe((value) => {
@@ -392,14 +361,14 @@
             {#if !$web3LoggedIn}
               <button
                 class="sign-button"
-                on:click={alternativeSignIn.coinbaseWallet}
+                on:click={() => {Account.log_in('coinbase')}}
               >
                 <img class="sign-icon" src="/icons/coinbase.png" alt="Google" />
                 <p class="sign-lable">Coinbase Smart Wallet</p></button
               >
               <button
                 class="sign-button"
-                on:click={alternativeSignIn.browserWallet}
+                on:click={() => {Account.log_in('metamask')}}
               >
                 <img
                   class="sign-icon"
@@ -409,7 +378,7 @@
                 <p class="sign-lable">browser wallet</p></button
               >
             {:else if $web3LoggedIn}
-              <h2 class="user-wallet">{$wallet}</h2>
+              <h2 class="user-wallet">{localStorage.getItem('wallet')}</h2>
             {/if}
           </div>
         </div>
@@ -499,7 +468,7 @@
           {:else}
             <!-- SIGN-IN general window -->
             <div class="buttons-container">
-              <button on:click={alternativeSignIn.google}>
+              <button on:click={() => {Account.google_login()}}>
                 <img class="sign-icon" src="/icons/google.png" alt="Google" />
                 <p class="sign-lable">with Google</p>
               </button>

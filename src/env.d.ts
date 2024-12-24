@@ -23,6 +23,8 @@ interface User extends SignUp {
   email_confirmed?: boolean;
   referral_count?: number;
   referred: boolean;
+  wallet?: string;
+  faux?: boolean;
 }
 
 interface SignIn {

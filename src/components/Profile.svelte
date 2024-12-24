@@ -6,7 +6,6 @@
   import {
     authenticated,
     referralCodes,
-    web3LoggedIn,
     web3loginError
   } from '@stores/account';
   import { showProfile } from '@stores/modal';
@@ -48,16 +47,16 @@
   let signInWithEmail: boolean;
 
   let user: any;
-  let loginMail: HTMLInputElement;
-  let loginPassword: HTMLInputElement;
+  let loginMail: string = '';
+  let loginPassword: string = '';
   let invalidCredentials: boolean = false;
 
   const handleSignIn = async (event: Event) => {
     event.preventDefault();
     try {
       await Account.signin({
-        email: loginMail.value,
-        password: loginPassword.value,
+        email: loginMail,
+        password: loginPassword,
       });
       setTimeout(() => {
         if (!isLogged) invalidCredentials = true;
@@ -86,11 +85,6 @@
   let editPasswordVisible: boolean = false;
   let passwordVisible: boolean = false;
   $: editPasswordMatch = editPassword === editPasswordConfirm;
-
-  const changePassword = () => {
-    editingPassword = true;
-    // CHANGE USER PASSWORD
-  }
 
   const saveChangedPassword = () => {
     editingPassword = false;
@@ -294,7 +288,7 @@
                 Save
               </button>
             {:else}
-              <button on:click={changePassword}>
+              <button on:click={() => editingPassword = true}>
                 Change password
               </button>
             {/if}
@@ -382,7 +376,7 @@
               <div class="input-container">
                 <label for="user-mail">Email</label>
                 <input
-                  bind:this={loginMail}
+                  bind:value={loginMail}
                   class="user-input"
                   type="email"
                   id="user-mail"
@@ -393,7 +387,7 @@
               <div class="input-container">
                 <label for="user-password">Password</label>
                 <input
-                  bind:this={loginPassword}
+                  bind:value={loginPassword}
                   class="user-input"
                   type="password"
                   id="user-password"
@@ -405,7 +399,7 @@
               {#if invalidCredentials}
                 <p class="validation">Invalid credentials!</p>
               {/if}
-              <button class="sign-button" on:click={handleSignIn}>
+              <button class="sign-button" on:click={handleSignIn} disabled={!(loginMail && loginPassword)}>
                 Sign in
               </button>
               <a href="/">Forgot password?</a>

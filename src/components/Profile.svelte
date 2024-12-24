@@ -17,8 +17,6 @@
     Account.cookie();
   });
 
-  $: if (web3LoggedIn) console.log(user)
-
   let dialog: HTMLDialogElement;
 
   $: if (dialog && $showProfile) {
@@ -81,37 +79,22 @@
     navigator.clipboard.writeText(event.target.id);
   }
 
-  let isEditing: string | null = null;
-  let editFirstName: string;
-  let editLastName: string;
-  let editPassword: string;
-  let editPasswordConfirm: string;
+  let editingPassword: boolean = false;
+  let editPassword: string = '';
+  let editPasswordConfirm: string = '';
   let editPasswordVisible: boolean = false;
   let passwordVisible: boolean = false;
   $: editPasswordMatch = editPassword === editPasswordConfirm;
-  $: editValidation =
-    isEditing === 'password'
-      ? !editPasswordMatch
-      : isEditing === 'username'
-        ? !editFirstName || !editLastName
-        : false;
 
-  function changeUserData(state: string | null) {
-    let savingData: string | null = null;
-    if (state === 'save') savingData = isEditing;
-    isEditing = state;
-    if (!isEditing) return;
-    if (isEditing == 'save') {
-      if (savingData === 'password') {
-        console.log(`save: ${editPassword}`);
-        // CHANGE USER PASSWORD
-      } else if (savingData === 'username') {
-        console.log(`save first name: ${editFirstName}`);
-        if (editLastName) console.log(`save last name: ${editLastName}`);
-        // CHANGE USERNAME
-      }
-      isEditing = null;
-    }
+  const changePassword = () => {
+    editingPassword = true;
+    // CHANGE USER PASSWORD
+  }
+
+  const saveChangedPassword = () => {
+    editingPassword = false;
+    console.log(`save: ${editPassword}`);
+    // SAVE USER PASSWORD
   }
 
   // Form state variables
@@ -240,10 +223,28 @@
               disabled
             />
           </div>
+          <div class="input-container">
+            <label for="first-name">First name</label>
+            <input
+              class="user-input"
+              type="text"
+              value={user.first_name}
+              disabled={true}
+            />
+          </div>
+          <div class="input-container">
+            <label for="last-name">Last name</label>
+            <input
+              class="user-input"
+              type="text"
+              value={user.last_name}
+              disabled={true}
+            />
+          </div>
 
-          {#if isEditing === 'password'}
+          {#if editingPassword}
             <div class="input-container">
-              <label for="password">Password</label>
+              <label for="password">New password</label>
               <div class="password-container">
                 <input
                   class="user-input highlighted-input"
@@ -264,7 +265,7 @@
               </div>
             </div>
             <div class="input-container">
-              <label for="password-confirmation">Confirm password</label>
+              <label for="password-confirmation">Confirm new password</label>
               <input
                 class="user-input highlighted-input"
                 type={editPasswordVisible ? 'text' : 'password'}
@@ -275,78 +276,26 @@
                   : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
               />
             </div>
-          {/if}
-
-          {#if isEditing === 'username'}
-            <div class="input-container">
-              <label for="first-name">First name</label>
-              <input
-                class="user-input highlighted-input"
-                type="text"
-                placeholder="Provide new First name"
-                bind:value={editFirstName}
-                style={editFirstName
-                  ? ''
-                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
-              />
-            </div>
-            <div class="input-container">
-              <label for="last-name">Last name</label>
-              <input
-                class="user-input highlighted-input"
-                type="text"
-                placeholder="Provide new Last name"
-                bind:value={editLastName}
-                style={editLastName
-                  ? ''
-                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
-              />
-            </div>
-          {:else}
-            <div class="input-container">
-              <label for="first-name">First name</label>
-              <input
-                class="user-input"
-                type="text"
-                value={user.first_name}
-                disabled={true}
-              />
-            </div>
-            <div class="input-container">
-              <label for="last-name">Last name</label>
-              <input
-                class="user-input"
-                type="text"
-                value={user.last_name}
-                disabled={true}
-              />
-            </div>
-          {/if}
-
-          {#if isEditing === 'password'}
             {#if !editPassword}
-              <p class="validation">Provide new password</p>
+              <p class="validation">Please enter new password</p>
             {:else if !editPasswordConfirm}
-              <p class="validation">Confirm new password</p>
+              <p class="validation">Please confirm new password</p>
             {:else if editPasswordConfirm && !editPasswordMatch}
               <p class="validation">Passwords do not match!</p>
             {/if}
           {/if}
 
           <div class="edit-buttons">
-            {#if isEditing}
-              <button on:click={() => changeUserData(null)}> Cancel </button>
+            {#if editingPassword}
+              <button on:click={() => editingPassword = false}> Cancel </button>
               <button
-                on:click={() => changeUserData('save')}
-                disabled={editValidation}
+                on:click={saveChangedPassword}
+                disabled={!editPasswordMatch}
               >
                 Save
               </button>
             {:else}
-              <button on:click={() => changeUserData('username')}>
-                Change name
-              </button>
-              <button on:click={() => changeUserData('password')}>
+              <button on:click={changePassword}>
                 Change password
               </button>
             {/if}

@@ -6,7 +6,6 @@
   import {
     authenticated,
     referralCodes,
-    wallet,
     web3LoggedIn,
   } from '@stores/account';
   import { showProfile } from '@stores/modal';
@@ -17,6 +16,8 @@
   onMount(async () => {
     Account.cookie();
   });
+
+  $: if (web3LoggedIn) console.log(user)
 
   let dialog: HTMLDialogElement;
 
@@ -382,7 +383,7 @@
                 <p class="sign-lable">browser wallet</p></button
               >
             {:else if $web3LoggedIn}
-              <h2 class="user-wallet">{localStorage.getItem('wallet')}</h2>
+              <h2 class="user-wallet">{user.wallet.slice(0, 6) + '...' + user.wallet.slice(-4)}</h2>
             {/if}
           </div>
         </div>
@@ -487,6 +488,14 @@
               >
                 <img class="sign-icon" src="/icons/email.png" alt="Google" />
                 <p class="sign-lable">with email</p>
+              </button>
+              <button
+                on:click={() => {
+                  Account.log_in('metamask');
+                }}
+              >
+                <img class="sign-icon" src="/icons/walletconnect.png" alt="Web3 login" />
+                <p class="sign-lable">with browser wallet</p>
               </button>
             </div>
             <hr />

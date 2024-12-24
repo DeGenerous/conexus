@@ -64,16 +64,19 @@ class Account {
 
   static async log_in(
     walletProvider: 'metamask' | 'coinbase' = 'metamask',
+    link: boolean = false,
   ): Promise<Account> {
     const provider = await Web3Provider.init(walletProvider);
 
-    const nonce = await Account.get_nonce(walletProvider);
+    const nonce = await Account.get_nonce(walletProvider, link);
 
     const signature = await provider.sign(message(nonce));
 
     const userWallet = await provider.userAddress();
 
-    const response = await fetch(`${url}/login`, {
+    const urlPath = link ? 'linklogin' : 'login';
+
+    const response = await fetch(`${url}/${urlPath}`, {
       method: 'POST',
       body: JSON.stringify({
         wallet: userWallet,
@@ -106,10 +109,13 @@ class Account {
 
   private static async get_nonce(
     walletProvider: 'metamask' | 'coinbase' = 'metamask',
+    link: boolean = false,
   ): Promise<string> {
     const provider = await Web3Provider.init(walletProvider);
 
-    const response = await fetch(`${url}/nonce`, {
+    const urlPath = link ? 'linknonce' : 'nonce';
+
+    const response = await fetch(`${url}/${urlPath}`, {
       method: 'POST',
       body: JSON.stringify({
         wallet: await provider.userAddress(),

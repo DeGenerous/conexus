@@ -362,7 +362,7 @@
               <button
                 class="sign-button"
                 on:click={() => {
-                  Account.log_in('coinbase');
+                  Account.log_in('coinbase', true);
                 }}
               >
                 <img class="sign-icon" src="/icons/coinbase.png" alt="Google" />
@@ -371,7 +371,7 @@
               <button
                 class="sign-button"
                 on:click={() => {
-                  Account.log_in('metamask');
+                  Account.log_in('metamask', true);
                 }}
               >
                 <img

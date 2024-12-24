@@ -7,6 +7,7 @@
     authenticated,
     referralCodes,
     web3LoggedIn,
+    web3loginError
   } from '@stores/account';
   import { showProfile } from '@stores/modal';
 
@@ -59,7 +60,7 @@
         password: loginPassword.value,
       });
       setTimeout(() => {
-        if (!$web3LoggedIn) invalidCredentials = true;
+        if (!isLogged) invalidCredentials = true;
       });
     } catch (error) {
       invalidCredentials = true;
@@ -185,33 +186,31 @@
       <section class="profile-window">
         <hr />
 
-        {#if $web3LoggedIn}
-          {#await CoNexus.available()}
-            <div class="story-games-container">
-              <h3>Available story games...</h3>
-            </div>
+        {#await CoNexus.available()}
+          <div class="story-games-container">
+            <h3>Available story games...</h3>
+          </div>
 
-            <hr />
-          {:then available}
-            <div class="story-games-container">
+          <hr />
+        {:then available}
+          <div class="story-games-container">
+            <h3>
+              You have used
+              <strong>{available.used} / {available.available} weekly</strong>
+              stories
+            </h3>
+
+            {#if available.bonus > 0}
               <h3>
-                You have used
-                <strong>{available.used} / {available.available} weekly</strong>
+                You have
+                <strong>{available.bonus} bonus</strong>
                 stories
               </h3>
+            {/if}
+          </div>
 
-              {#if available.bonus > 0}
-                <h3>
-                  You have
-                  <strong>{available.bonus} bonus</strong>
-                  stories
-                </h3>
-              {/if}
-            </div>
-
-            <hr />
-          {/await}
-        {/if}
+          <hr />
+        {/await}
 
         <div class="user-profile-info">
           <div class="input-container">
@@ -305,10 +304,10 @@
         <hr />
 
         <div class="wallet-connect">
-          <h2>{$web3LoggedIn ? '' : 'Connect'} Web3 account:</h2>
+          <h2>{user.fraux ? 'Connect' : ''} Web3 account:</h2>
 
           <div class="buttons-container">
-            {#if !$web3LoggedIn}
+            {#if user.fraux}
               <button
                 class="sign-button"
                 on:click={() => {
@@ -331,7 +330,7 @@
                 />
                 <p class="sign-lable">browser wallet</p></button
               >
-            {:else if $web3LoggedIn}
+            {:else}
               <h2 class="user-wallet">{user.wallet.slice(0, 6) + '...' + user.wallet.slice(-4)}</h2>
             {/if}
           </div>
@@ -447,6 +446,9 @@
                 <p class="sign-lable">with browser wallet</p>
               </button>
             </div>
+            {#if $web3loginError}
+              <p class="validation">This wallet is not linked to any account</p>
+            {/if}
             <hr />
             <h3>Don't have an account yet?</h3>
             <div class="buttons-container">

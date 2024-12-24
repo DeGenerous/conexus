@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 
 export const web3LoggedIn = writable<boolean>(false);
+export const web3loginError = writable<boolean>(false);
 export const wallet = writable<string>();
 export const authenticated = writable<{
   user: Nullable<User>;

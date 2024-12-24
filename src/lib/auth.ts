@@ -3,6 +3,7 @@ import { Web3Provider } from './ethers';
 import { get_cookie } from './cookies';
 import {
   web3LoggedIn,
+  web3loginError,
   referralCodes,
   authenticated,
   wallet,
@@ -86,14 +87,18 @@ class Account {
 
     if (!response.ok) {
       new_error({ code: response.status, error: await response.text() });
+
+      web3loginError.set(true);
+
+      toastStore.show('This wallet is not linked to any account! Please use another login method or different wallet.', 'error');
+    } else {
+      web3LoggedIn.set(true);
+
+      let maskedWallet = userWallet.slice(0, 6) + '...' + userWallet.slice(-4);
+      wallet.set(maskedWallet);
+  
+      toastStore.show('Successfully logged in', 'info');
     }
-
-    web3LoggedIn.set(true);
-
-    let maskedWallet = userWallet.slice(0, 6) + '...' + userWallet.slice(-4);
-    wallet.set(maskedWallet);
-
-    toastStore.show('Successfully logged in', 'info');
 
     // type Account = {
     //   username: string;

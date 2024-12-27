@@ -84,8 +84,8 @@
 
   img:hover,
   img:active {
-    transform: scale(1.2);
-    filter: drop-shadow(0 0.15vw 0.25vw #010020);
+    transform: scale(1.025) translateY(-0.25vw);
+    filter: drop-shadow(0 0.25vw 0.25vw #010020);
   }
 
   span {

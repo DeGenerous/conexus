@@ -262,7 +262,7 @@
               <input
                 class="user-input highlighted-input"
                 type={editPasswordVisible ? 'text' : 'password'}
-                placeholder="Confirm new password"
+                placeholder="Provide new password again"
                 bind:value={editPasswordConfirm}
                 style={editPassword === editPasswordConfirm
                   ? ''
@@ -632,7 +632,7 @@
     width: 65vw;
     height: 90%;
     background-color: rgba(1, 0, 32, 0.75);
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.5);
     border-radius: 1.5vw;
     overflow-x: hidden;
   }
@@ -653,6 +653,12 @@
       rgba(0, 0, 0, 0)
     );
     border-radius: 0.5vw;
+    cursor: pointer;
+  }
+
+  dialog::-webkit-scrollbar-thumb:hover,
+  dialog::-webkit-scrollbar-thumb:active {
+    background: rgba(51, 226, 230, 0.5);
   }
 
   dialog::backdrop {
@@ -788,6 +794,7 @@
     padding: 1.5vw 2vw;
     color: rgba(51, 226, 230, 0.75);
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
     border-radius: 1vw;
     background-color: rgba(51, 226, 230, 0.1);
     outline: none;
@@ -988,7 +995,7 @@
 
   .profile-icon:hover,
   .profile-icon:active {
-    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.5));
+    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.5));
     opacity: 0.75;
   }
 
@@ -1046,7 +1053,7 @@
 
     .user-input {
       width: 70vw;
-      font-size: 1.25em;
+      font-size: 1.1em;
       line-height: 1.75em;
     }
 

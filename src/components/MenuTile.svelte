@@ -67,28 +67,27 @@
     width: 28vw;
     background-color: rgba(22, 30, 95, 0.75);
     color: rgba(51, 226, 230, 0.75);
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
     border-radius: 2.5vw;
-    filter: drop-shadow(0 0 0.1vw #010020);
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
     cursor: pointer;
     text-decoration: none;
   }
 
   .tile:hover,
   .tile:active {
-    background-color: rgba(51, 226, 230, 0.3);
+    background-color: rgba(51, 226, 230, 0.5);
     color: #010020;
-    filter: drop-shadow(0 0 0.5vw #33e2e6);
-    transform: scale(1.01);
+    box-shadow: inset 0 0 0.5vw #010020, 0 0.5vw 0.5vw #010020;
+    transform: scale(1.025) translateY(-0.5vw);
   }
 
   .tile-picture {
     object-fit: cover;
-    width: 95%;
+    width: 92%;
     height: 80%;
-    margin: 2.5%;
+    margin: 4%;
     margin-bottom: 0;
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
+    box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.25);
     border-radius: 2vw;
     background-color: black;
     cursor: pointer;
@@ -99,7 +98,7 @@
     line-height: 3vw;
     padding-block: 1vw;
     white-space: nowrap;
-    text-shadow: 0 0 1vw #010020;
+    text-shadow: 0 0 0.1vw #010020;
     cursor: pointer;
   }
 

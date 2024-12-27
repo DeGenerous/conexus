@@ -251,9 +251,8 @@
   .image-wrapper {
     position: relative;
     width: 100%;
-    border: 0.1rem solid rgba(51, 226, 230, 0.25);
     border-radius: 1em;
-    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
+    box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.25);
     -webkit-backdrop-filter: blur(1em);
     backdrop-filter: blur(1em);
     background-color: rgba(51, 226, 230, 0.05);
@@ -301,6 +300,7 @@
     padding-inline: 1vw;
     font-size: 1.25vw;
     line-height: 2.5vw;
+    text-shadow: 0 0.25vw 0.25vw #010020;
   }
 
   h2 {
@@ -309,7 +309,7 @@
 
   strong {
     color: rgb(51, 226, 230);
-    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.5));
+    text-shadow: 0 0 0.1vw rgb(51, 226, 230);
   }
 
   .options-container {
@@ -318,9 +318,9 @@
     flex-direction: column;
     align-items: flex-start;
     padding: 1vw;
-    border: 0.1rem solid rgba(51, 226, 230, 0.25);
     border-radius: 1em;
     background-color: rgba(51, 226, 230, 0.05);
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
   }
 
   .option {
@@ -339,7 +339,7 @@
 
   .active-option {
     color: rgb(51, 226, 230) !important;
-    filter: drop-shadow(0 0 0.1rem rgba(51, 226, 230, 0.75)) !important;
+    text-shadow: 0 0 0.1vw rgb(51, 226, 230) !important;
   }
 
   .menu-option {
@@ -355,12 +355,15 @@
   .option:hover,
   .option:active {
     color: rgba(51, 226, 230, 1);
-    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
+    text-shadow: 0 0.25vw 0.5vw #010020;
+    filter: none;
+    transform: scale(1.025);
   }
 
   .option:disabled {
     opacity: 0.75;
-    color: rgba(51, 226, 230, 0.5);
+    color: rgba(51, 226, 230, 0.6);
+    text-shadow: none;
   }
 
   .option:disabled:hover,
@@ -395,6 +398,7 @@
     background-color: rgba(36, 65, 189, 0.75);
     border: 0.1rem solid rgba(51, 226, 230, 0.5);
     border-radius: 1em;
+    box-shadow: 0 0.5vw 0.5vw #010020;
   }
 
   .control-bar {
@@ -446,6 +450,7 @@
   .fullscreen-btn:hover,
   .fullscreen-btn:active {
     opacity: 0.75;
+    filter: drop-shadow(0 0.25vw 0.25vw #010020);
   }
 
   .control-bar-fullscreen {

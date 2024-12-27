@@ -42,26 +42,16 @@
 
   $: filteredCategories = categories;
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (!searchField) {
       filteredCategories = categories;
       return;
     }
-
-    filteredCategories = categories
-      .map((category: DynSectionCategory) => {
-        // Filter to get all topics in the category that match the search field
-        const matchingTopics = category.topics.filter((topic: DynTopic) =>
-          topic.name.toLowerCase().includes(searchField.toLowerCase()),
-        );
-        // If there are any matching topics, include them in the results
-        return matchingTopics.length > 0
-          ? { ...category, topics: matchingTopics }
-          : null;
-      })
-      .filter((category) => category !== null); // Remove categories with no matches
-
-    if (isSorting) handleSorting();
+    setTimeout(async () => {
+      filteredCategories = await CoNexus.searchCategories(searchField)
+  
+      if (isSorting) handleSorting();
+    }, 3000)
   };
 
   let searchInput: HTMLInputElement | null;
@@ -112,49 +102,6 @@
     const genre_name: string = this.innerHTML;
     filteredCategories = await CoNexus.getGenreTopics(genre_name);
   }
-
-  // let selectedGenres: string[];
-
-  // function genreSelector(this: HTMLElement) {
-  //   if (searchField) searchField = '';
-  //   this.classList.toggle('selected');
-  //   if (this.className.match('selected'))
-  //     this.style.color = 'rgba(51, 226, 230)';
-  //   else this.style.color = 'inherit';
-  //   selectedGenres = Array.from(document.querySelectorAll('.selected')).map(
-  //     (genre) => {
-  //       return genre.innerHTML;
-  //     },
-  //   );
-  //   filteredCategories = categories
-  //     .map((category: DynSectionCategory) => {
-  //       // Filter to get all topics in the category that match selected genres
-  //       const matchingTopics = category.topics.filter((topic: DynTopic) => {
-  //         let matchingStory: boolean = false;
-  //         selectedGenres.map((genre) => {
-  //           if (topic.genres?.includes(genre)) matchingStory = true;
-  //         });
-  //         if (matchingStory) return topic;
-  //       });
-  //       // If there are any matching topics, include them in the results
-  //       return matchingTopics.length > 0
-  //         ? { ...category, topics: matchingTopics }
-  //         : null;
-  //     })
-  //     .filter((category) => category !== null); // Remove categories with no matches
-  //   if (isSorting) handleSorting();
-  // }
-
-  // const resetGenresFilter = () => {
-  //   const genresList = document.querySelectorAll('.genre');
-  //   selectedGenres = [];
-  //   genresList.forEach((genre: any) => {
-  //     if (Array.from(genre.classList).includes('selected')) {
-  //       genre.classList.remove('selected');
-  //       genre.style.color = 'inherit';
-  //     }
-  //   });
-  // };
 </script>
 
 <svelte:window on:click={hideGenresFilter} />
@@ -276,18 +223,20 @@
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1vw;
     background-color: #010020;
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.5);
   }
 
   .genre {
     font-size: 1.5vw;
     line-height: 2vw;
     cursor: pointer;
+    color: rgba(51, 226, 230, 0.75);
   }
 
   .genre:hover,
   .genre:active {
     color: rgb(51, 226, 230);
-    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.25));
+    text-shadow: 0 0 0.1vw rgb(51, 226, 230);
   }
 
   .search-wrapper {
@@ -324,7 +273,7 @@
   }
 
   .categories-wrapper {
-    width: 95vw;
+    width: 100vw;
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;

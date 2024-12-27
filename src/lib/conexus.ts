@@ -141,6 +141,22 @@ export class CoNexus {
     return resp.categories;
   }
 
+  static async searchCategories(
+    search: string,
+  ): Promise<DynSectionCategory[]> {
+    const base = `${url}/topics/search/${search}`;
+
+    const response = await fetch(base);
+
+    if (!response.ok) {
+      new_error({ code: response.status, error: await response.text() });
+    }
+
+    const resp = await response.json();
+
+    return resp.topics;
+  }
+
   static async getGenres(): Promise<{ id: number; name: string }[]> {
     const response = await fetch(`${url}/genres`);
 

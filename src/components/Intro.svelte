@@ -42,10 +42,9 @@
     align-items: center;
     gap: 2vw;
     padding: 2vw;
-    background-color: rgba(1, 0, 32, 0.75);
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
+    background-color: rgba(1, 0, 32, 0.5);
     border-radius: 1.5vw;
-    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.25));
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
   }
 
   .conexus-menu-tiles {

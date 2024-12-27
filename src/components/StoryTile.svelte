@@ -38,7 +38,7 @@
     color: rgba(255, 255, 255, 0.6);
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1.5vw;
-    filter: drop-shadow(0 0 0.1vw #010020);
+    box-shadow: 0 0 0.5vw #010020;
     cursor: pointer;
     text-decoration: none;
     flex: none;
@@ -48,8 +48,8 @@
   .tile:active {
     background-color: rgba(45, 90, 216, 0.9);
     color: rgba(51, 226, 230, 0.9);
-    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.5));
-    transform: scale(1.01);
+    box-shadow: 0 0.5vw 0.5vw #010020;
+    transform: scale(1.025) translateY(-0.5vw);
   }
 
   .tile-picture {

@@ -178,7 +178,7 @@
     line-height: 5vw;
     text-align: center;
     color: rgba(51, 226, 230, 0.85);
-    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.5));
+    text-shadow: 0 0.5vw 0.5vw #010020;
   }
 
   .arrow {
@@ -192,7 +192,7 @@
 
   .arrow:hover,
   .arrow:active {
-    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.5));
+    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.5));
     opacity: 0.75;
   }
 
@@ -206,7 +206,7 @@
     gap: 2vw;
     padding: 2vw;
     background-color: rgba(1, 0, 32, 0.5);
-    border: 0.05vw solid rgba(51, 226, 230, 0.5);
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
     border-radius: 1.5vw;
   }
 
@@ -220,7 +220,7 @@
 
   .picture {
     width: 25vw;
-    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
+    box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.5);
     border-radius: 1vw;
   }
 
@@ -246,16 +246,16 @@
     text-align: center;
     padding: 0.5vw 1vw;
     background-color: rgba(51, 226, 230, 0.5);
-    border: 0.05vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1vw;
     color: #010020;
     text-shadow: 0 0 0.1vw #010020;
+    box-shadow: inset 0 0 0.5vw #010020;
   }
 
   .description {
     font-size: 1.5vw;
     line-height: 3vw;
-    text-shadow: 0 0 0.5vw rgb(1, 0, 32);
+    text-shadow: 0 0.25vw 0.25vw #010020;
   }
 
   .buttons-container {
@@ -273,7 +273,7 @@
   .unfinished-stories {
     max-width: 95%;
     background-color: rgba(51, 226, 230, 0.1);
-    border: 0.05vw solid rgba(51, 226, 230, 0.5);
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
     border-radius: 1.5vw;
     padding: 1vw;
     display: flex;
@@ -312,8 +312,8 @@
   .unfinished-story:active {
     background-color: rgba(45, 90, 216, 0.9);
     color: rgba(51, 226, 230, 0.9);
-    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
-    transform: scale(1.05);
+    box-shadow: 0 0.5vw 0.5vw #010020;
+    transform: scale(1.025) translateY(-0.25vw);
   }
 
   .continue-shaping-btn {
@@ -349,7 +349,7 @@
       position: fixed;
       top: 0;
       background-color: rgba(1, 0, 32, 0.75);
-      filter: drop-shadow(0 1vw 1vw rgba(1, 0, 32, 0.75));
+      box-shadow: 0 0.5vw 0.5vw #010020;
       -webkit-backdrop-filter: blur(2vw);
       backdrop-filter: blur(2vw);
       z-index: 2;
@@ -376,7 +376,6 @@
 
     .picture {
       width: 90vw;
-      filter: drop-shadow(0 0 0.5em rgba(51, 226, 230, 0.25));
     }
 
     article {

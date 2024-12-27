@@ -43,9 +43,7 @@
       rgba(0, 0, 0, 0),
       rgba(51, 226, 230, 0.1)
     );
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 1vw;
-    filter: drop-shadow(0 0 1vw rgba(51, 226, 230, 0.25));
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
     overflow-y: hidden;
   }
 
@@ -65,6 +63,12 @@
       rgba(51, 226, 230, 0.15)
     );
     border-radius: 1vw;
+    cursor: pointer;
+  }
+
+  .tiles-collection::-webkit-scrollbar-thumb:hover,
+  .tiles-collection::-webkit-scrollbar-thumb:active {
+    background: rgba(51, 226, 230, 0.5);
   }
 
   .collection-header {
@@ -80,7 +84,7 @@
     line-height: 3vw;
     color: rgba(51, 226, 230, 0.85);
     -webkit-text-stroke: 0.03vw #33e2e6;
-    text-shadow: 0 0 1vw rgba(51, 226, 230, 0.4);
+    text-shadow: 0 0.25vw 0.25vw #010020;
   }
 
   @media only screen and (max-width: 600px) {

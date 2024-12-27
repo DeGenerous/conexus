@@ -40,21 +40,33 @@
   let sortedCategories: DynSectionCategory[] = [];
   let searchField: string;
   let isSearching: boolean = false;
+  let debounceTimeout: NodeJS.Timeout;
 
   $: filteredCategories = categories;
 
   const handleSearch = async () => {
+    // Clear the previous timeout
+    clearTimeout(debounceTimeout);
+
+    // If searchField is empty, reset results and stop searching immediately
     if (!searchField) {
       filteredCategories = categories;
       isSearching = false;
       return;
     }
+
+    // Set isSearching to true when the debounce starts
     isSearching = true;
-    setTimeout(async () => {
-      filteredCategories = await CoNexus.searchCategories(searchField)
-      isSearching = false
+
+    // Set a new timeout for debouncing
+    debounceTimeout = setTimeout(async () => {
+      // Perform the search
+      filteredCategories = await CoNexus.searchCategories(searchField);
+      isSearching = false; // Stop searching after results are returned
+
+      // Handle sorting if applicable
       if (isSorting) handleSorting();
-    }, 3000)
+    }, 3000); // 3-second debounce delay
   };
 
   let searchInput: HTMLInputElement | null;
@@ -76,7 +88,7 @@
     sortedCategories = filteredCategories.map(
       (category: DynSectionCategory) => {
         category.topics = category.topics.sort((a, b) => {
-        // Sorting all topics in the category
+          // Sorting all topics in the category
           if (a.name < b.name) return -1;
           if (a.name > b.name) return 1;
           return 0;

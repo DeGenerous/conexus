@@ -77,7 +77,9 @@
   .tile:active {
     background-color: rgba(51, 226, 230, 0.5);
     color: #010020;
-    box-shadow: inset 0 0 0.5vw #010020, 0 0.5vw 0.5vw #010020;
+    box-shadow:
+      inset 0 0 0.5vw #010020,
+      0 0.5vw 0.5vw #010020;
     transform: scale(1.025) translateY(-0.5vw);
   }
 

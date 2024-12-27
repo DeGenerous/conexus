@@ -141,9 +141,7 @@ export class CoNexus {
     return resp.categories;
   }
 
-  static async searchCategories(
-    search: string,
-  ): Promise<DynSectionCategory[]> {
+  static async searchCategories(search: string): Promise<DynSectionCategory[]> {
     const base = `${url}/topics/search/${search}`;
 
     const response = await fetch(base);

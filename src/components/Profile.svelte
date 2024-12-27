@@ -6,7 +6,7 @@
   import {
     authenticated,
     referralCodes,
-    web3loginError
+    web3loginError,
   } from '@stores/account';
   import { showProfile } from '@stores/modal';
 
@@ -90,7 +90,7 @@
     editingPassword = false;
     console.log(`save: ${editPassword}`);
     // SAVE USER PASSWORD
-  }
+  };
 
   // Form state variables
   let referralCode = '';
@@ -280,7 +280,9 @@
 
           <div class="edit-buttons">
             {#if editingPassword}
-              <button on:click={() => editingPassword = false}> Cancel </button>
+              <button on:click={() => (editingPassword = false)}>
+                Cancel
+              </button>
               <button
                 on:click={saveChangedPassword}
                 disabled={!editPasswordMatch}
@@ -288,7 +290,7 @@
                 Save
               </button>
             {:else}
-              <button on:click={() => editingPassword = true}>
+              <button on:click={() => (editingPassword = true)}>
                 Change password
               </button>
             {/if}
@@ -325,7 +327,9 @@
                 <p class="sign-lable">browser wallet</p></button
               >
             {:else}
-              <h2 class="user-wallet">{user.wallet.slice(0, 6) + '...' + user.wallet.slice(-4)}</h2>
+              <h2 class="user-wallet">
+                {user.wallet.slice(0, 6) + '...' + user.wallet.slice(-4)}
+              </h2>
             {/if}
           </div>
         </div>
@@ -399,7 +403,11 @@
               {#if invalidCredentials}
                 <p class="validation">Invalid credentials!</p>
               {/if}
-              <button class="sign-button" on:click={handleSignIn} disabled={!(loginMail && loginPassword)}>
+              <button
+                class="sign-button"
+                on:click={handleSignIn}
+                disabled={!(loginMail && loginPassword)}
+              >
                 Sign in
               </button>
               <a href="/">Forgot password?</a>
@@ -436,7 +444,11 @@
                   Account.log_in('metamask');
                 }}
               >
-                <img class="sign-icon" src="/icons/walletconnect.png" alt="Web3 login" />
+                <img
+                  class="sign-icon"
+                  src="/icons/walletconnect.png"
+                  alt="Web3 login"
+                />
                 <p class="sign-lable">with browser wallet</p>
               </button>
             </div>
@@ -942,7 +954,7 @@
     align-items: center;
     justify-content: space-between;
     background-color: rgba(0, 0, 0, 0.1);
-    box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.25);;
+    box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.25);
     border-radius: 1vw;
     padding: 1vw;
   }

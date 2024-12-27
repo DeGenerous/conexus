@@ -88,15 +88,23 @@ class Account {
     if (!response.ok) {
       new_error({ code: response.status, error: await response.text() });
 
-      web3loginError.set(true);
+      web3loginError.set(false);
 
-      toastStore.show('This wallet is not linked to any account! Please use another login method or different wallet.', 'error');
+      toastStore.show(
+        'This wallet is not linked to any account! Please use another login method or different wallet.',
+        'error',
+      );
     } else {
       web3LoggedIn.set(true);
 
-      let maskedWallet = userWallet.slice(0, 6) + '...' + userWallet.slice(-4);
+      const resp = await response.json();
+
+      authenticated.set({ user: resp.user, loggedIn: true });
+
+      let maskedWallet =
+        userWallet.slice(0, 6) + '...' + resp.user.wallet.slice(-4);
       wallet.set(maskedWallet);
-  
+
       toastStore.show('Successfully logged in', 'info');
     }
 

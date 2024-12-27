@@ -39,17 +39,20 @@
   let isSorting: boolean = false;
   let sortedCategories: DynSectionCategory[] = [];
   let searchField: string;
+  let isSearching: boolean = false;
 
   $: filteredCategories = categories;
 
   const handleSearch = async () => {
     if (!searchField) {
       filteredCategories = categories;
+      isSearching = false;
       return;
     }
+    isSearching = true;
     setTimeout(async () => {
       filteredCategories = await CoNexus.searchCategories(searchField)
-  
+      isSearching = false
       if (isSorting) handleSorting();
     }, 3000)
   };
@@ -145,14 +148,22 @@
         ? 'rgba(56, 117, 250, 0.9)'
         : 'rgba(56, 117, 250, 0.5)'}"
     >
-      <img
-        class="filter-image"
-        src="/icons/search.png"
-        alt="Search"
-        on:click={handleSearchFocus}
-        role="button"
-        tabindex="0"
-      />
+      {#if isSearching}
+        <img
+          class="filter-image searching"
+          src="/icons/searching.png"
+          alt="Searching..."
+        />
+      {:else}
+        <img
+          class="filter-image"
+          src="/icons/search.png"
+          alt="Search"
+          on:click={handleSearchFocus}
+          role="button"
+          tabindex="0"
+        />
+      {/if}
       <input
         bind:this={searchInput}
         bind:value={searchField}
@@ -244,6 +255,19 @@
     background-color: rgba(56, 117, 250, 0.5);
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1vw;
+  }
+
+  .searching {
+    animation: searching 1s linear infinite;
+  }
+
+  @keyframes searching {
+    from {
+      transform: none;
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   .search-field {

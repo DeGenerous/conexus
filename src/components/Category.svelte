@@ -108,6 +108,10 @@
   };
 
   async function getGenre(this: HTMLElement) {
+    if (searchField) {
+      searchField = '';
+      handleSearch();
+    }
     const genre_name: string = this.innerHTML;
     filteredCategories = await CoNexus.getGenreTopics(genre_name);
     if (isSorting) handleSorting();

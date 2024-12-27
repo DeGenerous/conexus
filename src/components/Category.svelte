@@ -55,38 +55,32 @@
   };
 
   let searchInput: HTMLInputElement | null;
-  let mobileSearch = false;
+  let searchFocus = false;
   const handleSearchFocus = () => {
     if (!searchInput) return;
-    if (!mobileSearch) {
+    if (!searchFocus) {
       searchInput.focus();
-      mobileSearch = false;
+      searchFocus = false;
     }
-    if (mobileSearch) {
+    if (searchFocus) {
       searchInput.blur();
-      mobileSearch = true;
+      searchFocus = true;
     }
   };
 
   const handleSorting = () => {
-    console.log(filteredCategories); // check before sorting
+    console.log(filteredCategories);
     sortedCategories = filteredCategories.map(
       (category: DynSectionCategory) => {
         category.topics = category.topics.sort((a, b) => {
-          // Sorting all topics in the category
-          if (isSorting) {
-            if (a.name < b.name) return -1;
-            if (a.name > b.name) return 1;
-          } else {
-            if (a.order < b.order) return -1;
-            if (a.order > b.order) return 1;
-          }
+        // Sorting all topics in the category
+          if (a.name < b.name) return -1;
+          if (a.name > b.name) return 1;
           return 0;
         });
         return category;
       },
     );
-    console.log(sortedCategories); // check after sorting
     filteredCategories = sortedCategories;
   };
 
@@ -101,6 +95,7 @@
   async function getGenre(this: HTMLElement) {
     const genre_name: string = this.innerHTML;
     filteredCategories = await CoNexus.getGenreTopics(genre_name);
+    if (isSorting) handleSorting();
   }
 </script>
 
@@ -113,12 +108,11 @@
         class="filter blur"
         on:click={() => {
           isSorting = !isSorting;
-          handleSorting();
-          // if (isSorting) handleSorting();
-          // else {
-          //   searchField = '';
-          //   handleSearch();
-          // }
+          if (isSorting) handleSorting();
+          else {
+            searchField = '';
+            handleSearch();
+          }
         }}
         style="background-color: {isSorting
           ? 'rgba(56, 117, 250, 0.9)'

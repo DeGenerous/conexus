@@ -341,18 +341,18 @@
                   <input
                     class="ref-code"
                     id={code.code}
-                    class:used={code.is_used}
-                    class:not-used={!code.is_used}
+                    class:active-code={!code.is_used}
                     value={code.code}
                     disabled
                   />
-                  <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
-                  <button
-                    aria-label="Copy code"
-                    id={code.code}
-                    class="copy-button non-hover-btn"
-                    on:click={copyRefCode}
-                  ></button>
+                  {#if !code.is_used}
+                    <button
+                      aria-label="Copy code"
+                      id={code.code}
+                      class="copy-button non-hover-btn"
+                      on:click={copyRefCode}
+                    ></button>
+                  {/if}
                 </div>
               {/each}
             </div>
@@ -794,7 +794,7 @@
     padding: 1.5vw 2vw;
     color: rgba(51, 226, 230, 0.75);
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
+    box-shadow: 0 0.5vw 0.5vw #010020;
     border-radius: 1vw;
     background-color: rgba(51, 226, 230, 0.1);
     outline: none;
@@ -931,7 +931,7 @@
     grid-template-columns: 50% 50%;
     justify-content: center;
     gap: 1vw;
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
     border-radius: 1vw;
     background-color: rgba(51, 226, 230, 0.1);
   }
@@ -942,7 +942,7 @@
     align-items: center;
     justify-content: space-between;
     background-color: rgba(0, 0, 0, 0.1);
-    border: 0.1vw solid rgba(51, 226, 230, 0.25);
+    box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.25);;
     border-radius: 1vw;
     padding: 1vw;
   }
@@ -971,14 +971,9 @@
     background-image: url('/icons/checkmark.png');
   }
 
-  .used {
-    color: rgba(255, 255, 255, 0.35);
-    -webkit-text-stroke: 0.05vw rgba(255, 0, 0, 0.35);
-  }
-
-  .not-used {
+  .active-code {
     color: rgba(255, 255, 255, 0.75);
-    filter: drop-shadow(0 0 0.1vw rgba(51, 226, 230, 0.9));
+    text-shadow: 0 0 0.1vw rgb(51, 226, 230);
   }
 
   /* Profile icon */

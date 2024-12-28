@@ -71,14 +71,24 @@
   });
 
   const blankPicture: string = '/blank.avif'; // temp
+
+  const handleReturn = () => {
+    if (history.length > 2) history.back();
+    else window.location.href = '/';
+  };
 </script>
 
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $story === null}
   {#if topic !== null}
-    <!-- svelte-ignore a11y_invalid_attribute -->
     <header>
-      <a class="arrow" href="javascript:history.back()" aria-label="Back arrow"
-      ></a>
+      <span
+        class="arrow"
+        aria-label="Back arrow"
+        role="button"
+        tabindex="0"
+        on:click={handleReturn}
+      ></span>
       <h1>{topic.name.charAt(0).toUpperCase() + topic.name.slice(1)}</h1>
       <Profile />
     </header>
@@ -188,6 +198,7 @@
     background-size: contain;
     background-image: url('/icons/backArrow.avif');
     opacity: 0.4;
+    cursor: pointer;
   }
 
   .arrow:hover,

@@ -356,6 +356,10 @@
   }
 
   @media only screen and (max-width: 600px) {
+    :global(html) {
+      padding-top: 20%;
+    }
+
     header {
       position: fixed;
       top: 0;

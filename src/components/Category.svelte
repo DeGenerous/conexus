@@ -106,7 +106,10 @@
 
   const resetGenres = () => {
     if (!activeGenre) return;
-    else activeGenre = '';
+    else {
+      activeGenre = '';
+      filteredCategories = categories;
+    }
   };
 </script>
 

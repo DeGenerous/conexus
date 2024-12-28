@@ -35,6 +35,11 @@
 {/if}
 
 <style>
+  div {
+    font-size: inherit;
+    line-height: inherit;
+  }
+
   .toast {
     position: fixed;
     top: 2vw;

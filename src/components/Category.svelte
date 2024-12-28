@@ -75,19 +75,19 @@
   };
 
   const handleSorting = () => {
-    sortedCategories = filteredCategories.map(
-      (category: DynSectionCategory) => {
-        category.topics = category.topics.sort((a, b) => {
-          // Sorting all topics in the category
+    sortedCategories = filteredCategories.map((cat: DynSectionCategory) => {
+      // Clone the category and topics to avoid mutating the original
+      return {
+        ...cat,
+        topics: [...cat.topics].sort((a, b) => {
+          // Sorting all topics in the category alphabetically
           if (a.name < b.name) return -1;
           if (a.name > b.name) return 1;
           return 0;
-        });
-        return category;
-      },
-    );
+        }),
+      };
+    });
     filteredCategories = sortedCategories;
-    console.log(filteredCategories);
   };
 
   // Genres
@@ -142,10 +142,13 @@
         class="filter blur"
         on:click={() => {
           isSorting = !isSorting;
-          if (isSorting) handleSorting();
-          else {
-            filteredCategories = categories;
-            console.log(filteredCategories);
+          if (isSorting) {
+            handleSorting();
+          } else {
+            filteredCategories = categories.map((cat) => ({
+              ...cat,
+              topics: [...cat.topics], // Ensure a fresh copy of topics
+            }));
           }
         }}
         style={isSorting

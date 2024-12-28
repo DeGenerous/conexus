@@ -107,15 +107,27 @@
   const resetGenres = () => {
     if (!activeGenre) return;
     else activeGenre = '';
-  }
+  };
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
 {#if categories}
   <section class="filters">
     <div class="sort-genres-filters">
-      <div class="filter filter-wrapper blur" style={activeGenre ? 'background-color: rgba(56, 117, 250, 0.9); box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.5);' : ''}>
-        <img class="filter-image" src={activeGenre ? "/icons/reset.png" : "/icons/filter.png"} alt="Genres filter" on:click={resetGenres} role="button" tabindex="0" />
+      <div
+        class="filter filter-wrapper blur"
+        style={activeGenre
+          ? 'background-color: rgba(56, 117, 250, 0.9); box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.5);'
+          : ''}
+      >
+        <img
+          class="filter-image"
+          src={activeGenre ? '/icons/reset.png' : '/icons/filter.png'}
+          alt="Genres filter"
+          on:click={resetGenres}
+          role="button"
+          tabindex="0"
+        />
         <select class="genre-selector" bind:value={activeGenre}>
           <option value="" selected={true} disabled hidden>Select genre</option>
           {#each genres as genre (genre.id)}

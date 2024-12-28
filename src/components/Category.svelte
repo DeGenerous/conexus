@@ -34,7 +34,7 @@
     }
   });
 
-  // Search and Filter
+  // Search and Sorting
   let filteredCategories: DynSectionCategory[];
   let isSorting: boolean = false;
   let sortedCategories: DynSectionCategory[] = [];
@@ -45,26 +45,17 @@
   $: filteredCategories = categories;
 
   const handleSearch = async () => {
-    // Clear the previous timeout
     clearTimeout(debounceTimeout);
-
-    // If searchField is empty, reset results and stop searching immediately
     if (!searchField) {
       filteredCategories = categories;
       isSearching = false;
       return;
     }
-
-    // Set isSearching to true when the debounce starts
-    isSearching = true;
-
-    // Set a new timeout for debouncing
+    resetGenres();
+    isSearching = true; // Set isSearching to true when the debounce starts
     debounceTimeout = setTimeout(async () => {
-      // Perform the search
       filteredCategories = await CoNexus.searchCategories(searchField);
       isSearching = false; // Stop searching after results are returned
-
-      // Handle sorting if applicable
       if (isSorting) handleSorting();
     }, 3000); // 3-second debounce delay
   };
@@ -100,29 +91,38 @@
   };
 
   // Genres
-  let showGenres: boolean = false;
+  let activeGenre: string;
+  $: getGenre(activeGenre);
 
-  const showGenresFilter = () => (showGenres = true);
-  const hideGenresFilter = () => {
-    if (showGenres) showGenres = false;
-  };
-
-  async function getGenre(this: HTMLElement) {
+  async function getGenre(genre: string) {
+    if (!genre) return;
     if (searchField) {
       searchField = '';
       handleSearch();
     }
-    const genre_name: string = this.innerHTML;
-    filteredCategories = await CoNexus.getGenreTopics(genre_name);
+    filteredCategories = await CoNexus.getGenreTopics(genre);
     if (isSorting) handleSorting();
+  }
+
+  const resetGenres = () => {
+    if (!activeGenre) return;
+    else activeGenre = '';
   }
 </script>
 
-<svelte:window on:click={hideGenresFilter} />
-
+<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
 {#if categories}
   <section class="filters">
     <div class="sort-genres-filters">
+      <div class="filter filter-wrapper blur" style={activeGenre ? 'background-color: rgba(56, 117, 250, 0.9); box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.5);' : ''}>
+        <img class="filter-image" src={activeGenre ? "/icons/reset.png" : "/icons/filter.png"} alt="Genres filter" on:click={resetGenres} role="button" tabindex="0" />
+        <select class="genre-selector" bind:value={activeGenre}>
+          <option value="" selected={true} disabled hidden>Select genre</option>
+          {#each genres as genre (genre.id)}
+            <option value={genre.name}>{genre.name}</option>
+          {/each}
+        </select>
+      </div>
       <button
         class="filter blur"
         on:click={() => {
@@ -133,36 +133,20 @@
             handleSearch();
           }
         }}
-        style="background-color: {isSorting
-          ? 'rgba(56, 117, 250, 0.9)'
-          : 'rgba(56, 117, 250, 0.5)'}"
+        style={isSorting
+          ? 'background-color: rgba(56, 117, 250, 0.9); box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.5);'
+          : ''}
       >
         <img class="filter-image" src="/icons/sort.png" alt="Sort" />
-      </button>
-      <button class="filter blur" on:click|stopPropagation={showGenresFilter}>
-        <img class="filter-image" src="/icons/filter.png" alt="Filter" />
-        <!-- svelte-ignore a11y_no_noninteractive_element_interactions a11y_click_events_have_key_events -->
-        <ul
-          class="genres-list"
-          style="display: {showGenres ? 'grid' : 'none'}"
-          on:mouseleave={hideGenresFilter}
-          on:blur={hideGenresFilter}
-        >
-          {#each genres as genre (genre.id)}
-            <li class="genre" value={genre.name} on:click={getGenre}>
-              {genre.name}
-            </li>
-          {/each}
-        </ul>
+        A-z
       </button>
     </div>
 
-    <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
     <div
-      class="filter search-wrapper blur"
-      style="background-color: {searchField
-        ? 'rgba(56, 117, 250, 0.9)'
-        : 'rgba(56, 117, 250, 0.5)'}"
+      class="filter filter-wrapper blur"
+      style={searchField
+        ? 'background-color: rgba(56, 117, 250, 0.9); box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.5);'
+        : ''}
     >
       {#if isSearching}
         <img
@@ -211,12 +195,13 @@
     width: 95vw;
     display: flex;
     flex-flow: row nowrap;
-    justify-content: flex-end;
+    justify-content: space-between;
     gap: 1vw;
   }
 
   .filter {
     padding: 0 1vw;
+    color: #dedede;
   }
 
   .filter-image {
@@ -231,36 +216,7 @@
     gap: 1vw;
   }
 
-  .genres-list {
-    z-index: 2;
-    position: absolute;
-    bottom: -0.2vw;
-    right: -0.2vw;
-    display: grid;
-    grid-template-columns: 10vw 10vw 10vw;
-    row-gap: 1vw;
-    justify-items: center;
-    padding: 1vw;
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 1vw;
-    background-color: #010020;
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.5);
-  }
-
-  .genre {
-    font-size: 1.5vw;
-    line-height: 2vw;
-    cursor: pointer;
-    color: rgba(51, 226, 230, 0.75);
-  }
-
-  .genre:hover,
-  .genre:active {
-    color: rgb(51, 226, 230);
-    text-shadow: 0 0 0.1vw rgb(51, 226, 230);
-  }
-
-  .search-wrapper {
+  .filter-wrapper {
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
@@ -286,16 +242,32 @@
     }
   }
 
+  .genre-selector {
+    font-size: 1.5vw;
+    line-height: 3vw;
+    padding-block: 0.75vw;
+    width: 20vw;
+    text-align: center;
+    outline: none;
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
+    border-radius: 0.5vw;
+    cursor: pointer;
+    /* color: rgba(1, 0, 32, 0.9); */
+    /* background-color: rgba(51, 226, 230, 0.5); */
+    color: rgba(51, 226, 230, 0.9);
+    background-color: rgba(22, 30, 95, 0.9);
+  }
+
   .search-field {
     font-size: 1.5vw;
     line-height: 3vw;
     padding-inline: 0.5vw;
     color: rgba(51, 226, 230, 0.9);
-    background-color: rgba(1, 0, 32, 0.4);
+    background-color: rgba(22, 30, 95, 0.9);
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
     border-radius: 0.5vw;
     outline: none;
-    width: 20vw;
+    width: 19vw;
   }
 
   .search-field::placeholder {
@@ -303,7 +275,7 @@
   }
 
   .search-field:focus {
-    width: 30vw;
+    width: 27.5vw;
   }
 
   .categories-wrapper {
@@ -317,13 +289,14 @@
   @media only screen and (max-width: 600px) {
     .filters {
       width: 90%;
-      justify-content: space-between;
-      gap: 0.5em;
+      gap: 1em;
+      flex-direction: column;
     }
 
     .filter {
       border-radius: 0.5em;
       padding: 0.25em;
+      width: 33%;
     }
 
     .filter-image {
@@ -332,16 +305,25 @@
     }
 
     .sort-genres-filters {
-      flex-direction: row-reverse;
-      gap: 0.5em;
+      gap: 1em;
+      justify-content: space-between;
     }
 
-    .search-wrapper {
+    .filter-wrapper {
       padding: 0.25em;
       border-radius: 0.5em;
       gap: 0.25em;
       font-size: 1em;
       line-height: 1.5em;
+      width: 100%;
+    }
+
+    .genre-selector {
+      font-size: inherit;
+      line-height: inherit;
+      border-radius: 0.25em;
+      padding-block: 0.25em;
+      width: 100%;
     }
 
     .search-field {
@@ -349,27 +331,7 @@
       line-height: inherit;
       border-radius: 0.25em;
       padding: 0.25em 0.5em;
-      width: 30vw;
-    }
-
-    .search-field:focus {
-      width: 45vw;
-    }
-
-    .genres-list {
-      left: -0.2vw;
-      top: -0.2vw;
-      bottom: auto;
-      right: auto;
-      grid-template-columns: 40vw;
-      row-gap: 0.75em;
-      padding: 0.5em;
-      border-radius: 0.5em;
-    }
-
-    .genre {
-      font-size: 0.9em;
-      line-height: 1.5em;
+      width: 100% !important;
     }
 
     .categories-wrapper {

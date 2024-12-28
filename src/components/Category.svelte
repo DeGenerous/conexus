@@ -107,7 +107,10 @@
   const resetGenres = () => {
     if (!activeGenre) return;
     activeGenre = '';
-    filteredCategories = categories;
+    filteredCategories = categories.map((cat) => ({
+      ...cat,
+      topics: [...cat.topics], // Ensure a fresh copy of topics
+    }));
     if (isSorting) handleSorting();
   };
 </script>

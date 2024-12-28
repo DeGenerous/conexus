@@ -285,7 +285,7 @@
               </button>
               <button
                 on:click={saveChangedPassword}
-                disabled={!editPasswordMatch}
+                disabled={!editPassword || !editPasswordMatch}
               >
                 Save
               </button>

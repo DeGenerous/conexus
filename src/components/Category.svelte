@@ -106,10 +106,9 @@
 
   const resetGenres = () => {
     if (!activeGenre) return;
-    else {
-      activeGenre = '';
-      filteredCategories = categories;
-    }
+    activeGenre = '';
+    filteredCategories = categories;
+    if (isSorting) handleSorting();
   };
 </script>
 

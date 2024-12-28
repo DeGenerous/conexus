@@ -75,7 +75,6 @@
   };
 
   const handleSorting = () => {
-    console.log(filteredCategories);
     sortedCategories = filteredCategories.map(
       (category: DynSectionCategory) => {
         category.topics = category.topics.sort((a, b) => {
@@ -88,6 +87,7 @@
       },
     );
     filteredCategories = sortedCategories;
+    console.log(filteredCategories);
   };
 
   // Genres
@@ -129,8 +129,8 @@
           isSorting = !isSorting;
           if (isSorting) handleSorting();
           else {
-            searchField = '';
-            handleSearch();
+            filteredCategories = categories;
+            console.log(filteredCategories);
           }
         }}
         style={isSorting

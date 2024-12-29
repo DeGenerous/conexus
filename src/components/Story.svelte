@@ -154,7 +154,9 @@
 
     {#if selectedStory}
       <Modal
-        secondButton="Delete story: {selectedStory.category}"
+        secondButton="Delete story: {selectedStory.category
+          .charAt(0)
+          .toUpperCase() + selectedStory.category.slice(1)}"
         handleSecondButton={() => DeleteStory(selectedStory.story_id)}
       >
         <h2>Are you sure you want to delete this story?</h2>

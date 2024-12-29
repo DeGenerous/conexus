@@ -7,12 +7,7 @@
 </script>
 
 <section>
-  <div class="collection-header">
-    <p class="tiles-collection-legend">
-      {category.name}
-    </p>
-  </div>
-
+  <p class="collection-header">{category.name}</p>
   <div class="tiles-collection blur">
     {#each category.topics as topic}
       <StoryTile {section} topicName={topic.name} />
@@ -77,9 +72,6 @@
     align-items: center;
     justify-content: space-between;
     padding-inline: 2.5vw;
-  }
-
-  .tiles-collection-legend {
     font-size: 3vw;
     line-height: 3vw;
     color: rgba(51, 226, 230, 0.85);
@@ -98,9 +90,6 @@
       justify-content: center;
       padding: 0;
       gap: 0.5em;
-    }
-
-    .tiles-collection-legend {
       font-size: 1.5em;
       line-height: 1.5em;
     }

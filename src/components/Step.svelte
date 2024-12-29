@@ -442,7 +442,7 @@
   }
 
   .fullscreen-btn {
-    background-color: transparent;
+    background-color: transparent !important;
     border: none;
     opacity: 0.5;
   }

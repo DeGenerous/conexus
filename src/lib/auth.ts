@@ -43,22 +43,22 @@ class Account {
   }
 
   static async logged_in(): Promise<boolean> {
-    // if (web3LoggedIn) {
-    // 	try {
-    // 		const response = await fetch(`${url}/logged-in`, {
-    // 			method: "POST",
-    // 		});
+    if (web3LoggedIn) {
+    	try {
+    		const response = await fetch(`${url}/logged-in`, {
+    			method: "POST",
+    		});
 
-    // 		const logged_in = response.ok;
+    		const logged_in = response.ok;
 
-    // 		if (logged_in) {
-    // 			return true;
-    // 		}
-    // 		web3LoggedIn.set(false);
-    // 	} catch (error) {
-    // 		web3LoggedIn.set(false);
-    // 	}
-    // }
+    		if (logged_in) {
+    			return true;
+    		}
+    		web3LoggedIn.set(false);
+    	} catch (error) {
+    		web3LoggedIn.set(false);
+    	}
+    }
 
     return true;
   }
@@ -185,6 +185,8 @@ class Account {
       const resp = await response.json();
 
       authenticated.set({ user: resp.user, loggedIn: true });
+      web3LoggedIn.set(true);
+      
     } catch (error: any) {
       new_error({ code: 500, error: error });
     }

@@ -27,6 +27,7 @@
       signUp = false;
       signInWithEmail = false;
       invalidCredentials = false;
+      $web3loginError = false;
     }
   }
 
@@ -108,7 +109,7 @@
   let termsAccepted: boolean = false;
 
   $: isFormValid =
-    mandatoryFields && passwordsMatch && termsAccepted && referralCodeValid;
+    mandatoryFields && password.length >= 8 && passwordsMatch && termsAccepted && referralCodeValid;
 
   $: if (referralCode.length === 16) validateReferralCode();
   async function validateReferralCode() {
@@ -453,7 +454,7 @@
               </button>
             </div>
             {#if $web3loginError}
-              <p class="validation">This wallet is not linked to any account</p>
+              <p class="validation">This wallet is not linked to any account!</p>
             {/if}
             <hr />
             <h3>Don't have an account yet?</h3>
@@ -498,13 +499,14 @@
                   type={passwordVisible ? 'text' : 'password'}
                   bind:value={password}
                   required
-                  style={password
+                  style={password && password.length >= 8
                     ? ''
                     : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
                 />
                 <button
                   aria-label="Show password"
                   class="password-visibility-button non-hover-btn"
+                  on:click|preventDefault
                   on:pointerdown={() => (passwordVisible = true)}
                   on:pointerup={() => (passwordVisible = false)}
                   on:pointerleave={() => (passwordVisible = false)}
@@ -517,11 +519,19 @@
                 bind:value={confirmPassword}
                 required
                 type={passwordVisible ? 'text' : 'password'}
-                style={passwordsMatch
+                style={password && password.length >= 8 && confirmPassword && passwordsMatch
                   ? ''
                   : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
               />
             </div>
+
+            <!-- svelte-ignore block_empty -->
+            {#if !password}
+            {:else if password.length <= 8}
+              <p class="validation">Password should contain at least 8 characters!</p>
+            {:else if !passwordsMatch}
+              <p class="validation">Passwords do not match!</p>
+            {/if}
 
             <div class="input-container">
               <label for="user-first-name">First name</label>
@@ -590,9 +600,6 @@
 
             {#if password && !confirmPassword}
               <p class="validation">Please confirm your password</p>
-            {/if}
-            {#if !passwordsMatch}
-              <p class="validation">Passwords do not match</p>
             {/if}
 
             <div class="agreements-container">

@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   export let message = '';
   export let type = 'info';
-  export let duration = 5000;
+  export let duration = 10000;
   export let onClose;
 
   let visible = true;
@@ -36,8 +36,8 @@
 
 <style>
   div {
-    font-size: inherit;
-    line-height: inherit;
+    font-size: 1vw;
+    line-height: 1.5;
   }
 
   .toast {
@@ -54,10 +54,11 @@
     gap: 2vw;
     width: 35vw;
     opacity: 1;
+    animation: fade-out 5s ease-in-out;
   }
 
   .toast.hidden {
-    opacity: 0;
+    display: none;
   }
 
   .toast.info {
@@ -72,10 +73,26 @@
     cursor: pointer;
   }
 
+  @keyframes fade-out {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
   @media only screen and (max-width: 600px) {
+    div {
+      font-size: 1em;
+    }
+
     .toast {
       top: 2em;
-      padding: 0.5em 1em;
+      padding: 1em;
       gap: 1em;
       border-radius: 1em;
       width: 90vw;

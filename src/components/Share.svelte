@@ -80,6 +80,7 @@
     height: 1.5vw;
     filter: drop-shadow(0 0 0.1vw #010020);
     margin-inline: 0.5vw;
+    border-radius: 20%;
   }
 
   img:hover,

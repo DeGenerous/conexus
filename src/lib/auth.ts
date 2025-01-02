@@ -88,7 +88,7 @@ class Account {
     if (!response.ok) {
       new_error({ code: response.status, error: await response.text() });
 
-      web3loginError.set(false);
+      web3loginError.set(true);
 
       toastStore.show(
         'This wallet is not linked to any account! Please use another login method or different wallet.',

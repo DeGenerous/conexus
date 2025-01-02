@@ -158,7 +158,7 @@
           : ''}
       >
         <img class="filter-image" src="/icons/sort.png" alt="Sort" />
-        A-z
+        A-Z
       </button>
     </div>
 

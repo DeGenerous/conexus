@@ -18,6 +18,7 @@
 <a class="tile" href="/{section}/{topicName}">
   <img
     class="tile-picture"
+    loading="lazy"
     src={storyImage ?? blankPicture}
     alt={storyName}
     draggable="false"

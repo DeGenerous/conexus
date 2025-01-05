@@ -362,7 +362,7 @@
               {/each}
             </div>
           {/key}
-          <h2>Your referrals: {user.referral_count}</h2>
+          <h2>Your referrals: {$referralCodes.filter((code) => code.is_used).length}</h2>
         {:else}
           <button on:click={Account.generateReferralCode}>
             Get referral codes

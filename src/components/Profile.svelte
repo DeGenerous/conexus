@@ -305,10 +305,10 @@
         <hr />
 
         <div class="wallet-connect">
-          <h2>{user.fraux ? 'Connect' : ''} Web3 account:</h2>
+          <h2>{user.faux ? 'Connect' : ''} Web3 account:</h2>
 
           <div class="buttons-container">
-            {#if user.fraux}
+            {#if !user.faux}
               <h2 class="user-wallet">
                 {user.wallet.slice(0, 6) + '...' + user.wallet.slice(-4)}
               </h2>

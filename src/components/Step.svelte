@@ -46,17 +46,18 @@
     {/if}
   </div>
 
-  <!-- <p class="story-text">{step.story}</p> -->
-  {#each step.story.split('\n') as paragraph}
-    <p class="story-text">{paragraph}</p>
-  {/each}
+  <article class="story-text">
+    {#each step.story.split('\n') as paragraph}
+      <p>{paragraph}</p>
+    {/each}
+  </article>
 
   {#if $story?.step_data?.end}
     <hr />
 
     <h2>Story Summary</h2>
 
-    <p class="summary-text">{step.summary}</p>
+    <article class="summary-text">{step.summary}</article>
 
     <h2>AI identified you as <strong>{step.trait}</strong></h2>
 
@@ -301,6 +302,9 @@
     font-size: 1.25vw;
     line-height: 2.5vw;
     text-shadow: 0 0.25vw 0.25vw #010020;
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 1vw;
   }
 
   h2 {
@@ -489,6 +493,7 @@
       font-size: 1em;
       line-height: 1.75em;
       padding-inline: 0.5em;
+      gap: 0.5em;
     }
 
     .options-container {
@@ -586,6 +591,7 @@
       font-size: 1.5rem;
       line-height: 3rem;
       padding-inline: 1rem;
+      gap: 1rem;
     }
 
     .options-container {

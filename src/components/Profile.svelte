@@ -109,7 +109,11 @@
   let termsAccepted: boolean = false;
 
   $: isFormValid =
-    mandatoryFields && password.length >= 8 && passwordsMatch && termsAccepted && referralCodeValid;
+    mandatoryFields &&
+    password.length >= 8 &&
+    passwordsMatch &&
+    termsAccepted &&
+    referralCodeValid;
 
   $: if (referralCode.length === 16) validateReferralCode();
   async function validateReferralCode() {
@@ -305,6 +309,10 @@
 
           <div class="buttons-container">
             {#if user.fraux}
+              <h2 class="user-wallet">
+                {user.wallet.slice(0, 6) + '...' + user.wallet.slice(-4)}
+              </h2>
+            {:else}
               <button
                 class="sign-button"
                 on:click={() => {
@@ -327,10 +335,6 @@
                 />
                 <p class="sign-lable">browser wallet</p></button
               >
-            {:else}
-              <h2 class="user-wallet">
-                {user.wallet.slice(0, 6) + '...' + user.wallet.slice(-4)}
-              </h2>
             {/if}
           </div>
         </div>
@@ -362,7 +366,10 @@
               {/each}
             </div>
           {/key}
-          <h2>Your referrals: {$referralCodes.filter((code) => code.is_used).length}</h2>
+          <h2>
+            Your referrals: {$referralCodes.filter((code) => code.is_used)
+              .length}
+          </h2>
         {:else}
           <button on:click={Account.generateReferralCode}>
             Get referral codes
@@ -454,7 +461,9 @@
               </button>
             </div>
             {#if $web3loginError}
-              <p class="validation">This wallet is not linked to any account!</p>
+              <p class="validation">
+                This wallet is not linked to any account!
+              </p>
             {/if}
             <hr />
             <h3>Don't have an account yet?</h3>
@@ -519,16 +528,20 @@
                 bind:value={confirmPassword}
                 required
                 type={passwordVisible ? 'text' : 'password'}
-                style={password && password.length >= 8 && confirmPassword && passwordsMatch
+                style={password &&
+                password.length >= 8 &&
+                confirmPassword &&
+                passwordsMatch
                   ? ''
                   : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
               />
             </div>
 
             <!-- svelte-ignore block_empty -->
-            {#if !password}
-            {:else if password.length <= 8}
-              <p class="validation">Password should contain at least 8 characters!</p>
+            {#if !password}{:else if password.length <= 8}
+              <p class="validation">
+                Password should contain at least 8 characters!
+              </p>
             {:else if !passwordsMatch}
               <p class="validation">Passwords do not match!</p>
             {/if}

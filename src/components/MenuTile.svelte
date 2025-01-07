@@ -68,7 +68,9 @@
     background-color: rgba(22, 30, 95, 0.75);
     color: rgba(51, 226, 230, 0.75);
     border-radius: 2.5vw;
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25), 0 0 0.5vw #010020;
+    box-shadow:
+      inset 0 0 0.5vw rgba(51, 226, 230, 0.25),
+      0 0 0.5vw #010020;
     cursor: pointer;
     text-decoration: none;
   }

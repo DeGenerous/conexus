@@ -186,7 +186,6 @@ class Account {
 
       authenticated.set({ user: resp.user, loggedIn: true });
       web3LoggedIn.set(true);
-      
     } catch (error: any) {
       new_error({ code: 500, error: error });
     }

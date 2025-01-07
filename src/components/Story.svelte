@@ -219,7 +219,9 @@
     gap: 2vw;
     padding: 2vw;
     background-color: rgba(1, 0, 32, 0.5);
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25), 0 0 0.5vw #010020;
+    box-shadow:
+      inset 0 0 0.5vw rgba(51, 226, 230, 0.25),
+      0 0 0.5vw #010020;
     border-radius: 1.5vw;
   }
 
@@ -286,7 +288,9 @@
   .unfinished-stories {
     max-width: 95%;
     background-color: rgba(51, 226, 230, 0.1);
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25), 0 0 0.5vw #010020;
+    box-shadow:
+      inset 0 0 0.5vw rgba(51, 226, 230, 0.25),
+      0 0 0.5vw #010020;
     border-radius: 1.5vw;
     padding: 1vw;
     display: flex;

@@ -44,7 +44,9 @@
     padding: 2vw;
     background-color: rgba(1, 0, 32, 0.5);
     border-radius: 1.5vw;
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25), 0 0 0.5vw #010020;
+    box-shadow:
+      inset 0 0 0.5vw rgba(51, 226, 230, 0.25),
+      0 0 0.5vw #010020;
   }
 
   .conexus-menu-tiles {

@@ -38,7 +38,9 @@
       rgba(0, 0, 0, 0),
       rgba(51, 226, 230, 0.1)
     );
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25), 0 0 0.5vw #010020;
+    box-shadow:
+      inset 0 0 0.5vw rgba(51, 226, 230, 0.25),
+      0 0 0.5vw #010020;
     overflow-y: hidden;
   }
 

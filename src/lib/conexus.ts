@@ -229,7 +229,6 @@ export class CoNexus {
   }
 
   static async start(category: string): Promise<CoNexus> {
-    console.log('Starting story:', category);
     CoNexus.#play_music(category);
     CoNexus.#background_image(category);
     loading.set(true);

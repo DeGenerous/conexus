@@ -17,13 +17,20 @@ interface SignUp {
   role: Roles;
 }
 
+interface AuthWallet {
+  wallet: string;
+  fauc: boolean;
+  main: boolean;
+}
+
 interface User extends SignUp {
   ID?: string;
   oauth_id?: string;
   email_confirmed?: boolean;
   referral_count?: number;
   referred: boolean;
-  wallet?: string;
+  wallets?: AuthWallet[];
+  main_wallet?: string;
   faux?: boolean;
 }
 

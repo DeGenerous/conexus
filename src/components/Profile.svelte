@@ -68,6 +68,17 @@
     }
   };
 
+  const handleWalletSelect = async (event: Event) => {
+    try {
+      await Account.setMainWallet((event.target as HTMLSelectElement).value);
+
+      // reload the page to update the user object
+      location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   authenticated.subscribe((value) => {
     user = value.user;
     isLogged = value.loggedIn;
@@ -305,7 +316,64 @@
 
         <hr />
 
-        {#key $authenticated}
+        <div class="wallet-connect">
+          <h2>{user.faux ? 'Connect' : ''} Web3 account:</h2>
+
+          <div class="buttons-container">
+            {#if !user.faux}
+              <h2 class="user-wallet">
+                {user.main_wallet.slice(0, 6) +
+                  '...' +
+                  user.main_wallet.slice(-4)}
+              </h2>
+            {:else}
+              <button
+                class="sign-button"
+                on:click={() => {
+                  Account.log_in('coinbase', true);
+                }}
+              >
+                <img class="sign-icon" src="/icons/coinbase.png" alt="Google" />
+                <p class="sign-lable">Coinbase Smart Wallet</p></button
+              >
+              <button
+                class="sign-button"
+                on:click={() => {
+                  Account.log_in('metamask', true);
+                }}
+              >
+                <img
+                  class="sign-icon"
+                  src="/icons/walletconnect.png"
+                  alt="Google"
+                />
+                <p class="sign-lable">browser wallet</p></button
+              >
+            {/if}
+          </div>
+
+          {#if user.wallets && user.wallets.length > 1} <!-- TODO: Change to > 2 to acocunt for faux wallet -->
+            <label>
+              Select a wallet:
+              <select on:change={handleWalletSelect}>
+                {#each user.wallets as wallet (wallet.wallet)}
+                  {#if !wallet.faux}
+                    <option
+                      value={wallet.wallet}
+                      selected={wallet.wallet === user.main_wallet}
+                    >
+                      {wallet.wallet.slice(0, 6) +
+                        '...' +
+                        wallet.wallet.slice(-4)}
+                    </option>
+                  {/if}
+                {/each}
+              </select>
+            </label>
+          {/if}
+        </div>
+
+        <!-- {#key $authenticated}
           <div class="wallet-connect">
             <div class="buttons-container">
               {#if !user.faux}
@@ -315,10 +383,10 @@
                   {#each Array(3) as address, index}
                     <li class="wallet">
                       <p>{index + 1}</p>
-                      <span>{user.wallet.slice(0, 6) + '...' + user.wallet.slice(-4)}</span>
+                      <span>{user.main_wallet.slice(0, 6) + '...' + user.main_wallet.slice(-4)}</span>
                       <p
                         class="delete-button"
-                        data-address={user.wallet}
+                        data-address={user.main_wallet}
                         role="button"
                         tabindex="0"
                         on:click={() => {$showModal = true}}
@@ -364,7 +432,7 @@
               {/if}
             </div>
           </div>
-        {/key}
+        {/key} -->
 
         <hr />
 
@@ -690,7 +758,7 @@
   secondButton="Yes"
   handleSecondButton={() => {
     $showModal = false;
-    console.log('remove wallet')
+    console.log('remove wallet');
   }}
 >
   <h2>Do you want to remove this address?</h2>

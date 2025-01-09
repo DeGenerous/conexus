@@ -186,6 +186,25 @@ class Account {
     }
   }
 
+  static async setMainWallet(wallet: string): Promise<void> {
+    try {
+      const response = await fetch(`${url}/walletselect`, {
+        method: 'POST',
+        body: JSON.stringify({ wallet }),
+      });
+
+      if (!response.ok) {
+        new_error({ code: response.status, error: await response.text() });
+      }
+
+      const resp = await response.json();
+
+      authenticated.set({ user: resp.user, loggedIn: true });
+    } catch (error: any) {
+      new_error({ code: 500, error: error });
+    }
+  }
+
   static async me() {
     try {
       const response = await fetch(`${url}/me`);

@@ -8,8 +8,8 @@
     referralCodes,
     web3loginError,
   } from '@stores/account';
-  import { showProfile } from '@stores/modal';
-  import Modal from './Modal.svelte';
+  import { showModal, showProfile } from '@stores/modal';
+  import Modal from "./Modal.svelte";
 
   Account.me();
   Account.logged_in();
@@ -74,6 +74,29 @@
     background-color: rgb(45, 90, 216);
     box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25), 0 0 0.5vw rgba(51, 226, 230, 0.5);
   `;
+  let secondButton: string = '';
+  let handleSecondButton = () => {};
+  let confirmMessage: string = '';
+
+  const walletDeleteConfirm = (address: string) => {
+    secondButton = 'Remove';
+    handleSecondButton = () => {
+      console.log('remove wallet: ' + address);
+      $showModal = false;
+    };
+    confirmMessage = '<h2>Do you want to remove this address?</h2>';
+    $showModal = true;
+  }
+
+  const walletSelectConfirm = (address: string) => {
+    secondButton = 'Select';
+    handleSecondButton = () => {
+      handleWalletSelect(address);
+      $showModal = false;
+    };
+    confirmMessage = '<h2>Are you sure you want to select this address as a main one?</h2>';
+    $showModal = true;
+  }
 
   const handleWalletSelect = async (address: string) => {
     try {
@@ -332,18 +355,20 @@
                     {#each user.wallets as wallet, index}
                       {#if !wallet.faux}
                         <li class="wallet" style={wallet.wallet == user.main_wallet ? activeWalletStyling : ''}>
-                          <p class="check-button"
-                          role="button"
-                          tabindex="0"
-                          on:click={() => {
-                            if (wallet.wallet != user.main_wallet) handleWalletSelect(wallet.wallet);
-                          }}>★</p>
+                          <p 
+                            class="check-button"
+                            role="button"
+                            tabindex="0"
+                            on:click={() => {
+                              if (wallet.wallet != user.main_wallet) walletSelectConfirm(wallet.wallet);
+                            }}
+                          >★</p>
                           <span style={wallet.wallet == user.main_wallet ? 'color: rgb(51, 226, 230);' : ''}>{wallet.wallet.slice(0, 6) + '...' + wallet.wallet.slice(-4)}</span>
                           <p
                             class="delete-button"
                             role="button"
                             tabindex="0"
-                            on:click={() => {console.log('remove wallet: ' + wallet.wallet)}}
+                            on:click={() => walletDeleteConfirm(wallet.wallet)}
                           >
                             ❌
                           </p>
@@ -703,6 +728,8 @@
     {/if}
   </div>
 </dialog>
+
+<Modal {secondButton} {handleSecondButton}>{@html confirmMessage}</Modal>
 
 <style>
   dialog {

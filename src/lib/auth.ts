@@ -6,7 +6,6 @@ import {
   web3loginError,
   referralCodes,
   authenticated,
-  wallet,
 } from '@stores/account';
 import { toastStore } from '@stores/toast';
 
@@ -100,10 +99,6 @@ class Account {
       const resp = await response.json();
 
       authenticated.set({ user: resp.user, loggedIn: true });
-
-      let maskedWallet =
-        userWallet.slice(0, 6) + '...' + resp.user.wallet.slice(-4);
-      wallet.set(maskedWallet);
 
       toastStore.show('Successfully logged in', 'info');
     }

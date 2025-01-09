@@ -8,7 +8,7 @@
     referralCodes,
     web3loginError,
   } from '@stores/account';
-  import { showModal, showProfile } from '@stores/modal';
+  import { showProfile } from '@stores/modal';
   import Modal from './Modal.svelte';
 
   Account.me();
@@ -68,10 +68,16 @@
     }
   };
 
-  const handleWalletSelect = async (event: Event) => {
-    try {
-      await Account.setMainWallet((event.target as HTMLSelectElement).value);
+  let activeWalletStyling = `
+    color: rgba(51, 226, 230, 0.75);
+    text-shadow: 0 0 0.1vw rgb(51, 226, 230);
+    background-color: rgb(45, 90, 216);
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25), 0 0 0.5vw rgba(51, 226, 230, 0.5);
+  `;
 
+  const handleWalletSelect = async (address: string) => {
+    try {
+      await Account.setMainWallet(address);
       // reload the page to update the user object
       location.reload();
     } catch (error) {
@@ -316,16 +322,41 @@
 
         <hr />
 
-        <div class="wallet-connect">
-          <h2>{user.faux ? 'Connect' : ''} Web3 account:</h2>
-
-          <div class="buttons-container">
+        {#key $authenticated}
+          <div class="wallet-connect">
             {#if !user.faux}
-              <h2 class="user-wallet">
-                {user.main_wallet.slice(0, 6) +
-                  '...' +
-                  user.main_wallet.slice(-4)}
-              </h2>
+              {#if user.wallets && user.wallets.length > 1}
+                <div class="wallets-container">
+                  <h2>Connected Addresses:</h2>
+                  <ul>
+                    {#each user.wallets as wallet, index}
+                      {#if !wallet.faux}
+                        <li class="wallet" style={wallet.wallet == user.main_wallet ? activeWalletStyling : ''}>
+                          <p class="check-button"
+                          role="button"
+                          tabindex="0"
+                          on:click={() => {
+                            if (wallet.wallet != user.main_wallet) handleWalletSelect(wallet.wallet);
+                          }}>★</p>
+                          <span style={wallet.wallet == user.main_wallet ? 'color: rgb(51, 226, 230);' : ''}>{wallet.wallet.slice(0, 6) + '...' + wallet.wallet.slice(-4)}</span>
+                          <p
+                            class="delete-button"
+                            role="button"
+                            tabindex="0"
+                            on:click={() => {console.log('remove wallet: ' + wallet.wallet)}}
+                          >
+                            ❌
+                          </p>
+                        </li>
+                      {/if}
+                    {/each}
+                  </ul>
+                  <button class="add-wallet" on:click={() => {console.log('connect address')}}>
+                    <img src="icons/walletconnect.png" alt="WalletConnect" />
+                    Add another address
+                  </button>
+                </div>
+              {/if}
             {:else}
               <button
                 class="sign-button"
@@ -351,88 +382,7 @@
               >
             {/if}
           </div>
-
-          {#if user.wallets && user.wallets.length > 1} <!-- TODO: Change to > 2 to acocunt for faux wallet -->
-            <label>
-              Select a wallet:
-              <select on:change={handleWalletSelect}>
-                {#each user.wallets as wallet (wallet.wallet)}
-                  {#if !wallet.faux}
-                    <option
-                      value={wallet.wallet}
-                      selected={wallet.wallet === user.main_wallet}
-                    >
-                      {wallet.wallet.slice(0, 6) +
-                        '...' +
-                        wallet.wallet.slice(-4)}
-                    </option>
-                  {/if}
-                {/each}
-              </select>
-            </label>
-          {/if}
-        </div>
-
-        <!-- {#key $authenticated}
-          <div class="wallet-connect">
-            <div class="buttons-container">
-              {#if !user.faux}
-              <div class="wallets-container">
-                <h2>Connected Addresses:</h2>
-                <ul>
-                  {#each Array(3) as address, index}
-                    <li class="wallet">
-                      <p>{index + 1}</p>
-                      <span>{user.main_wallet.slice(0, 6) + '...' + user.main_wallet.slice(-4)}</span>
-                      <p
-                        class="delete-button"
-                        data-address={user.main_wallet}
-                        role="button"
-                        tabindex="0"
-                        on:click={() => {$showModal = true}}
-                      >
-                        ❌
-                      </p>
-                    </li>
-                  {/each}
-                </ul>
-                <button class="add-wallet" on:click={() => {console.log('connect address')}}>
-                  <img src="icons/walletconnect.png" alt="WalletConnect" />
-                  Add another address
-                </button>
-              </div>
-              {:else}
-                <h2>Connect Web3 account: </h2>
-                <button
-                  class="sign-button"
-                  on:click={() => {
-                    Account.log_in('coinbase', true);
-                  }}
-                >
-                  <img
-                    class="sign-icon"
-                    src="/icons/coinbase.png"
-                    alt="Google"
-                  />
-                  <p class="sign-lable">Coinbase Smart Wallet</p></button
-                >
-                <button
-                  class="sign-button"
-                  on:click={() => {
-                    Account.log_in('metamask', true);
-                  }}
-                >
-                  <img
-                    class="sign-icon"
-                    src="/icons/walletconnect.png"
-                    alt="Google"
-                  />
-                  <p class="sign-lable">browser wallet</p></button
-                >
-              {/if}
-            </div>
-          </div>
-        {/key} -->
+        {/key}
 
         <hr />
 
@@ -753,16 +703,6 @@
     {/if}
   </div>
 </dialog>
-
-<Modal
-  secondButton="Yes"
-  handleSecondButton={() => {
-    $showModal = false;
-    console.log('remove wallet');
-  }}
->
-  <h2>Do you want to remove this address?</h2>
-</Modal>
 
 <style>
   dialog {
@@ -1094,14 +1034,18 @@
     border-radius: 1vw;
   }
 
-  .delete-button {
+  .delete-button,
+  .check-button {
     cursor: pointer;
+    text-shadow: none;
   }
 
   .delete-button:hover,
-  .delete-button:active {
+  .delete-button:active,
+  .check-button:hover,
+  .check-button:active {
     text-shadow: 0 0 0.5vw rgba(1, 0, 32, 0.5);
-    transform: scale(1.05);
+    transform: scale(1.1);
   }
 
   .add-wallet {

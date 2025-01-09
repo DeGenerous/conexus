@@ -68,7 +68,7 @@ class Account {
   ): Promise<Account> {
     const provider = await Web3Provider.init(walletProvider);
 
-    const nonce = await Account.get_nonce(walletProvider, link);
+    const nonce = await Account.get_nonce(walletProvider);
 
     const signature = await provider.sign(message(nonce));
 
@@ -114,12 +114,11 @@ class Account {
   }
 
   private static async get_nonce(
-    walletProvider: 'metamask' | 'coinbase' = 'metamask',
-    link: boolean = false,
+    walletProvider: 'metamask' | 'coinbase' = 'metamask'
   ): Promise<string> {
     const provider = await Web3Provider.init(walletProvider);
 
-    const urlPath = link ? 'linknonce' : 'nonce';
+    const urlPath = 'nonce';
 
     const response = await fetch(`${url}/${urlPath}`, {
       method: 'POST',

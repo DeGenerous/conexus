@@ -8,7 +8,8 @@
     referralCodes,
     web3loginError,
   } from '@stores/account';
-  import { showProfile } from '@stores/modal';
+  import { showModal, showProfile } from '@stores/modal';
+  import Modal from './Modal.svelte';
 
   Account.me();
   Account.logged_in();
@@ -157,7 +158,7 @@
   on:close={() => ($showProfile = false)}
   on:click|self={() => ($showProfile = false)}
 >
-  <!-- svelte-ignore a11y-no-static-element-interactions -->
+  <!-- svelte-ignore a11y-no-static-element-interactions a11y_no_noninteractive_element_to_interactive_role -->
   <div on:click|stopPropagation>
     <header>
       {#if isLogged}
@@ -306,14 +307,34 @@
 
         {#key $authenticated}
           <div class="wallet-connect">
-            <h2>{user.faux ? 'Connect' : ''} Web3 account:</h2>
-
             <div class="buttons-container">
               {#if !user.faux}
-                <h2 class="user-wallet">
-                  {user.wallet.slice(0, 6) + '...' + user.wallet.slice(-4)}
-                </h2>
+              <div class="wallets-container">
+                <h2>Connected Addresses:</h2>
+                <ul>
+                  {#each Array(3) as address, index}
+                    <li class="wallet">
+                      <p>{index + 1}</p>
+                      <span>{user.wallet.slice(0, 6) + '...' + user.wallet.slice(-4)}</span>
+                      <p
+                        class="delete-button"
+                        data-address={user.wallet}
+                        role="button"
+                        tabindex="0"
+                        on:click={() => {$showModal = true}}
+                      >
+                        ❌
+                      </p>
+                    </li>
+                  {/each}
+                </ul>
+                <button class="add-wallet" on:click={() => {console.log('connect address')}}>
+                  <img src="icons/walletconnect.png" alt="WalletConnect" />
+                  Add another address
+                </button>
+              </div>
               {:else}
+                <h2>Connect Web3 account: </h2>
                 <button
                   class="sign-button"
                   on:click={() => {
@@ -665,6 +686,16 @@
   </div>
 </dialog>
 
+<Modal
+  secondButton="Yes"
+  handleSecondButton={() => {
+    $showModal = false;
+    console.log('remove wallet')
+  }}
+>
+  <h2>Do you want to remove this address?</h2>
+</Modal>
+
 <style>
   dialog {
     width: 65vw;
@@ -955,8 +986,62 @@
     gap: 2vw;
   }
 
-  .user-wallet {
-    color: rgba(51, 226, 230, 0.75);
+  .wallets-container {
+    min-width: 65vw;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2vw;
+  }
+
+  ul {
+    max-width: 55vw;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    gap: 1vw;
+  }
+
+  .wallet {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1vw;
+    padding: 0.5vw 1vw;
+    font-size: 2vw;
+    background-color: rgb(36, 65, 189);
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
+    border-radius: 1vw;
+    cursor: default;
+  }
+
+  .wallet span {
+    padding: 1vw 2vw;
+    font-size: 1.5vw;
+    color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(1, 0, 32, 0.5);
+    box-shadow: inset 0 0 0.5vw #010020;
+    border-radius: 1vw;
+  }
+
+  .delete-button {
+    cursor: pointer;
+  }
+
+  .delete-button:hover,
+  .delete-button:active {
+    text-shadow: 0 0 0.5vw rgba(1, 0, 32, 0.5);
+    transform: scale(1.05);
+  }
+
+  .add-wallet {
+    width: auto !important;
+  }
+
+  .add-wallet img {
+    width: 2vw;
   }
 
   /* Referral codes container */

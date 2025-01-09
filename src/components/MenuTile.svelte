@@ -2,9 +2,6 @@
   import type { DynSection } from '@lib/conexus';
   import { web3LoggedIn } from '@stores/account';
 
-  import Modal from './Modal.svelte';
-  import { showModal, showProfile } from '@stores/modal';
-
   export let section: DynSection;
 
   let isWeb3LoggedIn: boolean = false;
@@ -12,16 +9,6 @@
   web3LoggedIn.subscribe((value) => {
     isWeb3LoggedIn = value;
   });
-
-  const handleClick = (event: MouseEvent, href: string) => {
-    if (!isWeb3LoggedIn && section.name !== 'Community Picks') {
-      event.preventDefault(); // Prevent the default navigation
-      $showModal = true; // Show the dialog
-    } else {
-      // Allow navigation to proceed
-      window.location.href = href;
-    }
-  };
 
   // sectionImage is the name of the section but remove the spaces
   const imageName: string = section.name.replace(/\s/g, '');
@@ -35,7 +22,6 @@
   class="tile"
   id={section.name}
   href="/{section.name}"
-  on:click={(event) => handleClick(event, `/${section.name}`)}
 >
   <img
     class="tile-picture"
@@ -47,16 +33,6 @@
   />
   <p class="title">{section.name}</p>
 </a>
-
-<Modal
-  secondButton="Connect wallet"
-  handleSecondButton={() => {
-    $showModal = false;
-    $showProfile = true;
-  }}
->
-  <h2>Connect your wallet to access this section.</h2>
-</Modal>
 
 <style>
   .tile {

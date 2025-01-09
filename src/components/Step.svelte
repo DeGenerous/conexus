@@ -14,6 +14,7 @@
     if (width <= 600)
       imageWrapper.style.height = fullWidthImage ? 'auto' : '512px';
     else imageWrapper.style.height = 'auto';
+    console.log(step)
   });
 
   $: if ($fullscreen) document.documentElement.requestFullscreen();
@@ -59,7 +60,7 @@
 
     <article class="summary-text">{step.summary}</article>
 
-    <h2>AI identified you as <strong>{step.trait}</strong></h2>
+    <h2>CoNexus identified your trait as: <strong>{step.trait}</strong></h2>
 
     <div class="options-container blur">
       <button
@@ -253,7 +254,7 @@
     position: relative;
     width: 100%;
     border-radius: 1em;
-    box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.25);
+    box-shadow: 0 0 0.5vw #010020;
     -webkit-backdrop-filter: blur(1em);
     backdrop-filter: blur(1em);
     background-color: rgba(51, 226, 230, 0.05);
@@ -324,7 +325,7 @@
     padding: 1vw;
     border-radius: 1em;
     background-color: rgba(51, 226, 230, 0.05);
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25), 0 0 0.5vw #010020;
   }
 
   .option {
@@ -367,7 +368,7 @@
   .option:disabled {
     opacity: 0.75;
     color: rgba(51, 226, 230, 0.6);
-    text-shadow: none;
+    text-shadow: none !important;
   }
 
   .option:disabled:hover,
@@ -376,6 +377,7 @@
     background-color: transparent;
     color: rgba(51, 226, 230, 0.6);
     filter: none;
+    transform: none;
   }
 
   .controls-container {
@@ -571,6 +573,15 @@
   }
 
   @media screen and (min-width: 1920px) {
+    hr {
+      border: 0.1rem solid rgba(51, 226, 230, 0.5);
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      line-height: 1.75rem;
+    }
+
     h3 {
       font-size: 1.75rem;
       line-height: 1.75rem;
@@ -583,6 +594,7 @@
 
     .image-wrapper {
       width: 100rem;
+      box-shadow: 0 0 0.5rem #010020;
     }
 
     .story-text,
@@ -598,11 +610,18 @@
       width: 100rem;
       padding: 1rem;
       gap: 0;
+      box-shadow: inset 0 0 0.5rem rgba(51, 226, 230, 0.25), 0 0 0.5rem #010020;
     }
 
     .option {
       font-size: 1.75rem;
       line-height: 2.5rem;
+      padding: 2rem;
+    }
+
+    .option:hover,
+    .option:active {
+      text-shadow: 0 0.25rem 0.5rem #010020;
     }
 
     .option-selector {
@@ -617,6 +636,7 @@
     .step-bar {
       padding: 1rem;
       gap: 1rem;
+      box-shadow: 0 0.5rem 0.5rem #010020;
     }
 
     .controls {

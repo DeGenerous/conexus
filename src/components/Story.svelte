@@ -136,7 +136,9 @@
                 disabled={$loading}
               ></button>
               <h3>
-                {continuable.story_id.split('-')[0]} - {new Date(continuable.created ?? '').toLocaleDateString()}
+                {continuable.story_id.split('-')[0]} - {new Date(
+                  continuable.created ?? '',
+                ).toLocaleDateString()}
               </h3>
               <button
                 aria-label="Continue shaping"

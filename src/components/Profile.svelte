@@ -304,40 +304,46 @@
 
         <hr />
 
-        <div class="wallet-connect">
-          <h2>{user.faux ? 'Connect' : ''} Web3 account:</h2>
+        {#key $authenticated}
+          <div class="wallet-connect">
+            <h2>{user.faux ? 'Connect' : ''} Web3 account:</h2>
 
-          <div class="buttons-container">
-            {#if !user.faux}
-              <h2 class="user-wallet">
-                {user.wallet.slice(0, 6) + '...' + user.wallet.slice(-4)}
-              </h2>
-            {:else}
-              <button
-                class="sign-button"
-                on:click={() => {
-                  Account.log_in('coinbase', true);
-                }}
-              >
-                <img class="sign-icon" src="/icons/coinbase.png" alt="Google" />
-                <p class="sign-lable">Coinbase Smart Wallet</p></button
-              >
-              <button
-                class="sign-button"
-                on:click={() => {
-                  Account.log_in('metamask', true);
-                }}
-              >
-                <img
-                  class="sign-icon"
-                  src="/icons/walletconnect.png"
-                  alt="Google"
-                />
-                <p class="sign-lable">browser wallet</p></button
-              >
-            {/if}
+            <div class="buttons-container">
+              {#if !user.faux}
+                <h2 class="user-wallet">
+                  {user.wallet.slice(0, 6) + '...' + user.wallet.slice(-4)}
+                </h2>
+              {:else}
+                <button
+                  class="sign-button"
+                  on:click={() => {
+                    Account.log_in('coinbase', true);
+                  }}
+                >
+                  <img
+                    class="sign-icon"
+                    src="/icons/coinbase.png"
+                    alt="Google"
+                  />
+                  <p class="sign-lable">Coinbase Smart Wallet</p></button
+                >
+                <button
+                  class="sign-button"
+                  on:click={() => {
+                    Account.log_in('metamask', true);
+                  }}
+                >
+                  <img
+                    class="sign-icon"
+                    src="/icons/walletconnect.png"
+                    alt="Google"
+                  />
+                  <p class="sign-lable">browser wallet</p></button
+                >
+              {/if}
+            </div>
           </div>
-        </div>
+        {/key}
 
         <hr />
 

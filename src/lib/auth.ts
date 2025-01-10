@@ -96,9 +96,9 @@ class Account {
     } else {
       web3LoggedIn.set(true);
 
-      const resp = await response.json();
+      // const resp = await response.json();
 
-      authenticated.set({ user: resp.user, loggedIn: true });
+      // authenticated.set({ user: resp.user, loggedIn: true });
 
       toastStore.show('Successfully logged in', 'info');
     }

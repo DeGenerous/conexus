@@ -68,6 +68,8 @@
     }
   };
 
+  let walletsCounter: number = 1;
+  const increaseWalletsCounter = () => walletsCounter++;
   let activeWalletStyling = `
     color: rgba(51, 226, 230, 0.75);
     text-shadow: 0 0 0.1vw rgb(51, 226, 230);
@@ -339,10 +341,10 @@
                 <div class="wallets-container">
                   <h2>Connected Addresses:</h2>
                   <ul>
-                    {#each user.wallets as wallet, index}
+                    {#each user.wallets as wallet}
                       {#if !wallet.faux}
                         <li class="wallet" style={wallet.wallet == user.main_wallet ? activeWalletStyling : ''}>
-                          <p>{index}</p>
+                          <p>{increaseWalletsCounter()}</p>
                           <span style={wallet.wallet == user.main_wallet ? 'color: rgb(51, 226, 230);' : ''}>{wallet.wallet.slice(0, 6) + '...' + wallet.wallet.slice(-4)}</span>
                           <p
                             class="select-wallet"

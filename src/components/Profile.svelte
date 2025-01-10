@@ -8,7 +8,7 @@
     referralCodes,
     web3loginError,
   } from '@stores/account';
-  import { showModal, showProfile } from '@stores/modal';
+  import { showModal, showProfile, secondButton, handleSecondButton, modalContent } from '@stores/modal';
   import Modal from "./Modal.svelte";
 
   Account.me();
@@ -74,17 +74,14 @@
     background-color: rgb(45, 90, 216);
     box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25), 0 0 0.5vw rgba(51, 226, 230, 0.5);
   `;
-  let secondButton: string = '';
-  let handleSecondButton = () => {};
-  let confirmMessage: string = '';
 
   const walletSelectConfirm = (address: string) => {
-    secondButton = 'Select';
-    handleSecondButton = () => {
+    $secondButton = 'Select';
+    $handleSecondButton = () => {
       handleWalletSelect(address);
       $showModal = false;
     };
-    confirmMessage = '<h2>Are you sure you want to select this address as a main one?</h2>';
+    $modalContent = '<h2>Are you sure you want to select this address as a main one?</h2>';
     $showModal = true;
   }
 
@@ -348,7 +345,7 @@
                           <p>{index}</p>
                           <span style={wallet.wallet == user.main_wallet ? 'color: rgb(51, 226, 230);' : ''}>{wallet.wallet.slice(0, 6) + '...' + wallet.wallet.slice(-4)}</span>
                           <p
-                            class="delete-button"
+                            class="select-wallet"
                             role="button"
                             tabindex="0"
                             on:click={() => {
@@ -715,7 +712,7 @@
   </div>
 </dialog>
 
-<Modal {secondButton} {handleSecondButton}>{@html confirmMessage}</Modal>
+<Modal />
 
 <style>
   dialog {
@@ -1050,23 +1047,21 @@
     border-radius: 1vw;
   }
 
-  .delete-button,
-  .check-button {
+  .select-wallet {
     cursor: pointer;
     text-shadow: none;
     color: inherit;
   }
 
-  .delete-button:hover,
-  .delete-button:active,
-  .check-button:hover,
-  .check-button:active {
+  .select-wallet:hover,
+  .select-wallet:active {
     text-shadow: 0 0 0.5vw rgba(1, 0, 32, 0.5);
     transform: scale(1.1);
   }
 
   .add-wallet {
     width: auto !important;
+    gap: 1vw;
   }
 
   .add-wallet img {

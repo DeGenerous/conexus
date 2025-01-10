@@ -10,7 +10,7 @@
   import { checkUserState } from '@utils/route-guard';
 
   import Modal from './Modal.svelte';
-  import { showModal } from '@stores/modal';
+  import { showModal, secondButton, handleSecondButton, modalContent } from '@stores/modal';
   import Share from './Share.svelte';
   import Profile from './Profile.svelte';
 
@@ -51,6 +51,12 @@
   let selectedStory: any;
 
   function openModal(story: any) {
+    $secondButton = `Delete story: ${selectedStory.category
+      .charAt(0)
+      .toUpperCase() + selectedStory.category.slice(1)}`;
+    $handleSecondButton = () => DeleteStory(selectedStory.story_id);
+    $modalContent = `<h2>Are you sure you want to delete this story?</h2>
+      <h3>This action is irreversible. You will lose all progress on this story.</h3>`;
     selectedStory = story;
     $showModal = true;
   }
@@ -155,17 +161,7 @@
     <!-- Delete Story Modal -->
 
     {#if selectedStory}
-      <Modal
-        secondButton="Delete story: {selectedStory.category
-          .charAt(0)
-          .toUpperCase() + selectedStory.category.slice(1)}"
-        handleSecondButton={() => DeleteStory(selectedStory.story_id)}
-      >
-        <h2>Are you sure you want to delete this story?</h2>
-        <h3>
-          This action is irreversible. You will lose all progress on this story.
-        </h3>
-      </Modal>
+      <Modal />
     {/if}
   {:else}
     <h2 class="loading-message">...</h2>

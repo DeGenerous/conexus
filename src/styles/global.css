@@ -240,6 +240,7 @@ button img {
   height: 100%;
   width: auto;
   cursor: inherit;
+  filter: drop-shadow(0 0 0.5vw rgba(1, 0, 32, 0.5));
 }
 
 h1,

@@ -1,8 +1,6 @@
 <script lang="ts">
-  import { showModal } from '@stores/modal.ts';
+  import { showModal, secondButton, handleSecondButton, modalContent } from '@stores/modal.ts';
 
-  export let secondButton: string = '';
-  export let handleSecondButton: any = () => ($showModal = false);
   let dialog: HTMLDialogElement;
 
   $: if (dialog && $showModal) {
@@ -26,12 +24,12 @@
 >
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div on:click|stopPropagation>
-    <slot />
+    {@html $modalContent}
     <section>
       <button on:click={() => ($showModal = false)}> Close </button>
-      {#if secondButton}
-        <button on:click={handleSecondButton}>
-          {secondButton}
+      {#if $secondButton}
+        <button on:click={$handleSecondButton}>
+          {$secondButton}
         </button>
       {/if}
     </section>
@@ -85,6 +83,10 @@
 
     dialog > div {
       padding: 1em;
+    }
+
+    section {
+      gap: 1em;
     }
   }
 

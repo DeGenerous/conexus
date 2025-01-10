@@ -345,7 +345,7 @@
 
         <hr />
 
-        {#key $authenticated}
+        {#key user}
           <div class="wallet-connect">
             {#if !user.faux}
               {#if user.wallets && user.wallets.length > 1}
@@ -376,7 +376,7 @@
                       {/if}
                     {/each}
                   </ul>
-                  <button class="add-wallet" on:click={() => {console.log('connect address')}}>
+                  <button class="add-wallet" on:click={async () => Account.log_in('metamask', true)}>
                     <img src="icons/walletconnect.png" alt="WalletConnect" />
                     Add another address
                   </button>
@@ -1039,6 +1039,7 @@
   }
 
   .wallet {
+    min-width: 22.5vw;
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
@@ -1050,9 +1051,11 @@
     box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
     border-radius: 1vw;
     cursor: default;
+    color: #010020;
   }
 
   .wallet span {
+    text-align: center;
     padding: 1vw 2vw;
     font-size: 1.5vw;
     color: rgba(255, 255, 255, 0.6);
@@ -1065,6 +1068,7 @@
   .check-button {
     cursor: pointer;
     text-shadow: none;
+    color: inherit;
   }
 
   .delete-button:hover,
@@ -1251,6 +1255,40 @@
 
     .wallet-connect {
       flex-direction: column;
+    }
+
+    .wallets-container {
+      gap: 1em;
+    }
+
+    ul {
+      flex-flow: column nowrap;
+      gap: 1em;
+      max-width: none;
+    }
+
+    .wallet {
+      min-width: 75vw;
+      gap: 0.5em;
+      padding: 0.25em 0.5em;
+      font-size: 1.2em;
+      width: auto;
+      border-radius: 0.5em;
+    }
+
+    .wallet span {
+      width: 100%;
+      padding: 0.5em 1em;
+      font-size: 1.1em;
+      border-radius: 0.5em;
+    }
+
+    .add-wallet {
+      gap: 1em;
+    }
+
+    .add-wallet img {
+      width: 1em;
     }
 
     .referral-codes {

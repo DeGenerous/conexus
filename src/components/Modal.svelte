@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { showModal, secondButton, handleSecondButton, modalContent } from '@stores/modal.ts';
+  import {
+    showModal,
+    secondButton,
+    handleSecondButton,
+    modalContent,
+  } from '@stores/modal.ts';
 
   let dialog: HTMLDialogElement;
 

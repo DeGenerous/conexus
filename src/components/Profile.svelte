@@ -8,8 +8,14 @@
     referralCodes,
     web3loginError,
   } from '@stores/account';
-  import { showModal, showProfile, secondButton, handleSecondButton, modalContent } from '@stores/modal';
-  import Modal from "./Modal.svelte";
+  import {
+    showModal,
+    showProfile,
+    secondButton,
+    handleSecondButton,
+    modalContent,
+  } from '@stores/modal';
+  import Modal from './Modal.svelte';
 
   Account.me();
   Account.logged_in();
@@ -83,9 +89,10 @@
       handleWalletSelect(address);
       $showModal = false;
     };
-    $modalContent = '<h2>Are you sure you want to select this address as a main one?</h2>';
+    $modalContent =
+      '<h2>Are you sure you want to select this address as a main one?</h2>';
     $showModal = true;
-  }
+  };
 
   const handleWalletSelect = async (address: string) => {
     try {
@@ -343,25 +350,43 @@
                   <ul>
                     {#each user.wallets as wallet}
                       {#if !wallet.faux}
-                        <li class="wallet" style={wallet.wallet == user.main_wallet ? activeWalletStyling : ''}>
+                        <li
+                          class="wallet"
+                          style={wallet.wallet == user.main_wallet
+                            ? activeWalletStyling
+                            : ''}
+                        >
                           <p>{increaseWalletsCounter()}</p>
-                          <span style={wallet.wallet == user.main_wallet ? 'color: rgb(51, 226, 230);' : ''}>{wallet.wallet.slice(0, 6) + '...' + wallet.wallet.slice(-4)}</span>
+                          <span
+                            style={wallet.wallet == user.main_wallet
+                              ? 'color: rgb(51, 226, 230);'
+                              : ''}
+                            >{wallet.wallet.slice(0, 6) +
+                              '...' +
+                              wallet.wallet.slice(-4)}</span
+                          >
                           <p
                             class="select-wallet"
                             role="button"
                             tabindex="0"
                             on:click={() => {
-                              if (wallet.wallet != user.main_wallet) walletSelectConfirm(wallet.wallet);
+                              if (wallet.wallet != user.main_wallet)
+                                walletSelectConfirm(wallet.wallet);
                             }}
-                          >★</p>
+                          >
+                            ★
+                          </p>
                         </li>
                       {/if}
                     {/each}
                   </ul>
-                  <button class="add-wallet" on:click={async () => {
-                    await Account.log_in('metamask', true);
-                    location.reload();
-                  }}>
+                  <button
+                    class="add-wallet"
+                    on:click={async () => {
+                      await Account.log_in('metamask', true);
+                      location.reload();
+                    }}
+                  >
                     <img src="icons/walletconnect.png" alt="WalletConnect" />
                     Add another address
                   </button>

@@ -14,7 +14,7 @@
     if (width <= 600)
       imageWrapper.style.height = fullWidthImage ? 'auto' : '512px';
     else imageWrapper.style.height = 'auto';
-    console.log(step)
+    console.log(step);
   });
 
   $: if ($fullscreen) document.documentElement.requestFullscreen();
@@ -325,7 +325,9 @@
     padding: 1vw;
     border-radius: 1em;
     background-color: rgba(51, 226, 230, 0.05);
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25), 0 0 0.5vw #010020;
+    box-shadow:
+      inset 0 0 0.5vw rgba(51, 226, 230, 0.25),
+      0 0 0.5vw #010020;
   }
 
   .option {
@@ -610,7 +612,9 @@
       width: 100rem;
       padding: 1rem;
       gap: 0;
-      box-shadow: inset 0 0 0.5rem rgba(51, 226, 230, 0.25), 0 0 0.5rem #010020;
+      box-shadow:
+        inset 0 0 0.5rem rgba(51, 226, 230, 0.25),
+        0 0 0.5rem #010020;
     }
 
     .option {

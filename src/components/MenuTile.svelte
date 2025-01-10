@@ -18,11 +18,7 @@
   const blankPicture: string = '/blank.avif'; // temp
 </script>
 
-<a
-  class="tile"
-  id={section.name}
-  href="/{section.name}"
->
+<a class="tile" id={section.name} href="/{section.name}">
   <img
     class="tile-picture"
     src={sectionImage ?? blankPicture}

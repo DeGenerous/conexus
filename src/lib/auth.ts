@@ -96,9 +96,11 @@ class Account {
     } else {
       web3LoggedIn.set(true);
 
-      // const resp = await response.json();
+      if (link) {
+        const resp = await response.json();
 
-      // authenticated.set({ user: resp.user, loggedIn: true });
+        authenticated.set({ user: resp.user, loggedIn: true });
+      }
 
       toastStore.show('Successfully logged in', 'info');
     }
@@ -114,7 +116,7 @@ class Account {
   }
 
   private static async get_nonce(
-    walletProvider: 'metamask' | 'coinbase' = 'metamask'
+    walletProvider: 'metamask' | 'coinbase' = 'metamask',
   ): Promise<string> {
     const provider = await Web3Provider.init(walletProvider);
 

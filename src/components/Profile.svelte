@@ -376,7 +376,10 @@
                       {/if}
                     {/each}
                   </ul>
-                  <button class="add-wallet" on:click={async () => Account.log_in('metamask', true)}>
+                  <button class="add-wallet" on:click={async () => {
+                    await Account.log_in('metamask', true);
+                    location.reload();
+                  }}>
                     <img src="icons/walletconnect.png" alt="WalletConnect" />
                     Add another address
                   </button>

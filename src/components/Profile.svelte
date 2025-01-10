@@ -78,16 +78,6 @@
   let handleSecondButton = () => {};
   let confirmMessage: string = '';
 
-  const walletDeleteConfirm = (address: string) => {
-    secondButton = 'Remove';
-    handleSecondButton = () => {
-      console.log('remove wallet: ' + address);
-      $showModal = false;
-    };
-    confirmMessage = '<h2>Do you want to remove this address?</h2>';
-    $showModal = true;
-  }
-
   const walletSelectConfirm = (address: string) => {
     secondButton = 'Select';
     handleSecondButton = () => {
@@ -355,23 +345,16 @@
                     {#each user.wallets as wallet, index}
                       {#if !wallet.faux}
                         <li class="wallet" style={wallet.wallet == user.main_wallet ? activeWalletStyling : ''}>
-                          <p 
-                            class="check-button"
+                          <p>{index}</p>
+                          <span style={wallet.wallet == user.main_wallet ? 'color: rgb(51, 226, 230);' : ''}>{wallet.wallet.slice(0, 6) + '...' + wallet.wallet.slice(-4)}</span>
+                          <p
+                            class="delete-button"
                             role="button"
                             tabindex="0"
                             on:click={() => {
                               if (wallet.wallet != user.main_wallet) walletSelectConfirm(wallet.wallet);
                             }}
                           >★</p>
-                          <span style={wallet.wallet == user.main_wallet ? 'color: rgb(51, 226, 230);' : ''}>{wallet.wallet.slice(0, 6) + '...' + wallet.wallet.slice(-4)}</span>
-                          <p
-                            class="delete-button"
-                            role="button"
-                            tabindex="0"
-                            on:click={() => walletDeleteConfirm(wallet.wallet)}
-                          >
-                            ❌
-                          </p>
                         </li>
                       {/if}
                     {/each}

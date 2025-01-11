@@ -260,18 +260,19 @@
     align-items: center;
     gap: 1vw;
     font-size: 1.5vw;
-    line-height: 3vw;
+    line-height: 2vw;
     color: rgba(51, 226, 230, 0.75);
   }
 
   .genres-list {
     text-align: center;
-    padding: 0.5vw 1vw;
-    background-color: rgba(51, 226, 230, 0.5);
+    padding: 1vw;
     border-radius: 1vw;
-    color: #010020;
-    text-shadow: 0 0 0.1vw #010020;
-    box-shadow: inset 0 0 0.5vw #010020;
+    color: rgba(51, 226, 230, 0.75);
+    font-size: 1.5vw;
+    line-height: 2vw;
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
+    background-color: rgba(51, 226, 230, 0.1);
   }
 
   .description {
@@ -405,6 +406,7 @@
 
     .picture {
       width: 90vw;
+      border-radius: 0.5em;
     }
 
     article {
@@ -422,9 +424,11 @@
     }
 
     .genres-list {
-      padding: 0.25em 0.5em;
+      padding: 0.5em;
+      font-size: 1em;
+      line-height: 1.5em;
       text-shadow: 0 0 0.1em #010020;
-      border-radius: 1em;
+      border-radius: 0.5em;
     }
 
     .description {

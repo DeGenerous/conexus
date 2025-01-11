@@ -1157,9 +1157,12 @@
     width: 7vw;
     background-image: url('/icons/profileIcon.avif');
     background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
     opacity: 0.4;
     z-index: 1;
     cursor: pointer;
+    flex: none;
   }
 
   .profile-icon:hover,

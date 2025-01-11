@@ -202,6 +202,9 @@
     width: 7vw;
     z-index: 1;
     background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    flex: none;
     background-image: url('/icons/backArrow.avif');
     opacity: 0.4;
     cursor: pointer;

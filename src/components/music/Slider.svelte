@@ -72,10 +72,13 @@
 
   @media screen and (max-width: 600px) {
     div {
-      height: 2em;
-      padding: 0.25em 0.5em;
+      height: 2.5em;
+      padding: 0.5em;
       border-radius: 0.5em;
       gap: 0.5em;
+      box-shadow: inset 0 0 0.5vw #010020;
+      background-color: rgba(1, 0, 32, 0.35);
+      border: none;
     }
 
     button {

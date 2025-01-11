@@ -185,10 +185,10 @@
 
       <!-- MOBILE VIEW -->
     {:else}
-      <div class="control-bar">
+      <div class="control-bar blur">
         <div class="mobile-controls">
           <button class="quit" on:click={() => window.open('/', '_self')}>
-            <img class="quit" src="/icons/quit.png" alt="Quit" />
+            <img src="/icons/quit.png" alt="Quit" />
           </button>
 
           <div class="step-bar">
@@ -518,16 +518,20 @@
       flex-flow: column nowrap;
       padding: 0.5em;
       gap: 1em;
-    }
-
-    .control-bar {
       width: 100%;
+      border: none;
+      box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.5);
     }
 
     .step-bar {
       width: 50%;
       gap: 0.5em;
       border-radius: 0.5em;
+      color: rgba(51, 226, 230, 0.85);
+      box-shadow: inset 0 0 0.5vw #010020;
+      background-color: rgba(1, 0, 32, 0.35);
+      border: none;
+      padding: 0.5em;
     }
 
     .step-bar h3 {
@@ -544,7 +548,6 @@
       display: flex;
       flex-flow: row nowrap;
       justify-content: space-between;
-      align-items: center;
     }
 
     .mobile-sliders {
@@ -565,12 +568,18 @@
     .step-button {
       height: 2em;
       width: 2em;
-      padding: 0.1em;
+      padding: 0.15em;
       border-radius: 0.5em;
     }
 
     .fullscreen {
       padding: 0.25em;
+    }
+
+    .fullscreen,
+    .quit {
+      height: 2.5em;
+      width: 2.5em;
     }
   }
 

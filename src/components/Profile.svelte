@@ -393,28 +393,31 @@
                 </div>
               {/if}
             {:else}
-              <button
-                class="sign-button"
-                on:click={() => {
-                  Account.log_in('coinbase', true);
-                }}
-              >
-                <img class="sign-icon" src="/icons/coinbase.png" alt="Google" />
-                <p class="sign-lable">Coinbase Smart Wallet</p></button
-              >
-              <button
-                class="sign-button"
-                on:click={() => {
-                  Account.log_in('metamask', true);
-                }}
-              >
-                <img
-                  class="sign-icon"
-                  src="/icons/walletconnect.png"
-                  alt="Google"
-                />
-                <p class="sign-lable">browser wallet</p></button
-              >
+              <h2>Connect Web3 Wallet:</h2>
+              <div class="connect-wallet-buttons">
+                <button
+                  class="sign-button"
+                  on:click={() => {
+                    Account.log_in('coinbase', true);
+                  }}
+                >
+                  <img class="sign-icon" src="/icons/coinbase.png" alt="Google" />
+                  <p class="sign-lable">Coinbase Smart Wallet</p></button
+                >
+                <button
+                  class="sign-button"
+                  on:click={() => {
+                    Account.log_in('metamask', true);
+                  }}
+                >
+                  <img
+                    class="sign-icon"
+                    src="/icons/walletconnect.png"
+                    alt="Google"
+                  />
+                  <p class="sign-lable">browser wallet</p></button
+                >
+              </div>
             {/if}
           </div>
         {/key}
@@ -1031,6 +1034,14 @@
     gap: 2vw;
   }
 
+  .connect-wallet-buttons {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
+  }
+
   .wallets-container {
     min-width: 65vw;
     display: flex;
@@ -1266,6 +1277,10 @@
 
     .wallet-connect {
       flex-direction: column;
+    }
+
+    .connect-wallet-buttons {
+      gap: 0.5em;
     }
 
     .wallets-container {

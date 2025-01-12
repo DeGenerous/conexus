@@ -34,10 +34,12 @@ type Available = {
 
 export type StepData = {
   step: number;
+  title?: string;
   story: string;
   end: boolean;
   summary: string;
   trait: string;
+  trait_description?: string;
   options: string[];
   image?: string;
   choice?: number;

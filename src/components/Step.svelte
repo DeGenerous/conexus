@@ -22,6 +22,8 @@
 
   $: step = $story?.step_data as StepData;
 
+  $: if (step.title) console.log(step.title)
+
   let stepFont: string = 'Verdana';
   let width: number;
   const storyTitle: string =
@@ -61,6 +63,10 @@
     <article class="summary-text">{step.summary}</article>
 
     <h2>CoNexus identified your trait as: <strong>{step.trait}</strong></h2>
+
+    {#if step.trait_description}
+      <article class="summary-text">{step.trait_description}</article>
+    {/if}
 
     <div class="options-container blur">
       <button
@@ -103,6 +109,9 @@
               <img src="/icons/quit.png" alt="Quit" />
             </button>
             <h3>{storyTitle}</h3>
+            {#if step.title}
+              <h3> - {step.title}</h3>
+            {/if}
           </div>
 
           <div class="controls">

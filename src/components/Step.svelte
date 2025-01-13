@@ -102,7 +102,7 @@
       {#if !$fullscreen}
         <div class="control-bar blur">
           <div class="story-info-container">
-            <button class="quit" on:click={() => window.open('/', '_self')}>
+            <button class="quit" on:click={() => window.open('./', '_self')}>
               <img src="/icons/quit.png" alt="Quit" />
             </button>
             <h3>{storyTitle}</h3>

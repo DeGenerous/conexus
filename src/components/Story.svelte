@@ -9,7 +9,6 @@
   import { loading, story } from '@stores/conexus';
   import { checkUserState } from '@utils/route-guard';
 
-  import Modal from './Modal.svelte';
   import {
     showModal,
     secondButton,
@@ -57,8 +56,8 @@
 
   function openModal(story: any) {
     $secondButton = `Delete story: ${
-      selectedStory.category.charAt(0).toUpperCase() +
-      selectedStory.category.slice(1)
+      selectedStory?.category.charAt(0).toUpperCase() +
+      selectedStory?.category.slice(1)
     }`;
     $handleSecondButton = () => DeleteStory(selectedStory.story_id);
     $modalContent = `<h2>Are you sure you want to delete this story?</h2>
@@ -166,11 +165,6 @@
       </section>
     {/if}
 
-    <!-- Delete Story Modal -->
-
-    {#if selectedStory}
-      <Modal />
-    {/if}
   {:else}
     <h2 class="loading-message">...</h2>
   {/if}

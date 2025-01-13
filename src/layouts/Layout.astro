@@ -4,6 +4,7 @@ import { ViewTransitions } from 'astro:transitions';
 
 import Profile from '../components/Profile.svelte';
 import ToastContainer from '../components/ToastContainer.svelte';
+import Modal from '../components/Modal.svelte';
 
 const {
   header,
@@ -78,6 +79,8 @@ const {
     {subheading && <p class="subheading" set:html={subheading} />}
 
     <slot />
+
+    <Modal client:load />
 
     <style>
       .container {

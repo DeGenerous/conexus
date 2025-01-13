@@ -47,7 +47,7 @@
   </div>
 
   {#if step.title}
-    <h3 class="step-title"> - {step.title}</h3>
+    <h3 class="step-title">{step.title}</h3>
   {/if}
 
   <article class="story-text">

@@ -15,7 +15,6 @@
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
-  import Modal from './Modal.svelte';
 
   Account.me();
   Account.logged_in();
@@ -741,8 +740,6 @@
     {/if}
   </div>
 </dialog>
-
-<Modal />
 
 <style>
   dialog {

@@ -399,7 +399,7 @@
 
   @media only screen and (max-width: 600px) {
     :global(html) {
-      padding-top: 20%;
+      padding-top: 0;
     }
 
     .buttons-container button {
@@ -430,6 +430,7 @@
     }
 
     .story-container {
+      margin-top: 25%;
       max-width: 100%;
       flex-direction: column;
       gap: 1.5em;

@@ -96,6 +96,7 @@
     div {
       height: 3.5rem;
       padding: 0.5rem 1rem;
+      gap: 1rem;
     }
 
     button {

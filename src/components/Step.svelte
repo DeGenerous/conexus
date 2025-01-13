@@ -46,6 +46,10 @@
     {/if}
   </div>
 
+  {#if step.title}
+    <h3 class="step-title"> - {step.title}</h3>
+  {/if}
+
   <article class="story-text">
     {#each step.story.split('\n') as paragraph}
       <p>{paragraph}</p>
@@ -105,10 +109,8 @@
             <button class="quit" on:click={() => window.open('./', '_self')}>
               <img src="/icons/quit.png" alt="Quit" />
             </button>
+
             <h3>{storyTitle}</h3>
-            {#if step.title}
-              <h3> - {step.title}</h3>
-            {/if}
           </div>
 
           <div class="controls">
@@ -302,6 +304,10 @@
     animation: pulse 5s linear infinite;
   }
 
+  .step-title {
+    color: rgba(51, 226, 230, 0.75);
+  }
+
   .story-text,
   .summary-text {
     width: 100%;
@@ -398,7 +404,11 @@
   }
 
   .controls-container h3 {
+    line-height: 1.5;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 30vw;
   }
 
   .control-bar,
@@ -485,10 +495,6 @@
   }
 
   @media screen and (max-width: 600px) {
-    :global(html) {
-      padding-top: 0;
-    }
-
     .step-wrapper {
       gap: 1em;
       padding: 1em;
@@ -602,6 +608,14 @@
     h3 {
       font-size: 1.75rem;
       line-height: 1.75rem;
+    }
+
+    .controls-container h3 {
+      max-width: 30rem;
+    }
+
+    .story-info-container {
+      gap: 1rem;
     }
 
     .step-wrapper {

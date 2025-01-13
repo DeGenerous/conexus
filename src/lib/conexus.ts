@@ -1,3 +1,4 @@
+import { toastStore } from '@stores/toast';
 import { new_error } from './errors';
 import {
   background_music,
@@ -243,7 +244,7 @@ export class CoNexus {
     });
 
     if (!response.ok) {
-      new_error({ code: response.status, error: await response.text() });
+      new_error({ code: response.status});
     }
 
     const game_data: GameData = await response.json();

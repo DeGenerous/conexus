@@ -101,6 +101,6 @@ type GameData = {
 // Error
 type ConexusError = {
   code: number;
-  error: string;
-  log?: boolean;
+  error?: string = 'Something went wrong, please try again later...';
+  log?: boolean = true;
 };

@@ -14,15 +14,12 @@
     if (width <= 600)
       imageWrapper.style.height = fullWidthImage ? 'auto' : '512px';
     else imageWrapper.style.height = 'auto';
-    console.log(step);
   });
 
   $: if ($fullscreen) document.documentElement.requestFullscreen();
   else if (document.fullscreenElement) document.exitFullscreen();
 
   $: step = $story?.step_data as StepData;
-
-  $: if (step.title) console.log(step.title)
 
   let stepFont: string = 'Verdana';
   let width: number;

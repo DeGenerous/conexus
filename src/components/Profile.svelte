@@ -386,7 +386,7 @@
                       location.reload();
                     }}
                   >
-                    <img src="icons/walletconnect.png" alt="WalletConnect" />
+                    <img src="/icons/walletconnect.png" alt="WalletConnect" />
                     Add another address
                   </button>
                 </div>

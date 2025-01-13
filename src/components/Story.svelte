@@ -83,24 +83,17 @@
   });
 
   const blankPicture: string = '/blank.avif'; // temp
-
-  const handleReturn = () => {
-    if (history.length > 2) history.back();
-    else window.location.href = '/';
-  };
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $story === null}
   {#if topic !== null}
     <header>
-      <span
+      <a
         class="arrow"
         aria-label="Back arrow"
-        role="button"
-        tabindex="0"
-        on:click={handleReturn}
-      ></span>
+        href="./"
+      ></a>
       <h1>{topic.name.charAt(0).toUpperCase() + topic.name.slice(1)}</h1>
       <Profile />
     </header>

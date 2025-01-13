@@ -128,8 +128,17 @@
         </article>
         <div class="buttons-container">
           <Share />
-          <button on:click={() => topic && CoNexus.start(topic.name)}>
-            PLAY NOW
+          <button on:click={() => topic && CoNexus.start(topic.name)} disabled={$loading}>
+            {#if $loading}
+              <img
+                class="searching"
+                src="/icons/searching.png"
+                alt="Searching..."
+              />
+              Loading...
+            {:else}
+              PLAY NOW
+            {/if}
           </button>
         </div>
       </section>
@@ -370,9 +379,35 @@
     background-image: url('/icons/play.png');
   }
 
+  .buttons-container button {
+    gap: 1vw;
+  }
+
+  .searching {
+    height: 1.5vw;
+    animation: searching 1s linear infinite;
+  }
+
+  @keyframes searching {
+    from {
+      transform: none;
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
   @media only screen and (max-width: 600px) {
     :global(html) {
       padding-top: 20%;
+    }
+
+    .buttons-container button {
+      gap: 0.5em;
+    }
+
+    .searching {
+      height: 1em;
     }
 
     header {

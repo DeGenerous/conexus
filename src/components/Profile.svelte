@@ -343,7 +343,7 @@
         {#key user}
           <div class="wallet-connect">
             {#if !user.faux}
-              {#if user.wallets && user.wallets.length > 1}
+              {#if user.wallets && user.wallets.length >= 1}
                 <div class="wallets-container">
                   <h2>Connected Addresses:</h2>
                   <ul>

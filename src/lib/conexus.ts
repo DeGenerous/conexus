@@ -144,8 +144,11 @@ export class CoNexus {
     return resp.categories;
   }
 
-  static async searchCategories(search: string): Promise<DynSectionCategory[]> {
-    const base = `${url}/topics/search/${search}`;
+  static async searchCategories(
+    search: string,
+    section: string,
+  ): Promise<DynSectionCategory[]> {
+    const base = `${url}/topics/search/${section}?name=${search}`;
 
     const response = await fetch(base);
 
@@ -244,7 +247,7 @@ export class CoNexus {
     });
 
     if (!response.ok) {
-      new_error({ code: response.status});
+      new_error({ code: response.status });
     }
 
     const game_data: GameData = await response.json();

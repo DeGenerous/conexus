@@ -206,7 +206,10 @@ class Account {
 
   static async me() {
     try {
-      const response = await fetch(`${url}/me`);
+      const response = await fetch(`${url}/me`, {
+        method: 'GET',
+        credentials: 'include',
+      });
 
       if (!response.ok) {
         new_error({ code: response.status, error: await response.text() });
@@ -228,6 +231,7 @@ class Account {
     try {
       const response = await fetch(`${url}/me`, {
         method: 'GET',
+        credentials: 'include',
       });
 
       if (!response.ok) {

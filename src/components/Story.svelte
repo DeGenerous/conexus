@@ -166,7 +166,15 @@
     {/if}
 
   {:else}
-    <h2 class="loading-message">...</h2>
+    <header>
+      <a
+        class="arrow"
+        aria-label="Back arrow"
+        href="./"
+      ></a>
+      <h1>...</h1>
+      <Profile />
+    </header>
   {/if}
 {:else}
   <BackgroundMusic />
@@ -283,10 +291,6 @@
     justify-content: space-between;
     align-items: center;
     gap: 2vw;
-  }
-
-  .loading-message {
-    color: rgba(51, 226, 230, 0.5);
   }
 
   .unfinished-stories {

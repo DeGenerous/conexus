@@ -24,7 +24,7 @@
   let stepFont: string = 'Verdana';
   let width: number;
   const storyTitle: string =
-    _storyTitle.charAt(0).toUpperCase() + _storyTitle.slice(1);
+    (_storyTitle.charAt(0).toUpperCase() + _storyTitle.slice(1)).trim();
 </script>
 
 <svelte:window bind:outerWidth={width} />

@@ -93,7 +93,7 @@
         aria-label="Back arrow"
         href="./"
       ></a>
-      <h1>{topic.name.charAt(0).toUpperCase() + topic.name.slice(1)}</h1>
+      <h1>{(topic.name.charAt(0).toUpperCase() + topic.name.slice(1)).trim()}</h1>
       <Profile />
     </header>
 

@@ -379,16 +379,39 @@
                       {/if}
                     {/each}
                   </ul>
-                  <button
-                    class="add-wallet"
-                    on:click={async () => {
-                      await Account.log_in('metamask', true);
-                      location.reload();
-                    }}
-                  >
-                    <img src="/icons/walletconnect.png" alt="WalletConnect" />
-                    Add another address
-                  </button>
+                  <h3>Add another address:</h3>
+                  <div class="buttons-container">
+                    <button
+                      class="add-wallet"
+                      on:click={async () => {
+                        await Account.log_in('metamask', true);
+                        location.reload();
+                      }}
+                    >
+                      <img src="/icons/wallet.png" alt="Add wallet" />
+                      <p class="sign-lable">browser wallet</p>
+                    </button>
+                    <button
+                      class="add-wallet"
+                      on:click={async () => {
+                        await Account.log_in('coinbase', true);
+                        location.reload();
+                      }}
+                    >
+                      <img src="/icons/coinbase.png" alt="Add wallet" />
+                      <p class="sign-lable">Coinbase Smart wallet</p>
+                    </button>
+                    <button
+                      class="add-wallet"
+                      on:click={async () => {
+                        await Account.log_in('metamask', true); // walletconnect
+                        location.reload();
+                      }}
+                    >
+                      <img src="/icons/walletconnect.png" alt="Add wallet" />
+                      <p class="sign-lable">WalletConnect</p>
+                    </button>
+                  </div>
                 </div>
               {/if}
             {:else}
@@ -529,6 +552,7 @@
                 <img class="sign-icon" src="/icons/email.png" alt="Google" />
                 <p class="sign-lable">with email</p>
               </button>
+              <h3>or</h3>
               <button
                 on:click={() => {
                   Account.log_in('metamask');
@@ -536,10 +560,34 @@
               >
                 <img
                   class="sign-icon"
-                  src="/icons/walletconnect.png"
+                  src="/icons/wallet.png"
                   alt="Web3 login"
                 />
                 <p class="sign-lable">with browser wallet</p>
+              </button>
+              <button
+                on:click={() => {
+                  Account.log_in('coinbase');
+                }}
+              >
+                <img
+                  class="sign-icon"
+                  src="/icons/coinbase.png"
+                  alt="Web3 login"
+                />
+                <p class="sign-lable">with Coinbase Smart wallet</p>
+              </button>
+              <button
+                on:click={() => {
+                  Account.log_in(); // walletconnect
+                }}
+              >
+                <img
+                  class="sign-icon"
+                  src="/icons/walletconnect.png"
+                  alt="Web3 login"
+                />
+                <p class="sign-lable">with WalletConnect</p>
               </button>
             </div>
             {#if $web3loginError}
@@ -1095,7 +1143,7 @@
   }
 
   .add-wallet {
-    width: auto !important;
+    width: 40vw !important;
     gap: 1vw;
   }
 
@@ -1307,6 +1355,7 @@
     }
 
     .add-wallet {
+      width: 100% !important;
       gap: 1em;
     }
 

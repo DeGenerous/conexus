@@ -12,6 +12,7 @@
   const blankPicture = '/blank.avif';
   onMount(async () => {
     storyImage = await CoNexus.fetch_story_image(topicName!, 'tile');
+    localStorage.setItem(topicName, storyImage ?? blankPicture);
   });
 </script>
 
@@ -19,7 +20,7 @@
   <img
     class="tile-picture"
     loading="lazy"
-    src={storyImage ?? blankPicture}
+    src={localStorage.getItem(topicName)}
     alt={storyName}
     draggable="false"
     height="1024"

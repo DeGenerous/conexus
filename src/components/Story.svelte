@@ -200,7 +200,8 @@
 
 <style>
   :global(html) {
-    background-image: linear-gradient(#000000, #010020);
+    background-image: none;
+    background-color: black;
   }
 
   .bg-container {
@@ -214,7 +215,7 @@
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-position: center;
-    opacity: 0.5;
+    opacity: 0.25;
   }
 
   header {

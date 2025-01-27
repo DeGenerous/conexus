@@ -246,7 +246,7 @@
 
   .picture {
     width: 25vw;
-    filter: drop-shadow(0 0.5vw rgba(51, 226, 230, 0.5));
+    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
     border-radius: 1vw;
   }
 

@@ -1,25 +1,127 @@
 import React from 'react';
 
 import {
-  getDefaultConfig,
-  RainbowKitProvider,
-  RainbowKitAuthenticationProvider,
+  createAuthenticationAdapter,
   darkTheme,
+  getDefaultConfig,
+  type AuthenticationStatus,
+  ConnectButton,
+  RainbowKitAuthenticationProvider,
+  RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
 
-import { WagmiProvider } from 'wagmi';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createSiweMessage } from 'viem/siwe';
+import { WagmiProvider, useAccount } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains';
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+
+import { web3LoggedIn, authenticated } from '@stores/account';
 
 import '@rainbow-me/rainbowkit/styles.css';
 
+const url = import.meta.env.PUBLIC_BACKEND;
+
 const Web3Provider = ({ children }) => {
+  let AUTHENTICATION_STATUS: AuthenticationStatus = 'unauthenticated';
+
   const config = getDefaultConfig({
-    appName: 'My RainbowKit App',
+    appName: 'Degenerous DAO',
+    appIcon: 'https://media.degenerousdao.com/assets/logo.png',
+    appUrl: 'https://degenerousdao.com',
     projectId: '0b8a3fac6220753a719b9aeceb8f19fb',
     chains: [mainnet, polygon, optimism, arbitrum, base],
     ssr: false, // If your dApp uses server side rendering (SSR)
+  });
+
+  const message = (nonce: string) => `
+  Sign this message to prove you're an Potential NFT holder.
+
+  It will not cause a blockchain transaction, nor any gas fees.
+
+  Nonce:
+  ${nonce}`;
+
+  const authenticationAdapter = createAuthenticationAdapter({
+    getNonce: async () => {
+      console.log('Making request to fetch nonce:', url);
+
+      const response = await fetch(`${url}/nonce`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch nonce');
+      }
+
+      AUTHENTICATION_STATUS = 'loading';
+
+      return await response.text();
+    },
+
+    createMessage: ({ nonce, address, chainId }) => {
+      console.log(
+        `Creating message with nonce: ${nonce} and address: ${address} for chain: ${chainId}`,
+      );
+
+      if (!nonce || !address || !chainId) {
+        console.error('Missing required parameters for createSiweMessage:', {
+          nonce,
+          address,
+          chainId,
+        });
+        throw new Error('Missing parameters for creating the message');
+      }
+
+      nonce = nonce.replace(/-/g, '');
+
+      try {
+        return createSiweMessage({
+          nonce,
+          address,
+          chainId,
+          statement:
+            "Sign this message to prove you're an Potential NFT holder. It will not cause a blockchain transaction, nor any gas fees.",
+          domain: window.location.host,
+          uri: window.location.origin,
+          version: '1',
+        });
+      } catch (error) {
+        console.error('Error creating SIWE message:', error);
+        throw error;
+      }
+    },
+
+    verify: async ({ message, signature }) => {
+      console.log('Verifying signature with message:', message);
+
+      const response = await fetch(`${url}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, signature }),
+      });
+
+      if (!response.ok) {
+        AUTHENTICATION_STATUS = 'unauthenticated';
+        console.error('Verification failed');
+        return false;
+      }
+
+      const data = await response.json();
+
+      authenticated.set({ user: data.user, loggedIn: true });
+      AUTHENTICATION_STATUS = 'authenticated';
+
+      return true;
+    },
+
+    signOut: async () => {
+      await fetch(`${url}/signout`, {
+        method: 'POST',
+      });
+
+      authenticated.set({ user: null, loggedIn: false });
+    },
   });
 
   const queryClient = new QueryClient();
@@ -27,18 +129,23 @@ const Web3Provider = ({ children }) => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
-          // modalSize="compact"
-          theme={darkTheme({
-            accentColor: '#7b3fe4',
-            accentColorForeground: 'white',
-            borderRadius: 'small',
-            fontStack: 'system',
-            overlayBlur: 'small',
-          })}
+        <RainbowKitAuthenticationProvider
+          adapter={authenticationAdapter}
+          status={AUTHENTICATION_STATUS}
         >
-          {children}
-        </RainbowKitProvider>
+          <RainbowKitProvider
+            modalSize="compact"
+            theme={darkTheme({
+              accentColor: '#7b3fe4',
+              accentColorForeground: 'white',
+              borderRadius: 'small',
+              fontStack: 'system',
+              overlayBlur: 'small',
+            })}
+          >
+            {children}
+          </RainbowKitProvider>
+        </RainbowKitAuthenticationProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

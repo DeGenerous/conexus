@@ -21,15 +21,22 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
+    "@astrojs/react": "^4.1.6",
     "@astrojs/vercel": "^7.8.2",
     "@coinbase/wallet-sdk": "^4.2.3",
     "@metamask/detect-provider": "^2.0.0",
     "@metamask/sdk": "^0.30.1",
+    "@rainbow-me/rainbowkit": "^2.2.3",
+    "@tanstack/react-query": "^5.64.2",
     "ethers": "^6.13.4",
     "metamask": "^0.0.1-security",
     "prettier": "^3.3.3",
     "prettier-plugin-svelte": "^3.2.6",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "solc": "^0.8.28",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "viem": "^2.22.14",
+    "wagmi": "^2.14.9"
   }
 }

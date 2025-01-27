@@ -14,7 +14,7 @@
 
     url = url || window.location.href;
 
-    const message = `Check out the current story I'm playing on Conexus! \n ${url}`;
+    const message = `Check out the AI story I'm playing on CoNexus! \n ${url}`;
 
     switch (option) {
       case 'copy':

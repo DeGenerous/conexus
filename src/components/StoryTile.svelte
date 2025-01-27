@@ -5,8 +5,9 @@
 
   export let section: string;
   export let topicName: string;
-  const storyName: string =
-    (topicName.charAt(0).toUpperCase() + topicName.slice(1)).trim();
+  const storyName: string = (
+    topicName.charAt(0).toUpperCase() + topicName.slice(1)
+  ).trim();
 
   let storyImage: string | null = null;
   const blankPicture = '/blank.avif';

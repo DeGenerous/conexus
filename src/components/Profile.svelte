@@ -15,6 +15,7 @@
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
+  import WalletConnect from './WalletConnect.svelte';
 
   Account.me();
   Account.logged_in();
@@ -423,7 +424,11 @@
                     Account.log_in('coinbase', true);
                   }}
                 >
-                  <img class="sign-icon" src="/icons/coinbase.png" alt="Google" />
+                  <img
+                    class="sign-icon"
+                    src="/icons/coinbase.png"
+                    alt="Google"
+                  />
                   <p class="sign-lable">Coinbase Smart Wallet</p></button
                 >
                 <button
@@ -577,7 +582,7 @@
                 />
                 <p class="sign-lable">with Coinbase Smart wallet</p>
               </button>
-              <button
+              <!-- <button
                 on:click={() => {
                   Account.log_in(); // walletconnect
                 }}
@@ -588,7 +593,8 @@
                   alt="Web3 login"
                 />
                 <p class="sign-lable">with WalletConnect</p>
-              </button>
+              </button> -->
+              <!-- <WalletConnect /> -->
             </div>
             {#if $web3loginError}
               <p class="validation">

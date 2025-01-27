@@ -96,12 +96,10 @@
 {#if $story === null}
   {#if topic !== null}
     <header>
-      <a
-        class="arrow"
-        aria-label="Back arrow"
-        href="./"
-      ></a>
-      <h1>{(topic.name.charAt(0).toUpperCase() + topic.name.slice(1)).trim()}</h1>
+      <a class="arrow" aria-label="Back arrow" href="./"></a>
+      <h1>
+        {(topic.name.charAt(0).toUpperCase() + topic.name.slice(1)).trim()}
+      </h1>
       <Profile />
     </header>
 
@@ -128,7 +126,10 @@
         </article>
         <div class="buttons-container">
           <Share />
-          <button on:click={() => topic && CoNexus.start(topic.name)} disabled={$loading}>
+          <button
+            on:click={() => topic && CoNexus.start(topic.name)}
+            disabled={$loading}
+          >
             {#if $loading}
               <img
                 class="searching"
@@ -172,14 +173,9 @@
         </div>
       </section>
     {/if}
-
   {:else}
     <header>
-      <a
-        class="arrow"
-        aria-label="Back arrow"
-        href="./"
-      ></a>
+      <a class="arrow" aria-label="Back arrow" href="./"></a>
       <h1>...</h1>
       <Profile />
     </header>

@@ -80,8 +80,12 @@
       return {
         ...cat,
         topics: [...cat.topics].sort((a, b) => {
-          const firstTopic = (a.name.charAt(0).toUpperCase() + a.name.slice(1)).trim();
-          const secondTopic = (b.name.charAt(0).toUpperCase() + b.name.slice(1)).trim();
+          const firstTopic = (
+            a.name.charAt(0).toUpperCase() + a.name.slice(1)
+          ).trim();
+          const secondTopic = (
+            b.name.charAt(0).toUpperCase() + b.name.slice(1)
+          ).trim();
           // Sorting all topics in the category alphabetically
           if (firstTopic < secondTopic) return -1;
           if (firstTopic > secondTopic) return 1;

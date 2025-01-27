@@ -6,7 +6,7 @@
   import Step from '@components/Step.svelte';
   import { CoNexus } from '@lib/conexus';
   import type { DynTopic, ContinuableStory } from '@lib/conexus';
-  import { loading, story } from '@stores/conexus';
+  import { loading, story, background_image } from '@stores/conexus';
   import { checkUserState } from '@utils/route-guard';
 
   import {
@@ -19,6 +19,14 @@
   import Profile from './Profile.svelte';
 
   export let story_name: string;
+
+  let backgroundImageUrl: string = '/conexusBG.avif';
+
+  background_image.subscribe((value) => {
+    if (value) {
+      backgroundImageUrl = value;
+    }
+  });
 
   onMount(async () => {
     await checkUserState('/story');
@@ -183,7 +191,32 @@
   <Step />
 {/if}
 
+<div
+  class="bg-container"
+  style="
+    background-image: url({backgroundImageUrl});
+    "
+></div>
+
 <style>
+  :global(html) {
+    background-image: linear-gradient(#000000, #010020);
+  }
+
+  .bg-container {
+    z-index: -1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    min-width: 100vw;
+    min-height: 100vh;
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.5;
+  }
+
   header {
     width: 100vw;
     display: flex;

@@ -45,7 +45,7 @@ const Web3Provider = ({ children }) => {
     getNonce: async () => {
       console.log('Making request to fetch nonce:', url);
 
-      const response = await fetch(`${url}/nonce`, {
+      const response = await fetch(`${url}/rainbow/nonce`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -95,7 +95,7 @@ const Web3Provider = ({ children }) => {
     verify: async ({ message, signature }) => {
       console.log('Verifying signature with message:', message);
 
-      const response = await fetch(`${url}/login`, {
+      const response = await fetch(`${url}/rainbow/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message, signature }),
@@ -109,6 +109,7 @@ const Web3Provider = ({ children }) => {
 
       const data = await response.json();
 
+      web3LoggedIn.set(true);
       authenticated.set({ user: data.user, loggedIn: true });
       AUTHENTICATION_STATUS = 'authenticated';
 
@@ -120,6 +121,7 @@ const Web3Provider = ({ children }) => {
         method: 'POST',
       });
 
+      web3LoggedIn.set(false);
       authenticated.set({ user: null, loggedIn: false });
     },
   });

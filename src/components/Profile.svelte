@@ -582,19 +582,7 @@
                 />
                 <p class="sign-lable">with Coinbase Smart wallet</p>
               </button>
-              <!-- <button
-                on:click={() => {
-                  Account.log_in(); // walletconnect
-                }}
-              >
-                <img
-                  class="sign-icon"
-                  src="/icons/walletconnect.png"
-                  alt="Web3 login"
-                />
-                <p class="sign-lable">with WalletConnect</p>
-              </button> -->
-              <!-- <WalletConnect /> -->
+              <WalletConnect />
             </div>
             {#if $web3loginError}
               <p class="validation">

@@ -2,6 +2,7 @@ import React from 'react';
 
 import {
   createAuthenticationAdapter,
+  cssStringFromTheme,
   darkTheme,
   getDefaultConfig,
   type AuthenticationStatus,
@@ -21,7 +22,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 
 const url = import.meta.env.PUBLIC_BACKEND;
 
-const Web3Provider = ({ children }) => {
+const Web3Provider = ({ linking, children }) => {
   let AUTHENTICATION_STATUS: AuthenticationStatus = 'unauthenticated';
 
   const config = getDefaultConfig({
@@ -95,7 +96,9 @@ const Web3Provider = ({ children }) => {
     verify: async ({ message, signature }) => {
       console.log('Verifying signature with message:', message);
 
-      const response = await fetch(`${url}/rainbow/login`, {
+      const urlPath = linking ? '/rainbow/linklogin' : '/rainbow/login';
+
+      const response = await fetch(`${url}${urlPath}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message, signature }),
@@ -145,6 +148,29 @@ const Web3Provider = ({ children }) => {
               overlayBlur: 'small',
             })}
           >
+            <style
+              dangerouslySetInnerHTML={{
+                __html: `
+            :root {
+              width: 100%;
+              font-family: inherit;
+              cursor: pointer;
+              display: flex;
+              flex-flow: row nowrap;
+              justify-content: center;
+              align-items: center;
+              gap: 0.5vw;
+              padding: 1vw;
+              font-size: 1.5vw;
+              line-height: 1.5vw;
+              color: #dedede;
+              background-color: rgba(56, 117, 250, 0.5);
+              border: 0.1vw solid rgba(51, 226, 230, 0.5);
+              border-radius: 1vw;
+            }
+          `,
+              }}
+            />
             {children}
           </RainbowKitProvider>
         </RainbowKitAuthenticationProvider>
@@ -153,24 +179,24 @@ const Web3Provider = ({ children }) => {
   );
 };
 
-export const App = () => {
-  return (
-    <Web3Provider>
-      <ConnectButton
-        label="with Wallet Connect"
-        showBalance={false}
-        accountStatus={{
-          smallScreen: 'avatar',
-          largeScreen: 'full',
-        }}
-      />
-    </Web3Provider>
-  );
-};
+// export const App = () => {
+//   return (
+//     <Web3Provider>
+//       <ConnectButton
+//         label="with Wallet Connect"
+//         showBalance={false}
+//         accountStatus={{
+//           smallScreen: 'avatar',
+//           largeScreen: 'full',
+//         }}
+//       />
+//     </Web3Provider>
+//   );
+// };
 
-export const YourApp = () => {
+const YourApp = ( linking: boolean ) => {
   return (
-    <Web3Provider>
+    <Web3Provider linking={linking}>
       <ConnectButton.Custom>
         {({
           account,
@@ -260,3 +286,5 @@ export const YourApp = () => {
     </Web3Provider>
   );
 };
+
+export default YourApp;

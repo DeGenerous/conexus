@@ -382,7 +382,8 @@
                   </ul>
                   <h3>Add another address:</h3>
                   <div class="buttons-container">
-                    <button
+                    <WalletConnect linking={true} />
+                    <!-- <button
                       class="add-wallet"
                       on:click={async () => {
                         await Account.log_in('metamask', true);
@@ -411,14 +412,15 @@
                     >
                       <img src="/icons/walletconnect.png" alt="Add wallet" />
                       <p class="sign-lable">WalletConnect</p>
-                    </button>
+                    </button> -->
                   </div>
                 </div>
               {/if}
             {:else}
               <h2>Connect Web3 Wallet:</h2>
               <div class="connect-wallet-buttons">
-                <button
+                <WalletConnect linking={true} />
+                <!-- <button
                   class="sign-button"
                   on:click={() => {
                     Account.log_in('coinbase', true);
@@ -443,7 +445,7 @@
                     alt="Google"
                   />
                   <p class="sign-lable">browser wallet</p></button
-                >
+                > -->
               </div>
             {/if}
           </div>
@@ -558,7 +560,7 @@
                 <p class="sign-lable">with email</p>
               </button>
               <h3>or</h3>
-              <button
+              <!-- <button
                 on:click={() => {
                   Account.log_in('metamask');
                 }}
@@ -581,7 +583,7 @@
                   alt="Web3 login"
                 />
                 <p class="sign-lable">with Coinbase Smart wallet</p>
-              </button>
+              </button> -->
               <WalletConnect />
             </div>
             {#if $web3loginError}

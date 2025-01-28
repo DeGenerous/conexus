@@ -2,19 +2,21 @@
   import { onMount } from 'svelte';
   import ReactDOM from 'react-dom';
 
-  import { YourApp } from './Rainbow';
+  import YourApp from './Rainbow';
+
+  export let linking: boolean = false;
 
   onMount(() => {
     const reactRoot = document.getElementById('react-root');
     if (reactRoot) {
-      ReactDOM.render(YourApp(), reactRoot);
+      ReactDOM.render(YourApp(linking), reactRoot);
     }
   });
 </script>
 
 <div id="react-root"></div>
 
-<style>
+<!-- <style>
   #react-root {
     width: 100%;
     font-family: inherit;
@@ -32,4 +34,4 @@
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1vw;
   }
-</style>
+</style> -->

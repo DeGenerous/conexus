@@ -74,8 +74,6 @@
     }
   };
 
-  let walletsCounter: number = 1;
-  const increaseWalletsCounter = () => walletsCounter++;
   let activeWalletStyling = `
     color: rgba(51, 226, 230, 0.75);
     text-shadow: 0 0 0.1vw rgb(51, 226, 230);
@@ -348,36 +346,34 @@
                 <div class="wallets-container">
                   <h2>Connected Addresses:</h2>
                   <ul>
-                    {#each user.wallets as wallet}
-                      {#if !wallet.faux}
-                        <li
-                          class="wallet"
+                    {#each user.wallets.filter(address => !address.faux) as wallet, index}
+                      <li
+                        class="wallet"
+                        style={wallet.wallet == user.main_wallet
+                          ? activeWalletStyling
+                          : ''}
+                      >
+                        <p>{index + 1}</p>
+                        <span
                           style={wallet.wallet == user.main_wallet
-                            ? activeWalletStyling
+                            ? 'color: rgb(51, 226, 230);'
                             : ''}
+                          >{wallet.wallet.slice(0, 6) +
+                            '...' +
+                            wallet.wallet.slice(-4)}</span
                         >
-                          <p>{increaseWalletsCounter()}</p>
-                          <span
-                            style={wallet.wallet == user.main_wallet
-                              ? 'color: rgb(51, 226, 230);'
-                              : ''}
-                            >{wallet.wallet.slice(0, 6) +
-                              '...' +
-                              wallet.wallet.slice(-4)}</span
-                          >
-                          <p
-                            class="select-wallet"
-                            role="button"
-                            tabindex="0"
-                            on:click={() => {
-                              if (wallet.wallet != user.main_wallet)
-                                walletSelectConfirm(wallet.wallet);
-                            }}
-                          >
-                            ★
-                          </p>
-                        </li>
-                      {/if}
+                        <p
+                          class="select-wallet"
+                          role="button"
+                          tabindex="0"
+                          on:click={() => {
+                            if (wallet.wallet != user.main_wallet)
+                              walletSelectConfirm(wallet.wallet);
+                          }}
+                        >
+                          ★
+                        </p>
+                      </li>
                     {/each}
                   </ul>
                   <div class="buttons-container">

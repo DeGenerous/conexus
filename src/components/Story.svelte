@@ -124,7 +124,7 @@
 
           <p class="description">{topic.description}</p>
         </article>
-        <div class="buttons-container">
+        <div class="story-buttons-container">
           <Share />
           <button
             on:click={() => topic && CoNexus.start(topic.name)}
@@ -315,7 +315,7 @@
     text-shadow: 0 0.25vw 0.25vw #010020;
   }
 
-  .buttons-container {
+  .story-buttons-container {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
@@ -400,7 +400,7 @@
     background-image: url('/icons/play.png');
   }
 
-  .buttons-container button {
+  .story-buttons-container button {
     gap: 1vw;
   }
 
@@ -423,7 +423,7 @@
       padding-top: 0;
     }
 
-    .buttons-container button {
+    .story-buttons-container button {
       gap: 0.5em;
     }
 
@@ -495,7 +495,7 @@
       width: 90vw;
     }
 
-    .buttons-container {
+    .story-buttons-container {
       width: 100vw;
       flex-direction: column-reverse;
       align-items: center;

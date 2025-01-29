@@ -500,7 +500,7 @@
                 <img class="sign-icon" src="/icons/email.png" alt="Google" />
                 <p class="sign-lable">with email</p>
               </button>
-              <WalletConnect title={'with crypto wallet'} />
+              <WalletConnect title={'with Web3 wallet'} />
             </div>
             {#if $web3loginError}
               <p class="validation">

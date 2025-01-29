@@ -195,7 +195,7 @@ const YourApp = (linking: boolean, title: string) => {
             (!authenticationStatus || authenticationStatus === 'authenticated');
           // changing button width
           let autoWidth: any = undefined;
-          if (title !== 'with crypto wallet') autoWidth = { width: 'auto' };
+          if (title !== 'with Web3 wallet') autoWidth = { width: 'auto' };
           return (
             <div
               {...(!ready && {

@@ -12,9 +12,9 @@
 
   afterUpdate(() => {
     document.onfullscreenchange = () => {
-      fullscreen.set(!!document.fullscreenElement);
+      if ($fullscreen !== !!document.fullscreenElement) fullscreen.set(!!document.fullscreenElement);
     };
-    
+
     if (width <= 600)
       imageWrapper.style.height = fullWidthImage ? 'auto' : '512px';
     else imageWrapper.style.height = 'auto';

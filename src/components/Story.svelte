@@ -20,7 +20,7 @@
 
   export let story_name: string;
 
-  let backgroundImageUrl: string = '/conexusBG.avif';
+  let backgroundImageUrl: string = '/defaultBG.avif';
 
   background_image.subscribe((value) => {
     if (value) {

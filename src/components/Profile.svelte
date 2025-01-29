@@ -380,72 +380,14 @@
                       {/if}
                     {/each}
                   </ul>
-                  <h3>Add another address:</h3>
                   <div class="buttons-container">
-                    <WalletConnect linking={true} />
-                    <!-- <button
-                      class="add-wallet"
-                      on:click={async () => {
-                        await Account.log_in('metamask', true);
-                        location.reload();
-                      }}
-                    >
-                      <img src="/icons/wallet.png" alt="Add wallet" />
-                      <p class="sign-lable">browser wallet</p>
-                    </button>
-                    <button
-                      class="add-wallet"
-                      on:click={async () => {
-                        await Account.log_in('coinbase', true);
-                        location.reload();
-                      }}
-                    >
-                      <img src="/icons/coinbase.png" alt="Add wallet" />
-                      <p class="sign-lable">Coinbase Smart wallet</p>
-                    </button>
-                    <button
-                      class="add-wallet"
-                      on:click={async () => {
-                        await Account.log_in('metamask', true); // walletconnect
-                        location.reload();
-                      }}
-                    >
-                      <img src="/icons/walletconnect.png" alt="Add wallet" />
-                      <p class="sign-lable">WalletConnect</p>
-                    </button> -->
+                    <WalletConnect linking={true} title={'Add another address'} />
                   </div>
                 </div>
               {/if}
             {:else}
-              <h2>Connect Web3 Wallet:</h2>
-              <div class="connect-wallet-buttons">
-                <WalletConnect linking={true} />
-                <!-- <button
-                  class="sign-button"
-                  on:click={() => {
-                    Account.log_in('coinbase', true);
-                  }}
-                >
-                  <img
-                    class="sign-icon"
-                    src="/icons/coinbase.png"
-                    alt="Google"
-                  />
-                  <p class="sign-lable">Coinbase Smart Wallet</p></button
-                >
-                <button
-                  class="sign-button"
-                  on:click={() => {
-                    Account.log_in('metamask', true);
-                  }}
-                >
-                  <img
-                    class="sign-icon"
-                    src="/icons/walletconnect.png"
-                    alt="Google"
-                  />
-                  <p class="sign-lable">browser wallet</p></button
-                > -->
+              <div class="buttons-container">
+                <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
               </div>
             {/if}
           </div>
@@ -559,32 +501,7 @@
                 <img class="sign-icon" src="/icons/email.png" alt="Google" />
                 <p class="sign-lable">with email</p>
               </button>
-              <h3>or</h3>
-              <!-- <button
-                on:click={() => {
-                  Account.log_in('metamask');
-                }}
-              >
-                <img
-                  class="sign-icon"
-                  src="/icons/wallet.png"
-                  alt="Web3 login"
-                />
-                <p class="sign-lable">with browser wallet</p>
-              </button>
-              <button
-                on:click={() => {
-                  Account.log_in('coinbase');
-                }}
-              >
-                <img
-                  class="sign-icon"
-                  src="/icons/coinbase.png"
-                  alt="Web3 login"
-                />
-                <p class="sign-lable">with Coinbase Smart wallet</p>
-              </button> -->
-              <WalletConnect />
+              <WalletConnect title={'with crypto wallet'} />
             </div>
             {#if $web3loginError}
               <p class="validation">
@@ -887,32 +804,6 @@
     gap: 1.5vw;
   }
 
-  .buttons-container {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vw;
-  }
-
-  .buttons-container button {
-    width: 50vw;
-    justify-content: space-between;
-    gap: 1vw;
-  }
-
-  .sign-icon {
-    opacity: 0.9;
-    height: 2.5vw;
-    width: auto;
-    cursor: pointer;
-  }
-
-  .sign-lable {
-    width: 100%;
-    cursor: pointer;
-  }
-
   /* SIGNIN with EMAIL */
 
   .login-form,
@@ -931,10 +822,6 @@
   .login-form a:hover,
   .login-form a:active {
     color: rgb(51, 226, 230);
-  }
-
-  .sign-button {
-    width: 30vw !important;
   }
 
   .input-container {
@@ -1075,14 +962,6 @@
     gap: 2vw;
   }
 
-  .connect-wallet-buttons {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vw;
-  }
-
   .wallets-container {
     min-width: 65vw;
     display: flex;
@@ -1136,15 +1015,6 @@
   .select-wallet:active {
     text-shadow: 0 0 0.5vw rgba(1, 0, 32, 0.5);
     transform: scale(1.1);
-  }
-
-  .add-wallet {
-    width: 40vw !important;
-    gap: 1vw;
-  }
-
-  .add-wallet img {
-    width: 2vw;
   }
 
   /* Referral codes container */
@@ -1249,26 +1119,9 @@
       gap: 1em;
     }
 
-    .buttons-container {
-      gap: 0.75em;
-    }
-
-    .buttons-container button {
-      width: 75vw;
-      gap: 1em;
-    }
-
-    .sign-icon {
-      height: 0.8em;
-    }
-
     .login-form,
     .signup-form {
       gap: 1em;
-    }
-
-    .sign-button {
-      width: 70vw !important;
     }
 
     .input-container {
@@ -1320,10 +1173,6 @@
       flex-direction: column;
     }
 
-    .connect-wallet-buttons {
-      gap: 0.5em;
-    }
-
     .wallets-container {
       gap: 1em;
     }
@@ -1348,15 +1197,6 @@
       padding: 0.5em 1em;
       font-size: 1.1em;
       border-radius: 0.5em;
-    }
-
-    .add-wallet {
-      width: 100% !important;
-      gap: 1em;
-    }
-
-    .add-wallet img {
-      width: 1em;
     }
 
     .referral-codes {

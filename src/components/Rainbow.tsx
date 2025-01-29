@@ -35,7 +35,7 @@ const Web3Provider = ({ linking, children }) => {
   });
 
   const message = (nonce: string) => `
-  Sign this message to prove you're an Potential NFT holder.
+  Sign this message to prove you're a Potential NFT holder.
 
   It will not cause a blockchain transaction, nor any gas fees.
 
@@ -82,7 +82,7 @@ const Web3Provider = ({ linking, children }) => {
           address,
           chainId,
           statement:
-            "Sign this message to prove you're an Potential NFT holder. It will not cause a blockchain transaction, nor any gas fees.",
+            "Sign this message to prove you're a Potential NFT holder. It will not cause a blockchain transaction, nor any gas fees.",
           domain: window.location.host,
           uri: window.location.origin,
           version: '1',
@@ -139,38 +139,16 @@ const Web3Provider = ({ linking, children }) => {
           status={AUTHENTICATION_STATUS}
         >
           <RainbowKitProvider
-            modalSize="compact"
+            coolMode
+            modalSize="wide"
             theme={darkTheme({
-              accentColor: '#7b3fe4',
-              accentColorForeground: 'white',
-              borderRadius: 'small',
-              fontStack: 'system',
-              overlayBlur: 'small',
+              accentColor: 'rgb(51, 226, 230)',
+              accentColorForeground: 'rgb(51, 226, 230)',
+              borderRadius: 'large',
+              fontStack: 'rounded',
+              overlayBlur: 'large',
             })}
           >
-            <style
-              dangerouslySetInnerHTML={{
-                __html: `
-            :root {
-              width: 100%;
-              font-family: inherit;
-              cursor: pointer;
-              display: flex;
-              flex-flow: row nowrap;
-              justify-content: center;
-              align-items: center;
-              gap: 0.5vw;
-              padding: 1vw;
-              font-size: 1.5vw;
-              line-height: 1.5vw;
-              color: #dedede;
-              background-color: rgba(56, 117, 250, 0.5);
-              border: 0.1vw solid rgba(51, 226, 230, 0.5);
-              border-radius: 1vw;
-            }
-          `,
-              }}
-            />
             {children}
           </RainbowKitProvider>
         </RainbowKitAuthenticationProvider>
@@ -194,7 +172,7 @@ const Web3Provider = ({ linking, children }) => {
 //   );
 // };
 
-const YourApp = ( linking: boolean ) => {
+const YourApp = ( linking: boolean, title: string ) => {
   return (
     <Web3Provider linking={linking}>
       <ConnectButton.Custom>
@@ -215,22 +193,25 @@ const YourApp = ( linking: boolean ) => {
             account &&
             chain &&
             (!authenticationStatus || authenticationStatus === 'authenticated');
+          // changing button width
+          let autoWidth: any = undefined;
+          if (title !== 'with crypto wallet') autoWidth = {width: 'auto'};
           return (
             <div
               {...(!ready && {
                 'aria-hidden': true,
-                style: {
-                  opacity: 0,
-                  pointerEvents: 'none',
-                  userSelect: 'none',
-                },
               })}
             >
               {(() => {
                 if (!connected) {
                   return (
-                    <button onClick={openConnectModal} type="button">
-                      Connect Wallet
+                    <button className="sign-button" style={autoWidth} onClick={openConnectModal} type="button">
+                      <img
+                        className="sign-icon"
+                        src="/icons/wallet.png"
+                        alt="Google"
+                      />
+                      <p className="sign-lable">{title}</p>
                     </button>
                   );
                 }
@@ -242,28 +223,18 @@ const YourApp = ( linking: boolean ) => {
                   );
                 }
                 return (
-                  <div style={{ display: 'flex', gap: 12 }}>
+                  <div>
                     <button
                       onClick={openChainModal}
-                      style={{ display: 'flex', alignItems: 'center' }}
                       type="button"
                     >
                       {chain.hasIcon && (
                         <div
-                          style={{
-                            background: chain.iconBackground,
-                            width: 12,
-                            height: 12,
-                            borderRadius: 999,
-                            overflow: 'hidden',
-                            marginRight: 4,
-                          }}
                         >
                           {chain.iconUrl && (
                             <img
                               alt={chain.name ?? 'Chain icon'}
                               src={chain.iconUrl}
-                              style={{ width: 12, height: 12 }}
                             />
                           )}
                         </div>

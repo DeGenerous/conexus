@@ -13,7 +13,7 @@ const url = import.meta.env.PUBLIC_BACKEND;
 const domain = import.meta.env.PUBLIC_DOMAIN;
 
 const message = (nonce: string) => `
-Sign this message to prove you're an Potential NFT holder.
+Sign this message to prove you're a Potential NFT holder.
 
 It will not cause a blockchain transaction, nor any gas fees.
 

@@ -1,37 +1,26 @@
-<script lang="ts">
+<script>
   import { onMount } from 'svelte';
   import ReactDOM from 'react-dom';
 
   import YourApp from './Rainbow';
+ 
+  import { showProfile } from '@stores/modal';
 
-  export let linking: boolean = false;
+  export let linking = false;
+  export let title = 'Connect Wallet'
 
   onMount(() => {
     const reactRoot = document.getElementById('react-root');
     if (reactRoot) {
-      ReactDOM.render(YourApp(linking), reactRoot);
+      ReactDOM.render(YourApp(linking, title), reactRoot);
     }
   });
+
+  const closeProfile = () => {
+    if (!$showProfile) return;
+    $showProfile = false;
+  }
 </script>
 
-<div id="react-root"></div>
-
-<!-- <style>
-  #react-root {
-    width: 100%;
-    font-family: inherit;
-    cursor: pointer;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5vw;
-    padding: 1vw;
-    font-size: 1.5vw;
-    line-height: 1.5vw;
-    color: #dedede;
-    background-color: rgba(56, 117, 250, 0.5);
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 1vw;
-  }
-</style> -->
+<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+<div id="react-root" on:click={closeProfile}></div>

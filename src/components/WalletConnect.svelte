@@ -3,11 +3,11 @@
   import ReactDOM from 'react-dom';
 
   import YourApp from './Rainbow';
- 
+
   import { showProfile } from '@stores/modal';
 
   export let linking = false;
-  export let title = 'Connect Wallet'
+  export let title = 'Connect Wallet';
 
   onMount(() => {
     const reactRoot = document.getElementById('react-root');
@@ -19,7 +19,7 @@
   const closeProfile = () => {
     if (!$showProfile) return;
     $showProfile = false;
-  }
+  };
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->

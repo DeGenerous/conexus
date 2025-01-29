@@ -12,7 +12,8 @@
 
   afterUpdate(() => {
     document.onfullscreenchange = () => {
-      if ($fullscreen !== !!document.fullscreenElement) fullscreen.set(!!document.fullscreenElement);
+      if ($fullscreen !== !!document.fullscreenElement)
+        fullscreen.set(!!document.fullscreenElement);
     };
 
     if (width <= 600)

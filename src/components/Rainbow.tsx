@@ -172,7 +172,7 @@ const Web3Provider = ({ linking, children }) => {
 //   );
 // };
 
-const YourApp = ( linking: boolean, title: string ) => {
+const YourApp = (linking: boolean, title: string) => {
   return (
     <Web3Provider linking={linking}>
       <ConnectButton.Custom>
@@ -195,7 +195,7 @@ const YourApp = ( linking: boolean, title: string ) => {
             (!authenticationStatus || authenticationStatus === 'authenticated');
           // changing button width
           let autoWidth: any = undefined;
-          if (title !== 'with crypto wallet') autoWidth = {width: 'auto'};
+          if (title !== 'with crypto wallet') autoWidth = { width: 'auto' };
           return (
             <div
               {...(!ready && {
@@ -205,7 +205,12 @@ const YourApp = ( linking: boolean, title: string ) => {
               {(() => {
                 if (!connected) {
                   return (
-                    <button className="sign-button" style={autoWidth} onClick={openConnectModal} type="button">
+                    <button
+                      className="sign-button"
+                      style={autoWidth}
+                      onClick={openConnectModal}
+                      type="button"
+                    >
                       <img
                         className="sign-icon"
                         src="/icons/wallet.png"
@@ -224,13 +229,9 @@ const YourApp = ( linking: boolean, title: string ) => {
                 }
                 return (
                   <div>
-                    <button
-                      onClick={openChainModal}
-                      type="button"
-                    >
+                    <button onClick={openChainModal} type="button">
                       {chain.hasIcon && (
-                        <div
-                        >
+                        <div>
                           {chain.iconUrl && (
                             <img
                               alt={chain.name ?? 'Chain icon'}

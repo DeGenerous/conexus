@@ -346,7 +346,7 @@
                 <div class="wallets-container">
                   <h2>Connected Addresses:</h2>
                   <ul>
-                    {#each user.wallets.filter(address => !address.faux) as wallet, index}
+                    {#each user.wallets.filter((address) => !address.faux) as wallet, index}
                       <li
                         class="wallet"
                         style={wallet.wallet == user.main_wallet
@@ -377,7 +377,10 @@
                     {/each}
                   </ul>
                   <div class="buttons-container">
-                    <WalletConnect linking={true} title={'Add another address'} />
+                    <WalletConnect
+                      linking={true}
+                      title={'Add another address'}
+                    />
                   </div>
                 </div>
               {/if}

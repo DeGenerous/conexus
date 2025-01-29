@@ -612,7 +612,7 @@
     }
 
     .controls-container h3 {
-      max-width: 30rem;
+      max-width: 65rem;
     }
 
     .story-info-container {

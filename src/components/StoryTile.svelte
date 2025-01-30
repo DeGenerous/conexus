@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
   import { CoNexus } from '@lib/conexus';
 
   export let section: string;
@@ -9,26 +7,33 @@
     topicName.charAt(0).toUpperCase() + topicName.slice(1)
   ).trim();
 
-  let storyImage: string | null = null;
   const blankPicture = '/blank.avif';
-  onMount(async () => {
-    storyImage = await CoNexus.fetch_story_image(topicName!, 'tile');
-    localStorage.setItem(topicName, storyImage ?? blankPicture);
-  });
 </script>
 
-<a class="tile" href="/{section}/{topicName}">
-  <img
-    class="tile-picture"
-    loading="lazy"
-    src={localStorage.getItem(topicName)}
-    alt={storyName}
-    draggable="false"
-    height="1024"
-    width="1024"
-  />
-  <p class="title">{storyName}</p>
-</a>
+  <a class="tile" href="/{section}/{topicName}">
+    {#await CoNexus.fetch_story_image(topicName!, 'tile')}
+      <img
+        class="tile-picture"
+        loading="lazy"
+        src={blankPicture}
+        alt={storyName}
+        draggable="false"
+        height="1024"
+        width="1024"
+      />
+    {:then storyImage} 
+      <img
+        class="tile-picture"
+        loading="lazy"
+        src={storyImage ?? blankPicture}
+        alt={storyName}
+        draggable="false"
+        height="1024"
+        width="1024"
+      />
+    {/await}
+    <p class="title">{storyName}</p>
+  </a>
 
 <style>
   .tile {

@@ -157,6 +157,7 @@
               ...cat,
               topics: [...cat.topics], // Ensure a fresh copy of topics
             }));
+            getGenre(activeGenre);
           }
         }}
         style={isSorting

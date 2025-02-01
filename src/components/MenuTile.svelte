@@ -65,7 +65,7 @@
     margin-bottom: 0;
     box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.25);
     border-radius: 2vw;
-    background-color: black;
+    background-color: rgba(51, 226, 230, 0.1);
     cursor: pointer;
   }
 

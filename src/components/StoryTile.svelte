@@ -69,7 +69,7 @@
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1vw;
     flex: 1;
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(51, 226, 230, 0.1);
     cursor: pointer;
   }
 

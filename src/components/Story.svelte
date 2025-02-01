@@ -32,34 +32,7 @@
     await checkUserState('/story');
   });
 
-  let topic: DynTopic | null = null;
   let continuables: ContinuableStory[] = [];
-
-  // Fetch the topic
-  async function fetchTopic() {
-    try {
-      topic = await CoNexus.getTopic(story_name!);
-    } catch (error) {
-      console.error('Failed to fetch topic:', error);
-      topic = null;
-    }
-  }
-
-  // Fetch continuable stories
-  async function fetchContinuables() {
-    try {
-      continuables = await CoNexus.storyContinuable(story_name!);
-    } catch (error) {
-      console.error('Failed to fetch continuables:', error);
-      continuables = [];
-    }
-  }
-
-  onMount(async () => {
-    await fetchTopic();
-    await fetchContinuables();
-  });
-
   let selectedStory: any;
 
   function openModal(story: any) {
@@ -84,45 +57,71 @@
     continuables = await CoNexus.storyContinuable(story_name!);
   }
 
-  let storyImage: string | null = null;
-  onMount(async () => {
-    storyImage = await CoNexus.fetch_story_image(story_name!, 'description');
-  });
-
   const blankPicture: string = '/blank.avif'; // temp
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $story === null}
-  {#if topic !== null}
+  {#await CoNexus.getTopic(story_name!)}
     <header>
       <a class="arrow" aria-label="Back arrow" href="./"></a>
-      <h1>
+      <Profile />
+    </header>
+
+    <div class="story-container blur">
+        <div class="picture default-picture loading-animation"></div>
+
+      <section class="story-info">
+        <article>
+          <article>
+            <div class="genres" style="opacity: 0.5">
+              <p>Genres:</p>
+              <p class="genres-list default-genres loading-animation"></p>
+            </div>
+            <div class="default-line loading-animation"></div>
+            <div class="default-line loading-animation"></div>
+            <div class="default-line loading-animation"></div>
+            <div class="default-line loading-animation last-line"></div>
+          </article>
+        </article>
+        <div class="story-buttons-container">
+          <button disabled>SHARE</button>
+          <button disabled>PLAY NOW</button>
+        </div>
+      </section>
+    </div>
+  {:then topic: DynTopic}
+    <header>
+      <a class="arrow" aria-label="Back arrow" href="./"></a>
+      <h1 class="fade-in">
         {(topic.name.charAt(0).toUpperCase() + topic.name.slice(1)).trim()}
       </h1>
       <Profile />
     </header>
 
     <div class="story-container blur">
-      <img
-        class="picture"
-        src={storyImage ?? blankPicture}
-        alt={topic?.name}
-        draggable="false"
-        width="1024"
-        height="1024"
-      />
+      {#await CoNexus.fetch_story_image(story_name!, 'description')}
+        <div class="picture default-picture"></div>
+      {:then storyImage}
+        <img
+          class="picture fade-in"
+          src={storyImage ?? blankPicture}
+          alt={topic?.name}
+          draggable="false"
+          width="1024"
+          height="1024"
+        />
+      {/await}
 
       <section class="story-info">
         <article>
           {#if topic.genres !== ''}
             <div class="genres">
               <p>Genres:</p>
-              <p class="genres-list">{topic.genres}</p>
+              <p class="genres-list fade-in">{topic.genres}</p>
             </div>
           {/if}
-
-          <p class="description">{topic.description}</p>
+          <p class="description fade-in">{topic.description}</p>
         </article>
         <div class="story-buttons-container">
           <Share />
@@ -144,42 +143,66 @@
         </div>
       </section>
     </div>
-
-    {#if continuables.length > 0}
-      <section class="unfinished-stories blur">
-        <h3>Continue Shaping:</h3>
-        <div class="continue-shaping-container">
-          {#each continuables as continuable}
-            <div class="unfinished-story">
-              <button
-                aria-label="Delete story"
-                class="continue-shaping-btn delete-button"
-                on:click|preventDefault={() => openModal(continuable)}
-                disabled={$loading}
-              ></button>
-              <h3>
-                {continuable.story_id.split('-')[0]} - {new Date(
-                  continuable.created ?? '',
-                ).toLocaleDateString()}
-              </h3>
-              <button
-                aria-label="Continue shaping"
-                class="continue-shaping-btn continue-button"
-                on:click|preventDefault={() => CoNexus.continue(continuable)}
-                disabled={$loading}
-              ></button>
-            </div>
-          {/each}
-        </div>
-      </section>
-    {/if}
-  {:else}
+  {:catch}
     <header>
       <a class="arrow" aria-label="Back arrow" href="./"></a>
-      <h1>...</h1>
       <Profile />
     </header>
-  {/if}
+
+    <div class="story-container blur">
+        <div class="picture default-picture"></div>
+
+      <section class="story-info">
+        <article>
+          <article>
+            <div class="genres" style="opacity: 0.5">
+              <p>Failed to fetch story...</p>
+            </div>
+            <div class="genres" style="opacity: 0.5">
+              <p>Please try again or contact support.</p>
+            </div>
+          </article>
+        </article>
+        <div class="story-buttons-container">
+          <button disabled>SHARE</button>
+          <button disabled>ERROR</button>
+        </div>
+      </section>
+    </div>
+  {/await}
+
+  {#await CoNexus.storyContinuable(story_name!) then continuables}
+    <section class="unfinished-stories fade-in blur">
+      <h3>Continue Shaping:</h3>
+      <div class="continue-shaping-container">
+        {#each continuables as continuable}
+          <div class="unfinished-story">
+            <button
+              aria-label="Delete story"
+              class="continue-shaping-btn delete-button"
+              on:click|preventDefault={() => openModal(continuable)}
+              disabled={$loading}
+            ></button>
+            <h3>
+              {continuable.story_id.split('-')[0]} - {new Date(
+                continuable.created ?? '',
+              ).toLocaleDateString()}
+            </h3>
+            <button
+              aria-label="Continue shaping"
+              class="continue-shaping-btn continue-button"
+              on:click|preventDefault={() => CoNexus.continue(continuable)}
+              disabled={$loading}
+            ></button>
+          </div>
+        {/each}
+      </div>
+    </section>
+  {:catch}
+  <section class="unfinished-stories blur">
+    <h3>Failed to fetch unfinished stories...</h3>
+  </section>
+  {/await}
 {:else}
   <BackgroundMusic />
   <Tts />
@@ -264,10 +287,12 @@
       inset 0 0 0.5vw rgba(51, 226, 230, 0.25),
       0 0 0.5vw #010020;
     border-radius: 1.5vw;
+    transition: all 2s cubic-bezier(0.075, 0.82, 0.165, 1);
   }
 
   .story-info {
     min-height: 25vw;
+    width: 100%;
     display: flex;
     flex-flow: column nowrap;
     justify-content: space-between;
@@ -418,9 +443,81 @@
     }
   }
 
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fleshlight {
+    0% {
+      opacity: 0.75;
+      background-position: 200% 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.75;
+      background-position: 0 200%;
+    }
+  }
+
+  /* LOADING */
+
+  .fade-in {
+    animation: fadeIn 0.5s ease-in-out forwards;
+  }
+
+  .default-picture {
+    min-width: 25vw;
+    height: 25vw;
+    filter: none;
+    background-color: rgba(51, 226, 230, 0.1);
+  }
+
+  .default-genres {
+    min-width: 35vw;
+    color: transparent;
+    text-shadow: none !important;
+    height: 4vw;
+    background-color: rgba(51, 226, 230, 0.2);
+  }
+
+  .default-line {
+    background-color: rgba(51, 226, 230, 0.1);
+    height: 1.5vw;
+    width: 44vw;
+    margin-block: -0.5vw;
+  }
+
+  .last-line {
+    width: 25vw;
+  }
+
+  .loading-animation {
+    background-image: linear-gradient(
+      to right,
+      rgba(51, 226, 230, 0),
+      rgba(51, 226, 230, 0),
+      rgba(51, 226, 230, 0.05),
+      rgba(51, 226, 230, 0),
+      rgba(51, 226, 230, 0)
+    );
+    background-size: 200% auto;
+    animation: fleshlight 2s linear infinite;
+  }
+
   @media only screen and (max-width: 600px) {
     :global(html) {
       padding-top: 0;
+    }
+
+    .story-info {
+      width: auto;
     }
 
     .story-buttons-container button {
@@ -488,6 +585,10 @@
       border-radius: 0.5em;
     }
 
+    .default-genres {
+      width: 80vw;
+    }
+
     .description {
       text-align: center;
       font-size: 1em;
@@ -534,6 +635,26 @@
     .continue-shaping-btn {
       width: 2em;
       height: 2em;
+    }
+
+    .default-picture {
+      height: 90vw;
+    }
+
+    .default-genres {
+      min-width: none;
+      width: 80vw;
+      height: 2.5em;
+    }
+
+    .default-line {
+      height: 1em;
+      width: 80vw;
+      margin-block: 0.25em;
+    }
+
+    .last-line {
+      width: 80vw;
     }
   }
 </style>

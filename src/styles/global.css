@@ -288,6 +288,10 @@ a:active {
   color: rgba(0, 185, 55, 0.75);
 }
 
+.gray {
+  color: rgba(150, 150, 150, 0.75);
+}
+
 main {
   display: flex;
   flex-flow: column nowrap;

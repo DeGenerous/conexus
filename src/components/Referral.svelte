@@ -48,7 +48,7 @@
 
     {#if code.length === 16}
       {#await Account.validateReferralCode(code)}
-        <p class="validation">Checking referral code...</p>
+        <p class="validation gray">Checking referral code...</p>
       {:then referralObject}
         {#if referralObject}
           <p class="validation green">Referral code is valid</p>

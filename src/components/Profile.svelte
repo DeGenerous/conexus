@@ -200,8 +200,11 @@
           class="login-button"
           on:click={() => {
             Account.signout();
-          }}>Log out</button
+          }}
         >
+          <img src="/icons/sign-out.png" alt="Sign-out" />
+          <p>Sign out</p>
+        </button>
       {:else}
         <button class="back-arrow" on:click|stopPropagation={handleBackArrow}>
           <img src="/icons/quit-fullscreen.png" alt="Back" />
@@ -776,17 +779,24 @@
   }
 
   .back-arrow,
-  .close-button {
+  .close-button,
+  .login-button {
     padding: 0.5vw;
   }
 
   .back-arrow img,
-  .close-button img {
+  .close-button img,
+  .login-button img {
     width: 3vw;
     padding: 0.25vw;
     opacity: 0.9;
     height: auto;
     cursor: pointer;
+  }
+
+  .login-button p {
+    color: #dedede;
+    cursor: inherit;
   }
 
   .back-arrow img {
@@ -1105,13 +1115,23 @@
     }
 
     .back-arrow,
-    .close-button {
+    .close-button,
+    .login-button {
       padding: 0.35em;
     }
 
     .back-arrow img,
-    .close-button img {
+    .close-button img,
+    .login-button img {
       width: 1.25em;
+    }
+
+    .login-button img {
+      padding: 0;
+    }
+
+    .login-button p {
+      display: none;
     }
 
     .sign-container {
@@ -1193,8 +1213,8 @@
 
     .wallet span {
       width: 100%;
-      padding: 0.5em 1em;
-      font-size: 1.1em;
+      padding: 0.25em 1em;
+      font-size: 1em;
       border-radius: 0.5em;
     }
 

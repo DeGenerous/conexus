@@ -2,17 +2,29 @@
   import type { DynSectionCategory } from '@lib/conexus';
   import StoryTile from '../components/StoryTile.svelte';
 
-  export let category: DynSectionCategory;
-  export let section: string;
+  export let category: DynSectionCategory | null = null;
+  export let section: string = '';
 </script>
 
 <section>
-  <p class="collection-header">{category.name}</p>
-  <div class="tiles-collection blur">
-    {#each category.topics as topic}
-      <StoryTile {section} topicName={topic.name} />
-    {/each}
-  </div>
+  {#if !category || !section}
+    <p class="collection-header">Loading stories...</p>
+    <div class="tiles-collection blur">
+      {#each Array(7) as _}
+        <div class="tile">
+          <div class="tile-picture loading-animation"></div>
+          <p class="title loading-animation"></p>
+        </div>
+      {/each}
+    </div>
+  {:else}
+    <p class="collection-header">{category.name}</p>
+    <div class="tiles-collection blur">
+      {#each category.topics as topic}
+        <StoryTile {section} topicName={topic.name} />
+      {/each}
+    </div>
+  {/if}
 </section>
 
 <style>
@@ -81,6 +93,45 @@
     text-shadow: 0 0.25vw 0.25vw #010020;
   }
 
+  /* Default tiles */
+
+  .tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 20vw;
+    background-color: rgba(36, 65, 189, 0.5);
+    color: rgba(255, 255, 255, 0.6);
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
+    border-radius: 1.5vw;
+    box-shadow: 0 0 0.5vw #010020;
+    cursor: pointer;
+    flex: none;
+  }
+
+  .tile-picture {
+    width: 95%;
+    height: 19vw;
+    min-height: 19vw;
+    margin: 2.5%;
+    margin-bottom: 0;
+    /* border: 0.1vw solid rgba(51, 226, 230, 0.5); */
+    border-radius: 1vw;
+    background-color: rgba(51, 226, 230, 0.1);
+    /* background-color: rgba(1, 0, 32, 0.9); */
+    cursor: pointer;
+  }
+
+  .title {
+    margin-block: 0.95vw;
+    height: 3vw;
+    width: 90%;
+    background-color: rgba(51, 226, 230, 0.1);
+    /* background-color: rgba(1, 0, 32, 0.9); */
+    cursor: pointer;
+  }
+
   @media only screen and (max-width: 600px) {
     section {
       gap: 0.5em;
@@ -102,6 +153,23 @@
       border-right: none;
       gap: 1em;
       padding: 1em;
+    }
+
+    .tile {
+      width: 40vw;
+      border-radius: 1em;
+    }
+
+    .tile-picture {
+      height: 38vw;
+      min-height: 38vw;
+      border-radius: 0.75em;
+    }
+
+    .title {
+      margin-block: calc(0.5em - 0.1vw);
+      height: 1em;
+      width: 80%;
     }
   }
 </style>

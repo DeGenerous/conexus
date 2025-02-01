@@ -430,46 +430,9 @@
 
   .searching {
     height: 1.5vw;
-    animation: searching 1s linear infinite;
-  }
-
-  @keyframes searching {
-    from {
-      transform: none;
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes fleshlight {
-    0% {
-      opacity: 0.75;
-      background-position: 200% 0;
-    }
-    50% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0.75;
-      background-position: 0 200%;
-    }
   }
 
   /* LOADING */
-
-  .fade-in {
-    animation: fadeIn 0.5s ease-in-out forwards;
-  }
 
   .default-picture {
     min-width: 25vw;
@@ -495,19 +458,6 @@
 
   .last-line {
     width: 25vw;
-  }
-
-  .loading-animation {
-    background-image: linear-gradient(
-      to right,
-      rgba(51, 226, 230, 0),
-      rgba(51, 226, 230, 0),
-      rgba(51, 226, 230, 0.05),
-      rgba(51, 226, 230, 0),
-      rgba(51, 226, 230, 0)
-    );
-    background-size: 200% auto;
-    animation: fleshlight 2s linear infinite;
   }
 
   @media only screen and (max-width: 600px) {

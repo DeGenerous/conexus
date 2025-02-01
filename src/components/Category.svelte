@@ -122,7 +122,7 @@
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
-{#if categories}
+{#if categories && categories.length > 0}
   <section class="filters">
     <div class="sort-genres-filters">
       <div
@@ -212,7 +212,45 @@
     </div>
   {/key}
 {:else}
-  <p class="validation green">Loading data...</p>
+  <section class="filters">
+    <div class="sort-genres-filters">
+      <div class="filter filter-wrapper loading-animation blur" >
+        <img
+          class="filter-image"
+          src={activeGenre ? '/icons/reset.png' : '/icons/filter.png'}
+          alt="Genres filter"
+        />
+        <select class="genre-selector">
+          <option value="" selected={true} disabled hidden>Select genre</option>
+        </select>
+      </div>
+      <button class="filter loading-animation blur" style="cursor: pointer;" disabled>
+        <img class="filter-image" src="/icons/sort.png" alt="Sort" />
+        A-Z
+      </button>
+    </div>
+
+    <div
+      class="filter filter-wrapper loading-animation blur"
+    >
+        <img
+          class="filter-image"
+          src="/icons/search.png"
+          alt="Search"
+        />
+      <input
+        class="search-field"
+        placeholder="Search story..."
+        disabled
+      />
+    </div>
+  </section>
+
+  <div class="categories-wrapper">
+    {#each Array(2) as _}
+      <StoryCollection category={null} />
+    {/each}
+  </div>
 {/if}
 
 <style>
@@ -257,19 +295,6 @@
     background-color: rgba(56, 117, 250, 0.5);
     border: 0.1vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1vw;
-  }
-
-  .searching {
-    animation: searching 1s linear infinite;
-  }
-
-  @keyframes searching {
-    from {
-      transform: none;
-    }
-    to {
-      transform: rotate(360deg);
-    }
   }
 
   .genre-selector {

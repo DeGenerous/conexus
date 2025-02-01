@@ -20,6 +20,11 @@
 
   export let story_name: string;
 
+  onMount(async () => {
+    await checkUserState('/story');
+  });
+
+  let deletedStories: string[] = []; // temp storage before reload for immediate removal
   let backgroundImageUrl: string = '/defaultBG.avif';
 
   background_image.subscribe((value) => {
@@ -28,33 +33,25 @@
     }
   });
 
-  onMount(async () => {
-    await checkUserState('/story');
-  });
-
-  let continuables: ContinuableStory[] = [];
-  let selectedStory: any;
-
   function openModal(story: any) {
     $secondButton = `Delete story: ${
-      selectedStory?.category.charAt(0).toUpperCase() +
-      selectedStory?.category.slice(1)
+      story.category.charAt(0).toUpperCase() +
+      story.category.slice(1)
     }`;
-    $handleSecondButton = () => DeleteStory(selectedStory.story_id);
+    $handleSecondButton = () => DeleteStory(story.story_id);
     $modalContent = `<h2>Are you sure you want to delete this story?</h2>
       <h3>This action is irreversible. You will lose all progress on this story.</h3>`;
-    selectedStory = story;
     $showModal = true;
   }
 
   async function DeleteStory(story_id: any) {
-    await CoNexus.delete(story_id);
-    await fetchContinuableStories();
-    $showModal = false;
-  }
-
-  async function fetchContinuableStories() {
-    continuables = await CoNexus.storyContinuable(story_name!);
+    try {
+      await CoNexus.delete(story_id);
+      deletedStories[deletedStories.length] = story_id;
+      $showModal = false;
+    } catch (error) {
+      console.log('Failed to delete story: ' + error);
+    }
   }
 
   const blankPicture: string = '/blank.avif'; // temp
@@ -171,30 +168,32 @@
     </div>
   {/await}
 
-  {#await CoNexus.storyContinuable(story_name!) then continuables}
+  {#await CoNexus.storyContinuable(story_name!) then continuables: ContinuableStory[]}
     <section class="unfinished-stories fade-in blur">
       <h3>Continue Shaping:</h3>
       <div class="continue-shaping-container">
         {#each continuables as continuable}
-          <div class="unfinished-story">
-            <button
-              aria-label="Delete story"
-              class="continue-shaping-btn delete-button"
-              on:click|preventDefault={() => openModal(continuable)}
-              disabled={$loading}
-            ></button>
-            <h3>
-              {continuable.story_id.split('-')[0]} - {new Date(
-                continuable.created ?? '',
-              ).toLocaleDateString()}
-            </h3>
-            <button
-              aria-label="Continue shaping"
-              class="continue-shaping-btn continue-button"
-              on:click|preventDefault={() => CoNexus.continue(continuable)}
-              disabled={$loading}
-            ></button>
-          </div>
+          {#if !deletedStories.includes(continuable.story_id)}
+            <div class="unfinished-story">
+              <button
+                aria-label="Delete story"
+                class="continue-shaping-btn delete-button"
+                on:click|preventDefault={() => openModal(continuable)}
+                disabled={$loading}
+              ></button>
+              <h3>
+                {continuable.story_id.split('-')[0]} - {new Date(
+                  continuable.created ?? '',
+                ).toLocaleDateString()}
+              </h3>
+              <button
+                aria-label="Continue shaping"
+                class="continue-shaping-btn continue-button"
+                on:click|preventDefault={() => CoNexus.continue(continuable)}
+                disabled={$loading}
+              ></button>
+            </div>
+          {/if}
         {/each}
       </div>
     </section>

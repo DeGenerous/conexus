@@ -153,11 +153,14 @@
           if (isSorting) {
             handleSorting();
           } else {
-            filteredCategories = categories.map((cat) => ({
-              ...cat,
-              topics: [...cat.topics], // Ensure a fresh copy of topics
-            }));
-            getGenre(activeGenre);
+            if (activeGenre) {
+              getGenre(activeGenre);
+            } else {
+              filteredCategories = categories.map((cat) => ({
+                ...cat,
+                topics: [...cat.topics], // Ensure a fresh copy of topics
+              }));
+            }
           }
         }}
         style={isSorting

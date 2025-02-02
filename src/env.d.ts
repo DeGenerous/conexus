@@ -79,8 +79,9 @@ type Available = {
   available: number;
   used: number;
   bonus: number;
-  continuable: ContinuableStory[];
-  categories: Category[];
+  continuable?: ContinuableStory[];
+  categories?: Category[];
+  has_ape?: boolean;
 };
 
 type StepData = {

@@ -16,7 +16,7 @@ import { createSiweMessage } from 'viem/siwe';
 import { WagmiProvider, useAccount } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains';
 
-import { web3LoggedIn, authenticated } from '@stores/account';
+import { web3LoggedIn, authenticated, availables } from '@stores/account';
 
 import '@rainbow-me/rainbowkit/styles.css';
 
@@ -114,6 +114,8 @@ const Web3Provider = ({ linking, children }) => {
 
       web3LoggedIn.set(true);
       authenticated.set({ user: data.user, loggedIn: true });
+      availables.set(data.available);
+      
       AUTHENTICATION_STATUS = 'authenticated';
 
       return true;

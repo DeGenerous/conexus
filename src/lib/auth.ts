@@ -6,6 +6,7 @@ import {
   web3loginError,
   referralCodes,
   authenticated,
+  availables,
 } from '@stores/account';
 import { toastStore } from '@stores/toast';
 
@@ -178,8 +179,10 @@ class Account {
 
       const resp = await response.json();
 
-      authenticated.set({ user: resp.user, loggedIn: true });
       web3LoggedIn.set(true);
+      authenticated.set({ user: resp.user, loggedIn: true });
+      availables.set(resp.available);
+      
     } catch (error: any) {
       new_error({ code: 500, error: error });
     }
@@ -218,6 +221,7 @@ class Account {
       const resp = await response.json();
 
       authenticated.set({ user: resp.user, loggedIn: true });
+      availables.set(resp.available);
     } catch (error) {
       new_error({
         code: 500,

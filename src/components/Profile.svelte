@@ -7,6 +7,7 @@
     authenticated,
     referralCodes,
     web3loginError,
+    availables,
   } from '@stores/account';
   import {
     showModal,
@@ -55,6 +56,7 @@
   let signInWithEmail: boolean;
 
   let user: any;
+  let available: any;
   let loginMail: string = '';
   let loginPassword: string = '';
   let invalidCredentials: boolean = false;
@@ -105,6 +107,10 @@
   authenticated.subscribe((value) => {
     user = value.user;
     isLogged = value.loggedIn;
+  });
+
+  availables.subscribe((value) => {
+    available = value;
   });
 
   $: if (isLogged) {
@@ -223,7 +229,25 @@
       <section class="profile-window">
         <hr />
 
-        {#await CoNexus.available()}
+        <div class="story-games-container">
+          <h3>
+            You have used
+            <strong>{available.used} / {available.available} weekly</strong>
+            stories
+          </h3>
+
+          {#if available.bonus > 0}
+            <h3>
+              You have
+              <strong>{available.bonus} bonus</strong>
+              stories
+            </h3>
+          {/if}
+        </div>
+
+        <hr />
+
+        <!-- {#await CoNexus.available()}
           <div class="story-games-container">
             <h3>Available story games...</h3>
           </div>
@@ -247,7 +271,7 @@
           </div>
 
           <hr />
-        {/await}
+        {/await} -->
 
         <div class="user-profile-info">
           <div class="input-container">

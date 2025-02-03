@@ -246,98 +246,100 @@
 
         <hr />
 
-        <div class="user-profile-info">
-          <div class="input-container">
-            <label for="mail">Email</label>
-            <input
-              class="user-input"
-              type="email"
-              value={user.email}
-              disabled
-            />
-          </div>
-          <div class="input-container">
-            <label for="first-name">First name</label>
-            <input
-              class="user-input"
-              type="text"
-              value={user.first_name}
-              disabled={true}
-            />
-          </div>
-          <div class="input-container">
-            <label for="last-name">Last name</label>
-            <input
-              class="user-input"
-              type="text"
-              value={user.last_name}
-              disabled={true}
-            />
-          </div>
-
-          {#if editingPassword}
+        {#if user.email && user.first_name}
+          <div class="user-profile-info">
             <div class="input-container">
-              <label for="password">New password</label>
-              <div class="password-container">
+              <label for="mail">Email</label>
+              <input
+                class="user-input"
+                type="email"
+                value={user.email}
+                disabled
+              />
+            </div>
+            <div class="input-container">
+              <label for="first-name">First name</label>
+              <input
+                class="user-input"
+                type="text"
+                value={user.first_name}
+                disabled={true}
+              />
+            </div>
+            <div class="input-container">
+              <label for="last-name">Last name</label>
+              <input
+                class="user-input"
+                type="text"
+                value={user.last_name}
+                disabled={true}
+              />
+            </div>
+
+            {#if editingPassword}
+              <div class="input-container">
+                <label for="password">New password</label>
+                <div class="password-container">
+                  <input
+                    class="user-input highlighted-input"
+                    type={editPasswordVisible ? 'text' : 'password'}
+                    placeholder="Provide new password"
+                    bind:value={editPassword}
+                    style={editPassword
+                      ? ''
+                      : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
+                  />
+                  <button
+                    aria-label="Show password"
+                    class="password-visibility-button non-hover-btn"
+                    on:pointerdown={() => (editPasswordVisible = true)}
+                    on:pointerup={() => (editPasswordVisible = false)}
+                    on:pointerleave={() => (editPasswordVisible = false)}
+                  ></button>
+                </div>
+              </div>
+              <div class="input-container">
+                <label for="password-confirmation">Confirm new password</label>
                 <input
                   class="user-input highlighted-input"
                   type={editPasswordVisible ? 'text' : 'password'}
-                  placeholder="Provide new password"
-                  bind:value={editPassword}
-                  style={editPassword
+                  placeholder="Provide new password again"
+                  bind:value={editPasswordConfirm}
+                  style={editPassword === editPasswordConfirm
                     ? ''
                     : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
                 />
-                <button
-                  aria-label="Show password"
-                  class="password-visibility-button non-hover-btn"
-                  on:pointerdown={() => (editPasswordVisible = true)}
-                  on:pointerup={() => (editPasswordVisible = false)}
-                  on:pointerleave={() => (editPasswordVisible = false)}
-                ></button>
               </div>
-            </div>
-            <div class="input-container">
-              <label for="password-confirmation">Confirm new password</label>
-              <input
-                class="user-input highlighted-input"
-                type={editPasswordVisible ? 'text' : 'password'}
-                placeholder="Provide new password again"
-                bind:value={editPasswordConfirm}
-                style={editPassword === editPasswordConfirm
-                  ? ''
-                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
-              />
-            </div>
-            {#if !editPassword}
-              <p class="validation">Please enter new password</p>
-            {:else if !editPasswordConfirm}
-              <p class="validation">Please confirm new password</p>
-            {:else if editPasswordConfirm && !editPasswordMatch}
-              <p class="validation">Passwords do not match!</p>
+              {#if !editPassword}
+                <p class="validation">Please enter new password</p>
+              {:else if !editPasswordConfirm}
+                <p class="validation">Please confirm new password</p>
+              {:else if editPasswordConfirm && !editPasswordMatch}
+                <p class="validation">Passwords do not match!</p>
+              {/if}
             {/if}
-          {/if}
 
-          <div class="edit-buttons">
-            {#if editingPassword}
-              <button on:click={() => (editingPassword = false)}>
-                Cancel
-              </button>
-              <button
-                on:click={saveChangedPassword}
-                disabled={!editPassword || !editPasswordMatch}
-              >
-                Save
-              </button>
-            {:else}
-              <button on:click={() => (editingPassword = true)}>
-                Change password
-              </button>
-            {/if}
+            <div class="edit-buttons">
+              {#if editingPassword}
+                <button on:click={() => (editingPassword = false)}>
+                  Cancel
+                </button>
+                <button
+                  on:click={saveChangedPassword}
+                  disabled={!editPassword || !editPasswordMatch}
+                >
+                  Save
+                </button>
+              {:else}
+                <button on:click={() => (editingPassword = true)}>
+                  Change password
+                </button>
+              {/if}
+            </div>
           </div>
-        </div>
 
-        <hr />
+          <hr />
+        {/if}
 
         {#key user}
           <div class="wallet-connect">
@@ -392,41 +394,43 @@
           </div>
         {/key}
 
-        <hr />
+        {#if user.email && user.first_name}
+          <hr />
 
-        <h2>Your referral codes</h2>
-        {#if $referralCodes != null}
-          {#key $referralCodes}
-            <div class="referral-codes">
-              {#each $referralCodes as code}
-                <div class="ref-code-container">
-                  <input
-                    class="ref-code"
-                    id={code.code}
-                    class:active-code={!code.is_used}
-                    value={code.code}
-                    disabled
-                  />
-                  {#if !code.is_used}
-                    <button
-                      aria-label="Copy code"
+          <h2>Your referral codes</h2>
+          {#if $referralCodes != null}
+            {#key $referralCodes}
+              <div class="referral-codes">
+                {#each $referralCodes as code}
+                  <div class="ref-code-container">
+                    <input
+                      class="ref-code"
                       id={code.code}
-                      class="copy-button non-hover-btn"
-                      on:click={copyRefCode}
-                    ></button>
-                  {/if}
-                </div>
-              {/each}
-            </div>
-          {/key}
-          <h2>
-            Your referrals: {$referralCodes.filter((code) => code.is_used)
-              .length}
-          </h2>
-        {:else}
-          <button on:click={Account.generateReferralCode}>
-            Get referral codes
-          </button>
+                      class:active-code={!code.is_used}
+                      value={code.code}
+                      disabled
+                    />
+                    {#if !code.is_used}
+                      <button
+                        aria-label="Copy code"
+                        id={code.code}
+                        class="copy-button non-hover-btn"
+                        on:click={copyRefCode}
+                      ></button>
+                    {/if}
+                  </div>
+                {/each}
+              </div>
+            {/key}
+            <h2>
+              Your referrals: {$referralCodes.filter((code) => code.is_used)
+                .length}
+            </h2>
+          {:else}
+            <button on:click={Account.generateReferralCode}>
+              Get referral codes
+            </button>
+          {/if}
         {/if}
       </section>
     {:else}

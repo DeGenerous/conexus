@@ -169,34 +169,36 @@
   {/await}
 
   {#await CoNexus.storyContinuable(story_name!) then continuables: ContinuableStory[]}
-    <section class="unfinished-stories fade-in blur">
-      <h3>Continue Shaping:</h3>
-      <div class="continue-shaping-container">
-        {#each continuables as continuable}
-          {#if !deletedStories.includes(continuable.story_id)}
-            <div class="unfinished-story">
-              <button
-                aria-label="Delete story"
-                class="continue-shaping-btn delete-button"
-                on:click|preventDefault={() => openModal(continuable)}
-                disabled={$loading}
-              ></button>
-              <h3>
-                {continuable.story_id.split('-')[0]} - {new Date(
-                  continuable.created ?? '',
-                ).toLocaleDateString()}
-              </h3>
-              <button
-                aria-label="Continue shaping"
-                class="continue-shaping-btn continue-button"
-                on:click|preventDefault={() => CoNexus.continue(continuable)}
-                disabled={$loading}
-              ></button>
-            </div>
-          {/if}
-        {/each}
-      </div>
-    </section>
+    {#if continuables.length > 0}
+      <section class="unfinished-stories fade-in blur">
+        <h3>Continue Shaping:</h3>
+        <div class="continue-shaping-container">
+          {#each continuables as continuable}
+            {#if !deletedStories.includes(continuable.story_id)}
+              <div class="unfinished-story">
+                <button
+                  aria-label="Delete story"
+                  class="continue-shaping-btn delete-button"
+                  on:click|preventDefault={() => openModal(continuable)}
+                  disabled={$loading}
+                ></button>
+                <h3>
+                  {continuable.story_id.split('-')[0]} - {new Date(
+                    continuable.created ?? '',
+                  ).toLocaleDateString()}
+                </h3>
+                <button
+                  aria-label="Continue shaping"
+                  class="continue-shaping-btn continue-button"
+                  on:click|preventDefault={() => CoNexus.continue(continuable)}
+                  disabled={$loading}
+                ></button>
+              </div>
+            {/if}
+          {/each}
+        </div>
+      </section>
+    {/if}
   {:catch}
   <section class="unfinished-stories blur">
     <h3>Failed to fetch unfinished stories...</h3>

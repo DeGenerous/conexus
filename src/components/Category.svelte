@@ -214,7 +214,7 @@
 {:else}
   <section class="filters">
     <div class="sort-genres-filters">
-      <div class="filter filter-wrapper loading-animation blur" >
+      <div class="filter filter-wrapper loading-animation blur">
         <img
           class="filter-image"
           src={activeGenre ? '/icons/reset.png' : '/icons/filter.png'}
@@ -224,25 +224,19 @@
           <option value="" selected={true} disabled hidden>Select genre</option>
         </select>
       </div>
-      <button class="filter loading-animation blur" style="cursor: pointer;" disabled>
+      <button
+        class="filter loading-animation blur"
+        style="cursor: pointer;"
+        disabled
+      >
         <img class="filter-image" src="/icons/sort.png" alt="Sort" />
         A-Z
       </button>
     </div>
 
-    <div
-      class="filter filter-wrapper loading-animation blur"
-    >
-        <img
-          class="filter-image"
-          src="/icons/search.png"
-          alt="Search"
-        />
-      <input
-        class="search-field"
-        placeholder="Search story..."
-        disabled
-      />
+    <div class="filter filter-wrapper loading-animation blur">
+      <img class="filter-image" src="/icons/search.png" alt="Search" />
+      <input class="search-field" placeholder="Search story..." disabled />
     </div>
   </section>
 

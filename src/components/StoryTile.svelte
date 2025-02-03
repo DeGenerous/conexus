@@ -10,30 +10,30 @@
   const blankPicture = '/blank.avif';
 </script>
 
-  <a class="tile" href="/{section}/{topicName}">
-    {#await CoNexus.fetch_story_image(topicName!, 'tile')}
-      <img
-        class="tile-picture"
-        loading="lazy"
-        src={blankPicture}
-        alt={storyName}
-        draggable="false"
-        height="1024"
-        width="1024"
-      />
-    {:then storyImage} 
-      <img
-        class="tile-picture"
-        loading="lazy"
-        src={storyImage ?? blankPicture}
-        alt={storyName}
-        draggable="false"
-        height="1024"
-        width="1024"
-      />
-    {/await}
-    <p class="title">{storyName}</p>
-  </a>
+<a class="tile" href="/{section}/{topicName}">
+  {#await CoNexus.fetch_story_image(topicName!, 'tile')}
+    <img
+      class="tile-picture"
+      loading="lazy"
+      src={blankPicture}
+      alt={storyName}
+      draggable="false"
+      height="1024"
+      width="1024"
+    />
+  {:then storyImage}
+    <img
+      class="tile-picture"
+      loading="lazy"
+      src={storyImage ?? blankPicture}
+      alt={storyName}
+      draggable="false"
+      height="1024"
+      width="1024"
+    />
+  {/await}
+  <p class="title">{storyName}</p>
+</a>
 
 <style>
   .tile {

@@ -115,7 +115,7 @@ const Web3Provider = ({ linking, children }) => {
       web3LoggedIn.set(true);
       authenticated.set({ user: data.user, loggedIn: true });
       availables.set(data.available);
-      
+
       AUTHENTICATION_STATUS = 'authenticated';
 
       return true;

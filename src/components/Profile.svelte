@@ -2,7 +2,6 @@
   import { onMount } from 'svelte';
 
   import Account, { Roles } from '@lib/auth';
-  import { CoNexus } from '@lib/conexus';
   import {
     authenticated,
     referralCodes,
@@ -246,32 +245,6 @@
         </div>
 
         <hr />
-
-        <!-- {#await CoNexus.available()}
-          <div class="story-games-container">
-            <h3>Available story games...</h3>
-          </div>
-
-          <hr />
-        {:then available}
-          <div class="story-games-container">
-            <h3>
-              You have used
-              <strong>{available.used} / {available.available} weekly</strong>
-              stories
-            </h3>
-
-            {#if available.bonus > 0}
-              <h3>
-                You have
-                <strong>{available.bonus} bonus</strong>
-                stories
-              </h3>
-            {/if}
-          </div>
-
-          <hr />
-        {/await} -->
 
         <div class="user-profile-info">
           <div class="input-container">

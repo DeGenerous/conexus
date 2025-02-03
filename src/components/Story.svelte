@@ -35,8 +35,7 @@
 
   function openModal(story: any) {
     $secondButton = `Delete story: ${
-      story.category.charAt(0).toUpperCase() +
-      story.category.slice(1)
+      story.category.charAt(0).toUpperCase() + story.category.slice(1)
     }`;
     $handleSecondButton = () => DeleteStory(story.story_id);
     $modalContent = `<h2>Are you sure you want to delete this story?</h2>
@@ -66,7 +65,7 @@
     </header>
 
     <div class="story-container blur">
-        <div class="picture default-picture loading-animation"></div>
+      <div class="picture default-picture loading-animation"></div>
 
       <section class="story-info">
         <article>
@@ -87,7 +86,7 @@
         </div>
       </section>
     </div>
-  {:then topic: DynTopic}
+  {:then topic: : DynTopic}
     <header>
       <a class="arrow" aria-label="Back arrow" href="./"></a>
       <h1 class="fade-in">
@@ -147,7 +146,7 @@
     </header>
 
     <div class="story-container blur">
-        <div class="picture default-picture"></div>
+      <div class="picture default-picture"></div>
 
       <section class="story-info">
         <article>
@@ -168,7 +167,7 @@
     </div>
   {/await}
 
-  {#await CoNexus.storyContinuable(story_name!) then continuables: ContinuableStory[]}
+  {#await CoNexus.storyContinuable(story_name!) then continuables: : ContinuableStory[]}
     {#if continuables.length > 0}
       <section class="unfinished-stories fade-in blur">
         <h3>Continue Shaping:</h3>
@@ -200,9 +199,9 @@
       </section>
     {/if}
   {:catch}
-  <section class="unfinished-stories blur">
-    <h3>Failed to fetch unfinished stories...</h3>
-  </section>
+    <section class="unfinished-stories blur">
+      <h3>Failed to fetch unfinished stories...</h3>
+    </section>
   {/await}
 {:else}
   <BackgroundMusic />

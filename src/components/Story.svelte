@@ -86,7 +86,7 @@
         </div>
       </section>
     </div>
-  {:then topic: : DynTopic}
+  {:then topic: DynTopic}
     <header>
       <a class="arrow" aria-label="Back arrow" href="./"></a>
       <h1 class="fade-in">
@@ -167,7 +167,7 @@
     </div>
   {/await}
 
-  {#await CoNexus.storyContinuable(story_name!) then continuables: : ContinuableStory[]}
+  {#await CoNexus.storyContinuable(story_name!) then continuables: ContinuableStory[]}
     {#if continuables.length > 0}
       <section class="unfinished-stories fade-in blur">
         <h3>Continue Shaping:</h3>

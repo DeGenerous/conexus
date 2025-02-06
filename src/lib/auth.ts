@@ -356,6 +356,67 @@ class Account {
       return null;
     }
   }
+
+  static async forgotPassword(email: string): Promise<void> {
+    try {
+      const response = await fetch(`${url}/forgot-password?email=${email}`, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        new_error({ code: response.status, error: await response.text() });
+      }
+
+      const resp = await response.json();
+
+      console.log(resp.message);
+    } catch (error: any) {
+      new_error({ code: 500, error: error });
+    }
+  }
+
+  static async resetPassword(data: ResetPassword): Promise<void> {
+    try {
+      const response = await fetch(`${url}/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        // new_error({ code: response.status, error: await response.text() });
+        toastStore.show('Error resetting password', 'error');
+      }
+
+      const resp = await response.json();
+
+      toastStore.show(resp.message, 'info');
+    } catch (error: any) {
+      new_error({ code: 500, error: error });
+    }
+  }
+
+  static async changePassword(data: ChangePassword): Promise<void> {
+    try {
+      const response = await fetch(`${url}/change-password`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        // new_error({ code: response.status, error: await response.text() });
+        toastStore.show('Error changing password', 'error');
+      }
+
+      const resp = await response.json();
+
+      console.log(resp.message);
+    } catch (error: any) {
+      new_error({ code: 500, error: error });
+    }
+  }
 }
 
 export default Account;

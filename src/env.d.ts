@@ -105,3 +105,14 @@ type ConexusError = {
   error?: string = 'Something went wrong, please try again later...';
   log?: boolean = true;
 };
+
+type ResetPassword = {
+  email: string;
+  password: string;
+  token: string;
+};
+
+type ChangePassword = {
+  old_password: string;
+  new_password: string;
+};

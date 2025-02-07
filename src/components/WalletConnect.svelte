@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import ReactDOM from 'react-dom';
+  import { createRoot } from 'react-dom/client';
 
   import YourApp from './Rainbow';
 
@@ -12,7 +12,8 @@
   onMount(() => {
     const reactRoot = document.getElementById('react-root');
     if (reactRoot) {
-      ReactDOM.render(YourApp(linking, title), reactRoot);
+      const root = createRoot(reactRoot); // Create a root
+      root.render(YourApp(linking, title));
     }
   });
 

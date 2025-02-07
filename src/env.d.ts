@@ -32,6 +32,8 @@ interface User extends SignUp {
   wallets?: AuthWallet[];
   main_wallet?: string;
   faux?: boolean;
+  email_confirmed?: boolean;
+  is_oauth?: boolean;
 }
 
 interface SignIn {

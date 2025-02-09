@@ -15,6 +15,8 @@
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
+  import { isAvailable } from '@utils/validation';
+
   import WalletConnect from './WalletConnect.svelte';
 
   Account.me();
@@ -228,21 +230,27 @@
       <section class="profile-window">
         <hr />
 
-        <div class="story-games-container">
-          <h3>
-            You have used
-            <strong>{available.used} / {available.available} weekly</strong>
-            stories
-          </h3>
-
-          {#if available.bonus > 0}
+        {#if isAvailable(available)}
+          <div class="story-games-container">
             <h3>
-              You have
-              <strong>{available.bonus} bonus</strong>
+              You have used
+              <strong>{available.used} / {available.available} weekly</strong>
               stories
             </h3>
-          {/if}
-        </div>
+
+            {#if available.bonus > 0}
+              <h3>
+                You have
+                <strong>{available.bonus} bonus</strong>
+                stories
+              </h3>
+            {/if}
+          </div>
+        {:else}
+          <div class="error-message">
+            <p><strong>Error:</strong> {available.message}</p>
+          </div>
+        {/if}
 
         <hr />
 

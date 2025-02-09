@@ -3,6 +3,11 @@
 
 type Nullable<T> = T | null | undefined;
 
+type APIError = {
+  message: string;
+  error: string;
+}
+
 type VolumeControl = {
   muted: boolean;
   volume: number;

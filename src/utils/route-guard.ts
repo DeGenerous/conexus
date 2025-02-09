@@ -1,5 +1,6 @@
 import Account from '@lib/auth';
-import { authenticated } from '@stores/account';
+import { authenticated, availables } from '@stores/account';
+import { isAvailable } from './validation';
 
 function redirectTo(path: string) {
   if (typeof window !== 'undefined') {
@@ -24,14 +25,22 @@ export async function checkUserState(path: string): Promise<void> {
   }
 
   if (isRouteMatched(path, protectedRoutes)) {
-    const user = await Account.middlewareAuthme();
+    const authData = await Account.middlewareAuthme();
 
-    if (!user) {
+    if (!authData) {
       redirectTo('/');
       return;
     }
 
+    const [user, available] = authData;
+
     authenticated.set({ user: user, loggedIn: true });
+    availables.set(available);
+
+    // if (!isAvailable(available)) {
+    //   redirectTo('/profile');
+    //   return;
+    // }
 
     if (isRouteMatched(path, verifiedRoutes) && !user.referred) {
       redirectTo('/referral');

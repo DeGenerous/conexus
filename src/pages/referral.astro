@@ -1,8 +1,11 @@
 ---
-import Layout from "@layouts/Layout.astro";
-import UseReferral from "@components/Referral.svelte";
+import Layout from '@layouts/Layout.astro';
+import UseReferral from '@components/Referral.svelte';
+
+const title = 'Referral';
+const arrow = true;
 ---
 
-<Layout title="Referral">
+<Layout {title} {arrow}>
   <UseReferral client:load />
 </Layout>

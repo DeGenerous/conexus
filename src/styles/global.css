@@ -326,6 +326,25 @@ main {
   cursor: pointer;
 }
 
+.user-input {
+  width: 30vw;
+  font-size: 1.75vw;
+  line-height: 1.75vw;
+  padding: 1.5vw 2vw;
+  color: rgba(51, 226, 230, 0.75);
+  border: 0.1vw solid rgba(51, 226, 230, 0.5);
+  box-shadow: 0 0.5vw 0.5vw #010020;
+  border-radius: 1vw;
+  background-color: rgba(51, 226, 230, 0.1);
+  outline: none;
+  text-align: center;
+  cursor: text;
+}
+
+.user-input:disabled {
+  opacity: 1; /* for iOS */
+}
+
 @media only screen and (max-width: 600px) {
   html {
     padding-top: 25%;
@@ -379,6 +398,12 @@ main {
 
   .sign-icon {
     height: 0.8em;
+  }
+
+  .user-input {
+    width: 70vw;
+    font-size: 1.1em;
+    line-height: 1.75em;
   }
 }
 

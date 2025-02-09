@@ -592,7 +592,7 @@
             </div>
 
             <!-- svelte-ignore block_empty -->
-            {#if !password}{:else if password.length <= 8}
+            {#if !password}{:else if password.length < 8}
               <p class="validation">
                 Password should contain at least 8 characters!
               </p>
@@ -848,25 +848,6 @@
     justify-content: center;
     align-items: center;
     gap: 0.5vw;
-  }
-
-  .user-input {
-    width: 30vw;
-    font-size: 1.75vw;
-    line-height: 1.75vw;
-    padding: 1.5vw 2vw;
-    color: rgba(51, 226, 230, 0.75);
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    box-shadow: 0 0.5vw 0.5vw #010020;
-    border-radius: 1vw;
-    background-color: rgba(51, 226, 230, 0.1);
-    outline: none;
-    text-align: center;
-    cursor: text;
-  }
-
-  .user-input:disabled {
-    opacity: 1; /* for iOS */
   }
 
   .agreements-container {
@@ -1154,12 +1135,6 @@
 
     .input-container {
       gap: 0.25em;
-    }
-
-    .user-input {
-      width: 70vw;
-      font-size: 1.1em;
-      line-height: 1.75em;
     }
 
     .agreement {

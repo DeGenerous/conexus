@@ -101,7 +101,7 @@
     align-items: center;
     gap: 1.5vw;
     background-color: rgba(1, 0, 32, 0.75);
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.5);
     border-radius: 1.5vw;
     padding: 2vw 3vw;
   }
@@ -111,20 +111,6 @@
     line-height: 2vw;
     color: rgba(51, 226, 230, 0.75);
     text-align: center;
-  }
-
-  .user-input {
-    width: 30vw;
-    font-size: 1.5vw;
-    line-height: 1.5vw;
-    padding: 1.5vw 2vw;
-    color: rgba(51, 226, 230, 0.75);
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 1vw;
-    background-color: rgba(51, 226, 230, 0.1);
-    outline: none;
-    text-align: center;
-    cursor: text;
   }
 
   @media only screen and (max-width: 600px) {
@@ -141,12 +127,6 @@
 
     .signup-label {
       font-size: 1em;
-      line-height: 1.5em;
-    }
-
-    .user-input {
-      width: 70vw;
-      font-size: 1.25em;
       line-height: 1.5em;
     }
   }

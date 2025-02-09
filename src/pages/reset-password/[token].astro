@@ -14,8 +14,6 @@ const meta = {
 };
 ---
 
-<main>
-  <Layout {...meta} {arrow}>
-    <ResetPassword token={token} client:load />
-  </Layout>
-</main>
+<Layout {...meta} {arrow}>
+  <ResetPassword {token} client:load />
+</Layout>

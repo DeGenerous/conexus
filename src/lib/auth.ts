@@ -182,7 +182,6 @@ class Account {
       web3LoggedIn.set(true);
       authenticated.set({ user: resp.user, loggedIn: true });
       availables.set(resp.available);
-      
     } catch (error: any) {
       new_error({ code: 500, error: error });
     }
@@ -231,7 +230,9 @@ class Account {
     }
   }
 
-  static async middlewareAuthme(): Promise<[User, Available | APIError] | null> {
+  static async middlewareAuthme(): Promise<
+    [User, Available | APIError] | null
+  > {
     try {
       const response = await fetch(`${url}/me`, {
         method: 'GET',

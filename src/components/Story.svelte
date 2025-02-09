@@ -54,6 +54,35 @@
   }
 
   const blankPicture: string = '/blank.avif'; // temp
+
+  // SVG Icons
+  const handleDeleteSvg = (id: string, state: 'focus' | 'blur') => {
+    const deleteSvgIcon = document.getElementById(`delete-icon-${id}`);
+    const deleteSvgCircle = document.getElementById(`delete-circle-${id}`);
+    if (state == 'focus') {
+      deleteSvgIcon!.setAttribute('transform', 'scale(1.5)');
+      deleteSvgCircle!.setAttribute('r', '0');
+      deleteSvgCircle!.style.opacity = '0';
+    } else if (state == 'blur') {
+      deleteSvgIcon!.setAttribute('transform', 'scale(1)');
+      deleteSvgCircle!.setAttribute('r', '90');
+      deleteSvgCircle!.style.opacity = '1';
+    }
+  }
+
+  const handlePlaySvg = (id: string, state: 'focus' | 'blur') => {
+    const playSvgIcon = document.getElementById(`play-icon-${id}`);
+    const playSvgCircle = document.getElementById(`play-circle-${id}`);
+    if (state == 'focus') {
+      playSvgIcon!.setAttribute('transform', 'scale(1.5)');
+      playSvgCircle!.setAttribute('r', '0');
+      playSvgCircle!.style.opacity = '0';
+    } else if (state == 'blur') {
+      playSvgIcon!.setAttribute('transform', 'scale(1)');
+      playSvgCircle!.setAttribute('r', '90');
+      playSvgCircle!.style.opacity = '1';
+    }
+  }
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -126,11 +155,23 @@
             disabled={$loading}
           >
             {#if $loading}
-              <img
-                class="searching"
-                src="/icons/searching.png"
-                alt="Searching..."
-              />
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                viewBox="0 0 100 100"
+                class="loading-svg"
+                stroke="transparent"
+                stroke-width="7.5"
+                stroke-dasharray="288.5"
+                stroke-linecap="round"
+                fill="none"
+              >
+                <path
+                  d="
+                    M 50 96 a 46 46 0 0 1 0 -92 46 46 0 0 1 0 92
+                  "
+                  transform-origin="50 50"
+                />
+              </svg>
               Loading...
             {:else}
               PLAY NOW
@@ -175,23 +216,70 @@
           {#each continuables as continuable}
             {#if !deletedStories.includes(continuable.story_id)}
               <div class="unfinished-story">
-                <button
-                  aria-label="Delete story"
-                  class="continue-shaping-btn delete-button"
-                  on:click|preventDefault={() => openModal(continuable)}
-                  disabled={$loading}
-                ></button>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  viewBox="-100 -100 200 200"
+                  class="delete-svg continue-shaping-btn"
+                  fill="none"
+                  stroke="rgb(255, 60, 64)"
+                  stroke-width="15"
+                  stroke-linecap="round"
+                  on:click|preventDefault={() => {
+                    if (!$loading) openModal(continuable)
+                  }}
+                  on:pointerover={() => handleDeleteSvg(continuable.story_id, 'focus')}
+                  on:pointerout={() => handleDeleteSvg(continuable.story_id, 'blur')}
+                  role="button"
+                  tabindex="0"
+                >
+                  <path
+                    id="delete-icon-{continuable.story_id}"
+                    d="
+                      M -35 -35
+                      L 35 35
+                      M -35 35
+                      L 35 -35
+                    "
+                  />
+                  <circle
+                    id="delete-circle-{continuable.story_id}"
+                    r="90"
+                  />
+                </svg>
                 <h3>
                   {continuable.story_id.split('-')[0]} - {new Date(
                     continuable.created ?? '',
                   ).toLocaleDateString()}
                 </h3>
-                <button
-                  aria-label="Continue shaping"
-                  class="continue-shaping-btn continue-button"
-                  on:click|preventDefault={() => CoNexus.continue(continuable)}
-                  disabled={$loading}
-                ></button>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  viewBox="-100 -100 200 200"
+                  class="play-svg continue-shaping-btn"
+                  fill="none"
+                  stroke="rgb(0, 185, 55)"
+                  stroke-width="15"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  on:click|preventDefault={() => {
+                    if (!$loading) CoNexus.continue(continuable)
+                  }}
+                  on:pointerover={() => handlePlaySvg(continuable.story_id, 'focus')}
+                  on:pointerout={() => handlePlaySvg(continuable.story_id, 'blur')}
+                  role="button"
+                  tabindex="0"
+                >
+                  <polygon
+                    id="play-icon-{continuable.story_id}"
+                    points="
+                      -26 -36 -26 36 36 0
+                    "
+                    fill="rgb(0, 185, 55)"
+                  />
+                  <circle
+                    id="play-circle-{continuable.story_id}"
+                    r="90"
+                  />
+                </svg>
               </div>
             {/if}
           {/each}
@@ -398,39 +486,11 @@
   }
 
   .continue-shaping-btn {
-    padding: 0;
-    margin: 0;
-    border: none;
-    border-radius: 0;
-    background-color: rgba(0, 0, 0, 0);
-    opacity: 0.9;
-    width: 3vw;
-    height: 3vw;
-    background-size: contain;
-    background-repeat: no-repeat;
-  }
-
-  .continue-shaping-btn:hover,
-  .continue-shaping-btn:active {
-    background-color: rgba(0, 0, 0, 0);
-    color: rgba(0, 0, 0, 0);
-    opacity: 1;
-  }
-
-  .delete-button {
-    background-image: url('/icons/delete.png');
-  }
-
-  .continue-button {
-    background-image: url('/icons/play.png');
+    height: 3vw !important;
   }
 
   .story-buttons-container button {
     gap: 1vw;
-  }
-
-  .searching {
-    height: 1.5vw;
   }
 
   /* LOADING */
@@ -472,10 +532,6 @@
 
     .story-buttons-container button {
       gap: 0.5em;
-    }
-
-    .searching {
-      height: 1em;
     }
 
     header {
@@ -583,8 +639,7 @@
     }
 
     .continue-shaping-btn {
-      width: 2em;
-      height: 2em;
+      height: 2em !important;
     }
 
     .default-picture {

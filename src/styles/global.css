@@ -243,6 +243,12 @@ button img {
   filter: drop-shadow(0 0 0.5vw rgba(1, 0, 32, 0.5));
 }
 
+button svg {
+  height: 1.5vw;
+  width: 1.5vw;
+  cursor: inherit !important;
+}
+
 h1,
 h2 {
   text-align: center;
@@ -359,6 +365,11 @@ main {
     line-height: 1.75em;
     padding: 0.25em 1em;
     border-radius: 0.5em;
+  }
+
+  button svg {
+    height: 1em;
+    width: 1em;
   }
 
   h1 {

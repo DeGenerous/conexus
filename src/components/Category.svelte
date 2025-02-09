@@ -57,7 +57,7 @@
       filteredCategories = await CoNexus.searchCategories(searchField, section);
       isSearching = false; // Stop searching after results are returned
       if (isSorting) handleSorting();
-    }, 3000); // 3-second debounce delay
+    }, 3750); // 3.75-second debounce delay
   };
 
   let searchInput: HTMLInputElement | null;
@@ -119,6 +119,9 @@
     }));
     if (isSorting) handleSorting();
   };
+
+  // SVG Icons
+  let searchSvgFocus: boolean = false;
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
@@ -131,14 +134,59 @@
           ? 'background-color: rgba(56, 117, 250, 0.9); box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.5);'
           : ''}
       >
-        <img
-          class="filter-image"
-          src={activeGenre ? '/icons/reset.png' : '/icons/filter.png'}
-          alt="Genres filter"
-          on:click={resetGenres}
-          role="button"
-          tabindex="0"
-        />
+        {#if activeGenre}
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            viewBox="-100 -100 200 200"
+            class="reset-svg filter-image"
+            fill="#dedede"
+            stroke="#dedede"
+            stroke-width="20"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            on:click={resetGenres}
+            role="button"
+            tabindex="0"
+          >
+            <path
+              d="
+                M 70 -50
+                A 85 85 0 1 0 85 0
+              "
+              fill="none"
+            />
+            <polygon
+              points="
+                70 -50 60 -90 30 -55
+              "
+            />
+          </svg>
+        {:else}
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            viewBox="-100 -100 200 200"
+            class="filter-svg filter-image"
+            fill="#dedede"
+            stroke="#dedede"
+            stroke-width="6"
+            stroke-linejoin="round"
+          >
+            <path
+              d="
+                M -25 60
+                L -25 -15
+                L -95 -85
+                L -95 -95
+                L 95 -95
+                L 95 -85
+                L 25 -15
+                L 25 95
+                L 20 95
+                Z
+              "
+            />
+          </svg>
+        {/if}
         <select class="genre-selector" bind:value={activeGenre}>
           <option value="" selected={true} disabled hidden>Select genre</option>
           {#each genres as genre (genre.id)}
@@ -164,10 +212,67 @@
           }
         }}
         style={isSorting
-          ? 'background-color: rgba(56, 117, 250, 0.9); box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.5);'
+          ? 'background-color: rgba(56, 117, 250, 0.9); box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.5); color: rgb(51, 226, 230); text-shadow: none;'
           : ''}
       >
-        <img class="filter-image" src="/icons/sort.png" alt="Sort" />
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          viewBox="-100 -100 200 200"
+          class="sort-svg filter-image"
+          fill={isSorting ? "rgb(51, 226, 230)" : "#dedede"}
+          stroke={isSorting ? "rgb(51, 226, 230)" : "#dedede"}
+          stroke-linejoin="round"
+          style="transform: {isSorting
+            ? 'scale(1.1)'
+            : ''
+          }"
+        >
+          <path
+            style="transform: {isSorting
+              ? 'scale(0.9) translateY(10%)'
+              : ''
+            }"
+            d="
+              M -80 -95
+              L -80 34
+              L -96 34
+              L -72 72
+              L -48 34
+              L -64 34
+              L -64 -95
+              Z
+            "
+            stroke-width="6"
+          />
+          <rect
+            x="-30"
+            y="-98"
+            width="130"
+            height="20"
+            rx="4"
+          />
+          <rect
+            x="-30"
+            y="-48"
+            width="105"
+            height="20"
+            rx="4"
+          />
+          <rect
+            x="-30"
+            y="2"
+            width="80"
+            height="20"
+            rx="4"
+          />
+          <rect
+            x="-30"
+            y="52"
+            width="55"
+            height="20"
+            rx="4"
+          />
+        </svg>
         A-Z
       </button>
     </div>
@@ -179,25 +284,60 @@
         : ''}
     >
       {#if isSearching}
-        <img
-          class="filter-image searching"
-          src="/icons/searching.png"
-          alt="Searching..."
-        />
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          viewBox="0 0 100 100"
+          class="loading-svg filter-image"
+          stroke="transparent"
+          stroke-width="7.5"
+          stroke-dasharray="288.5"
+          stroke-linecap="round"
+          fill="none"
+        >
+          <path
+            d="
+              M 50 96 a 46 46 0 0 1 0 -92 46 46 0 0 1 0 92
+            "
+            transform-origin="50 50"
+          />
+        </svg>
       {:else}
-        <img
-          class="filter-image"
-          src="/icons/search.png"
-          alt="Search"
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          viewBox="-100 -100 200 200"
+          class="search-svg filter-image"
+          stroke="#dedede"
+          stroke-linecap="round"
+          fill="none"
           on:click={handleSearchFocus}
           role="button"
           tabindex="0"
-        />
+          style="transform: {searchSvgFocus
+            ? 'scale(1.05) rotate(90deg)'
+            : 'none'
+          }"
+        >
+          <circle
+            cx="-20"
+            cy="-20"
+            r="70"
+            stroke-width="15"
+          />
+          <line
+            x1="34"
+            y1="34"
+            x2="85"
+            y2="80"
+            stroke-width="25"
+          />
+        </svg>
       {/if}
       <input
         bind:this={searchInput}
         bind:value={searchField}
         on:input={handleSearch}
+        on:focus={() => searchSvgFocus = true}
+        on:blur={() => searchSvgFocus = false}
         class="search-field"
         placeholder="Search story..."
       />
@@ -214,29 +354,120 @@
 {:else}
   <section class="filters">
     <div class="sort-genres-filters">
-      <div class="filter filter-wrapper loading-animation blur">
-        <img
-          class="filter-image"
-          src={activeGenre ? '/icons/reset.png' : '/icons/filter.png'}
-          alt="Genres filter"
-        />
-        <select class="genre-selector">
+      <div class="filter filter-wrapper loading-animation blur" style="cursor: progress;">
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          viewBox="-100 -100 200 200"
+          class="filter-svg filter-image"
+          fill="#dedede"
+          stroke="#dedede"
+          stroke-width="6"
+          stroke-linejoin="round"
+          style="cursor: inherit;"
+        >
+          <path
+            d="
+              M -25 60
+              L -25 -15
+              L -95 -85
+              L -95 -95
+              L 95 -95
+              L 95 -85
+              L 25 -15
+              L 25 95
+              L 20 95
+              Z
+            "
+          />
+        </svg>
+        <select class="genre-selector" style="cursor: inherit;">
           <option value="" selected={true} disabled hidden>Select genre</option>
         </select>
       </div>
       <button
         class="filter loading-animation blur"
-        style="cursor: pointer;"
+        style="cursor: progress;"
         disabled
       >
-        <img class="filter-image" src="/icons/sort.png" alt="Sort" />
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          viewBox="-100 -100 200 200"
+          class="sort-svg filter-image"
+          fill="#dedede"
+          stroke="#dedede"
+          stroke-linejoin="round"
+        >
+          <path
+            d="
+              M -80 -95
+              L -80 34
+              L -96 34
+              L -72 72
+              L -48 34
+              L -64 34
+              L -64 -95
+              Z
+            "
+            stroke-width="6"
+          />
+          <rect
+            x="-30"
+            y="-98"
+            width="130"
+            height="20"
+            rx="4"
+          />
+          <rect
+            x="-30"
+            y="-48"
+            width="105"
+            height="20"
+            rx="4"
+          />
+          <rect
+            x="-30"
+            y="2"
+            width="80"
+            height="20"
+            rx="4"
+          />
+          <rect
+            x="-30"
+            y="52"
+            width="55"
+            height="20"
+            rx="4"
+          />
+        </svg>
         A-Z
       </button>
     </div>
 
-    <div class="filter filter-wrapper loading-animation blur">
-      <img class="filter-image" src="/icons/search.png" alt="Search" />
-      <input class="search-field" placeholder="Search story..." disabled />
+    <div class="filter filter-wrapper loading-animation blur" style="cursor: progress;">
+      <svg
+        xmlns='http://www.w3.org/2000/svg'
+        viewBox="-100 -100 200 200"
+        class="search-svg filter-image"
+        stroke="#dedede"
+        stroke-linecap="round"
+        fill="none"
+        style="cursor: inherit;"
+      >
+        <circle
+          cx="-20"
+          cy="-20"
+          r="70"
+          stroke-width="15"
+        />
+        <line
+          x1="34"
+          y1="34"
+          x2="85"
+          y2="80"
+          stroke-width="25"
+        />
+      </svg>
+      <input class="search-field" placeholder="Search story..." disabled style="cursor: inherit;" />
     </div>
   </section>
 
@@ -248,10 +479,6 @@
 {/if}
 
 <style>
-  img {
-    cursor: pointer;
-  }
-
   .filters {
     z-index: 100;
     width: 95vw;
@@ -267,9 +494,8 @@
   }
 
   .filter-image {
-    height: 2vw;
+    height: 2vw !important;
     width: auto;
-    opacity: 0.9;
   }
 
   .sort-genres-filters {
@@ -349,7 +575,7 @@
     }
 
     .filter-image {
-      height: 2em;
+      height: 1.5em !important;
       padding: 0.25em;
     }
 

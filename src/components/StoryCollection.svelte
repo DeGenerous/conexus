@@ -11,9 +11,9 @@
     <p class="collection-header">Loading stories...</p>
     <div class="tiles-collection blur">
       {#each Array(7) as _}
-        <div class="tile">
-          <div class="tile-picture loading-animation"></div>
-          <p class="title loading-animation"></p>
+        <div class="tile" style="cursor: progress;">
+          <div class="tile-picture loading-animation" style="cursor: inherit;"></div>
+          <p class="title loading-animation" style="cursor: inherit;"></p>
         </div>
       {/each}
     </div>

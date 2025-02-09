@@ -16,6 +16,7 @@
   };
 
   $: if (code.length === 16) validateReferralCode();
+  $: if (code.length < 16) referralCodeValid = false;
   let referralCodeValid = false;
   async function validateReferralCode() {
     const referralObject: ReferralCode | null =
@@ -44,6 +45,11 @@
       maxlength="16"
       bind:value={code}
       required
+      style={code
+        ? referralCodeValid
+          ? ''
+          : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
+        : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
     />
 
     {#if code.length === 16}

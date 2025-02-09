@@ -123,11 +123,13 @@
   }
 
   let editingPassword: boolean = false;
+  let editOldPassword: string = '';
   let editPassword: string = '';
   let editPasswordConfirm: string = '';
   let editPasswordVisible: boolean = false;
   let passwordVisible: boolean = false;
-  $: editPasswordMatch = editPassword === editPasswordConfirm;
+  $: editPasswordMatch = editPassword.length >= 8 && editPassword === editPasswordConfirm;
+  $: oldPasswordCorrect = editOldPassword === 'password'; // fake validation
 
   const saveChangedPassword = () => {
     editingPassword = false;
@@ -158,6 +160,7 @@
     referralCodeValid;
 
   $: if (referralCode.length === 16) validateReferralCode();
+  $: if (referralCode.length < 16) referralCodeValid = false;
   async function validateReferralCode() {
     const referralObject: ReferralCode | null =
       await Account.validateReferralCode(referralCode);
@@ -286,6 +289,27 @@
 
             {#if editingPassword}
               <div class="input-container">
+                <label for="password">Old password</label>
+                <div class="password-confirmation">
+                  <input
+                    class="user-input highlighted-input"
+                    type={editPasswordVisible ? 'text' : 'password'}
+                    placeholder="Enter old password"
+                    bind:value={editOldPassword}
+                    style={editOldPassword
+                      ? oldPasswordCorrect
+                        ? ''
+                        : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
+                      : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
+                  />
+                </div>
+              </div>
+
+              {#if !editOldPassword}{:else if !oldPasswordCorrect}
+                <p class="validation">Old password doesn't match!</p>
+              {/if}
+
+              <div class="input-container">
                 <label for="password">New password</label>
                 <div class="password-container">
                   <input
@@ -294,7 +318,9 @@
                     placeholder="Provide new password"
                     bind:value={editPassword}
                     style={editPassword
-                      ? ''
+                      ? editPassword.length < 8
+                        ? 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
+                        : ''
                       : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
                   />
                   <button
@@ -305,19 +331,22 @@
                     on:pointerleave={() => (editPasswordVisible = false)}
                   ></button>
                 </div>
-              </div>
-              <div class="input-container">
-                <label for="password-confirmation">Confirm new password</label>
+
                 <input
                   class="user-input highlighted-input"
                   type={editPasswordVisible ? 'text' : 'password'}
-                  placeholder="Provide new password again"
+                  placeholder="Confirm new password"
                   bind:value={editPasswordConfirm}
                   style={editPassword === editPasswordConfirm
                     ? ''
                     : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
                 />
               </div>
+
+              {#if editPassword && editPassword.length < 8}
+                <p class="validation">Password should contain at least 8 characters!</p>
+              {/if}
+
               {#if !editPassword}
                 <p class="validation">Please enter new password</p>
               {:else if !editPasswordConfirm}
@@ -327,23 +356,25 @@
               {/if}
             {/if}
 
-            <div class="edit-buttons">
-              {#if editingPassword}
-                <button on:click={() => (editingPassword = false)}>
-                  Cancel
-                </button>
-                <button
-                  on:click={saveChangedPassword}
-                  disabled={!editPassword || !editPasswordMatch}
-                >
-                  Save
-                </button>
-              {:else}
-                <button on:click={() => (editingPassword = true)}>
-                  Change password
-                </button>
-              {/if}
-            </div>
+            {#if !user.is_oauth}
+              <div class="edit-buttons">
+                {#if editingPassword}
+                  <button on:click={() => (editingPassword = false)}>
+                    Cancel
+                  </button>
+                  <button
+                    on:click={saveChangedPassword}
+                    disabled={!editPassword || !editPasswordMatch || !oldPasswordCorrect}
+                  >
+                    Save
+                  </button>
+                {:else}
+                  <button on:click={() => (editingPassword = true)}>
+                    Change password
+                  </button>
+                {/if}
+              </div>
+            {/if}
           </div>
 
           <hr />

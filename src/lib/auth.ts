@@ -296,6 +296,7 @@ class Account {
       const referralC = await response.json();
 
       referralCodes.set(referralC.codes);
+      window.location.reload();
     } catch (error: any) {
       new_error({ code: 500, error: error });
     }

@@ -24,6 +24,11 @@
       bind:value={email}
       placeholder="Email"
       required
+      style={email
+        ? emailExists
+          ? ''
+          : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
+        : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
     />
 
     {#if !email}
@@ -40,6 +45,11 @@
       bind:value={password}
       placeholder="New password"
       required
+      style={password
+        ? password.length < 8
+          ? 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
+          : ''
+        : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
     />
     <input
       class="user-input"

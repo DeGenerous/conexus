@@ -12,7 +12,10 @@
     <div class="tiles-collection blur">
       {#each Array(7) as _}
         <div class="tile" style="cursor: progress;">
-          <div class="tile-picture loading-animation" style="cursor: inherit;"></div>
+          <div
+            class="tile-picture loading-animation"
+            style="cursor: inherit;"
+          ></div>
           <p class="title loading-animation" style="cursor: inherit;"></p>
         </div>
       {/each}

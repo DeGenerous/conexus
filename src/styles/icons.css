@@ -113,7 +113,9 @@ svg * {
 .fullscreen-svg *,
 .eye-svg *,
 .volume-svg * {
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  transition:
+    transform 0.3s ease-in-out,
+    opacity 0.3s ease-in-out;
 }
 
 .loading-svg {
@@ -122,7 +124,7 @@ svg * {
   transition: all 0.3s ease-in-out;
   animation:
     pathStroke 3.75s infinite ease-in-out,
-    pathRotate 7.5s infinite cubic-bezier(1,0.5,0,0.5);
+    pathRotate 7.5s infinite cubic-bezier(1, 0.5, 0, 0.5);
 }
 .loading-svg:hover {
   filter: drop-shadow(0 0 0.25vw rgba(51, 226, 230, 0.75));
@@ -134,7 +136,8 @@ svg * {
     stroke: rgb(56, 117, 250);
     opacity: 0;
   }
-  40%, 70% {
+  40%,
+  70% {
     stroke-dashoffset: 0;
     stroke: rgb(51, 226, 230);
     opacity: 1;

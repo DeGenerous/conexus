@@ -17,6 +17,7 @@
   } from '@stores/modal';
   import Share from './Share.svelte';
   import Profile from './Profile.svelte';
+  import BackArrow from './BackArrow.svelte';
 
   export let story_name: string;
 
@@ -89,7 +90,7 @@
 {#if $story === null}
   {#await CoNexus.getTopic(story_name!)}
     <header>
-      <a class="arrow" aria-label="Back arrow" href="./"></a>
+      <BackArrow href="./" />
       <Profile />
     </header>
 
@@ -117,7 +118,7 @@
     </div>
   {:then topic: DynTopic}
     <header>
-      <a class="arrow" aria-label="Back arrow" href="./"></a>
+      <BackArrow href="./" />
       <h1 class="fade-in">
         {(topic.name.charAt(0).toUpperCase() + topic.name.slice(1)).trim()}
       </h1>

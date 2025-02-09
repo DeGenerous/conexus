@@ -128,7 +128,8 @@
   let editPasswordConfirm: string = '';
   let editPasswordVisible: boolean = false;
   let passwordVisible: boolean = false;
-  $: editPasswordMatch = editPassword.length >= 8 && editPassword === editPasswordConfirm;
+  $: editPasswordMatch =
+    editPassword.length >= 8 && editPassword === editPasswordConfirm;
   $: oldPasswordCorrect = editOldPassword === 'password'; // fake validation
 
   const saveChangedPassword = () => {
@@ -185,15 +186,51 @@
       referral_code: referralCode,
     });
   };
+
+  // SVG Icons
+  let profileSvgFocus: boolean = false;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
-<span
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="-100 -100 200 200"
   class="profile-icon"
-  role="button"
-  tabindex="0"
-  on:click={() => ($showProfile = true)}
-></span>
+>
+  <defs>
+    <mask id="profile-svg-mask">
+      <circle r="95" fill="white" />
+      <g
+        class="profile-svg-mask"
+        fill="black"
+        transform={profileSvgFocus ? 'scale(1.1)' : ''}
+      >
+        <circle cy="-25" r="30" />
+        <path
+          d="
+            M -55 55
+            Q -60 20 -25 15
+            L 25 15
+            Q 60 20 55 55
+            Z
+          "
+        />
+      </g>
+    </mask>
+  </defs>
+
+  <circle
+    class="profile-svg"
+    r="95"
+    fill="rgba(51, 226, 230, 0.75)"
+    mask="url(#profile-svg-mask)"
+    on:click={() => ($showProfile = true)}
+    on:pointerover={() => (profileSvgFocus = true)}
+    on:pointerout={() => (profileSvgFocus = false)}
+    role="button"
+    tabindex="0"
+  />
+</svg>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
 <dialog
@@ -344,7 +381,9 @@
               </div>
 
               {#if editPassword && editPassword.length < 8}
-                <p class="validation">Password should contain at least 8 characters!</p>
+                <p class="validation">
+                  Password should contain at least 8 characters!
+                </p>
               {/if}
 
               {#if !editPassword}
@@ -364,7 +403,9 @@
                   </button>
                   <button
                     on:click={saveChangedPassword}
-                    disabled={!editPassword || !editPasswordMatch || !oldPasswordCorrect}
+                    disabled={!editPassword ||
+                      !editPasswordMatch ||
+                      !oldPasswordCorrect}
                   >
                     Save
                   </button>
@@ -1107,20 +1148,8 @@
   .profile-icon {
     height: 7vw;
     width: 7vw;
-    background-image: url('/icons/profileIcon.avif');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 0.4;
     z-index: 1;
-    cursor: pointer;
     flex: none;
-  }
-
-  .profile-icon:hover,
-  .profile-icon:active {
-    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.5));
-    opacity: 0.75;
   }
 
   @media only screen and (max-width: 600px) {

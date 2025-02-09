@@ -136,7 +136,7 @@
       >
         {#if activeGenre}
           <svg
-            xmlns='http://www.w3.org/2000/svg'
+            xmlns="http://www.w3.org/2000/svg"
             viewBox="-100 -100 200 200"
             class="reset-svg filter-image"
             fill="#dedede"
@@ -163,7 +163,7 @@
           </svg>
         {:else}
           <svg
-            xmlns='http://www.w3.org/2000/svg'
+            xmlns="http://www.w3.org/2000/svg"
             viewBox="-100 -100 200 200"
             class="filter-svg filter-image"
             fill="#dedede"
@@ -216,22 +216,16 @@
           : ''}
       >
         <svg
-          xmlns='http://www.w3.org/2000/svg'
+          xmlns="http://www.w3.org/2000/svg"
           viewBox="-100 -100 200 200"
           class="sort-svg filter-image"
-          fill={isSorting ? "rgb(51, 226, 230)" : "#dedede"}
-          stroke={isSorting ? "rgb(51, 226, 230)" : "#dedede"}
+          fill={isSorting ? 'rgb(51, 226, 230)' : '#dedede'}
+          stroke={isSorting ? 'rgb(51, 226, 230)' : '#dedede'}
           stroke-linejoin="round"
-          style="transform: {isSorting
-            ? 'scale(1.1)'
-            : ''
-          }"
+          style="transform: {isSorting ? 'scale(1.1)' : ''}"
         >
           <path
-            style="transform: {isSorting
-              ? 'scale(0.9) translateY(10%)'
-              : ''
-            }"
+            style="transform: {isSorting ? 'scale(0.9) translateY(10%)' : ''}"
             d="
               M -80 -95
               L -80 34
@@ -244,34 +238,10 @@
             "
             stroke-width="6"
           />
-          <rect
-            x="-30"
-            y="-98"
-            width="130"
-            height="20"
-            rx="4"
-          />
-          <rect
-            x="-30"
-            y="-48"
-            width="105"
-            height="20"
-            rx="4"
-          />
-          <rect
-            x="-30"
-            y="2"
-            width="80"
-            height="20"
-            rx="4"
-          />
-          <rect
-            x="-30"
-            y="52"
-            width="55"
-            height="20"
-            rx="4"
-          />
+          <rect x="-30" y="-98" width="130" height="20" rx="4" />
+          <rect x="-30" y="-48" width="105" height="20" rx="4" />
+          <rect x="-30" y="2" width="80" height="20" rx="4" />
+          <rect x="-30" y="52" width="55" height="20" rx="4" />
         </svg>
         A-Z
       </button>
@@ -285,7 +255,7 @@
     >
       {#if isSearching}
         <svg
-          xmlns='http://www.w3.org/2000/svg'
+          xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 100 100"
           class="loading-svg filter-image"
           stroke="transparent"
@@ -303,7 +273,7 @@
         </svg>
       {:else}
         <svg
-          xmlns='http://www.w3.org/2000/svg'
+          xmlns="http://www.w3.org/2000/svg"
           viewBox="-100 -100 200 200"
           class="search-svg filter-image"
           stroke="#dedede"
@@ -314,30 +284,18 @@
           tabindex="0"
           style="transform: {searchSvgFocus
             ? 'scale(1.05) rotate(90deg)'
-            : 'none'
-          }"
+            : 'none'}"
         >
-          <circle
-            cx="-20"
-            cy="-20"
-            r="70"
-            stroke-width="15"
-          />
-          <line
-            x1="34"
-            y1="34"
-            x2="85"
-            y2="80"
-            stroke-width="25"
-          />
+          <circle cx="-20" cy="-20" r="70" stroke-width="15" />
+          <line x1="34" y1="34" x2="85" y2="80" stroke-width="25" />
         </svg>
       {/if}
       <input
         bind:this={searchInput}
         bind:value={searchField}
         on:input={handleSearch}
-        on:focus={() => searchSvgFocus = true}
-        on:blur={() => searchSvgFocus = false}
+        on:focus={() => (searchSvgFocus = true)}
+        on:blur={() => (searchSvgFocus = false)}
         class="search-field"
         placeholder="Search story..."
       />
@@ -354,9 +312,12 @@
 {:else}
   <section class="filters">
     <div class="sort-genres-filters">
-      <div class="filter filter-wrapper loading-animation blur" style="cursor: progress;">
+      <div
+        class="filter filter-wrapper loading-animation blur"
+        style="cursor: progress;"
+      >
         <svg
-          xmlns='http://www.w3.org/2000/svg'
+          xmlns="http://www.w3.org/2000/svg"
           viewBox="-100 -100 200 200"
           class="filter-svg filter-image"
           fill="#dedede"
@@ -390,7 +351,7 @@
         disabled
       >
         <svg
-          xmlns='http://www.w3.org/2000/svg'
+          xmlns="http://www.w3.org/2000/svg"
           viewBox="-100 -100 200 200"
           class="sort-svg filter-image"
           fill="#dedede"
@@ -410,42 +371,21 @@
             "
             stroke-width="6"
           />
-          <rect
-            x="-30"
-            y="-98"
-            width="130"
-            height="20"
-            rx="4"
-          />
-          <rect
-            x="-30"
-            y="-48"
-            width="105"
-            height="20"
-            rx="4"
-          />
-          <rect
-            x="-30"
-            y="2"
-            width="80"
-            height="20"
-            rx="4"
-          />
-          <rect
-            x="-30"
-            y="52"
-            width="55"
-            height="20"
-            rx="4"
-          />
+          <rect x="-30" y="-98" width="130" height="20" rx="4" />
+          <rect x="-30" y="-48" width="105" height="20" rx="4" />
+          <rect x="-30" y="2" width="80" height="20" rx="4" />
+          <rect x="-30" y="52" width="55" height="20" rx="4" />
         </svg>
         A-Z
       </button>
     </div>
 
-    <div class="filter filter-wrapper loading-animation blur" style="cursor: progress;">
+    <div
+      class="filter filter-wrapper loading-animation blur"
+      style="cursor: progress;"
+    >
       <svg
-        xmlns='http://www.w3.org/2000/svg'
+        xmlns="http://www.w3.org/2000/svg"
         viewBox="-100 -100 200 200"
         class="search-svg filter-image"
         stroke="#dedede"
@@ -453,21 +393,15 @@
         fill="none"
         style="cursor: inherit;"
       >
-        <circle
-          cx="-20"
-          cy="-20"
-          r="70"
-          stroke-width="15"
-        />
-        <line
-          x1="34"
-          y1="34"
-          x2="85"
-          y2="80"
-          stroke-width="25"
-        />
+        <circle cx="-20" cy="-20" r="70" stroke-width="15" />
+        <line x1="34" y1="34" x2="85" y2="80" stroke-width="25" />
       </svg>
-      <input class="search-field" placeholder="Search story..." disabled style="cursor: inherit;" />
+      <input
+        class="search-field"
+        placeholder="Search story..."
+        disabled
+        style="cursor: inherit;"
+      />
     </div>
   </section>
 

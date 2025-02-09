@@ -7,6 +7,7 @@ import { ViewTransitions } from 'astro:transitions';
 import Profile from '../components/Profile.svelte';
 import ToastContainer from '../components/ToastContainer.svelte';
 import Modal from '../components/Modal.svelte';
+import BackArrow from '../components/BackArrow.svelte';
 
 const {
   header,
@@ -52,20 +53,21 @@ const {
     {
       !story && (
         <header class="container">
-          {arrow && <a class="icon arrow" href="/" aria-label="Back arrow" />}
+          {arrow && <BackArrow client:load />}
           {!arrow && (
             <a
-              class="icon logo"
               href="https://degenerousdao.com/"
               target="_blank"
               aria-label="dgrs-logo"
-            />
+            >
+              <img class="logo" src="/logo.avif" alt="Logo" />
+            </a>
           )}
           {header === 'CoNexus' ? (
             <picture>
               <source srcset="title.avif" type="image/avif" />
               <img
-                class="blur"
+                class="title blur"
                 src="title.png"
                 alt="CoNexus"
                 draggable="false"
@@ -102,7 +104,7 @@ const {
         text-shadow: 0 0.5vw 0.5vw #010020;
       }
 
-      img {
+      .title {
         width: 33vw;
         height: auto;
         filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
@@ -125,34 +127,23 @@ const {
       }
 
       a {
-        height: 7vw;
-        width: 7vw;
-        z-index: 1;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
         flex: none;
-      }
-
-      .arrow {
-        background-image: url('/icons/backArrow.avif');
-        opacity: 0.4;
-      }
-
-      .arrow:hover,
-      .arrow:active {
-        filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.5));
-        opacity: 0.75;
+        border-radius: 50%;
       }
 
       .logo {
-        background-image: url('/logo.avif');
+        cursor: inherit;
+        border-radius: inherit;
+        height: 7vw;
+        width: 7vw;
         opacity: 0.7;
+        transition: all 0.3s ease-in-out;
       }
 
       .logo:hover,
       .logo:active {
-        opacity: 0.9;
+        opacity: 1;
+        transform: scale(1.05);
       }
 
       @media only screen and (max-width: 600px) {
@@ -171,7 +162,7 @@ const {
           line-height: 1.5em;
         }
 
-        img {
+        .title {
           width: 40vw;
           padding: 2vw 4vw;
         }
@@ -189,7 +180,7 @@ const {
           border-radius: 1em;
         }
 
-        a {
+        .logo {
           width: 3em;
           height: 3em;
         }

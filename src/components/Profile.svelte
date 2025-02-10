@@ -78,8 +78,7 @@
   };
 
   let activeWalletStyling = `
-    color: rgba(51, 226, 230, 0.75);
-    text-shadow: 0 0 0.1vw rgb(51, 226, 230);
+    color: rgb(51, 226, 230);
     background-color: rgb(45, 90, 216);
     box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25), 0 0 0.5vw rgba(51, 226, 230, 0.5);
   `;
@@ -116,10 +115,6 @@
 
   $: if (isLogged) {
     Account.referraLCodes();
-  }
-
-  function copyRefCode(event: any) {
-    navigator.clipboard.writeText(event.target.id);
   }
 
   let editingPassword: boolean = false;
@@ -189,6 +184,10 @@
 
   // SVG Icons
   let profileSvgFocus: boolean = false;
+  let backArrowSvgFocus: boolean = false;
+  let closeSvgFocus: boolean = false;
+  let signInSvgFocus: boolean = false;
+  let signOutSvgFocus: boolean = false;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
@@ -233,13 +232,14 @@
 </svg>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
+<!-- svelte-ignore a11y-no-static-element-interactions a11y_no_noninteractive_element_to_interactive_role -->
+<!-- svelte-ignore a11y_consider_explicit_label -->
 <dialog
   class="blur"
   bind:this={dialog}
   on:close={() => ($showProfile = false)}
   on:click|self={() => ($showProfile = false)}
 >
-  <!-- svelte-ignore a11y-no-static-element-interactions a11y_no_noninteractive_element_to_interactive_role -->
   <div on:click|stopPropagation>
     <header>
       {#if isLogged}
@@ -248,20 +248,139 @@
           on:click={() => {
             Account.signout();
           }}
+          on:pointerover={() => (signOutSvgFocus = true)}
+          on:pointerout={() => (signOutSvgFocus = false)}
         >
-          <img src="/icons/sign-out.png" alt="Sign-out" />
-          <p>Sign out</p>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="-100 -100 200 200"
+            class="door-svg"
+            fill="none"
+            stroke="#dedede"
+            stroke-width="12"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            style="stroke: {signOutSvgFocus ? 'rgb(51, 226, 230)' : '#dedede'}"
+          >
+            <defs>
+              <mask id="door-svg-mask">
+                <rect
+                  x="-25"
+                  y="-75"
+                  width="100"
+                  height="150"
+                  rx="15"
+                  fill="none"
+                  stroke="white"
+                />
+                <line
+                  x1="-25"
+                  y1="-35"
+                  x2="-25"
+                  y2="35"
+                  stroke="black"
+                  stroke-width="14"
+                  stroke-linecap="square"
+                />
+              </mask>
+            </defs>
+
+            <path
+              style="transform: {signOutSvgFocus ? 'translateX(-10%)' : 'none'}"
+              d="
+                M 30 0
+                L -80 0
+                L -55 -25
+                M -80 0
+                L -55 25
+              "
+              fill="none"
+            />
+            <rect
+              x="-25"
+              y="-75"
+              width="100"
+              height="150"
+              rx="15"
+              mask="url(#door-svg-mask)"
+            />
+          </svg>
         </button>
       {:else}
-        <button class="back-arrow" on:click|stopPropagation={handleBackArrow}>
-          <img src="/icons/quit-fullscreen.png" alt="Back" />
+        <button
+          class="back-arrow"
+          on:click|stopPropagation={handleBackArrow}
+          on:pointerover={() => (backArrowSvgFocus = true)}
+          on:pointerout={() => (backArrowSvgFocus = false)}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
+            <defs>
+              <mask id="quit-svg-mask">
+                <circle r="95" fill="white" />
+                <path
+                  class="quit-svg-mask"
+                  d="
+                    M 50 0
+                    L -50 0
+                    L 0 -50
+                    M -50 0
+                    L 0 50
+                  "
+                  fill="none"
+                  stroke="black"
+                  stroke-width="25"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  transform={backArrowSvgFocus ? 'scale(1.1)' : ''}
+                />
+              </mask>
+            </defs>
+
+            <circle
+              style="
+                transition: all 0.3s ease-in-out;
+                transform: {backArrowSvgFocus ? 'scale(1.05);' : 'none'}
+                fill: {backArrowSvgFocus
+                ? 'rgb(51, 226, 230)'
+                : 'rgba(51, 226, 230, 0.75)'}
+              "
+              fill="rgba(51, 226, 230, 0.75)"
+              r="95"
+              mask="url(#quit-svg-mask)"
+            />
+          </svg>
         </button>
       {/if}
       <button
         class="close-button"
         on:click|stopPropagation={() => ($showProfile = false)}
+        on:pointerover={() => (closeSvgFocus = true)}
+        on:pointerout={() => (closeSvgFocus = false)}
       >
-        <img src="/icons/close.png" alt="Close" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="-100 -100 200 200"
+          class="close-svg"
+          stroke="rgba(255, 60, 64, 0.85)"
+          stroke-width="30"
+          stroke-linecap="round"
+          style="
+            transform: {closeSvgFocus ? 'scale(1.1);' : 'none'}
+            stroke: {closeSvgFocus
+            ? 'rgb(255, 60, 64)'
+            : 'rgba(255, 60, 64, 0.85)'}
+          "
+        >
+          <path
+            d="
+              M -65 -65
+              L 65 65
+              M -65 65
+              L 65 -65
+            "
+            fill="none"
+          />
+        </svg>
       </button>
     </header>
 
@@ -360,13 +479,98 @@
                         : ''
                       : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
                   />
-                  <button
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="-100 -100 200 200"
+                    class="eye-svg"
+                    fill="none"
+                    stroke="rgb(51, 226, 230)"
+                    stroke-width="15"
+                    stroke-linejoin="round"
+                    stroke-linecap="round"
+                    opacity="0.75"
+                    on:click={() =>
+                      (editPasswordVisible = !editPasswordVisible)}
+                    role="button"
+                    tabindex="0"
                     aria-label="Show password"
-                    class="password-visibility-button non-hover-btn"
-                    on:pointerdown={() => (editPasswordVisible = true)}
-                    on:pointerup={() => (editPasswordVisible = false)}
-                    on:pointerleave={() => (editPasswordVisible = false)}
-                  ></button>
+                  >
+                    <defs>
+                      <mask id="eye-svg-top-mask">
+                        <rect
+                          class="eye-svg-top"
+                          x="-100"
+                          y="-100"
+                          width="200"
+                          height="200"
+                          fill="white"
+                          style="transform: {editPasswordVisible
+                            ? 'none'
+                            : 'translateX(-200px)'}"
+                        />
+                      </mask>
+                      <mask id="eye-svg-bottom-mask">
+                        <rect
+                          class="eye-svg-bottom"
+                          x="100"
+                          y="-100"
+                          width="200"
+                          height="200"
+                          fill="white"
+                          style="transform: {editPasswordVisible
+                            ? 'none'
+                            : 'translateX(-200px)'}"
+                        />
+                      </mask>
+                      <mask id="eye-svg-crossed-out-mask">
+                        <g stroke="white">
+                          <circle r="20" />
+                          <path
+                            d="
+                              M -80 0
+                              Q 0 -90 80 0
+                              Q 0 90 -80 0
+                              Z
+                            "
+                          />
+                        </g>
+                        <line
+                          x1="55"
+                          y1="-75"
+                          x2="-95"
+                          y2="75"
+                          stroke="black"
+                        />
+                      </mask>
+                    </defs>
+
+                    <g mask="url(#eye-svg-top-mask)">
+                      <circle r="20" />
+                      <path
+                        d="
+                          M -80 0
+                          Q 0 -90 80 0
+                          Q 0 90 -80 0
+                          Z
+                        "
+                      />
+                    </g>
+
+                    <g mask="url(#eye-svg-bottom-mask)">
+                      <g mask="url(#eye-svg-crossed-out-mask)">
+                        <circle r="20" />
+                        <path
+                          d="
+                            M -80 0
+                            Q 0 -90 80 0
+                            Q 0 90 -80 0
+                            Z
+                          "
+                        />
+                      </g>
+                      <line x1="75" y1="-75" x2="-75" y2="75" />
+                    </g>
+                  </svg>
                 </div>
 
                 <input
@@ -444,17 +648,26 @@
                             '...' +
                             wallet.wallet.slice(-4)}</span
                         >
-                        <p
-                          class="select-wallet"
-                          role="button"
-                          tabindex="0"
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          class="star-svg"
+                          fill="#010020"
+                          style={wallet.wallet === user.main_wallet
+                            ? 'fill: rgb(51, 226, 230)'
+                            : ''}
                           on:click={() => {
                             if (wallet.wallet != user.main_wallet)
                               walletSelectConfirm(wallet.wallet);
                           }}
+                          role="button"
+                          tabindex="0"
                         >
-                          ★
-                        </p>
+                          <path
+                            d="m12 3 2.23 6.88h7.23l-5.85 4.24L17.85 21 12 16.75 6.15 21l2.24-6.88-5.85-4.24h7.23L12 3z"
+                          >
+                          </path>
+                        </svg>
                       </li>
                     {/each}
                   </ul>
@@ -491,12 +704,62 @@
                       disabled
                     />
                     {#if !code.is_used}
-                      <button
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="-100 -100 200 200"
+                        class="copy-svg"
+                        fill="none"
+                        stroke="rgb(51, 226, 230)"
+                        stroke-width="15"
+                        stroke-linejoin="round"
+                        stroke-linecap="round"
+                        opacity="0.75"
+                        on:click={() =>
+                          navigator.clipboard.writeText(code.code)}
+                        role="button"
+                        tabindex="0"
                         aria-label="Copy code"
-                        id={code.code}
-                        class="copy-button non-hover-btn"
-                        on:click={copyRefCode}
-                      ></button>
+                      >
+                        <defs>
+                          <mask id="copy-checkmark">
+                            <rect
+                              x="-45"
+                              y="-60"
+                              width="130"
+                              height="150"
+                              fill="white"
+                              stroke="white"
+                            />
+                            <path
+                              d="
+                                M -10 10
+                                L 10 40
+                                L 50 -20
+                              "
+                              fill="none"
+                              stroke="black"
+                            />
+                          </mask>
+                        </defs>
+
+                        <path
+                          d="
+                            M 40 -67
+                            L 40 -90
+                            L -90 -90
+                            L -90 60
+                            L -52 60
+                          "
+                          fill="none"
+                        />
+                        <rect
+                          x="-45"
+                          y="-60"
+                          width="130"
+                          height="150"
+                          mask="url(#copy-checkmark)"
+                        />
+                      </svg>
                     {/if}
                   </div>
                 {/each}
@@ -549,10 +812,74 @@
                 <p class="validation">Invalid credentials!</p>
               {/if}
               <button
-                class="sign-button"
+                class="sign-in-button"
                 on:click={handleSignIn}
+                on:pointerover={() => {
+                  if (loginMail && loginPassword) signInSvgFocus = true;
+                }}
+                on:pointerout={() => {
+                  if (loginMail && loginPassword) signInSvgFocus = false;
+                }}
                 disabled={!(loginMail && loginPassword)}
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="-100 -100 200 200"
+                  class="door-svg"
+                  fill="none"
+                  stroke="#dedede"
+                  stroke-width="12"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  style="stroke: {signInSvgFocus
+                    ? 'rgb(51, 226, 230)'
+                    : '#dedede'}"
+                >
+                  <defs>
+                    <mask id="door-svg-mask">
+                      <rect
+                        x="-25"
+                        y="-75"
+                        width="100"
+                        height="150"
+                        rx="15"
+                        fill="none"
+                        stroke="white"
+                      />
+                      <line
+                        x1="-25"
+                        y1="-35"
+                        x2="-25"
+                        y2="35"
+                        stroke="black"
+                        stroke-width="14"
+                        stroke-linecap="square"
+                      />
+                    </mask>
+                  </defs>
+
+                  <path
+                    style="transform: {signInSvgFocus
+                      ? 'translateX(10%)'
+                      : 'none'}"
+                    d="
+                      M -80 0
+                      L 30 0
+                      L 5 -25
+                      M 30 0
+                      L 5 25
+                    "
+                    fill="none"
+                  />
+                  <rect
+                    x="-25"
+                    y="-75"
+                    width="100"
+                    height="150"
+                    rx="15"
+                    mask="url(#door-svg-mask)"
+                  />
+                </svg>
                 Sign in
               </button>
               <a href="/reset-password/<token>">Forgot password?</a>
@@ -638,14 +965,91 @@
                     ? ''
                     : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
                 />
-                <button
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="-100 -100 200 200"
+                  class="eye-svg"
+                  fill="none"
+                  stroke="rgb(51, 226, 230)"
+                  stroke-width="15"
+                  stroke-linejoin="round"
+                  stroke-linecap="round"
+                  opacity="0.75"
+                  on:click={() => (passwordVisible = !passwordVisible)}
+                  role="button"
+                  tabindex="0"
                   aria-label="Show password"
-                  class="password-visibility-button non-hover-btn"
-                  on:click|preventDefault
-                  on:pointerdown={() => (passwordVisible = true)}
-                  on:pointerup={() => (passwordVisible = false)}
-                  on:pointerleave={() => (passwordVisible = false)}
-                ></button>
+                >
+                  <defs>
+                    <mask id="eye-svg-top-mask">
+                      <rect
+                        class="eye-svg-top"
+                        x="-100"
+                        y="-100"
+                        width="200"
+                        height="200"
+                        fill="white"
+                        style="transform: {passwordVisible
+                          ? 'none'
+                          : 'translateX(-200px)'}"
+                      />
+                    </mask>
+                    <mask id="eye-svg-bottom-mask">
+                      <rect
+                        class="eye-svg-bottom"
+                        x="100"
+                        y="-100"
+                        width="200"
+                        height="200"
+                        fill="white"
+                        style="transform: {passwordVisible
+                          ? 'none'
+                          : 'translateX(-200px)'}"
+                      />
+                    </mask>
+                    <mask id="eye-svg-crossed-out-mask">
+                      <g stroke="white">
+                        <circle r="20" />
+                        <path
+                          d="
+                            M -80 0
+                            Q 0 -90 80 0
+                            Q 0 90 -80 0
+                            Z
+                          "
+                        />
+                      </g>
+                      <line x1="55" y1="-75" x2="-95" y2="75" stroke="black" />
+                    </mask>
+                  </defs>
+
+                  <g mask="url(#eye-svg-top-mask)">
+                    <circle r="20" />
+                    <path
+                      d="
+                        M -80 0
+                        Q 0 -90 80 0
+                        Q 0 90 -80 0
+                        Z
+                      "
+                    />
+                  </g>
+
+                  <g mask="url(#eye-svg-bottom-mask)">
+                    <g mask="url(#eye-svg-crossed-out-mask)">
+                      <circle r="20" />
+                      <path
+                        d="
+                          M -80 0
+                          Q 0 -90 80 0
+                          Q 0 90 -80 0
+                          Z
+                        "
+                      />
+                    </g>
+                    <line x1="75" y1="-75" x2="-75" y2="75" />
+                  </g>
+                </svg>
               </div>
               <input
                 class="user-input"
@@ -838,18 +1242,6 @@
     padding: 1vw;
   }
 
-  /* Reset button styling for icons */
-
-  .password-visibility-button,
-  .copy-button {
-    padding: 0;
-    margin: 0;
-    border: none;
-    border-radius: 0;
-    background-color: rgba(0, 0, 0, 0);
-    opacity: 0.75;
-  }
-
   /* Control buttons */
 
   header {
@@ -865,23 +1257,11 @@
     padding: 0.5vw;
   }
 
-  .back-arrow img,
-  .close-button img,
-  .login-button img {
+  .back-arrow svg,
+  .close-button svg,
+  .login-button svg {
+    height: 3vw;
     width: 3vw;
-    padding: 0.25vw;
-    opacity: 0.9;
-    height: auto;
-    cursor: pointer;
-  }
-
-  .login-button p {
-    color: #dedede;
-    cursor: inherit;
-  }
-
-  .back-arrow img {
-    opacity: 0.75;
   }
 
   /* SIGN-IN window */
@@ -986,17 +1366,10 @@
     border: 0.1vw solid rgba(51, 226, 230, 0.9);
   }
 
-  .password-visibility-button {
+  .eye-svg {
     margin-left: 1vw;
     width: 3vw;
     height: 3vw;
-    background-image: url('/icons/invisibleicon.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-  }
-
-  .password-visibility-button:active {
-    background-image: url('/icons/visibleicon.png');
   }
 
   .edit-buttons {
@@ -1076,18 +1449,6 @@
     border-radius: 1vw;
   }
 
-  .select-wallet {
-    cursor: pointer;
-    text-shadow: none;
-    color: inherit;
-  }
-
-  .select-wallet:hover,
-  .select-wallet:active {
-    text-shadow: 0 0 0.5vw rgba(1, 0, 32, 0.5);
-    transform: scale(1.1);
-  }
-
   /* Referral codes container */
 
   .referral-codes {
@@ -1126,16 +1487,9 @@
     opacity: 1; /* for iOS */
   }
 
-  .copy-button {
+  .copy-svg {
     width: 2vw;
     height: 2vw;
-    background-image: url('/icons/copyicon.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-  }
-
-  .copy-button:active {
-    background-image: url('/icons/checkmark.png');
   }
 
   .active-code {
@@ -1168,20 +1522,6 @@
     .close-button,
     .login-button {
       padding: 0.35em;
-    }
-
-    .back-arrow img,
-    .close-button img,
-    .login-button img {
-      width: 1.25em;
-    }
-
-    .login-button img {
-      padding: 0;
-    }
-
-    .login-button p {
-      display: none;
     }
 
     .sign-container {
@@ -1221,7 +1561,7 @@
       margin-bottom: 0.5em;
     }
 
-    .password-visibility-button {
+    .eye-svg {
       width: 1em;
       height: 1em;
       margin-left: 0.25em;
@@ -1280,7 +1620,7 @@
       padding: 0.25em 0.5em;
     }
 
-    .copy-button {
+    .copy-svg {
       width: 1em;
       height: 1em;
     }

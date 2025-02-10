@@ -57,13 +57,60 @@
         role="button"
         tabindex="0"
       />
-      <img
-        src="/icons/copyicon.png"
-        alt="Share"
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="-100 -100 200 200"
+        fill="none"
+        stroke="rgb(51, 226, 230)"
+        stroke-width="15"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        opacity="0.75"
         on:click={() => handleOptionClick('copy')}
         role="button"
         tabindex="0"
-      />
+        aria-label="Copy"
+      >
+        <defs>
+          <mask id="copy-checkmark">
+            <rect
+              x="-45"
+              y="-60"
+              width="130"
+              height="150"
+              fill="white"
+              stroke="white"
+            />
+            <path
+              d="
+                M -10 10
+                L 10 40
+                L 50 -20
+              "
+              fill="none"
+              stroke="black"
+            />
+          </mask>
+        </defs>
+
+        <path
+          d="
+            M 40 -67
+            L 40 -90
+            L -90 -90
+            L -90 60
+            L -52 60
+          "
+          fill="none"
+        />
+        <rect
+          x="-45"
+          y="-60"
+          width="130"
+          height="150"
+          mask="url(#copy-checkmark)"
+        />
+      </svg>
     {:else}
       SHARE
     {/if}
@@ -76,7 +123,8 @@
     display: flex;
   }
 
-  img {
+  img,
+  svg {
     height: 1.5vw;
     filter: drop-shadow(0 0 0.1vw #010020);
     margin-inline: 0.5vw;
@@ -84,7 +132,9 @@
   }
 
   img:hover,
-  img:active {
+  img:active,
+  svg:hover,
+  svg:active {
     transform: scale(1.025) translateY(-0.25vw);
     filter: drop-shadow(0 0.25vw 0.25vw #010020);
   }
@@ -102,7 +152,8 @@
       padding: 0.25em 0.5em;
     }
 
-    img {
+    img,
+    svg {
       height: 1.25em;
     }
   }

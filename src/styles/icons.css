@@ -23,13 +23,13 @@ svg * {
 .sort-svg,
 .door-svg,
 .fullscreen-svg,
-.eye-svg {
+.eye-svg,
+.star-svg {
   cursor: pointer;
   transition: all 0.3s ease-in-out;
 }
 .back-arrow-svg:hover,
 .profile-svg:hover,
-.close-svg:hover,
 .reset-svg:hover,
 .quit-svg:hover,
 .step-arrow-svg:hover,
@@ -37,7 +37,8 @@ svg * {
 .volume-svg:hover,
 .replay-svg:hover,
 .fullscreen-svg:hover,
-.eye-svg:hover {
+.eye-svg:hover,
+.star-svg:hover {
   fill: rgb(51, 226, 230);
   transform: scale(1.05);
 }
@@ -46,7 +47,6 @@ svg * {
 .voice-svg:hover,
 .volume-svg:hover,
 .replay-svg:hover,
-.door-svg:hover,
 .fullscreen-svg:hover {
   stroke: rgb(51, 226, 230);
 }
@@ -58,6 +58,14 @@ svg * {
   transition: all 0.3s ease-in-out;
 }
 
+.star-svg,
+.copy-svg {
+  transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.star-svg:hover {
+  transform: scale(1.1);
+}
+
 .fullscreen-svg {
   transform: none !important;
 }
@@ -66,9 +74,6 @@ svg * {
   fill: none !important;
 }
 
-.close-svg:hover {
-  stroke: rgb(255, 60, 64);
-}
 .reset-svg,
 .delete-svg-circle,
 .play-svg-circle {

@@ -69,7 +69,7 @@
       deleteSvgCircle!.setAttribute('r', '90');
       deleteSvgCircle!.style.opacity = '1';
     }
-  }
+  };
 
   const handlePlaySvg = (id: string, state: 'focus' | 'blur') => {
     const playSvgIcon = document.getElementById(`play-icon-${id}`);
@@ -83,7 +83,7 @@
       playSvgCircle!.setAttribute('r', '90');
       playSvgCircle!.style.opacity = '1';
     }
-  }
+  };
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -154,10 +154,11 @@
           <button
             on:click={() => topic && CoNexus.start(topic.name)}
             disabled={$loading}
+            style={$loading ? 'color: rgb(51, 226, 230)' : ''}
           >
             {#if $loading}
               <svg
-                xmlns='http://www.w3.org/2000/svg'
+                xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 100 100"
                 class="loading-svg"
                 stroke="transparent"
@@ -218,7 +219,7 @@
             {#if !deletedStories.includes(continuable.story_id)}
               <div class="unfinished-story">
                 <svg
-                  xmlns='http://www.w3.org/2000/svg'
+                  xmlns="http://www.w3.org/2000/svg"
                   viewBox="-100 -100 200 200"
                   class="delete-svg continue-shaping-btn"
                   fill="none"
@@ -226,10 +227,12 @@
                   stroke-width="15"
                   stroke-linecap="round"
                   on:click|preventDefault={() => {
-                    if (!$loading) openModal(continuable)
+                    if (!$loading) openModal(continuable);
                   }}
-                  on:pointerover={() => handleDeleteSvg(continuable.story_id, 'focus')}
-                  on:pointerout={() => handleDeleteSvg(continuable.story_id, 'blur')}
+                  on:pointerover={() =>
+                    handleDeleteSvg(continuable.story_id, 'focus')}
+                  on:pointerout={() =>
+                    handleDeleteSvg(continuable.story_id, 'blur')}
                   role="button"
                   tabindex="0"
                 >
@@ -242,10 +245,7 @@
                       L 35 -35
                     "
                   />
-                  <circle
-                    id="delete-circle-{continuable.story_id}"
-                    r="90"
-                  />
+                  <circle id="delete-circle-{continuable.story_id}" r="90" />
                 </svg>
                 <h3>
                   {continuable.story_id.split('-')[0]} - {new Date(
@@ -253,7 +253,7 @@
                   ).toLocaleDateString()}
                 </h3>
                 <svg
-                  xmlns='http://www.w3.org/2000/svg'
+                  xmlns="http://www.w3.org/2000/svg"
                   viewBox="-100 -100 200 200"
                   class="play-svg continue-shaping-btn"
                   fill="none"
@@ -262,10 +262,12 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   on:click|preventDefault={() => {
-                    if (!$loading) CoNexus.continue(continuable)
+                    if (!$loading) CoNexus.continue(continuable);
                   }}
-                  on:pointerover={() => handlePlaySvg(continuable.story_id, 'focus')}
-                  on:pointerout={() => handlePlaySvg(continuable.story_id, 'blur')}
+                  on:pointerover={() =>
+                    handlePlaySvg(continuable.story_id, 'focus')}
+                  on:pointerout={() =>
+                    handlePlaySvg(continuable.story_id, 'blur')}
                   role="button"
                   tabindex="0"
                 >
@@ -276,10 +278,7 @@
                     "
                     fill="rgb(0, 185, 55)"
                   />
-                  <circle
-                    id="play-circle-{continuable.story_id}"
-                    r="90"
-                  />
+                  <circle id="play-circle-{continuable.story_id}" r="90" />
                 </svg>
               </div>
             {/if}
@@ -492,6 +491,11 @@
 
   .story-buttons-container button {
     gap: 1vw;
+  }
+
+  .loading-svg {
+    height: 1.5vw;
+    width: 1.5vw;
   }
 
   /* LOADING */

@@ -281,6 +281,7 @@ class Account {
 
     authenticated.set({ user: null, loggedIn: false });
     web3LoggedIn.set(false);
+    window.open('/', '_self');
   }
 
   static async generateReferralCode(): Promise<void> {

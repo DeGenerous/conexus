@@ -31,12 +31,36 @@
   const storyTitle: string = (
     _storyTitle.charAt(0).toUpperCase() + _storyTitle.slice(1)
   ).trim();
+
+  // SVG Icons
+  let quitSvgWindowFocus: boolean = false;
+  let quitSvgFullscreenFocus: boolean = false;
+
+  let backStepArrowWindowFocus: boolean = false;
+  let nextStepArrowWindowFocus: boolean = false;
+  let backStepArrowFullscreenFocus: boolean = false;
+  let nextStepArrowFullscreenFocus: boolean = false;
+
+  let fullscreenSvgWindowFocus: boolean = false;
+  let fullscreenSvgFullscreenFocus: boolean = false;
+
+  const handleSelectorSvg = (id: number, state: 'focus' | 'blur') => {
+    const selectorSvg = document.getElementById(`selector-${id}`);
+    if (state == 'focus') {
+      selectorSvg!.style.transform = 'scaleX(1.5)';
+      selectorSvg!.style.opacity = '1';
+    } else if (state == 'blur') {
+      selectorSvg!.style.transform = 'none';
+      selectorSvg!.style.opacity = '0.75';
+    }
+  }
 </script>
 
 <svelte:window bind:outerWidth={width} />
 
+<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_consider_explicit_label -->
 <section class="step-wrapper" style="font-family: {stepFont}">
-  <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions a11y-no-static-element-interactions -->
   <div
     class="image-wrapper"
     bind:this={imageWrapper}
@@ -92,13 +116,41 @@
             : ''}"
           style="font-family: {stepFont}"
           disabled={$loading || step.step !== $story?.maxStep}
-          on:click={() => $story?.next_step(i + 1)}
+          on:click={() => {
+            $story?.next_step(i + 1);
+            handleSelectorSvg(i, 'blur')
+          }}
+          on:pointerover={() => {
+            if (!$loading && step.step == $story?.maxStep) handleSelectorSvg(i, 'focus')
+          }}
+          on:pointerout={() => {
+            if (!$loading && step.step == $story?.maxStep) handleSelectorSvg(i, 'blur')
+          }}
         >
-          <img
-            class="option-selector"
-            src="/icons/option-selector.png"
-            alt="Option"
-          />
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            viewBox="-100 -100 200 200"
+            class="option-selector-svg"
+            fill="rgb(51, 226, 2305)"
+            stroke="rgb(51, 226, 230)"
+            stroke-width="20"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polygon
+              id="selector-{i}"
+              style="
+                transform: {$loading ? 'none' : step.choice
+                && step.choice - 1 === i ? 'scaleX(1.5)' : 'none'} !important;
+                opacity: {$loading ? '0.75' : step.choice
+                && step.choice - 1 === i ? '1' : '0.75'} !important;
+              "
+              points="
+                -40 -90 -40 90 50 0
+              "
+              opacity="0.75"
+            />
+          </svg>
           {option}
         </button>
       {/each}
@@ -112,8 +164,48 @@
       {#if !$fullscreen}
         <div class="control-bar blur">
           <div class="story-info-container">
-            <button class="quit" on:click={() => window.open('./', '_self')}>
-              <img src="/icons/quit.png" alt="Quit" />
+            <button
+              class="quit"
+              on:click={() => window.open('./', '_self')}
+              on:pointerover={() => quitSvgWindowFocus = true}
+              on:pointerout={() => quitSvgWindowFocus = false}
+            >
+              <svg xmlns='http://www.w3.org/2000/svg' viewBox="-100 -100 200 200">
+                <defs>
+                  <mask id="quit-svg-mask">
+                    <circle 
+                      r="95"
+                      fill="white"
+                    />
+                    <path
+                      class="quit-svg-mask"
+                      d="
+                        M 50 0
+                        L -50 0
+                        L 0 -50
+                        M -50 0
+                        L 0 50
+                      "
+                      fill="none"
+                      stroke="black"
+                      stroke-width="25"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      style="transform: {quitSvgWindowFocus ? 'scale(1.2)' : 'none'}"
+                    />
+                  </mask>
+                </defs>
+              
+                <circle 
+                  r="95"
+                  fill="rgb(22, 30, 95)"
+                  mask="url(#quit-svg-mask)"
+                  style="
+                    transform: {quitSvgWindowFocus ? 'scale(1.05)' : 'none'};
+                    fill: {quitSvgWindowFocus ? 'rgb(1, 0, 32)' : 'rgb(22, 30, 95)'}
+                  "
+                />
+              </svg>
             </button>
 
             <h3>{storyTitle}</h3>
@@ -122,8 +214,51 @@
           <div class="controls">
             <Slider src="/icons/volume.png" volume={background_volume} />
             <Slider src="/icons/voice.png" volume={tts_volume} restartable />
-            <button class="fullscreen" on:click={() => ($fullscreen = true)}>
-              <img src="/icons/fullscreen.png" alt="Enter fullscreen mode" />
+            <button
+              class="fullscreen"
+              on:click={() => ($fullscreen = true)}
+              on:pointerover={() => fullscreenSvgWindowFocus = true}
+              on:pointerout={() => fullscreenSvgWindowFocus = false}
+            >
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                viewBox="-100 -100 200 200"
+                class="fullscreen-svg"
+                fill="rgb(22, 30, 95)"
+                stroke="rgb(22, 30, 95)"
+                stroke-width="25"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-label="Enter fullscreen mode"
+                style="transform: {fullscreenSvgWindowFocus ? 'scale(1.05)' : ''}"
+              >
+                <g id="fullscreen-arrow" style="transform: {fullscreenSvgWindowFocus ? 'translate(-2.5%, -2.5%)' : ''}">
+                  <line
+                    x1="0"
+                    y1="0"
+                    x2="-55"
+                    y2="-55"
+                  />
+                  <polygon
+                    points="
+                      -85 -32 -85 -85 -32 -85
+                    "
+                    stroke-width="15"
+                  />
+                </g>
+                <use
+                  href="#fullscreen-arrow"
+                  transform="rotate(90)"
+                />
+                <use
+                  href="#fullscreen-arrow"
+                  transform="rotate(180)"
+                />
+                <use
+                  href="#fullscreen-arrow"
+                  transform="rotate(270)"
+                />
+              </svg>
             </button>
           </div>
         </div>
@@ -131,22 +266,122 @@
         <div class="step-bar blur">
           <button
             class="step-button"
-            on:click={() => $story?.loadStep(step.step - 1)}
+            on:click={() => {
+              if (step.step === 2) backStepArrowWindowFocus = false;
+              $story?.loadStep(step.step - 1);
+            }}
+            on:pointerover={() => {
+              if (step.step !== 1) backStepArrowWindowFocus = true;
+            }}
+            on:pointerout={() => {
+              if (step.step !== 1) backStepArrowWindowFocus = false;
+            }}
             disabled={step.step === 1}
           >
-            <img src="/icons/step-arrow.png" alt="Back" />
+            <svg xmlns='http://www.w3.org/2000/svg' viewBox="-100 -100 200 200">
+              <defs>
+                <mask id="back-step-arrow-svg-mask">
+                  <circle 
+                    r="95"
+                    fill="white"
+                  />
+                  <g
+                    class="step-arrow-svg-mask"
+                    fill="black"
+                    stroke="black"
+                    style="transform: {backStepArrowWindowFocus ? 'scale(1.2)' : 'none'}"
+                  >
+                    <polygon
+                      points="
+                        -50 0 -5 -45 -5 45
+                      "
+                      stroke-width="10"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <rect
+                      x="-5"
+                      y="-18"
+                      width="56"
+                      height="36"
+                      rx="5"
+                    />
+                  </g>
+                </mask>
+              </defs>
+            
+              <circle 
+                r="95"
+                fill="rgb(22, 30, 95)"
+                mask="url(#back-step-arrow-svg-mask)"
+                style="
+                  transform: {backStepArrowWindowFocus ? 'scale(1.05)' : 'none'};
+                  fill: {backStepArrowWindowFocus ? 'rgb(1, 0, 32)' : 'rgb(22, 30, 95)'}
+                "
+              />
+            </svg>
           </button>
           <h3>Step {`${step.step < 10 ? '0' : ''}${step.step}`}</h3>
           <button
             class="step-button"
-            on:click={() => $story?.loadStep(step.step + 1)}
+            on:click={() => {
+              if ($story?.maxStep == step.step + 1) nextStepArrowWindowFocus = false;
+              $story?.loadStep(step.step + 1);
+            }}
+            on:pointerover={() => {
+              if (step.step !== $story?.maxStep) nextStepArrowWindowFocus = true;
+            }}
+            on:pointerout={() => {
+              if (step.step !== $story?.maxStep) nextStepArrowWindowFocus = false;
+            }}
             disabled={step.step === $story?.maxStep}
           >
-            <img
-              src="/icons/step-arrow.png"
-              alt="Next"
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              viewBox="-100 -100 200 200"
               style="transform: rotate(180deg)"
-            />
+            >
+              <defs>
+                <mask id="next-step-arrow-svg-mask">
+                  <circle 
+                    r="95"
+                    fill="white"
+                  />
+                  <g
+                    class="step-arrow-svg-mask"
+                    fill="black"
+                    stroke="black"
+                    style="transform: {nextStepArrowWindowFocus ? 'scale(1.2)' : 'none'}"
+                  >
+                    <polygon
+                      points="
+                        -50 0 -5 -45 -5 45
+                      "
+                      stroke-width="10"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <rect
+                      x="-5"
+                      y="-18"
+                      width="56"
+                      height="36"
+                      rx="5"
+                    />
+                  </g>
+                </mask>
+              </defs>
+            
+              <circle 
+                r="95"
+                fill="rgb(22, 30, 95)"
+                mask="url(#next-step-arrow-svg-mask)"
+                style="
+                  transform: {nextStepArrowWindowFocus ? 'scale(1.05)' : 'none'};
+                  fill: {nextStepArrowWindowFocus ? 'rgb(1, 0, 32)' : 'rgb(22, 30, 95)'}
+                "
+              />
+            </svg>
           </button>
         </div>
 
@@ -154,46 +389,218 @@
       {:else}
         <div class="control-bar-fullscreen">
           <div class="story-info-container">
-            <button
-              class="quit fullscreen-btn"
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              viewBox="-100 -100 200 200"
+              class="quit-svg-element"
               on:click={() => window.open('/', '_self')}
+              role="button"
+              tabindex="0"
             >
-              <img src="/icons/quit-fullscreen.png" alt="Quit" />
-            </button>
+              <defs>
+                <mask id="quit-svg-mask">
+                  <circle 
+                    r="95"
+                    fill="white"
+                  />
+                  <path
+                    class="quit-svg-mask"
+                    d="
+                      M 50 0
+                      L -50 0
+                      L 0 -50
+                      M -50 0
+                      L 0 50
+                    "
+                    fill="none"
+                    stroke="black"
+                    stroke-width="25"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    style="transform: {quitSvgFullscreenFocus ? 'scale(1.2)' : 'none'}"
+                  />
+                </mask>
+              </defs>
+            
+              <circle 
+                class="quit-svg"
+                r="95"
+                fill="rgba(51, 226, 230, 0.5)"
+                mask="url(#quit-svg-mask)"
+                on:pointerover={() => quitSvgFullscreenFocus = true}
+                on:pointerout={() => quitSvgFullscreenFocus = false}
+              />
+            </svg>
             <h3 style="color: rgba(51, 226, 230, 0.5)">{storyTitle}</h3>
           </div>
 
           <div class="step-bar-fullscreen">
-            <button
-              class="step-button fullscreen-btn"
-              on:click={() => $story?.loadStep(step.step - 1)}
-              disabled={step.step === 1}
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              viewBox="-100 -100 200 200"
+              class="step-button-svg-element"
             >
-              <img src="/icons/step-arrow-fullscreen.png" alt="Back" />
-            </button>
+              <defs>
+                <mask id="fullscreen-back-step-arrow-svg-mask">
+                  <circle 
+                    r="95"
+                    fill="white"
+                  />
+                  <g
+                    class="step-arrow-svg-mask"
+                    fill="black"
+                    stroke="black"
+                    style="transform: {backStepArrowFullscreenFocus ? 'scale(1.2)' : 'none'}"
+                  >
+                    <polygon
+                      points="
+                        -50 0 -5 -45 -5 45
+                      "
+                      stroke-width="10"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <rect
+                      x="-5"
+                      y="-18"
+                      width="56"
+                      height="36"
+                      rx="5"
+                    />
+                  </g>
+                </mask>
+              </defs>
+            
+              <circle 
+                class="step-arrow-svg"
+                r="95"
+                fill="rgba(51, 226, 230, 0.5)"
+                mask="url(#fullscreen-back-step-arrow-svg-mask)"
+                on:click={() => {
+                  if (step.step !== 1) $story?.loadStep(step.step - 1);
+                  if (step.step === 2) backStepArrowFullscreenFocus = false;
+                }}
+                on:pointerover={() => {
+                  if (step.step !== 1) backStepArrowFullscreenFocus = true;
+                }}
+                on:pointerout={() => {
+                  if (step.step !== 1) backStepArrowFullscreenFocus = false;
+                }}
+                style={step.step === 1
+                  ? 'fill: rgba(51, 226, 230, 0.15); cursor: not-allowed; transform: none;'
+                  : ''
+                }
+              />
+            </svg>
             <h3 style="color: rgba(51, 226, 230, 0.5)">
               Step {`${step.step < 10 ? '0' : ''}${step.step}`}
             </h3>
-            <button
-              class="step-button fullscreen-btn"
-              on:click={() => $story?.loadStep(step.step + 1)}
-              style="background-color: rgba(1, 0, 32, 0.1)"
-              disabled={step.step === $story?.maxStep}
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              viewBox="-100 -100 200 200"
+              class="step-button-svg-element"
+              style="transform: rotate(180deg)"
             >
-              <img
-                src="/icons/step-arrow-fullscreen.png"
-                alt="Next"
-                style="transform: rotate(180deg)"
+              <defs>
+                <mask id="fullscreen-next-step-arrow-svg-mask">
+                  <circle 
+                    r="95"
+                    fill="white"
+                  />
+                  <g
+                    class="step-arrow-svg-mask"
+                    fill="black"
+                    stroke="black"
+                    style="transform: {nextStepArrowFullscreenFocus ? 'scale(1.2)' : 'none'}"
+                  >
+                    <polygon
+                      points="
+                        -50 0 -5 -45 -5 45
+                      "
+                      stroke-width="10"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <rect
+                      x="-5"
+                      y="-18"
+                      width="56"
+                      height="36"
+                      rx="5"
+                    />
+                  </g>
+                </mask>
+              </defs>
+            
+              <circle 
+                class="step-arrow-svg"
+                r="95"
+                fill="rgba(51, 226, 230, 0.5)"
+                mask="url(#fullscreen-next-step-arrow-svg-mask)"
+                on:click={() => {
+                  if (step.step !== $story?.maxStep) $story?.loadStep(step.step + 1);
+                  if ($story?.maxStep == step.step + 1) nextStepArrowFullscreenFocus = false;
+                }}
+                on:pointerover={() => {
+                  if (step.step !== $story?.maxStep) nextStepArrowFullscreenFocus = true;
+                }}
+                on:pointerout={() => {
+                  if (step.step !== $story?.maxStep) nextStepArrowFullscreenFocus = false;
+                }}
+                style={step.step === $story?.maxStep
+                  ? 'fill: rgba(51, 226, 230, 0.15); cursor: not-allowed; transform: none;'
+                  : ''
+                }
               />
-            </button>
+            </svg>
           </div>
 
-          <button
-            class="fullscreen fullscreen-btn"
-            on:click={() => ($fullscreen = false)}
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            viewBox="-100 -100 200 200"
+            class="fullscreen-svg fullscreen-svg-element"
+            fill="rgb(51, 226, 230)"
+            stroke="rgb(51, 226, 230)"
+            opacity="0.5"
+            stroke-width="20"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            on:click={() => {
+              $fullscreen = false;
+              fullscreenSvgFullscreenFocus = false;
+            }}
+            on:pointerover={() => fullscreenSvgFullscreenFocus = true}
+            on:pointerout={() => fullscreenSvgFullscreenFocus = false}
+            style="transform: {fullscreenSvgFullscreenFocus ? 'scale(1.05)' : ''}"
           >
-            <img src="/icons/fullscreen-exit.png" alt="Exit fullscreen mode" />
-          </button>
+            <g id="windowed-arrow" style="transform: {fullscreenSvgFullscreenFocus ? 'translate(5%, 5%)' : ''}">
+              <line
+                x1="-90"
+                y1="-90"
+                x2="-50"
+                y2="-50"
+              />
+              <polygon
+                points="
+                  -85 -32 -32 -32 -32 -85
+                "
+                stroke-width="12"
+                transform="translate(10 10)"
+              />
+            </g>
+            <use
+              href="#windowed-arrow"
+              transform="rotate(90)"
+            />
+            <use
+              href="#windowed-arrow"
+              transform="rotate(180)"
+            />
+            <use
+              href="#windowed-arrow"
+              transform="rotate(270)"
+            />
+          </svg>
         </div>
       {/if}
 
@@ -349,8 +756,10 @@
   }
 
   .option {
+    width: 100%;
     display: flex;
     flex-flow: row nowrap;
+    justify-content: flex-start;
     align-items: center;
     gap: 0.75em;
     text-align: start;
@@ -371,18 +780,12 @@
     width: 100%;
   }
 
-  .option-selector {
-    height: 2vw;
-    width: auto;
-    opacity: 0.85;
-  }
-
   .option:hover,
   .option:active {
     color: rgba(51, 226, 230, 1);
     text-shadow: 0 0.25vw 0.5vw #010020;
     filter: none;
-    transform: scale(1.025);
+    transform: scale(1.025) translateX(0.5%);
   }
 
   .option:disabled {
@@ -427,7 +830,7 @@
     padding: 1vw;
     background-color: rgba(36, 65, 189, 0.75);
     border: 0.1rem solid rgba(51, 226, 230, 0.5);
-    border-radius: 1em;
+    border-radius: 1vw;
     box-shadow: 0 0.5vw 0.5vw #010020;
   }
 
@@ -455,32 +858,36 @@
     gap: 1vw;
   }
 
-  .fullscreen,
   .quit,
   .step-button {
-    height: 3.5vw;
-    width: 3.5vw;
-    padding: 0.5vw;
+    padding: 0.25vw;
   }
 
   .fullscreen {
-    padding: 0.75vw;
+    padding: 0.5vw;
+  }
+
+  .fullscreen svg {
+    height: 2.5vw;
+    width: 2.5vw;
+  }
+
+  .quit svg,
+  .quit-svg-element,
+  .step-button svg,
+  .step-button-svg-element,
+  .fullscreen-svg-element {
+    height: 3vw;
+    width: 3vw;
+  }
+
+  .fullscreen-svg-element:hover,
+  .fullscreen-svg-element:active {
+    opacity: 1;
   }
 
   .step-button:disabled {
     opacity: 0.3 !important;
-  }
-
-  .fullscreen-btn {
-    background-color: transparent !important;
-    border: none;
-    opacity: 0.5;
-  }
-
-  .fullscreen-btn:hover,
-  .fullscreen-btn:active {
-    opacity: 0.75;
-    filter: drop-shadow(0 0.25vw 0.25vw #010020);
   }
 
   .control-bar-fullscreen {
@@ -490,6 +897,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 2vw;
+    padding-inline: 1vw;
   }
 
   .step-bar-fullscreen {
@@ -528,16 +936,13 @@
       line-height: 2em;
     }
 
-    .option-selector {
-      height: 1.25em;
-    }
-
     .control-bar {
       flex-flow: column nowrap;
       padding: 0.5em;
       gap: 1em;
       width: 100%;
       border: none;
+      border-radius: 1em;
       box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.5);
     }
 
@@ -549,6 +954,7 @@
       box-shadow: inset 0 0 0.5vw #010020;
       background-color: rgba(1, 0, 32, 0.35);
       border: none;
+      border-radius: 1em;
       padding: 0.5em;
     }
 
@@ -602,6 +1008,26 @@
   }
 
   @media screen and (min-width: 1920px) {
+    button {
+      padding: 0.25rem !important;
+      border-width: 0.05rem !important;
+      border-radius: 25%;
+    }
+    
+    button svg {
+      height: 3rem !important;
+      width: 3rem !important;
+    }
+
+    .fullscreen {
+      padding: 0.5rem !important;
+    }
+
+    .fullscreen svg {
+      height: 2.5rem !important;
+      width: 2.5rem !important;
+    }
+
     hr {
       border: 0.1rem solid rgba(51, 226, 230, 0.5);
     }
@@ -645,8 +1071,8 @@
 
     .options-container {
       width: 100rem;
-      padding: 1rem;
-      gap: 0;
+      padding: 1.5rem;
+      gap: 1rem;
       box-shadow:
         inset 0 0 0.5rem rgba(51, 226, 230, 0.25),
         0 0 0.5rem #010020;
@@ -654,7 +1080,7 @@
 
     .option {
       font-size: 1.75rem;
-      line-height: 2.5rem;
+      line-height: 3.5rem;
       padding: 2rem;
     }
 
@@ -663,8 +1089,9 @@
       text-shadow: 0 0.25rem 0.5rem #010020;
     }
 
-    .option-selector {
-      height: 1.5rem;
+    .option-selector-svg {
+      height: 2rem !important;
+      width: 2rem !important;
     }
 
     .controls-container {
@@ -676,23 +1103,27 @@
       padding: 1rem;
       gap: 1rem;
       box-shadow: 0 0.5rem 0.5rem #010020;
+      border-radius: 1rem;
+      border-width: 0.05rem;
+    }
+
+    .control-bar-fullscreen {
+      padding-inline: 1rem;
+    }
+
+    .step-bar-fullscreen {
+      gap: 1.5rem;
     }
 
     .controls {
       gap: 1rem;
     }
 
-    .fullscreen,
-    .quit,
-    .step-button {
-      height: 3.5rem;
-      width: 3.5rem;
-      padding: 0.5rem;
-      border-radius: 1rem;
-    }
-
-    .fullscreen {
-      padding: 0.75rem;
+    .quit-svg-element,
+    .step-button-svg-element,
+    .fullscreen-svg-element {
+      height: 3rem;
+      width: 3rem;
     }
   }
 </style>

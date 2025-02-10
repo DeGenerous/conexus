@@ -333,7 +333,7 @@
                   stroke-width="25"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  transform={backArrowSvgFocus ? 'scale(1.1)' : ''}
+                  transform={backArrowSvgFocus ? 'scale(1.2)' : ''}
                 />
               </mask>
             </defs>
@@ -367,7 +367,7 @@
           stroke-width="30"
           stroke-linecap="round"
           style="
-            transform: {closeSvgFocus ? 'scale(1.1);' : 'none'}
+            transform: {closeSvgFocus ? 'scale(1.2);' : 'none'}
             stroke: {closeSvgFocus
             ? 'rgb(255, 60, 64)'
             : 'rgba(255, 60, 64, 0.85)'}

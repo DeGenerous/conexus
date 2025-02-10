@@ -36,7 +36,6 @@ svg * {
 .voice-svg:hover,
 .volume-svg:hover,
 .replay-svg:hover,
-.fullscreen-svg:hover,
 .eye-svg:hover,
 .star-svg:hover {
   fill: rgb(51, 226, 230);
@@ -46,8 +45,7 @@ svg * {
 .search-svg:hover,
 .voice-svg:hover,
 .volume-svg:hover,
-.replay-svg:hover,
-.fullscreen-svg:hover {
+.replay-svg:hover {
   stroke: rgb(51, 226, 230);
 }
 
@@ -64,10 +62,6 @@ svg * {
 }
 .star-svg:hover {
   transform: scale(1.1);
-}
-
-.fullscreen-svg {
-  transform: none !important;
 }
 
 .eye-svg {

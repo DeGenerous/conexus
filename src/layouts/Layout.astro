@@ -87,6 +87,12 @@ const {
     <Modal client:load />
 
     <style>
+      picture {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
       .container {
         width: 100vw;
         display: flex;
@@ -94,6 +100,7 @@ const {
         justify-content: space-between;
         align-items: center;
         padding: 2vw;
+        min-height: 12.5vw;
       }
 
       .header {
@@ -111,7 +118,7 @@ const {
         box-shadow:
           inset 0 0 0.5vw rgba(51, 226, 230, 0.5),
           0 0.25vw 0.25vw #010020;
-        background-color: rgba(51, 226, 230, 0.25);
+        background-color: rgba(51, 226, 230, 0.5);
         padding: 1vw 2vw;
         border-radius: 1.5vw;
         aspect-ratio: initial;
@@ -155,6 +162,7 @@ const {
           -webkit-backdrop-filter: blur(2vw);
           backdrop-filter: blur(2vw);
           z-index: 200;
+          min-height: 5em;
         }
 
         .header {

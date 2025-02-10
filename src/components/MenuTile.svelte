@@ -86,7 +86,7 @@
 
     .tile-picture {
       width: 95%;
-      aspect-ratio: 3/2;
+      margin: 3%;
       border-radius: 0.5em;
     }
 

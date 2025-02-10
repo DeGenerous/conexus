@@ -191,45 +191,47 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  viewBox="-100 -100 200 200"
-  class="profile-icon"
->
-  <defs>
-    <mask id="profile-svg-mask">
-      <circle r="95" fill="white" />
-      <g
-        class="profile-svg-mask"
-        fill="black"
-        transform={profileSvgFocus ? 'scale(1.1)' : ''}
-      >
-        <circle cy="-25" r="30" />
-        <path
-          d="
-            M -55 55
-            Q -60 20 -25 15
-            L 25 15
-            Q 60 20 55 55
-            Z
-          "
-        />
-      </g>
-    </mask>
-  </defs>
+<span class="profile-icon-container">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="-100 -100 200 200"
+    class="profile-icon"
+  >
+    <defs>
+      <mask id="profile-svg-mask">
+        <circle r="95" fill="white" />
+        <g
+          class="profile-svg-mask"
+          fill="black"
+          transform={profileSvgFocus ? 'scale(1.1)' : ''}
+        >
+          <circle cy="-25" r="30" />
+          <path
+            d="
+              M -55 55
+              Q -60 20 -25 15
+              L 25 15
+              Q 60 20 55 55
+              Z
+            "
+          />
+        </g>
+      </mask>
+    </defs>
 
-  <circle
-    class="profile-svg"
-    r="95"
-    fill="rgba(51, 226, 230, 0.75)"
-    mask="url(#profile-svg-mask)"
-    on:click={() => ($showProfile = true)}
-    on:pointerover={() => (profileSvgFocus = true)}
-    on:pointerout={() => (profileSvgFocus = false)}
-    role="button"
-    tabindex="0"
-  />
-</svg>
+    <circle
+      class="profile-svg"
+      r="95"
+      fill="rgba(51, 226, 230, 0.75)"
+      mask="url(#profile-svg-mask)"
+      on:click={() => ($showProfile = true)}
+      on:pointerover={() => (profileSvgFocus = true)}
+      on:pointerout={() => (profileSvgFocus = false)}
+      role="button"
+      tabindex="0"
+    />
+  </svg>
+</span>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
 <!-- svelte-ignore a11y-no-static-element-interactions a11y_no_noninteractive_element_to_interactive_role -->
@@ -1449,6 +1451,11 @@
     border-radius: 1vw;
   }
 
+  .star-svg {
+    height: 3vw;
+    width: 3vw;
+  }
+
   /* Referral codes container */
 
   .referral-codes {
@@ -1499,6 +1506,12 @@
 
   /* Profile icon */
 
+  .profile-icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   .profile-icon {
     height: 7vw;
     width: 7vw;
@@ -1522,6 +1535,13 @@
     .close-button,
     .login-button {
       padding: 0.35em;
+    }
+
+    .back-arrow svg,
+    .close-button svg,
+    .login-button svg {
+      height: 1.5em;
+      width: 1.5em;
     }
 
     .sign-container {
@@ -1600,6 +1620,11 @@
       padding: 0.25em 1em;
       font-size: 1em;
       border-radius: 0.5em;
+    }
+
+    .star-svg {
+      height: 1.75em;
+      width: 1.75em;
     }
 
     .referral-codes {

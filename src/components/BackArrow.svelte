@@ -45,11 +45,21 @@
   a {
     flex: none;
     border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   a svg {
     cursor: inherit;
     height: 7vw;
     width: 7vw;
+  }
+
+  @media only screen and (max-width: 600px) {
+    a svg {
+      height: 3em;
+      width: 3em;
+    }
   }
 </style>

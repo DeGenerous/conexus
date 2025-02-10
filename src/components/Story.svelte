@@ -332,6 +332,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 2vw;
+    min-height: 12.5vw;
   }
 
   h1 {
@@ -547,6 +548,7 @@
       -webkit-backdrop-filter: blur(2vw);
       backdrop-filter: blur(2vw);
       z-index: 2;
+      min-height: 5em;
     }
 
     h1 {
@@ -665,6 +667,11 @@
 
     .last-line {
       width: 80vw;
+    }
+
+    .loading-svg {
+      height: 1em;
+      width: 1em;
     }
   }
 </style>

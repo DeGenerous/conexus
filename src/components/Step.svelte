@@ -212,8 +212,8 @@
           </div>
 
           <div class="controls">
-            <Slider src="/icons/volume.png" volume={background_volume} />
-            <Slider src="/icons/voice.png" volume={tts_volume} restartable />
+            <Slider type="volume" volume={background_volume} />
+            <Slider type="voice" volume={tts_volume} restartable />
             <button
               class="fullscreen"
               on:click={() => ($fullscreen = true)}
@@ -230,7 +230,11 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 aria-label="Enter fullscreen mode"
-                style="transform: {fullscreenSvgWindowFocus ? 'scale(1.05)' : ''}"
+                style="
+                  transform: {fullscreenSvgWindowFocus ? 'scale(1.05)' : ''};
+                  fill: {fullscreenSvgWindowFocus ? 'rgb(1, 0, 32)' : 'rgb(22, 30, 95)'};
+                  stroke: {fullscreenSvgWindowFocus ? 'rgb(1, 0, 32)' : 'rgb(22, 30, 95)'};
+                "
               >
                 <g id="fullscreen-arrow" style="transform: {fullscreenSvgWindowFocus ? 'translate(-2.5%, -2.5%)' : ''}">
                   <line
@@ -647,8 +651,8 @@
           </button>
         </div>
         <div class="mobile-sliders">
-          <Slider src="/icons/volume.png" volume={background_volume} />
-          <Slider src="/icons/voice.png" volume={tts_volume} restartable />
+          <Slider type="volume" volume={background_volume} />
+          <Slider type="voice" volume={tts_volume} restartable />
         </div>
       </div>
     {/if}

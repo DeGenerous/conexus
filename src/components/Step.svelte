@@ -32,6 +32,58 @@
     _storyTitle.charAt(0).toUpperCase() + _storyTitle.slice(1)
   ).trim();
 
+  let activeOptionNumber: number = 0;
+  let pointerOverOption: boolean = false;
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.repeat) return;
+    switch (event.key) {
+      case 'f': {
+        $fullscreen = !$fullscreen;
+        break;
+      }
+      case 'ArrowLeft': {
+        if ($loading) return;
+        if (step.step !== 1) {
+          $story?.loadStep(step.step - 1);
+          handleSelectorSvg(activeOptionNumber, 'blur');
+          activeOptionNumber = 0;
+        } else return;
+        break;
+      }
+      case 'ArrowRight': {
+        if ($loading) return;
+        if (step.step !== $story?.maxStep) {
+          $story?.loadStep(step.step + 1);
+          handleSelectorSvg(activeOptionNumber, 'blur');
+          activeOptionNumber = 0;
+        } else return;
+        break;
+      }
+      case 'ArrowUp': {
+        if (step.step !== $story?.maxStep || $loading || pointerOverOption) return;
+        event.preventDefault();
+        handleSelectorSvg(activeOptionNumber, 'blur');
+        if ($story?.step_data?.end) activeOptionNumber = 0;
+        else if (activeOptionNumber !== 0) activeOptionNumber--;
+        const activeOption = document.getElementById(`option-${activeOptionNumber}`);
+        handleSelectorSvg(activeOptionNumber, 'focus');
+        activeOption?.focus();
+        break;
+      }
+      case 'ArrowDown': {
+        if (step.step !== $story?.maxStep || $loading || pointerOverOption) return;
+        event.preventDefault();
+        handleSelectorSvg(activeOptionNumber, 'blur');
+        if ($story?.step_data?.end) activeOptionNumber = 0;
+        else if (activeOptionNumber !== step.options.length - 1) activeOptionNumber++;
+        const activeOption = document.getElementById(`option-${activeOptionNumber}`);
+        handleSelectorSvg(activeOptionNumber, 'focus');
+        activeOption?.focus();
+        break;
+      }
+    }
+  }
+
   // SVG Icons
   let quitSvgWindowFocus: boolean = false;
   let quitSvgFullscreenFocus: boolean = false;
@@ -45,6 +97,7 @@
   let fullscreenSvgFullscreenFocus: boolean = false;
 
   const handleSelectorSvg = (id: number, state: 'focus' | 'blur') => {
+    if ($story?.step_data?.end) return;
     const selectorSvg = document.getElementById(`selector-${id}`);
     if (state == 'focus') {
       selectorSvg!.style.transform = 'scaleX(1.5)';
@@ -56,7 +109,7 @@
   }
 </script>
 
-<svelte:window bind:outerWidth={width} />
+<svelte:window bind:outerWidth={width} on:keydown={handleKeyDown} />
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y_consider_explicit_label -->
@@ -101,6 +154,7 @@
 
     <div class="options-container blur">
       <button
+        id="option-0"
         class="option menu-option"
         on:click={() => window.open('/', '_self')}>Return to main menu</button
       >
@@ -109,6 +163,7 @@
     <div class="options-container blur">
       {#each step.options as option, i}
         <button
+          id="option-{i}"
           class="option {step.choice
             ? step.choice - 1 === i
               ? 'active-option'
@@ -121,10 +176,21 @@
             handleSelectorSvg(i, 'blur')
           }}
           on:pointerover={() => {
-            if (!$loading && step.step == $story?.maxStep) handleSelectorSvg(i, 'focus')
+            if (!$loading && step.step == $story?.maxStep) {
+              handleSelectorSvg(i, 'focus');
+              pointerOverOption = true;
+            }
+            if (document.activeElement!.tagName == 'BUTTON') {
+              const activeOption = document.activeElement as HTMLButtonElement;
+              activeOption.blur();
+              handleSelectorSvg(activeOptionNumber, 'blur');
+            }
           }}
           on:pointerout={() => {
-            if (!$loading && step.step == $story?.maxStep) handleSelectorSvg(i, 'blur')
+            if (!$loading && step.step == $story?.maxStep) {
+              handleSelectorSvg(i, 'blur');
+              pointerOverOption = false;
+            }
           }}
         >
           <svg
@@ -270,15 +336,17 @@
         <div class="step-bar blur">
           <button
             class="step-button"
+            class:disabled-btn-styling={$loading}
+            style={$loading ? 'cursor: progress' : ''}
             on:click={() => {
               if (step.step === 2) backStepArrowWindowFocus = false;
-              $story?.loadStep(step.step - 1);
+              if (!$loading) $story?.loadStep(step.step - 1);
             }}
             on:pointerover={() => {
-              if (step.step !== 1) backStepArrowWindowFocus = true;
+              if (step.step !== 1 && !$loading) backStepArrowWindowFocus = true;
             }}
             on:pointerout={() => {
-              if (step.step !== 1) backStepArrowWindowFocus = false;
+              if (step.step !== 1 && !$loading) backStepArrowWindowFocus = false;
             }}
             disabled={step.step === 1}
           >
@@ -481,18 +549,20 @@
                 fill="rgba(51, 226, 230, 0.5)"
                 mask="url(#fullscreen-back-step-arrow-svg-mask)"
                 on:click={() => {
-                  if (step.step !== 1) $story?.loadStep(step.step - 1);
+                  if (step.step !== 1 && !$loading) $story?.loadStep(step.step - 1);
                   if (step.step === 2) backStepArrowFullscreenFocus = false;
                 }}
                 on:pointerover={() => {
-                  if (step.step !== 1) backStepArrowFullscreenFocus = true;
+                  if (step.step !== 1 && !$loading) backStepArrowFullscreenFocus = true;
                 }}
                 on:pointerout={() => {
-                  if (step.step !== 1) backStepArrowFullscreenFocus = false;
+                  if (step.step !== 1 && !$loading) backStepArrowFullscreenFocus = false;
                 }}
                 style={step.step === 1
                   ? 'fill: rgba(51, 226, 230, 0.15); cursor: not-allowed; transform: none;'
-                  : ''
+                  : $loading
+                    ? 'fill: rgba(51, 226, 230, 0.5); cursor: progress; transform: none;'
+                    : ''
                 }
               />
             </svg>
@@ -782,14 +852,22 @@
 
   .menu-option {
     width: 100%;
+    justify-content: center;
   }
 
   .option:hover,
-  .option:active {
+  .option:active,
+  .option:focus {
     color: rgba(51, 226, 230, 1);
     text-shadow: 0 0.25vw 0.5vw #010020;
     filter: none;
     transform: scale(1.025) translateX(0.5%);
+  }
+
+  .menu-option:hover,
+  .menu-option:active,
+  .menu-option:focus {
+    transform: scale(1.025);
   }
 
   .option:disabled {

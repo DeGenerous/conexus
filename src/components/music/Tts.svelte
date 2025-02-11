@@ -30,8 +30,6 @@
 
         tts_volume.set({ muted, volume, restart: false });
 
-        console.log('restarted');
-
         return;
       }
 

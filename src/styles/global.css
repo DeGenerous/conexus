@@ -146,6 +146,7 @@
 * {
   font-size: inherit;
   line-height: inherit;
+  outline: none !important;
 }
 
 html {
@@ -234,6 +235,15 @@ button:disabled:active {
   background-color: rgba(0, 0, 0, 0);
   color: rgba(0, 0, 0, 0);
   opacity: 1;
+}
+
+.disabled-btn-styling {
+  color: #dedede !important;
+  background-color: rgba(56, 117, 250, 0.5) !important;
+  border-color: rgba(51, 226, 230, 0.5) !important;
+  filter: none !important;
+  text-shadow: none !important;
+  transform: none !important;
 }
 
 button img {

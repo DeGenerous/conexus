@@ -60,29 +60,36 @@
         break;
       }
       case 'ArrowUp': {
-        if (step.step !== $story?.maxStep || $loading || pointerOverOption) return;
+        if (step.step !== $story?.maxStep || $loading || pointerOverOption)
+          return;
         event.preventDefault();
         handleSelectorSvg(activeOptionNumber, 'blur');
         if ($story?.step_data?.end) activeOptionNumber = 0;
         else if (activeOptionNumber !== 0) activeOptionNumber--;
-        const activeOption = document.getElementById(`option-${activeOptionNumber}`);
+        const activeOption = document.getElementById(
+          `option-${activeOptionNumber}`,
+        );
         handleSelectorSvg(activeOptionNumber, 'focus');
         activeOption?.focus();
         break;
       }
       case 'ArrowDown': {
-        if (step.step !== $story?.maxStep || $loading || pointerOverOption) return;
+        if (step.step !== $story?.maxStep || $loading || pointerOverOption)
+          return;
         event.preventDefault();
         handleSelectorSvg(activeOptionNumber, 'blur');
         if ($story?.step_data?.end) activeOptionNumber = 0;
-        else if (activeOptionNumber !== step.options.length - 1) activeOptionNumber++;
-        const activeOption = document.getElementById(`option-${activeOptionNumber}`);
+        else if (activeOptionNumber !== step.options.length - 1)
+          activeOptionNumber++;
+        const activeOption = document.getElementById(
+          `option-${activeOptionNumber}`,
+        );
         handleSelectorSvg(activeOptionNumber, 'focus');
         activeOption?.focus();
         break;
       }
     }
-  }
+  };
 
   // SVG Icons
   let quitSvgWindowFocus: boolean = false;
@@ -106,7 +113,7 @@
       selectorSvg!.style.transform = 'none';
       selectorSvg!.style.opacity = '0.75';
     }
-  }
+  };
 </script>
 
 <svelte:window bind:outerWidth={width} on:keydown={handleKeyDown} />
@@ -173,9 +180,11 @@
           disabled={$loading || step.step !== $story?.maxStep}
           on:click={() => {
             $story?.next_step(i + 1);
-            handleSelectorSvg(i, 'blur')
+            if (width < 600) return;
+            handleSelectorSvg(i, 'blur');
           }}
           on:pointerover={() => {
+            if (width < 600) return;
             if (!$loading && step.step == $story?.maxStep) {
               handleSelectorSvg(i, 'focus');
               pointerOverOption = true;
@@ -187,36 +196,45 @@
             }
           }}
           on:pointerout={() => {
+            if (width < 600) return;
             if (!$loading && step.step == $story?.maxStep) {
               handleSelectorSvg(i, 'blur');
               pointerOverOption = false;
             }
           }}
         >
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            viewBox="-100 -100 200 200"
-            class="option-selector-svg"
-            fill="rgb(51, 226, 2305)"
-            stroke="rgb(51, 226, 230)"
-            stroke-width="20"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polygon
-              id="selector-{i}"
-              style="
-                transform: {$loading ? 'none' : step.choice
-                && step.choice - 1 === i ? 'scaleX(1.5)' : 'none'} !important;
-                opacity: {$loading ? '0.75' : step.choice
-                && step.choice - 1 === i ? '1' : '0.75'} !important;
-              "
-              points="
-                -40 -90 -40 90 50 0
-              "
-              opacity="0.75"
-            />
-          </svg>
+          {#if width > 600}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="-100 -100 200 200"
+              class="option-selector-svg"
+              fill="rgb(51, 226, 2305)"
+              stroke="rgb(51, 226, 230)"
+              stroke-width="20"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polygon
+                id="selector-{i}"
+                style="
+                  transform: {$loading
+                  ? 'none'
+                  : step.choice && step.choice - 1 === i
+                    ? 'scaleX(1.5)'
+                    : 'none'} !important;
+                  opacity: {$loading
+                  ? '0.75'
+                  : step.choice && step.choice - 1 === i
+                    ? '1'
+                    : '0.75'} !important;
+                "
+                points="
+                  -40 -90 -40 90 50 0
+                "
+                opacity="0.75"
+              />
+            </svg>
+          {/if}
           {option}
         </button>
       {/each}
@@ -233,16 +251,16 @@
             <button
               class="quit"
               on:click={() => window.open('./', '_self')}
-              on:pointerover={() => quitSvgWindowFocus = true}
-              on:pointerout={() => quitSvgWindowFocus = false}
+              on:pointerover={() => (quitSvgWindowFocus = true)}
+              on:pointerout={() => (quitSvgWindowFocus = false)}
             >
-              <svg xmlns='http://www.w3.org/2000/svg' viewBox="-100 -100 200 200">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="-100 -100 200 200"
+              >
                 <defs>
                   <mask id="quit-svg-mask">
-                    <circle 
-                      r="95"
-                      fill="white"
-                    />
+                    <circle r="95" fill="white" />
                     <path
                       class="quit-svg-mask"
                       d="
@@ -257,18 +275,22 @@
                       stroke-width="25"
                       stroke-linecap="round"
                       stroke-linejoin="round"
-                      style="transform: {quitSvgWindowFocus ? 'scale(1.2)' : 'none'}"
+                      style="transform: {quitSvgWindowFocus
+                        ? 'scale(1.2)'
+                        : 'none'}"
                     />
                   </mask>
                 </defs>
-              
-                <circle 
+
+                <circle
                   r="95"
                   fill="rgb(22, 30, 95)"
                   mask="url(#quit-svg-mask)"
                   style="
                     transform: {quitSvgWindowFocus ? 'scale(1.05)' : 'none'};
-                    fill: {quitSvgWindowFocus ? 'rgb(1, 0, 32)' : 'rgb(22, 30, 95)'}
+                    fill: {quitSvgWindowFocus
+                    ? 'rgb(1, 0, 32)'
+                    : 'rgb(22, 30, 95)'}
                   "
                 />
               </svg>
@@ -283,11 +305,11 @@
             <button
               class="fullscreen"
               on:click={() => ($fullscreen = true)}
-              on:pointerover={() => fullscreenSvgWindowFocus = true}
-              on:pointerout={() => fullscreenSvgWindowFocus = false}
+              on:pointerover={() => (fullscreenSvgWindowFocus = true)}
+              on:pointerout={() => (fullscreenSvgWindowFocus = false)}
             >
               <svg
-                xmlns='http://www.w3.org/2000/svg'
+                xmlns="http://www.w3.org/2000/svg"
                 viewBox="-100 -100 200 200"
                 class="fullscreen-svg"
                 fill="rgb(22, 30, 95)"
@@ -298,17 +320,21 @@
                 aria-label="Enter fullscreen mode"
                 style="
                   transform: {fullscreenSvgWindowFocus ? 'scale(1.05)' : ''};
-                  fill: {fullscreenSvgWindowFocus ? 'rgb(1, 0, 32)' : 'rgb(22, 30, 95)'};
-                  stroke: {fullscreenSvgWindowFocus ? 'rgb(1, 0, 32)' : 'rgb(22, 30, 95)'};
+                  fill: {fullscreenSvgWindowFocus
+                  ? 'rgb(1, 0, 32)'
+                  : 'rgb(22, 30, 95)'};
+                  stroke: {fullscreenSvgWindowFocus
+                  ? 'rgb(1, 0, 32)'
+                  : 'rgb(22, 30, 95)'};
                 "
               >
-                <g id="fullscreen-arrow" style="transform: {fullscreenSvgWindowFocus ? 'translate(-2.5%, -2.5%)' : ''}">
-                  <line
-                    x1="0"
-                    y1="0"
-                    x2="-55"
-                    y2="-55"
-                  />
+                <g
+                  id="fullscreen-arrow"
+                  style="transform: {fullscreenSvgWindowFocus
+                    ? 'translate(-2.5%, -2.5%)'
+                    : ''}"
+                >
+                  <line x1="0" y1="0" x2="-55" y2="-55" />
                   <polygon
                     points="
                       -85 -32 -85 -85 -32 -85
@@ -316,18 +342,9 @@
                     stroke-width="15"
                   />
                 </g>
-                <use
-                  href="#fullscreen-arrow"
-                  transform="rotate(90)"
-                />
-                <use
-                  href="#fullscreen-arrow"
-                  transform="rotate(180)"
-                />
-                <use
-                  href="#fullscreen-arrow"
-                  transform="rotate(270)"
-                />
+                <use href="#fullscreen-arrow" transform="rotate(90)" />
+                <use href="#fullscreen-arrow" transform="rotate(180)" />
+                <use href="#fullscreen-arrow" transform="rotate(270)" />
               </svg>
             </button>
           </div>
@@ -346,22 +363,22 @@
               if (step.step !== 1 && !$loading) backStepArrowWindowFocus = true;
             }}
             on:pointerout={() => {
-              if (step.step !== 1 && !$loading) backStepArrowWindowFocus = false;
+              if (step.step !== 1 && !$loading)
+                backStepArrowWindowFocus = false;
             }}
             disabled={step.step === 1}
           >
-            <svg xmlns='http://www.w3.org/2000/svg' viewBox="-100 -100 200 200">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
               <defs>
                 <mask id="back-step-arrow-svg-mask">
-                  <circle 
-                    r="95"
-                    fill="white"
-                  />
+                  <circle r="95" fill="white" />
                   <g
                     class="step-arrow-svg-mask"
                     fill="black"
                     stroke="black"
-                    style="transform: {backStepArrowWindowFocus ? 'scale(1.2)' : 'none'}"
+                    style="transform: {backStepArrowWindowFocus
+                      ? 'scale(1.2)'
+                      : 'none'}"
                   >
                     <polygon
                       points="
@@ -371,24 +388,22 @@
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     />
-                    <rect
-                      x="-5"
-                      y="-18"
-                      width="56"
-                      height="36"
-                      rx="5"
-                    />
+                    <rect x="-5" y="-18" width="56" height="36" rx="5" />
                   </g>
                 </mask>
               </defs>
-            
-              <circle 
+
+              <circle
                 r="95"
                 fill="rgb(22, 30, 95)"
                 mask="url(#back-step-arrow-svg-mask)"
                 style="
-                  transform: {backStepArrowWindowFocus ? 'scale(1.05)' : 'none'};
-                  fill: {backStepArrowWindowFocus ? 'rgb(1, 0, 32)' : 'rgb(22, 30, 95)'}
+                  transform: {backStepArrowWindowFocus
+                  ? 'scale(1.05)'
+                  : 'none'};
+                  fill: {backStepArrowWindowFocus
+                  ? 'rgb(1, 0, 32)'
+                  : 'rgb(22, 30, 95)'}
                 "
               />
             </svg>
@@ -397,33 +412,35 @@
           <button
             class="step-button"
             on:click={() => {
-              if ($story?.maxStep == step.step + 1) nextStepArrowWindowFocus = false;
+              if ($story?.maxStep == step.step + 1)
+                nextStepArrowWindowFocus = false;
               $story?.loadStep(step.step + 1);
             }}
             on:pointerover={() => {
-              if (step.step !== $story?.maxStep) nextStepArrowWindowFocus = true;
+              if (step.step !== $story?.maxStep)
+                nextStepArrowWindowFocus = true;
             }}
             on:pointerout={() => {
-              if (step.step !== $story?.maxStep) nextStepArrowWindowFocus = false;
+              if (step.step !== $story?.maxStep)
+                nextStepArrowWindowFocus = false;
             }}
             disabled={step.step === $story?.maxStep}
           >
             <svg
-              xmlns='http://www.w3.org/2000/svg'
+              xmlns="http://www.w3.org/2000/svg"
               viewBox="-100 -100 200 200"
               style="transform: rotate(180deg)"
             >
               <defs>
                 <mask id="next-step-arrow-svg-mask">
-                  <circle 
-                    r="95"
-                    fill="white"
-                  />
+                  <circle r="95" fill="white" />
                   <g
                     class="step-arrow-svg-mask"
                     fill="black"
                     stroke="black"
-                    style="transform: {nextStepArrowWindowFocus ? 'scale(1.2)' : 'none'}"
+                    style="transform: {nextStepArrowWindowFocus
+                      ? 'scale(1.2)'
+                      : 'none'}"
                   >
                     <polygon
                       points="
@@ -433,24 +450,22 @@
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     />
-                    <rect
-                      x="-5"
-                      y="-18"
-                      width="56"
-                      height="36"
-                      rx="5"
-                    />
+                    <rect x="-5" y="-18" width="56" height="36" rx="5" />
                   </g>
                 </mask>
               </defs>
-            
-              <circle 
+
+              <circle
                 r="95"
                 fill="rgb(22, 30, 95)"
                 mask="url(#next-step-arrow-svg-mask)"
                 style="
-                  transform: {nextStepArrowWindowFocus ? 'scale(1.05)' : 'none'};
-                  fill: {nextStepArrowWindowFocus ? 'rgb(1, 0, 32)' : 'rgb(22, 30, 95)'}
+                  transform: {nextStepArrowWindowFocus
+                  ? 'scale(1.05)'
+                  : 'none'};
+                  fill: {nextStepArrowWindowFocus
+                  ? 'rgb(1, 0, 32)'
+                  : 'rgb(22, 30, 95)'}
                 "
               />
             </svg>
@@ -462,7 +477,7 @@
         <div class="control-bar-fullscreen">
           <div class="story-info-container">
             <svg
-              xmlns='http://www.w3.org/2000/svg'
+              xmlns="http://www.w3.org/2000/svg"
               viewBox="-100 -100 200 200"
               class="quit-svg-element"
               on:click={() => window.open('/', '_self')}
@@ -471,10 +486,7 @@
             >
               <defs>
                 <mask id="quit-svg-mask">
-                  <circle 
-                    r="95"
-                    fill="white"
-                  />
+                  <circle r="95" fill="white" />
                   <path
                     class="quit-svg-mask"
                     d="
@@ -489,18 +501,20 @@
                     stroke-width="25"
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    style="transform: {quitSvgFullscreenFocus ? 'scale(1.2)' : 'none'}"
+                    style="transform: {quitSvgFullscreenFocus
+                      ? 'scale(1.2)'
+                      : 'none'}"
                   />
                 </mask>
               </defs>
-            
-              <circle 
+
+              <circle
                 class="quit-svg"
                 r="95"
                 fill="rgba(51, 226, 230, 0.5)"
                 mask="url(#quit-svg-mask)"
-                on:pointerover={() => quitSvgFullscreenFocus = true}
-                on:pointerout={() => quitSvgFullscreenFocus = false}
+                on:pointerover={() => (quitSvgFullscreenFocus = true)}
+                on:pointerout={() => (quitSvgFullscreenFocus = false)}
               />
             </svg>
             <h3 style="color: rgba(51, 226, 230, 0.5)">{storyTitle}</h3>
@@ -508,21 +522,20 @@
 
           <div class="step-bar-fullscreen">
             <svg
-              xmlns='http://www.w3.org/2000/svg'
+              xmlns="http://www.w3.org/2000/svg"
               viewBox="-100 -100 200 200"
               class="step-button-svg-element"
             >
               <defs>
                 <mask id="fullscreen-back-step-arrow-svg-mask">
-                  <circle 
-                    r="95"
-                    fill="white"
-                  />
+                  <circle r="95" fill="white" />
                   <g
                     class="step-arrow-svg-mask"
                     fill="black"
                     stroke="black"
-                    style="transform: {backStepArrowFullscreenFocus ? 'scale(1.2)' : 'none'}"
+                    style="transform: {backStepArrowFullscreenFocus
+                      ? 'scale(1.2)'
+                      : 'none'}"
                   >
                     <polygon
                       points="
@@ -532,60 +545,55 @@
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     />
-                    <rect
-                      x="-5"
-                      y="-18"
-                      width="56"
-                      height="36"
-                      rx="5"
-                    />
+                    <rect x="-5" y="-18" width="56" height="36" rx="5" />
                   </g>
                 </mask>
               </defs>
-            
-              <circle 
+
+              <circle
                 class="step-arrow-svg"
                 r="95"
                 fill="rgba(51, 226, 230, 0.5)"
                 mask="url(#fullscreen-back-step-arrow-svg-mask)"
                 on:click={() => {
-                  if (step.step !== 1 && !$loading) $story?.loadStep(step.step - 1);
+                  if (step.step !== 1 && !$loading)
+                    $story?.loadStep(step.step - 1);
                   if (step.step === 2) backStepArrowFullscreenFocus = false;
                 }}
                 on:pointerover={() => {
-                  if (step.step !== 1 && !$loading) backStepArrowFullscreenFocus = true;
+                  if (step.step !== 1 && !$loading)
+                    backStepArrowFullscreenFocus = true;
                 }}
                 on:pointerout={() => {
-                  if (step.step !== 1 && !$loading) backStepArrowFullscreenFocus = false;
+                  if (step.step !== 1 && !$loading)
+                    backStepArrowFullscreenFocus = false;
                 }}
                 style={step.step === 1
                   ? 'fill: rgba(51, 226, 230, 0.15); cursor: not-allowed; transform: none;'
                   : $loading
                     ? 'fill: rgba(51, 226, 230, 0.5); cursor: progress; transform: none;'
-                    : ''
-                }
+                    : ''}
               />
             </svg>
             <h3 style="color: rgba(51, 226, 230, 0.5)">
               Step {`${step.step < 10 ? '0' : ''}${step.step}`}
             </h3>
             <svg
-              xmlns='http://www.w3.org/2000/svg'
+              xmlns="http://www.w3.org/2000/svg"
               viewBox="-100 -100 200 200"
               class="step-button-svg-element"
               style="transform: rotate(180deg)"
             >
               <defs>
                 <mask id="fullscreen-next-step-arrow-svg-mask">
-                  <circle 
-                    r="95"
-                    fill="white"
-                  />
+                  <circle r="95" fill="white" />
                   <g
                     class="step-arrow-svg-mask"
                     fill="black"
                     stroke="black"
-                    style="transform: {nextStepArrowFullscreenFocus ? 'scale(1.2)' : 'none'}"
+                    style="transform: {nextStepArrowFullscreenFocus
+                      ? 'scale(1.2)'
+                      : 'none'}"
                   >
                     <polygon
                       points="
@@ -595,42 +603,39 @@
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     />
-                    <rect
-                      x="-5"
-                      y="-18"
-                      width="56"
-                      height="36"
-                      rx="5"
-                    />
+                    <rect x="-5" y="-18" width="56" height="36" rx="5" />
                   </g>
                 </mask>
               </defs>
-            
-              <circle 
+
+              <circle
                 class="step-arrow-svg"
                 r="95"
                 fill="rgba(51, 226, 230, 0.5)"
                 mask="url(#fullscreen-next-step-arrow-svg-mask)"
                 on:click={() => {
-                  if (step.step !== $story?.maxStep) $story?.loadStep(step.step + 1);
-                  if ($story?.maxStep == step.step + 1) nextStepArrowFullscreenFocus = false;
+                  if (step.step !== $story?.maxStep)
+                    $story?.loadStep(step.step + 1);
+                  if ($story?.maxStep == step.step + 1)
+                    nextStepArrowFullscreenFocus = false;
                 }}
                 on:pointerover={() => {
-                  if (step.step !== $story?.maxStep) nextStepArrowFullscreenFocus = true;
+                  if (step.step !== $story?.maxStep)
+                    nextStepArrowFullscreenFocus = true;
                 }}
                 on:pointerout={() => {
-                  if (step.step !== $story?.maxStep) nextStepArrowFullscreenFocus = false;
+                  if (step.step !== $story?.maxStep)
+                    nextStepArrowFullscreenFocus = false;
                 }}
                 style={step.step === $story?.maxStep
                   ? 'fill: rgba(51, 226, 230, 0.15); cursor: not-allowed; transform: none;'
-                  : ''
-                }
+                  : ''}
               />
             </svg>
           </div>
 
           <svg
-            xmlns='http://www.w3.org/2000/svg'
+            xmlns="http://www.w3.org/2000/svg"
             viewBox="-100 -100 200 200"
             class="fullscreen-svg fullscreen-svg-element"
             fill="rgb(51, 226, 230)"
@@ -643,17 +648,19 @@
               $fullscreen = false;
               fullscreenSvgFullscreenFocus = false;
             }}
-            on:pointerover={() => fullscreenSvgFullscreenFocus = true}
-            on:pointerout={() => fullscreenSvgFullscreenFocus = false}
-            style="transform: {fullscreenSvgFullscreenFocus ? 'scale(1.05)' : ''}"
+            on:pointerover={() => (fullscreenSvgFullscreenFocus = true)}
+            on:pointerout={() => (fullscreenSvgFullscreenFocus = false)}
+            style="transform: {fullscreenSvgFullscreenFocus
+              ? 'scale(1.05)'
+              : ''}"
           >
-            <g id="windowed-arrow" style="transform: {fullscreenSvgFullscreenFocus ? 'translate(5%, 5%)' : ''}">
-              <line
-                x1="-90"
-                y1="-90"
-                x2="-50"
-                y2="-50"
-              />
+            <g
+              id="windowed-arrow"
+              style="transform: {fullscreenSvgFullscreenFocus
+                ? 'translate(5%, 5%)'
+                : ''}"
+            >
+              <line x1="-90" y1="-90" x2="-50" y2="-50" />
               <polygon
                 points="
                   -85 -32 -32 -32 -32 -85
@@ -662,18 +669,9 @@
                 transform="translate(10 10)"
               />
             </g>
-            <use
-              href="#windowed-arrow"
-              transform="rotate(90)"
-            />
-            <use
-              href="#windowed-arrow"
-              transform="rotate(180)"
-            />
-            <use
-              href="#windowed-arrow"
-              transform="rotate(270)"
-            />
+            <use href="#windowed-arrow" transform="rotate(90)" />
+            <use href="#windowed-arrow" transform="rotate(180)" />
+            <use href="#windowed-arrow" transform="rotate(270)" />
           </svg>
         </div>
       {/if}
@@ -682,43 +680,183 @@
     {:else}
       <div class="control-bar blur">
         <div class="mobile-controls">
-          <button class="quit" on:click={() => window.open('/', '_self')}>
-            <img src="/icons/quit.png" alt="Quit" />
-          </button>
+          <svg
+            class="quit-button-svg"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="-100 -100 200 200"
+            on:click={() => window.open('/', '_self')}
+            role="button"
+            tabindex="0"
+          >
+            <defs>
+              <mask id="quit-svg-mask">
+                <circle r="95" fill="white" />
+                <path
+                  d="
+                    M 50 0
+                    L -50 0
+                    L 0 -50
+                    M -50 0
+                    L 0 50
+                  "
+                  fill="none"
+                  stroke="black"
+                  stroke-width="25"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </mask>
+            </defs>
+
+            <circle
+              class="quit-svg"
+              r="95"
+              fill="#dedede"
+              mask="url(#quit-svg-mask)"
+            />
+          </svg>
 
           <div class="step-bar">
-            <button
-              class="step-button"
-              on:click={() => $story?.loadStep(step.step - 1)}
-              disabled={step.step === 1}
+            <svg
+              class="step-button-svg"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="-100 -100 200 200"
+              on:click={() => {
+                if (step.step !== 1 && !$loading)
+                  $story?.loadStep(step.step - 1);
+              }}
+              role="button"
+              tabindex="0"
             >
-              <img src="/icons/step-arrow.png" alt="Back" />
-            </button>
-            <h3>Step {`${step.step < 10 ? '0' : ''}${step.step}`}</h3>
-            <button
-              class="step-button"
-              on:click={() => $story?.loadStep(step.step + 1)}
-              disabled={step.step === $story?.maxStep}
-            >
-              <img
-                src="/icons/step-arrow.png"
-                alt="Next"
-                style="transform: rotate(180deg)"
+              <defs>
+                <mask id="step-arrow-svg-mask">
+                  <circle r="95" fill="white" />
+                  <g fill="black" stroke="black">
+                    <polygon
+                      points="
+                        -50 0 -5 -45 -5 45
+                      "
+                      stroke-width="10"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <rect x="-5" y="-18" width="56" height="36" rx="5" />
+                  </g>
+                </mask>
+              </defs>
+
+              <circle
+                class="step-arrow-svg"
+                r="95"
+                fill="rgba(51, 226, 230, 0.75)"
+                mask="url(#step-arrow-svg-mask)"
+                style={step.step === 1
+                  ? 'opacity: 0.25; fill: rgba(51, 226, 230, 0.25); transform: none;'
+                  : $loading
+                    ? 'opacity: 0.5; fill: rgba(51, 226, 230, 0.25); transform: none;'
+                    : ''}
               />
-            </button>
+            </svg>
+            <h3 style="color: rgba(51, 226, 230, 0.75)">
+              Step {`${step.step < 10 ? '0' : ''}${step.step}`}
+            </h3>
+            <svg
+              class="step-button-svg"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="-100 -100 200 200"
+              style="transform: rotate(180deg)"
+              on:click={() => {
+                if (step.step !== $story?.maxStep)
+                  $story?.loadStep(step.step + 1);
+              }}
+              role="button"
+              tabindex="0"
+            >
+              <defs>
+                <mask id="step-arrow-svg-mask">
+                  <circle r="95" fill="white" />
+                  <g fill="black" stroke="black">
+                    <polygon
+                      points="
+                        -50 0 -5 -45 -5 45
+                      "
+                      stroke-width="10"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <rect x="-5" y="-18" width="56" height="36" rx="5" />
+                  </g>
+                </mask>
+              </defs>
+
+              <circle
+                class="step-arrow-svg"
+                r="95"
+                fill="rgba(51, 226, 230, 0.75)"
+                mask="url(#step-arrow-svg-mask)"
+                style={step.step === $story?.maxStep
+                  ? 'opacity: 0.25; fill: rgba(51, 226, 230, 0.25); transform: none;'
+                  : ''}
+              />
+            </svg>
           </div>
 
-          <button
-            class="fullscreen"
-            on:click={() => fullscreen.update((old) => !old)}
-          >
-            <img
-              src={$fullscreen
-                ? '/icons/fullscreen-exit-mobile.png'
-                : '/icons/fullscreen.png'}
-              alt={($fullscreen ? 'Exit' : 'Enter') + ' fullscreen mode'}
-            />
-          </button>
+          {#if $fullscreen}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="-100 -100 200 200"
+              class="fullscreen-svg"
+              fill="#dedede"
+              stroke="#dedede"
+              stroke-width="20"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              on:click={() => fullscreen.update((old) => !old)}
+              role="button"
+              tabindex="0"
+            >
+              <g id="windowed-arrow">
+                <line x1="-90" y1="-90" x2="-50" y2="-50" />
+                <polygon
+                  points="
+                    -85 -32 -32 -32 -32 -85
+                  "
+                  stroke-width="12"
+                  transform="translate(10 10)"
+                />
+              </g>
+              <use href="#windowed-arrow" transform="rotate(90)" />
+              <use href="#windowed-arrow" transform="rotate(180)" />
+              <use href="#windowed-arrow" transform="rotate(270)" />
+            </svg>
+          {:else}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="-100 -100 200 200"
+              class="fullscreen-svg"
+              fill="#dedede"
+              stroke="#dedede"
+              stroke-width="20"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              on:click={() => fullscreen.update((old) => !old)}
+              role="button"
+              tabindex="0"
+            >
+              <g id="fullscreen-arrow">
+                <line x1="0" y1="0" x2="-55" y2="-55" />
+                <polygon
+                  points="
+                    -85 -32 -85 -85 -32 -85
+                  "
+                  stroke-width="12"
+                />
+              </g>
+              <use href="#fullscreen-arrow" transform="rotate(90)" />
+              <use href="#fullscreen-arrow" transform="rotate(180)" />
+              <use href="#fullscreen-arrow" transform="rotate(270)" />
+            </svg>
+          {/if}
         </div>
         <div class="mobile-sliders">
           <Slider type="volume" volume={background_volume} />
@@ -1009,8 +1147,8 @@
     }
 
     .options-container {
-      gap: 0.5em;
-      padding: 0.5em;
+      gap: 1em;
+      padding: 1em 0.5em;
     }
 
     .option {
@@ -1029,9 +1167,9 @@
     }
 
     .step-bar {
-      width: 50%;
+      width: 60%;
       gap: 0.5em;
-      border-radius: 0.5em;
+      border-radius: 0.5em !important;
       color: rgba(51, 226, 230, 0.85);
       box-shadow: inset 0 0 0.5vw #010020;
       background-color: rgba(1, 0, 32, 0.35);
@@ -1041,8 +1179,8 @@
     }
 
     .step-bar h3 {
-      color: #dedede;
       font-weight: 100;
+      max-width: none;
     }
 
     h3 {
@@ -1054,6 +1192,8 @@
       display: flex;
       flex-flow: row nowrap;
       justify-content: space-between;
+      align-items: center;
+      padding-inline: 0.25em;
     }
 
     .mobile-sliders {
@@ -1069,23 +1209,25 @@
       justify-content: space-between;
     }
 
-    .fullscreen,
-    .quit,
-    .step-button {
+    .quit-button-svg {
       height: 2em;
       width: 2em;
-      padding: 0.15em;
-      border-radius: 0.5em;
     }
 
-    .fullscreen {
-      padding: 0.25em;
+    .fullscreen-svg {
+      height: 1.75em;
+      width: 1.75em;
     }
 
-    .fullscreen,
-    .quit {
-      height: 2.5em;
-      width: 2.5em;
+    .step-button-svg {
+      height: 1.5em;
+      width: 1.5em;
+    }
+
+    .fullscreen-svg:hover,
+    .fullscreen-svg:active {
+      fill: rgb(51, 226, 230);
+      stroke: rgb(51, 226, 230);
     }
   }
 
@@ -1095,7 +1237,7 @@
       border-width: 0.05rem !important;
       border-radius: 25%;
     }
-    
+
     button svg {
       height: 3rem !important;
       width: 3rem !important;

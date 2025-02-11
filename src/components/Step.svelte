@@ -571,7 +571,7 @@
                 style={step.step === 1
                   ? 'fill: rgba(51, 226, 230, 0.15); cursor: not-allowed; transform: none;'
                   : $loading
-                    ? 'fill: rgba(51, 226, 230, 0.5); cursor: progress; transform: none;'
+                    ? 'fill: rgba(51, 226, 230, 0.35); cursor: progress; transform: none;'
                     : ''}
               />
             </svg>
@@ -751,9 +751,9 @@
                 fill="rgba(51, 226, 230, 0.75)"
                 mask="url(#step-arrow-svg-mask)"
                 style={step.step === 1
-                  ? 'opacity: 0.25; fill: rgba(51, 226, 230, 0.25); transform: none;'
+                  ? 'fill: rgba(51, 226, 230, 0.25); transform: none;'
                   : $loading
-                    ? 'opacity: 0.5; fill: rgba(51, 226, 230, 0.25); transform: none;'
+                    ? 'fill: rgba(51, 226, 230, 0.5); transform: none;'
                     : ''}
               />
             </svg>
@@ -795,7 +795,7 @@
                 fill="rgba(51, 226, 230, 0.75)"
                 mask="url(#step-arrow-svg-mask)"
                 style={step.step === $story?.maxStep
-                  ? 'opacity: 0.25; fill: rgba(51, 226, 230, 0.25); transform: none;'
+                  ? 'fill: rgba(51, 226, 230, 0.25); transform: none;'
                   : ''}
               />
             </svg>

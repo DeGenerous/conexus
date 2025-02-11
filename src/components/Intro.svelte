@@ -120,8 +120,8 @@
 
     .tile-picture {
       width: 95%;
-      height: 53.85vw;
-      min-height: 53.85vw;
+      height: 80.75vw;
+      min-height: 80.75vw;
       border-radius: 0.75em;
     }
 

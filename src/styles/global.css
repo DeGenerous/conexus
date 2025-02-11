@@ -434,11 +434,13 @@ main {
   background-image: linear-gradient(
     to right,
     rgba(51, 226, 230, 0),
-    rgba(51, 226, 230, 0.05),
+    rgba(51, 226, 230, 0),
+    rgba(51, 226, 230, 0.025),
+    rgba(51, 226, 230, 0),
     rgba(51, 226, 230, 0)
   );
   background-size: 200% auto;
-  animation: flashlight 2s linear infinite;
+  animation: flashlight 7.5s cubic-bezier(0.14, 0.75, 0.2, 1) infinite;
 }
 
 .fade-in {
@@ -460,15 +462,15 @@ main {
 
 @keyframes flashlight {
   0% {
-    opacity: 0.85;
-    background-position: 200% 0;
+    opacity: 0.9;
+    background-position: 400% 0;
   }
   50% {
     opacity: 1;
   }
   100% {
-    opacity: 0.85;
-    background-position: 0 200%;
+    opacity: 0.9;
+    background-position: 0 0;
   }
 }
 

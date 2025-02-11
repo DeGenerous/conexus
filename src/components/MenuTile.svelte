@@ -87,6 +87,7 @@
     .tile-picture {
       width: 95%;
       margin: 3%;
+      margin-bottom: 0;
       border-radius: 0.5em;
     }
 

@@ -54,7 +54,7 @@
     resetGenres();
     isSearching = true; // Set isSearching to true when the debounce starts
     debounceTimeout = setTimeout(async () => {
-      filteredCategories = await CoNexus.searchCategories(searchField, section);
+      filteredCategories = await CoNexus.searchCategories(searchField.replace(/[^a-zA-Z ]/g, ""), section);
       isSearching = false; // Stop searching after results are returned
       if (isSorting) handleSorting();
     }, 3750); // 3.75-second debounce delay

@@ -10,5 +10,5 @@ export const authenticated = writable<{
 export const referralCodes = writable<ReferralCode[]>([]);
 export const availables = writable<Available | APIError>({
   message: '',
-  error: '',
+  details: '',
 });

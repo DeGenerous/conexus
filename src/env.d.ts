@@ -4,8 +4,13 @@
 type Nullable<T> = T | null | undefined;
 
 type APIError = {
-  message: string;
-  error: string;
+  message: string; // User-facing error message
+  details?: string; // Developer debug info (optional)
+}
+
+type APIResponse<T> = {
+  data?: T;
+  error?: APIError;
 }
 
 type VolumeControl = {
@@ -122,4 +127,41 @@ type ResetPassword = {
 type ChangePassword = {
   old_password: string;
   new_password: string;
+};
+
+type Web3Signin = {
+  message: string;
+  signature: string;
+};
+
+type Section = {
+  name: string;
+  tile_image1?: string;
+  tile_image2?: string;
+};
+
+type Genre = { 
+  id: number; 
+  name: string
+}
+
+type SectionCategory = {
+  name: string;
+  created_at?: Date;
+  topics: {
+    name: string;
+    order: number;
+    available: boolean;
+    title_image1?: string;
+    title_image2?: string;
+    created_at?: Date;
+  }[];
+};
+
+type SectionTopic = {
+  name: string;
+  image_prompt?: string;
+  description?: string;
+  description_image?: string;
+  genres?: string;
 };

@@ -421,6 +421,27 @@ class Account {
       new_error({ code: 500, error: error });
     }
   }
+
+  static async confirmEmail(email: string, token: string): Promise<void> {
+    try {
+      const response = await fetch(
+        `${url}/confirm-email?email=${email}&token=${token}`,
+        {
+          method: 'GET',
+        },
+      );
+
+      if (!response.ok) {
+        new_error({ code: response.status, error: await response.text() });
+      }
+
+      const resp = await response.json();
+
+      console.log(resp.message);
+    } catch (error: any) {
+      new_error({ code: 500, error: error });
+    }
+  }
 }
 
 export default Account;

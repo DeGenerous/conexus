@@ -87,6 +87,6 @@ export default class Fetcher {
       };
     }
 
-    return responseData;
+    return { data: responseData };
   }
 }

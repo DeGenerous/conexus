@@ -56,7 +56,7 @@ export default class AccountAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async changePassword(passwords: { old: string; new: string }) {
-    return this.request<{ success: boolean; message: string }>(
+    return this.request<APISTDResposne>(
       '/account/change-password',
       {
         method: 'POST',
@@ -70,7 +70,7 @@ export default class AccountAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async logout() {
-    return this.request<{ success: boolean; message: string }>(
+    return this.request<APISTDResposne>(
       '/account/logout',
     );
   }
@@ -80,7 +80,7 @@ export default class AccountAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async useReferralCode(code: string) {
-    return this.request<{ success: boolean; message: string }>(
+    return this.request<APISTDResposne>(
       `/account/use-referral-code/${code}`,
     );
   }

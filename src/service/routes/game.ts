@@ -104,7 +104,7 @@ export default class GameAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async deleteStory(storyId: string) {
-    return this.request<{ success: boolean; message: string }>(
+    return this.request<APISTDResposne>(
       `/game/delete-story/${storyId}`,
       {
         method: 'DELETE',

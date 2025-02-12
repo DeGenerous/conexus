@@ -35,7 +35,7 @@ export default class AuthAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async confirmEmail(email: string, token: string) {
-    return this.request<{ success: boolean; message: string }>(
+    return this.request<APISTDResposne>(
       `/auth/confirm-email?email=${email}&token=${token}`,
     );
   }
@@ -55,7 +55,7 @@ export default class AuthAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async forgotPassword(email: string) {
-    return this.request<{ success: boolean; message: string }>(
+    return this.request<APISTDResposne>(
       '/auth/forgot-password',
       {
         method: 'POST',
@@ -72,7 +72,7 @@ export default class AuthAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async resetPassword(email: string, token: string, password: string) {
-    return this.request<{ success: boolean; message: string }>(
+    return this.request<APISTDResposne>(
       '/auth/reset-password',
       {
         method: 'POST',
@@ -86,9 +86,9 @@ export default class AuthAPI extends Fetcher {
    * @param address - The user's wallet address.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    */
-  async web3Getnonce(address: string) {
+  async web3Getnonce() {
     return this.request<{ nonce: number }>(
-      `/auth/web3-get-nonce?address=${address}`,
+      `/auth/web3-get-nonce`,
     );
   }
 

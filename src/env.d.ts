@@ -3,15 +3,19 @@
 
 type Nullable<T> = T | null | undefined;
 
+type APISTDResposne = {
+  message: string;
+};
+
 type APIError = {
   message: string; // User-facing error message
   details?: string; // Developer debug info (optional)
-}
+};
 
 type APIResponse<T> = {
   data?: T;
   error?: APIError;
-}
+};
 
 type VolumeControl = {
   muted: boolean;
@@ -140,10 +144,10 @@ type Section = {
   tile_image2?: string;
 };
 
-type Genre = { 
-  id: number; 
-  name: string
-}
+type Genre = {
+  id: number;
+  name: string;
+};
 
 type SectionCategory = {
   name: string;

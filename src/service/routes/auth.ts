@@ -55,10 +55,13 @@ export default class AuthAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async forgotPassword(email: string) {
-    return this.request<{ success: boolean; message: string }>('/auth/forgot-password', {
-      method: 'POST',
-      body: JSON.stringify({ email }),
-    });
+    return this.request<{ success: boolean; message: string }>(
+      '/auth/forgot-password',
+      {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+      },
+    );
   }
 
   /**
@@ -69,10 +72,13 @@ export default class AuthAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async resetPassword(email: string, token: string, password: string) {
-    return this.request<{ success: boolean; message: string }>('/auth/reset-password', {
-      method: 'POST',
-      body: JSON.stringify({ email, token, password }),
-    });
+    return this.request<{ success: boolean; message: string }>(
+      '/auth/reset-password',
+      {
+        method: 'POST',
+        body: JSON.stringify({ email, token, password }),
+      },
+    );
   }
 
   /**

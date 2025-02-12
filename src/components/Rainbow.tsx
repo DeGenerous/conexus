@@ -2,7 +2,6 @@ import React from 'react';
 
 import {
   createAuthenticationAdapter,
-  cssStringFromTheme,
   darkTheme,
   getDefaultConfig,
   type AuthenticationStatus,
@@ -13,7 +12,7 @@ import {
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createSiweMessage } from 'viem/siwe';
-import { WagmiProvider, useAccount } from 'wagmi';
+import { WagmiProvider } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains';
 
 import { web3LoggedIn, authenticated, availables } from '@stores/account';
@@ -33,14 +32,6 @@ const Web3Provider = ({ linking, children }) => {
     chains: [mainnet, polygon, optimism, arbitrum, base],
     ssr: false, // If your dApp uses server side rendering (SSR)
   });
-
-  const message = (nonce: string) => `
-  Sign this message to prove you're a Potential NFT holder.
-
-  It will not cause a blockchain transaction, nor any gas fees.
-
-  Nonce:
-  ${nonce}`;
 
   const authenticationAdapter = createAuthenticationAdapter({
     getNonce: async () => {

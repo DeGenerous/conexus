@@ -1,4 +1,3 @@
-import { N } from 'ethers';
 import { writable } from 'svelte/store';
 
 export const web3LoggedIn = writable<boolean>(false);

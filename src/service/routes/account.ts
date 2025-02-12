@@ -1,4 +1,4 @@
-import Fetcher from "@service/fetcher";
+import Fetcher from '@service/fetcher';
 
 /**
  * An API class for handling account requests.
@@ -56,10 +56,13 @@ export default class AccountAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async changePassword(passwords: { old: string; new: string }) {
-    return this.request<{ success: boolean; message: string }>('/account/change-password', {
-      method: 'POST',
-      body: JSON.stringify(passwords),
-    });
+    return this.request<{ success: boolean; message: string }>(
+      '/account/change-password',
+      {
+        method: 'POST',
+        body: JSON.stringify(passwords),
+      },
+    );
   }
 
   /**
@@ -67,7 +70,9 @@ export default class AccountAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async logout() {
-    return this.request<{ success: boolean; message: string }>('/account/logout');
+    return this.request<{ success: boolean; message: string }>(
+      '/account/logout',
+    );
   }
 
   /**

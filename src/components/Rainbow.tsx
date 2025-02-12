@@ -74,8 +74,6 @@ const Web3Provider = ({ linking, children }) => {
         throw new Error('Missing parameters for creating the message');
       }
 
-      nonce = nonce.replace(/-/g, '');
-
       try {
         return createSiweMessage({
           nonce,

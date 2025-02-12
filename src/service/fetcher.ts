@@ -87,7 +87,7 @@ class Fetcher {
       };
     }
 
-    return { data: responseData };
+    return responseData;
   }
 }
 
@@ -100,10 +100,10 @@ export class AuthAPI extends Fetcher {
    * @param credentials - The user's credentials.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    */
-  async signin(credentials: { username: string; password: string }) {
-    return this.request<{ success: boolean }>('/auth/signin', {
+  async signin(email: string, password: string ) {
+    return this.request<{ user: User }>('/auth/signin', {
       method: 'POST',
-      body: JSON.stringify(credentials),
+      body: JSON.stringify({ email, password }),
     });
   }
 
@@ -321,7 +321,7 @@ export class GameAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async continue(story_id: string) {
-    return this.request<{ game: GameData }>('/game/continue', {
+    return this.request('/game/continue', {
       method: 'POST',
       body: JSON.stringify({ story_id }),
     });

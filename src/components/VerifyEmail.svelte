@@ -10,29 +10,52 @@
   });
 </script>
 
-{#await Account.confirmEmail(user?.email!, token)}
-  <div class="container">
-    <h1>Verifying Email...</h1>
+<section>
+  <div>
+    {#await Account.confirmEmail(user?.email!, token)}
+      <h2 style="color: rgb(150, 150, 150)">Verifying Email...</h2>
+    {:then response}
+      <h2 style="color: rgb(0, 185, 55)">Email Verified</h2>
+      <h3>Your email has been verified. You can now login to your account.</h3>
+    {:catch error}
+      <h2 style="color: rgb(255, 60, 64)">Error</h2>
+      <h3>{error.message}</h3>
+    {/await}
+    <button on:click={() => (window.open('/', '_self'))}>Return home</button>
   </div>
-{:then response}
-  <div class="container">
-    <h1>Email Verified</h1>
-    <p>Your email has been verified. You can now login to your account.</p>
-  </div>
-{:catch error}
-  <div class="container">
-    <h1>Error</h1>
-    <p>{error.message}</p>
-  </div>
-{/await}
+</section>
 
 <style>
-  .container {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 1rem;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+  h2 {
+    text-shadow: 0 0 0.5vw #010020;
+  }
+
+  section {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5vw;
+    background-color: rgba(1, 0, 32, 0.75);
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.5);
+    border-radius: 1.5vw;
+    padding: 2vw 3vw;
+  }
+
+  @media only screen and (max-width: 600px) {
+    div {
+      width: 85vw;
+      padding: 1em;
+      border-radius: 1em;
+      gap: 1em;
+    }
   }
 </style>

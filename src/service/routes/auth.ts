@@ -87,7 +87,7 @@ export default class AuthAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    */
   async web3Getnonce() {
-    return this.request<{ nonce: number }>(
+    return this.request<{ nonce: string }>(
       `/auth/web3-get-nonce`,
     );
   }

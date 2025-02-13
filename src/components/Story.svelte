@@ -26,6 +26,7 @@
   });
 
   let deletedStories: string[] = []; // temp storage before reload for immediate removal
+  let noUnfinishedStoriesLeft: boolean = false;
   let backgroundImageUrl: string = '/defaultBG.avif';
 
   background_image.subscribe((value) => {
@@ -49,6 +50,10 @@
       await CoNexus.delete(story_id);
       deletedStories[deletedStories.length] = story_id;
       $showModal = false;
+      await CoNexus.storyContinuable(story_name!)
+        .then((continuables) => {
+          if (continuables.length == 0) noUnfinishedStoriesLeft = true
+        })
     } catch (error) {
       console.log('Failed to delete story: ' + error);
     }
@@ -212,79 +217,81 @@
 
   {#await CoNexus.storyContinuable(story_name!) then continuables: ContinuableStory[]}
     {#if continuables.length > 0}
-      <section class="unfinished-stories fade-in blur">
-        <h3>Continue Shaping:</h3>
-        <div class="continue-shaping-container">
-          {#each continuables as continuable}
-            {#if !deletedStories.includes(continuable.story_id)}
-              <div class="unfinished-story">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="-100 -100 200 200"
-                  class="delete-svg continue-shaping-btn"
-                  fill="none"
-                  stroke="rgb(255, 60, 64)"
-                  stroke-width="15"
-                  stroke-linecap="round"
-                  on:click|preventDefault={() => {
-                    if (!$loading) openModal(continuable);
-                  }}
-                  on:pointerover={() =>
-                    handleDeleteSvg(continuable.story_id, 'focus')}
-                  on:pointerout={() =>
-                    handleDeleteSvg(continuable.story_id, 'blur')}
-                  role="button"
-                  tabindex="0"
-                >
-                  <path
-                    id="delete-icon-{continuable.story_id}"
-                    d="
-                      M -35 -35
-                      L 35 35
-                      M -35 35
-                      L 35 -35
-                    "
-                  />
-                  <circle id="delete-circle-{continuable.story_id}" r="90" />
-                </svg>
-                <h3>
-                  {continuable.story_id.split('-')[0]} - {new Date(
-                    continuable.created ?? '',
-                  ).toLocaleDateString()}
-                </h3>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="-100 -100 200 200"
-                  class="play-svg continue-shaping-btn"
-                  fill="none"
-                  stroke="rgb(0, 185, 55)"
-                  stroke-width="15"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  on:click|preventDefault={() => {
-                    if (!$loading) CoNexus.continue(continuable);
-                  }}
-                  on:pointerover={() =>
-                    handlePlaySvg(continuable.story_id, 'focus')}
-                  on:pointerout={() =>
-                    handlePlaySvg(continuable.story_id, 'blur')}
-                  role="button"
-                  tabindex="0"
-                >
-                  <polygon
-                    id="play-icon-{continuable.story_id}"
-                    points="
-                      -26 -36 -26 36 36 0
-                    "
-                    fill="rgb(0, 185, 55)"
-                  />
-                  <circle id="play-circle-{continuable.story_id}" r="90" />
-                </svg>
-              </div>
-            {/if}
-          {/each}
-        </div>
-      </section>
+      {#if !noUnfinishedStoriesLeft}
+        <section class="unfinished-stories fade-in blur">
+          <h3>Continue Shaping:</h3>
+          <div class="continue-shaping-container">
+            {#each continuables as continuable}
+              {#if !deletedStories.includes(continuable.story_id)}
+                <div class="unfinished-story">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="-100 -100 200 200"
+                    class="delete-svg continue-shaping-btn"
+                    fill="none"
+                    stroke="rgb(255, 60, 64)"
+                    stroke-width="15"
+                    stroke-linecap="round"
+                    on:click|preventDefault={() => {
+                      if (!$loading) openModal(continuable);
+                    }}
+                    on:pointerover={() =>
+                      handleDeleteSvg(continuable.story_id, 'focus')}
+                    on:pointerout={() =>
+                      handleDeleteSvg(continuable.story_id, 'blur')}
+                    role="button"
+                    tabindex="0"
+                  >
+                    <path
+                      id="delete-icon-{continuable.story_id}"
+                      d="
+                        M -35 -35
+                        L 35 35
+                        M -35 35
+                        L 35 -35
+                      "
+                    />
+                    <circle id="delete-circle-{continuable.story_id}" r="90" />
+                  </svg>
+                  <h3>
+                    {continuable.story_id.split('-')[0]} - {new Date(
+                      continuable.created ?? '',
+                    ).toLocaleDateString()}
+                  </h3>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="-100 -100 200 200"
+                    class="play-svg continue-shaping-btn"
+                    fill="none"
+                    stroke="rgb(0, 185, 55)"
+                    stroke-width="15"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    on:click|preventDefault={() => {
+                      if (!$loading) CoNexus.continue(continuable);
+                    }}
+                    on:pointerover={() =>
+                      handlePlaySvg(continuable.story_id, 'focus')}
+                    on:pointerout={() =>
+                      handlePlaySvg(continuable.story_id, 'blur')}
+                    role="button"
+                    tabindex="0"
+                  >
+                    <polygon
+                      id="play-icon-{continuable.story_id}"
+                      points="
+                        -26 -36 -26 36 36 0
+                      "
+                      fill="rgb(0, 185, 55)"
+                    />
+                    <circle id="play-circle-{continuable.story_id}" r="90" />
+                  </svg>
+                </div>
+              {/if}
+            {/each}
+          </div>
+        </section>
+      {/if}
     {/if}
   {:catch}
     <section class="unfinished-stories blur">

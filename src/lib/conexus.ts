@@ -1,5 +1,5 @@
 import { toastStore } from '@stores/toast';
-import { new_error } from './errors';
+import { new_error } from '@errors/index';
 import {
   background_music,
   background_image,

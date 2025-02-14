@@ -11,10 +11,6 @@ export default class ViewAPI extends Fetcher {
     );
   }
 
-  async topicByName(name: string) {
-    return this.request<{ topic: SectionTopic }>(`/view/topic/${name}`);
-  }
-
   async searchSectionByTopic(section: string, topic: string) {
     return this.request<{ category: SectionCategory }>(
       `/view/topics/section/${section}/${topic}`,

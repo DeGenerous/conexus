@@ -4,12 +4,16 @@ import Fetcher from '@service/fetcher';
  * An API class for handling game requests.
  */
 export default class GameAPI extends Fetcher {
+  async topicByName(name: string) {
+    return this.request<SectionTopic>(`/view/topic/${name}`);
+  }
+
   /**
    * Sends a request to start a new game.
    * @param category - The category of the game.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
-  async startGame(category: string) {
+  async start(category: string) {
     return this.request<GameData>('/game/start', {
       method: 'POST',
       body: JSON.stringify({ category }),
@@ -45,27 +49,11 @@ export default class GameAPI extends Fetcher {
    * @param choice - The player's choice.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
-  async respond(story_id: string, choice: string) {
+  async respond(story_id: string, choice: number) {
     return this.request<GameData>('/game/respond', {
       method: 'POST',
       body: JSON.stringify({ story_id, choice }),
     });
-  }
-
-  /**
-   * Sends a request to get the TTS audio for the specified text.
-   * @param story_id - The ID of the story to get the TTS audio for.
-   * @returns A promise that resolves to an APIResponse containing the response data or an error.
-   * */
-  async getTTS(story_id: string) {
-    return this.request<Blob>(
-      `/game/tts`,
-      {
-        method: 'POST',
-        body: JSON.stringify({ story_id }),
-      },
-      'blob',
-    );
   }
 
   /**
@@ -88,8 +76,33 @@ export default class GameAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async loadStepImage(story_id: string, step: number) {
+    return this.request<string>(`/game/load-step-image/${step}`, {
+      method: 'POST',
+      body: JSON.stringify({ story_id }),
+    });
+  }
+
+  /**
+   * Delete a story.
+   * @param story_id - The ID of the story to delete.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   * */
+  async deleteStory(story_id: string) {
+    return this.request<APISTDResposne>(`/game/delete-story/${story_id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  /* Media Routes */
+
+  /**
+   * Get the image for a step in the story {uses Dalle}.
+   * @param story_id - The ID of the story.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   */
+  async image(story_id: string) {
     return this.request<Blob>(
-      `/game/load-step-image/${step}`,
+      `/game/image/`,
       {
         method: 'POST',
         body: JSON.stringify({ story_id }),
@@ -99,16 +112,46 @@ export default class GameAPI extends Fetcher {
   }
 
   /**
-   * Delete a story.
-   * @param storyId - The ID of the story to delete.
+   * Version 2 to get the image for a step in the story {uses Flux - requires check image status}.
+   * @param story_id - The ID of the story.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   */
+  async imageV2(story_id: string) {
+    return this.request<{ jobID: string }>(`/game/image-v2/`, {
+      method: 'POST',
+      body: JSON.stringify({ story_id }),
+    });
+  }
+
+  /**
+   * Version 2 to get the image for a step in the story {uses Flux - requires check image status}.
+   * @param story_id - The ID of the story.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   */
+  async imageStatusV2(story_id: string, job_id: string) {
+    return this.request<{ status: string; image?: string }>(
+      `/game/image-v2-status/${job_id}`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ story_id }),
+      },
+      'blob',
+    );
+  }
+
+  /**
+   * Sends a request to get the TTS audio for the specified text.
+   * @param story_id - The ID of the story to get the TTS audio for.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
-  async deleteStory(storyId: string) {
-    return this.request<APISTDResposne>(
-      `/game/delete-story/${storyId}`,
+  async getTTS(story_id: string) {
+    return this.request<Blob>(
+      `/game/tts`,
       {
-        method: 'DELETE',
+        method: 'POST',
+        body: JSON.stringify({ story_id }),
       },
+      'blob',
     );
   }
 }

@@ -1,4 +1,4 @@
-import { new_error } from './errors';
+import { new_error } from '@errors/index';
 import { Web3Provider } from './ethers';
 import { get_cookie } from './cookies';
 import {

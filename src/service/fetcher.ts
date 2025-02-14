@@ -77,16 +77,18 @@ export default class Fetcher {
       responseData = await response.text();
     }
 
-    if (!response.ok) {
-      return {
-        error: {
-          message:
-            responseData.error || response.statusText || 'An error occurred',
-          details: isJson ? responseData.error : responseData,
-        },
-      };
-    }
+    return responseData;
 
-    return { data: responseData };
+    // if (!response.ok) {
+    //   return {
+    //     error: {
+    //       message:
+    //         responseData.error || response.statusText || 'An error occurred',
+    //       details: isJson ? responseData.error : responseData,
+    //     },
+    //   };
+    // }
+
+    // return { data: responseData };
   }
 }

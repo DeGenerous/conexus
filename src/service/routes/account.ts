@@ -55,14 +55,11 @@ export default class AccountAPI extends Fetcher {
    * @param profile - The profile details to update.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
-  async changePassword(passwords: { old: string; new: string }) {
-    return this.request<APISTDResposne>(
-      '/account/change-password',
-      {
-        method: 'POST',
-        body: JSON.stringify(passwords),
-      },
-    );
+  async changePassword(old_password: string, new_password: string) {
+    return this.request<APISTDResposne>('/account/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ old_password, new_password }),
+    });
   }
 
   /**
@@ -70,9 +67,7 @@ export default class AccountAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async logout() {
-    return this.request<APISTDResposne>(
-      '/account/logout',
-    );
+    return this.request<APISTDResposne>('/account/logout');
   }
 
   /**
@@ -80,9 +75,7 @@ export default class AccountAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async useReferralCode(code: string) {
-    return this.request<APISTDResposne>(
-      `/account/use-referral-code/${code}`,
-    );
+    return this.request<APISTDResposne>(`/account/use-referral-code/${code}`);
   }
 
   /**
@@ -100,7 +93,7 @@ export default class AccountAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async getReferralCodes() {
-    return this.request<{ codes: ReferralCode[] }>('/account/referral-codes');
+    return this.request<{ codes: ReferralCode[] }>('/account/get-referral-codes');
   }
 
   /**

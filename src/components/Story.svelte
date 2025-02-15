@@ -4,7 +4,7 @@
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
   import Tts from '@components/music/Tts.svelte';
   import Step from '@components/Step.svelte';
-  import { CoNexusGame } from '@libv2/story';
+  import { CoNexusGame } from '@lib/story';
   import { loading, story, background_image } from '@stores/conexus';
   import {
     showModal,
@@ -13,9 +13,11 @@
     modalContent,
   } from '@stores/modal';
   
-  import Share from './utils/Share.svelte';
+  import { checkUserState } from '@utils/route-guard';
+  
   import Profile from './Profile.svelte';
   import BackArrow from './utils/BackArrow.svelte';
+  import Share from './utils/Share.svelte';
 
   export let story_name: string;
 

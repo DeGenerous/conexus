@@ -2,15 +2,13 @@
   import { fullscreen, story, loading } from '@stores/conexus';
   import { background_volume, tts_volume } from '@stores/volumes';
   import { storyTitle as _storyTitle } from '@lib/conexus';
-  import type { StepData } from '@lib/conexus';
 
   import Slider from './music/Slider.svelte';
-  import { afterUpdate } from 'svelte';
 
   let fullWidthImage: boolean = false;
-  let imageWrapper: HTMLDivElement;
+  let imageWrapper: HTMLButtonElement;
 
-  afterUpdate(() => {
+  $effect(() => {
     document.onfullscreenchange = () => {
       if ($fullscreen !== !!document.fullscreenElement)
         fullscreen.set(!!document.fullscreenElement);
@@ -21,13 +19,19 @@
     else imageWrapper.style.height = 'auto';
   });
 
-  $: if ($fullscreen) document.documentElement.requestFullscreen();
-  else if (document.fullscreenElement) document.exitFullscreen();
+  $effect(() => {
+    if ($fullscreen) document.documentElement.requestFullscreen();
+    else if (document.fullscreenElement) document.exitFullscreen();
+  });
 
-  $: step = $story?.step_data as StepData;
+  let step: StepData = $state({} as StepData);
+
+  $effect(() => {
+    step = $story?.step_data as StepData;
+  });
 
   let stepFont: string = 'Verdana';
-  let width: number;
+  let width: number = $state(0);
   const storyTitle: string = (
     _storyTitle.charAt(0).toUpperCase() + _storyTitle.slice(1)
   ).trim();
@@ -92,16 +96,16 @@
   };
 
   // SVG Icons
-  let quitSvgWindowFocus: boolean = false;
-  let quitSvgFullscreenFocus: boolean = false;
+  let quitSvgWindowFocus: boolean = $state(false);
+  let quitSvgFullscreenFocus: boolean = $state(false);
 
-  let backStepArrowWindowFocus: boolean = false;
-  let nextStepArrowWindowFocus: boolean = false;
-  let backStepArrowFullscreenFocus: boolean = false;
-  let nextStepArrowFullscreenFocus: boolean = false;
+  let backStepArrowWindowFocus: boolean = $state(false);
+  let nextStepArrowWindowFocus: boolean = $state(false);
+  let backStepArrowFullscreenFocus: boolean = $state(false);
+  let nextStepArrowFullscreenFocus: boolean = $state(false);
 
-  let fullscreenSvgWindowFocus: boolean = false;
-  let fullscreenSvgFullscreenFocus: boolean = false;
+  let fullscreenSvgWindowFocus: boolean = $state(false);
+  let fullscreenSvgFullscreenFocus: boolean = $state(false);
 
   const handleSelectorSvg = (id: number, state: 'focus' | 'blur') => {
     if ($story?.step_data?.end) return;
@@ -169,10 +173,10 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions a11y-no-static-element-interactions -->
 <section class="step-wrapper" style="font-family: {stepFont}">
-  <div
+  <button
     class="image-wrapper"
     bind:this={imageWrapper}
-    on:click={() => (fullWidthImage = !fullWidthImage)}
+    onclick={() => (fullWidthImage = !fullWidthImage)}
   >
     {#if step.image}
       <img class="image" src={`data:image/png;base64,${step.image}`} alt="" />
@@ -182,7 +186,7 @@
         <p class="click-hint">Click to change image size</p>
       {/if}
     {/if}
-  </div>
+  </button>
 
   {#if step.title}
     <h3 class="step-title">{step.title}</h3>
@@ -215,7 +219,7 @@
       <button
         id="option-0"
         class="option menu-option"
-        on:click={() => window.open('/', '_self')}>Return to main menu</button
+        onclick={() => window.open('/', '_self')}>Return to main menu</button
       >
     </div>
   {:else}
@@ -230,13 +234,13 @@
             : ''}"
           style="font-family: {stepFont}"
           disabled={$loading || step.step !== $story?.maxStep}
-          on:click={() => {
+          onclick={() => {
             $story?.next_step(i + 1);
             if (width < 600) return;
             handleSelectorSvg(i, 'blur');
             if (activeOptionNumber !== 0) activeOptionNumber = 0;
           }}
-          on:pointerover={() => {
+          onpointerover={() => {
             if (width < 600) return;
             if (!$loading && step.step == $story?.maxStep) {
               handleSelectorSvg(i, 'focus');
@@ -248,7 +252,7 @@
               handleSelectorSvg(activeOptionNumber, 'blur');
             }
           }}
-          on:pointerout={() => {
+          onpointerout={() => {
             if (width < 600) return;
             if (!$loading && step.step == $story?.maxStep) {
               handleSelectorSvg(i, 'blur');
@@ -448,14 +452,14 @@
             class="step-button"
             class:disabled-btn-styling={$loading}
             style={$loading ? 'cursor: progress' : ''}
-            on:click={() => {
+            onclick={() => {
               if (step.step === 2) backStepArrowWindowFocus = false;
               if (!$loading) $story?.loadStep(step.step - 1);
             }}
-            on:pointerover={() => {
+            onpointerover={() => {
               if (step.step !== 1 && !$loading) backStepArrowWindowFocus = true;
             }}
-            on:pointerout={() => {
+            onpointerout={() => {
               if (step.step !== 1 && !$loading)
                 backStepArrowWindowFocus = false;
             }}
@@ -505,16 +509,16 @@
           <h3>Step {`${step.step < 10 ? '0' : ''}${step.step}`}</h3>
           <button
             class="step-button"
-            on:click={() => {
+            onclick={() => {
               if ($story?.maxStep == step.step + 1)
                 nextStepArrowWindowFocus = false;
               $story?.loadStep(step.step + 1);
             }}
-            on:pointerover={() => {
+            onpointerover={() => {
               if (step.step !== $story?.maxStep)
                 nextStepArrowWindowFocus = true;
             }}
-            on:pointerout={() => {
+            onpointerout={() => {
               if (step.step !== $story?.maxStep)
                 nextStepArrowWindowFocus = false;
             }}
@@ -575,7 +579,7 @@
               xmlns="http://www.w3.org/2000/svg"
               viewBox="-100 -100 200 200"
               class="quit-svg-element"
-              on:click={() => window.open('/', '_self')}
+              onclick={() => window.open('/', '_self')}
               role="button"
               tabindex="0"
             >
@@ -608,8 +612,10 @@
                 r="95"
                 fill="rgba(51, 226, 230, 0.5)"
                 mask="url(#quit-svg-mask)"
-                on:pointerover={() => (quitSvgFullscreenFocus = true)}
-                on:pointerout={() => (quitSvgFullscreenFocus = false)}
+                onpointerover={() => (quitSvgFullscreenFocus = true)}
+                onpointerout={() => (quitSvgFullscreenFocus = false)}
+                role="button"
+                tabindex="0"
               />
             </svg>
             <h3 style="color: rgba(51, 226, 230, 0.5); max-width: none;">
@@ -652,16 +658,16 @@
                 r="95"
                 fill="rgba(51, 226, 230, 0.5)"
                 mask="url(#fullscreen-back-step-arrow-svg-mask)"
-                on:click={() => {
+                onclick={() => {
                   if (step.step !== 1 && !$loading)
                     $story?.loadStep(step.step - 1);
                   if (step.step === 2) backStepArrowFullscreenFocus = false;
                 }}
-                on:pointerover={() => {
+                onpointerover={() => {
                   if (step.step !== 1 && !$loading)
                     backStepArrowFullscreenFocus = true;
                 }}
-                on:pointerout={() => {
+                onpointerout={() => {
                   if (step.step !== 1 && !$loading)
                     backStepArrowFullscreenFocus = false;
                 }}
@@ -670,6 +676,8 @@
                   : $loading
                     ? 'fill: rgba(51, 226, 230, 0.35); cursor: progress; transform: none;'
                     : ''}
+                role="button"
+                tabindex="0"
               />
             </svg>
             <h3 style="color: rgba(51, 226, 230, 0.5)">
@@ -710,23 +718,25 @@
                 r="95"
                 fill="rgba(51, 226, 230, 0.5)"
                 mask="url(#fullscreen-next-step-arrow-svg-mask)"
-                on:click={() => {
+                onclick={() => {
                   if (step.step !== $story?.maxStep)
                     $story?.loadStep(step.step + 1);
                   if ($story?.maxStep == step.step + 1)
                     nextStepArrowFullscreenFocus = false;
                 }}
-                on:pointerover={() => {
+                onpointerover={() => {
                   if (step.step !== $story?.maxStep)
                     nextStepArrowFullscreenFocus = true;
                 }}
-                on:pointerout={() => {
+                onpointerout={() => {
                   if (step.step !== $story?.maxStep)
                     nextStepArrowFullscreenFocus = false;
                 }}
                 style={step.step === $story?.maxStep
                   ? 'fill: rgba(51, 226, 230, 0.15); cursor: not-allowed; transform: none;'
                   : ''}
+                role="button"
+                tabindex="0"
               />
             </svg>
           </div>
@@ -741,15 +751,17 @@
             stroke-width="20"
             stroke-linecap="round"
             stroke-linejoin="round"
-            on:click={() => {
+            onclick={() => {
               $fullscreen = false;
               fullscreenSvgFullscreenFocus = false;
             }}
-            on:pointerover={() => (fullscreenSvgFullscreenFocus = true)}
-            on:pointerout={() => (fullscreenSvgFullscreenFocus = false)}
+            onpointerover={() => (fullscreenSvgFullscreenFocus = true)}
+            onpointerout={() => (fullscreenSvgFullscreenFocus = false)}
             style="transform: {fullscreenSvgFullscreenFocus
               ? 'scale(1.05)'
               : ''}"
+            role="button"
+            tabindex="0"
           >
             <g
               id="windowed-arrow"
@@ -781,7 +793,7 @@
             class="quit-button-svg"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="-100 -100 200 200"
-            on:click={() => window.open('/', '_self')}
+            onclick={() => window.open('/', '_self')}
             role="button"
             tabindex="0"
           >
@@ -818,7 +830,7 @@
               class="step-button-svg"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="-100 -100 200 200"
-              on:click={() => {
+              onclick={() => {
                 if (step.step !== 1 && !$loading)
                   $story?.loadStep(step.step - 1);
               }}
@@ -862,7 +874,7 @@
               xmlns="http://www.w3.org/2000/svg"
               viewBox="-100 -100 200 200"
               style="transform: rotate(180deg)"
-              on:click={() => {
+              onclick={() => {
                 if (step.step !== $story?.maxStep)
                   $story?.loadStep(step.step + 1);
               }}
@@ -908,7 +920,7 @@
               stroke-width="20"
               stroke-linecap="round"
               stroke-linejoin="round"
-              on:click={() => fullscreen.update((old) => !old)}
+              onclick={() => fullscreen.update((old) => !old)}
               role="button"
               tabindex="0"
             >
@@ -936,7 +948,7 @@
               stroke-width="20"
               stroke-linecap="round"
               stroke-linejoin="round"
-              on:click={() => fullscreen.update((old) => !old)}
+              onclick={() => fullscreen.update((old) => !old)}
               role="button"
               tabindex="0"
             >

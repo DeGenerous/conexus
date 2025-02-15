@@ -5,6 +5,8 @@
 
   export let token: string;
 
+  let acct: Account = new Account();
+
   let email: string = '';
   let password: string = '';
   let passwordConfirm: string = '';
@@ -60,7 +62,7 @@
     {/if}
 
     <button
-      on:click={() => Account.resetPassword({ email, password, token })}
+      on:click={() => acct.resetPassword({ email, password, token })}
       disabled={!validation}
     >
       Reset Password

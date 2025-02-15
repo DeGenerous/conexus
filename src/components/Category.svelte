@@ -8,6 +8,7 @@
   import { checkUserState, checkWeb3LoginState } from '@utils/route-guard';
   import { web3LoggedIn } from '@stores/account';
   import StoryCollection from './utils/StoryCollection.svelte';
+  import Links from './utils/Links.svelte';
 
   export let section: string;
   let isWeb3LoggedIn: boolean = false;
@@ -414,6 +415,8 @@
     {/each}
   </div>
 {/if}
+
+<Links {section} />
 
 <style>
   .filters {

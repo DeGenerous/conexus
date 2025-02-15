@@ -1,14 +1,15 @@
 <script lang="ts">
   import { fullscreen, story, loading } from '@stores/conexus';
   import { background_volume, tts_volume } from '@stores/volumes';
-  import { storyTitle as _storyTitle } from '@lib/conexus';
+  import { storyTitle as _storyTitle } from '@libv2/story';
 
   import Slider from './music/Slider.svelte';
+  import { afterUpdate } from 'svelte';
 
   let fullWidthImage: boolean = false;
-  let imageWrapper: HTMLButtonElement;
+  let imageWrapper: HTMLDivElement;
 
-  $effect(() => {
+  afterUpdate(() => {
     document.onfullscreenchange = () => {
       if ($fullscreen !== !!document.fullscreenElement)
         fullscreen.set(!!document.fullscreenElement);
@@ -19,19 +20,13 @@
     else imageWrapper.style.height = 'auto';
   });
 
-  $effect(() => {
-    if ($fullscreen) document.documentElement.requestFullscreen();
-    else if (document.fullscreenElement) document.exitFullscreen();
-  });
+  $: if ($fullscreen) document.documentElement.requestFullscreen();
+  else if (document.fullscreenElement) document.exitFullscreen();
 
-  let step: StepData = $state({} as StepData);
-
-  $effect(() => {
-    step = $story?.step_data as StepData;
-  });
+  $: step = $story?.step_data as StepData;
 
   let stepFont: string = 'Verdana';
-  let width: number = $state(0);
+  let width: number;
   const storyTitle: string = (
     _storyTitle.charAt(0).toUpperCase() + _storyTitle.slice(1)
   ).trim();
@@ -48,7 +43,7 @@
       case 'ArrowLeft': {
         if ($loading) return;
         if (step.step !== 1) {
-          $story?.loadStep(step.step - 1);
+          $story?.loadGameStep(step.step - 1);
           handleSelectorSvg(activeOptionNumber, 'blur');
           activeOptionNumber = 0;
         } else return;
@@ -57,7 +52,7 @@
       case 'ArrowRight': {
         if ($loading) return;
         if (step.step !== $story?.maxStep) {
-          $story?.loadStep(step.step + 1);
+          $story?.loadGameStep(step.step + 1);
           handleSelectorSvg(activeOptionNumber, 'blur');
           activeOptionNumber = 0;
         } else return;
@@ -96,16 +91,16 @@
   };
 
   // SVG Icons
-  let quitSvgWindowFocus: boolean = $state(false);
-  let quitSvgFullscreenFocus: boolean = $state(false);
+  let quitSvgWindowFocus: boolean = false;
+  let quitSvgFullscreenFocus: boolean = false;
 
-  let backStepArrowWindowFocus: boolean = $state(false);
-  let nextStepArrowWindowFocus: boolean = $state(false);
-  let backStepArrowFullscreenFocus: boolean = $state(false);
-  let nextStepArrowFullscreenFocus: boolean = $state(false);
+  let backStepArrowWindowFocus: boolean = false;
+  let nextStepArrowWindowFocus: boolean = false;
+  let backStepArrowFullscreenFocus: boolean = false;
+  let nextStepArrowFullscreenFocus: boolean = false;
 
-  let fullscreenSvgWindowFocus: boolean = $state(false);
-  let fullscreenSvgFullscreenFocus: boolean = $state(false);
+  let fullscreenSvgWindowFocus: boolean = false;
+  let fullscreenSvgFullscreenFocus: boolean = false;
 
   const handleSelectorSvg = (id: number, state: 'focus' | 'blur') => {
     if ($story?.step_data?.end) return;
@@ -173,10 +168,10 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions a11y-no-static-element-interactions -->
 <section class="step-wrapper" style="font-family: {stepFont}">
-  <button
+  <div
     class="image-wrapper"
     bind:this={imageWrapper}
-    onclick={() => (fullWidthImage = !fullWidthImage)}
+    on:click={() => (fullWidthImage = !fullWidthImage)}
   >
     {#if step.image}
       <img class="image" src={`data:image/png;base64,${step.image}`} alt="" />
@@ -186,7 +181,7 @@
         <p class="click-hint">Click to change image size</p>
       {/if}
     {/if}
-  </button>
+  </div>
 
   {#if step.title}
     <h3 class="step-title">{step.title}</h3>
@@ -219,7 +214,7 @@
       <button
         id="option-0"
         class="option menu-option"
-        onclick={() => window.open('/', '_self')}>Return to main menu</button
+        on:click={() => window.open('/', '_self')}>Return to main menu</button
       >
     </div>
   {:else}
@@ -234,13 +229,13 @@
             : ''}"
           style="font-family: {stepFont}"
           disabled={$loading || step.step !== $story?.maxStep}
-          onclick={() => {
-            $story?.next_step(i + 1);
+          on:click={() => {
+            $story?.nextStep(i + 1);
             if (width < 600) return;
             handleSelectorSvg(i, 'blur');
             if (activeOptionNumber !== 0) activeOptionNumber = 0;
           }}
-          onpointerover={() => {
+          on:pointerover={() => {
             if (width < 600) return;
             if (!$loading && step.step == $story?.maxStep) {
               handleSelectorSvg(i, 'focus');
@@ -252,7 +247,7 @@
               handleSelectorSvg(activeOptionNumber, 'blur');
             }
           }}
-          onpointerout={() => {
+          on:pointerout={() => {
             if (width < 600) return;
             if (!$loading && step.step == $story?.maxStep) {
               handleSelectorSvg(i, 'blur');
@@ -452,14 +447,14 @@
             class="step-button"
             class:disabled-btn-styling={$loading}
             style={$loading ? 'cursor: progress' : ''}
-            onclick={() => {
+            on:click={() => {
               if (step.step === 2) backStepArrowWindowFocus = false;
-              if (!$loading) $story?.loadStep(step.step - 1);
+              if (!$loading) $story?.loadGameStep(step.step - 1);
             }}
-            onpointerover={() => {
+            on:pointerover={() => {
               if (step.step !== 1 && !$loading) backStepArrowWindowFocus = true;
             }}
-            onpointerout={() => {
+            on:pointerout={() => {
               if (step.step !== 1 && !$loading)
                 backStepArrowWindowFocus = false;
             }}
@@ -509,16 +504,16 @@
           <h3>Step {`${step.step < 10 ? '0' : ''}${step.step}`}</h3>
           <button
             class="step-button"
-            onclick={() => {
+            on:click={() => {
               if ($story?.maxStep == step.step + 1)
                 nextStepArrowWindowFocus = false;
-              $story?.loadStep(step.step + 1);
+              $story?.loadGameStep(step.step + 1);
             }}
-            onpointerover={() => {
+            on:pointerover={() => {
               if (step.step !== $story?.maxStep)
                 nextStepArrowWindowFocus = true;
             }}
-            onpointerout={() => {
+            on:pointerout={() => {
               if (step.step !== $story?.maxStep)
                 nextStepArrowWindowFocus = false;
             }}
@@ -579,7 +574,7 @@
               xmlns="http://www.w3.org/2000/svg"
               viewBox="-100 -100 200 200"
               class="quit-svg-element"
-              onclick={() => window.open('/', '_self')}
+              on:click={() => window.open('/', '_self')}
               role="button"
               tabindex="0"
             >
@@ -612,10 +607,8 @@
                 r="95"
                 fill="rgba(51, 226, 230, 0.5)"
                 mask="url(#quit-svg-mask)"
-                onpointerover={() => (quitSvgFullscreenFocus = true)}
-                onpointerout={() => (quitSvgFullscreenFocus = false)}
-                role="button"
-                tabindex="0"
+                on:pointerover={() => (quitSvgFullscreenFocus = true)}
+                on:pointerout={() => (quitSvgFullscreenFocus = false)}
               />
             </svg>
             <h3 style="color: rgba(51, 226, 230, 0.5); max-width: none;">
@@ -658,16 +651,16 @@
                 r="95"
                 fill="rgba(51, 226, 230, 0.5)"
                 mask="url(#fullscreen-back-step-arrow-svg-mask)"
-                onclick={() => {
+                on:click={() => {
                   if (step.step !== 1 && !$loading)
-                    $story?.loadStep(step.step - 1);
+                    $story?.loadGameStep(step.step - 1);
                   if (step.step === 2) backStepArrowFullscreenFocus = false;
                 }}
-                onpointerover={() => {
+                on:pointerover={() => {
                   if (step.step !== 1 && !$loading)
                     backStepArrowFullscreenFocus = true;
                 }}
-                onpointerout={() => {
+                on:pointerout={() => {
                   if (step.step !== 1 && !$loading)
                     backStepArrowFullscreenFocus = false;
                 }}
@@ -676,8 +669,6 @@
                   : $loading
                     ? 'fill: rgba(51, 226, 230, 0.35); cursor: progress; transform: none;'
                     : ''}
-                role="button"
-                tabindex="0"
               />
             </svg>
             <h3 style="color: rgba(51, 226, 230, 0.5)">
@@ -718,25 +709,23 @@
                 r="95"
                 fill="rgba(51, 226, 230, 0.5)"
                 mask="url(#fullscreen-next-step-arrow-svg-mask)"
-                onclick={() => {
+                on:click={() => {
                   if (step.step !== $story?.maxStep)
-                    $story?.loadStep(step.step + 1);
+                    $story?.loadGameStep(step.step + 1);
                   if ($story?.maxStep == step.step + 1)
                     nextStepArrowFullscreenFocus = false;
                 }}
-                onpointerover={() => {
+                on:pointerover={() => {
                   if (step.step !== $story?.maxStep)
                     nextStepArrowFullscreenFocus = true;
                 }}
-                onpointerout={() => {
+                on:pointerout={() => {
                   if (step.step !== $story?.maxStep)
                     nextStepArrowFullscreenFocus = false;
                 }}
                 style={step.step === $story?.maxStep
                   ? 'fill: rgba(51, 226, 230, 0.15); cursor: not-allowed; transform: none;'
                   : ''}
-                role="button"
-                tabindex="0"
               />
             </svg>
           </div>
@@ -751,17 +740,15 @@
             stroke-width="20"
             stroke-linecap="round"
             stroke-linejoin="round"
-            onclick={() => {
+            on:click={() => {
               $fullscreen = false;
               fullscreenSvgFullscreenFocus = false;
             }}
-            onpointerover={() => (fullscreenSvgFullscreenFocus = true)}
-            onpointerout={() => (fullscreenSvgFullscreenFocus = false)}
+            on:pointerover={() => (fullscreenSvgFullscreenFocus = true)}
+            on:pointerout={() => (fullscreenSvgFullscreenFocus = false)}
             style="transform: {fullscreenSvgFullscreenFocus
               ? 'scale(1.05)'
               : ''}"
-            role="button"
-            tabindex="0"
           >
             <g
               id="windowed-arrow"
@@ -793,7 +780,7 @@
             class="quit-button-svg"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="-100 -100 200 200"
-            onclick={() => window.open('/', '_self')}
+            on:click={() => window.open('/', '_self')}
             role="button"
             tabindex="0"
           >
@@ -830,9 +817,9 @@
               class="step-button-svg"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="-100 -100 200 200"
-              onclick={() => {
+              on:click={() => {
                 if (step.step !== 1 && !$loading)
-                  $story?.loadStep(step.step - 1);
+                  $story?.loadGameStep(step.step - 1);
               }}
               role="button"
               tabindex="0"
@@ -874,9 +861,9 @@
               xmlns="http://www.w3.org/2000/svg"
               viewBox="-100 -100 200 200"
               style="transform: rotate(180deg)"
-              onclick={() => {
+              on:click={() => {
                 if (step.step !== $story?.maxStep)
-                  $story?.loadStep(step.step + 1);
+                  $story?.loadGameStep(step.step + 1);
               }}
               role="button"
               tabindex="0"
@@ -920,7 +907,7 @@
               stroke-width="20"
               stroke-linecap="round"
               stroke-linejoin="round"
-              onclick={() => fullscreen.update((old) => !old)}
+              on:click={() => fullscreen.update((old) => !old)}
               role="button"
               tabindex="0"
             >
@@ -948,7 +935,7 @@
               stroke-width="20"
               stroke-linecap="round"
               stroke-linejoin="round"
-              onclick={() => fullscreen.update((old) => !old)}
+              on:click={() => fullscreen.update((old) => !old)}
               role="button"
               tabindex="0"
             >

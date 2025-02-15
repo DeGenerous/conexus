@@ -431,9 +431,35 @@
   }
 
   .description {
+    max-height: 20vw;
     font-size: 1.5vw;
     line-height: 3vw;
     text-shadow: 0 0.25vw 0.25vw #010020;
+    overflow: auto;
+  }
+
+  .description::-webkit-scrollbar {
+    width: 0.5vw;
+  }
+
+  .description::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0);
+  }
+
+  .description::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0),
+      rgba(51, 226, 230, 0.5),
+      rgba(0, 0, 0, 0)
+    );
+    border-radius: 0.5vw;
+    cursor: pointer;
+  }
+
+  .description::-webkit-scrollbar-thumb:hover,
+  .description::-webkit-scrollbar-thumb:active {
+    background: rgba(51, 226, 230, 0.5);
   }
 
   .story-buttons-container {
@@ -614,6 +640,7 @@
       font-size: 1em;
       line-height: 2em;
       width: 90vw;
+      max-height: none;
     }
 
     .story-buttons-container {

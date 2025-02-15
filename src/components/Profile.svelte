@@ -17,7 +17,7 @@
   } from '@stores/modal';
   import { isAvailable } from '@utils/validation';
 
-  import WalletConnect from './WalletConnect.svelte';
+  import WalletConnect from './web3/WalletConnect.svelte';
 
   Account.me();
   Account.logged_in();

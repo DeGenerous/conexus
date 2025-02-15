@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { DynSectionCategory } from '@lib/conexus';
-  import StoryTile from '../components/StoryTile.svelte';
+  import StoryTile from './StoryTile.svelte';
 
   export let category: DynSectionCategory | null = null;
   export let section: string = '';

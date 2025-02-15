@@ -15,9 +15,9 @@
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
-  import Share from './Share.svelte';
+  import Share from './utils/Share.svelte';
   import Profile from './Profile.svelte';
-  import BackArrow from './BackArrow.svelte';
+  import BackArrow from './utils/BackArrow.svelte';
 
   export let story_name: string;
 

@@ -7,7 +7,7 @@
   } from '@lib/conexus';
   import { checkUserState, checkWeb3LoginState } from '@utils/route-guard';
   import { web3LoggedIn } from '@stores/account';
-  import StoryCollection from './StoryCollection.svelte';
+  import StoryCollection from './utils/StoryCollection.svelte';
 
   export let section: string;
   let isWeb3LoggedIn: boolean = false;

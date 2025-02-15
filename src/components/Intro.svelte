@@ -2,7 +2,7 @@
   import { CoNexus } from '@lib/conexus';
   import { web3LoggedIn } from '@stores/account';
 
-  import MenuTile from './MenuTile.svelte';
+  import MenuTile from './utils/MenuTile.svelte';
 
   let isWeb3LoggedIn: boolean = false;
 

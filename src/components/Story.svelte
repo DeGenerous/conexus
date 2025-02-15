@@ -189,7 +189,7 @@
     </div>
   {:catch}
     <header>
-      <a class="arrow" aria-label="Back arrow" href="./"></a>
+      <BackArrow href="./" />
       <Profile />
     </header>
 
@@ -348,25 +348,6 @@
     text-align: center;
     color: rgba(51, 226, 230, 0.85);
     text-shadow: 0 0.5vw 0.5vw #010020;
-  }
-
-  .arrow {
-    height: 7vw;
-    width: 7vw;
-    z-index: 1;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    flex: none;
-    background-image: url('/icons/backArrow.avif');
-    opacity: 0.4;
-    cursor: pointer;
-  }
-
-  .arrow:hover,
-  .arrow:active {
-    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.5));
-    opacity: 0.75;
   }
 
   .story-container {
@@ -586,11 +567,6 @@
 
     h1 {
       font-size: 1.5em;
-    }
-
-    .arrow {
-      width: 3em;
-      height: 3em;
     }
 
     .story-container {

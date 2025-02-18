@@ -124,9 +124,10 @@
   {:then topic: DynTopic}
     <header>
       <BackArrow href="./" />
-      <h1 class="fade-in">
+      <!-- <h1 class="fade-in">
         {(topic.name.charAt(0).toUpperCase() + topic.name.slice(1)).trim()}
-      </h1>
+      </h1> -->
+      <h1>NLwnaflan awfnawlnf wafnawn</h1>
       <Profile />
     </header>
 
@@ -567,6 +568,7 @@
 
     h1 {
       font-size: 1.5em;
+      line-height: 1.5em;
     }
 
     .story-container {

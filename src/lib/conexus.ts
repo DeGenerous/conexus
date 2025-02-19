@@ -173,8 +173,8 @@ export class CoNexus {
     return resp.genres;
   }
 
-  static async getGenreTopics(genre: string): Promise<DynSectionCategory[]> {
-    const base = `${url}/genres/${genre}`;
+  static async getGenreTopics(genre: string, section: string): Promise<DynSectionCategory[]> {
+    const base = `${url}/genres/${section}?name=${genre}`;
 
     const response = await fetch(base);
 

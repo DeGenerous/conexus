@@ -110,7 +110,7 @@
       searchField = '';
       handleSearch();
     }
-    filteredCategories = await CoNexus.getGenreTopics(genre);
+    filteredCategories = await CoNexus.getGenreTopics(genre, section);
     if (isSorting) handleSorting();
   }
 

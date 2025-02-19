@@ -1,0 +1,15 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import Dashboard from '@components/Dashboard/dashboard.svelte';
+
+const arrow = true;
+
+const meta ={
+  header: 'Dashboard',
+}
+---
+
+<Layout {...meta} {arrow}>
+  <Dashboard client:load />
+</Layout>

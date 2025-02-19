@@ -1,10 +1,5 @@
 <script lang="ts">
-<<<<<<< HEAD:src/components/utils/StoryCollection.svelte
-  import type { DynSectionCategory } from '@lib/conexus';
   import StoryTile from './StoryTile.svelte';
-=======
-  import StoryTile from '../components/StoryTile.svelte';
->>>>>>> 9049663 (refactor initial commit, using internal backend):src/components/StoryCollection.svelte
 
   export let category: SectionCategory | null = null;
   export let section: string = '';

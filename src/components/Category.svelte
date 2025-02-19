@@ -111,7 +111,7 @@
       searchField = '';
       handleSearch();
     }
-    filteredCategories = await CoNexus.getGenreTopics(genre, section);
+    filteredCategories = await app.getGenreTopics(genre, section);
     if (isSorting) handleSorting();
   }
 

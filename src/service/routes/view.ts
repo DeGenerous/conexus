@@ -21,9 +21,9 @@ export default class ViewAPI extends Fetcher {
     return this.request<{ genres: Genre[] }>('/view/genres');
   }
 
-  async genreTopics(genre: string) {
+  async genreTopics(genre: string, section: string) {
     return this.request<SectionCategory[]>(
-      `/view/genre-topics/${genre}`,
+      `/view/genre-topics/${section}?name=${genre}`,
     );
   }
 }

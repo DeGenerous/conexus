@@ -80,8 +80,8 @@ export class CoNexusApp extends ViewAPI {
     return data.genres;
   }
 
-  async getGenreTopics(genre: string): Promise<SectionCategory[]> {
-    const { data, error } = await this.genreTopics(genre);
+  async getGenreTopics(genre: string, section: string): Promise<SectionCategory[]> {
+    const { data, error } = await this.genreTopics(genre, section);
 
     if (!data) {
       if (error) {

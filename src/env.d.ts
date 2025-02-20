@@ -3,6 +3,12 @@
 
 type Nullable<T> = T | null | undefined;
 
+declare namespace App {
+  interface Locals {
+    user: User
+  }
+}
+
 type APISTDResposne = {
   message: string;
 };
@@ -23,66 +29,6 @@ type VolumeControl = {
   restart: boolean;
 };
 
-interface SignUp {
-  first_name: string;
-  last_name: string;
-  email: string;
-  password: string;
-  role: Roles;
-}
-
-interface AuthWallet {
-  wallet: string;
-  faux: boolean;
-  main: boolean;
-}
-
-interface User extends SignUp {
-  ID?: string;
-  oauth_id?: string;
-  email_confirmed?: boolean;
-  referral_count?: number;
-  referred: boolean;
-  wallets?: AuthWallet[];
-  main_wallet?: string;
-  faux?: boolean;
-  email_confirmed?: boolean;
-  is_oauth?: boolean;
-}
-
-interface SignIn {
-  email: string;
-  password: string;
-}
-
-enum Roles {
-  ADMIN = 'admin',
-  USER = 'user',
-  ARTIST = 'artist',
-}
-
-interface ReferralCode {
-  ID: number;
-  code: string;
-  user_id: number;
-  is_used: boolean;
-  used_by: number;
-  created_at: string;
-  updated_at: string;
-}
-
-interface ReferralSignUp {
-  user: User;
-  referral_code: string;
-  newsletter: bool
-}
-
-interface SubscriptionStatus {
-	is_active:       boolean
-	subscribed_at:   Date | null
-	unsubscribed_at: Date | null
-}
-
 type ContinuableStory = {
   story_id: string;
   category: string;
@@ -97,15 +43,6 @@ type Topic = {
 type Category = {
   name: string;
   topics: Topic[];
-};
-
-type Available = {
-  available: number;
-  used: number;
-  bonus: number;
-  continuable?: ContinuableStory[];
-  categories?: Category[];
-  has_ape?: boolean;
 };
 
 type StepData = {
@@ -125,13 +62,6 @@ type StepData = {
 type GameData = {
   id: string;
 } & StepData;
-
-// Error
-type ConexusError = {
-  code: number;
-  error?: string = 'Something went wrong, please try again later...';
-  log?: boolean = true;
-};
 
 type ResetPassword = {
   email: string;

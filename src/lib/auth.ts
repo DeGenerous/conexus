@@ -1,4 +1,4 @@
-import { new_error } from '@errors/index';
+import { api_error } from '@errors/index';
 import { Web3Provider } from './ethers';
 import { get_cookie } from './cookies';
 import {
@@ -87,7 +87,7 @@ class Account {
     });
 
     if (!response.ok) {
-      new_error({ code: response.status, error: await response.text() });
+      console.error(response.text());
 
       web3loginError.set(true);
 
@@ -130,7 +130,7 @@ class Account {
     });
 
     if (!response.ok) {
-      new_error({ code: response.status, error: await response.text() });
+      console.error(response.text());
     }
 
     return await response.text();
@@ -160,10 +160,10 @@ class Account {
       }
 
       if (!response.ok) {
-        new_error({ code: response.status, error: await response.text() });
+        console.error(response.text());
       }
     } catch (error: any) {
-      new_error({ code: 500, error: error });
+      console.error(error);
     }
   }
 
@@ -175,7 +175,7 @@ class Account {
       });
 
       if (!response.ok) {
-        new_error({ code: response.status, error: await response.text() });
+        console.error(response.text());
       }
 
       const resp = await response.json();
@@ -188,7 +188,7 @@ class Account {
         toastStore.show(resp.message, 'info');
       }
     } catch (error: any) {
-      new_error({ code: 500, error: error });
+      console.error(error);
     }
   }
 
@@ -200,14 +200,14 @@ class Account {
       });
 
       if (!response.ok) {
-        new_error({ code: response.status, error: await response.text() });
+        console.error(response.text());
       }
 
       const resp = await response.json();
 
       authenticated.set({ user: resp.user, loggedIn: true });
     } catch (error: any) {
-      new_error({ code: 500, error: error });
+      console.error(error);
     }
   }
 
@@ -219,7 +219,7 @@ class Account {
       });
 
       if (!response.ok) {
-        new_error({ code: response.status, error: await response.text() });
+        console.error(response.text());
       }
 
       const resp = await response.json();
@@ -227,11 +227,7 @@ class Account {
       authenticated.set({ user: resp.user, loggedIn: true });
       availables.set(resp.available);
     } catch (error) {
-      new_error({
-        code: 500,
-        error: `Error fetching user: ${error}`,
-        log: false,
-      });
+      console.error(error);
     }
   }
 
@@ -245,7 +241,7 @@ class Account {
       });
 
       if (!response.ok) {
-        new_error({ code: response.status, error: await response.text() });
+        console.error(response.text());
         return null;
       }
 
@@ -253,7 +249,7 @@ class Account {
 
       return [resp.user, resp.available];
     } catch (error: any) {
-      new_error({ code: 500, error: error });
+      console.error(error);
       return null;
     }
   }
@@ -265,7 +261,7 @@ class Account {
     });
 
     if (!response.ok) {
-      new_error({ code: response.status, error: await response.text() });
+      console.error(response.text());
     }
 
     const resp = await response.json();
@@ -281,7 +277,7 @@ class Account {
     });
 
     if (!response.ok) {
-      new_error({ code: response.status, error: await response.text() });
+      console.error(response.text());
     }
 
     authenticated.set({ user: null, loggedIn: false });
@@ -296,7 +292,7 @@ class Account {
       });
 
       if (!response.ok) {
-        new_error({ code: response.status, error: await response.text() });
+        console.error(response.text());
       }
 
       const referralC = await response.json();
@@ -304,7 +300,7 @@ class Account {
       referralCodes.set(referralC.codes);
       window.location.reload();
     } catch (error: any) {
-      new_error({ code: 500, error: error });
+      console.error(error);
     }
   }
 
@@ -315,14 +311,14 @@ class Account {
       });
 
       if (!response.ok) {
-        new_error({ code: response.status, error: await response.text() });
+        console.error(response.text());
       }
 
       const referralC = await response.json();
 
       referralCodes.set(referralC.codes);
     } catch (error: any) {
-      new_error({ code: 500, error: error });
+      console.error(error);
     }
   }
 
@@ -333,14 +329,14 @@ class Account {
       });
 
       if (!response.ok) {
-        new_error({ code: response.status, error: await response.text() });
+        console.error(response.text());
       }
 
       const referralC = await response.json();
 
       console.log(referralC.message);
     } catch (error: any) {
-      new_error({ code: 500, error: error });
+      console.error(error);
     }
   }
 
@@ -354,14 +350,14 @@ class Account {
 
       if (!response.ok) {
         // Log or handle the error as appropriate
-        new_error({ code: response.status, error: await response.text() });
+        console.error(response.text());
         return null;
       }
 
       const referralC = await response.json();
       return referralC.referral as ReferralCode;
     } catch (error: any) {
-      new_error({ code: 500, error }); // Handle unexpected errors
+      console.error(error);
       return null;
     }
   }
@@ -373,14 +369,14 @@ class Account {
       });
 
       if (!response.ok) {
-        new_error({ code: response.status, error: await response.text() });
+        console.error(response.text());
       }
 
       const resp = await response.json();
 
       console.log(resp.message);
     } catch (error: any) {
-      new_error({ code: 500, error: error });
+      console.error(error);
     }
   }
 
@@ -395,7 +391,7 @@ class Account {
       });
 
       if (!response.ok) {
-        // new_error({ code: response.status, error: await response.text() });
+        // console.error(response.text())
         toastStore.show('Error resetting password', 'error');
       }
 
@@ -403,7 +399,7 @@ class Account {
 
       toastStore.show(resp.message, 'info');
     } catch (error: any) {
-      new_error({ code: 500, error: error });
+      console.error(error);
     }
   }
 
@@ -415,7 +411,7 @@ class Account {
       });
 
       if (!response.ok) {
-        // new_error({ code: response.status, error: await response.text() });
+        // console.error(response.text())
         toastStore.show('Error changing password', 'error');
       }
 
@@ -423,7 +419,7 @@ class Account {
 
       console.log(resp.message);
     } catch (error: any) {
-      new_error({ code: 500, error: error });
+      console.error(error);
     }
   }
 
@@ -434,14 +430,14 @@ class Account {
       });
 
       if (!response.ok) {
-        new_error({ code: response.status, error: await response.text() });
+        console.error(response.text());
       }
 
       const resp = await response.json();
 
       console.log(resp.message);
     } catch (error: any) {
-      new_error({ code: 500, error: error });
+      console.error(error);
     }
   }
 

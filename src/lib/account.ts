@@ -116,7 +116,7 @@ export class Account {
 
     if (!data) {
       if (error) {
-        api_error(error);
+        api_error(error, false);
       } else {
         toastStore.show('Error getting current user', 'error');
       }

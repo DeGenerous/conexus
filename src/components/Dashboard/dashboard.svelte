@@ -2,12 +2,17 @@
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
   import { authenticated } from '@stores/account';
+  import { checkUserState } from '@utils/route-guard';
 
   import CreatePrompt from './CreatePrompt.svelte';
   import GeneralInfo from './GeneralInfo.svelte';
   import StoryMetrics from './StoryMetrics.svelte';
 
-  const { user, loggedIn } = get(authenticated);
+  const { user } = get(authenticated);
+  
+  // onMount(async () => {
+  //   await checkUserState(`/dashboard`);
+  // });
 
   const dashboardSections = [
     { name: 'General Info', component: GeneralInfo },

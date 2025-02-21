@@ -60,7 +60,7 @@
   onMount(() => {
     Account.cookie();
   });
-  
+
   Account.me();
 
   authenticated.subscribe((value) => {

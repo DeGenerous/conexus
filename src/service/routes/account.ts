@@ -93,7 +93,9 @@ export default class AccountAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async getReferralCodes() {
-    return this.request<{ codes: ReferralCode[] }>('/account/get-referral-codes');
+    return this.request<{ codes: ReferralCode[] }>(
+      '/account/get-referral-codes',
+    );
   }
 
   /**

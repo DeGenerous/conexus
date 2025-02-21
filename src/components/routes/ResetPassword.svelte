@@ -49,8 +49,7 @@
         stroke-linejoin="round"
         stroke-linecap="round"
         opacity="0.75"
-        on:click={() =>
-          (passwordVisible = !passwordVisible)}
+        on:click={() => (passwordVisible = !passwordVisible)}
         role="button"
         tabindex="0"
         aria-label="Show password"
@@ -94,13 +93,7 @@
                 "
               />
             </g>
-            <line
-              x1="55"
-              y1="-75"
-              x2="-95"
-              y2="75"
-              stroke="black"
-            />
+            <line x1="55" y1="-75" x2="-95" y2="75" stroke="black" />
           </mask>
         </defs>
 

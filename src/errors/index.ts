@@ -6,7 +6,6 @@ export const new_error = (error: ConexusError) => {
   }
 };
 
-
 export const api_error = (error: APIError) => {
   toastStore.show(`Error: ${error.message}`, 'error');
 };

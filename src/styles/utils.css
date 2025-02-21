@@ -51,6 +51,27 @@
   opacity: 1; /* for iOS */
 }
 
+.input-container {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5vw;
+}
+
+.password-input-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 4vw;
+  gap: 1vw;
+}
+
+.password-input-container svg {
+  width: 3vw;
+  height: 3vw;
+}
+
 @media only screen and (max-width: 600px) {
   .sign-icon {
     height: 0.8em;
@@ -61,7 +82,7 @@
   }
 
   .container {
-    width: 85vw;
+    width: 90vw;
     padding: 1em;
     border-radius: 1em;
     gap: 1em;
@@ -71,5 +92,19 @@
     width: 70vw;
     font-size: 1.1em;
     line-height: 1.75em;
+  }
+
+  .input-container {
+    gap: 0.25em;
+  }
+
+  .password-input-container {
+    gap: 0.25em;
+    margin-left: 1.5em;
+  }
+  
+  .password-input-container svg {
+    width: 1.25em;
+    height: 1.25em;
   }
 }

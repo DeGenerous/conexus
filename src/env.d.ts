@@ -33,7 +33,7 @@ interface SignUp {
 
 interface AuthWallet {
   wallet: string;
-  fauc: boolean;
+  faux: boolean;
   main: boolean;
 }
 

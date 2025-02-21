@@ -15,7 +15,8 @@
       <div>
         <h3>Explore more:</h3>
         <button
-          on:click={() => (window.open('https://loredex.degenerousdao.com/', '_blank'))}
+          on:click={() =>
+            window.open('https://loredex.degenerousdao.com/', '_blank')}
         >
           Loredex
         </button>
@@ -23,7 +24,8 @@
       <div>
         <h3>Influence the storyline:</h3>
         <button
-          on:click={() => (window.open('https://governance.degenerousdao.com/', '_blank'))}
+          on:click={() =>
+            window.open('https://governance.degenerousdao.com/', '_blank')}
         >
           Galactic Governance Hub
         </button>

@@ -21,6 +21,6 @@
       <h2 style="color: rgb(255, 60, 64)">Error</h2>
       <h3>{error.message}</h3>
     {/await}
-    <button on:click={() => (window.open('/', '_self'))}>Return home</button>
+    <button on:click={() => window.open('/', '_self')}>Return home</button>
   </div>
 </section>

@@ -121,7 +121,7 @@ button svg {
 }
 
 button *,
-[role="button"] * {
+[role='button'] * {
   cursor: inherit;
 }
 
@@ -177,6 +177,10 @@ h3 a:active {
   font-size: 1.25vw;
   line-height: 1.5vw;
   color: rgba(255, 50, 50, 0.75);
+}
+
+.highlighted-border {
+  border: 0.1vw solid rgb(51, 226, 230) !important;
 }
 
 .red-border {

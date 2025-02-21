@@ -20,10 +20,7 @@
       <p class="validation">Provide the email associated with your profile</p>
     {/if}
 
-    <button
-      on:click={() => (Account.forgotPassword(email))}
-      disabled={!email}
-    >
+    <button on:click={() => Account.forgotPassword(email)} disabled={!email}>
       Send verification link
     </button>
   </div>

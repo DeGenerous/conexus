@@ -67,10 +67,7 @@
         rel="noopener noreferrer">here</a
       >!
     </h3>
-    <button
-      on:click={useReferralCode}
-      disabled={!referralCodeValid}
-    >
+    <button on:click={useReferralCode} disabled={!referralCodeValid}>
       Use Referral Code
     </button>
   </div>

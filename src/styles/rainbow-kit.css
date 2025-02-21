@@ -74,6 +74,11 @@ a > div {
   cursor: pointer;
 }
 
+[role='document'] svg {
+  width: auto;
+  height: auto;
+}
+
 @media only screen and (max-width: 600px) {
   [role='document'] button,
   [role='document'] button:hover,

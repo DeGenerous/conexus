@@ -19,13 +19,6 @@
 
   import WalletConnect from './web3/WalletConnect.svelte';
 
-  Account.me();
-  Account.logged_in();
-
-  onMount(async () => {
-    Account.cookie();
-  });
-
   let dialog: HTMLDialogElement;
 
   $: if (dialog && $showProfile) {
@@ -52,15 +45,35 @@
     $showProfile = false;
   };
 
+  // Sign-in
+  let user: Nullable<User>;
+  let available: Available | APIError;
   let isLogged: boolean;
+
   let signUp: boolean;
   let signInWithEmail: boolean;
-
-  let user: any;
-  let available: any;
   let loginMail: string = '';
   let loginPassword: string = '';
+  let loginPasswordVisible: boolean = false;
   let invalidCredentials: boolean = false;
+
+  onMount(() => {
+    Account.cookie();
+  });
+  
+  Account.me();
+
+  authenticated.subscribe((value) => {
+    user = value.user;
+    isLogged = value.loggedIn;
+  });
+  availables.subscribe((value) => {
+    available = value;
+  });
+
+  $: if (isLogged) {
+    Account.referraLCodes();
+  }
 
   const handleSignIn = async (event: Event) => {
     event.preventDefault();
@@ -77,76 +90,43 @@
     }
   };
 
-  let activeWalletStyling = `
-    color: rgb(51, 226, 230);
-    background-color: rgb(45, 90, 216);
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25), 0 0 0.5vw rgba(51, 226, 230, 0.5);
-  `;
-
-  const walletSelectConfirm = (address: string) => {
-    $secondButton = 'Select';
-    $handleSecondButton = () => {
-      handleWalletSelect(address);
-      $showModal = false;
-    };
-    $modalContent =
-      '<h2>Are you sure you want to select this address as a main one?</h2>';
-    $showModal = true;
-  };
-
-  const handleWalletSelect = async (address: string) => {
-    try {
-      await Account.setMainWallet(address);
-      // reload the page to update the user object
-      location.reload();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  authenticated.subscribe((value) => {
-    user = value.user;
-    isLogged = value.loggedIn;
-  });
-
-  availables.subscribe((value) => {
-    available = value;
-  });
-
-  $: if (isLogged) {
-    Account.referraLCodes();
-  }
-
+  // Change password
   let editingPassword: boolean = false;
   let editOldPassword: string = '';
   let editPassword: string = '';
   let editPasswordConfirm: string = '';
   let editPasswordVisible: boolean = false;
-  let passwordVisible: boolean = false;
   $: editPasswordMatch =
     editPassword.length >= 8 && editPassword === editPasswordConfirm;
-  $: oldPasswordCorrect = editOldPassword === 'password'; // fake validation
 
   const saveChangedPassword = () => {
-    editingPassword = false;
-    console.log(`save: ${editPassword}`);
-    // SAVE USER PASSWORD
+    try {
+      Account.changePassword({
+        old_password: editOldPassword,
+        new_password: editPassword,
+      });
+      editingPassword = false;
+    } catch (error) {
+      console.log('Old password is invalid!');
+      console.log(error);
+    }
   };
 
-  // Form state variables
-  let referralCode = '';
-  let referralCodeValid = false;
-  let first_name = '';
-  let last_name = '';
-  let password = '';
-  let confirmPassword = '';
-  let email = '';
+  // Sign-up form
+  let referralCode: string = '';
+  let referralCodeValid: boolean = false;
+  let first_name: string = '';
+  let last_name: string = '';
+  let password: string = '';
+  let confirmPassword: string = '';
+  let passwordVisible: boolean = false;
+  let email: string = '';
 
-  // Form validation variables
   $: mandatoryFields = email && first_name && last_name && password;
   $: passwordsMatch =
     password && confirmPassword ? password == confirmPassword : true;
   let termsAccepted: boolean = false;
+  let newsletterSignup: boolean = false;
 
   $: isFormValid =
     mandatoryFields &&
@@ -180,6 +160,40 @@
       },
       referral_code: referralCode,
     });
+    if (newsletterSignup) signupForNewsletter();
+  };
+
+  const signupForNewsletter = () => {
+    // ADD USER EMAIL TO THE NEWSLETTER LIST
+    console.log('Newsletter Sign-up');
+  };
+
+  // Utility functions
+  let activeWalletStyling = `
+    color: rgb(51, 226, 230);
+    background-color: rgb(45, 90, 216);
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25), 0 0 0.5vw rgba(51, 226, 230, 0.5);
+  `;
+
+  const walletSelectConfirm = (address: string) => {
+    $secondButton = 'Select';
+    $handleSecondButton = () => {
+      handleWalletSelect(address);
+      $showModal = false;
+    };
+    $modalContent =
+      '<h2>Are you sure you want to select this address as a main one?</h2>';
+    $showModal = true;
+  };
+
+  const handleWalletSelect = async (address: string) => {
+    try {
+      await Account.setMainWallet(address);
+      // reload the page to update the user object
+      location.reload();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // SVG Icons
@@ -392,7 +406,7 @@
         <hr />
 
         {#if isAvailable(available)}
-          <div class="story-games-container">
+          <div class="stories-count">
             <h3>
               You have used
               <strong>{available.used} / {available.available} weekly</strong>
@@ -415,7 +429,7 @@
 
         <hr />
 
-        {#if user.email && user.first_name}
+        {#if user?.email && user?.first_name}
           <div class="user-profile-info">
             <div class="input-container">
               <label for="mail">Email</label>
@@ -448,38 +462,28 @@
             {#if editingPassword}
               <div class="input-container">
                 <label for="password">Old password</label>
-                <div class="password-confirmation">
-                  <input
-                    class="user-input highlighted-input"
-                    type={editPasswordVisible ? 'text' : 'password'}
-                    placeholder="Enter old password"
-                    bind:value={editOldPassword}
-                    style={editOldPassword
-                      ? oldPasswordCorrect
-                        ? ''
-                        : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
-                      : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
-                  />
-                </div>
+                <input
+                  class="user-input highlighted-border"
+                  class:red-border={!editOldPassword}
+                  type={editPasswordVisible ? 'text' : 'password'}
+                  placeholder="Enter old password"
+                  bind:value={editOldPassword}
+                />
               </div>
 
-              {#if !editOldPassword}{:else if !oldPasswordCorrect}
-                <p class="validation">Old password doesn't match!</p>
+              {#if !editOldPassword}
+                <p class="validation">Please enter your old password</p>
               {/if}
 
               <div class="input-container">
                 <label for="password">New password</label>
-                <div class="password-container">
+                <div class="password-input-container">
                   <input
-                    class="user-input highlighted-input"
+                    class="user-input highlighted-border"
+                    class:red-border={!editPassword || editPassword.length < 8}
                     type={editPasswordVisible ? 'text' : 'password'}
                     placeholder="Provide new password"
                     bind:value={editPassword}
-                    style={editPassword
-                      ? editPassword.length < 8
-                        ? 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
-                        : ''
-                      : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
                   />
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -574,17 +578,14 @@
                     </g>
                   </svg>
                 </div>
-
-                <input
-                  class="user-input highlighted-input"
-                  type={editPasswordVisible ? 'text' : 'password'}
-                  placeholder="Confirm new password"
-                  bind:value={editPasswordConfirm}
-                  style={editPassword === editPasswordConfirm
-                    ? ''
-                    : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
-                />
               </div>
+              <input
+                class="user-input highlighted-border"
+                class:red-border={!editPasswordMatch}
+                type={editPasswordVisible ? 'text' : 'password'}
+                placeholder="Confirm new password"
+                bind:value={editPasswordConfirm}
+              />
 
               {#if editPassword && editPassword.length < 8}
                 <p class="validation">
@@ -609,9 +610,7 @@
                   </button>
                   <button
                     on:click={saveChangedPassword}
-                    disabled={!editPassword ||
-                      !editPasswordMatch ||
-                      !oldPasswordCorrect}
+                    disabled={!editPassword || !editPasswordMatch}
                   >
                     Save
                   </button>
@@ -629,7 +628,7 @@
 
         {#key user}
           <div class="wallet-connect">
-            {#if !user.faux}
+            {#if user && !user.faux}
               {#if user.wallets && user.wallets.length >= 1}
                 <div class="wallets-container">
                   <h2>Connected Addresses:</h2>
@@ -659,7 +658,7 @@
                             ? 'fill: rgb(51, 226, 230)'
                             : ''}
                           on:click={() => {
-                            if (wallet.wallet != user.main_wallet)
+                            if (wallet.wallet != user!.main_wallet)
                               walletSelectConfirm(wallet.wallet);
                           }}
                           role="button"
@@ -689,7 +688,7 @@
           </div>
         {/key}
 
-        {#if user.email && user.first_name}
+        {#if user?.email && user?.first_name}
           <hr />
 
           <h2>Your referral codes</h2>
@@ -800,15 +799,109 @@
               </div>
               <div class="input-container">
                 <label for="user-password">Password</label>
-                <input
-                  bind:value={loginPassword}
-                  class="user-input"
-                  type="password"
-                  id="user-password"
-                  placeholder="Enter your password"
-                  minlength="8"
-                  required
-                />
+                <div class="password-input-container">
+                  <input
+                    bind:value={loginPassword}
+                    class="user-input"
+                    type={loginPasswordVisible ? 'text' : 'password'}
+                    id="user-password"
+                    placeholder="Enter your password"
+                    minlength="8"
+                    required
+                  />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="-100 -100 200 200"
+                    class="eye-svg"
+                    fill="none"
+                    stroke="rgb(51, 226, 230)"
+                    stroke-width="15"
+                    stroke-linejoin="round"
+                    stroke-linecap="round"
+                    opacity="0.75"
+                    on:click={() =>
+                      (loginPasswordVisible = !loginPasswordVisible)}
+                    role="button"
+                    tabindex="0"
+                    aria-label="Show password"
+                  >
+                    <defs>
+                      <mask id="eye-svg-top-mask">
+                        <rect
+                          class="eye-svg-top"
+                          x="-100"
+                          y="-100"
+                          width="200"
+                          height="200"
+                          fill="white"
+                          style="transform: {loginPasswordVisible
+                            ? 'none'
+                            : 'translateX(-200px)'}"
+                        />
+                      </mask>
+                      <mask id="eye-svg-bottom-mask">
+                        <rect
+                          class="eye-svg-bottom"
+                          x="100"
+                          y="-100"
+                          width="200"
+                          height="200"
+                          fill="white"
+                          style="transform: {loginPasswordVisible
+                            ? 'none'
+                            : 'translateX(-200px)'}"
+                        />
+                      </mask>
+                      <mask id="eye-svg-crossed-out-mask">
+                        <g stroke="white">
+                          <circle r="20" />
+                          <path
+                            d="
+                              M -80 0
+                              Q 0 -90 80 0
+                              Q 0 90 -80 0
+                              Z
+                            "
+                          />
+                        </g>
+                        <line
+                          x1="55"
+                          y1="-75"
+                          x2="-95"
+                          y2="75"
+                          stroke="black"
+                        />
+                      </mask>
+                    </defs>
+
+                    <g mask="url(#eye-svg-top-mask)">
+                      <circle r="20" />
+                      <path
+                        d="
+                          M -80 0
+                          Q 0 -90 80 0
+                          Q 0 90 -80 0
+                          Z
+                        "
+                      />
+                    </g>
+
+                    <g mask="url(#eye-svg-bottom-mask)">
+                      <g mask="url(#eye-svg-crossed-out-mask)">
+                        <circle r="20" />
+                        <path
+                          d="
+                            M -80 0
+                            Q 0 -90 80 0
+                            Q 0 90 -80 0
+                            Z
+                          "
+                        />
+                      </g>
+                      <line x1="75" y1="-75" x2="-75" y2="75" />
+                    </g>
+                  </svg>
+                </div>
               </div>
               {#if invalidCredentials}
                 <p class="validation">Invalid credentials!</p>
@@ -941,31 +1034,27 @@
               <label for="new-user-mail">Mail</label>
               <input
                 class="user-input"
+                class:red-border={!email}
                 type="email"
                 id="new-user-mail"
                 placeholder="Enter email"
                 bind:value={email}
                 required
-                style={email
-                  ? ''
-                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
               />
             </div>
 
             <div class="input-container">
               <label for="new-user-password">Password</label>
-              <div class="password-container">
+              <div class="password-input-container">
                 <input
                   class="user-input"
+                  class:red-border={!password || password.length < 8}
                   id="new-user-password"
                   placeholder="Enter password"
                   minlength="8"
                   type={passwordVisible ? 'text' : 'password'}
                   bind:value={password}
                   required
-                  style={password && password.length >= 8
-                    ? ''
-                    : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
                 />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -1053,21 +1142,16 @@
                   </g>
                 </svg>
               </div>
-              <input
-                class="user-input"
-                id="confirm-new-user-password"
-                placeholder="Confirm password"
-                bind:value={confirmPassword}
-                required
-                type={passwordVisible ? 'text' : 'password'}
-                style={password &&
-                password.length >= 8 &&
-                confirmPassword &&
-                passwordsMatch
-                  ? ''
-                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
-              />
             </div>
+            <input
+              class="user-input"
+              class:red-border={!passwordsMatch}
+              id="confirm-new-user-password"
+              placeholder="Confirm password"
+              bind:value={confirmPassword}
+              required
+              type={passwordVisible ? 'text' : 'password'}
+            />
 
             <!-- svelte-ignore block_empty -->
             {#if !password}{:else if password.length < 8}
@@ -1082,32 +1166,29 @@
               <label for="user-first-name">First name</label>
               <input
                 class="user-input"
+                class:red-border={!first_name}
                 type="text"
                 id="user-first-name"
                 placeholder="Enter First name"
                 bind:value={first_name}
-                style={first_name
-                  ? ''
-                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
               />
             </div>
             <div class="input-container">
               <label for="user-last-name">Last name</label>
               <input
                 class="user-input"
+                class:red-border={!last_name}
                 type="text"
                 id="user-last-name"
-                placeholder="Enter Last name (optional)"
+                placeholder="Enter Last name"
                 bind:value={last_name}
-                style={last_name
-                  ? ''
-                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
               />
             </div>
             <div class="input-container">
               <label for="user-ref-code">Referral code</label>
               <input
                 class="user-input"
+                class:red-border={!referralCodeValid}
                 type="text"
                 id="user-ref-code"
                 placeholder="A11A7528D9C82915"
@@ -1115,9 +1196,6 @@
                 maxlength="16"
                 bind:value={referralCode}
                 required
-                style={referralCodeValid
-                  ? ''
-                  : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
               />
             </div>
 
@@ -1173,7 +1251,13 @@
                 </label>
               </div>
               <div class="agreement">
-                <input type="checkbox" id="newsletter" />
+                <input
+                  type="checkbox"
+                  id="newsletter"
+                  on:change={(event: any) => {
+                    newsletterSignup = event.target?.checked;
+                  }}
+                />
                 <label for="newsletter" class="newsletter">
                   I'd like to receive news twice a month.
                 </label>
@@ -1266,25 +1350,21 @@
     width: 3vw;
   }
 
-  /* SIGN-IN window */
+  /* SIGN-IN & SIGN-UP */
 
-  .sign-container {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1.5vw;
-  }
-
-  /* SIGNIN with EMAIL */
-
+  .sign-container,
   .login-form,
-  .signup-form {
+  .signup-form,
+  .user-profile-info {
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
     justify-content: space-between;
     gap: 1.5vw;
+  }
+
+  .user-profile-info {
+    gap: 1vw;
   }
 
   .login-form a {
@@ -1294,14 +1374,6 @@
   .login-form a:hover,
   .login-form a:active {
     color: rgb(51, 226, 230);
-  }
-
-  .input-container {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5vw;
   }
 
   .agreements-container {
@@ -1348,32 +1420,6 @@
     padding-block: 1vw;
   }
 
-  .user-profile-info {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vw;
-  }
-
-  .password-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-left: 4vw;
-    margin-bottom: 1vw;
-  }
-
-  .highlighted-input {
-    border: 0.1vw solid rgba(51, 226, 230, 0.9);
-  }
-
-  .eye-svg {
-    margin-left: 1vw;
-    width: 3vw;
-    height: 3vw;
-  }
-
   .edit-buttons {
     display: flex;
     flex-flow: row nowrap;
@@ -1383,18 +1429,18 @@
 
   /* Story games number */
 
-  .story-games-container {
+  .stories-count {
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
     gap: 1.5vw;
   }
 
-  .story-games-container h3 {
+  .stories-count h3 {
     color: rgba(51, 226, 230, 0.65);
   }
 
-  .story-games-container strong {
+  .stories-count strong {
     color: rgba(51, 226, 230, 0.9);
   }
 
@@ -1544,65 +1590,24 @@
       width: 1.5em;
     }
 
-    .sign-container {
-      gap: 1em;
-    }
-
+    .sign-container,
     .login-form,
-    .signup-form {
+    .signup-form,
+    .user-profile-info,
+    .agreement,
+    .wallets-container,
+    .edit-buttons,
+    ul {
       gap: 1em;
     }
 
-    .input-container {
-      gap: 0.25em;
-    }
-
-    .agreement {
-      gap: 1em;
-    }
-
-    #terms,
-    #newsletter {
-      -webkit-transform: scale(1.5);
-      transform: scale(1.5);
-    }
-
-    .profile-window {
-      gap: 0.5em;
-      padding-block: 0.5em;
-    }
-
-    .user-profile-info {
-      gap: 1em;
-    }
-
-    .password-container {
-      margin-left: 1.75em;
-      margin-bottom: 0.5em;
-    }
-
-    .eye-svg {
-      width: 1em;
-      height: 1em;
-      margin-left: 0.25em;
-    }
-
-    .edit-buttons {
-      flex-direction: column;
-      gap: 1em;
-    }
-
+    .edit-buttons,
     .wallet-connect {
       flex-direction: column;
     }
 
-    .wallets-container {
-      gap: 1em;
-    }
-
     ul {
       flex-flow: column nowrap;
-      gap: 1em;
       max-width: none;
     }
 
@@ -1625,6 +1630,17 @@
     .star-svg {
       height: 1.75em;
       width: 1.75em;
+    }
+
+    #terms,
+    #newsletter {
+      -webkit-transform: scale(1.5);
+      transform: scale(1.5);
+    }
+
+    .profile-window {
+      gap: 0.5em;
+      padding-block: 0.5em;
     }
 
     .referral-codes {

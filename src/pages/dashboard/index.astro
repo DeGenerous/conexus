@@ -3,8 +3,6 @@ import Layout from '@layouts/Layout.astro';
 
 import Dashboard from '@components/Dashboard/dashboard.svelte';
 
-import ProtectedLayout from '@components/Layout.svelte';
-
 const arrow = true;
 
 const meta = {
@@ -13,7 +11,5 @@ const meta = {
 ---
 
 <Layout {...meta} {arrow}>
-  <ProtectedLayout client:load>
     <Dashboard client:load />
-  </ProtectedLayout>
 </Layout>

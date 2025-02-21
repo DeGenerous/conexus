@@ -1,8 +1,13 @@
 <script>
     import { onMount } from 'svelte';
-    let userInfo = {};
+    import { get } from 'svelte/store';
+
+    import { authenticated } from '@stores/account';
+
     let storiesPlayedLastWeek = [];
     let topPerformingStories = [];
+
+    const { user } = get(authenticated);
 
     // Assume these functions fetch data from APIs
     async function fetchUserInfo() {
@@ -20,11 +25,11 @@
         topPerformingStories = await fetch('/api/stories/top-performing').then(res => res.json());
     }
 
-    onMount(async () => {
-        await fetchUserInfo();
-        await fetchStoriesPlayedLastWeek();
-        await fetchTopPerformingStories();
-    });
+    // onMount(async () => {
+    //     await fetchUserInfo();
+    //     await fetchStoriesPlayedLastWeek();
+    //     await fetchTopPerformingStories();
+    // });
 </script>
 
 <style>
@@ -49,7 +54,7 @@
 
 <div class="general-info">
     <div class="welcome">
-        Welcome, {userInfo.name}!
+        Welcome, {user?.first_name}!
     </div>
     <div class="metrics">
         <div class="metric">

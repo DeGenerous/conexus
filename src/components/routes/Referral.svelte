@@ -29,27 +29,18 @@
   }
 </script>
 
-<h2>Please provide a referral code to complete your registration.</h2>
-
-<div class="referral-container">
-  <div class="ref-code-form blur">
-    <label class="signup-label" for="referral-code">
-      Enter your referral code:
-    </label>
+<div class="container-wrapper">
+  <div class="container blur">
+    <h3>Please provide a referral code to complete your registration</h3>
     <input
       class="user-input"
+      class:red-border={!code || !referralCodeValid}
       type="text"
-      id="referral-code"
       placeholder="A11A7528D9C82915"
       minlength="16"
       maxlength="16"
       bind:value={code}
       required
-      style={code
-        ? referralCodeValid
-          ? ''
-          : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'
-        : 'border: 0.1vw solid rgba(255, 50, 50, 0.75);'}
     />
 
     {#if code.length === 16}
@@ -68,16 +59,15 @@
       <p class="validation">Code should contain 16 characters</p>
     {/if}
 
-    <p class="signup-label">
+    <h3>
       Don't have one yet? Find yours
       <a
         href="https://discord.gg/349FgMSUK8"
         target="_blank"
         rel="noopener noreferrer">here</a
       >!
-    </p>
+    </h3>
     <button
-      class="submit-button"
       on:click={useReferralCode}
       disabled={!referralCodeValid}
     >
@@ -85,55 +75,3 @@
     </button>
   </div>
 </div>
-
-<style>
-  h2 {
-    margin-bottom: 2vw;
-    text-shadow: 0 0 0.5vw #010020;
-  }
-
-  .referral-container {
-    width: 100%;
-    height: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .ref-code-form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1.5vw;
-    background-color: rgba(1, 0, 32, 0.75);
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.5);
-    border-radius: 1.5vw;
-    padding: 2vw 3vw;
-  }
-
-  .signup-label {
-    font-size: 1.5vw;
-    line-height: 2vw;
-    color: rgba(51, 226, 230, 0.75);
-    text-align: center;
-  }
-
-  @media only screen and (max-width: 600px) {
-    h2 {
-      margin-bottom: 2em;
-    }
-
-    .ref-code-form {
-      width: 85vw;
-      padding: 1em;
-      border-radius: 1em;
-      gap: 1em;
-    }
-
-    .signup-label {
-      font-size: 1em;
-      line-height: 1.5em;
-    }
-  }
-</style>

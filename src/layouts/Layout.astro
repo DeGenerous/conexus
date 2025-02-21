@@ -1,7 +1,9 @@
 ---
+import '../styles/reset.css';
 import '../styles/global.css';
 import '../styles/rainbow-kit.css';
 import '../styles/icons.css';
+import '../styles/utils.css';
 import { ViewTransitions } from 'astro:transitions';
 
 import Profile from '../components/Profile.svelte';
@@ -52,7 +54,7 @@ const {
     <ToastContainer client:load />
     {
       !story && (
-        <header class="container">
+        <header>
           {arrow && <BackArrow client:load />}
           {!arrow && (
             <a
@@ -93,7 +95,7 @@ const {
         align-items: center;
       }
 
-      .container {
+      header {
         width: 100vw;
         display: flex;
         flex-flow: row nowrap;
@@ -154,7 +156,7 @@ const {
       }
 
       @media only screen and (max-width: 600px) {
-        .container {
+        header {
           position: fixed;
           top: 0;
           background-color: rgba(1, 0, 32, 0.75);

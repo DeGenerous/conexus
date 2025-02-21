@@ -977,7 +977,7 @@
                 </svg>
                 Sign in
               </button>
-              <a href="/reset-password/<token>">Forgot password?</a>
+              <a href="/reset-password">Forgot password?</a>
               <!-- svelte-ignore a11y_missing_attribute -->
               <a
                 href="/"

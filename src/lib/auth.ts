@@ -182,6 +182,10 @@ class Account {
       web3LoggedIn.set(true);
       authenticated.set({ user: resp.user, loggedIn: true });
       availables.set(resp.available);
+
+      if (resp.message) {
+        toastStore.show(resp.message, 'info');
+      }
     } catch (error: any) {
       new_error({ code: 500, error: error });
     }
@@ -425,7 +429,7 @@ class Account {
   static async confirmEmail(email: string, token: string): Promise<void> {
     try {
       const response = await fetch(
-        `${url}/confirm-email?email=${email}&token=${token}`,
+        `${url}/confirm-email?token=${token}`,
         {
           method: 'GET',
         },

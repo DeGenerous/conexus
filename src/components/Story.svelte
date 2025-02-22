@@ -52,7 +52,7 @@
       await game.delete(story_id);
       deletedStories[deletedStories.length] = story_id;
       $showModal = false;
-      await CoNexus.storyContinuable(story_name!).then((continuables) => {
+      await game.storyContinuables(story_name!).then((continuables) => {
         if (continuables.length == 0) noUnfinishedStoriesLeft = true;
       });
     } catch (error) {

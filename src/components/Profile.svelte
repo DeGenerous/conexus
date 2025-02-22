@@ -188,7 +188,7 @@
 
   const handleWalletSelect = async (address: string) => {
     try {
-      await account.setMainWallet(address);
+      await account.selectMainWallet(address);
       // reload the page to update the user object
       location.reload();
     } catch (error) {

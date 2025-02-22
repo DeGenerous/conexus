@@ -1,21 +1,21 @@
 /// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
 
-interface SignUp {
+type SignUp = {
   first_name: string;
   last_name: string;
   email: string;
   password: string;
   role: Roles;
-}
+};
 
-interface AuthWallet {
+type AuthWallet = {
   wallet: string;
-  fauc: boolean;
+  faux: boolean;
   main: boolean;
-}
+};
 
-interface User extends SignUp {
+type User = {
   ID?: string;
   oauth_id?: string;
   email_confirmed?: boolean;
@@ -26,12 +26,12 @@ interface User extends SignUp {
   faux?: boolean;
   email_confirmed?: boolean;
   is_oauth?: boolean;
-}
+} & SignUp;
 
-interface SignIn {
+type SignIn = {
   email: string;
   password: string;
-}
+};
 
 enum Roles {
   ADMIN = 'admin',
@@ -39,7 +39,7 @@ enum Roles {
   ARTIST = 'artist',
 }
 
-interface ReferralCode {
+type ReferralCode = {
   ID: number;
   code: string;
   user_id: number;
@@ -47,12 +47,12 @@ interface ReferralCode {
   used_by: number;
   created_at: string;
   updated_at: string;
-}
+};
 
-interface ReferralSignUp {
+type ReferralSignUp = {
   user: User;
   referral_code: string;
-}
+};
 
 type Available = {
   available: number;

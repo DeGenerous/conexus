@@ -60,7 +60,7 @@ export class Account {
     window.location.href = data.url;
   }
 
-  async confirmEmail(token: string): Promise<void> {
+  async confirmEmail(token: string): Promise<boolean> {
     const { data, error } = await this.accountAPI.confirmEmail(token);
 
     if (!data) {
@@ -69,10 +69,11 @@ export class Account {
       } else {
         toastStore.show('Error confirming email', 'error');
       }
-      return;
+      return false;
     }
 
     toastStore.show(data.message || 'Email confirmed successfully', 'info');
+    return true;
   }
 
   async forgotPassword(email: string): Promise<void> {

@@ -3,11 +3,9 @@
   import { authenticated } from '@stores/account';
 
   export let token: string;
-  let user: Nullable<User> = null;
 
-  authenticated.subscribe((value) => {
-    user = value.user;
-  });
+  // Use Svelte's reactive store access
+  $: user = $authenticated.user;
 </script>
 
 <section class="container-wrapper">

@@ -426,7 +426,7 @@ class Account {
     }
   }
 
-  static async confirmEmail(email: string, token: string): Promise<void> {
+  static async confirmEmail(token: string): Promise<void> {
     try {
       const response = await fetch(
         `${url}/confirm-email?token=${token}`,

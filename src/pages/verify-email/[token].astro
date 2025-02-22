@@ -5,15 +5,8 @@ import VerifyEmail from '@components/routes/VerifyEmail.svelte';
 const { token } = Astro.params;
 
 const arrow = true;
-
-const meta = {
-  title: 'Welcome to CoNexus',
-  description: 'Explore the best stories in the multiverse',
-  image: '/favicon.ico',
-  url: 'https://conexus-v1-test.degenerousdao.com/',
-};
 ---
 
-<Layout {...meta} {arrow}>
+<Layout {arrow}>
   <VerifyEmail token={token} client:load />
 </Layout>

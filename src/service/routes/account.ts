@@ -13,6 +13,17 @@ export default class AccountAPI extends Fetcher {
   }
 
   /**
+   * Confirm the user's email address.
+   * @param token - The confirmation token.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   * */
+  async confirmEmail(token: string) {
+    return this.request<APISTDResposne>(
+      `/account/confirm-email?token=${token}`,
+    );
+  }
+
+  /**
    * Link a new wallet to the user's account.
    * @param signin - The wallet details to link.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.

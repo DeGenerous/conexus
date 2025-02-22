@@ -60,8 +60,8 @@ export class Account {
     window.location.href = data.url;
   }
 
-  async confirmEmail(email: string, token: string): Promise<void> {
-    const { data, error } = await this.authAPI.confirmEmail(email, token);
+  async confirmEmail(token: string): Promise<void> {
+    const { data, error } = await this.accountAPI.confirmEmail(token);
 
     if (!data) {
       if (error) {

@@ -21,9 +21,21 @@
 <style>
   .toast-container {
     position: fixed;
-    top: 0;
+    top: 2vw;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 100;
+    z-index: 1000;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .toast-container {
+      top: 5em;
+      gap: 0.5em;
+    }
   }
 </style>

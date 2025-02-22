@@ -5,10 +5,7 @@
   export let duration = 10000;
   export let onClose;
 
-  let visible = true;
-
   const closeToast = () => {
-    visible = false;
     if (onClose) onClose();
   };
 
@@ -23,16 +20,18 @@
   });
 </script>
 
-{#if visible}
-  <div class={`toast ${type} ${visible ? '' : 'hidden'} blur`}>
-    <div>{message}</div>
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div class="close-btn" role="button" tabindex="0" on:click={closeToast}>
-      ✖
-    </div>
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div
+  class="toast blur"
+  class:info={type === 'info'}
+  class:error={type !== 'info'}
+>
+  <p>{message}</p>
+  <div class="close-btn" role="button" tabindex="0" on:click={closeToast}>
+    ✖
   </div>
-{/if}
+</div>
 
 <style>
   div {
@@ -41,24 +40,16 @@
   }
 
   .toast {
-    position: fixed;
-    top: 2vw;
-    left: 50%;
-    transform: translateX(-50%);
     padding: 1vw 2vw;
     border-radius: 1vw;
     color: white;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 2vw;
-    width: 35vw;
+    gap: 1vw;
+    max-width: 35vw;
     opacity: 1;
     animation: fade-out 5s ease-in-out;
-  }
-
-  .toast.hidden {
-    display: none;
   }
 
   .toast.info {
@@ -95,7 +86,7 @@
       padding: 1em;
       gap: 1em;
       border-radius: 1em;
-      width: 90vw;
+      max-width: 90vw;
     }
   }
 </style>

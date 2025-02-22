@@ -13,7 +13,6 @@
   $: validation = email && password.length >= 8 && passwordsMatch;
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
 <div class="container-wrapper">
   <div class="container blur">
     <h3>Confirm your email address and create a new password</h3>

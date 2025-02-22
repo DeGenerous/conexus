@@ -1,12 +1,13 @@
 <script lang="ts">
   import Account from '@lib/auth';
+  import EyeSVG from '@components/icons/Eye.svelte';
+  import passwordVisible from '@stores/password-visibility';
 
   export let token: string;
 
   let email: string = '';
   let password: string = '';
   let passwordConfirm: string = '';
-  let passwordVisible: boolean = false;
 
   $: passwordsMatch = password && password === passwordConfirm;
   $: validation = email && password.length >= 8 && passwordsMatch;
@@ -39,91 +40,7 @@
         required
         autocomplete="new-password"
       />
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="-100 -100 200 200"
-        class="eye-svg"
-        fill="none"
-        stroke="rgb(51, 226, 230)"
-        stroke-width="15"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        opacity="0.75"
-        on:click={() => (passwordVisible = !passwordVisible)}
-        role="button"
-        tabindex="0"
-        aria-label="Show password"
-      >
-        <defs>
-          <mask id="eye-svg-top-mask">
-            <rect
-              class="eye-svg-top"
-              x="-100"
-              y="-100"
-              width="200"
-              height="200"
-              fill="white"
-              style="transform: {passwordVisible
-                ? 'none'
-                : 'translateX(-200px)'}"
-            />
-          </mask>
-          <mask id="eye-svg-bottom-mask">
-            <rect
-              class="eye-svg-bottom"
-              x="100"
-              y="-100"
-              width="200"
-              height="200"
-              fill="white"
-              style="transform: {passwordVisible
-                ? 'none'
-                : 'translateX(-200px)'}"
-            />
-          </mask>
-          <mask id="eye-svg-crossed-out-mask">
-            <g stroke="white">
-              <circle r="20" />
-              <path
-                d="
-                  M -80 0
-                  Q 0 -90 80 0
-                  Q 0 90 -80 0
-                  Z
-                "
-              />
-            </g>
-            <line x1="55" y1="-75" x2="-95" y2="75" stroke="black" />
-          </mask>
-        </defs>
-
-        <g mask="url(#eye-svg-top-mask)">
-          <circle r="20" />
-          <path
-            d="
-              M -80 0
-              Q 0 -90 80 0
-              Q 0 90 -80 0
-              Z
-            "
-          />
-        </g>
-
-        <g mask="url(#eye-svg-bottom-mask)">
-          <g mask="url(#eye-svg-crossed-out-mask)">
-            <circle r="20" />
-            <path
-              d="
-                M -80 0
-                Q 0 -90 80 0
-                Q 0 90 -80 0
-                Z
-              "
-            />
-          </g>
-          <line x1="75" y1="-75" x2="-75" y2="75" />
-        </g>
-      </svg>
+      <EyeSVG visibility="reset" />
     </div>
 
     <input

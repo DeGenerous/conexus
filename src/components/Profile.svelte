@@ -17,7 +17,11 @@
   } from '@stores/modal';
   import { isAvailable } from '@utils/validation';
 
-  import WalletConnect from './web3/WalletConnect.svelte';
+  import WalletConnect from '@components/web3/WalletConnect.svelte';
+  
+  import DoorSVG from '@components/icons/Door.svelte';
+  import EyeSVG from '@components/icons/Eye.svelte';
+  import passwordVisible from '@stores/password-visibility';
 
   let dialog: HTMLDialogElement;
 
@@ -54,7 +58,6 @@
   let signInWithEmail: boolean;
   let loginMail: string = '';
   let loginPassword: string = '';
-  let loginPasswordVisible: boolean = false;
   let invalidCredentials: boolean = false;
 
   onMount(() => {
@@ -95,7 +98,6 @@
   let editOldPassword: string = '';
   let editPassword: string = '';
   let editPasswordConfirm: string = '';
-  let editPasswordVisible: boolean = false;
   $: editPasswordMatch =
     editPassword.length >= 8 && editPassword === editPasswordConfirm;
 
@@ -119,7 +121,6 @@
   let last_name: string = '';
   let password: string = '';
   let confirmPassword: string = '';
-  let passwordVisible: boolean = false;
   let email: string = '';
 
   $: mandatoryFields = email && first_name && last_name && password;
@@ -267,60 +268,7 @@
           on:pointerover={() => (signOutSvgFocus = true)}
           on:pointerout={() => (signOutSvgFocus = false)}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="-100 -100 200 200"
-            class="door-svg"
-            fill="none"
-            stroke="#dedede"
-            stroke-width="12"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            style="stroke: {signOutSvgFocus ? 'rgb(51, 226, 230)' : '#dedede'}"
-          >
-            <defs>
-              <mask id="door-svg-mask">
-                <rect
-                  x="-25"
-                  y="-75"
-                  width="100"
-                  height="150"
-                  rx="15"
-                  fill="none"
-                  stroke="white"
-                />
-                <line
-                  x1="-25"
-                  y1="-35"
-                  x2="-25"
-                  y2="35"
-                  stroke="black"
-                  stroke-width="14"
-                  stroke-linecap="square"
-                />
-              </mask>
-            </defs>
-
-            <path
-              style="transform: {signOutSvgFocus ? 'translateX(-10%)' : 'none'}"
-              d="
-                M 30 0
-                L -80 0
-                L -55 -25
-                M -80 0
-                L -55 25
-              "
-              fill="none"
-            />
-            <rect
-              x="-25"
-              y="-75"
-              width="100"
-              height="150"
-              rx="15"
-              mask="url(#door-svg-mask)"
-            />
-          </svg>
+          <DoorSVG state="outside" {signOutSvgFocus} bigIcon={true} />
         </button>
       {:else}
         <button
@@ -465,7 +413,7 @@
                 <input
                   class="user-input highlighted-border"
                   class:red-border={!editOldPassword}
-                  type={editPasswordVisible ? 'text' : 'password'}
+                  type={$passwordVisible.edit ? 'text' : 'password'}
                   placeholder="Enter old password"
                   bind:value={editOldPassword}
                 />
@@ -481,108 +429,17 @@
                   <input
                     class="user-input highlighted-border"
                     class:red-border={!editPassword || editPassword.length < 8}
-                    type={editPasswordVisible ? 'text' : 'password'}
+                    type={$passwordVisible.edit ? 'text' : 'password'}
                     placeholder="Provide new password"
                     bind:value={editPassword}
                   />
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="-100 -100 200 200"
-                    class="eye-svg"
-                    fill="none"
-                    stroke="rgb(51, 226, 230)"
-                    stroke-width="15"
-                    stroke-linejoin="round"
-                    stroke-linecap="round"
-                    opacity="0.75"
-                    on:click={() =>
-                      (editPasswordVisible = !editPasswordVisible)}
-                    role="button"
-                    tabindex="0"
-                    aria-label="Show password"
-                  >
-                    <defs>
-                      <mask id="eye-svg-top-mask">
-                        <rect
-                          class="eye-svg-top"
-                          x="-100"
-                          y="-100"
-                          width="200"
-                          height="200"
-                          fill="white"
-                          style="transform: {editPasswordVisible
-                            ? 'none'
-                            : 'translateX(-200px)'}"
-                        />
-                      </mask>
-                      <mask id="eye-svg-bottom-mask">
-                        <rect
-                          class="eye-svg-bottom"
-                          x="100"
-                          y="-100"
-                          width="200"
-                          height="200"
-                          fill="white"
-                          style="transform: {editPasswordVisible
-                            ? 'none'
-                            : 'translateX(-200px)'}"
-                        />
-                      </mask>
-                      <mask id="eye-svg-crossed-out-mask">
-                        <g stroke="white">
-                          <circle r="20" />
-                          <path
-                            d="
-                              M -80 0
-                              Q 0 -90 80 0
-                              Q 0 90 -80 0
-                              Z
-                            "
-                          />
-                        </g>
-                        <line
-                          x1="55"
-                          y1="-75"
-                          x2="-95"
-                          y2="75"
-                          stroke="black"
-                        />
-                      </mask>
-                    </defs>
-
-                    <g mask="url(#eye-svg-top-mask)">
-                      <circle r="20" />
-                      <path
-                        d="
-                          M -80 0
-                          Q 0 -90 80 0
-                          Q 0 90 -80 0
-                          Z
-                        "
-                      />
-                    </g>
-
-                    <g mask="url(#eye-svg-bottom-mask)">
-                      <g mask="url(#eye-svg-crossed-out-mask)">
-                        <circle r="20" />
-                        <path
-                          d="
-                            M -80 0
-                            Q 0 -90 80 0
-                            Q 0 90 -80 0
-                            Z
-                          "
-                        />
-                      </g>
-                      <line x1="75" y1="-75" x2="-75" y2="75" />
-                    </g>
-                  </svg>
+                  <EyeSVG visibility="edit" />
                 </div>
               </div>
               <input
                 class="user-input highlighted-border"
                 class:red-border={!editPasswordMatch}
-                type={editPasswordVisible ? 'text' : 'password'}
+                type={$passwordVisible.edit ? 'text' : 'password'}
                 placeholder="Confirm new password"
                 bind:value={editPasswordConfirm}
               />
@@ -803,104 +660,13 @@
                   <input
                     bind:value={loginPassword}
                     class="user-input"
-                    type={loginPasswordVisible ? 'text' : 'password'}
+                    type={$passwordVisible.login ? 'text' : 'password'}
                     id="user-password"
                     placeholder="Enter your password"
                     minlength="8"
                     required
                   />
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="-100 -100 200 200"
-                    class="eye-svg"
-                    fill="none"
-                    stroke="rgb(51, 226, 230)"
-                    stroke-width="15"
-                    stroke-linejoin="round"
-                    stroke-linecap="round"
-                    opacity="0.75"
-                    on:click={() =>
-                      (loginPasswordVisible = !loginPasswordVisible)}
-                    role="button"
-                    tabindex="0"
-                    aria-label="Show password"
-                  >
-                    <defs>
-                      <mask id="eye-svg-top-mask">
-                        <rect
-                          class="eye-svg-top"
-                          x="-100"
-                          y="-100"
-                          width="200"
-                          height="200"
-                          fill="white"
-                          style="transform: {loginPasswordVisible
-                            ? 'none'
-                            : 'translateX(-200px)'}"
-                        />
-                      </mask>
-                      <mask id="eye-svg-bottom-mask">
-                        <rect
-                          class="eye-svg-bottom"
-                          x="100"
-                          y="-100"
-                          width="200"
-                          height="200"
-                          fill="white"
-                          style="transform: {loginPasswordVisible
-                            ? 'none'
-                            : 'translateX(-200px)'}"
-                        />
-                      </mask>
-                      <mask id="eye-svg-crossed-out-mask">
-                        <g stroke="white">
-                          <circle r="20" />
-                          <path
-                            d="
-                              M -80 0
-                              Q 0 -90 80 0
-                              Q 0 90 -80 0
-                              Z
-                            "
-                          />
-                        </g>
-                        <line
-                          x1="55"
-                          y1="-75"
-                          x2="-95"
-                          y2="75"
-                          stroke="black"
-                        />
-                      </mask>
-                    </defs>
-
-                    <g mask="url(#eye-svg-top-mask)">
-                      <circle r="20" />
-                      <path
-                        d="
-                          M -80 0
-                          Q 0 -90 80 0
-                          Q 0 90 -80 0
-                          Z
-                        "
-                      />
-                    </g>
-
-                    <g mask="url(#eye-svg-bottom-mask)">
-                      <g mask="url(#eye-svg-crossed-out-mask)">
-                        <circle r="20" />
-                        <path
-                          d="
-                            M -80 0
-                            Q 0 -90 80 0
-                            Q 0 90 -80 0
-                            Z
-                          "
-                        />
-                      </g>
-                      <line x1="75" y1="-75" x2="-75" y2="75" />
-                    </g>
-                  </svg>
+                  <EyeSVG visibility="login" />
                 </div>
               </div>
               {#if invalidCredentials}
@@ -917,64 +683,7 @@
                 }}
                 disabled={!(loginMail && loginPassword)}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="-100 -100 200 200"
-                  class="door-svg"
-                  fill="none"
-                  stroke="#dedede"
-                  stroke-width="12"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  style="stroke: {signInSvgFocus
-                    ? 'rgb(51, 226, 230)'
-                    : '#dedede'}"
-                >
-                  <defs>
-                    <mask id="door-svg-mask">
-                      <rect
-                        x="-25"
-                        y="-75"
-                        width="100"
-                        height="150"
-                        rx="15"
-                        fill="none"
-                        stroke="white"
-                      />
-                      <line
-                        x1="-25"
-                        y1="-35"
-                        x2="-25"
-                        y2="35"
-                        stroke="black"
-                        stroke-width="14"
-                        stroke-linecap="square"
-                      />
-                    </mask>
-                  </defs>
-
-                  <path
-                    style="transform: {signInSvgFocus
-                      ? 'translateX(10%)'
-                      : 'none'}"
-                    d="
-                      M -80 0
-                      L 30 0
-                      L 5 -25
-                      M 30 0
-                      L 5 25
-                    "
-                    fill="none"
-                  />
-                  <rect
-                    x="-25"
-                    y="-75"
-                    width="100"
-                    height="150"
-                    rx="15"
-                    mask="url(#door-svg-mask)"
-                  />
-                </svg>
+                <DoorSVG state="inside" {signInSvgFocus} />
                 Sign in
               </button>
               <a href="/reset-password">Forgot password?</a>
@@ -1052,95 +761,11 @@
                   id="new-user-password"
                   placeholder="Enter password"
                   minlength="8"
-                  type={passwordVisible ? 'text' : 'password'}
+                  type={$passwordVisible.signup ? 'text' : 'password'}
                   bind:value={password}
                   required
                 />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="-100 -100 200 200"
-                  class="eye-svg"
-                  fill="none"
-                  stroke="rgb(51, 226, 230)"
-                  stroke-width="15"
-                  stroke-linejoin="round"
-                  stroke-linecap="round"
-                  opacity="0.75"
-                  on:click={() => (passwordVisible = !passwordVisible)}
-                  role="button"
-                  tabindex="0"
-                  aria-label="Show password"
-                >
-                  <defs>
-                    <mask id="eye-svg-top-mask">
-                      <rect
-                        class="eye-svg-top"
-                        x="-100"
-                        y="-100"
-                        width="200"
-                        height="200"
-                        fill="white"
-                        style="transform: {passwordVisible
-                          ? 'none'
-                          : 'translateX(-200px)'}"
-                      />
-                    </mask>
-                    <mask id="eye-svg-bottom-mask">
-                      <rect
-                        class="eye-svg-bottom"
-                        x="100"
-                        y="-100"
-                        width="200"
-                        height="200"
-                        fill="white"
-                        style="transform: {passwordVisible
-                          ? 'none'
-                          : 'translateX(-200px)'}"
-                      />
-                    </mask>
-                    <mask id="eye-svg-crossed-out-mask">
-                      <g stroke="white">
-                        <circle r="20" />
-                        <path
-                          d="
-                            M -80 0
-                            Q 0 -90 80 0
-                            Q 0 90 -80 0
-                            Z
-                          "
-                        />
-                      </g>
-                      <line x1="55" y1="-75" x2="-95" y2="75" stroke="black" />
-                    </mask>
-                  </defs>
-
-                  <g mask="url(#eye-svg-top-mask)">
-                    <circle r="20" />
-                    <path
-                      d="
-                        M -80 0
-                        Q 0 -90 80 0
-                        Q 0 90 -80 0
-                        Z
-                      "
-                    />
-                  </g>
-
-                  <g mask="url(#eye-svg-bottom-mask)">
-                    <g mask="url(#eye-svg-crossed-out-mask)">
-                      <circle r="20" />
-                      <path
-                        d="
-                          M -80 0
-                          Q 0 -90 80 0
-                          Q 0 90 -80 0
-                          Z
-                        "
-                      />
-                    </g>
-                    <line x1="75" y1="-75" x2="-75" y2="75" />
-                  </g>
-                </svg>
+                <EyeSVG visibility="signup" />
               </div>
             </div>
             <input
@@ -1150,7 +775,7 @@
               placeholder="Confirm password"
               bind:value={confirmPassword}
               required
-              type={passwordVisible ? 'text' : 'password'}
+              type={$passwordVisible.signup ? 'text' : 'password'}
             />
 
             <!-- svelte-ignore block_empty -->
@@ -1344,8 +969,7 @@
   }
 
   .back-arrow svg,
-  .close-button svg,
-  .login-button svg {
+  .close-button svg {
     height: 3vw;
     width: 3vw;
   }
@@ -1584,8 +1208,7 @@
     }
 
     .back-arrow svg,
-    .close-button svg,
-    .login-button svg {
+    .close-button svg {
       height: 1.5em;
       width: 1.5em;
     }

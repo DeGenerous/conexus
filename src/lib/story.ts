@@ -238,6 +238,23 @@ export class CoNexusGame extends GameAPI {
     story.set(this);
   }
 
+  // Generate image for current step v1
+  async #image(): Promise<void> {
+    const { data, error } = await this.image(this.step_data.id);
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error getting image', 'error');
+      }
+      return;
+    }
+
+    this.step_data.image = data.image;
+    story.set(this);
+  }
+
   // Generate image for current step v2
   async #generateImage(): Promise<void> {
     const { data, error } = await this.imageV2(this.step_data.id);
@@ -259,17 +276,13 @@ export class CoNexusGame extends GameAPI {
   // Generate image status v2
   async #generateImageStatus(): Promise<void> {
     try {
-      const { data, error } = await this.imageStatusV2(
+      const { data } = await this.imageStatusV2(
         this.step_data.id,
         this.jobID,
       );
 
       if (!data) {
-        if (error) {
-          api_error(error);
-        } else {
-          toastStore.show('Error getting image status', 'error');
-        }
+        this.#image();
         this.#clear_interval();
         return;
       }
@@ -292,7 +305,6 @@ export class CoNexusGame extends GameAPI {
   async #textToSpeech(): Promise<void> {
     const { data, error } = await this.getTTS(this.step_data.id);
 
-    console.log('TTS data', data);
     if (!data) {
       if (error) {
         api_error(error);

@@ -1,5 +1,7 @@
 <script lang="ts">
-  import Account from '@lib/auth';
+  import { Account } from '@lib/account';
+
+  const acct: Account = new Account();
 
   let email: string = '';
 </script>
@@ -20,7 +22,7 @@
       <p class="validation">Provide the email associated with your profile</p>
     {/if}
 
-    <button on:click={() => Account.forgotPassword(email)} disabled={!email}>
+    <button on:click={() => acct.forgotPassword(email)} disabled={!email}>
       Send verification link
     </button>
   </div>

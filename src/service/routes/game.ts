@@ -102,7 +102,7 @@ export default class GameAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    */
   async image(story_id: string) {
-    return this.request<string>(`/game/image/`, {
+    return this.request<{image: string}>(`/game/image-v1`, {
       method: 'POST',
       body: JSON.stringify({ story_id }),
     });

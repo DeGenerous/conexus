@@ -4,7 +4,7 @@
   export let section: string;
   export let topicName: string;
 
-  const CoNexus: CoNexusGame = new CoNexusGame();
+  const game: CoNexusGame = new CoNexusGame();
 
   const storyName: string = (
     topicName.charAt(0).toUpperCase() + topicName.slice(1)
@@ -14,7 +14,7 @@
 </script>
 
 <a class="tile" href="/{section}/{topicName}">
-  {#await CoNexus.fetch_story_image(topicName!, 'tile')}
+  {#await game.fetch_story_image(topicName!, 'tile')}
     <img
       class="tile-picture"
       loading="lazy"

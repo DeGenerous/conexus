@@ -12,7 +12,6 @@
     story.subscribe((story) => {
       const step = story?.step_data as StepData;
 
-      console.log('TTS', step.tts);
       if (step && step.tts && last_tts !== step.tts) {
         audio.src = window.URL.createObjectURL(step.tts);
         audio.play();

@@ -21,7 +21,7 @@
 
   export let story_name: string;
 
-  let game: CoNexusGame = new CoNexusGame();
+  const game: CoNexusGame = new CoNexusGame();
 
   onMount(async () => {
     await checkUserState('/story');

@@ -81,15 +81,15 @@
   </nav>
 
   <!-- Content Display -->
-  <main class="content">
+  <div class="content">
     <svelte:component this={currentComponent} />
-  </main>
+  </div>
 </div>
 
 <style>
   .dashboard {
     display: flex;
-    height: 100vh;
+    height: 150vh;
   }
 
   .sidebar {
@@ -156,6 +156,7 @@
 
   .content {
     flex: 1;
+    position: relative;
     padding: 30px;
     background: black;
     border-radius: 10px;

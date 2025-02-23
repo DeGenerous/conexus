@@ -151,7 +151,7 @@ type Genre = {
 
 type SectionCategory = {
   name: string;
-  created_at?: Date;
+  oder: number;
   topics: {
     name: string;
     order: number;
@@ -160,6 +160,7 @@ type SectionCategory = {
     title_image2?: string;
     created_at?: Date;
   }[];
+  created_at?: Date;
 };
 
 type SectionTopic = {

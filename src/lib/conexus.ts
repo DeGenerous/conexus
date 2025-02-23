@@ -49,7 +49,7 @@ export type StepData = {
 
 export type DynSectionCategory = {
   name: string;
-  created_at?: Date;
+  order: number;
   topics: {
     name: string;
     order: number;
@@ -58,6 +58,7 @@ export type DynSectionCategory = {
     title_image2?: string;
     created_at?: Date;
   }[];
+  created_at?: Date;
 };
 
 export type DynTopic = {

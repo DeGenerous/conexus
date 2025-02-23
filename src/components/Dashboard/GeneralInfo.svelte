@@ -1,77 +1,61 @@
-<script>
-    import { onMount } from 'svelte';
-    import { get } from 'svelte/store';
+<script lang="ts">
+  import { onMount } from 'svelte';
+  import { authenticated } from '@stores/account';
 
-    import { authenticated } from '@stores/account';
+  type Story = {
+    title: string;
+  };
 
-    let storiesPlayedLastWeek = [];
-    let topPerformingStories = [];
+  let user = $authenticated.user;
+  let storiesPlayedLastWeek = [] as Story[];
+  let topPerformingStories = [] as Story[];
+  let isLoading = true;
 
-    const { user } = get(authenticated);
+  async function fetchData() {
+    isLoading = true;
+    [storiesPlayedLastWeek, topPerformingStories] = await Promise.all([
+      fetch('/api/stories/played/last-week').then((res) => res.json()),
+      fetch('/api/stories/top-performing').then((res) => res.json()),
+    ]);
+    isLoading = false;
+  }
 
-    // Assume these functions fetch data from APIs
-    async function fetchUserInfo() {
-        // Fetch user info from API
-        userInfo = await fetch('/api/user/info').then(res => res.json());
-    }
-
-    async function fetchStoriesPlayedLastWeek() {
-        // Fetch stories played last week from API
-        storiesPlayedLastWeek = await fetch('/api/stories/played/last-week').then(res => res.json());
-    }
-
-    async function fetchTopPerformingStories() {
-        // Fetch top performing stories from API
-        topPerformingStories = await fetch('/api/stories/top-performing').then(res => res.json());
-    }
-
-    // onMount(async () => {
-    //     await fetchUserInfo();
-    //     await fetchStoriesPlayedLastWeek();
-    //     await fetchTopPerformingStories();
-    // });
+  onMount(fetchData);
 </script>
 
-<style>
-    .general-info {
-        padding: 1rem;
-    }
-    .welcome {
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-    }
-    .metrics {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-    @media (min-width: 600px) {
-        .metrics {
-            flex-direction: row;
-        }
-    }
-</style>
-
-<div class="general-info">
-    <div class="welcome">
-        Welcome, {user?.first_name}!
+<div class="info-container">
+  <h2>Welcome, {user?.first_name}!</h2>
+  {#if isLoading}
+    <p>Loading metrics...</p>
+  {:else}
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <h3>Stories Played Last Week</h3>
+        <ul>
+          {#each storiesPlayedLastWeek as story}<li>{story.title}</li>{/each}
+        </ul>
+      </div>
+      <div class="metric-card">
+        <h3>Top Performing Stories</h3>
+        <ul>
+          {#each topPerformingStories as story}<li>{story.title}</li>{/each}
+        </ul>
+      </div>
     </div>
-    <div class="metrics">
-        <div class="metric">
-            <h3>Stories Played Last Week</h3>
-            <ul>
-                {#each storiesPlayedLastWeek as story}
-                    <li>{story.title}</li>
-                {/each}
-            </ul>
-        </div>
-        <div class="metric">
-            <h3>Top Performing Stories</h3>
-            <ul>
-                {#each topPerformingStories as story}
-                    <li>{story.title}</li>
-                {/each}
-            </ul>
-        </div>
-    </div>
+  {/if}
 </div>
+
+<style>
+  .info-container {
+    padding: 1.5rem;
+  }
+  .metrics-grid {
+    display: flex;
+    gap: 1rem;
+  }
+  .metric-card {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+</style>

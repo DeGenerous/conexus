@@ -140,9 +140,17 @@ export class CoNexus {
       new_error({ code: response.status, error: await response.text() });
     }
 
-    const resp = await response.json();
+    const orderedCategories = await response.json().then((resp) => {
+      return resp.categories.sort((a: DynSectionCategory, b: DynSectionCategory) => {
+        if (a.order < b.order) return -1;
+        if (a.order > b.order) return 1;
+        return 0;
+      });
+    });
 
-    return resp.categories;
+    console.log(orderedCategories);
+
+    return orderedCategories;
   }
 
   static async searchCategories(

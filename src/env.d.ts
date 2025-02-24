@@ -92,7 +92,7 @@ type Genre = {
 
 type SectionCategory = {
   name: string;
-  oder: number;
+  order: number;
   topics: {
     name: string;
     order: number;

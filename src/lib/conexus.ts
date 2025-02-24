@@ -47,19 +47,19 @@
 //   tts?: Blob;
 // };
 
-export type DynSectionCategory = {
-  name: string;
-  order: number;
-  topics: {
-    name: string;
-    order: number;
-    available: boolean;
-    title_image1?: string;
-    title_image2?: string;
-    created_at?: Date;
-  }[];
-  created_at?: Date;
-};
+// export type DynSectionCategory = {
+//   name: string;
+//   order: number;
+//   topics: {
+//     name: string;
+//     order: number;
+//     available: boolean;
+//     title_image1?: string;
+//     title_image2?: string;
+//     created_at?: Date;
+//   }[];
+//   created_at?: Date;
+// };
 
 // export type DynTopic = {
 //   name: string;
@@ -150,8 +150,8 @@ export type DynSectionCategory = {
       );
     });
 
-    return orderedCategories;
-  }
+//   return orderedCategories;
+// }
 
 //   static async searchCategories(
 //     search: string,
@@ -182,8 +182,8 @@ export type DynSectionCategory = {
 //     return resp.genres;
 //   }
 
-  // static async getGenreTopics(genre: string, section: string): Promise<DynSectionCategory[]> {
-  //   const base = `${url}/genres/${section}?name=${genre}`;
+// static async getGenreTopics(genre: string, section: string): Promise<DynSectionCategory[]> {
+//   const base = `${url}/genres/${section}?name=${genre}`;
 
 //     const response = await fetch(base);
 

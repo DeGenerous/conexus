@@ -44,7 +44,15 @@ export class CoNexusApp extends ViewAPI {
       return [];
     }
 
-    return data;
+    const orderedCategories = data.sort(
+      (a: SectionCategory, b: SectionCategory) => {
+        if (a.order < b.order) return -1;
+        if (a.order > b.order) return 1;
+        return 0;
+      },
+    );
+
+    return orderedCategories;
   }
 
   async searchSectionCategories(
@@ -80,7 +88,10 @@ export class CoNexusApp extends ViewAPI {
     return data.genres;
   }
 
-  async getGenreTopics(genre: string, section: string): Promise<SectionCategory[]> {
+  async getGenreTopics(
+    genre: string,
+    section: string,
+  ): Promise<SectionCategory[]> {
     const { data, error } = await this.genreTopics(genre, section);
 
     if (!data) {

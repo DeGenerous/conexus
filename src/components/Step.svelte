@@ -114,12 +114,50 @@
       selectorSvg!.style.opacity = '0.75';
     }
   };
+
+  // Light Theme
+  let theme: 'dark' | 'white' | 'beige' = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'dark';
+  $: themeColor = theme == 'white'
+      ? 'rgba(255, 255, 255, 0.9)'
+      : theme == 'beige'
+        ? 'rgba(250, 238, 209, 0.9)'
+        : 'rgba(1, 0, 32, 0.9)';
+
+  let mobileTextWrapperStyling = '';
+  $: textWrapperStyling = theme == 'dark' ? '' :`
+    background-color:${themeColor};
+    color: black;
+    border-radius: 1em;
+    padding-block: 1%;
+    text-shadow: none;
+    box-shadow:
+      inset 0 0 0.5rem #010020,
+      0 0 0.5rem #010020;
+    ${mobileTextWrapperStyling}
+  `;
+  $: if (width < 600) mobileTextWrapperStyling = `
+    padding: 1em;
+  `;
+  
+  const switchTheme = () => {
+    switch (theme) {
+      case 'dark': {
+        theme = 'white';
+        break;
+      }
+      case 'white': {
+        theme = 'beige';
+        break;
+      }
+      default: theme = 'dark';
+    }
+    localStorage.setItem('theme', theme);
+  }
 </script>
 
 <svelte:window bind:outerWidth={width} on:keydown={handleKeyDown} />
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions a11y-no-static-element-interactions -->
-<!-- svelte-ignore a11y_consider_explicit_label -->
 <section class="step-wrapper" style="font-family: {stepFont}">
   <div
     class="image-wrapper"
@@ -140,7 +178,7 @@
     <h3 class="step-title">{step.title}</h3>
   {/if}
 
-  <article class="story-text">
+  <article class="story-text" style={textWrapperStyling}>
     {#each step.story.split('\n') as paragraph}
       <p>{paragraph}</p>
     {/each}
@@ -151,12 +189,12 @@
 
     <h2>Story Summary</h2>
 
-    <article class="summary-text">{step.summary}</article>
+    <article class="summary-text" style={textWrapperStyling}>{step.summary}</article>
 
     <h2>CoNexus identified your trait as: <strong>{step.trait}</strong></h2>
 
     {#if step.trait_description}
-      <article class="summary-text">{step.trait_description}</article>
+      <article class="summary-text" style={textWrapperStyling}>{step.trait_description}</article>
     {/if}
 
     <div class="options-container blur">
@@ -182,6 +220,7 @@
             $story?.next_step(i + 1);
             if (width < 600) return;
             handleSelectorSvg(i, 'blur');
+            if (activeOptionNumber !== 0) activeOptionNumber = 0;
           }}
           on:pointerover={() => {
             if (width < 600) return;
@@ -253,6 +292,7 @@
               on:click={() => window.open('./', '_self')}
               on:pointerover={() => (quitSvgWindowFocus = true)}
               on:pointerout={() => (quitSvgWindowFocus = false)}
+              aria-label="quit"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -300,6 +340,53 @@
           </div>
 
           <div class="controls">
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              viewBox="-100 -100 200 200"
+              class="eye-svg filled-out-eye"
+              stroke={themeColor}
+              stroke-width="15"
+              stroke-linejoin="round"
+              stroke-linecap="round"
+              opacity="0.75"
+              on:click={switchTheme}
+              role="button"
+              tabindex="0"
+            >
+              <mask id="eye-circle">
+                <path
+                  fill="white"
+                  stroke="white"
+                  d="
+                    M -80 0
+                    Q 0 -90 80 0
+                    Q 0 90 -80 0
+                    Z
+                  "
+                  mask="url(#eye-circle)"
+                />
+                <circle
+                  r="25"
+                  fill="black"
+                  stroke="black"
+                />
+              </mask>
+              <circle
+                r="15"
+                fill={themeColor}
+                stroke="none"
+              />
+              <path
+                fill={themeColor}
+                d="
+                  M -80 0
+                  Q 0 -90 80 0
+                  Q 0 90 -80 0
+                  Z
+                "
+                mask="url(#eye-circle)"
+              />
+            </svg>
             <Slider type="volume" volume={background_volume} />
             <Slider type="voice" volume={tts_volume} restartable />
             <button
@@ -307,6 +394,7 @@
               on:click={() => ($fullscreen = true)}
               on:pointerover={() => (fullscreenSvgWindowFocus = true)}
               on:pointerout={() => (fullscreenSvgWindowFocus = false)}
+              aria-label="Enter fullscreen mode"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -317,7 +405,6 @@
                 stroke-width="25"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                aria-label="Enter fullscreen mode"
                 style="
                   transform: {fullscreenSvgWindowFocus ? 'scale(1.05)' : ''};
                   fill: {fullscreenSvgWindowFocus
@@ -367,6 +454,7 @@
                 backStepArrowWindowFocus = false;
             }}
             disabled={step.step === 1}
+            aria-label="Back step"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
               <defs>
@@ -425,6 +513,7 @@
                 nextStepArrowWindowFocus = false;
             }}
             disabled={step.step === $story?.maxStep}
+            aria-label="Next step"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -517,7 +606,7 @@
                 on:pointerout={() => (quitSvgFullscreenFocus = false)}
               />
             </svg>
-            <h3 style="color: rgba(51, 226, 230, 0.5)">{storyTitle}</h3>
+            <h3 style="color: rgba(51, 226, 230, 0.5); max-width: none;">{storyTitle}</h3>
           </div>
 
           <div class="step-bar-fullscreen">
@@ -866,6 +955,58 @@
     {/if}
   </section>
   {#if width <= 600}
+    <div
+      class="theme-switcher"
+      on:click={switchTheme}
+      role="button"
+      tabindex="0"
+    >
+      <p style="color: {themeColor}">{theme.charAt(0).toUpperCase() + theme.slice(1)} theme</p>
+      <svg
+        xmlns='http://www.w3.org/2000/svg'
+        viewBox="-100 -100 200 200"
+        class="eye-svg filled-out-eye"
+        stroke={themeColor}
+        stroke-width="15"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        opacity="1"
+      >
+        <mask id="eye-circle">
+          <path
+            fill="white"
+            stroke="white"
+            d="
+              M -80 0
+              Q 0 -90 80 0
+              Q 0 90 -80 0
+              Z
+            "
+            mask="url(#eye-circle)"
+          />
+          <circle
+            r="25"
+            fill="black"
+            stroke="black"
+          />
+        </mask>
+        <circle
+          r="15"
+          fill={themeColor}
+          stroke="none"
+        />
+        <path
+          fill={themeColor}
+          d="
+            M -80 0
+            Q 0 -90 80 0
+            Q 0 90 -80 0
+            Z
+          "
+          mask="url(#eye-circle)"
+        />
+      </svg>
+    </div>
     <h3>{storyTitle}</h3>
   {/if}
 </section>
@@ -1032,12 +1173,17 @@
     align-items: center;
   }
 
+  .controls-container svg {
+    width: 2.5vw;
+    height: 2.5vw;
+  }
+
   .controls-container h3 {
     line-height: 1.5;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 30vw;
+    max-width: 27.5vw;
   }
 
   .control-bar,
@@ -1156,7 +1302,8 @@
       line-height: 2em;
     }
 
-    .control-bar {
+    .control-bar,
+    .theme-switcher {
       flex-flow: column nowrap;
       padding: 0.5em;
       gap: 1em;
@@ -1164,6 +1311,21 @@
       border: none;
       border-radius: 1em;
       box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.5);
+    }
+
+    .control-bar svg {
+      width: 1.25em;
+      height: 1.25em;
+    }
+
+    .theme-switcher {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: center;
+      align-items: center;
+      width: auto;
+      padding-inline: 1em;
+      background-color: rgba(36, 65, 189, 0.75);
     }
 
     .step-bar {
@@ -1320,6 +1482,15 @@
 
     .controls-container {
       width: 100rem;
+    }
+
+    .controls-container svg {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+
+    .controls-container h3 {
+      max-width: 25rem;
     }
 
     .control-bar,

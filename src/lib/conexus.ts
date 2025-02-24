@@ -148,8 +148,6 @@ export class CoNexus {
       });
     });
 
-    console.log(orderedCategories);
-
     return orderedCategories;
   }
 

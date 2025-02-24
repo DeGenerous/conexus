@@ -376,7 +376,9 @@
   }
 
   .picture {
+    min-width: 25vw;
     width: 25vw;
+    aspect-ratio: 1/1;
     filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
     border-radius: 1vw;
   }
@@ -653,6 +655,11 @@
       width: 90vw;
       justify-content: space-between;
       border-radius: 1em;
+    }
+
+    .unfinished-story svg {
+      width: 1.75em;
+      height: 1.75em;
     }
 
     .continue-shaping-btn {

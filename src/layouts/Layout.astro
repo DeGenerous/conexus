@@ -1,16 +1,16 @@
 ---
-import '../styles/reset.css';
-import '../styles/global.css';
-import '../styles/rainbow-kit.css';
-import '../styles/icons.css';
-import '../styles/utils.css';
 import { ViewTransitions } from 'astro:transitions';
 
-import Profile from '../components/Profile.svelte';
-import ToastContainer from '../components/utils/ToastContainer.svelte';
-import Modal from '../components/utils/Modal.svelte';
-import BackArrow from '../components/utils/BackArrow.svelte';
-import GoogleAnalytics from '../components/utils/GoogleAnalytics.svelte';
+import Profile from '@components/Profile.svelte';
+import ToastContainer from '@components/utils/ToastContainer.svelte';
+import Modal from '@components/utils/Modal.svelte';
+import BackArrow from '@components/utils/BackArrow.svelte';
+
+import '@styles/reset.css';
+import '@styles/global.css';
+import '@styles/rainbow-kit.css';
+import '@styles/icons.css';
+import '@styles/utils.css';
 
 const {
   header,
@@ -40,13 +40,14 @@ const {
       }
       gtag('js', new Date());
 
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+      });
+
       gtag('config', 'G-YSHBY9F7FY');
-      // gtag('consent', 'default', {
-      //   ad_storage: 'denied',
-      //   ad_user_data: 'denied',
-      //   ad_personalization: 'denied',
-      //   analytics_storage: 'denied',
-      // });
     </script>
     <title>CoNexus | DeGenerous DAO</title>
     <meta charset="utf-8" />

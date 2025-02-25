@@ -140,15 +140,15 @@
 //       new_error({ code: response.status, error: await response.text() });
 //     }
 
-    const orderedCategories = await response.json().then((resp) => {
-      return resp.categories.sort(
-        (a: DynSectionCategory, b: DynSectionCategory) => {
-          if (a.order < b.order) return -1;
-          if (a.order > b.order) return 1;
-          return 0;
-        },
-      );
-    });
+// const orderedCategories = await response.json().then((resp) => {
+//   return resp.categories.sort(
+//     (a: DynSectionCategory, b: DynSectionCategory) => {
+//       if (a.order < b.order) return -1;
+//       if (a.order > b.order) return 1;
+//       return 0;
+//     },
+//   );
+// });
 
 //   return orderedCategories;
 // }

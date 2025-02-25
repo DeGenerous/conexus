@@ -116,7 +116,8 @@
   };
 
   // Light Theme
-  let theme: 'dark' | 'white' | 'beige' = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'dark';
+  let local_theme: string | null = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'dark';
+  let theme: 'dark' | 'white' | 'beige' = local_theme == 'dark' ? 'dark' : local_theme == 'white' ? 'white' : 'beige';
   $: themeColor = theme == 'white'
       ? 'rgba(255, 255, 255, 0.9)'
       : theme == 'beige'

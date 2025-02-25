@@ -34,6 +34,8 @@
       signInWithEmail = false;
       invalidCredentials = false;
       $web3loginError = false;
+    } else {
+      editingPassword = false;
     }
   }
 

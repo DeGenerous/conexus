@@ -1,9 +1,9 @@
 <script lang="ts">
+  import DoorSVG from '@components/icons/Door.svelte';
   import { authenticated } from '@stores/account';
   import { showProfile } from '@stores/modal';
 
   import Intro from './Intro.svelte';
-  import DoorSVG from '@components/icons/Door.svelte';
 
   let isLogged: boolean = false;
   let signInSvgFocus: boolean = false;

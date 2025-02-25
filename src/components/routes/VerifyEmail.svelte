@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  
   import { Account } from '@lib/account';
 
   export let token: string;

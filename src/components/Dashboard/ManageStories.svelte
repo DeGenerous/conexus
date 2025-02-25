@@ -1,5 +1,6 @@
 <script>
     import { onMount } from 'svelte';
+    
     let stories = [];
 
     onMount(async () => {

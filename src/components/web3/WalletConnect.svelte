@@ -2,9 +2,9 @@
   import { onMount } from 'svelte';
   import { createRoot } from 'react-dom/client';
 
-  import RainbowConnect from './Rainbow';
-
   import { showProfile } from '@stores/modal';
+  
+  import RainbowConnect from './Rainbow';
 
   export let linking = false;
   export let title = 'Connect Wallet';

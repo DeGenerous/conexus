@@ -1,6 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-
+  
+  import DoorSVG from '@components/icons/Door.svelte';
+  import EyeSVG from '@components/icons/Eye.svelte';
+  import WalletConnect from '@components/web3/WalletConnect.svelte';
   import { Account } from '@lib/account';
   import {
     authenticated,
@@ -15,13 +18,8 @@
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
-  import { isAvailable } from '@utils/validation';
-
-  import WalletConnect from '@components/web3/WalletConnect.svelte';
-
-  import DoorSVG from '@components/icons/Door.svelte';
-  import EyeSVG from '@components/icons/Eye.svelte';
   import passwordVisible from '@stores/password-visibility';
+  import { isAvailable } from '@utils/validation';
 
   let dialog: HTMLDialogElement;
 

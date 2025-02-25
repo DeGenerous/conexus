@@ -228,18 +228,23 @@
                     viewBox="-100 -100 200 200"
                     class="delete-svg continue-shaping-btn"
                     fill="none"
-                    stroke="rgb(255, 60, 64)"
+                    stroke={$loading ? '#010020' : 'rgb(255, 60, 64)'}
                     stroke-width="15"
                     stroke-linecap="round"
                     on:click|preventDefault={() => {
                       if (!$loading) openModal(continuable);
                     }}
-                    on:pointerover={() =>
-                      handleDeleteSvg(continuable.story_id, 'focus')}
-                    on:pointerout={() =>
-                      handleDeleteSvg(continuable.story_id, 'blur')}
+                    on:pointerover={() => {
+                      if (!$loading)
+                        handleDeleteSvg(continuable.story_id, 'focus');
+                    }}
+                    on:pointerout={() => {
+                      if (!$loading)
+                        handleDeleteSvg(continuable.story_id, 'blur');
+                    }}
                     role="button"
                     tabindex="0"
+                    style={$loading ? 'cursor: not-allowed' : ''}
                   >
                     <path
                       id="delete-icon-{continuable.story_id}"
@@ -262,26 +267,31 @@
                     viewBox="-100 -100 200 200"
                     class="play-svg continue-shaping-btn"
                     fill="none"
-                    stroke="rgb(0, 185, 55)"
+                    stroke={$loading ? '#010020' : 'rgb(0, 185, 55)'}
                     stroke-width="15"
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     on:click|preventDefault={() => {
                       if (!$loading) CoNexus.continue(continuable);
                     }}
-                    on:pointerover={() =>
-                      handlePlaySvg(continuable.story_id, 'focus')}
-                    on:pointerout={() =>
-                      handlePlaySvg(continuable.story_id, 'blur')}
+                    on:pointerover={() => {
+                      if (!$loading)
+                        handlePlaySvg(continuable.story_id, 'focus');
+                    }}
+                    on:pointerout={() => {
+                      if (!$loading)
+                        handlePlaySvg(continuable.story_id, 'blur');
+                    }}
                     role="button"
                     tabindex="0"
+                    style={$loading ? 'cursor: not-allowed' : ''}
                   >
                     <polygon
                       id="play-icon-{continuable.story_id}"
                       points="
                         -26 -36 -26 36 36 0
                       "
-                      fill="rgb(0, 185, 55)"
+                      fill={$loading ? '#010020' : 'rgb(0, 185, 55)'}
                     />
                     <circle id="play-circle-{continuable.story_id}" r="90" />
                   </svg>

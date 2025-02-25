@@ -1,12 +1,12 @@
-import type { Writable } from 'svelte/store';
-import { storable } from '@lib/storable';
+import { writable } from 'svelte/store';
 
-export const background_volume: Writable<VolumeControl> = storable(
-  'background_volume',
-  { muted: false, volume: 0.5, restart: false },
-);
-export const tts_volume: Writable<VolumeControl> = storable('tts_volume', {
+export const background_volume = writable<VolumeControl>({
   muted: false,
-  volume: 0.5,
+  volume: 0.1,
+  restart: false
+});
+export const tts_volume = writable<VolumeControl>({
+  muted: false,
+  volume: 1,
   restart: false,
 });

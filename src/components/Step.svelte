@@ -388,7 +388,7 @@
                 mask="url(#eye-circle)"
               />
             </svg>
-            <Slider type="volume" volume={background_volume} />
+            <Slider type="music" volume={background_volume} />
             <Slider type="voice" volume={tts_volume} restartable />
             <button
               class="fullscreen"
@@ -949,7 +949,7 @@
           {/if}
         </div>
         <div class="mobile-sliders">
-          <Slider type="volume" volume={background_volume} />
+          <Slider type="music" volume={background_volume} />
           <Slider type="voice" volume={tts_volume} restartable />
         </div>
       </div>

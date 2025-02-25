@@ -1,26 +1,41 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import type { Writable } from 'svelte/store';
 
-  export let type: 'voice' | 'volume';
+  export let type: 'voice' | 'music';
   export let volume: Writable<VolumeControl>;
-
   export let restartable: boolean = false;
 
-  $: v = !$volume.muted ? $volume.volume : 0;
+  $: inputValue = !$volume.muted ? $volume.volume : 0;
+
+  onMount(() => {
+    if (localStorage.getItem(`${type}-volume`)) {
+      const volumeValue = JSON.parse(localStorage.getItem(`${type}-volume`) as string);
+      $volume = volumeValue;
+      if (type === 'voice') {
+        voiceMuted = $volume.muted;
+      } else if (type === 'music') {
+        volumeMuted = $volume.muted;
+      }
+    }
+  })
 
   const mute = () => {
-    volume.update((v) => ({ ...v, muted: !v.muted }));
-    if (type === 'voice') {
-      voiceMuted = !voiceMuted;
-    } else if (type === 'volume') {
-      volumeMuted = !volumeMuted;
-    }
+    volume.update((v) => {
+      if (type === 'voice') {
+        voiceMuted = !v.muted;
+      } else if (type === 'music') {
+        volumeMuted = !v.muted;
+      }
+      return { ...v, muted: !v.muted }
+    });
+    localStorage.setItem(`${type}-volume`, JSON.stringify($volume));
   };
 
   const update = (e: Event) => {
     const target = e.target as HTMLInputElement;
-
     volume.set({ muted: false, volume: +target.value, restart: false });
+    localStorage.setItem(`${type}-volume`, JSON.stringify($volume));
   };
 
   const restart = () => {
@@ -38,7 +53,7 @@
       ? voiceMuted
         ? true
         : false
-      : type === 'volume'
+      : type === 'music'
         ? volumeMuted
           ? true
           : false
@@ -188,7 +203,7 @@
         <line x1="85" y1="-85" x2="-85" y2="85" stroke-width="15" />
       </g>
     </svg>
-  {:else if type === 'volume'}
+  {:else if type === 'music'}
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="-100 -100 200 200"
@@ -284,7 +299,7 @@
     min="0"
     max="1"
     step="0.01"
-    value={v}
+    value={inputValue}
     on:change={update}
     disabled={disabledInput}
   />

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { StepData } from '@stores/types';
   import { story } from '@stores/conexus';
   import { tts_volume } from '@stores/volumes';
   import { onMount } from 'svelte';
@@ -29,7 +28,6 @@
         }
 
         tts_volume.set({ muted, volume, restart: false });
-
         return;
       }
 

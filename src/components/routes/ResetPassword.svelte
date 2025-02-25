@@ -33,7 +33,7 @@
       <input
         class="user-input"
         class:red-border={!password || password.length < 8}
-        type={passwordVisible ? 'text' : 'password'}
+        type={$passwordVisible.reset ? 'text' : 'password'}
         bind:value={password}
         placeholder="New password"
         required
@@ -45,7 +45,7 @@
     <input
       class="user-input"
       class:red-border={!passwordsMatch}
-      type={passwordVisible ? 'text' : 'password'}
+      type={$passwordVisible.reset ? 'text' : 'password'}
       bind:value={passwordConfirm}
       placeholder="Confirm new password"
       required

@@ -116,16 +116,23 @@
   };
 
   // Light Theme
-  let local_theme: string | null = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'dark';
-  let theme: 'dark' | 'white' | 'beige' = local_theme == 'dark' ? 'dark' : local_theme == 'white' ? 'white' : 'beige';
-  $: themeColor = theme == 'white'
+  let local_theme: string | null = localStorage.getItem('theme')
+    ? localStorage.getItem('theme')
+    : 'dark';
+  let theme: 'dark' | 'white' | 'beige' =
+    local_theme == 'dark' ? 'dark' : local_theme == 'white' ? 'white' : 'beige';
+  $: themeColor =
+    theme == 'white'
       ? 'rgba(255, 255, 255, 0.9)'
       : theme == 'beige'
         ? 'rgba(250, 238, 209, 0.9)'
         : 'rgba(1, 0, 32, 0.9)';
 
   let mobileTextWrapperStyling = '';
-  $: textWrapperStyling = theme == 'dark' ? '' :`
+  $: textWrapperStyling =
+    theme == 'dark'
+      ? ''
+      : `
     background-color:${themeColor};
     color: black;
     border-radius: 1em;
@@ -136,10 +143,11 @@
       0 0 0.5rem #010020;
     ${mobileTextWrapperStyling}
   `;
-  $: if (width < 600) mobileTextWrapperStyling = `
+  $: if (width < 600)
+    mobileTextWrapperStyling = `
     padding: 1em;
   `;
-  
+
   const switchTheme = () => {
     switch (theme) {
       case 'dark': {
@@ -150,10 +158,11 @@
         theme = 'beige';
         break;
       }
-      default: theme = 'dark';
+      default:
+        theme = 'dark';
     }
     localStorage.setItem('theme', theme);
-  }
+  };
 </script>
 
 <svelte:window bind:outerWidth={width} on:keydown={handleKeyDown} />
@@ -190,12 +199,16 @@
 
     <h2>Story Summary</h2>
 
-    <article class="summary-text" style={textWrapperStyling}>{step.summary}</article>
+    <article class="summary-text" style={textWrapperStyling}>
+      {step.summary}
+    </article>
 
     <h2>CoNexus identified your trait as: <strong>{step.trait}</strong></h2>
 
     {#if step.trait_description}
-      <article class="summary-text" style={textWrapperStyling}>{step.trait_description}</article>
+      <article class="summary-text" style={textWrapperStyling}>
+        {step.trait_description}
+      </article>
     {/if}
 
     <div class="options-container blur">
@@ -342,7 +355,7 @@
 
           <div class="controls">
             <svg
-              xmlns='http://www.w3.org/2000/svg'
+              xmlns="http://www.w3.org/2000/svg"
               viewBox="-100 -100 200 200"
               class="eye-svg filled-out-eye"
               stroke={themeColor}
@@ -366,17 +379,9 @@
                   "
                   mask="url(#eye-circle)"
                 />
-                <circle
-                  r="25"
-                  fill="black"
-                  stroke="black"
-                />
+                <circle r="25" fill="black" stroke="black" />
               </mask>
-              <circle
-                r="15"
-                fill={themeColor}
-                stroke="none"
-              />
+              <circle r="15" fill={themeColor} stroke="none" />
               <path
                 fill={themeColor}
                 d="
@@ -607,7 +612,9 @@
                 on:pointerout={() => (quitSvgFullscreenFocus = false)}
               />
             </svg>
-            <h3 style="color: rgba(51, 226, 230, 0.5); max-width: none;">{storyTitle}</h3>
+            <h3 style="color: rgba(51, 226, 230, 0.5); max-width: none;">
+              {storyTitle}
+            </h3>
           </div>
 
           <div class="step-bar-fullscreen">
@@ -962,9 +969,11 @@
       role="button"
       tabindex="0"
     >
-      <p style="color: {themeColor}">{theme.charAt(0).toUpperCase() + theme.slice(1)} theme</p>
+      <p style="color: {themeColor}">
+        {theme.charAt(0).toUpperCase() + theme.slice(1)} theme
+      </p>
       <svg
-        xmlns='http://www.w3.org/2000/svg'
+        xmlns="http://www.w3.org/2000/svg"
         viewBox="-100 -100 200 200"
         class="eye-svg filled-out-eye"
         stroke={themeColor}
@@ -985,17 +994,9 @@
             "
             mask="url(#eye-circle)"
           />
-          <circle
-            r="25"
-            fill="black"
-            stroke="black"
-          />
+          <circle r="25" fill="black" stroke="black" />
         </mask>
-        <circle
-          r="15"
-          fill={themeColor}
-          stroke="none"
-        />
+        <circle r="15" fill={themeColor} stroke="none" />
         <path
           fill={themeColor}
           d="

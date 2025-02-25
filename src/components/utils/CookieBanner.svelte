@@ -56,7 +56,10 @@
     <h3>
       We use cookies to provide you with a better service. By continuing to use
       this website, you consent to the use of cookies as described in our
-      <a href="https://docs.google.com/document/d/1kkIY-86y2LtoM4IXzp80E5H7Op1YSezw8nPBG1AQ2uo/edit?usp=sharing" target="_blank">Privacy Policy</a>.
+      <a
+        href="https://docs.google.com/document/d/1kkIY-86y2LtoM4IXzp80E5H7Op1YSezw8nPBG1AQ2uo/edit?usp=sharing"
+        target="_blank">Privacy Policy</a
+      >.
     </h3>
     <div>
       <button on:click={() => acceptCookies(true)}>Accept all</button>

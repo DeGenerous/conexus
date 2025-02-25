@@ -1,6 +1,6 @@
 <script lang="ts">
   import passwordVisible from '@stores/password-visibility';
-  
+
   type Password = 'login' | 'signup' | 'edit' | 'reset';
 
   export let visibility: Password;
@@ -31,8 +31,8 @@
         }
       }
       return password;
-    })
-  }
+    });
+  };
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -60,9 +60,7 @@
         width="200"
         height="200"
         fill="white"
-        style="transform: {visible
-          ? 'none'
-          : 'translateX(-200px)'}"
+        style="transform: {visible ? 'none' : 'translateX(-200px)'}"
       />
     </mask>
     <mask id="eye-svg-bottom-mask">
@@ -73,9 +71,7 @@
         width="200"
         height="200"
         fill="white"
-        style="transform: {visible
-          ? 'none'
-          : 'translateX(-200px)'}"
+        style="transform: {visible ? 'none' : 'translateX(-200px)'}"
       />
     </mask>
     <mask id="eye-svg-crossed-out-mask">
@@ -90,13 +86,7 @@
           "
         />
       </g>
-      <line
-        x1="55"
-        y1="-75"
-        x2="-95"
-        y2="75"
-        stroke="black"
-      />
+      <line x1="55" y1="-75" x2="-95" y2="75" stroke="black" />
     </mask>
   </defs>
 

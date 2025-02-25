@@ -21,7 +21,7 @@
     stroke-linecap="round"
     stroke-linejoin="round"
     style="stroke: {signOutSvgFocus ? 'rgb(51, 226, 230)' : '#dedede'};"
-    >
+  >
     <defs>
       <mask id="door-svg-mask">
         <rect
@@ -75,10 +75,8 @@
     stroke-width="12"
     stroke-linecap="round"
     stroke-linejoin="round"
-    style="stroke: {signInSvgFocus
-      ? 'rgb(51, 226, 230)'
-      : '#dedede'}"
-    >
+    style="stroke: {signInSvgFocus ? 'rgb(51, 226, 230)' : '#dedede'}"
+  >
     <defs>
       <mask id="door-svg-mask">
         <rect
@@ -103,9 +101,7 @@
     </defs>
 
     <path
-      style="transform: {signInSvgFocus
-        ? 'translateX(10%)'
-        : 'none'}"
+      style="transform: {signInSvgFocus ? 'translateX(10%)' : 'none'}"
       d="
         M -80 0
         L 30 0

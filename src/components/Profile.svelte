@@ -18,7 +18,7 @@
   import { isAvailable } from '@utils/validation';
 
   import WalletConnect from '@components/web3/WalletConnect.svelte';
-  
+
   import DoorSVG from '@components/icons/Door.svelte';
   import EyeSVG from '@components/icons/Eye.svelte';
   import passwordVisible from '@stores/password-visibility';

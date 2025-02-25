@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 import svelte from '@astrojs/svelte';
 import react from '@astrojs/react';
-import partytown from '@astrojs/partytown'
+import partytown from '@astrojs/partytown';
 
 import vercel from '@astrojs/vercel/serverless';
 

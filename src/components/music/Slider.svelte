@@ -10,7 +10,9 @@
 
   onMount(() => {
     if (localStorage.getItem(`${type}-volume`)) {
-      const volumeValue = JSON.parse(localStorage.getItem(`${type}-volume`) as string);
+      const volumeValue = JSON.parse(
+        localStorage.getItem(`${type}-volume`) as string,
+      );
       $volume = volumeValue;
       if (type === 'voice') {
         voiceMuted = $volume.muted;
@@ -18,7 +20,7 @@
         volumeMuted = $volume.muted;
       }
     }
-  })
+  });
 
   const mute = () => {
     volume.update((v) => {
@@ -27,7 +29,7 @@
       } else if (type === 'music') {
         volumeMuted = !v.muted;
       }
-      return { ...v, muted: !v.muted }
+      return { ...v, muted: !v.muted };
     });
     localStorage.setItem(`${type}-volume`, JSON.stringify($volume));
   };

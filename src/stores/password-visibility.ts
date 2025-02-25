@@ -4,7 +4,7 @@ const passwordVisible = writable({
   login: false,
   signup: false,
   edit: false,
-  reset: false
-})
+  reset: false,
+});
 
 export default passwordVisible;

@@ -127,7 +127,7 @@
 
   $: mandatoryFields = email && first_name && last_name && password;
   $: passwordsMatch =
-    password && confirmPassword ? password == confirmPassword : true;
+    password && confirmPassword ? password == confirmPassword : false;
   let termsAccepted: boolean = false;
   let newsletterSignup: boolean = false;
 
@@ -1024,8 +1024,10 @@
 
   #terms,
   #newsletter {
-    -webkit-transform: scale(2);
-    transform: scale(2);
+    /* -webkit-transform: scale(2);
+    transform: scale(2); */
+    width: 1.5vw;
+    height: 1.5vw;
     flex: 1;
     accent-color: rgba(51, 226, 230, 0.75);
     cursor: pointer;
@@ -1259,8 +1261,10 @@
 
     #terms,
     #newsletter {
-      -webkit-transform: scale(1.5);
-      transform: scale(1.5);
+      /* -webkit-transform: scale(1.5);
+      transform: scale(1.5); */
+      width: 1em;
+      height: 1em;
     }
 
     .profile-window {

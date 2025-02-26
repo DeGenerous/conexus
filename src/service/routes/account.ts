@@ -24,6 +24,22 @@ export default class AccountAPI extends Fetcher {
   }
 
   /**
+   * Subscribe the user to the newsletter.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   */
+  async subscribeNewsletter() {
+    return this.request<APISTDResposne>('/account/subscribe-newsletter');
+  }
+
+  /**
+   * Unsubscribe the user from the newsletter.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   */
+  async unsubscribeNewsletter() {
+    return this.request<APISTDResposne>('/account/unsubscribe-newsletter');
+  }
+
+  /**
    * Link a new wallet to the user's account.
    * @param signin - The wallet details to link.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.

@@ -1,6 +1,6 @@
 import { api_error } from '@errors/index';
 import { AccountAPI, AuthAPI } from '@service/routes';
-import { authenticated, referralCodes, web3LoggedIn } from '@stores/account';
+import { authenticated, newsletterStatus, referralCodes, web3LoggedIn } from '@stores/account';
 import { toastStore } from '@stores/toast';
 
 export class Account {
@@ -74,6 +74,51 @@ export class Account {
 
     toastStore.show(data.message || 'Email confirmed successfully', 'info');
     return true;
+  }
+
+  async subscribeNewsletter(): Promise<void> {
+    const { data, error } = await this.accountAPI.subscribeNewsletter();
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error subscribing to newsletter', 'error');
+      }
+      return;
+    }
+
+    toastStore.show(data.message || 'Subscribed to newsletter', 'info');
+  }
+
+  async unsubscribeNewsletter(): Promise<void> {
+    const { data, error } = await this.accountAPI.unsubscribeNewsletter();
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error unsubscribing from newsletter', 'error');
+      }
+      return;
+    }
+
+    toastStore.show(data.message || 'Unsubscribed from newsletter', 'info');
+  }
+
+  async subscriptionStatus(): Promise<void> {
+    const { data, error } = await this.accountAPI.subscriptionStatus();
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error getting subscription status', 'error');
+      }
+      return;
+    }
+
+    newsletterStatus.set(data);
   }
 
   async forgotPassword(email: string): Promise<void> {

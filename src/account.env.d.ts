@@ -65,7 +65,7 @@ type Available = {
 };
 
 type SubscriptionStatus = {
-	is_Active:       boolean
-	subscribed_at:   string
-	undefinednsubscribed_at: string
+	is_active:       boolean
+	subscribed_at:   Date | null
+	undefinednsubscribed_at: Date | null
 }

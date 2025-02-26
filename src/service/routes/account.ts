@@ -40,6 +40,14 @@ export default class AccountAPI extends Fetcher {
   }
 
   /**
+   * Subscription status of the user.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   */
+  async subscriptionStatus() {
+    return this.request<SubscriptionStatus>('/account/subscription-status');
+  }
+
+  /**
    * Link a new wallet to the user's account.
    * @param signin - The wallet details to link.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.

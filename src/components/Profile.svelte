@@ -630,6 +630,25 @@
             </button>
           {/if}
         {/if}
+
+        {#await Account.subscriptionStatus then {is_active, subscribed_at}}
+          <hr />
+
+          <h2>Newsletter Subscription</h2>
+
+          {#if subscribed_at}
+            <h3>Subscribed at: {subscribed_at}</h3>
+          {/if}
+
+          <button
+            on:click={() => {
+              if (is_active) Account.unsubscribeNewsletter();
+              else Account.subscribeNewsletter();
+            }}
+          >
+            {is_active ? "Unsubscribe" : "Subscribe"}
+          </button>
+        {/await}
       </section>
     {:else}
       <section class="sign-container">

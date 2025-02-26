@@ -80,7 +80,7 @@ interface ReferralSignUp {
 interface SubscriptionStatus {
 	is_active:       boolean
 	subscribed_at:   Date | null
-	undefinednsubscribed_at: Date | null
+	unsubscribed_at: Date | null
 }
 
 interface ContinuableStory {

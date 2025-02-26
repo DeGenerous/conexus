@@ -35,8 +35,6 @@ const Web3Provider = ({ linking, children }) => {
 
   const authenticationAdapter = createAuthenticationAdapter({
     getNonce: async () => {
-      console.log('Making request to fetch nonce:', url);
-
       const response = await fetch(`${url}/rainbow/nonce`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -52,10 +50,6 @@ const Web3Provider = ({ linking, children }) => {
     },
 
     createMessage: ({ nonce, address, chainId }) => {
-      console.log(
-        `Creating message with nonce: ${nonce} and address: ${address} for chain: ${chainId}`,
-      );
-
       if (!nonce || !address || !chainId) {
         console.error('Missing required parameters for createSiweMessage:', {
           nonce,
@@ -83,8 +77,6 @@ const Web3Provider = ({ linking, children }) => {
     },
 
     verify: async ({ message, signature }) => {
-      console.log('Verifying signature with message:', message);
-
       const urlPath = linking ? '/rainbow/linklogin' : '/rainbow/login';
 
       const response = await fetch(`${url}${urlPath}`, {

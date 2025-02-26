@@ -631,7 +631,7 @@
           {/if}
         {/if}
 
-        {#await Account.subscriptionStatus then {is_active, subscribed_at}}
+        {#await Account.subscriptionStatus() then {is_active, subscribed_at}}
           <hr />
 
           <h2>Newsletter Subscription</h2>

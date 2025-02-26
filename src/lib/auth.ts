@@ -481,7 +481,7 @@ class Account {
     }
   }
 
-  static async subscriptionStatus(): Promise<void> {
+  static async subscriptionStatus(): Promise<SubscriptionStatus> {
     try {
       const response = await fetch(`${url}/subscription-status`, {
         method: 'GET',
@@ -494,8 +494,11 @@ class Account {
       const resp = await response.json() as SubscriptionStatus
 
       newsletterStatus.set(resp);
+      
+      return resp;
     } catch (error: any) {
       new_error({ code: 500, error: error });
+      return { is_active: false, subscribed_at: null, unsubscribed_at: null };
     }
   }
 }

@@ -52,6 +52,7 @@ type ReferralCode = {
 type ReferralSignUp = {
   user: User;
   referral_code: string;
+  newsletter: boolean;
 };
 
 type Available = {

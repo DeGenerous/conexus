@@ -37,7 +37,7 @@ export default class Fetcher {
    * Creates an instance of Fetcher.
    * @param baseUrl - The base URL for the API.
    */
-  constructor(baseUrl: string = import.meta.env.VITE_API_URL as string) {
+  constructor(baseUrl: string = import.meta.env.PUBLIC_BACKEND as string) {
     this.baseUrl = baseUrl;
   }
 

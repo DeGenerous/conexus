@@ -7,6 +7,7 @@ import {
   referralCodes,
   authenticated,
   availables,
+  newsletterStatus,
 } from '@stores/account';
 import { toastStore } from '@stores/toast';
 
@@ -492,7 +493,7 @@ class Account {
 
       const resp = await response.json() as SubscriptionStatus
 
-      console.log(resp);
+      newsletterStatus.set(resp);
     } catch (error: any) {
       new_error({ code: 500, error: error });
     }

@@ -7,6 +7,11 @@ export const authenticated = writable<{
   loggedIn: boolean;
 }>({ user: null, loggedIn: false });
 export const referralCodes = writable<ReferralCode[]>([]);
+export const newsletterStatus = writable<SubscriptionStatus>({
+  is_active: false,
+  subscribed_at: null,
+  undefinednsubscribed_at: null,
+});
 export const availables = writable<Available | APIError>({
   message: '',
   details: '',

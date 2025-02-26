@@ -62,3 +62,9 @@ type Available = {
   categories?: Category[];
   has_ape?: boolean;
 };
+
+type SubscriptionStatus = {
+	is_Active:       boolean
+	subscribed_at:   string
+	undefinednsubscribed_at: string
+}

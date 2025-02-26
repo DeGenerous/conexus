@@ -10,7 +10,7 @@ export const referralCodes = writable<ReferralCode[]>([]);
 export const newsletterStatus = writable<SubscriptionStatus>({
   is_active: false,
   subscribed_at: null,
-  undefinednsubscribed_at: null,
+  unsubscribed_at: null,
 });
 export const availables = writable<Available | APIError>({
   message: '',

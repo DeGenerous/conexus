@@ -74,6 +74,13 @@ interface ReferralCode {
 interface ReferralSignUp {
   user: User;
   referral_code: string;
+  newsletter: bool
+}
+
+interface SubscriptionStatus {
+	is_Active:       boolean
+	subscribed_at:   string
+	undefinednsubscribed_at: string
 }
 
 interface ContinuableStory {

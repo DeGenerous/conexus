@@ -162,13 +162,8 @@
         role: Roles.USER,
       },
       referral_code: referralCode,
+      newsletter: newsletterSignup,
     });
-    if (newsletterSignup) signupForNewsletter();
-  };
-
-  const signupForNewsletter = () => {
-    // ADD USER EMAIL TO THE NEWSLETTER LIST
-    console.log('Newsletter Sign-up');
   };
 
   // Utility functions

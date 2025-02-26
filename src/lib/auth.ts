@@ -443,6 +443,60 @@ class Account {
       new_error({ code: 500, error: error });
     }
   }
+
+  static async subscribeNewsletter(): Promise<void> {
+    try {
+      const response = await fetch(`${url}/subscribe-newsletter`, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        new_error({ code: response.status, error: await response.text() });
+      }
+
+      const resp = await response.json();
+
+      console.log(resp.message);
+    } catch (error: any) {
+      new_error({ code: 500, error: error });
+    }
+  }
+
+  static async unsubscribeNewsletter(): Promise<void> {
+    try {
+      const response = await fetch(`${url}/unsubscribe-newsletter`, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        new_error({ code: response.status, error: await response.text() });
+      }
+
+      const resp = await response.json();
+
+      console.log(resp.message);
+    } catch (error: any) {
+      new_error({ code: 500, error: error });
+    }
+  }
+
+  static async subscriptionStatus(): Promise<void> {
+    try {
+      const response = await fetch(`${url}/subscription-status`, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        new_error({ code: response.status, error: await response.text() });
+      }
+
+      const resp = await response.json() as SubscriptionStatus
+
+      console.log(resp);
+    } catch (error: any) {
+      new_error({ code: 500, error: error });
+    }
+  }
 }
 
 export default Account;

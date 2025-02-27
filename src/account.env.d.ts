@@ -26,6 +26,7 @@ type User = {
   faux?: boolean;
   email_confirmed?: boolean;
   is_oauth?: boolean;
+  available?: Available;
 } & SignUp;
 
 type SignIn = {
@@ -67,5 +68,5 @@ type Available = {
 type SubscriptionStatus = {
 	is_active:       boolean
 	subscribed_at:   Date | null
-	undefinednsubscribed_at: Date | null
+	unsubscribed_at: Date | null
 }

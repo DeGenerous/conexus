@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  
+
   import DoorSVG from '@components/icons/Door.svelte';
   import EyeSVG from '@components/icons/Eye.svelte';
   import WalletConnect from '@components/web3/WalletConnect.svelte';
@@ -9,7 +9,6 @@
     authenticated,
     referralCodes,
     web3loginError,
-    availables,
   } from '@stores/account';
   import {
     showModal,
@@ -19,7 +18,6 @@
     modalContent,
   } from '@stores/modal';
   import passwordVisible from '@stores/password-visibility';
-  import { isAvailable } from '@utils/validation';
 
   let dialog: HTMLDialogElement;
 
@@ -51,7 +49,6 @@
 
   // Sign-in
   let user: Nullable<User>;
-  let available: Available | APIError;
   let isLogged: boolean;
 
   let signUp: boolean;
@@ -71,9 +68,6 @@
   authenticated.subscribe((value) => {
     user = value.user;
     isLogged = value.loggedIn;
-  });
-  availables.subscribe((value) => {
-    available = value;
   });
 
   $: if (isLogged && account) {
@@ -346,29 +340,31 @@
     </header>
 
     <!-- USER PROFILE -->
-    {#if isLogged}
+    {#if isLogged && user}
       <section class="profile-window">
         <hr />
 
-        {#if isAvailable(available)}
+        {#if user.available}
           <div class="stories-count">
             <h3>
               You have used
-              <strong>{available.used} / {available.available} weekly</strong>
+              <strong
+                >{user.available.used} / {user.available.available} weekly</strong
+              >
               stories
             </h3>
 
-            {#if available.bonus > 0}
+            {#if user.available.bonus > 0}
               <h3>
                 You have
-                <strong>{available.bonus} bonus</strong>
+                <strong>{user.available.bonus} bonus</strong>
                 stories
               </h3>
             {/if}
           </div>
         {:else}
           <div class="error-message">
-            <p><strong>Error:</strong> {available.message}</p>
+            <p><strong>Error:</strong>Unavailable</p>
           </div>
         {/if}
 

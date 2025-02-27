@@ -1,7 +1,6 @@
 // import Account from '@lib/auth';
 import { Account } from '@lib/account';
-import { authenticated, availables } from '@stores/account';
-import { isAvailable } from './validation';
+import { authenticated } from '@stores/account';
 
 function redirectTo(path: string) {
   if (typeof window !== 'undefined') {
@@ -34,12 +33,6 @@ export async function checkUserState(path: string): Promise<void> {
     }
 
     authenticated.set({ user: user, loggedIn: true });
-    // availables.set(available);
-
-    // if (!isAvailable(available)) {
-    //   redirectTo('/profile');
-    //   return;
-    // }
 
     if (isRouteMatched(path, verifiedRoutes) && !user.referred) {
       redirectTo('/referral');

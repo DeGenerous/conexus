@@ -194,6 +194,19 @@
   let closeSvgFocus: boolean = false;
   let signInSvgFocus: boolean = false;
   let signOutSvgFocus: boolean = false;
+
+  // Newsletter
+  let updateNewsletterStatus: boolean | null = null;
+  const dateToString = (date: Date) => {
+    const dateObject: Date = new Date(date);
+
+    const day: string = ("0" + dateObject.getDate()).slice(-2);
+    const month: string = ("0" + (dateObject.getMonth() + 1)).slice(-2);
+    const year: number = dateObject.getFullYear();
+
+    const fullDate: string = `${day}.${month}.${year}`;
+    return fullDate;
+  }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
@@ -627,24 +640,40 @@
           {/if}
         {/if}
 
-        {#await account.subscriptionStatus() then {is_active, subscribed_at}}
-          <hr />
+        {#key updateNewsletterStatus}
+          {#await account.subscriptionStatus() then {is_active, subscribed_at}}
+            <hr />
 
-          <h2>Newsletter Subscription</h2>
+            {#if is_active}
+              <h2>Newsletter Subscription</h2>
 
-          {#if subscribed_at}
-            <h3>Subscribed at: {new Date(subscribed_at)}</h3>
-          {/if}
-
-          <button
-            on:click={() => {
-              if (is_active) account.unsubscribeNewsletter();
-              else account.subscribeNewsletter();
-            }}
-          >
-            {is_active ? "Unsubscribe" : "Subscribe"}
-          </button>
-        {/await}
+              {#if subscribed_at}
+                <h3>Active since: {dateToString(subscribed_at.Time)}</h3>
+              {/if}
+              <h3
+                class="unsubscribe-button"
+                on:click={() => {
+                  account.unsubscribeNewsletter()
+                    .then(() => (updateNewsletterStatus = true))
+                }}
+                role="button"
+                tabindex="0"
+              >
+                Unsubscribe
+              </h3>
+            {:else}
+              <div class="newsletter-subscription">
+                <h3>Subscribe to the Newsletter:</h3>
+                <button on:click={() =>{
+                  account.subscribeNewsletter()
+                    .then(() => (updateNewsletterStatus = false))
+                }}>
+                  Subscribe
+                </button>
+              </div>
+            {/if}
+          {/await}
+        {/key}
       </section>
     {:else}
       <section class="sign-container">
@@ -1188,6 +1217,37 @@
     text-shadow: 0 0 0.1vw rgb(51, 226, 230);
   }
 
+  /* Newsletter */
+
+  .newsletter-subscription {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
+  }
+
+  .newsletter-subscription button {
+    background-color: rgba(0, 185, 55, 0.75);
+  }
+
+  .newsletter-subscription button:hover,
+  .newsletter-subscription button:active {
+    color: #010020;
+    background-color: rgb(0, 185, 55);
+  }
+
+  .unsubscribe-button {
+    color: rgba(255, 60, 64, 0.75);
+    cursor: pointer;
+  }
+
+  .unsubscribe-button:hover,
+  .unsubscribe-button:active {
+    color: rgb(255, 60, 64);
+    text-decoration: underline;
+  }
+
   /* Profile icon */
 
   .profile-icon-container {
@@ -1303,6 +1363,10 @@
     .copy-svg {
       width: 1em;
       height: 1em;
+    }
+
+    .newsletter-subscription {
+      gap: 0.5em;
     }
 
     .profile-icon {

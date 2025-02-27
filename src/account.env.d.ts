@@ -66,7 +66,13 @@ type Available = {
 };
 
 type SubscriptionStatus = {
-	is_active:       boolean
-	subscribed_at:   string | null
-	unsubscribed_at: string | null
+	is_active: boolean
+	subscribed_at: {
+    Time: Date,
+    Valid: boolean
+  } | null
+	unsubscribed_at: {
+    Time: Date,
+    Valid: boolean
+  } | null
 }

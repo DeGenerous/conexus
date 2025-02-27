@@ -15,7 +15,7 @@ import { createSiweMessage } from 'viem/siwe';
 import { WagmiProvider } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains';
 
-import { web3LoggedIn, authenticated, availables } from '@stores/account';
+import { web3LoggedIn, authenticated } from '@stores/account';
 import { AccountAPI, AuthAPI } from '@service/routes';
 
 import '@rainbow-me/rainbowkit/styles.css';

@@ -1,9 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  
-  import {
-    CoNexusApp
-  } from '@lib/view';
+
+  import { CoNexusApp } from '@lib/view';
   import { checkUserState, checkWeb3LoginState } from '@utils/route-guard';
   import { web3LoggedIn } from '@stores/account';
 

@@ -200,13 +200,13 @@
   const dateToString = (date: Date) => {
     const dateObject: Date = new Date(date);
 
-    const day: string = ("0" + dateObject.getDate()).slice(-2);
-    const month: string = ("0" + (dateObject.getMonth() + 1)).slice(-2);
+    const day: string = ('0' + dateObject.getDate()).slice(-2);
+    const month: string = ('0' + (dateObject.getMonth() + 1)).slice(-2);
     const year: number = dateObject.getFullYear();
 
     const fullDate: string = `${day}.${month}.${year}`;
     return fullDate;
-  }
+  };
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
@@ -641,7 +641,7 @@
         {/if}
 
         {#key updateNewsletterStatus}
-          {#await account.subscriptionStatus() then {is_active, subscribed_at}}
+          {#await account.subscriptionStatus() then { is_active, subscribed_at }}
             <hr />
 
             {#if is_active}
@@ -653,8 +653,9 @@
               <h3
                 class="unsubscribe-button"
                 on:click={() => {
-                  account.unsubscribeNewsletter()
-                    .then(() => (updateNewsletterStatus = true))
+                  account
+                    .unsubscribeNewsletter()
+                    .then(() => (updateNewsletterStatus = true));
                 }}
                 role="button"
                 tabindex="0"
@@ -663,11 +664,14 @@
               </h3>
             {:else}
               <div class="newsletter-subscription">
-                <h3>Subscribe to the Newsletter:</h3>
-                <button on:click={() =>{
-                  account.subscribeNewsletter()
-                    .then(() => (updateNewsletterStatus = false))
-                }}>
+                <h3>Subscribe to Newsletter:</h3>
+                <button
+                  on:click={() => {
+                    account
+                      .subscribeNewsletter()
+                      .then(() => (updateNewsletterStatus = false));
+                  }}
+                >
                   Subscribe
                 </button>
               </div>

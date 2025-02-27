@@ -276,10 +276,7 @@ export class CoNexusGame extends GameAPI {
   // Generate image status v2
   async #generateImageStatus(): Promise<void> {
     try {
-      const { data } = await this.imageStatusV2(
-        this.step_data.id,
-        this.jobID,
-      );
+      const { data } = await this.imageStatusV2(this.step_data.id, this.jobID);
 
       if (!data) {
         this.#image();

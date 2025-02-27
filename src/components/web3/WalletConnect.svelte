@@ -3,7 +3,7 @@
   import { createRoot } from 'react-dom/client';
 
   import { showProfile } from '@stores/modal';
-  
+
   import RainbowConnect from './Rainbow';
 
   export let linking = false;

@@ -9,7 +9,11 @@ function redirectTo(path: string) {
 
 // Define route patterns
 const excludedRoutes = [/^\/referral$/];
-const protectedRoutes = [/^\/story(\/.*)?$/, /^\/dashboard(\/.*)?$/, /^\/[^/]+$/];
+const protectedRoutes = [
+  /^\/story(\/.*)?$/,
+  /^\/dashboard(\/.*)?$/,
+  /^\/[^/]+$/,
+];
 const verifiedRoutes = [/^\/story(\/.*)?$/, /^\/[^/]+$/];
 
 // Helper function to match a route pattern

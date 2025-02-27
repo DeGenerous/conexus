@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  
+
   export let message = '';
   export let type = 'info';
   export let duration = 10000;

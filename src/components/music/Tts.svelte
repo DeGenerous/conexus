@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  
+
   import { story } from '@stores/conexus';
   import { tts_volume } from '@stores/volumes';
 

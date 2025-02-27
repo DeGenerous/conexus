@@ -1,10 +1,6 @@
 import { api_error } from '@errors/index';
 import { AccountAPI, AuthAPI } from '@service/routes';
-import {
-  authenticated,
-  referralCodes,
-  web3LoggedIn,
-} from '@stores/account';
+import { authenticated, referralCodes, web3LoggedIn } from '@stores/account';
 import { toastStore } from '@stores/toast';
 
 export class Account {
@@ -94,7 +90,7 @@ export class Account {
       return;
     }
 
-    toastStore.show(data.message || 'Subscribed to newsletter', 'info');
+    // toastStore.show(data.message || 'Subscribed to newsletter', 'info');
   }
 
   async unsubscribeNewsletter(): Promise<void> {
@@ -109,7 +105,7 @@ export class Account {
       return;
     }
 
-    toastStore.show(data.message || 'Unsubscribed from newsletter', 'info');
+    // toastStore.show(data.message || 'Unsubscribed from newsletter', 'info');
   }
 
   async subscriptionStatus(): Promise<SubscriptionStatus> {

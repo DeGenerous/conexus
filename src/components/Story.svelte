@@ -12,9 +12,9 @@
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
-  
+
   import { checkUserState } from '@utils/route-guard';
-  
+
   import Profile from './Profile.svelte';
   import BackArrow from './utils/BackArrow.svelte';
   import Share from './utils/Share.svelte';

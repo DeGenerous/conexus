@@ -5,7 +5,7 @@ type Nullable<T> = T | null | undefined;
 
 declare namespace App {
   interface Locals {
-    user: User
+    user: User;
   }
 }
 

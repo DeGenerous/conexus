@@ -1,4 +1,3 @@
-// import Account from '@lib/auth';
 import { Account } from '@lib/account';
 import { authenticated } from '@stores/account';
 

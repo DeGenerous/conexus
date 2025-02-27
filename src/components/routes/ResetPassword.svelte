@@ -13,6 +13,8 @@
 
   $: passwordsMatch = password && password === passwordConfirm;
   $: validation = email && password.length >= 8 && passwordsMatch;
+
+  $: stringValidation = email.includes('@') && email.includes('.');
 </script>
 
 <div class="container-wrapper">
@@ -20,14 +22,14 @@
     <h3>Confirm your email address and create a new password</h3>
     <input
       class="user-input"
-      class:red-border={!email}
+      class:red-border={!email || !stringValidation}
       type="email"
       bind:value={email}
       placeholder="Email"
       required
     />
 
-    {#if !email}
+    {#if !email || !stringValidation}
       <p class="validation">Provide the email associated with your profile</p>
     {/if}
 

@@ -4,6 +4,8 @@
   const acct: Account = new Account();
 
   let email: string = '';
+
+  $: stringValidation = email.includes('@') && email.includes('.')
 </script>
 
 <div class="container-wrapper">
@@ -22,7 +24,7 @@
       <p class="validation">Provide the email associated with your profile</p>
     {/if}
 
-    <button on:click={() => acct.forgotPassword(email)} disabled={!email}>
+    <button on:click={() => acct.forgotPassword(email)} disabled={!email || !stringValidation}>
       Send verification link
     </button>
   </div>

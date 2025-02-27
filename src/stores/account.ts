@@ -11,5 +11,4 @@ export const newsletterStatus = writable<SubscriptionStatus>({
   is_active: false,
   subscribed_at: null,
   unsubscribed_at: null,
-  unsubscribed_at: null,
 });

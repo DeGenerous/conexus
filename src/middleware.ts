@@ -1,5 +1,4 @@
 import { defineMiddleware } from 'astro:middleware';
-import { AccountAPI } from '@service/routes';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   // Proceed with the next middleware or the requested route

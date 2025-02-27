@@ -77,15 +77,15 @@ const Web3Provider = ({ linking, children }) => {
     },
 
     verify: async ({ message, signature }) => {
-      let resp: APIResponse<{ user: User}>;
+      let resp: APIResponse<{ user: User }>;
 
       if (linking) {
-        resp = await authAPI.web3WalletSignin({
+        resp = await accountAPI.web3WalletLink({
           message,
           signature,
         });
       } else {
-        resp = await accountAPI.web3WalletLink({
+        resp = await authAPI.web3WalletSignin({
           message,
           signature,
         });

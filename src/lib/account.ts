@@ -1,6 +1,10 @@
 import { api_error } from '@errors/index';
 import { AccountAPI, AuthAPI } from '@service/routes';
-import { authenticated, newsletterStatus, referralCodes, web3LoggedIn } from '@stores/account';
+import {
+  authenticated,
+  referralCodes,
+  web3LoggedIn,
+} from '@stores/account';
 import { toastStore } from '@stores/toast';
 
 export class Account {
@@ -28,6 +32,7 @@ export class Account {
     }
 
     authenticated.set({ user: data.user, loggedIn: true });
+    web3LoggedIn.set(true);
   }
 
   async signup(signupData: ReferralSignUp): Promise<void> {
@@ -43,6 +48,7 @@ export class Account {
     }
 
     authenticated.set({ user: data.user, loggedIn: true });
+    web3LoggedIn.set(true);
   }
 
   async googleSignin(): Promise<void> {
@@ -106,7 +112,7 @@ export class Account {
     toastStore.show(data.message || 'Unsubscribed from newsletter', 'info');
   }
 
-  async subscriptionStatus(): Promise<void> {
+  async subscriptionStatus(): Promise<SubscriptionStatus> {
     const { data, error } = await this.accountAPI.subscriptionStatus();
 
     if (!data) {
@@ -115,10 +121,10 @@ export class Account {
       } else {
         toastStore.show('Error getting subscription status', 'error');
       }
-      return;
+      return { is_active: false, subscribed_at: null, unsubscribed_at: null };
     }
 
-    newsletterStatus.set(data);
+    return data;
   }
 
   async forgotPassword(email: string): Promise<void> {
@@ -170,6 +176,7 @@ export class Account {
     }
 
     authenticated.set({ user: data.user, loggedIn: true });
+    web3LoggedIn.set(true);
   }
 
   static async getUser(): Promise<User | null> {
@@ -234,6 +241,7 @@ export class Account {
     }
 
     authenticated.set({ user: data.user, loggedIn: true });
+    web3LoggedIn.set(true);
   }
 
   async generateReferralCode(): Promise<void> {

@@ -38,8 +38,6 @@ export class CoNexusApp extends ViewAPI {
     if (!data) {
       if (error) {
         api_error(error);
-      } else {
-        toastStore.show('Error fetching section categories', 'error');
       }
       return [];
     }
@@ -64,8 +62,6 @@ export class CoNexusApp extends ViewAPI {
     if (!data) {
       if (error) {
         api_error(error);
-      } else {
-        toastStore.show('Error fetching section category', 'error');
       }
       return [];
     }

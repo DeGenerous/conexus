@@ -1,5 +1,5 @@
 import { Account } from '@lib/account';
-import { authenticated } from '@stores/account';
+import { authenticated, web3LoggedIn } from '@stores/account';
 
 function redirectTo(path: string) {
   if (typeof window !== 'undefined') {
@@ -32,6 +32,7 @@ export async function checkUserState(path: string): Promise<void> {
     }
 
     authenticated.set({ user: user, loggedIn: true });
+    web3LoggedIn.set(true);
 
     if (isRouteMatched(path, verifiedRoutes) && !user.referred) {
       redirectTo('/referral');

@@ -627,19 +627,19 @@
           {/if}
         {/if}
 
-        {#await Account.subscriptionStatus() then {is_active, subscribed_at}}
+        {#await account.subscriptionStatus() then {is_active, subscribed_at}}
           <hr />
 
           <h2>Newsletter Subscription</h2>
 
           {#if subscribed_at}
-            <h3>Subscribed at: {subscribed_at}</h3>
+            <h3>Subscribed at: {new Date(subscribed_at)}</h3>
           {/if}
 
           <button
             on:click={() => {
-              if (is_active) Account.unsubscribeNewsletter();
-              else Account.subscribeNewsletter();
+              if (is_active) account.unsubscribeNewsletter();
+              else account.subscribeNewsletter();
             }}
           >
             {is_active ? "Unsubscribe" : "Subscribe"}

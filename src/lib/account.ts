@@ -2,6 +2,7 @@ import { api_error } from '@errors/index';
 import { AccountAPI, AuthAPI } from '@service/routes';
 import { authenticated, referralCodes, web3LoggedIn } from '@stores/account';
 import { toastStore } from '@stores/toast';
+import { accountError } from '@stores/account';
 
 export class Account {
   private accountAPI: AccountAPI;
@@ -20,10 +21,12 @@ export class Account {
 
     if (!data) {
       if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error signing in', 'error');
+        // api_error(error);
+        accountError.set({signin: error.message})
       }
+      // else {
+        // toastStore.show('Error signing in', 'error');
+      // }
       return;
     }
 
@@ -36,10 +39,12 @@ export class Account {
 
     if (!data) {
       if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error signing up', 'error');
+        // api_error(error);
+        accountError.set({signup: error.message})
       }
+      // else {
+      //   toastStore.show('Error signing up', 'error');
+      // }
       return;
     }
 
@@ -52,10 +57,12 @@ export class Account {
 
     if (!data) {
       if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error signing up with google', 'error');
+        // api_error(error);
+        accountError.set({googleSignin: error.message})
       }
+      // else {
+      //   toastStore.show('Error signing up with google', 'error');
+      // }
       return;
     }
 
@@ -83,10 +90,12 @@ export class Account {
 
     if (!data) {
       if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error subscribing to newsletter', 'error');
+        // api_error(error);
+        accountError.set({subscribeNewsletter: error.message})
       }
+      // else {
+      //   toastStore.show('Error subscribing to newsletter', 'error');
+      // }
       return;
     }
 
@@ -98,10 +107,12 @@ export class Account {
 
     if (!data) {
       if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error unsubscribing from newsletter', 'error');
+        // api_error(error);
+        accountError.set({unsubscribeNewsletter: error.message})
       }
+      // else {
+      //   toastStore.show('Error unsubscribing from newsletter', 'error');
+      // }
       return;
     }
 
@@ -114,6 +125,7 @@ export class Account {
     if (!data) {
       if (error) {
         api_error(error);
+        accountError.set({subscriptionStatus: error.message})
       } else {
         toastStore.show('Error getting subscription status', 'error');
       }
@@ -197,14 +209,16 @@ export class Account {
 
     if (!data) {
       if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error changing password', 'error');
+        // api_error(error);
+        accountError.set({changePassword: error.message})
       }
+      // else {
+      //   toastStore.show('Error changing password', 'error');
+      // }
       return;
     }
 
-    toastStore.show(data.message || 'Password changed successfully', 'info');
+    // toastStore.show(data.message || 'Password changed successfully', 'info');
   }
 
   async signout(): Promise<void> {
@@ -229,10 +243,12 @@ export class Account {
 
     if (!data) {
       if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error changing wallet', 'error');
+        // api_error(error);
+        accountError.set({selectMainWallet: error.message})
       }
+      // else {
+      //   toastStore.show('Error changing wallet', 'error');
+      // }
       return;
     }
 
@@ -245,10 +261,12 @@ export class Account {
 
     if (!data) {
       if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error signigenerating referral codes', 'error');
+        // api_error(error);
+        accountError.set({generateReferralCode: error.message})
       }
+      // else {
+      //   toastStore.show('Error signigenerating referral codes', 'error');
+      // }
       return;
     }
 

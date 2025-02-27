@@ -8,7 +8,7 @@
   import {
     authenticated,
     referralCodes,
-    web3loginError,
+    accountError
   } from '@stores/account';
   import {
     showModal,
@@ -28,8 +28,6 @@
     if (!isLogged) {
       signUp = false;
       signInWithEmail = false;
-      invalidCredentials = false;
-      $web3loginError = false;
     } else {
       editingPassword = false;
     }
@@ -55,7 +53,6 @@
   let signInWithEmail: boolean;
   let loginMail: string = '';
   let loginPassword: string = '';
-  let invalidCredentials: boolean = false;
 
   let account: Account;
 
@@ -74,21 +71,6 @@
     account.getReferraLCodes();
   }
 
-  const handleSignIn = async (event: Event) => {
-    event.preventDefault();
-    try {
-      await account.signin({
-        email: loginMail,
-        password: loginPassword,
-      });
-      setTimeout(() => {
-        if (!isLogged) invalidCredentials = true;
-      });
-    } catch (error) {
-      invalidCredentials = true;
-    }
-  };
-
   // Change password
   let editingPassword: boolean = false;
   let editOldPassword: string = '';
@@ -97,17 +79,12 @@
   $: editPasswordMatch =
     editPassword.length >= 8 && editPassword === editPasswordConfirm;
 
-  const saveChangedPassword = () => {
-    try {
-      account.changePassword({
-        old_password: editOldPassword,
-        new_password: editPassword,
-      });
-      editingPassword = false;
-    } catch (error) {
-      console.log('Old password is invalid!');
-      console.log(error);
-    }
+  const saveChangedPassword = async () => {
+    await account.changePassword({
+      old_password: editOldPassword,
+      new_password: editPassword,
+    });
+    if (!$accountError || !$accountError.changePassword) editingPassword = false;
   };
 
   // Sign-up form
@@ -179,13 +156,10 @@
   };
 
   const handleWalletSelect = async (address: string) => {
-    try {
-      await account.selectMainWallet(address);
-      // reload the page to update the user object
-      location.reload();
-    } catch (error) {
-      console.error(error);
-    }
+    await account.selectMainWallet(address);
+    if ($accountError && $accountError.selectMainWallet) return;
+    // reload the page to update the user object
+    location.reload();
   };
 
   // SVG Icons
@@ -463,6 +437,10 @@
               {:else if editPasswordConfirm && !editPasswordMatch}
                 <p class="validation">Passwords do not match!</p>
               {/if}
+
+              {#if $accountError && $accountError.changePassword}
+                <p class="validation">{$accountError.changePassword}</p>
+              {/if}
             {/if}
 
             {#if !user.is_oauth}
@@ -542,6 +520,10 @@
                     />
                   </div>
                 </div>
+
+                {#if $accountError && $accountError.selectMainWallet}
+                  <p class="validation">{$accountError.selectMainWallet}</p>
+                {/if}
               {/if}
             {:else}
               <div class="buttons-container">
@@ -637,6 +619,10 @@
             <button on:click={account.generateReferralCode}>
               Get referral codes
             </button>
+
+            {#if $accountError && $accountError.generateReferralCode}
+              <p class="validation">{$accountError.generateReferralCode}</p>
+            {/if}
           {/if}
         {/if}
 
@@ -678,6 +664,16 @@
             {/if}
           {/await}
         {/key}
+
+        {#if $accountError && $accountError.subscribeNewsletter}
+          <p class="validation">{$accountError.subscribeNewsletter}</p>
+        {/if}
+        {#if $accountError && $accountError.unsubscribeNewsletter}
+          <p class="validation">{$accountError.unsubscribeNewsletter}</p>
+        {/if}
+        {#if $accountError && $accountError.subscriptionStatus}
+          <p class="validation">{$accountError.subscriptionStatus}</p>
+        {/if}
       </section>
     {:else}
       <section class="sign-container">
@@ -714,12 +710,17 @@
                   <EyeSVG visibility="login" />
                 </div>
               </div>
-              {#if invalidCredentials}
-                <p class="validation">Invalid credentials!</p>
+
+              {#if $accountError && $accountError.signin}
+                <p class="validation">{$accountError.signin}</p>
               {/if}
+
               <button
                 class="sign-in-button"
-                on:click={handleSignIn}
+                on:click|preventDefault={() => account.signin({
+                  email: loginMail,
+                  password: loginPassword,
+                })}
                 on:pointerover={() => {
                   if (loginMail && loginPassword) signInSvgFocus = true;
                 }}
@@ -752,6 +753,11 @@
                 <img class="sign-icon" src="/icons/google.png" alt="Google" />
                 <p class="sign-lable">with Google</p>
               </button>
+
+              {#if $accountError && $accountError.googleSignin}
+                <p class="validation">{$accountError.googleSignin}</p>
+              {/if}
+
               <button
                 on:click={() => {
                   signInWithEmail = true;
@@ -762,11 +768,6 @@
               </button>
               <WalletConnect title={'with Web3 wallet'} />
             </div>
-            {#if $web3loginError}
-              <p class="validation">
-                This wallet is not linked to any account!
-              </p>
-            {/if}
             <hr />
             <h3>Don't have an account yet?</h3>
             <div class="buttons-container">
@@ -893,6 +894,10 @@
 
             {#if password && !confirmPassword}
               <p class="validation">Please confirm your password</p>
+            {/if}
+
+            {#if $accountError && $accountError.signup}
+              <p class="validation">{$accountError.signup}</p>
             {/if}
 
             <div class="agreements-container">

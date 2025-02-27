@@ -76,3 +76,17 @@ type SubscriptionStatus = {
     Valid: boolean;
   } | null;
 };
+
+// temporary storage for all Profile errors
+// until we move it to the separate page
+type AccountError = {
+  signin?: Nullable<string>;
+  signup?: Nullable<string>;
+  googleSignin?: Nullable<string>;
+  subscribeNewsletter?: Nullable<string>;
+  unsubscribeNewsletter?: Nullable<string>;
+  subscriptionStatus?: Nullable<string>;
+  changePassword?: Nullable<string>;
+  selectMainWallet?: Nullable<string>;
+  generateReferralCode?: Nullable<string>;
+} | null

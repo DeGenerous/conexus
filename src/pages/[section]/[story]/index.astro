@@ -1,6 +1,6 @@
 ---
 import Layout from '@layouts/Layout.astro';
-import Topic from '@components/Story.svelte';
+import Story from '@components/Story.svelte';
 
 const { section, story } = Astro.params;
 
@@ -23,6 +23,6 @@ const meta = {
 
 <main>
   <Layout {story} {...meta}>
-    <Topic story_name={story} client:load />
+    <Story story_name={story} client:load />
   </Layout>
 </main>

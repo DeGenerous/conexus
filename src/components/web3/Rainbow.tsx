@@ -77,13 +77,24 @@ const Web3Provider = ({ linking, children }) => {
     },
 
     verify: async ({ message, signature }) => {
-      const { data, error } = await authAPI.web3WalletSignin({
-        message,
-        signature,
-      });
+      let resp: APIResponse<{ user: User}>;
+
+      if (linking) {
+        resp = await authAPI.web3WalletSignin({
+          message,
+          signature,
+        });
+      } else {
+        resp = await accountAPI.web3WalletLink({
+          message,
+          signature,
+        });
+      }
+
+      const { data, error } = resp;
 
       if (!data) {
-        console.error('Failed to verify signature:', error);
+        console.error('Failed to verify signature:', error?.details);
         AUTHENTICATION_STATUS = 'unauthenticated';
         return false;
       }

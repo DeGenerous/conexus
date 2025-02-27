@@ -6,7 +6,6 @@ import {
   web3loginError,
   referralCodes,
   authenticated,
-  availables,
   newsletterStatus,
 } from '@stores/account';
 import { toastStore } from '@stores/toast';
@@ -182,7 +181,7 @@ class Account {
 
       web3LoggedIn.set(true);
       authenticated.set({ user: resp.user, loggedIn: true });
-      availables.set(resp.available);
+
 
       if (resp.message) {
         toastStore.show(resp.message, 'info');
@@ -225,7 +224,7 @@ class Account {
       const resp = await response.json();
 
       authenticated.set({ user: resp.user, loggedIn: true });
-      availables.set(resp.available);
+
     } catch (error) {
       console.error(error);
     }
@@ -448,14 +447,14 @@ class Account {
       });
 
       if (!response.ok) {
-        new_error({ code: response.status, error: await response.text() });
+        // new_error({ code: response.status, error: await response.text() });
       }
 
       const resp = await response.json();
 
       console.log(resp.message);
     } catch (error: any) {
-      new_error({ code: 500, error: error });
+      // new_error({ code: 500, error: error });
     }
   }
 
@@ -466,14 +465,14 @@ class Account {
       });
 
       if (!response.ok) {
-        new_error({ code: response.status, error: await response.text() });
+        // new_error({ code: response.status, error: await response.text() });
       }
 
       const resp = await response.json();
 
       console.log(resp.message);
     } catch (error: any) {
-      new_error({ code: 500, error: error });
+      // new_error({ code: 500, error: error });
     }
   }
 
@@ -484,7 +483,7 @@ class Account {
       });
 
       if (!response.ok) {
-        new_error({ code: response.status, error: await response.text() });
+        // new_error({ code: response.status, error: await response.text() });
       }
 
       const resp = await response.json() as SubscriptionStatus
@@ -493,8 +492,7 @@ class Account {
       
       return resp;
     } catch (error: any) {
-      new_error({ code: 500, error: error });
-      return { is_active: false, subscribed_at: null, unsubscribed_at: null };
+      // new_error({ code: 500, error: error });
     }
   }
 }

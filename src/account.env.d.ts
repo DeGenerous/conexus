@@ -82,6 +82,7 @@ type SubscriptionStatus = {
 type AccountError = {
   signin?: Nullable<string>;
   signup?: Nullable<string>;
+  validateReferralCode?: Nullable<string>;
   googleSignin?: Nullable<string>;
   subscribeNewsletter?: Nullable<string>;
   unsubscribeNewsletter?: Nullable<string>;

@@ -133,13 +133,4 @@ export default class AccountAPI extends Fetcher {
     );
   }
 
-  /**
-   * Validate a referral code provided by another user.
-   * @returns A promise that resolves to an APIResponse containing the response data or an error.
-   * */
-  async validateReferralCode(code: string) {
-    return this.request<{ valid: boolean; referral: ReferralCode }>(
-      `/account/validate-referral-code/${code}`,
-    );
-  }
 }

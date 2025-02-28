@@ -21,12 +21,10 @@ export class Account {
 
     if (!data) {
       if (error) {
-        // api_error(error);
-        accountError.set({signin: error.message})
+        accountError.set({ signin: error.message });
+      } else {
+        accountError.set({ signin: 'Error signing in' });
       }
-      // else {
-        // toastStore.show('Error signing in', 'error');
-      // }
       return;
     }
 
@@ -39,12 +37,10 @@ export class Account {
 
     if (!data) {
       if (error) {
-        // api_error(error);
-        accountError.set({signup: error.message})
+        accountError.set({ signup: error.message });
+      } else {
+        accountError.set({ signup: 'Error signing up' });
       }
-      // else {
-      //   toastStore.show('Error signing up', 'error');
-      // }
       return;
     }
 
@@ -52,17 +48,32 @@ export class Account {
     web3LoggedIn.set(true);
   }
 
+  async validateReferralCode(code: string): Promise<ReferralCode | null> {
+    const { data, error } = await this.authAPI.validateReferralCode(code);
+
+    if (!data) {
+      if (error) {
+        accountError.set({ validateReferralCode: error.message });
+      } else {
+        accountError.set({
+          validateReferralCode: 'Error validating referral code',
+        });
+      }
+      return null;
+    }
+
+    return data.referral;
+  }
+
   async googleSignin(): Promise<void> {
     const { data, error } = await this.authAPI.googleSignin();
 
     if (!data) {
       if (error) {
-        // api_error(error);
-        accountError.set({googleSignin: error.message})
+        accountError.set({ googleSignin: error.message });
+      } else {
+        accountError.set({ googleSignin: 'Error signing in with google' });
       }
-      // else {
-      //   toastStore.show('Error signing up with google', 'error');
-      // }
       return;
     }
 
@@ -90,12 +101,12 @@ export class Account {
 
     if (!data) {
       if (error) {
-        // api_error(error);
-        accountError.set({subscribeNewsletter: error.message})
+        accountError.set({ subscribeNewsletter: error.message });
+      } else {
+        accountError.set({
+          subscribeNewsletter: 'Error subscribing to newsletter',
+        });
       }
-      // else {
-      //   toastStore.show('Error subscribing to newsletter', 'error');
-      // }
       return;
     }
 
@@ -107,12 +118,12 @@ export class Account {
 
     if (!data) {
       if (error) {
-        // api_error(error);
-        accountError.set({unsubscribeNewsletter: error.message})
+        accountError.set({ unsubscribeNewsletter: error.message });
+      } else {
+        accountError.set({
+          unsubscribeNewsletter: 'Error unsubscribing from newsletter',
+        });
       }
-      // else {
-      //   toastStore.show('Error unsubscribing from newsletter', 'error');
-      // }
       return;
     }
 
@@ -125,7 +136,7 @@ export class Account {
     if (!data) {
       if (error) {
         api_error(error);
-        accountError.set({subscriptionStatus: error.message})
+        accountError.set({ subscriptionStatus: error.message });
       } else {
         toastStore.show('Error getting subscription status', 'error');
       }
@@ -209,12 +220,10 @@ export class Account {
 
     if (!data) {
       if (error) {
-        // api_error(error);
-        accountError.set({changePassword: error.message})
+        accountError.set({ changePassword: error.message });
+      } else {
+        accountError.set({ changePassword: 'Error changing password' });
       }
-      // else {
-      //   toastStore.show('Error changing password', 'error');
-      // }
       return;
     }
 
@@ -243,12 +252,10 @@ export class Account {
 
     if (!data) {
       if (error) {
-        // api_error(error);
-        accountError.set({selectMainWallet: error.message})
+        accountError.set({ selectMainWallet: error.message });
+      } else {
+        accountError.set({ selectMainWallet: 'Error changing wallet' });
       }
-      // else {
-      //   toastStore.show('Error changing wallet', 'error');
-      // }
       return;
     }
 
@@ -261,12 +268,12 @@ export class Account {
 
     if (!data) {
       if (error) {
-        // api_error(error);
-        accountError.set({generateReferralCode: error.message})
+        accountError.set({ generateReferralCode: error.message });
+      } else {
+        accountError.set({
+          generateReferralCode: 'Error generating referral codes',
+        });
       }
-      // else {
-      //   toastStore.show('Error signigenerating referral codes', 'error');
-      // }
       return;
     }
 
@@ -287,19 +294,6 @@ export class Account {
     }
 
     referralCodes.set(data.codes);
-  }
-
-  async validateReferralCode(code: string): Promise<ReferralCode | null> {
-    const { data, error } = await this.accountAPI.validateReferralCode(code);
-
-    if (!data) {
-      if (error) {
-        api_error(error);
-      }
-      return null;
-    }
-
-    return data.referral;
   }
 
   async useReferralCode(code: string): Promise<void> {

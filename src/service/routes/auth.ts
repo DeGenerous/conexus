@@ -34,7 +34,7 @@ export default class AuthAPI extends Fetcher {
    * */
   async validateReferralCode(code: string) {
     return this.request<{ valid: boolean; referral: ReferralCode }>(
-      `/account/validate-referral-code/${code}`,
+      `/auth/validate-referral-code/${code}`,
     );
   }
 

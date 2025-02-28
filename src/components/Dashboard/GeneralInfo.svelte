@@ -1,13 +1,18 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { authenticated } from '@stores/account';
+  import { Account } from '@lib/account';
 
   type Story = {
     title: string;
   };
 
-  let user = $authenticated.user;
+  let user: Nullable<User>;
+
+  onMount(async () => {
+    user = await Account.getUser();
+  });
+
   let storiesPlayedLastWeek = [] as Story[];
   let topPerformingStories = [] as Story[];
   let isLoading = true;

@@ -91,7 +91,7 @@ export default class AccountAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async changePassword(old_password: string, new_password: string) {
-    return this.request<APISTDResposne>('/account/change-password', {
+    return this.request<APISTDResposne>('/account/change-account-password', {
       method: 'POST',
       body: JSON.stringify({ old_password, new_password }),
     });

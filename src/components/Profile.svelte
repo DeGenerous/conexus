@@ -54,11 +54,9 @@
   let loginMail: string = '';
   let loginPassword: string = '';
 
-  let account: Account;
+  let account: Account = new Account();
 
   onMount(async () => {
-    account = new Account();
-
     account.me();
   });
 
@@ -131,7 +129,7 @@
         email,
         password,
         referred: referralCodeValid,
-        role: Roles.USER,
+        role: 'user',
       },
       referral_code: referralCode,
       newsletter: newsletterSignup,

@@ -6,7 +6,7 @@ type SignUp = {
   last_name: string;
   email: string;
   password: string;
-  role: Roles;
+  role: Roles | string;
 };
 
 type AuthWallet = {

@@ -5,11 +5,7 @@
   import EyeSVG from '@components/icons/Eye.svelte';
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import { Account } from '@lib/account';
-  import {
-    authenticated,
-    referralCodes,
-    accountError
-  } from '@stores/account';
+  import { authenticated, referralCodes, accountError } from '@stores/account';
   import {
     showModal,
     showProfile,
@@ -83,7 +79,8 @@
       old_password: editOldPassword,
       new_password: editPassword,
     });
-    if (!$accountError || !$accountError.changePassword) editingPassword = false;
+    if (!$accountError || !$accountError.changePassword)
+      editingPassword = false;
   };
 
   // Sign-up form
@@ -95,9 +92,12 @@
   let confirmPassword: string = '';
   let email: string = '';
 
-  $: mandatoryFields = email && first_name && last_name && password;
+  $: mandatoryFields = emailValidation && first_name && last_name && password;
   $: passwordsMatch =
     password && confirmPassword ? password == confirmPassword : false;
+  $: emailValidation = email.match(
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+  );
   let termsAccepted: boolean = false;
   let newsletterSignup: boolean = false;
 
@@ -716,10 +716,11 @@
 
               <button
                 class="sign-in-button"
-                on:click|preventDefault={() => account.signin({
-                  email: loginMail,
-                  password: loginPassword,
-                })}
+                on:click|preventDefault={() =>
+                  account.signin({
+                    email: loginMail,
+                    password: loginPassword,
+                  })}
                 on:pointerover={() => {
                   if (loginMail && loginPassword) signInSvgFocus = true;
                 }}
@@ -788,7 +789,7 @@
               <label for="new-user-mail">Mail</label>
               <input
                 class="user-input"
-                class:red-border={!email}
+                class:red-border={!emailValidation}
                 type="email"
                 id="new-user-mail"
                 placeholder="Enter email"

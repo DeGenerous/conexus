@@ -5,7 +5,9 @@
 
   let email: string = '';
 
-  $: stringValidation = email.includes('@') && email.includes('.')
+  $: emailValidation = email.match(
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+  );
 </script>
 
 <div class="container-wrapper">
@@ -13,18 +15,21 @@
     <h3>You will receive a confirmation email with link</h3>
     <input
       class="user-input"
-      class:red-border={!email}
+      class:red-border={!emailValidation}
       type="email"
       bind:value={email}
       placeholder="Email"
       required
     />
 
-    {#if !email}
+    {#if !emailValidation}
       <p class="validation">Provide the email associated with your profile</p>
     {/if}
 
-    <button on:click={() => acct.forgotPassword(email)} disabled={!email || !stringValidation}>
+    <button
+      on:click={() => acct.forgotPassword(email)}
+      disabled={!email || !emailValidation}
+    >
       Send verification link
     </button>
   </div>

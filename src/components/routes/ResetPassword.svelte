@@ -12,9 +12,12 @@
   let passwordConfirm: string = '';
 
   $: passwordsMatch = password && password === passwordConfirm;
-  $: validation = email && password.length >= 8 && passwordsMatch;
+  $: validation =
+    email && password.length >= 8 && passwordsMatch && emailValidation;
 
-  $: stringValidation = email.includes('@') && email.includes('.');
+  $: emailValidation = email.match(
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+  );
 </script>
 
 <div class="container-wrapper">
@@ -22,14 +25,14 @@
     <h3>Confirm your email address and create a new password</h3>
     <input
       class="user-input"
-      class:red-border={!email || !stringValidation}
+      class:red-border={!email || !emailValidation}
       type="email"
       bind:value={email}
       placeholder="Email"
       required
     />
 
-    {#if !email || !stringValidation}
+    {#if !email || !emailValidation}
       <p class="validation">Provide the email associated with your profile</p>
     {/if}
 

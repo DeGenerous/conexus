@@ -80,7 +80,7 @@
     editPassword.length >= 8 && editPassword === editPasswordConfirm;
 
   const saveChangedPassword = async () => {
-    $accountError = null;
+    $accountError = null as AccountError;
     await account.changePassword({
       old_password: editOldPassword,
       new_password: editPassword,

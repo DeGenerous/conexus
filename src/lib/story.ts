@@ -317,7 +317,7 @@ export class CoNexusGame extends GameAPI {
 
   static #formatFileName(category: string): string {
     let fileName = category.toLowerCase();
-    let formattedFileName = fileName.replace(/[\s.\-\/]+/g, '');
+    let formattedFileName = fileName.replace(/[^a-z0-9]/g, '');
 
     storyTitle = category;
 

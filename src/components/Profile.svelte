@@ -615,7 +615,7 @@
                 .length}
             </h2>
           {:else}
-            <button on:click={() => account.generateReferralCode()}>
+            <button on:click={() => account.generateReferralCode().then(() => window.location.reload())}>
               Get referral codes
             </button>
 

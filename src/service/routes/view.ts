@@ -13,12 +13,12 @@ export default class ViewAPI extends Fetcher {
 
   async searchSectionByTopic(section: string, topic: string) {
     return this.request<SectionCategory[]>(
-      `/view/topics/section/${section}/${topic}`,
+      `/view/topics/search/${section}/${topic}`,
     );
   }
 
   async genres() {
-    return this.request<{ genres: Genre[] }>('/view/genres');
+    return this.request<Genre[]>('/view/genres');
   }
 
   async genreTopics(genre: string, section: string) {

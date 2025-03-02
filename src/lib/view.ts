@@ -81,7 +81,7 @@ export class CoNexusApp extends ViewAPI {
       return [];
     }
 
-    return data.genres;
+    return data;
   }
 
   async getGenreTopics(

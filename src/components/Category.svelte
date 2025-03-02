@@ -14,7 +14,7 @@
   let app: CoNexusApp = new CoNexusApp();
 
   let categories: SectionCategory[] = [];
-  let genres: { id: number; name: string }[] = [];
+  let genres: Genre[] = [];
 
   onMount(async () => {
     await checkUserState(`/${section}`);

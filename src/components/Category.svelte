@@ -56,8 +56,8 @@
     isSearching = true; // Set isSearching to true when the debounce starts
     debounceTimeout = setTimeout(async () => {
       filteredCategories = await app.searchSectionCategories(
-        searchField.replace(/[^a-zA-Z ]/g, ''),
         section,
+        searchField.replace(/[^a-zA-Z ]/g, ''),
       );
       isSearching = false; // Stop searching after results are returned
       if (isSorting) handleSorting();

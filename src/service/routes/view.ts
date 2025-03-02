@@ -13,7 +13,7 @@ export default class ViewAPI extends Fetcher {
 
   async searchSectionByTopic(section: string, topic: string) {
     return this.request<SectionCategory[]>(
-      `/view/topics/search/${section}/${topic}`,
+      `/view/topics/search/${section}?name=${topic}`,
     );
   }
 

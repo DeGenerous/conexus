@@ -202,7 +202,7 @@
     flex-flow: column nowrap;
     justify-content: flex-start;
     align-items: center;
-    gap: 1vw;
+    gap: 1.5vw;
     padding: 2vw;
     background-image: radial-gradient(
       rgba(0, 0, 0, 0),

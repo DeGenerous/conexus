@@ -1224,6 +1224,7 @@
   .active-code {
     color: rgba(255, 255, 255, 0.75);
     text-shadow: 0 0 0.1vw rgb(51, 226, 230);
+    cursor: text;
   }
 
   /* Newsletter */

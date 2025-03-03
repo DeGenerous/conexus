@@ -191,7 +191,7 @@
             />
           </svg>
         {/if}
-        <select class="genre-selector" bind:value={activeGenre}>
+        <select class="selector" bind:value={activeGenre}>
           <option value="" selected={true} disabled hidden>Select genre</option>
           {#each genres as genre (genre.id)}
             <option value={genre.name}>{genre.name}</option>
@@ -345,7 +345,7 @@
             "
           />
         </svg>
-        <select class="genre-selector" style="cursor: inherit;">
+        <select class="selector" style="cursor: inherit;">
           <option value="" selected={true} disabled hidden>Select genre</option>
         </select>
       </div>
@@ -457,22 +457,6 @@
     border-radius: 1vw;
   }
 
-  .genre-selector {
-    font-size: 1.5vw;
-    line-height: 3vw;
-    padding-block: 0.75vw;
-    width: 20vw;
-    text-align: center;
-    outline: none;
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 0.5vw;
-    cursor: pointer;
-    /* color: rgba(1, 0, 32, 0.9); */
-    /* background-color: rgba(51, 226, 230, 0.5); */
-    color: rgba(51, 226, 230, 0.9);
-    background-color: rgba(22, 30, 95, 0.9);
-  }
-
   .search-field {
     font-size: 1.5vw;
     line-height: 3vw;
@@ -530,14 +514,6 @@
       gap: 0.25em;
       font-size: 1em;
       line-height: 1.5em;
-      width: 100%;
-    }
-
-    .genre-selector {
-      font-size: inherit;
-      line-height: inherit;
-      border-radius: 0.25em;
-      padding-block: 0.25em;
       width: 100%;
     }
 

@@ -24,10 +24,12 @@
   }
 </script>
 
-{#await Account.getUser() then user: Nullable<User>}
+{#await Account.getUser()}
+  <h2>Loading...</h2>
+{:then user: Nullable<User>}
   <h2>Welcome, {user?.first_name}!</h2>
   
-  <div class="metric-card container">
+  <div class="container">
     <h3>Stories Played Last Week</h3>
     <ul>
       {#each storiesPlayedLastWeek as story}<li>{story.title}</li>{/each}
@@ -41,7 +43,7 @@
     </ul>
   </div>
 
-  <div class="metric-card container">
+  <div class="container">
     <h3>Top Performing Stories</h3>
     <ul>
       {#each topPerformingStories as story}<li>{story.title}</li>{/each}
@@ -59,9 +61,14 @@
 {/await}
 
 <style>
-  .metric-card {
-    width: 90vw;
+  .container {
+    width: 95vw;
     padding-bottom: 0;
+    gap: 0;
+  }
+
+  .container h3 {
+    color: rgba(51, 226, 230, 0.9);
   }
 
   ul {
@@ -72,5 +79,17 @@
     overflow-x: scroll;
     gap: 1vw;
     padding: 2vw;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .container {
+      width: 100vw;
+      border-radius: 0;
+    }
+
+    ul {
+      gap: 1em;
+      padding: 1em;
+    }
   }
 </style>

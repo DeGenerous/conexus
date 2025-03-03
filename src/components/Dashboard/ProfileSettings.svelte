@@ -327,6 +327,7 @@
       <div class="newsletter-subscription container">
         <h3>Subscribe to Newsletter:</h3>
         <button
+          class="green-button"
           on:click={() => {
             account
               .subscribeNewsletter()
@@ -354,6 +355,15 @@
 
   .stories-count strong {
     color: rgba(51, 226, 230, 0.9);
+  }
+
+  label {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
+    white-space: nowrap;
   }
 
   /* Wallets */
@@ -457,16 +467,6 @@
     gap: 1vw;
   }
 
-  .newsletter-subscription button {
-    background-color: rgba(0, 185, 55, 0.75);
-  }
-
-  .newsletter-subscription button:hover,
-  .newsletter-subscription button:active {
-    color: #010020;
-    background-color: rgb(0, 185, 55);
-  }
-
   .unsubscribe-button {
     color: rgba(255, 60, 64, 0.75);
     cursor: pointer;
@@ -479,8 +479,8 @@
   }
 
   @media only screen and (max-width: 600px) {
-    label select {
-      width: 25vw;
+    label {
+      gap: 1em;
     }
 
     .wallets-container,

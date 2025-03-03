@@ -93,6 +93,34 @@
   height: 3vw;
 }
 
+.buttons-wrapper {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1vw;
+}
+
+.green-button {
+  background-color: rgba(0, 185, 55, 0.75);
+}
+
+.green-button:hover,
+.green-button:active {
+  color: #010020;
+  background-color: rgb(0, 185, 55);
+}
+
+.red-button {
+  background-color: rgba(255, 60, 64, 0.75);
+}
+
+.red-button:hover,
+.red-button:active {
+  color: #010020;
+  background-color: rgb(255, 60, 64);
+}
+
 @media only screen and (max-width: 600px) {
   .sign-icon {
     height: 0.8em;
@@ -140,5 +168,10 @@
     border-radius: 0.25em;
     padding-block: 0.25em;
     width: 100%;
+  }
+
+  .buttons-wrapper {
+    flex-wrap: wrap;
+    gap: 0.5em;
   }
 }

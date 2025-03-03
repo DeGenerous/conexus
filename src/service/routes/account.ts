@@ -132,5 +132,4 @@ export default class AccountAPI extends Fetcher {
       '/account/get-referral-codes',
     );
   }
-
 }

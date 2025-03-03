@@ -56,7 +56,8 @@
       <div class="nav-section">
         <div
           class="nav-item"
-          class:active={currentComponent === section.component || section.subsections && section.expanded}
+          class:active={currentComponent === section.component ||
+            (section.subsections && section.expanded)}
           on:click={() => toggleSection(i)}
           role="button"
           tabindex="0"
@@ -64,11 +65,11 @@
           <span>{section.name}</span>
           {#if section.subsections}
             <svg
-              xmlns='http://www.w3.org/2000/svg'
+              xmlns="http://www.w3.org/2000/svg"
               viewBox="-100 -100 200 200"
               class="option-selector-svg"
-              fill={section.expanded ? "rgb(51, 226, 230)" : "#dedede"}
-              stroke={section.expanded ? "rgb(51, 226, 230)" : "#dedede"}
+              fill={section.expanded ? 'rgb(51, 226, 230)' : '#dedede'}
+              stroke={section.expanded ? 'rgb(51, 226, 230)' : '#dedede'}
               stroke-width="20"
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -83,25 +84,25 @@
               />
             </svg>
           {/if}
-          </div>
-          {#if section.subsections && section.expanded}
-            <div class="subsections blur">
-              {#each section.subsections as sub}
-                <div
-                  class="sub-nav-item"
-                  on:click={() => {
-                    selectComponent(sub.component);
-                    dashboardSections[i].expanded = false;
-                  }}
-                  role="button"
-                  tabindex="0"
-                >
-                  {sub.name}
-              </div>
-              {/each}
-            </div>
-          {/if}
         </div>
+        {#if section.subsections && section.expanded}
+          <div class="subsections blur">
+            {#each section.subsections as sub}
+              <div
+                class="sub-nav-item"
+                on:click={() => {
+                  selectComponent(sub.component);
+                  dashboardSections[i].expanded = false;
+                }}
+                role="button"
+                tabindex="0"
+              >
+                {sub.name}
+              </div>
+            {/each}
+          </div>
+        {/if}
+      </div>
     {/each}
   </nav>
 
@@ -126,7 +127,7 @@
     justify-content: space-around;
     align-items: center;
     background-color: rgba(36, 65, 189, 0.75);
-    box-shadow:0 0 0.5vw #010020;
+    box-shadow: 0 0 0.5vw #010020;
     z-index: 100;
     position: sticky;
     top: 0;
@@ -165,7 +166,7 @@
     animation: fadeIn 0.3s ease-in-out forwards;
     border-bottom-right-radius: 1.5vw;
     border-bottom-left-radius: 1.5vw;
-    box-shadow:0 0.25vw 0.5vw #010020;
+    box-shadow: 0 0.25vw 0.5vw #010020;
   }
 
   .sub-nav-item {

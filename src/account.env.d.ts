@@ -90,4 +90,4 @@ type AccountError = {
   changePassword?: Nullable<string>;
   selectMainWallet?: Nullable<string>;
   generateReferralCode?: Nullable<string>;
-} | null
+} | null;

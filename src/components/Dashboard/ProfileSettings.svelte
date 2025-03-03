@@ -1,26 +1,55 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { Account } from '@lib/account';
-  import { authenticated, referralCodes } from '@stores/account';
+  import { referralCodes } from '@stores/account';
+
   import Eye from '@components/icons/Eye.svelte';
   import passwordVisible from '@stores/password-visibility';
 
-  let account: Account = new Account();
-  onMount(async () => {
-    account.me();
-  });
+  import WalletConnect from '@components/web3/WalletConnect.svelte';
+  import {
+    showModal,
+    secondButton,
+    handleSecondButton,
+    modalContent,
+  } from '@stores/modal';
 
-  $: user = $authenticated.user;
-
+  let account = new Account();
   let password: string = 'password';
 
-  async function saveProfileSettings() {
+  async function saveProfileSettings(user: User) {
     await fetch('/api/user/settings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(user),
     });
   }
+
+  // Wallets
+
+  let activeWalletStyling = `
+    color: rgb(51, 226, 230);
+    background-color: rgb(45, 90, 216);
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25), 0 0 0.5vw rgba(51, 226, 230, 0.5);
+  `;
+
+  const walletSelectConfirm = (address: string) => {
+    $secondButton = 'Select';
+    $handleSecondButton = () => {
+      handleWalletSelect(address);
+      $showModal = false;
+    };
+    $modalContent =
+      '<h2>Are you sure you want to select this address as a main one?</h2>';
+    $showModal = true;
+  };
+
+  const handleWalletSelect = async (address: string) => {
+    await account.selectMainWallet(address);
+    // reload the page to update the user object
+    location.reload();
+  };
+
+  // Newsletter
 
   let updateNewsletterStatus: boolean | null = null;
   const dateToString = (date: Date) => {
@@ -35,8 +64,9 @@
   };
 </script>
 
-{#if user}
-  {#if user.available}
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+{#await Account.getUser() then user}
+  {#if user?.available}
     <div class="stories-count">
       <h3>
         You have used
@@ -55,7 +85,7 @@
       {/if}
     </div>
 
-    <hr>
+    <hr />
   {/if}
 
   <h2>Profile Settings</h2>
@@ -67,7 +97,7 @@
         id="email"
         class="user-input"
         type="text"
-        bind:value={user.email}
+        bind:value={user!.email}
         disabled={true}
       />
     </div>
@@ -78,7 +108,7 @@
         id="first-name"
         class="user-input"
         type="text"
-        bind:value={user.first_name}
+        bind:value={user!.first_name}
       />
     </div>
 
@@ -88,7 +118,7 @@
         id="last-name"
         class="user-input"
         type="text"
-        bind:value={user.last_name}
+        bind:value={user!.last_name}
       />
     </div>
 
@@ -117,13 +147,72 @@
       </label>
     </div>
 
-    <button on:click={saveProfileSettings}>Save Changes</button>
+    <button on:click={() => saveProfileSettings(user!)}>Save Changes</button>
   </div>
-{/if}
+
+  <hr />
+
+  <div class="wallet-connect">
+    {#if user && !user.faux}
+      {#if user.wallets && user.wallets.length >= 1}
+        <div class="wallets-container">
+          <h2>Connected Addresses:</h2>
+          <ul>
+            {#each user.wallets.filter((address) => !address.faux) as wallet, index}
+              <li
+                class="wallet"
+                style={wallet.wallet == user.main_wallet
+                  ? activeWalletStyling
+                  : ''}
+              >
+                <p>{index + 1}</p>
+                <span
+                  style={wallet.wallet == user.main_wallet
+                    ? 'color: rgb(51, 226, 230);'
+                    : ''}
+                  >{wallet.wallet.slice(0, 6) +
+                    '...' +
+                    wallet.wallet.slice(-4)}</span
+                >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  class="star-svg"
+                  fill="#010020"
+                  style={wallet.wallet === user.main_wallet
+                    ? 'fill: rgb(51, 226, 230)'
+                    : ''}
+                  on:click={() => {
+                    if (wallet.wallet != user!.main_wallet)
+                      walletSelectConfirm(wallet.wallet);
+                  }}
+                  role="button"
+                  tabindex="0"
+                >
+                  <path
+                    d="m12 3 2.23 6.88h7.23l-5.85 4.24L17.85 21 12 16.75 6.15 21l2.24-6.88-5.85-4.24h7.23L12 3z"
+                  >
+                  </path>
+                </svg>
+              </li>
+            {/each}
+          </ul>
+          <div class="buttons-container">
+            <WalletConnect linking={true} title={'Add another address'} />
+          </div>
+        </div>
+      {/if}
+    {:else}
+      <div class="buttons-container">
+        <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
+      </div>
+    {/if}
+  </div>
+{/await}
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $referralCodes}
-  <hr>
+  <hr />
 
   <h2>Referral Codes:</h2>
 
@@ -148,8 +237,7 @@
             stroke-linejoin="round"
             stroke-linecap="round"
             opacity="0.75"
-            on:click={() =>
-              navigator.clipboard.writeText(code.code)}
+            on:click={() => navigator.clipboard.writeText(code.code)}
             role="button"
             tabindex="0"
             aria-label="Copy code"
@@ -268,6 +356,64 @@
     color: rgba(51, 226, 230, 0.9);
   }
 
+  /* Wallets */
+
+  .wallet-connect {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2vw;
+  }
+
+  .wallets-container {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2vw;
+  }
+
+  ul {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    gap: 1vw;
+  }
+
+  .wallet {
+    min-width: 22.5vw;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1vw;
+    padding: 0.5vw 1vw;
+    font-size: 2vw;
+    background-color: rgb(36, 65, 189);
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
+    border-radius: 1vw;
+    cursor: default;
+    color: #010020;
+  }
+
+  .wallet span {
+    text-align: center;
+    padding: 1vw 2vw;
+    font-size: 1.5vw;
+    color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(1, 0, 32, 0.5);
+    box-shadow: inset 0 0 0.5vw #010020;
+    border-radius: 1vw;
+  }
+
+  .star-svg {
+    height: 3vw;
+    width: 3vw;
+  }
+
+  /* Referral codes */
+
   .referral-codes {
     display: flex;
     flex-flow: row wrap;
@@ -301,6 +447,8 @@
     cursor: text;
   }
 
+  /* Newsletter */
+
   .newsletter-subscription {
     display: flex;
     flex-flow: row wrap;
@@ -333,6 +481,32 @@
   @media only screen and (max-width: 600px) {
     label select {
       width: 25vw;
+    }
+
+    .wallets-container,
+    ul {
+      gap: 1em;
+    }
+
+    .wallet {
+      min-width: 75vw;
+      gap: 0.5em;
+      padding: 0.25em 0.5em;
+      font-size: 1.2em;
+      width: auto;
+      border-radius: 0.5em;
+    }
+
+    .wallet span {
+      width: 100%;
+      padding: 0.25em 1em;
+      font-size: 1em;
+      border-radius: 0.5em;
+    }
+
+    .star-svg {
+      height: 1.75em;
+      width: 1.75em;
     }
 
     .referral-codes {

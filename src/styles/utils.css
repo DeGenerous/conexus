@@ -47,6 +47,20 @@
   cursor: text;
 }
 
+.story-input {
+  width: 100%;
+  font-size: 1.75vw;
+  line-height: 1.75vw;
+  padding: 1.5vw 2vw;
+  color: white;
+  border: 0.1vw solid rgba(51, 226, 230, 0.5);
+  box-shadow: 0 0 0.5vw #010020;
+  border-radius: 1vw;
+  background-color: rgba(22, 30, 95, 0.75);
+  outline: none;
+  cursor: text;
+}
+
 .user-input:disabled {
   opacity: 1; /* for iOS */
 }
@@ -73,6 +87,15 @@
   /* background-color: rgba(51, 226, 230, 0.5); */
   color: rgba(51, 226, 230, 0.9);
   background-color: rgba(22, 30, 95, 0.9);
+}
+
+.selector-label {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1vw;
+  white-space: nowrap;
 }
 
 .password-input-container {
@@ -137,10 +160,15 @@
     gap: 1em;
   }
 
-  .user-input {
+  .user-input,
+  .story-input {
     width: 70vw;
     font-size: 1.1em;
     line-height: 1.75em;
+  }
+
+  .story-input {
+    width: auto;
   }
 
   .input-container {
@@ -168,6 +196,10 @@
     border-radius: 0.25em;
     padding-block: 0.25em;
     width: 100%;
+  }
+
+  .selector-label {
+    gap: 1em;
   }
 
   .buttons-wrapper {

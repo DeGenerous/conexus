@@ -218,7 +218,7 @@
   @media only screen and (max-width: 600px) {
     nav {
       justify-content: center;
-      position: static;
+      top: 5em;
     }
 
     .nav-item {

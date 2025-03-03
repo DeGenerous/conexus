@@ -13,32 +13,16 @@
   }
 </script>
 
-<div class="toggle-buttons">
-  <button on:click={showParameters}> Show Parameters </button>
-  <button on:click={showBlank}> Show Blank </button>
+<div class="buttons-wrapper">
+  <h3>Format:</h3>
+  <button on:click={showParameters}>Table</button>
+  <button on:click={showBlank}>Open</button>
 </div>
 
-<div class="create-content">
+<div class="container-wrapper">
   {#if selectedComponent === 'Blank'}
     <Blank />
   {:else}
     <Parameters />
   {/if}
 </div>
-
-<style>
-  .toggle-buttons {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    width: 100%;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    justify-content: center;
-  }
-
-  .create-content {
-    display: flex;
-    justify-content: center;
-  }
-</style>

@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from 'svelte';
   import { createEventDispatcher } from 'svelte';
 
   let topicName = '';
@@ -52,19 +51,23 @@
   }
 </script>
 
-<div class="container">
-  <h1>Prompt</h1>
+<h2>Prompt</h2>
+
+<div class="input-container">
   <label for="topic">Topic</label>
-  <input type="text" bind:value={topicName} />
+  <input id="topic" class="story-input" type="text" bind:value={topicName} />
+</div>
 
+<div class="input-container">
   <label for="description">Description</label>
-  <textarea bind:value={topicDescription}></textarea>
+  <textarea id="description" class="story-input" bind:value={topicDescription}></textarea>
+</div>
 
+<div class="input-container container">
+  <label for="image-prompts">Image Prompt</label>
   {#if imageResponse}
-    <label for="imagePrompts">Image Prompt</label>
-    <textarea bind:value={imageResponse} rows="5"></textarea>
+    <textarea id="image-prompts" class="user-input" bind:value={imageResponse} rows="5"></textarea>
   {:else}
-    <label for="imagePrompts">Image Prompts</label>
     <ul>
       {#each imagePrompts as prompt, index}
         <li>
@@ -76,65 +79,69 @@
         </li>
       {/each}
     </ul>
-    <input type="text" bind:value={newImagePrompt} />
+    <input id="image-prompts" class="user-input" type="text" bind:value={newImagePrompt} />
     <button class="primary-button" on:click={addImagePrompt}
       >Add Image Prompt</button
     >
   {/if}
+</div>
 
+<div class="input-container">
   <label for="response">Prompt</label>
-  <textarea bind:value={response} rows="5"></textarea>
+  <textarea id="response" class="story-input" bind:value={response} rows="5"></textarea>
+</div>
 
-  <label for="category">Select Category</label>
-  <select bind:value={categoryId}>
-    {#each categories as cat}
-      <option value={cat.id}>{cat.name}</option>
-    {/each}
-  </select>
+<div class="input-container">
+  <label for="category" class="selector-label">
+    Select Category
+    <select class="selector" bind:value={categoryId}>
+      <option value="" selected={true} disabled hidden>Select</option>
+      {#each categories as cat}
+        <option value={cat.id}>{cat.name}</option>
+      {/each}
+    </select>
+  </label>
+</div>
 
-  <button class="primary-button" on:click={savePrompt}>Save Prompt</button>
-  <button class="secondary-button" on:click={() => dispatch('close')}
-    >Close</button
+<div class="buttons-wrapper">
+  <button
+    class="red-button"
+    on:click={() => dispatch('close')}
   >
+    Close
+  </button>
+  <button
+    class="green-button"
+    on:click={savePrompt}
+  >
+    Save Prompt
+  </button>
 </div>
 
 <style>
-  .container {
-    background: transparent;
-    padding: 16px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 70%;
-    max-height: 80%;
-    overflow-y: auto;
+  #topic {
+    width: 50vw;
   }
-  label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
+
+  #image-prompts {
+    width: 85vw;
   }
-  input,
-  textarea,
-  select {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+
+  textarea {
+    min-width: 50vw;
+    min-height: 10vw;
+    max-width: 90vw;
+    max-height: 50vh;
   }
-  button {
-    padding: 8px 16px;
-    margin-right: 8px;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  .primary-button {
-    background: blue;
-    color: white;
-  }
-  .secondary-button {
-    background: gray;
-    color: white;
+
+  @media only screen and (max-width: 600px) {
+    .container {
+      width: 100vw;
+      border-radius: 0;
+    }
+
+    .story-input {
+      width: 90vw !important;
+    }
   }
 </style>

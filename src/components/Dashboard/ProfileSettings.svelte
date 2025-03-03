@@ -137,7 +137,7 @@
     </div>
 
     <div class="input-container">
-      <label>
+      <label class="selector-label">
         Visibility:
         <select class="selector">
           <option value="" selected={true} disabled hidden>Select</option>
@@ -357,15 +357,6 @@
     color: rgba(51, 226, 230, 0.9);
   }
 
-  label {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vw;
-    white-space: nowrap;
-  }
-
   /* Wallets */
 
   .wallet-connect {
@@ -479,10 +470,6 @@
   }
 
   @media only screen and (max-width: 600px) {
-    label {
-      gap: 1em;
-    }
-
     .wallets-container,
     ul {
       gap: 1em;

@@ -13,7 +13,7 @@
 
 <div class="container">
   <div class="input-container">
-    <label>
+    <label class="selector-label">
       Sort by:
       <select
         class="selector"
@@ -46,15 +46,6 @@
     gap: 0;
   }
 
-  label {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vw;
-    white-space: nowrap;
-  }
-
   ul {
     width: inherit;
     display: flex;
@@ -66,10 +57,6 @@
   }
 
   @media only screen and (max-width: 600px) {
-    label {
-      gap: 1em;
-    }
-
     .container {
       width: 100vw;
       border-radius: 0;

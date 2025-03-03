@@ -20,7 +20,7 @@
   };
 
   let dashboardSections: Section[] = [
-    { name: 'General Info', component: GeneralInfo },
+    { name: 'Stats', component: GeneralInfo },
     {
       name: 'Stories',
       subsections: [
@@ -30,7 +30,7 @@
       ],
       expanded: false,
     },
-    { name: 'Profile Settings', component: ProfileSettings },
+    { name: 'Profile', component: ProfileSettings },
   ];
 
   let currentComponent: any = GeneralInfo;
@@ -48,40 +48,65 @@
   }
 </script>
 
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <div class="dashboard">
   <!-- Sidebar Navigation -->
-  <nav class="sidebar">
+  <nav class="blur">
     {#each dashboardSections as section, i}
       <div class="nav-section">
-        <button
-          class="nav-item {currentComponent === section.component
-            ? 'active'
-            : ''}"
+        <div
+          class="nav-item"
+          class:active={currentComponent === section.component || section.subsections && section.expanded}
           on:click={() => toggleSection(i)}
+          role="button"
+          tabindex="0"
         >
           <span>{section.name}</span>
           {#if section.subsections}
-            <span class="arrow">{section.expanded ? '↓' : '→'}</span>
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              viewBox="-100 -100 200 200"
+              class="option-selector-svg"
+              fill={section.expanded ? "rgb(51, 226, 230)" : "#dedede"}
+              stroke={section.expanded ? "rgb(51, 226, 230)" : "#dedede"}
+              stroke-width="20"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              transform={section.expanded ? 'rotate(90)' : ''}
+            >
+              <polygon
+                class="option-selector-icon"
+                points="
+                  -40 -90 -40 90 50 0
+                "
+                opacity="0.75"
+              />
+            </svg>
           {/if}
-        </button>
-        {#if section.subsections && section.expanded}
-          <div class="subsections">
-            {#each section.subsections as sub}
-              <button
-                class="sub-nav-item"
-                on:click={() => selectComponent(sub.component)}
-              >
-                {sub.name}
-              </button>
-            {/each}
           </div>
-        {/if}
-      </div>
+          {#if section.subsections && section.expanded}
+            <div class="subsections blur">
+              {#each section.subsections as sub}
+                <div
+                  class="sub-nav-item"
+                  on:click={() => {
+                    selectComponent(sub.component);
+                    dashboardSections[i].expanded = false;
+                  }}
+                  role="button"
+                  tabindex="0"
+                >
+                  {sub.name}
+              </div>
+              {/each}
+            </div>
+          {/if}
+        </div>
     {/each}
   </nav>
 
   <!-- Content Display -->
-  <div class="content">
+  <div class="content blur">
     <svelte:component this={currentComponent} />
   </div>
 </div>
@@ -89,77 +114,139 @@
 <style>
   .dashboard {
     display: flex;
-    height: 150vh;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
   }
 
-  .sidebar {
-    width: 250px;
-    background-color: #2c3e50;
-    padding: 20px;
+  nav {
+    width: 100vw;
     display: flex;
-    flex-direction: column;
-    gap: 5px;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    align-items: center;
+    background-color: rgba(36, 65, 189, 0.75);
+    box-shadow:0 0 0.5vw #010020;
+    z-index: 100;
+    position: sticky;
+    top: 0;
   }
 
   .nav-section {
     display: flex;
-    flex-direction: column;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
   }
 
   .nav-item {
-    width: 100%;
     display: flex;
-    justify-content: space-between;
+    flex-flow: row nowrap;
+    justify-content: center;
     align-items: center;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 16px;
-    padding: 12px;
-    text-align: left;
+    gap: 0.5vw;
     cursor: pointer;
-    transition: background 0.3s ease;
-    border-radius: 5px;
-  }
-
-  .nav-item:hover,
-  .nav-item.active {
-    background-color: #1a252f;
+    padding: 1vw 1.5vw;
+    font-size: 1.5vw;
+    position: relative;
+    width: 100%;
   }
 
   .subsections {
     display: flex;
-    flex-direction: column;
-    padding-left: 20px;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 100%;
+    background-color: rgba(22, 30, 95);
+    animation: fadeIn 0.3s ease-in-out forwards;
+    border-bottom-right-radius: 1.5vw;
+    border-bottom-left-radius: 1.5vw;
+    box-shadow:0 0.25vw 0.5vw #010020;
   }
 
   .sub-nav-item {
-    font-size: 14px;
-    padding: 10px 15px;
-    background: none;
-    border: none;
-    color: white;
-    text-align: left;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
-    transition: background 0.3s ease;
-    border-radius: 5px;
+    padding: 1vw 1.5vw;
+    font-size: 1.25vw;
     width: 100%;
+    border-radius: 1.5vw;
   }
 
+  .nav-item:hover,
   .sub-nav-item:hover {
-    background-color: #34495e;
+    background-color: rgba(45, 90, 216, 0.9);
+    color: rgba(51, 226, 230, 0.9);
   }
 
-  .arrow {
-    transition: transform 0.2s ease;
+  .active {
+    color: rgba(51, 226, 230, 0.9);
+    text-shadow: 0 0 0.1vw rgb(51, 226, 230);
+  }
+
+  .option-selector-svg {
+    width: 1.25vw;
+    height: 1.25vw;
   }
 
   .content {
-    flex: 1;
-    position: relative;
-    padding: 30px;
-    background: black;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100vw;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1vw;
+    padding: 2vw;
+    background-image: radial-gradient(
+      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 0),
+      rgba(51, 226, 230, 0.1)
+    );
+    box-shadow:
+      inset 0 0 0.5vw rgba(51, 226, 230, 0.25),
+      0 0vw 0.5vw #010020;
+  }
+
+  @media only screen and (max-width: 600px) {
+    nav {
+      justify-content: center;
+      position: static;
+    }
+
+    .nav-item {
+      padding: 0.5em;
+      font-size: 1em;
+      gap: 0.5em;
+    }
+
+    .subsections {
+      width: 100vw;
+      border-bottom-right-radius: 0.5em;
+      border-bottom-left-radius: 0.5em;
+    }
+
+    .sub-nav-item {
+      padding: 0.5em;
+      font-size: 1em;
+      border-radius: 0.5em;
+    }
+
+    .option-selector-svg {
+      width: 0.75em;
+      height: 0.75em;
+    }
+
+    .content {
+      min-height: 100vw;
+      gap: 1em;
+      padding: 1em;
+    }
   }
 </style>

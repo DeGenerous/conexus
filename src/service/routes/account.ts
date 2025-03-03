@@ -81,7 +81,7 @@ export default class AccountAPI extends Fetcher {
   async web3SelectWallet(wallet: string) {
     return this.request<{ user: User }>('/account/web3-select-wallet', {
       method: 'POST',
-      body: JSON.stringify(wallet),
+      body: JSON.stringify({ wallet }),
     });
   }
 

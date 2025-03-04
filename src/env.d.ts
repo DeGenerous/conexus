@@ -111,3 +111,25 @@ type SectionTopic = {
   description_image?: string;
   genres?: string;
 };
+
+type FolderContent = {
+  id: string;
+  name: string;
+  description: string;
+  user_id: string;
+  parent_id: string;
+  path: string;
+  folders: FolderContent[];
+  files: FileContent[];
+}
+
+type FileContent = {
+  id: string;
+  name: string;
+  path: string;
+  content_type: string;
+  size: number;
+  parent_id: string;
+  hash: string;
+  data: string;
+}

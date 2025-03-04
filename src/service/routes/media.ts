@@ -1,10 +1,10 @@
 import Fetcher from '@service/fetcher';
 
 export default class MediaAPI extends Fetcher {
-  async upload(file: File, parent_id: string) {
+  async uploadFile(file: File, parent_id?: string) {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('parent_id', parent_id);
+    formData.append('parent_id', parent_id || '');
 
     return this.request<APISTDResposne>('/media/upload', {
       method: 'POST',
@@ -12,46 +12,31 @@ export default class MediaAPI extends Fetcher {
     });
   }
 
-  async serve(file_id: string) {
+  async serveFile(file_id: string) {
     return this.request<Blob>(`/media/serve/${file_id}`);
   }
 
-  async delete(file_id: string) {
+  async moveFile(parent_id: string, file_id: string) {
+    return this.request<APISTDResposne>('/media/move', {
+      method: 'POST',
+      body: JSON.stringify({ parent_id, file_id }),
+    });
+  }
+
+  async deleteFile(file_id: string) {
     return this.request<APISTDResposne>(`/media/delete/${file_id}`, {
       method: 'DELETE',
     });
   }
 
-  async createNewFolder(name: string, parent_id: string, description?: string) {
-    return this.request<APISTDResposne>('/media/create-new-folder', {
+  async createNewFolder(parent_id: string, name: string, description?: string) {
+    return this.request<APISTDResposne>('/media/new-folder', {
       method: 'POST',
-      body: JSON.stringify({ name, parent_id, description }),
+      body: JSON.stringify({ parent_id, name, description }),
     });
   }
 
-  async folderContent(folder_id: string) {
-    return this.request<FolderContent[]>(`/media/folder-content/${folder_id}`);
+  async getFolderContent(folder_id: string) {
+    return this.request<FolderContent>(`/media/folder_content/${folder_id}`);
   }
-}
-
-type FolderContent = {
-    id: string;
-    name: string;
-    description: string;
-    user_id: string;
-    parent_id: string;
-    path: string;
-    folders: FolderContent[];
-    files: FileContent[];
-}
-
-type FileContent = {
-    id: string;
-    name: string;
-    path: string;
-    content_type: string;
-    size: number;
-    parent_id: string;
-    hash: string;
-    data: string;
 }

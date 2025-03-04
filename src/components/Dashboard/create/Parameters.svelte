@@ -2,20 +2,25 @@
   import countries from '../../../data/countries.json';
 
   import RadioSlider from './RadioSlider.svelte';
+  import Scenario from './Scenario.svelte';
+  import Characters from './Characters.svelte';
+  import WritingStyle from './WritingStyle.svelte';
+  import StoryCharacteristics from './StoryCharacteristics.svelte';
 
   let response = '';
   let fullResponse = '';
   let imageResponse = '';
 
-  let formData: TestPromptRequest = {
+  // let formData: TestPromptRequest = {
+  let formData = {
     setting: '',
     style: 'Optional',
     premise: '',
     exposition: '',
     firstAct: '',
     pov: '',
-    winningScenario: [],
-    losingScenario: [],
+    winningScenarios: [],
+    losingScenarios: [],
     mainCharacter: {
       name: '',
       description: '',
@@ -120,7 +125,7 @@
   }
 </script>
 
-<form class="container-wrapper" onsubmit={handleSubmit}>
+<form class="container-wrapper" on:submit={handleSubmit}>
   <!-- Style, (Genre) -->
   <div class="buttons-wrapper">
     <div class="input-container">
@@ -204,14 +209,85 @@
   </div>
 
   <!-- Setting, Premise, Exposition, First Act, Point of View -->
+  <div class="input-container">
+    <label class="section-title" for="setting">Setting</label>
+    <textarea
+      id="setting"
+      class="story-input"
+      placeholder="Describe the time and place where your story unfolds, whether it's a futuristic city, a medieval kingdom, a distant galaxy, or somewhere beyond imagination."
+      rows="2"
+      bind:value={formData.setting}
+    ></textarea>
+  </div>
+
+  <div class="input-container">
+    <label class="section-title" for="premise">Premise</label>
+    <textarea
+      id="premise"
+      class="story-input"
+      placeholder="Summarize the core of your story—who the main character is, what challenge they face, and what’s at stake in their journey."
+      rows="2"
+      bind:value={formData.premise}
+    ></textarea>
+  </div>
+
+  <div class="input-container">
+    <label class="section-title" for="exposition">Exposition</label>
+    <textarea
+      id="exposition"
+      class="story-input"
+      placeholder="Set the stage for your story—introduce the world, key events leading up to the present, and any important background details the reader needs to know."
+      rows="2"
+      bind:value={formData.exposition}
+    ></textarea>
+  </div>
+
+  <div class="input-container">
+    <label class="section-title" for="first-act">First Act</label>
+    <textarea
+      id="first-act"
+      class="story-input"
+      placeholder="Describe how the story begins—introduce the main character, their current situation, and the inciting event that sets the plot in motion."
+      rows="2"
+      bind:value={formData.firstAct}
+    ></textarea>
+  </div>
+
+  <div class="input-container">
+    <label class="section-title" for="point-of-view">Point of View</label>
+    <textarea
+      id="point-of-view"
+      class="story-input"
+      placeholder="Specify the perspective of the story—first-person, second-person, or third-person—and whose eyes we experience the journey through."
+      rows="2"
+      bind:value={formData.premise}
+    ></textarea>
+  </div>
 
   <!-- Scenarios -->
+  <Scenario
+    winningScenarios={formData.winningScenarios}
+    losingScenarios={formData.losingScenarios}
+  />
 
   <!-- Characters -->
+  <Characters
+    mainCharacter={formData.mainCharacter}
+    sideCharacters={formData.sideCharacters}
+    setRelationships={formData.relationships}
+  />
 
   <!-- Writing Style -->
+  <WritingStyle {formData} />
 
   <!-- Story Characteristics -->
+  <StoryCharacteristics {formData} />
+
+  <div class="buttons-wrapper">
+    <button on:click|preventDefault>SAVE</button>
+    <button on:click|preventDefault>PREVIEW</button>
+    <button class="green-button" type="submit">CREATE A DREAM</button>
+  </div>
 </form>
 
 <style>
@@ -236,6 +312,16 @@
     padding: 1.5vw;
   }
 
+  .section-title {
+    color: rgba(51, 226, 230, 0.9);
+  }
+
+  textarea {
+    width: 90vw;
+    min-height: 10vh;
+    max-height: 100vh;
+  }
+
   @media only screen and (max-width: 600px) {
     .dream-box {
       width: 100vw;
@@ -258,6 +344,10 @@
     .selector {
       width: 85vw;
       padding-block: 0.5em;
+    }
+
+    textarea {
+      min-height: 20vh;
     }
   }
 </style>

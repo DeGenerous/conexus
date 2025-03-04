@@ -2,7 +2,7 @@
 <script>
   import Dropdown from './Dropdown.svelte';
   export let formData;
-  export let setFormData;
+  export let setFormData = () => {};
 
   function handleChangeWritingStyle(event, key) {
     setFormData({

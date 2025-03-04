@@ -2,6 +2,8 @@
 <script>
   import { createEventDispatcher } from 'svelte';
 
+  import Dropdown from './Dropdown.svelte';
+
   export let winningScenarios = [];
   export let losingScenarios = [];
   const dispatch = createEventDispatcher();

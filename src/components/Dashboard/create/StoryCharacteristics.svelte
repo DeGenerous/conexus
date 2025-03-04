@@ -4,7 +4,7 @@
   import { writable } from 'svelte/store';
 
   export let formData;
-  export let setFormData;
+  export let setFormData = () => {};
 
   const handleSliderChange = (newValue, toneProperty) => {
     setFormData({

@@ -91,8 +91,8 @@ type TestPromptRequest = {
   exposition?: string;
   firstAct?: string;
   pov: string;
-  winningScenario: string[];
-  losingScenario: string[];
+  winningScenarios: string[];
+  losingScenarios: string[];
   mainCharacter: Character;
   sideCharacters: Character[];
   relationships: string;

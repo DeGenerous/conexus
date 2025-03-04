@@ -31,7 +31,7 @@
 <Dropdown name="Characters">
   <div class="text-lg font-bold text-center mb-4 text-white">
     <label for="mainCharacter" class="block mb-1">Main Character</label>
-    <NewCharacter bind:character={mainCharacter} />
+    <!-- <NewCharacter bind:character={mainCharacter} /> -->
   </div>
 
   <div
@@ -51,7 +51,7 @@
         </li>
       {/each}
     </ul>
-    <NewCharacter bind:character={$newSideCharacter} />
+    <!-- <NewCharacter bind:character={$newSideCharacter} /> -->
     <button
       class="p-2 rounded-md bg-blue-600"
       on:click={handleAddSideCharacter}
@@ -62,10 +62,10 @@
 
   <div class="text-lg font-bold text-center mb-4 text-white">
     <label for="relationship" class="block mb-1">Relationship</label>
-    <RelationshipVisualizer
+    <!-- <RelationshipVisualizer
       {mainCharacter}
       {sideCharacters}
       {setRelationships}
-    />
+    /> -->
   </div>
 </Dropdown>

@@ -161,8 +161,10 @@
 </div>
 
 <div class="buttons-wrapper">
-  <button class="red-button" on:click={() => dispatch('close')}> Close </button>
-  <button class="green-button" on:click={savePrompt}> Save Prompt </button>
+  <!-- <button class="red-button" on:click={() => dispatch('close')}>Close</button> -->
+  <button>SAVE</button>
+  <button>PREVIEW</button>
+  <button class="green-button" on:click={savePrompt}>CREATE A DREAM</button>
 </div>
 
 <style>

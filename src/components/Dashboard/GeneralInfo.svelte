@@ -28,17 +28,23 @@
   <h2>Loading...</h2>
 {:then user: Nullable<User>}
   <h2>Welcome, {user?.first_name}!</h2>
-  
+
   <div class="container">
     <h3>Stories Played Last Week</h3>
     <ul>
       {#each storiesPlayedLastWeek as story}<li>{story.title}</li>{/each}
       <!-- examples -->
-      <StoryTile section="Community Picks" topicName="Sherlock Holmes: The Infinite Case" />
+      <StoryTile
+        section="Community Picks"
+        topicName="Sherlock Holmes: The Infinite Case"
+      />
       <StoryTile section="Community Picks" topicName="Peter Pan" />
       <StoryTile section="Community Picks" topicName="Ragnarok" />
       <StoryTile section="Community Picks" topicName="The Unveiling" />
-      <StoryTile section="Community Picks" topicName="From Stadiums to Battlefields" />
+      <StoryTile
+        section="Community Picks"
+        topicName="From Stadiums to Battlefields"
+      />
       <StoryTile section="Community Picks" topicName="Hard Exit" />
     </ul>
   </div>
@@ -53,7 +59,10 @@
       <StoryTile section="Community Picks" topicName="Random" />
       <StoryTile section="Community Picks" topicName="Dracula Awakening" />
       <StoryTile section="Community Picks" topicName="Treasure Planet" />
-      <StoryTile section="Community Picks" topicName="The Immortal King: Quest of Gilgamesh" />
+      <StoryTile
+        section="Community Picks"
+        topicName="The Immortal King: Quest of Gilgamesh"
+      />
       <StoryTile section="Community Picks" topicName="Adam and Eve" />
       <StoryTile section="Community Picks" topicName="Bros & Beers" />
     </ul>

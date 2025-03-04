@@ -5,22 +5,22 @@
   let topicDescription = '';
   let imagePrompts = [];
   let newImagePrompt = '';
-  let categoryId = undefined;
+  let categoryId = 1;
   let response = '';
   let imageResponse = '';
   let categories = [
     {
       id: 1,
-      name: 'Community Picks'
+      name: 'Community Picks',
     },
     {
       id: 2,
-      name: 'Collabs Picks'
+      name: 'Collabs Picks',
     },
     {
       id: 3,
-      name: 'Dischordian Saga'
-    }
+      name: 'Dischordian Saga',
+    },
   ];
 
   const dispatch = createEventDispatcher();
@@ -67,13 +67,10 @@
 <div class="container">
   <h3>Prompt</h3>
   <div class="buttons-wrapper">
-    <input
-      class="user-input"
-      placeholder="https://example.com"
-    />
+    <input class="user-input" placeholder="https://example.com" />
     <button>Parse Link</button>
   </div>
-  <hr>
+  <hr />
   <div class="buttons-wrapper">
     <h3>Click to upload PDF file:</h3>
     <button>Upload PDF</button>
@@ -86,7 +83,7 @@
     id="topic"
     class="story-input"
     type="text"
-    placeholder="Story Name"
+    placeholder="Enter Story Name"
     bind:value={topicName}
   />
 </div>
@@ -102,34 +99,43 @@
   ></textarea>
 </div>
 
-<div class="container">
-  <label for="image-prompts">Image Prompt</label>
-  <!-- {#if imageResponse}
-    <textarea id="image-prompts" class="user-input" bind:value={imageResponse} rows="5"></textarea>
-  {:else} -->
+{#if imageResponse}
+  <div class="input-container">
+    <label for="image-prompts">Image Prompt</label>
+    <textarea
+      id="image-prompts"
+      class="story-input"
+      placeholder="E.g. A breathtaking cosmic landscape filled with swirling galaxies, ancient ruins, and a lone traveler standing at the edge of destiny."
+      rows="3"
+      bind:value={imageResponse}
+    ></textarea>
+  </div>
+{:else}
+  <div class="container">
+    <h3>Image Prompt</h3>
     <ul class="container-wrapper image-prompts">
       {#each imagePrompts as prompt, index}
         <li class="buttons-wrapper">
           <h3>{prompt}</h3>
-          <button
-            class="red-button"
-            on:click={() => removeImagePrompt(index)}>Remove</button
+          <button class="red-button" on:click={() => removeImagePrompt(index)}
+            >Remove</button
           >
         </li>
-        <hr>
+        <hr />
       {/each}
     </ul>
     <input
       id="image-prompts"
       class="story-input"
       type="text"
-      placeholder="A breathtaking cosmic landscape filled with swirling galaxies, ancient ruins, and a lone traveler standing at the edge of destiny."
-      bind:value={newImagePrompt} />
+      placeholder="E.g. A breathtaking cosmic landscape filled with swirling galaxies, ancient ruins, and a lone traveler standing at the edge of destiny."
+      bind:value={newImagePrompt}
+    />
     <button class="primary-button" on:click={addImagePrompt}
       >Add Image Prompt</button
     >
-  <!-- {/if} -->
-</div>
+  </div>
+{/if}
 
 <div class="input-container">
   <label for="response">Prompt</label>
@@ -155,21 +161,15 @@
 </div>
 
 <div class="buttons-wrapper">
-  <button
-    class="red-button"
-    on:click={() => dispatch('close')}
-  >
-    Close
-  </button>
-  <button
-    class="green-button"
-    on:click={savePrompt}
-  >
-    Save Prompt
-  </button>
+  <button class="red-button" on:click={() => dispatch('close')}> Close </button>
+  <button class="green-button" on:click={savePrompt}> Save Prompt </button>
 </div>
 
 <style>
+  label:not(.selector-label) {
+    color: rgba(51, 226, 230, 0.9);
+  }
+
   #topic {
     width: 50vw;
     text-align: center;

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import StoryTile from "@components/utils/StoryTile.svelte";
+  import StoryTile from '@components/utils/StoryTile.svelte';
 
   const storySections: string[] = ['Top Stories', 'Most Played', 'Most Liked'];
   let currentSection = 0;
@@ -33,7 +33,10 @@
     <StoryTile section="Community Picks" topicName="Random" />
     <StoryTile section="Community Picks" topicName="Dracula Awakening" />
     <StoryTile section="Community Picks" topicName="Treasure Planet" />
-    <StoryTile section="Community Picks" topicName="The Immortal King: Quest of Gilgamesh" />
+    <StoryTile
+      section="Community Picks"
+      topicName="The Immortal King: Quest of Gilgamesh"
+    />
     <StoryTile section="Community Picks" topicName="Adam and Eve" />
     <StoryTile section="Community Picks" topicName="Bros & Beers" />
   </ul>

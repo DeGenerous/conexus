@@ -39,7 +39,7 @@
   :global(input) {
     font-family: inherit;
   }
-  
+
   :global(textarea) {
     font-family: inherit;
     resize: vertical;

@@ -28,12 +28,17 @@
 <!-- examples -->
 <div class="container">
   <h3>Shadow of the Shogun</h3>
-  <p>In the shadowed chaos of 16th-century Japan, you lead the Iga Ninja Clan as warlords clash for dominion. With Oda Nobunaga’s armies marching to annihilate your people, every decision—be it guerrilla warfare, assassination, or betrayal—shapes the fate of your clan. Infiltrate enemy castles, manipulate powerful daimyo, and master the art of deception to survive the bloodstained Sengoku era, where honor is fleeting, and the blade is absolute.</p>
+  <p>
+    In the shadowed chaos of 16th-century Japan, you lead the Iga Ninja Clan as
+    warlords clash for dominion. With Oda Nobunaga’s armies marching to
+    annihilate your people, every decision—be it guerrilla warfare,
+    assassination, or betrayal—shapes the fate of your clan. Infiltrate enemy
+    castles, manipulate powerful daimyo, and master the art of deception to
+    survive the bloodstained Sengoku era, where honor is fleeting, and the blade
+    is absolute.
+  </p>
   <div class="buttons-wrapper">
-    <button
-      class="red-button"
-      on:click={() => deleteStory(story.id)}
-    >
+    <button class="red-button" on:click={() => deleteStory(story.id)}>
       Delete
     </button>
     <button>Play Demo</button>
@@ -43,12 +48,14 @@
 
 <div class="container">
   <h3>Che Guevara: Revolution</h3>
-  <p>Step into the boots of Ernesto "Che" Guevara, the Argentine doctor turned revolutionary icon. From the battlefields of Cuba to the jungles of Bolivia, every decision shapes history—will you forge a lasting rebellion, or meet your fate as a martyr of the revolution?</p>
+  <p>
+    Step into the boots of Ernesto "Che" Guevara, the Argentine doctor turned
+    revolutionary icon. From the battlefields of Cuba to the jungles of Bolivia,
+    every decision shapes history—will you forge a lasting rebellion, or meet
+    your fate as a martyr of the revolution?
+  </p>
   <div class="buttons-wrapper">
-    <button
-      class="red-button"
-      on:click={() => deleteStory(story.id)}
-    >
+    <button class="red-button" on:click={() => deleteStory(story.id)}>
       Delete
     </button>
     <button>Play Demo</button>

@@ -1,6 +1,6 @@
 <script>
   import Dropdown from './Dropdown.svelte';
-  import SliderField from './SliderField.svelte';
+  import Slider from './Slider.svelte';
   import { writable } from 'svelte/store';
 
   export let formData;
@@ -19,7 +19,7 @@
 
 <Dropdown name="Story Characteristics">
   {#each Object.keys(formData.tone) as toneProperty}
-    <SliderField
+    <Slider
       label={toneProperty}
       id={toneProperty.toLowerCase()}
       name={`tone.${toneProperty}`}

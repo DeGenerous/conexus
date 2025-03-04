@@ -33,7 +33,8 @@
     { name: 'Profile', component: ProfileSettings },
   ];
 
-  let currentComponent: any = GeneralInfo;
+  // let currentComponent: any = GeneralInfo;
+  let currentComponent: any = CreateStory;
 
   function selectComponent(component: any) {
     currentComponent = component;

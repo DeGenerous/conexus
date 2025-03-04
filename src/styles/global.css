@@ -124,6 +124,10 @@ button svg {
   cursor: inherit !important;
 }
 
+[role='button'] {
+  cursor: pointer;
+}
+
 button *,
 [role='button'] * {
   cursor: inherit;

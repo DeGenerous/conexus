@@ -50,8 +50,8 @@
 .story-input {
   width: 100%;
   font-size: 1.75vw;
-  line-height: 1.75vw;
-  padding: 1.5vw 2vw;
+  line-height: 3vw;
+  padding: 0.5vw 2vw;
   color: white;
   border: 0.1vw solid rgba(51, 226, 230, 0.5);
   box-shadow: 0 0 0.5vw #010020;
@@ -163,8 +163,9 @@
   .user-input,
   .story-input {
     width: 70vw;
+    padding: 0.25em 0.5em;
     font-size: 1.1em;
-    line-height: 1.75em;
+    line-height: 2em;
   }
 
   .story-input {
@@ -196,6 +197,7 @@
     border-radius: 0.25em;
     padding-block: 0.25em;
     width: 100%;
+    min-width: 30vw;
   }
 
   .selector-label {

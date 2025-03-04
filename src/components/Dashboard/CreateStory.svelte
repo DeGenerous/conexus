@@ -2,7 +2,7 @@
   import Blank from './create/Blank.svelte';
   import Parameters from './create/Parameters.svelte';
 
-  let selectedComponent = 'Open';
+  let selectedComponent = 'Table';
   const showBlank = () => (selectedComponent = 'Open');
   const showParameters = () => (selectedComponent = 'Table');
 </script>

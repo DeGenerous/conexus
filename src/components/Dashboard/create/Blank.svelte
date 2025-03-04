@@ -8,7 +8,20 @@
   let categoryId = undefined;
   let response = '';
   let imageResponse = '';
-  let categories = [];
+  let categories = [
+    {
+      id: 1,
+      name: 'Community Picks'
+    },
+    {
+      id: 2,
+      name: 'Collabs Picks'
+    },
+    {
+      id: 3,
+      name: 'Dischordian Saga'
+    }
+  ];
 
   const dispatch = createEventDispatcher();
 

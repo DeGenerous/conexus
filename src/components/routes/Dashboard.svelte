@@ -128,7 +128,7 @@
     justify-content: space-around;
     align-items: center;
     background-color: rgba(36, 65, 189, 0.75);
-    box-shadow: 0 0 0.5vw #010020;
+    box-shadow: 0 0.25vw 0.5vw #010020;
     z-index: 100;
     position: sticky;
     top: 0;
@@ -168,6 +168,7 @@
     border-bottom-right-radius: 1.5vw;
     border-bottom-left-radius: 1.5vw;
     box-shadow: 0 0.25vw 0.5vw #010020;
+    width: 100%;
   }
 
   .sub-nav-item {

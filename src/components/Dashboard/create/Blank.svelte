@@ -113,17 +113,19 @@
 {:else}
   <div class="container">
     <h3>Image Prompt</h3>
-    <ul class="container-wrapper image-prompts">
-      {#each imagePrompts as prompt, index}
-        <li class="buttons-wrapper">
-          <h3>{prompt}</h3>
-          <button class="red-button" on:click={() => removeImagePrompt(index)}
-            >Remove</button
-          >
-        </li>
-        <hr />
-      {/each}
-    </ul>
+    {#if imagePrompts.length > 0}
+      <ul class="container-wrapper image-prompts">
+        {#each imagePrompts as prompt, index}
+          <li class="buttons-wrapper">
+            <h3>{prompt}</h3>
+            <button class="red-button" on:click={() => removeImagePrompt(index)}
+              >Remove</button
+            >
+          </li>
+          <hr />
+        {/each}
+      </ul>
+    {/if}
     <input
       id="image-prompts"
       class="story-input"

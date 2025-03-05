@@ -8,12 +8,15 @@
   const handleChange = (event) => {
     onChange(parseInt(event.target.value, 10));
   };
+
+  $: if (value < 1) value = 1; else if (value > 100) value = 100;
 </script>
 
-<div class="slider-field">
-  <label for={id} class="slider-label">{label}</label>
-  <div class="slider-container">
+<section class="buttons-wrapper">
+  <label for={id}>{label}</label>
+  <div class="buttons-wrapper slider-wrapper">
     <input
+      class="slider"
       type="range"
       min="1"
       max="100"
@@ -21,35 +24,82 @@
       {name}
       bind:value
       on:input={handleChange}
-      class="slider"
     />
-    <span class="slider-value">{value}</span>
+    <input
+      class="slider-value"
+      type="number" 
+      min="1"
+      max="100"
+      bind:value/>
   </div>
-</div>
+</section>
 
 <style>
-  .slider-field {
-    margin-bottom: 15px;
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 
-  .slider-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+  input[type="number"] {
+    appearance: textfield;
   }
 
-  .slider-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  section {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  label {
+    pointer-events: none;
+  }
+
+  .slider-wrapper {
+    width: 77.5vw;
+    background-color: rgb(22, 30, 95);
+    box-shadow: 0 0 0.5vw #010020;
+    padding: 1vw;
+    border-radius: 1vw;
   }
 
   .slider {
-    flex: 1;
+    width: 97.5%;
     cursor: pointer;
   }
 
   .slider-value {
-    font-weight: bold;
+    appearance: textfield;
+    width: 5%;
+    text-align: center;
+    color: rgb(51, 226, 230);
+    background-color: rgba(1, 0, 32, 0.5);
+    border-radius: 0.5vw;
+    border: none;
+    outline: none;
+    font-size: 1.25vw;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .buttons-wrapper {
+      flex-wrap: nowrap;
+    }
+
+    .slider-wrapper {
+      width: 65vw;
+      padding: 0.5em;
+      border-radius: 0.5em;
+    }
+
+    .slider {
+      width: 85%;
+      cursor: pointer;
+    }
+
+    .slider-value {
+      width: 15%;
+      color: rgb(51, 226, 230);
+      font-size: 1em;
+      border-radius: 0.5em;
+    }
   }
 </style>

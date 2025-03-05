@@ -1,7 +1,6 @@
 <script>
   import Dropdown from './Dropdown.svelte';
   import Slider from './Slider.svelte';
-  import { writable } from 'svelte/store';
 
   export let formData;
   export let setFormData = () => {};

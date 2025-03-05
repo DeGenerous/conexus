@@ -13,9 +13,11 @@
 </script>
 
 <Dropdown name="Writing Style">
-  <div>
-    <label for="tense">Tense</label>
+  <div class="buttons-wrapper">
+    <label for="tense">Tense:</label>
     <select
+      id="tense"
+      class="selector"
       bind:value={formData.writingStyle.Tense}
       on:change={(e) => handleChangeWritingStyle(e, 'Tense')}
     >
@@ -25,9 +27,11 @@
     </select>
   </div>
 
-  <div>
-    <label for="style">Style</label>
+  <div class="buttons-wrapper">
+    <label for="style">Style:</label>
     <select
+      id="style"
+      class="selector"
       bind:value={formData.writingStyle.Style}
       on:change={(e) => handleChangeWritingStyle(e, 'Style')}
     >
@@ -37,9 +41,11 @@
     </select>
   </div>
 
-  <div>
-    <label for="voice">Voice</label>
+  <div class="buttons-wrapper">
+    <label for="voice">Voice:</label>
     <select
+      id="voice"
+      class="selector"
       bind:value={formData.writingStyle.Voice}
       on:change={(e) => handleChangeWritingStyle(e, 'Voice')}
     >
@@ -48,3 +54,12 @@
     </select>
   </div>
 </Dropdown>
+
+<style>
+    @media only screen and (max-width: 600px) {
+      .selector {
+        width: 85vw;
+        padding-block: 0.5em;
+      }
+    }
+</style>

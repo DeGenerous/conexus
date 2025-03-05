@@ -5,7 +5,7 @@
   import Dropdown from './Dropdown.svelte';
 
   export let winningScenarios = [];
-  let losingScenarios = ['Describe how the story can reach a satisfying or victorious conclusion—whether through achieving a goal, overcoming challenges, or finding personal growth.', 'afmawklfnawk awkfnawlknfa', 'lkanwflkanwf awjlfnawlkfn awnflawf awnflawnf awlnflawnf', 'Describe how the story can reach a satisfying or victorious conclusion—whether through achieving a goal, overcoming challenges, or finding personal growth.'];
+  export let losingScenarios = [];
   const dispatch = createEventDispatcher();
   let winningScenario = '';
   let losingScenario = '';

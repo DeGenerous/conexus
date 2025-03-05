@@ -30,9 +30,9 @@
     sideCharacters: [],
     relationships: '',
     writingStyle: {
-      Tense: 'past',
-      Style: 'descriptive',
-      Voice: 'active',
+      Tense: 'PresentTense',
+      Style: 'Descriptive',
+      Voice: 'Active',
     },
     tone: {
       Optimistic: 1,

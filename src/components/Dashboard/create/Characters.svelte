@@ -1,8 +1,7 @@
 <script>
-  import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
   import Dropdown from './Dropdown.svelte';
-  import RelationshipVisualizer from './RelationshipVisualizer.svelte';
+  import NewCharacter from './NewCharacter.svelte';
 
   export let mainCharacter;
   export let sideCharacters = [];
@@ -29,43 +28,69 @@
 </script>
 
 <Dropdown name="Characters">
-  <div class="text-lg font-bold text-center mb-4 text-white">
-    <label for="mainCharacter" class="block mb-1">Main Character</label>
-    <!-- <NewCharacter bind:character={mainCharacter} /> -->
+  <div class="container-wrapper character-container">
+    <h2>Main Character</h2>
+    <NewCharacter character={mainCharacter} />
   </div>
 
-  <div
-    class="text-lg font-bold flex flex-col space-y-1 text-center items-center mb-4 text-white"
-  >
-    <label for="sideCharacters" class="block mb-1">Side Characters</label>
-    <ul>
-      {#each sideCharacters as character, index}
-        <li>
-          {character.name}: {character.description}
-          <button
-            class="text-white text-md bg-red-700 rounded-md p-1 m-2"
-            on:click={() => handleRemoveSideCharacter(index)}
-          >
-            Remove
-          </button>
-        </li>
-      {/each}
-    </ul>
-    <!-- <NewCharacter bind:character={$newSideCharacter} /> -->
-    <button
-      class="p-2 rounded-md bg-blue-600"
-      on:click={handleAddSideCharacter}
-    >
-      Add Side Character
-    </button>
-  </div>
+  <hr>
 
-  <div class="text-lg font-bold text-center mb-4 text-white">
-    <label for="relationship" class="block mb-1">Relationship</label>
-    <!-- <RelationshipVisualizer
-      {mainCharacter}
-      {sideCharacters}
-      {setRelationships}
-    /> -->
+  <div class="container-wrapper">
+    <h2>Side Characters</h2>
+    {#if sideCharacters.length > 0}
+      <ul class="container-wrapper characters-container">
+        {#each sideCharacters as character, index}
+          <li class="container side-character">
+            <h2>{character.name}</h2>
+            <h3>{character.description}</h3>
+            <h3>{character.physicality}</h3>
+            <h3>{character.psychology}</h3>
+            <button
+              class="red-button"
+              on:click|preventDefault={() => handleRemoveSideCharacter(index)}
+            >
+              Remove
+            </button>
+          </li>
+        {/each}
+      </ul>
+    {/if}
+    <NewCharacter character={newSideCharacter} />
   </div>
+  
+  <button on:click|preventDefault>Add Side Character</button>
+
+  <hr>
+
+  <!-- Relationships -->
+  <h2>Relationships</h2>
 </Dropdown>
+
+<style>
+  .characters-container {
+    gap: 1vw;
+  }
+
+  .side-character {
+    background-color: rgb(22, 30, 95);
+    box-shadow: 0 0 0.5vw #010020;
+  }
+
+  .characters-container h2 {
+    color: rgba(51, 226, 230, 0.9);
+  }
+
+  .characters-container h3 {
+    line-height: 1.5;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .characters-container {
+      gap: 1em;
+    }
+
+    .characters-container h3 {
+      line-height: 2;
+    }
+  }
+</style>

@@ -70,6 +70,7 @@
   @media only screen and (max-width: 600px) {
     section {
       width: 100vw;
+      border-radius: 0;
     }
 
     .container {

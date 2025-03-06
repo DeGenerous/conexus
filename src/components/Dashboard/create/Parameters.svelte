@@ -5,7 +5,6 @@
   import Scenario from './Scenario.svelte';
   import Characters from './Characters.svelte';
   import WritingStyle from './WritingStyle.svelte';
-  import StoryCharacteristics from './StoryCharacteristics.svelte';
 
   let response = '';
   let fullResponse = '';
@@ -208,67 +207,52 @@
     </div>
   </div>
 
-  <!-- Setting, Premise, Exposition, First Act, Point of View -->
-  <div class="input-container">
-    <label class="section-title" for="setting">Setting</label>
-    <textarea
-      id="setting"
-      class="story-input"
-      placeholder="Describe the time and place where your story unfolds, whether it's a futuristic city, a medieval kingdom, a distant galaxy, or somewhere beyond imagination."
-      rows="2"
-      bind:value={formData.setting}
-    ></textarea>
-  </div>
+  <!-- Setting, Premise, Exposition, First Act -->
+  <div class="dream-box">
+    <div class="buttons-wrapper">
+      <h2>Set Premise</h2>
+      <textarea
+        id="premise"
+        class="story-input dream-textfield"
+        placeholder="Summarize the core of your story—who the main character is, what challenge they face, and what’s at stake in their journey."
+        rows="2"
+        bind:value={formData.premise}
+      ></textarea>
+    </div>
 
-  <div class="input-container">
-    <label class="section-title" for="premise">Premise</label>
-    <textarea
-      id="premise"
-      class="story-input"
-      placeholder="Summarize the core of your story—who the main character is, what challenge they face, and what’s at stake in their journey."
-      rows="2"
-      bind:value={formData.premise}
-    ></textarea>
-  </div>
+    <div class="buttons-wrapper">
+      <h2>Set Environment</h2>
+      <textarea
+        id="setting"
+        class="story-input dream-textfield"
+        placeholder="Describe the time and place where your story unfolds, whether it's a futuristic city, a medieval kingdom, a distant galaxy, or somewhere beyond imagination."
+        rows="2"
+        bind:value={formData.setting}
+      ></textarea>
+    </div>
 
-  <div class="input-container">
-    <label class="section-title" for="exposition">Exposition</label>
-    <textarea
-      id="exposition"
-      class="story-input"
-      placeholder="Set the stage for your story—introduce the world, key events leading up to the present, and any important background details the reader needs to know."
-      rows="2"
-      bind:value={formData.exposition}
-    ></textarea>
-  </div>
+    <div class="buttons-wrapper">
+      <h2>Set Exposition</h2>
+      <textarea
+        id="exposition"
+        class="story-input dream-textfield"
+        placeholder="Set the stage for your story—introduce the world, key events leading up to the present, and any important background details the reader needs to know."
+        rows="2"
+        bind:value={formData.exposition}
+      ></textarea>
+    </div>
 
-  <div class="input-container">
-    <label class="section-title" for="first-act">First Act</label>
-    <textarea
-      id="first-act"
-      class="story-input"
-      placeholder="Describe how the story begins—introduce the main character, their current situation, and the inciting event that sets the plot in motion."
-      rows="2"
-      bind:value={formData.firstAct}
-    ></textarea>
+    <div class="buttons-wrapper">
+      <h2>Set First Action</h2>
+      <textarea
+        id="first-act"
+        class="story-input dream-textfield"
+        placeholder="Describe how the story begins—introduce the main character, their current situation, and the inciting event that sets the plot in motion."
+        rows="2"
+        bind:value={formData.firstAct}
+      ></textarea>
+    </div>
   </div>
-
-  <div class="input-container">
-    <label class="section-title" for="point-of-view">Point of View</label>
-    <textarea
-      id="point-of-view"
-      class="story-input"
-      placeholder="Specify the perspective of the story—first-person, second-person, or third-person—and whose eyes we experience the journey through."
-      rows="2"
-      bind:value={formData.premise}
-    ></textarea>
-  </div>
-
-  <!-- Scenarios -->
-  <Scenario
-    winningScenarios={formData.winningScenarios}
-    losingScenarios={formData.losingScenarios}
-  />
 
   <!-- Characters -->
   <Characters
@@ -277,11 +261,14 @@
     setRelationships={formData.relationships}
   />
 
+  <!-- Scenarios -->
+  <Scenario
+    winningScenarios={formData.winningScenarios}
+    losingScenarios={formData.losingScenarios}
+  />
+
   <!-- Writing Style -->
   <WritingStyle {formData} />
-
-  <!-- Story Characteristics -->
-  <StoryCharacteristics {formData} />
 
   <div class="buttons-wrapper">
     <button on:click|preventDefault>SAVE</button>
@@ -312,14 +299,17 @@
     padding: 1.5vw;
   }
 
-  .section-title {
-    color: rgba(51, 226, 230, 0.9);
-  }
-
   textarea {
     width: 90vw;
     min-height: 10vh;
     max-height: 100vh;
+  }
+
+  .dream-textfield {
+    width: 70vw;
+    border: none;
+    background-color: rgba(1, 0, 32, 0.75);
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.5);
   }
 
   @media only screen and (max-width: 600px) {
@@ -348,6 +338,10 @@
 
     textarea {
       min-height: 20vh;
+    }
+
+    .dream-textfield {
+      width: 90vw;
     }
   }
 </style>

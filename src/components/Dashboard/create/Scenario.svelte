@@ -39,7 +39,7 @@
   }
 </script>
 
-<Dropdown name="Scenarios">
+<Dropdown name="Describe Scenarios">
   <h3>Winning Scenario</h3>
   {#if winningScenarios.length > 0}
     <ul class="container-wrapper winning-scenarios">

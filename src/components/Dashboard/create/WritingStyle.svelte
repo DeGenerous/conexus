@@ -1,6 +1,8 @@
 <!-- WritingStyleComp.svelte -->
 <script>
   import Dropdown from './Dropdown.svelte';
+  import Slider from './Slider.svelte';
+
   export let formData;
   export let setFormData = () => {};
 
@@ -10,9 +12,19 @@
       writingStyle: { ...formData.writingStyle, [key]: event.target.value },
     });
   }
+
+  const handleSliderChange = (newValue, toneProperty) => {
+    setFormData({
+      ...formData,
+      tone: {
+        ...formData.tone,
+        [toneProperty]: newValue,
+      },
+    });
+  };
 </script>
 
-<Dropdown name="Writing Style">
+<Dropdown name="Build Writing Style">
   <div class="buttons-wrapper">
     <label for="tense">Tense:</label>
     <select
@@ -53,13 +65,46 @@
       <option value="Passive">Passive</option>
     </select>
   </div>
+
+  <div class="input-container">
+    <label class="section-title" for="point-of-view">Point of View</label>
+    <textarea
+      id="point-of-view"
+      class="story-input"
+      placeholder="Specify the perspective of the story—first-person, second-person, or third-person—and whose eyes we experience the journey through."
+      rows="2"
+      bind:value={formData.premise}
+    ></textarea>
+  </div>
+
+  <hr>
+
+  {#each Object.keys(formData.tone) as toneProperty}
+    <Slider
+      label={toneProperty}
+      id={toneProperty.toLowerCase()}
+      name={`tone.${toneProperty}`}
+      value={formData.tone[toneProperty]}
+      on:change={(event) => handleSliderChange(event.detail, toneProperty)}
+    />
+  {/each}
 </Dropdown>
 
 <style>
-    @media only screen and (max-width: 600px) {
-      .selector {
-        width: 85vw;
-        padding-block: 0.5em;
-      }
+  textarea {
+    width: 80vw;
+    min-height: 10vh;
+    max-height: 100vh;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .selector {
+      width: 85vw;
+      padding-block: 0.5em;
     }
+
+    textarea {
+      min-height: 20vh;
+    }
+  }
 </style>

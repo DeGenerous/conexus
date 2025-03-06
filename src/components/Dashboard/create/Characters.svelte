@@ -21,7 +21,7 @@
     ? 'rgba(0, 185, 55, 0.5)'
     : relationshipType === 'enemies'
       ? 'rgba(255, 60, 64, 0.5)'
-      : 'rgba(150, 150, 150, 0.5)'
+      : 'rgba(36, 65, 189, 0.75)'
 
   $: relationship = sourceCharacter + ' is ' + relationshipType + ' with ' + targetCharacter;
 
@@ -38,7 +38,7 @@
   }
 </script>
 
-<Dropdown name="Characters">
+<Dropdown name="Add Characters">
   <div class="container-wrapper character-container">
     <h2>Main Character</h2>
     <NewCharacter character={mainCharacter} />
@@ -129,7 +129,7 @@
   .relationship {
     width: 70vw;
     flex-flow: column nowrap;
-    background-color: rgba(150, 150, 150, 0.5);
+    background-color: rgba(36, 65, 189, 0.75);
     box-shadow: inset 0 0 0.5vw #010020;
     padding-block: 1vw;
     border-radius: 1.5vw;

@@ -166,6 +166,7 @@
     padding: 0.25em 0.5em;
     font-size: 1.1em;
     line-height: 2em;
+    border-radius: 0.5em;
   }
 
   .story-input {

@@ -14,6 +14,17 @@
     psychology: '',
   });
 
+  let sourceCharacter = '';
+  let targetCharacter = '';
+  let relationshipType = 'neutral';
+  $: relationshipColor = relationshipType === 'friends'
+    ? 'rgba(0, 185, 55, 0.5)'
+    : relationshipType === 'enemies'
+      ? 'rgba(255, 60, 64, 0.5)'
+      : 'rgba(150, 150, 150, 0.5)'
+
+  $: relationship = sourceCharacter + ' is ' + relationshipType + ' with ' + targetCharacter;
+
   function handleAddSideCharacter() {
     newSideCharacter.update((character) => {
       if (!character.name || !character.description) return character;
@@ -62,8 +73,39 @@
 
   <hr>
 
-  <!-- Relationships -->
-  <h2>Relationships</h2>
+  <div class="container-wrapper">
+    <h2>Relationships</h2>
+    <div class="buttons-wrapper relationship" style="background-color: {relationshipColor}">
+      <div class="input-container">
+        <label for="source">Source Character</label>
+        <input
+          class="story-input"
+          type="text"
+          placeholder="Enter character's name"
+          bind:value={sourceCharacter}
+        />
+      </div>
+
+      <div class="input-container">
+        <label for="target">Target Character</label>
+        <input
+          class="story-input"
+          type="text"
+          placeholder="Enter character's name"
+          bind:value={targetCharacter}
+        />
+      </div>
+    </div>
+
+    <div class="buttons-wrapper">
+      <select class="selector" bind:value={relationshipType}>
+        {#each ['friends', 'neutral', 'enemies'] as option}
+          <option value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</option>
+        {/each}
+      </select>
+      <button on:click|preventDefault>Add Relationship</button>
+    </div>
+  </div>
 </Dropdown>
 
 <style>
@@ -84,6 +126,24 @@
     line-height: 1.5;
   }
 
+  .relationship {
+    width: 70vw;
+    flex-flow: column nowrap;
+    background-color: rgba(150, 150, 150, 0.5);
+    box-shadow: inset 0 0 0.5vw #010020;
+    padding-block: 1vw;
+    border-radius: 1.5vw;
+  }
+
+  .relationship label {
+    color: rgb(51, 226, 230)
+  }
+
+  .relationship input {
+    text-align: center;
+    background-color: rgba(1, 0, 32, 0.75);
+  }
+
   @media only screen and (max-width: 600px) {
     .characters-container {
       gap: 1em;
@@ -91,6 +151,12 @@
 
     .characters-container h3 {
       line-height: 2;
+    }
+
+    .relationship {
+      width: 90vw;
+      padding-block: 1em;
+      border-radius: 0.5em;
     }
   }
 </style>

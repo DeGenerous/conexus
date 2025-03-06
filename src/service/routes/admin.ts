@@ -14,17 +14,23 @@ export default class AdminAPI extends Fetcher {
   }
 
   async generatePrompt(prompt: TestPromptRequest) {
-    return this.request<APISTDResposne>('/admin/generate-prompt', {
-      method: 'POST',
-      body: JSON.stringify(prompt),
-    });
+    return this.request<{ full: string; short: string; image_prompt: string }>(
+      '/admin/generate-prompt',
+      {
+        method: 'POST',
+        body: JSON.stringify(prompt),
+      },
+    );
   }
 
   async createNewPrompt(prompt: CreatePrompt) {
-    return this.request<APISTDResposne>('/admin/create-new-prompt', {
-      method: 'POST',
-      body: JSON.stringify(prompt),
-    });
+    return this.request<{ topic_id: string; prompt_id: string }>(
+      '/admin/create-new-prompt',
+      {
+        method: 'POST',
+        body: JSON.stringify(prompt),
+      },
+    );
   }
 
   async editTopicPrompt(prompt: string, topic_id: number, prompt_id: number) {

@@ -67,10 +67,18 @@
             <!-- svelte-ignore a11y_media_has_caption -->
             <video controls>
               <source
-                src={`/api/media/server/${file.id}`}
+                src={`/api/media/serve/${file.id}`}
                 type={file.content_type}
               />
             </video>
+          {:else if file.content_type.includes('audio')}
+            <!-- svelte-ignore a11y_media_has_caption -->
+            <audio controls>
+              <source
+                src={`/api/media/serve/${file.id}`}
+                type={file.content_type}
+              />
+            </audio>
           {:else}
             📄 {file.name}
           {/if}

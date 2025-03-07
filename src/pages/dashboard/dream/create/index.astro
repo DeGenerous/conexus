@@ -1,0 +1,15 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import CreateStory from '@components/dashboard/dream/CreateStory.svelte';
+
+const arrow = true;
+
+const meta = {
+  header: 'DREAM',
+};
+---
+
+<Layout {...meta} {arrow}>
+  <CreateStory client:load />
+</Layout>

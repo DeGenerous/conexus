@@ -1,11 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import GeneralInfo from '@components/Dashboard/GeneralInfo.svelte';
-  import CreateStory from '@components/Dashboard/CreateStory.svelte';
-  import ManageStories from '@components/Dashboard/ManageStories.svelte';
-  import StoryMetrics from '@components/Dashboard/StoryMetrics.svelte';
-  import ProfileSettings from '@components/Dashboard/ProfileSettings.svelte';
+  import GeneralInfo from '@components/dashboard/GeneralInfo.svelte';
+  import CreateStory from '@components/dashboard/CreateStory.svelte';
+  import ManageStories from '@components/dashboard/ManageStories.svelte';
+  import StoryMetrics from '@components/dashboard/StoryMetrics.svelte';
+  import ProfileSettings from '@components/dashboard/ProfileSettings.svelte';
   import { checkUserState } from '@utils/route-guard';
 
   onMount(async () => {

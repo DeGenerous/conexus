@@ -104,7 +104,7 @@
   }
 
   .story-input {
-    width: 95%;
+    width: 80vw;
   }
 
   @media only screen and (max-width: 600px) {

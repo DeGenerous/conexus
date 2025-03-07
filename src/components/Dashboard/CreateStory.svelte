@@ -1,39 +1,11 @@
 <script>
-  import Blank from './create/Blank.svelte';
-  import Parameters from './create/Parameters.svelte';
-
   let selectedComponent = 'Table';
   const showBlank = () => (selectedComponent = 'Open');
   const showParameters = () => (selectedComponent = 'Table');
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_to_interactive_role -->
-<div class="container buttons-wrapper">
-  <h3>Format:</h3>
-  <h2
-    class:active={selectedComponent === 'Table'}
-    on:click={showParameters}
-    role="button"
-    tabindex="0"
-  >
-    Table
-  </h2>
-  <h3>|</h3>
-  <h2
-    class:active={selectedComponent === 'Open'}
-    on:click={showBlank}
-    role="button"
-    tabindex="0"
-  >
-    Open
-  </h2>
-</div>
-
-{#if selectedComponent === 'Open'}
-  <Blank />
-{:else}
-  <Parameters />
-{/if}
+<a href="./dream/create">Create a story</a>
 
 <style>
   :global(input) {

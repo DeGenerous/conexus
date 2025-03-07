@@ -47,20 +47,6 @@
   cursor: text;
 }
 
-.story-input {
-  width: 100%;
-  font-size: 1.75vw;
-  line-height: 3vw;
-  padding: 0.5vw 2vw;
-  color: white;
-  border: 0.1vw solid rgba(51, 226, 230, 0.5);
-  box-shadow: 0 0 0.5vw #010020;
-  border-radius: 1vw;
-  background-color: rgba(22, 30, 95, 0.75);
-  outline: none;
-  cursor: text;
-}
-
 .user-input:disabled {
   opacity: 1; /* for iOS */
 }
@@ -160,17 +146,12 @@
     gap: 1em;
   }
 
-  .user-input,
-  .story-input {
+  .user-input {
     width: 70vw;
     padding: 0.25em 0.5em;
     font-size: 1.1em;
     line-height: 2em;
     border-radius: 0.5em;
-  }
-
-  .story-input {
-    width: auto;
   }
 
   .input-container {

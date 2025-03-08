@@ -1,13 +1,10 @@
 <!-- WritingStyleComp.svelte -->
 <script>
   import dreamData from '../../../../data/dream';
+  import { tablePrompt } from '@stores/dream';
 
   import Dropdown from './Dropdown.svelte';
   import Slider from './Slider.svelte';
-
-  let selectedTense = 'present';
-  let selectedStyle = 'descriptive';
-  let selectedVoice = 'active';
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -18,9 +15,10 @@
       <div class="container dream-radio-buttons">
         {#each dreamData.tense as tense}
           <span
-            class:active={tense === selectedTense}
+            class:active={tense === $tablePrompt.tense}
             role="button"
             tabindex="0"
+            on:click={() => ($tablePrompt.tense = tense)}
           >
             {dreamData.capitalize(tense)}
           </span>
@@ -32,6 +30,7 @@
       <h2>Story Arcs</h2>
       <div class="container">
         <Slider
+          bind:sliderValue={$tablePrompt.storyArcs}
           parameters={dreamData.min_max}
           inputValue={2}
           hints={[
@@ -46,11 +45,12 @@
     <div class="buttons-wrapper">
       <h2>Style</h2>
       <div class="container dream-radio-buttons">
-        {#each dreamData.style as style}
+        {#each dreamData.writingStyle as style}
           <span
-            class:active={style === selectedStyle}
+            class:active={style === $tablePrompt.writingStyle}
             role="button"
             tabindex="0"
+            on:click={() => ($tablePrompt.writingStyle = style)}
           >
             {dreamData.capitalize(style)}
           </span>
@@ -63,9 +63,10 @@
       <div class="container dream-radio-buttons">
         {#each dreamData.voice as voice}
           <span
-            class:active={voice === selectedVoice}
+            class:active={voice === $tablePrompt.voice}
             role="button"
             tabindex="0"
+            on:click={() => ($tablePrompt.voice = voice)}
           >
             {dreamData.capitalize(voice)}
           </span>
@@ -77,6 +78,7 @@
       <h2>Pacing</h2>
       <div class="container">
         <Slider
+          bind:sliderValue={$tablePrompt.pacing}
           parameters={dreamData.min_max}
           inputValue={2}
           hints={[
@@ -98,6 +100,7 @@
       class="story-input"
       placeholder="Specify the perspective of the story—first-person, second-person, or third-person—and whose eyes we experience the journey through. E.g. First-person, from the detective’s skeptical assistant, uncovering their mentor’s hidden dark secret."
       rows="3"
+      bind:value={$tablePrompt.POV}
     ></textarea>
   </div>
 
@@ -106,11 +109,11 @@
   <h3>Story Tone</h3>
 
   <div class="dream-box tone-characteristics">
-    {#each dreamData.tone as tone}
+    {#each $tablePrompt.tone as {name, value}}
       <div class="buttons-wrapper">
-        <h2>{tone}</h2>
+        <h2>{dreamData.capitalize(name)}</h2>
         <div class="container">
-          <Slider />
+          <Slider bind:sliderValue={value} />
         </div>
       </div>
     {/each}

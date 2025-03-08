@@ -3,6 +3,7 @@
   export let parameters: string[] = ['none', 'min', 'standard', 'max'];
   export let inputValue = 1;
   export let hints: Nullable<string[]> = null;
+  export let sliderValue: any = null;
 
   const setOptions = () => {
     const options: {id: number, value: string}[] = [];
@@ -16,6 +17,8 @@
 
   function handleChange() {
     const activeValue = options.filter((option) => option.id == inputValue)[0].value;
+    // console.log(activeValue)
+    sliderValue = activeValue;
   }
 </script>
 

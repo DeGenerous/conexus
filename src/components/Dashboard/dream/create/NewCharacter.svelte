@@ -1,5 +1,5 @@
-<script>
-  export let character = {
+<script lang="ts">
+  export let character: Character = {
     name: '',
     description: '',
     psychology: '',
@@ -32,7 +32,7 @@
     class="story-input"
     placeholder="Describe the character’s appearance, including distinguishing features, clothing, or any unique traits. E.g. Tall and broad-shouldered with piercing emerald eyes, dressed in a weathered leather jacket and carrying an old relic from the past."
     rows="3"
-    bind:value={character.description}
+    bind:value={character.physicality}
   ></textarea>
 </div>
 
@@ -42,7 +42,7 @@
     class="story-input"
     placeholder="Explore the character’s personality, motivations, and inner struggles. E.g. A brilliant but skeptical scientist who hides their emotions behind logic, driven by an obsession to prove the existence of extraterrestrial life."
     rows="3"
-    bind:value={character.description}
+    bind:value={character.psychology}
   ></textarea>
 </div>
 

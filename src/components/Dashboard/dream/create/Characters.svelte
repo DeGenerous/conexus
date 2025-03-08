@@ -1,61 +1,79 @@
-<script>
+<script lang="ts">
+  import { writable } from 'svelte/store';
+
   import dreamData from '../../../../data/dream';
+  import { tablePrompt } from '@stores/dream';
 
   import Dropdown from './Dropdown.svelte';
   import NewCharacter from './NewCharacter.svelte';
 
-  const sideCharacters = [
-    {
-      name: 'Captain Orion Vale',
-      description: 'A decorated starship captain renowned for leading dangerous expeditions into the unknown. Once a fearless leader, he now wrestles with the guilt of a failed mission that cost his crew dearly.',
-      physicality: 'Rugged and battle-scarred, with silver-streaked black hair and sharp blue eyes that hold years of wisdom. Wears a reinforced navy-blue flight suit with insignias from past conquests and a worn leather belt carrying his laser pistol.',
-      psychology: 'A deeply conflicted strategist who masks his self-doubt with unwavering confidence. He believes redemption lies beyond the stars and is willing to risk everything to uncover the truth hidden in deep space.',
-    },
-    {
-      name: 'Lady Selene Duskbane',
-      description: 'A powerful sorceress exiled from the Celestial Court for wielding forbidden magic. Now wandering the realm as an outcast, she seeks the ancient artifact that can restore her place among the stars.',
-      physicality: 'Ethereal and graceful, with long silver hair flowing like liquid moonlight. Her violet eyes shimmer with arcane energy, and she wears a flowing obsidian robe embroidered with celestial runes. A crescent-shaped staff glows faintly in her grasp.',
-      psychology: 'Cold and calculating, yet burdened by the loneliness of exile. Though she projects an aura of mystery and control, she secretly longs for companionship and the chance to prove her loyalty once more.',
-    }
-  ]
-
-  let sideCharacter = {
+  let newSideCharacter: Character = {
     name: '',
     description: '',
     physicality: '',
     psychology: '',
+  };
+  const addSideCharacter = () => {
+    $tablePrompt.sideCharacters = [...$tablePrompt.sideCharacters, newSideCharacter];
+    newSideCharacter = {
+      name: '',
+      description: '',
+      physicality: '',
+      psychology: '',
+    }
+  }
+  const removeSideCharacter = (index: number) => {
+    $tablePrompt.sideCharacters = $tablePrompt.sideCharacters.filter((character, nr) => {
+      return nr !== index;
+    });
   }
 
-  let sourceCharacter = '';
-  let targetCharacter = '';
-  let selectedRealtionship = 'neutral';
+  let newRelationship: Relationship = {
+    type: 'neutral',
+    details: '',
+    connection: ['', ''],
+  }
+  const addRelationship = () => {
+    $tablePrompt.relationships = [...$tablePrompt.relationships, newRelationship];
+    newRelationship = {
+      type: 'neutral',
+      details: '',
+      connection: ['', ''],
+    }
+  }
+  const removeRelationship = (index: number) => {
+    $tablePrompt.relationships = $tablePrompt.relationships.filter((character, nr) => {
+      return nr !== index;
+    });
+  }
 
-  $: relationshipExamples = selectedRealtionship === 'friends'
+  $: relationshipExamples = newRelationship.type === 'friends'
     ? 'Family, Mentor/Protégé, Allies of Convenience, Unbreakable Bond...'
-    : selectedRealtionship === 'enemies'
+    : newRelationship.type === 'enemies'
       ? 'Betrayer, Rival, Respectful Opponent, Mortal Enemy, Frenemy...'
       : 'Stranger, Tenuous Trust, Business Relationship, Mysterious Past...';
 
-  const setRelationshipColor = (type) => {
-    if (type === 'friends') return 'rgba(0, 185, 55, 0.75)';
-    if (type === 'enemies') return 'rgba(255, 60, 64, 0.75)';
-    return 'rgba(150, 150, 150, 0.75)';
+  const setRelationshipColor = (type: string, opacity: number = 1) => {
+    if (type === 'friends') return `rgba(0, 185, 55, ${opacity})`;
+    if (type === 'enemies') return `rgba(255, 60, 64, ${opacity})`;
+    return `rgba(150, 150, 150, ${opacity})`;
   }
 </script>
 
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <Dropdown name="Add Characters">
   <div class="container-wrapper character-container">
     <h2>Main Character</h2>
-    <NewCharacter />
+    <NewCharacter bind:character={$tablePrompt.mainCharacter} />
   </div>
 
   <hr>
 
   <div class="container-wrapper">
     <h2>Side Characters</h2>
-    {#if sideCharacters.length > 0}
+    {#if $tablePrompt.sideCharacters.length > 0}
       <ul class="container-wrapper characters-container">
-        {#each sideCharacters as character, index}
+        {#each $tablePrompt.sideCharacters as character, index}
           <li class="container added-prompt side-character">
             <h2 class="character-name">{character.name}</h2>
             <div class="buttons-wrapper">
@@ -74,19 +92,42 @@
                 <h3>{character.psychology}</h3>
               </div>
             {/if}
-            <button class="red-button">Remove</button>
+            <button class="red-button" on:click={() => (removeSideCharacter(index))}>
+              Remove
+            </button>
           </li>
         {/each}
       </ul>
     {/if}
-    <NewCharacter />
+    <NewCharacter bind:character={newSideCharacter} />
   </div>
   
-  <button>Add Side Character</button>
+  <button on:click={addSideCharacter}>Add Side Character</button>
 
   <hr>
 
   <h2>Relationships</h2>
+  {#if $tablePrompt.relationships.length > 0}
+      <ul class="container-wrapper characters-container relationships-container">
+        {#each $tablePrompt.relationships as { type, details, connection }, index}
+          <li
+            class="container added-prompt side-character"
+            style="background-color: {setRelationshipColor(type, 0.5)}"
+          >
+            <h2 class="character-name">{connection[0]}</h2>
+            {#if details}
+              <h3 class="relationship-details">
+                {details}
+              </h3>
+            {/if}
+            <h2 class="character-name">{connection[1]}</h2>
+            <button class="red-button" on:click={() => (removeRelationship(index))}>
+              Remove
+            </button>
+          </li>
+        {/each}
+      </ul>
+    {/if}
 
   <div class="container-wrapper dream-box relationship">
     <div class="buttons-wrapper">
@@ -94,9 +135,10 @@
       <div class="container dream-radio-buttons">
         {#each dreamData.relationship as type}
           <span
-            class:active={type === selectedRealtionship}
+            class:active={type === newRelationship.type}
             role="button"
             tabindex="0"
+            on:click={() => (newRelationship.type = type as any)}
           >
             {dreamData.capitalize(type)}
           </span>
@@ -111,37 +153,52 @@
         class="story-input dream-textfield"
         type="text"
         placeholder={"E.g. " + relationshipExamples}
+        bind:value={newRelationship.details}
       />
     </div>
 
     <div class="buttons-wrapper">
-      <h2>Characters</h2>
+      <h2>Connection</h2>
       <div class="container relationship-characters">
-        <select class="selector" style="border-color: {setRelationshipColor(selectedRealtionship)}">
+        <select
+          class="selector"
+          style="border-color: {setRelationshipColor(newRelationship.type, 0.75)}"
+          bind:value={newRelationship.connection[0]}
+        >
           <option value="" selected={true} disabled hidden>Select</option>
-          <option value="" disabled>None</option>
-          <!-- {#each dreamData.characters as character}
-            <option value={character}>{character}</option>
-          {/each} -->
+          {#if $tablePrompt.sideCharacters}
+            {#each $tablePrompt.sideCharacters as { name }}
+              <option value={name}>{name}</option>
+            {/each}
+          {:else}
+            <option value="" disabled>None</option>
+          {/if}
         </select>
 
         <div
           class="relationship-line"
-          style="background-color: {setRelationshipColor(selectedRealtionship)}"
+          style="background-color: {setRelationshipColor(newRelationship.type, 0.75)}"
         ></div>
 
-        <select class="selector" style="border-color: {setRelationshipColor(selectedRealtionship)}">
+        <select
+          class="selector"
+          style="border-color: {setRelationshipColor(newRelationship.type, 0.75)}"
+          bind:value={newRelationship.connection[1]}
+        >
           <option value="" selected={true} disabled hidden>Select</option>
-          <option value="" disabled>None</option>
-          <!-- {#each dreamData.characters as character}
-            <option value={character}>{character}</option>
-          {/each} -->
+          {#if $tablePrompt.sideCharacters}
+            {#each $tablePrompt.sideCharacters as { name }}
+              <option value={name}>{name}</option>
+            {/each}
+          {:else}
+            <option value="" disabled>None</option>
+          {/if}
         </select>
       </div>
     </div>
   </div>
 
-  <button>Add Relationship</button>
+  <button on:click={addRelationship}>Add Relationship</button>
 </Dropdown>
 
 <style>
@@ -203,6 +260,20 @@
     height: 0.5vw;
   }
 
+  .relationships-container {
+    flex-flow: row wrap;
+  }
+
+  .relationships-container h2 {
+    color: #dedede;
+  }
+
+  .relationship-details {
+    text-align: center;
+    width: auto !important;
+    background-color: rgba(1, 0, 32, 0.5) !important;
+  }
+
   @media only screen and (max-width: 600px) {
     .characters-container {
       gap: 1em;
@@ -241,11 +312,14 @@
     .relationship-characters {
       width: 95vw;
       gap: 1em;
-      /* flex-flow: column nowrap; */
     }
 
     .relationship-line {
       display: none;
+    }
+
+    .relationship-details {
+      padding: 0.5em 1em !important;
     }
   }
 </style>

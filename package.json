@@ -16,13 +16,13 @@
   "devDependencies": {
     "@astrojs/svelte": "7.0.4",
     "@sveltejs/vite-plugin-svelte": "5.0.3",
-    "astro": "5.3.1",
+    "astro": "^5.4.2",
     "svelte": "5.20.5"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/react": "4.2.0",
-    "@astrojs/vercel": "8.0.8",
+    "@astrojs/vercel": "^8.0.4",
     "@coinbase/wallet-sdk": "4.3.0",
     "@metamask/detect-provider": "^2.0.0",
     "@metamask/sdk": "0.32.0",

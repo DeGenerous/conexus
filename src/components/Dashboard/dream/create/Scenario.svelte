@@ -1,101 +1,139 @@
 <!-- Scenarios.svelte -->
-<script>
+<script lang="ts">
+  import { tablePrompt } from '@stores/dream';
   import Dropdown from './Dropdown.svelte';
 
-  export let winningScenarios = [
-    'The protagonist defeats the villain and restores peace to their world.',
-    'Two characters overcome obstacles and end up together.',
-    'The main character outsmarts their captors and finds freedom.',
-    'A flawed character atones for past mistakes and earns a second chance.',
-    'The protagonist succeeds in an impossible challenge, proving everyone wrong.',
-    'Warring factions reach a truce, avoiding complete destruction.',
+  let newWinningScenario: string = '';
+  const addWinningScenario = () => {
+    if (newWinningScenario === '') return;
+    $tablePrompt.winningScenarios = [...$tablePrompt.winningScenarios, newWinningScenario];
+    newWinningScenario = '';
+  }
+  const removeWinningScenario = (index: number) => {
+    $tablePrompt.winningScenarios = $tablePrompt.winningScenarios.filter((scenario, nr) => {
+      return nr !== index;
+    });
+  }
 
-  ];
-  export let losingScenarios = [
-    'The protagonist fights bravely but ultimately falls to the villain.',
-    'The hero wins but dies in the process, leaving behind a legacy.',
-    'The main character succumbs to temptation, becoming the very evil they fought.',
-    'An adventure into the unknown ends in disaster, leaving no survivors.',
-  ];
-  export let keyEvents = [
-    'The protagonist receives an invitation or challenge that sets the story in motion.',
-    'An early challenge tests the hero’s skills and sets the stakes.',
-    'A close ally is revealed to be working against the hero.',
-    'The protagonist learns they were always destined for something greater.',
-    'The hero faces their lowest point, nearly giving up.',
-    'A wise figure imparts crucial advice or knowledge before disappearing.',
-    'The protagonist discovers a dangerous power they must control.',
-    'A countdown begins, forcing the hero into a desperate attempt to succeed.',
-    'The final battle or confrontation between the protagonist and antagonist.',
-    'A major reveal changes everything the character thought they knew.'
-  ];
+  let newLosingScenario: string = '';
+  const addLosingScenario = () => {
+    if (newLosingScenario === '') return;
+    $tablePrompt.losingScenarios = [...$tablePrompt.losingScenarios, newLosingScenario];
+    newLosingScenario = '';
+  }
+  const removeLosingScenario = (index: number) => {
+    $tablePrompt.losingScenarios = $tablePrompt.losingScenarios.filter((scenario, nr) => {
+      return nr !== index;
+    });
+  }
 
-  let winningScenario = '';
-  let losingScenario = '';
-  let keyEvent = '';
+  let newKeyEvent: string = '';
+  const addKeyEvent = () => {
+    if (newKeyEvent === '') return;
+    $tablePrompt.keyEvents = [...$tablePrompt.keyEvents, newKeyEvent];
+    newKeyEvent = '';
+  }
+  const removeKeyEvent = (index: number) => {
+    $tablePrompt.keyEvents = $tablePrompt.keyEvents.filter((event, nr) => {
+      return nr !== index;
+    });
+  }
+
+  function handleEnterKey(event: KeyboardEvent) {
+    if (event.key !== 'Enter' || event.repeat) return;
+    const activeInput = document.activeElement as HTMLElement;
+    switch (activeInput.id) {
+      case 'winning-scenario': {
+        event.preventDefault();
+        addWinningScenario();
+        break;
+      }
+      case 'losing-scenario': {
+        event.preventDefault();
+        addLosingScenario();
+        break;
+      }
+      case 'key-event': {
+        event.preventDefault();
+        addKeyEvent();
+        break;
+      }
+    }
+  }
 </script>
+
+<svelte:window on:keypress={handleEnterKey} />
 
 <Dropdown name="Describe Scenarios">
   <h3>Winning Scenario</h3>
-  {#if winningScenarios.length > 0}
+  {#if $tablePrompt.winningScenarios.length > 0}
     <ul class="container-wrapper winning-scenarios">
-      {#each winningScenarios as scenario, index}
+      {#each $tablePrompt.winningScenarios as scenario, index}
         <li class="buttons-wrapper added-prompt">
           <h3>{scenario}</h3>
-          <button class="red-button">Remove</button>
+          <button class="red-button" on:click={() => (removeWinningScenario(index))}>
+            Remove
+          </button>
         </li>
       {/each}
     </ul>
   {/if}
   <input
+    id="winning-scenario"
     class="story-input"
     type="text"
     placeholder="How does the story reach a happy or victorious ending? List key moments that lead to success."
-    bind:value={winningScenario}
+    bind:value={newWinningScenario}
   />
-  <button class="primary-button">Add Winning Scenario</button>
+  <button on:click={addWinningScenario}>Add Winning Scenario</button>
 
   <hr>
 
   <h3>Losing Scenario</h3>
-  {#if losingScenarios.length > 0}
+  {#if $tablePrompt.losingScenarios.length > 0}
     <ul class="container-wrapper losing-scenarios">
-      {#each losingScenarios as scenario, index}
+      {#each $tablePrompt.losingScenarios as scenario, index}
         <li class="buttons-wrapper added-prompt">
           <h3>{scenario}</h3>
-          <button class="red-button">Remove</button>
+          <button class="red-button" on:click={() => (removeLosingScenario(index))}>
+            Remove
+          </button>
         </li>
       {/each}
     </ul>
   {/if}
   <input
+    id="losing-scenario"
     class="story-input"
     type="text"
     placeholder="What leads to failure, loss, or tragedy? List key missteps and dangers that lead to downfall."
-    bind:value={losingScenario}
+    bind:value={newLosingScenario}
   />
-  <button class="primary-button">Add Winning Scenario</button>
+  <button on:click={addLosingScenario}>Add Losing Scenario</button>
 
   <hr>
 
   <h3>Key Events</h3>
-  {#if losingScenarios.length > 0}
+  {#if $tablePrompt.keyEvents.length > 0}
     <ul class="container-wrapper losing-scenarios">
-      {#each keyEvents as event, index}
+      {#each $tablePrompt.keyEvents as event, index}
         <li class="buttons-wrapper added-prompt">
           <h3>{event}</h3>
-          <button class="red-button">Remove</button>
+          <button class="red-button" on:click={() => (removeKeyEvent(index))}>
+            Remove
+          </button>
         </li>
       {/each}
     </ul>
   {/if}
   <input
+    id="key-event"
     class="story-input"
     type="text"
     placeholder="What major events shape the story? List key twists, challenges, or turning points."
-    bind:value={keyEvent}
+    bind:value={newKeyEvent}
   />
-  <button class="primary-button">Add Winning Scenario</button>
+  <button on:click={addKeyEvent}>Add Key Event</button>
 </Dropdown>
 
 <style>

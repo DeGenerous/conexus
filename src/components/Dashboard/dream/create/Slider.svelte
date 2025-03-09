@@ -6,17 +6,18 @@
   export let sliderValue: any = null;
 
   const setOptions = () => {
-    const options: {id: number, value: string}[] = [];
+    const options: { id: number; value: string }[] = [];
     for (let i = 1; i <= parameters.length; i++) {
-      options.push({id: i, value: parameters[i - 1]})
+      options.push({ id: i, value: parameters[i - 1] });
     }
     return options;
-  }
+  };
 
   const options = setOptions();
 
   function handleChange() {
-    const activeValue = options.filter((option) => option.id == inputValue)[0].value;
+    const activeValue = options.filter((option) => option.id == inputValue)[0]
+      .value;
     // console.log(activeValue)
     sliderValue = activeValue;
   }
@@ -103,11 +104,13 @@
       gap: 0.5em;
     }
 
-    ul, input {
+    ul,
+    input {
       width: inherit;
     }
 
-    li, h3 {
+    li,
+    h3 {
       font-size: 1em;
     }
   }

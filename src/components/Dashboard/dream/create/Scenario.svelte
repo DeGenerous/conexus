@@ -6,38 +6,48 @@
   let newWinningScenario: string = '';
   const addWinningScenario = () => {
     if (newWinningScenario === '') return;
-    $tablePrompt.winningScenarios = [...$tablePrompt.winningScenarios, newWinningScenario];
+    $tablePrompt.winningScenarios = [
+      ...$tablePrompt.winningScenarios,
+      newWinningScenario,
+    ];
     newWinningScenario = '';
-  }
+  };
   const removeWinningScenario = (index: number) => {
-    $tablePrompt.winningScenarios = $tablePrompt.winningScenarios.filter((scenario, nr) => {
-      return nr !== index;
-    });
-  }
+    $tablePrompt.winningScenarios = $tablePrompt.winningScenarios.filter(
+      (scenario, nr) => {
+        return nr !== index;
+      },
+    );
+  };
 
   let newLosingScenario: string = '';
   const addLosingScenario = () => {
     if (newLosingScenario === '') return;
-    $tablePrompt.losingScenarios = [...$tablePrompt.losingScenarios, newLosingScenario];
+    $tablePrompt.losingScenarios = [
+      ...$tablePrompt.losingScenarios,
+      newLosingScenario,
+    ];
     newLosingScenario = '';
-  }
+  };
   const removeLosingScenario = (index: number) => {
-    $tablePrompt.losingScenarios = $tablePrompt.losingScenarios.filter((scenario, nr) => {
-      return nr !== index;
-    });
-  }
+    $tablePrompt.losingScenarios = $tablePrompt.losingScenarios.filter(
+      (scenario, nr) => {
+        return nr !== index;
+      },
+    );
+  };
 
   let newKeyEvent: string = '';
   const addKeyEvent = () => {
     if (newKeyEvent === '') return;
     $tablePrompt.keyEvents = [...$tablePrompt.keyEvents, newKeyEvent];
     newKeyEvent = '';
-  }
+  };
   const removeKeyEvent = (index: number) => {
     $tablePrompt.keyEvents = $tablePrompt.keyEvents.filter((event, nr) => {
       return nr !== index;
     });
-  }
+  };
 
   function handleEnterKey(event: KeyboardEvent) {
     if (event.key !== 'Enter' || event.repeat) return;
@@ -71,7 +81,10 @@
       {#each $tablePrompt.winningScenarios as scenario, index}
         <li class="buttons-wrapper added-prompt">
           <h3>{scenario}</h3>
-          <button class="red-button" on:click={() => (removeWinningScenario(index))}>
+          <button
+            class="red-button"
+            on:click={() => removeWinningScenario(index)}
+          >
             Remove
           </button>
         </li>
@@ -87,7 +100,7 @@
   />
   <button on:click={addWinningScenario}>Add Winning Scenario</button>
 
-  <hr>
+  <hr />
 
   <h3>Losing Scenario</h3>
   {#if $tablePrompt.losingScenarios.length > 0}
@@ -95,7 +108,10 @@
       {#each $tablePrompt.losingScenarios as scenario, index}
         <li class="buttons-wrapper added-prompt">
           <h3>{scenario}</h3>
-          <button class="red-button" on:click={() => (removeLosingScenario(index))}>
+          <button
+            class="red-button"
+            on:click={() => removeLosingScenario(index)}
+          >
             Remove
           </button>
         </li>
@@ -111,7 +127,7 @@
   />
   <button on:click={addLosingScenario}>Add Losing Scenario</button>
 
-  <hr>
+  <hr />
 
   <h3>Key Events</h3>
   {#if $tablePrompt.keyEvents.length > 0}
@@ -119,7 +135,7 @@
       {#each $tablePrompt.keyEvents as event, index}
         <li class="buttons-wrapper added-prompt">
           <h3>{event}</h3>
-          <button class="red-button" on:click={() => (removeKeyEvent(index))}>
+          <button class="red-button" on:click={() => removeKeyEvent(index)}>
             Remove
           </button>
         </li>

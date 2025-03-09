@@ -36,7 +36,7 @@
           hints={[
             'A simple narrative with a clear beginning, middle, and end.',
             'A balanced journey with character growth and key turning points.',
-            'A deep story with twists, challenges, and evolving developments.'
+            'A deep story with twists, challenges, and evolving developments.',
           ]}
         />
       </div>
@@ -84,14 +84,14 @@
           hints={[
             'Slower pacing focuses on deep character moments, world-building, and gradual story progression.',
             'A balanced mix of action, character development, and key events unfolding naturally.',
-            'Fast-paced storytelling with rapid events, high stakes, and minimal downtime.'
+            'Fast-paced storytelling with rapid events, high stakes, and minimal downtime.',
           ]}
         />
       </div>
     </div>
   </div>
 
-  <hr>
+  <hr />
 
   <div class="input-container">
     <label class="section-title" for="point-of-view">Point of View</label>
@@ -104,12 +104,12 @@
     ></textarea>
   </div>
 
-  <hr>
+  <hr />
 
   <h3>Story Tone</h3>
 
   <div class="dream-box tone-characteristics">
-    {#each $tablePrompt.tone as {name, value}}
+    {#each $tablePrompt.tone as { name, value }}
       <div class="buttons-wrapper">
         <h2>{dreamData.capitalize(name)}</h2>
         <div class="container">
@@ -125,7 +125,8 @@
     width: 80vw;
   }
 
-  label, h3 {
+  label,
+  h3 {
     color: #dedede;
   }
 
@@ -150,7 +151,7 @@
     .style-options {
       width: 100vw;
     }
- 
+
     .style-options .container {
       width: 95vw;
     }

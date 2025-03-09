@@ -26,11 +26,11 @@ const dreamData = {
     'motivating',
     'curious',
     'humoristic',
-    'surreal'
+    'surreal',
   ],
   relationship: ['friends', 'neutral', 'enemies'],
   min_max: ['min', 'standard', 'max'],
   capitalize: (input) => input.charAt(0).toUpperCase() + input.slice(1),
-}
+};
 
 export default dreamData;

@@ -13,14 +13,19 @@
   let newImagePrompt: string = '';
   const addImagePrompt = () => {
     if (newImagePrompt === '') return;
-    $promptSettings.imagePrompts = [...$promptSettings.imagePrompts, newImagePrompt];
+    $promptSettings.imagePrompts = [
+      ...$promptSettings.imagePrompts,
+      newImagePrompt,
+    ];
     newImagePrompt = '';
-  }
+  };
   const removeImagePrompt = (index: number) => {
-    $promptSettings.imagePrompts = $promptSettings.imagePrompts.filter((prompt, nr) => {
-      return nr !== index;
-    });
-  }
+    $promptSettings.imagePrompts = $promptSettings.imagePrompts.filter(
+      (prompt, nr) => {
+        return nr !== index;
+      },
+    );
+  };
 
   function handleEnterKey(event: KeyboardEvent) {
     if (event.key !== 'Enter' || event.repeat) return;
@@ -36,18 +41,20 @@
 
   const showPrompt = () => {
     console.log($promptSettings);
-    console.log('Table:')
+    console.log('Table:');
     console.log($tablePrompt);
-    console.log('Open:')
+    console.log('Open:');
     console.log($openPrompt);
-  }
+  };
 </script>
 
 <svelte:window on:keypress={handleEnterKey} />
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <section class="container-wrapper dream-wrapper">
-  <h2 class="page-title">Be the author of your own destiny and the architect of your dreams</h2>
+  <h2 class="page-title">
+    Be the author of your own destiny and the architect of your dreams
+  </h2>
 
   <!-- TITLE, DESCRIPTION, IMAGE PROMPTS -->
   <div class="dream-box blur general-parameters">
@@ -61,7 +68,7 @@
         bind:value={$promptSettings.name}
       />
     </div>
-    
+
     <div class="input-container">
       <label for="description">Description</label>
       <textarea
@@ -73,7 +80,7 @@
       ></textarea>
     </div>
 
-    <hr>
+    <hr />
 
     <h3>Image Generation Instructions</h3>
     {#if $promptSettings.imagePrompts.length > 0}
@@ -81,7 +88,10 @@
         {#each $promptSettings.imagePrompts as prompt, index}
           <li class="buttons-wrapper added-prompt">
             <h3>{prompt}</h3>
-            <button class="red-button" on:click={() => (removeImagePrompt(index))}>
+            <button
+              class="red-button"
+              on:click={() => removeImagePrompt(index)}
+            >
               Remove
             </button>
           </li>
@@ -114,7 +124,11 @@
 
         <div class="input-container">
           <label for="language">Language</label>
-          <select id="language" class="selector" bind:value={$promptSettings.language}>
+          <select
+            id="language"
+            class="selector"
+            bind:value={$promptSettings.language}
+          >
             {#each countries as { name }}
               <option value={name}>{name}</option>
             {/each}
@@ -141,7 +155,11 @@
 
         <div class="input-container">
           <label for="font">Difficulty</label>
-          <select id="font" class="selector" bind:value={$promptSettings.difficulty}>
+          <select
+            id="font"
+            class="selector"
+            bind:value={$promptSettings.difficulty}
+          >
             {#each dreamData.min_max as option}
               <option value={option}>{dreamData.capitalize(option)}</option>
             {/each}
@@ -153,7 +171,11 @@
     <div class="buttons-wrapper">
       <h2>Length</h2>
       <div class="container">
-        <Slider bind:sliderValue={$promptSettings.length} parameters={dreamData.min_max} inputValue={2} />
+        <Slider
+          bind:sliderValue={$promptSettings.length}
+          parameters={dreamData.min_max}
+          inputValue={2}
+        />
       </div>
     </div>
 
@@ -248,7 +270,9 @@
   <div class="buttons-wrapper">
     <button class="red-button blur">CLEAR</button>
     <button class="blur">SAVE DRAFT</button>
-    <button class="green-button blur" on:click={showPrompt}>CREATE A DREAM</button>
+    <button class="green-button blur" on:click={showPrompt}
+      >CREATE A DREAM</button
+    >
   </div>
 </section>
 

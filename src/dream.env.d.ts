@@ -9,18 +9,18 @@ type Character = {
   description: string;
   physicality?: string;
   psychology?: string;
-}
+};
 
 type Relationship = {
   type: 'friends' | 'neutral' | 'enemies';
   details?: string;
   connection: [string, string];
-}
+};
 
 type Tone = {
   name: string;
   value: None_Max;
-}[]
+}[];
 
 interface PromptSettings {
   name: string;
@@ -31,7 +31,7 @@ interface PromptSettings {
   interactivity: Min_Max;
   difficulty: Min_Max;
   length: Min_Max;
-};
+}
 
 interface TablePrompt {
   premise: string;

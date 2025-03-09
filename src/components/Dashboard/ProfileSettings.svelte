@@ -66,270 +66,270 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <section class="container-wrapper">
-{#await Account.getUser() then user}
-  {#if user?.available}
-    <div class="stories-count blur">
-      <h3>
-        You have used
-        <strong
-          >{user.available.used} / {user.available.available} weekly</strong
-        >
-        stories
-      </h3>
-
-      {#if user.available.bonus > 0}
+  {#await Account.getUser() then user}
+    {#if user?.available}
+      <div class="stories-count blur">
         <h3>
-          You have
-          <strong>{user.available.bonus} bonus</strong>
+          You have used
+          <strong
+            >{user.available.used} / {user.available.available} weekly</strong
+          >
           stories
         </h3>
-      {/if}
+
+        {#if user.available.bonus > 0}
+          <h3>
+            You have
+            <strong>{user.available.bonus} bonus</strong>
+            stories
+          </h3>
+        {/if}
+      </div>
+
+      <hr />
+    {/if}
+
+    <h2>Profile Settings</h2>
+
+    <div class="container blur">
+      <div class="input-container">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          class="user-input"
+          type="text"
+          bind:value={user!.email}
+          disabled={true}
+        />
+      </div>
+
+      <div class="input-container">
+        <label for="first-name">First name</label>
+        <input
+          id="first-name"
+          class="user-input"
+          type="text"
+          bind:value={user!.first_name}
+        />
+      </div>
+
+      <div class="input-container">
+        <label for="last-name">Last name</label>
+        <input
+          id="last-name"
+          class="user-input"
+          type="text"
+          bind:value={user!.last_name}
+        />
+      </div>
+
+      <div class="input-container">
+        <label for="last-name">Password</label>
+        <div class="password-input-container">
+          <input
+            id="password"
+            class="user-input"
+            class:red-border={!password || password.length < 8}
+            type={$passwordVisible.edit ? 'text' : 'password'}
+            bind:value={password}
+          />
+          <Eye visibility="edit" />
+        </div>
+      </div>
+
+      <button on:click={() => saveProfileSettings(user!)}>Save Changes</button>
     </div>
 
     <hr />
-  {/if}
 
-  <h2>Profile Settings</h2>
-
-  <div class="container blur">
-    <div class="input-container">
-      <label for="email">Email</label>
-      <input
-        id="email"
-        class="user-input"
-        type="text"
-        bind:value={user!.email}
-        disabled={true}
-      />
-    </div>
-
-    <div class="input-container">
-      <label for="first-name">First name</label>
-      <input
-        id="first-name"
-        class="user-input"
-        type="text"
-        bind:value={user!.first_name}
-      />
-    </div>
-
-    <div class="input-container">
-      <label for="last-name">Last name</label>
-      <input
-        id="last-name"
-        class="user-input"
-        type="text"
-        bind:value={user!.last_name}
-      />
-    </div>
-
-    <div class="input-container">
-      <label for="last-name">Password</label>
-      <div class="password-input-container">
-        <input
-          id="password"
-          class="user-input"
-          class:red-border={!password || password.length < 8}
-          type={$passwordVisible.edit ? 'text' : 'password'}
-          bind:value={password}
-        />
-        <Eye visibility="edit" />
-      </div>
-    </div>
-
-    <button on:click={() => saveProfileSettings(user!)}>Save Changes</button>
-  </div>
-
-  <hr />
-
-  <div class="wallet-connect">
-    {#if user && !user.faux}
-      {#if user.wallets && user.wallets.length >= 1}
-        <div class="wallets-container">
-          <h2>Connected Addresses:</h2>
-          <ul>
-            {#each user.wallets.filter((address) => !address.faux) as wallet, index}
-              <li
-                class="wallet"
-                style={wallet.wallet == user.main_wallet
-                  ? activeWalletStyling
-                  : ''}
-              >
-                <p>{index + 1}</p>
-                <span
+    <div class="wallet-connect">
+      {#if user && !user.faux}
+        {#if user.wallets && user.wallets.length >= 1}
+          <div class="wallets-container">
+            <h2>Connected Addresses:</h2>
+            <ul>
+              {#each user.wallets.filter((address) => !address.faux) as wallet, index}
+                <li
+                  class="wallet"
                   style={wallet.wallet == user.main_wallet
-                    ? 'color: rgb(51, 226, 230);'
+                    ? activeWalletStyling
                     : ''}
-                  >{wallet.wallet.slice(0, 6) +
-                    '...' +
-                    wallet.wallet.slice(-4)}</span
                 >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  class="star-svg"
-                  fill="#010020"
-                  style={wallet.wallet === user.main_wallet
-                    ? 'fill: rgb(51, 226, 230)'
-                    : ''}
-                  on:click={() => {
-                    if (wallet.wallet != user!.main_wallet)
-                      walletSelectConfirm(wallet.wallet);
-                  }}
-                  role="button"
-                  tabindex="0"
-                >
-                  <path
-                    d="m12 3 2.23 6.88h7.23l-5.85 4.24L17.85 21 12 16.75 6.15 21l2.24-6.88-5.85-4.24h7.23L12 3z"
+                  <p>{index + 1}</p>
+                  <span
+                    style={wallet.wallet == user.main_wallet
+                      ? 'color: rgb(51, 226, 230);'
+                      : ''}
+                    >{wallet.wallet.slice(0, 6) +
+                      '...' +
+                      wallet.wallet.slice(-4)}</span
                   >
-                  </path>
-                </svg>
-              </li>
-            {/each}
-          </ul>
-          <div class="buttons-container">
-            <WalletConnect linking={true} title={'Add another address'} />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    class="star-svg"
+                    fill="#010020"
+                    style={wallet.wallet === user.main_wallet
+                      ? 'fill: rgb(51, 226, 230)'
+                      : ''}
+                    on:click={() => {
+                      if (wallet.wallet != user!.main_wallet)
+                        walletSelectConfirm(wallet.wallet);
+                    }}
+                    role="button"
+                    tabindex="0"
+                  >
+                    <path
+                      d="m12 3 2.23 6.88h7.23l-5.85 4.24L17.85 21 12 16.75 6.15 21l2.24-6.88-5.85-4.24h7.23L12 3z"
+                    >
+                    </path>
+                  </svg>
+                </li>
+              {/each}
+            </ul>
+            <div class="buttons-container">
+              <WalletConnect linking={true} title={'Add another address'} />
+            </div>
           </div>
+        {/if}
+      {:else}
+        <div class="buttons-container">
+          <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
         </div>
       {/if}
-    {:else}
-      <div class="buttons-container">
-        <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
-      </div>
-    {/if}
-  </div>
-{/await}
+    </div>
+  {/await}
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-{#if $referralCodes}
-  <hr />
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  {#if $referralCodes}
+    <hr />
 
-  <h2>Referral Codes:</h2>
+    <h2>Referral Codes:</h2>
 
-  <div class="referral-codes">
-    {#each $referralCodes as code}
-      <div class="ref-code-container">
-        <input
-          class="ref-code"
-          id="code-{code.code}"
-          class:active-code={!code.is_used}
-          value={code.code}
-          disabled
-        />
-        {#if !code.is_used}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="-100 -100 200 200"
-            class="copy-svg"
-            fill="none"
-            stroke="rgb(51, 226, 230)"
-            stroke-width="15"
-            stroke-linejoin="round"
-            stroke-linecap="round"
-            opacity="0.75"
-            on:click={() => navigator.clipboard.writeText(code.code)}
-            role="button"
-            tabindex="0"
-            aria-label="Copy code"
-          >
-            <defs>
-              <mask id="copy-checkmark">
-                <rect
-                  x="-45"
-                  y="-60"
-                  width="130"
-                  height="150"
-                  fill="white"
-                  stroke="white"
-                />
-                <path
-                  d="
+    <div class="referral-codes">
+      {#each $referralCodes as code}
+        <div class="ref-code-container">
+          <input
+            class="ref-code"
+            id="code-{code.code}"
+            class:active-code={!code.is_used}
+            value={code.code}
+            disabled
+          />
+          {#if !code.is_used}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="-100 -100 200 200"
+              class="copy-svg"
+              fill="none"
+              stroke="rgb(51, 226, 230)"
+              stroke-width="15"
+              stroke-linejoin="round"
+              stroke-linecap="round"
+              opacity="0.75"
+              on:click={() => navigator.clipboard.writeText(code.code)}
+              role="button"
+              tabindex="0"
+              aria-label="Copy code"
+            >
+              <defs>
+                <mask id="copy-checkmark">
+                  <rect
+                    x="-45"
+                    y="-60"
+                    width="130"
+                    height="150"
+                    fill="white"
+                    stroke="white"
+                  />
+                  <path
+                    d="
                       M -10 10
                       L 10 40
                       L 50 -20
                     "
-                  fill="none"
-                  stroke="black"
-                />
-              </mask>
-            </defs>
+                    fill="none"
+                    stroke="black"
+                  />
+                </mask>
+              </defs>
 
-            <path
-              d="
+              <path
+                d="
                   M 40 -67
                   L 40 -90
                   L -90 -90
                   L -90 60
                   L -52 60
                 "
-              fill="none"
-            />
-            <rect
-              x="-45"
-              y="-60"
-              width="130"
-              height="150"
-              mask="url(#copy-checkmark)"
-            />
-            <path
-              d="
+                fill="none"
+              />
+              <rect
+                x="-45"
+                y="-60"
+                width="130"
+                height="150"
+                mask="url(#copy-checkmark)"
+              />
+              <path
+                d="
                   M -10 10
                   L 10 40
                   L 50 -20
                 "
-              fill="none"
-              stroke="rgb(1, 0, 32)"
-              stroke-width="20"
-            />
-          </svg>
-        {/if}
-      </div>
-    {/each}
-  </div>
-{/if}
+                fill="none"
+                stroke="rgb(1, 0, 32)"
+                stroke-width="20"
+              />
+            </svg>
+          {/if}
+        </div>
+      {/each}
+    </div>
+  {/if}
 
-<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
-{#key updateNewsletterStatus}
-  {#await account.subscriptionStatus() then { is_active, subscribed_at }}
-    <hr />
+  <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
+  {#key updateNewsletterStatus}
+    {#await account.subscriptionStatus() then { is_active, subscribed_at }}
+      <hr />
 
-    {#if is_active}
-      <div class="container">
-        <h2>Newsletter Subscription</h2>
+      {#if is_active}
+        <div class="container">
+          <h2>Newsletter Subscription</h2>
 
-        {#if subscribed_at}
-          <h3>Active since: {dateToString(subscribed_at.Time)}</h3>
-        {/if}
-        <h3
-          class="unsubscribe-button"
-          on:click={() => {
-            account
-              .unsubscribeNewsletter()
-              .then(() => (updateNewsletterStatus = true));
-          }}
-          role="button"
-          tabindex="0"
-        >
-          Unsubscribe
-        </h3>
-      </div>
-    {:else}
-      <div class="newsletter-subscription container blur">
-        <h3>Subscribe to Newsletter:</h3>
-        <button
-          class="green-button"
-          on:click={() => {
-            account
-              .subscribeNewsletter()
-              .then(() => (updateNewsletterStatus = false));
-          }}
-        >
-          Subscribe
-        </button>
-      </div>
-    {/if}
-  {/await}
-{/key}
+          {#if subscribed_at}
+            <h3>Active since: {dateToString(subscribed_at.Time)}</h3>
+          {/if}
+          <h3
+            class="unsubscribe-button"
+            on:click={() => {
+              account
+                .unsubscribeNewsletter()
+                .then(() => (updateNewsletterStatus = true));
+            }}
+            role="button"
+            tabindex="0"
+          >
+            Unsubscribe
+          </h3>
+        </div>
+      {:else}
+        <div class="newsletter-subscription container blur">
+          <h3>Subscribe to Newsletter:</h3>
+          <button
+            class="green-button"
+            on:click={() => {
+              account
+                .subscribeNewsletter()
+                .then(() => (updateNewsletterStatus = false));
+            }}
+          >
+            Subscribe
+          </button>
+        </div>
+      {/if}
+    {/await}
+  {/key}
 </section>
 
 <style>

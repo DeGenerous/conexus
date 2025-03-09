@@ -14,50 +14,61 @@
     psychology: '',
   };
   const addSideCharacter = () => {
-    $tablePrompt.sideCharacters = [...$tablePrompt.sideCharacters, newSideCharacter];
+    $tablePrompt.sideCharacters = [
+      ...$tablePrompt.sideCharacters,
+      newSideCharacter,
+    ];
     newSideCharacter = {
       name: '',
       description: '',
       physicality: '',
       psychology: '',
-    }
-  }
+    };
+  };
   const removeSideCharacter = (index: number) => {
-    $tablePrompt.sideCharacters = $tablePrompt.sideCharacters.filter((character, nr) => {
-      return nr !== index;
-    });
-  }
+    $tablePrompt.sideCharacters = $tablePrompt.sideCharacters.filter(
+      (character, nr) => {
+        return nr !== index;
+      },
+    );
+  };
 
   let newRelationship: Relationship = {
     type: 'neutral',
     details: '',
     connection: ['', ''],
-  }
+  };
   const addRelationship = () => {
-    $tablePrompt.relationships = [...$tablePrompt.relationships, newRelationship];
+    $tablePrompt.relationships = [
+      ...$tablePrompt.relationships,
+      newRelationship,
+    ];
     newRelationship = {
       type: 'neutral',
       details: '',
       connection: ['', ''],
-    }
-  }
+    };
+  };
   const removeRelationship = (index: number) => {
-    $tablePrompt.relationships = $tablePrompt.relationships.filter((character, nr) => {
-      return nr !== index;
-    });
-  }
+    $tablePrompt.relationships = $tablePrompt.relationships.filter(
+      (character, nr) => {
+        return nr !== index;
+      },
+    );
+  };
 
-  $: relationshipExamples = newRelationship.type === 'friends'
-    ? 'Family, Mentor/Protégé, Allies of Convenience, Unbreakable Bond...'
-    : newRelationship.type === 'enemies'
-      ? 'Betrayer, Rival, Respectful Opponent, Mortal Enemy, Frenemy...'
-      : 'Stranger, Tenuous Trust, Business Relationship, Mysterious Past...';
+  $: relationshipExamples =
+    newRelationship.type === 'friends'
+      ? 'Family, Mentor/Protégé, Allies of Convenience, Unbreakable Bond...'
+      : newRelationship.type === 'enemies'
+        ? 'Betrayer, Rival, Respectful Opponent, Mortal Enemy, Frenemy...'
+        : 'Stranger, Tenuous Trust, Business Relationship, Mysterious Past...';
 
   const setRelationshipColor = (type: string, opacity: number = 1) => {
     if (type === 'friends') return `rgba(0, 185, 55, ${opacity})`;
     if (type === 'enemies') return `rgba(255, 60, 64, ${opacity})`;
     return `rgba(150, 150, 150, ${opacity})`;
-  }
+  };
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -67,7 +78,7 @@
     <NewCharacter bind:character={$tablePrompt.mainCharacter} />
   </div>
 
-  <hr>
+  <hr />
 
   <div class="container-wrapper">
     <h2>Side Characters</h2>
@@ -92,7 +103,10 @@
                 <h3>{character.psychology}</h3>
               </div>
             {/if}
-            <button class="red-button" on:click={() => (removeSideCharacter(index))}>
+            <button
+              class="red-button"
+              on:click={() => removeSideCharacter(index)}
+            >
               Remove
             </button>
           </li>
@@ -101,33 +115,33 @@
     {/if}
     <NewCharacter bind:character={newSideCharacter} />
   </div>
-  
+
   <button on:click={addSideCharacter}>Add Side Character</button>
 
-  <hr>
+  <hr />
 
   <h2>Relationships</h2>
   {#if $tablePrompt.relationships.length > 0}
-      <ul class="container-wrapper characters-container relationships-container">
-        {#each $tablePrompt.relationships as { type, details, connection }, index}
-          <li
-            class="container added-prompt side-character"
-            style="background-color: {setRelationshipColor(type, 0.5)}"
-          >
-            <h2 class="character-name">{connection[0]}</h2>
-            {#if details}
-              <h3 class="relationship-details">
-                {details}
-              </h3>
-            {/if}
-            <h2 class="character-name">{connection[1]}</h2>
-            <button class="red-button" on:click={() => (removeRelationship(index))}>
-              Remove
-            </button>
-          </li>
-        {/each}
-      </ul>
-    {/if}
+    <ul class="container-wrapper characters-container relationships-container">
+      {#each $tablePrompt.relationships as { type, details, connection }, index}
+        <li
+          class="container added-prompt side-character"
+          style="background-color: {setRelationshipColor(type, 0.5)}"
+        >
+          <h2 class="character-name">{connection[0]}</h2>
+          {#if details}
+            <h3 class="relationship-details">
+              {details}
+            </h3>
+          {/if}
+          <h2 class="character-name">{connection[1]}</h2>
+          <button class="red-button" on:click={() => removeRelationship(index)}>
+            Remove
+          </button>
+        </li>
+      {/each}
+    </ul>
+  {/if}
 
   <div class="container-wrapper dream-box relationship">
     <div class="buttons-wrapper">
@@ -152,7 +166,7 @@
         id="relationship-details"
         class="story-input dream-textfield"
         type="text"
-        placeholder={"E.g. " + relationshipExamples}
+        placeholder={'E.g. ' + relationshipExamples}
         bind:value={newRelationship.details}
       />
     </div>
@@ -162,7 +176,10 @@
       <div class="container relationship-characters">
         <select
           class="selector"
-          style="border-color: {setRelationshipColor(newRelationship.type, 0.75)}"
+          style="border-color: {setRelationshipColor(
+            newRelationship.type,
+            0.75,
+          )}"
           bind:value={newRelationship.connection[0]}
         >
           <option value="" selected={true} disabled hidden>Select</option>
@@ -177,12 +194,18 @@
 
         <div
           class="relationship-line"
-          style="background-color: {setRelationshipColor(newRelationship.type, 0.75)}"
+          style="background-color: {setRelationshipColor(
+            newRelationship.type,
+            0.75,
+          )}"
         ></div>
 
         <select
           class="selector"
-          style="border-color: {setRelationshipColor(newRelationship.type, 0.75)}"
+          style="border-color: {setRelationshipColor(
+            newRelationship.type,
+            0.75,
+          )}"
           bind:value={newRelationship.connection[1]}
         >
           <option value="" selected={true} disabled hidden>Select</option>
@@ -242,7 +265,7 @@
   }
 
   .dream-radio-buttons {
-    width: 74vw !important; 
+    width: 74vw !important;
   }
 
   .relationship-characters {

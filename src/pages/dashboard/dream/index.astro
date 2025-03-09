@@ -1,15 +1,15 @@
 ---
 import Layout from '@layouts/Layout.astro';
 
-import ProfileSettings from '@components/dashboard/ProfileSettings.svelte';
+import Dream from '@components/dashboard/Dream.svelte';
 
 const arrow = true;
 
 const meta = {
-  header: 'Profile',
+  header: 'DREAM',
 };
 ---
 
 <Layout {...meta} {arrow}>
-  <ProfileSettings client:load />
+  <Dream />
 </Layout>

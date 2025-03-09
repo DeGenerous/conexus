@@ -65,9 +65,10 @@
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
+<section class="container-wrapper">
 {#await Account.getUser() then user}
   {#if user?.available}
-    <div class="stories-count">
+    <div class="stories-count blur">
       <h3>
         You have used
         <strong
@@ -90,7 +91,7 @@
 
   <h2>Profile Settings</h2>
 
-  <div class="container">
+  <div class="container blur">
     <div class="input-container">
       <label for="email">Email</label>
       <input
@@ -134,17 +135,6 @@
         />
         <Eye visibility="edit" />
       </div>
-    </div>
-
-    <div class="input-container">
-      <label class="selector-label">
-        Visibility:
-        <select class="selector">
-          <option value="" selected={true} disabled hidden>Select</option>
-          <option value="public">Public</option>
-          <option value="private">Private</option>
-        </select>
-      </label>
     </div>
 
     <button on:click={() => saveProfileSettings(user!)}>Save Changes</button>
@@ -324,7 +314,7 @@
         </h3>
       </div>
     {:else}
-      <div class="newsletter-subscription container">
+      <div class="newsletter-subscription container blur">
         <h3>Subscribe to Newsletter:</h3>
         <button
           class="green-button"
@@ -340,6 +330,7 @@
     {/if}
   {/await}
 {/key}
+</section>
 
 <style>
   .stories-count {

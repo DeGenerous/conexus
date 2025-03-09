@@ -2,6 +2,7 @@
   import countries from '../../../data/countries.json';
   import dreamData from '../../../data/dream';
   import { promptSettings, openPrompt, tablePrompt } from '@stores/dream';
+  import generatePrompt from '@utils/prompt';
 
   import Slider from './create/Slider.svelte';
   import Characters from './create/Characters.svelte';
@@ -39,12 +40,12 @@
     }
   }
 
-  const showPrompt = () => {
-    console.log($promptSettings);
-    console.log('Table:');
-    console.log($tablePrompt);
-    console.log('Open:');
-    console.log($openPrompt);
+  const generateStory = () => {
+    const storyData: TablePrompt | string =
+      promptFormat === 'Table'
+        ? $tablePrompt
+        : $openPrompt;
+    generatePrompt($promptSettings, storyData);
   };
 </script>
 
@@ -270,7 +271,7 @@
   <div class="buttons-wrapper">
     <button class="red-button blur">CLEAR</button>
     <button class="blur">SAVE DRAFT</button>
-    <button class="green-button blur" on:click={showPrompt}
+    <button class="green-button blur" on:click={generateStory}
       >CREATE A DREAM</button
     >
   </div>

@@ -1,5 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+
+  import { serveUrl } from '@constants/media';
   import MediaManager from '@lib/media';
 
   let mediaManager = new MediaManager();
@@ -25,10 +27,10 @@
       const tileData = await mediaManager.fetchTopicMedia(topic_id, 'tile');
       const audioData = await mediaManager.fetchTopicMedia(topic_id, 'audio');
 
-      backgrounds = [...bgData.map((fileId) => `/api/media/serve/${fileId}`)]; // ✅ Prefix each background
-      description = descData.length ? `/api/media/serve/${descData[0]}` : null; // ✅ Prefix description
-      tile = tileData.length ? `/api/media/serve/${tileData[0]}` : null; // ✅ Prefix tile
-      audio = audioData.length ? `/api/media/serve/${audioData[0]}` : null; // ✅ Prefix audio
+      backgrounds = [...bgData.map((fileId) => ` ${serveUrl}${fileId}`)]; // ✅ Prefix each background
+      description = descData.length ? ` ${serveUrl}${descData[0]}` : null; // ✅ Prefix description
+      tile = tileData.length ? ` ${serveUrl}${tileData[0]}` : null; // ✅ Prefix tile
+      audio = audioData.length ? ` ${serveUrl}${audioData[0]}` : null; // ✅ Prefix audio
     } catch (error) {
       console.error('Failed to load media:', error);
     } finally {
@@ -57,7 +59,7 @@
             topic_name,
           );
           if (response.file_id) {
-            fileUrls.push(`/api/media/serve/${response.file_id}`);
+            fileUrls.push(` ${serveUrl}${response.file_id}`);
           }
         }
         backgrounds = [...backgrounds, ...fileUrls].slice(0, 3); // Keep max 3
@@ -72,21 +74,21 @@
             files[0],
             topic_name,
           );
-          const fileUrl = `/api/media/serve/${response.file_id}`;
+          const fileUrl = ` ${serveUrl}${response.file_id}`;
           description = fileUrl;
         } else if (type === 'tile') {
           const response = await mediaManager.uploadFileTile(
             files[0],
             topic_name,
           );
-          const fileUrl = `/api/media/serve/${response.file_id}`;
+          const fileUrl = ` ${serveUrl}${response.file_id}`;
           tile = fileUrl;
         } else if (type === 'audio') {
           const response = await mediaManager.uploadFileAudio(
             files[0],
             topic_name,
           );
-          const fileUrl = `/api/media/serve/${response.file_id}`;
+          const fileUrl = ` ${serveUrl}${response.file_id}`;
           audio = fileUrl;
         }
 

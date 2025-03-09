@@ -6,19 +6,19 @@ export default class MediaAPI extends Fetcher {
 
     switch (media_type) {
       case 'background':
-        url = '/admin/upload-background';
+        url = '/media/upload-background';
         break;
       case 'description':
-        url = '/admin/upload-description';
+        url = '/media/upload-description';
         break;
       case 'tile':
-        url = '/admin/upload-tile';
+        url = '/media/upload-tile';
         break;
       case 'audio':
-        url = '/admin/upload-audio';
+        url = '/media/upload-audio';
         break;
       case 'video':
-        url = '/admin/upload-video';
+        url = '/media/upload-video';
         break;
     }
 
@@ -37,19 +37,19 @@ export default class MediaAPI extends Fetcher {
 
     switch (media_type) {
       case 'background':
-        url = '/admin/get-background';
+        url = '/media/get-background';
         break;
       case 'description':
-        url = '/admin/get-description';
+        url = '/media/get-description';
         break;
       case 'tile':
-        url = '/admin/get-tile';
+        url = '/media/get-tile';
         break;
       case 'audio':
-        url = '/admin/get-audio';
+        url = '/media/get-audio';
         break;
       case 'video':
-        url = '/admin/get-video';
+        url = '/media/get-video';
         break;
     }
 

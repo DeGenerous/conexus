@@ -12,6 +12,7 @@
   let backgrounds: string[] = [];
   let description: string | null = null;
   let tile: string | null = null;
+  let audio: string | null = null;
 
   // Fetch stored media on load
   const loadMedia = async () => {
@@ -22,10 +23,12 @@
         'description',
       );
       const tileData = await mediaManager.fetchTopicMedia(topic_id, 'tile');
+      const audioData = await mediaManager.fetchTopicMedia(topic_id, 'audio');
 
       backgrounds = [...bgData.map((fileId) => `/api/media/serve/${fileId}`)]; // ✅ Prefix each background
       description = descData.length ? `/api/media/serve/${descData[0]}` : null; // ✅ Prefix description
       tile = tileData.length ? `/api/media/serve/${tileData[0]}` : null; // ✅ Prefix tile
+      audio = audioData.length ? `/api/media/serve/${audioData[0]}` : null; // ✅ Prefix audio
     } catch (error) {
       console.error('Failed to load media:', error);
     } finally {
@@ -34,10 +37,7 @@
   };
 
   // Handle file upload
-  const handleFileUpload = async (
-    event: Event,
-    type: 'background' | 'description' | 'tile',
-  ) => {
+  const handleFileUpload = async (event: Event, type: MediaType) => {
     const input = event.target as HTMLInputElement;
     if (!input.files) return;
 
@@ -66,13 +66,32 @@
           alert('Only one file is allowed for this type.');
           return;
         }
-        const response =
-          type === 'description'
-            ? await mediaManager.uploadFileDescription(files[0], topic_name)
-            : await mediaManager.uploadFileTile(files[0], topic_name);
-        const fileUrl = `/api/media/serve/${response.file_id}`;
-        if (type === 'description') description = fileUrl;
-        if (type === 'tile') tile = fileUrl;
+
+        if (type === 'description') {
+          const response = await mediaManager.uploadFileDescription(
+            files[0],
+            topic_name,
+          );
+          const fileUrl = `/api/media/serve/${response.file_id}`;
+          description = fileUrl;
+        } else if (type === 'tile') {
+          const response = await mediaManager.uploadFileTile(
+            files[0],
+            topic_name,
+          );
+          const fileUrl = `/api/media/serve/${response.file_id}`;
+          tile = fileUrl;
+        } else if (type === 'audio') {
+          const response = await mediaManager.uploadFileAudio(
+            files[0],
+            topic_name,
+          );
+          const fileUrl = `/api/media/serve/${response.file_id}`;
+          audio = fileUrl;
+        }
+
+        // Reset input value
+        input.value = '';
       }
     } catch (error) {
       console.error('File upload failed:', error);
@@ -140,6 +159,23 @@
         />
         {#if tile}
           <img src={tile} alt="Tile" class="preview" />
+        {/if}
+      </div>
+
+      <!-- Audio Upload -->
+      <div class="media-group">
+        <h2>Audio</h2>
+        <label for="audio-upload">Upload Audio:</label>
+        <input
+          id="audio-upload"
+          type="file"
+          on:change={(e) => handleFileUpload(e, 'audio')}
+        />
+        {#if audio}
+          <audio controls>
+            <source src={audio} type="audio/mpeg" />
+            Your browser does not support the audio element.
+          </audio>
         {/if}
       </div>
     </div>

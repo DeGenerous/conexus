@@ -9,53 +9,11 @@ class MediaManager {
     this.mediaAPI = new MediaAPI();
   }
 
-  async uploadFileBackground(file: File, topic_name: string) {
+  async uploadTopicMedia(file: File, topic_name: string, media_type: MediaType) {
     const { data, error } = await this.mediaAPI.uploadFile(
       file,
       topic_name,
-      'background',
-    );
-
-    if (!data) {
-      return {} as { file_id: string };
-    }
-
-    return data;
-  }
-
-  async uploadFileDescription(file: File, topic_name: string) {
-    const { data, error } = await this.mediaAPI.uploadFile(
-      file,
-      topic_name,
-      'description',
-    );
-
-    if (!data) {
-      return {} as { file_id: string };
-    }
-
-    return data;
-  }
-
-  async uploadFileTile(file: File, topic_name: string) {
-    const { data, error } = await this.mediaAPI.uploadFile(
-      file,
-      topic_name,
-      'tile',
-    );
-
-    if (!data) {
-      return {} as { file_id: string };
-    }
-
-    return data;
-  }
-
-  async uploadFileAudio(file: File, topic_name: string) {
-    const { data, error } = await this.mediaAPI.uploadFile(
-      file,
-      topic_name,
-      'audio',
+      media_type,
     );
 
     if (!data) {
@@ -76,6 +34,16 @@ class MediaManager {
     }
 
     return data;
+  }
+
+  async deleteTopicMedia(topic_id: number, file_id: string, media_type: MediaType) {
+    const { data, error } = await this.mediaAPI.DeleteFile(topic_id, file_id, media_type);
+
+    if (!data) {
+      if (error) {
+        throw new Error(error.details);
+      }
+    }
   }
 
   async getFolderContents(folder_id: string): Promise<FolderContent | null> {

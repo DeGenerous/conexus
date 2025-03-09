@@ -56,6 +56,33 @@ export default class MediaAPI extends Fetcher {
     return this.request<string[]>(`${url}/${topic_id}`);
   }
 
+  async DeleteFile(topic_id: number, file_id: string, media_type: MediaType) {
+    let url = '';
+
+    switch (media_type) {
+      case 'background':
+        url = '/media/delete-background';
+        break;
+      case 'description':
+        url = '/media/delete-description';
+        break;
+      case 'tile':
+        url = '/media/delete-tile';
+        break;
+      case 'audio':
+        url = '/media/delete-audio';
+        break;
+      case 'video':
+        url = '/media/delete-video';
+        break;
+    }
+
+    return this.request<APISTDResposne>(url, {
+      method: 'DELETE',
+      body: JSON.stringify({ topic_id, file_id }),
+    });
+  }
+
   async serveFile(file_id: string) {
     return this.request<Blob>(`/media/serve/${file_id}`);
   }

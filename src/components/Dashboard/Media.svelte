@@ -19,18 +19,27 @@
   // Fetch stored media on load
   const loadMedia = async () => {
     try {
-      const bgData = await mediaManager.fetchTopicMedia(topic_id.toString(), 'background');
+      const bgData = await mediaManager.fetchTopicMedia(
+        topic_id.toString(),
+        'background',
+      );
       const descData = await mediaManager.fetchTopicMedia(
         topic_id.toString(),
         'description',
       );
-      const tileData = await mediaManager.fetchTopicMedia(topic_id.toString(), 'tile');
-      const audioData = await mediaManager.fetchTopicMedia(topic_id.toString(), 'audio');
+      const tileData = await mediaManager.fetchTopicMedia(
+        topic_id.toString(),
+        'tile',
+      );
+      const audioData = await mediaManager.fetchTopicMedia(
+        topic_id.toString(),
+        'audio',
+      );
 
-      backgrounds = [...bgData.map((fileId) => ` ${serveUrl}${fileId}`)]; // ✅ Prefix each background
-      description = descData.length ? ` ${serveUrl}${descData[0]}` : null; // ✅ Prefix description
-      tile = tileData.length ? ` ${serveUrl}${tileData[0]}` : null; // ✅ Prefix tile
-      audio = audioData.length ? ` ${serveUrl}${audioData[0]}` : null; // ✅ Prefix audio
+      backgrounds = [...bgData];
+      description = descData.length ? descData[0] : null;
+      tile = tileData.length ? tileData[0] : null;
+      audio = audioData.length ? audioData[0] : null;
     } catch (error) {
       console.error('Failed to load media:', error);
     } finally {
@@ -54,9 +63,10 @@
           return;
         }
         for (const file of files) {
-          const response = await mediaManager.uploadFileBackground(
+          const response = await mediaManager.uploadTopicMedia(
             file,
             topic_name,
+            'background',
           );
           if (response.file_id) {
             fileUrls.push(` ${serveUrl}${response.file_id}`);
@@ -70,25 +80,28 @@
         }
 
         if (type === 'description') {
-          const response = await mediaManager.uploadFileDescription(
+          const response = await mediaManager.uploadTopicMedia(
             files[0],
             topic_name,
+            'description',
           );
-          const fileUrl = ` ${serveUrl}${response.file_id}`;
+          const fileUrl = `${response.file_id}`;
           description = fileUrl;
         } else if (type === 'tile') {
-          const response = await mediaManager.uploadFileTile(
+          const response = await mediaManager.uploadTopicMedia(
             files[0],
             topic_name,
+            'tile',
           );
-          const fileUrl = ` ${serveUrl}${response.file_id}`;
+          const fileUrl = `${response.file_id}`;
           tile = fileUrl;
         } else if (type === 'audio') {
-          const response = await mediaManager.uploadFileAudio(
+          const response = await mediaManager.uploadTopicMedia(
             files[0],
             topic_name,
+            'audio',
           );
-          const fileUrl = ` ${serveUrl}${response.file_id}`;
+          const fileUrl = `${response.file_id}`;
           audio = fileUrl;
         }
 
@@ -100,7 +113,23 @@
     }
   };
 
-  console.log('Media component loaded', backgrounds, description, tile);
+  const handleDelete = async (fileId: string, type: MediaType) => {
+    try {
+      await mediaManager.deleteTopicMedia(topic_id, fileId, type);
+
+      if (type === 'background') {
+        backgrounds = backgrounds.filter((bg) => bg !== fileId);
+      } else if (type === 'description') {
+        description = null;
+      } else if (type === 'tile') {
+        tile = null;
+      } else if (type === 'audio') {
+        audio = null;
+      }
+    } catch (error) {
+      console.error('Failed to delete media:', error);
+    }
+  };
 
   onMount(async () => {
     await loadMedia();
@@ -131,7 +160,8 @@
 
         <div class="media-grid">
           {#each backgrounds as bg}
-            <img src={bg} alt="Background" class="preview" />
+            <img src={`${serveUrl}${bg}`} alt="Background" class="preview" />
+            <button on:click={() => handleDelete(bg, 'background')}>Delete</button>
           {/each}
         </div>
       </div>
@@ -146,7 +176,11 @@
           on:change={(e) => handleFileUpload(e, 'description')}
         />
         {#if description}
-          <img src={description} alt="Description" class="preview" />
+          <img
+            src={`${serveUrl}${description}`}
+            alt="Description"
+            class="preview"
+          />
         {/if}
       </div>
 
@@ -160,7 +194,7 @@
           on:change={(e) => handleFileUpload(e, 'tile')}
         />
         {#if tile}
-          <img src={tile} alt="Tile" class="preview" />
+          <img src={` ${serveUrl}${tile}`} alt="Tile" class="preview" />
         {/if}
       </div>
 
@@ -175,7 +209,7 @@
         />
         {#if audio}
           <audio controls>
-            <source src={audio} type="audio/mpeg" />
+            <source src={` ${serveUrl}${audio}`} type="audio/mpeg" />
             Your browser does not support the audio element.
           </audio>
         {/if}

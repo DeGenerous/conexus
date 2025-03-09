@@ -41,7 +41,7 @@ export class CoNexusGame extends GameAPI {
     return CoNexusGame.instance;
   }
 
-  async getTopic(topic: string): Promise<SectionTopic> {
+  async getTopic(topic: string): Promise<ThumbnailTopic> {
     const { data, error } = await this.topicByName(topic);
 
     if (!data) {

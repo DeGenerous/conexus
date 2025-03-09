@@ -7,7 +7,7 @@
   let mediaManager = new MediaManager();
 
   export let topic_name = 'Escape'; // Default topic_name
-  let topic_id = '1'; // Default topic_id
+  export let topic_id: number = 1; // Default topic_id
 
   let isLoading = true;
 
@@ -19,13 +19,13 @@
   // Fetch stored media on load
   const loadMedia = async () => {
     try {
-      const bgData = await mediaManager.fetchTopicMedia(topic_id, 'background');
+      const bgData = await mediaManager.fetchTopicMedia(topic_id.toString(), 'background');
       const descData = await mediaManager.fetchTopicMedia(
-        topic_id,
+        topic_id.toString(),
         'description',
       );
-      const tileData = await mediaManager.fetchTopicMedia(topic_id, 'tile');
-      const audioData = await mediaManager.fetchTopicMedia(topic_id, 'audio');
+      const tileData = await mediaManager.fetchTopicMedia(topic_id.toString(), 'tile');
+      const audioData = await mediaManager.fetchTopicMedia(topic_id.toString(), 'audio');
 
       backgrounds = [...bgData.map((fileId) => ` ${serveUrl}${fileId}`)]; // ✅ Prefix each background
       description = descData.length ? ` ${serveUrl}${descData[0]}` : null; // ✅ Prefix description

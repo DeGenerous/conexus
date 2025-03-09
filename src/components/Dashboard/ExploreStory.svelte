@@ -14,18 +14,18 @@
 
   let adminApp = new AdminApp();
 
-  export let topic_name = 'Escape'; // Default topic_name
+  export let topic_name = 'escape'; // Default topic_name
 
-  export let topic: NewTopic
-  export let user;
+  export let topic: ViewTopic;;
+  export let user: User;
   export let categories;
   // export let genres;
   // export let refreshPage;
 
   let openTopicDescription = false;
   let openPrompt = false;
-  let topicDescription = { id: 1, description: "topic.description" };
-  // let topicDescription = { id: topic?.id ?? 1, description: topic.description };
+  // let topicDescription = { id: 1, description: 'topic.description' };
+  let topicDescription;
   let promptText = {};
 
   function handleTopicCategoryChange(
@@ -58,108 +58,204 @@
   function handleTopicDescriptionChange() {
     console.log('Updating topic description:', topicDescription);
   }
+
+  onMount(async () => {
+    const view_topic = await adminApp.fetchTopic(topic_name);
+    categories = await adminApp.fetchCategories();
+
+    if (view_topic) {
+      topic = view_topic;
+      topicDescription = { id: topic.id ?? 1, description: topic.description }
+    }
+  });
 </script>
 
-<div
-  style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 100vh; padding: 1rem; color: white;"
->
-  <div
-    style="display: flex; justify-content: space-between; width: 100%; max-width: 500px; padding: 1rem; background-color: #2d3748; border-radius: 8px;"
-  >
-    <!-- <PromptHeader {topic} isAdmin={user?.role === 'admin'} /> -->
-    {#if categories}
+<div class="container">
+  <div class="header">
+    {#if categories && topic !== null}
       <select
         bind:value={topic.category_id}
-        on:change={(e) => handleTopicCategoryChange(topic.id, (e.target as HTMLSelectElement).value)}
-        style="border: 1px solid #ccc; padding: 0.5rem; border-radius: 5px; color: black;"
+        on:change={(e) =>
+          handleTopicCategoryChange(
+            topic.id,
+            (e.target as HTMLSelectElement).value,
+          )}
       >
+        <option value="">Select a category</option>
         {#each categories as category}
-          <option value="">Select a category</option>
           <option value={category.id}>{category.name}</option>
         {/each}
       </select>
     {/if}
   </div>
 
-  <div style="width: 100%; max-width: 500px; padding: 1rem; margin-top: 1rem;">
+  <div class="tags-container">
     <!-- <GenreTags {topic} availableGenres={genres} /> -->
   </div>
 
-  <div
-    style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 1rem;"
-  >
-    <a
-      href="#image-gallery"
-      style="background-color: #2563eb; padding: 10px 20px; border-radius: 8px; color: white;"
-      >Image Gallery</a
-    >
-    <a
-      href="#music-gallery"
-      style="background-color: #059669; padding: 10px 20px; border-radius: 8px; color: white;"
-      >Audio Gallery</a
-    >
-    <button
-      on:click={() => handleOpenImagePromptModal(topic.id, topic.image_prompt)}
-      style="background-color: #ca8a04; padding: 10px 20px; border-radius: 8px; color: white;"
-      >Image Prompt</button
-    >
-    <!-- <AvailableButton {topic.prompt_id} {topic.available} {refreshPage} /> -->
-    {#if user?.role === 'admin'}
+  <div class="button-group">
+    <a href="#image-gallery" class="btn blue">Image Gallery</a>
+    <a href="#music-gallery" class="btn green">Audio Gallery</a>
+    {#if topic}
       <button
-        on:click={() => handleOpenDeleteModal(topic.prompt_id, topic.name)}
-        style="background-color: #dc2626; padding: 10px 20px; border-radius: 8px; color: white;"
-        >Delete</button
+        class="btn yellow"
+        on:click={() =>
+          handleOpenImagePromptModal(topic.id, topic.image_prompt)}
       >
+        Image Prompt
+      </button>
     {/if}
-  </div>
-
-  <div
-    style="width: 100%; max-width: 500px; text-align: center; margin-top: 1rem;"
-  >
-    <h2 style="color: #d1d5db;">Description</h2>
-    {#if openTopicDescription}
-      <textarea
-        bind:value={topicDescription.description}
-        rows="3"
-        style="width: 100%; padding: 1rem; border: 1px solid #ccc; border-radius: 5px; color: black;"
-      ></textarea>
+    {#if user?.role === 'admin' && topic}
       <button
-        on:click={() => {
-          handleTopicDescriptionChange();
-          openTopicDescription = false;
-        }}
-        style="background-color: #059669; padding: 10px; border-radius: 8px; color: white;"
-        >Save</button
+        class="btn red"
+        on:click={() => handleOpenDeleteModal(topic.prompt_id, topic.name)}
       >
-    {:else}
-      <button
-        on:click={() => (openTopicDescription = true)}
-        on:keydown={(e) => e.key === 'Enter' && (openTopicDescription = true)}
-        aria-label="Edit topic description"
-        style="padding: 1rem; border: 1px solid #ccc; border-radius: 5px; background-color: #f9fafb; color: black; text-align: left; width: 100%;"
-      >
-        { "Add a description"}
-        <!-- {topic.description ?? "Add a description"} -->
+        Delete
       </button>
     {/if}
   </div>
 
-  <Media {topic_name} />
-
-  <div
-    id="image-gallery"
-    style="width: 100%; text-align: center; margin-top: 2rem;"
-  >
-    <h2 style="color: white;">Image Gallery</h2>
-    <!-- <Gallery folder={topic.name} folderPath="backgrounds" type="image" />
-    <Gallery folder={topic.name} folderPath="description" type="image" /> -->
+  <div class="description">
+    <h2>Description</h2>
+    {#if openTopicDescription}
+      <textarea bind:value={topicDescription.description} rows="10"></textarea>
+      <button
+        class="btn green"
+        on:click={() => {
+          handleTopicDescriptionChange();
+          openTopicDescription = false;
+        }}
+      >
+        Save
+      </button>
+      <button
+        class="btn red"
+        on:click={() => (openTopicDescription = false)}
+      >
+        Cancel
+      </button>
+    {:else}
+      <button
+        class="description-btn"
+        on:click={() => (openTopicDescription = true)}
+        aria-label="Edit topic description"
+      >
+        {topic?.description ?? 'Add a description'}
+      </button>
+    {/if}
   </div>
 
-  <div
-    id="music-gallery"
-    style="width: 100%; text-align: center; margin-top: 2rem;"
-  >
-    <h2 style="color: white;">Audio Gallery</h2>
-    <!-- <Gallery folder={topic.name} type="music" /> -->
+  {#if topic}
+    <Media {topic_name} topic_id={topic.id} />
+  {/if}
+
+  <!-- <div id="image-gallery" class="gallery">
+    <h2>Image Gallery</h2>
+    <Gallery folder={topic?.name} folderPath="backgrounds" type="image" />
+    <Gallery folder={topic?.name} folderPath="description" type="image" />
   </div>
+
+  <div id="music-gallery" class="gallery">
+    <h2>Audio Gallery</h2>
+    <Gallery folder={topic?.name} type="music" />
+  </div> -->
 </div>
+
+<style>
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+    padding: 1rem;
+    color: white;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 500px;
+    padding: 1rem;
+    background-color: #2d3748;
+    border-radius: 8px;
+  }
+
+  select {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    border-radius: 5px;
+    color: black;
+  }
+
+  .tags-container {
+    width: 100%;
+    max-width: 500px;
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+  }
+
+  .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 1rem;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .blue {
+    background-color: #2563eb;
+  }
+
+  .green {
+    background-color: #059669;
+  }
+
+  .yellow {
+    background-color: #ca8a04;
+  }
+
+  .red {
+    background-color: #dc2626;
+  }
+
+  .description {
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  .description-btn {
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9fafb;
+    color: black;
+    text-align: left;
+    width: 100%;
+  }
+
+  h2 {
+    color: #d1d5db;
+  }
+</style>

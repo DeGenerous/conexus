@@ -122,7 +122,7 @@
         </div>
       </section>
     </div>
-  {:then topic: SectionTopic}
+  {:then topic: ThumbnailTopic}
     <header>
       <BackArrow href="./" />
       <h1 class="fade-in">

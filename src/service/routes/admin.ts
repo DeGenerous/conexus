@@ -9,8 +9,8 @@ export default class AdminAPI extends Fetcher {
     return this.request<CategoryView[]>('/admin/categories');
   }
 
-  async topics() {
-    return this.request<CollectionTopic[]>('/admin/topics');
+  async topic(name: string) {
+    return this.request<ViewTopic>(`/admin/topic/${name}`);
   }
 
   async generatePrompt(prompt: TestPromptRequest) {

@@ -91,15 +91,18 @@ type CreatePrompt = {
 
 type MediaType = 'background' | 'description' | 'tile' | 'audio' | 'video';
 
-type NewTopic = {
-  id: number;
+type ThumbnailTopic = {
   name: string;
+  genres: string;
+  description: string;
+};
+
+type ViewTopic = {
+  id: number;
   category_id: number;
   image_prompt: string;
-  description: string;
-  description_image: string;
-  genres: string;
-  prompt: string;
   prompt_id: number;
+  prompt: string;
+  media_folder_id?: string;
   available: string;
-};
+} & ThumbnailTopic;

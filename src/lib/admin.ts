@@ -24,14 +24,29 @@ export class AdminApp extends AdminAPI {
     return data;
   }
 
-  async fetchTopics() {
-    const { data, error } = await this.topics();
+  async fetchCategories(): Promise<CategoryView[]> {
+    const { data, error } = await this.categories();
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error fetching view', 'error');
+      }
+      return [];
+    }
+
+    return data;
+  }
+
+  async fetchTopic(topic_name: string): Promise<ViewTopic | null> {
+    const { data, error } = await this.topic(topic_name);
 
     if (!data) {
       if (error) {
         api_error(error);
       }
-      return [];
+      return null;
     }
 
     return data;
@@ -125,18 +140,18 @@ export class AdminApp extends AdminAPI {
     return data;
   }
 
-  async editSection(section: Section) {
-    const { data, error } = await this.editSectionData(section);
+  // async editSection(section: Section) {
+  //   const { data, error } = await this.editSectionData(section);
 
-    if (!data) {
-      if (error) {
-        api_error(error);
-      }
-      return [];
-    }
+  //   if (!data) {
+  //     if (error) {
+  //       api_error(error);
+  //     }
+  //     return [];
+  //   }
 
-    return data;
-  }
+  //   return data;
+  // }
 
   async newCategory(category: Category) {
     const { data, error } = await this.createNewCategory(category);
@@ -151,18 +166,18 @@ export class AdminApp extends AdminAPI {
     return data;
   }
 
-  async editCategory(category: Category) {
-    const { data, error } = await this.editCategoryData(category);
+  // async editCategory(category: Category) {
+  //   const { data, error } = await this.editCategoryData(category);
 
-    if (!data) {
-      if (error) {
-        api_error(error);
-      }
-      return [];
-    }
+  //   if (!data) {
+  //     if (error) {
+  //       api_error(error);
+  //     }
+  //     return [];
+  //   }
 
-    return data;
-  }
+  //   return data;
+  // }
 
   async changeCategorySection(topic: Topic) {
     const { data, error } = await this.changeTopicCategorySection(topic);

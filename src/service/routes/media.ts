@@ -1,15 +1,59 @@
 import Fetcher from '@service/fetcher';
 
 export default class MediaAPI extends Fetcher {
-  async uploadFile(file: File, parent_id?: string) {
+  async uploadFile(file: File, topic_name: string, media_type: MediaType) {
+    let url = '';
+
+    switch (media_type) {
+      case 'background':
+        url = '/admin/upload-background';
+        break;
+      case 'description':
+        url = '/admin/upload-description';
+        break;
+      case 'tile':
+        url = '/admin/upload-tile';
+        break;
+      case 'audio':
+        url = '/admin/upload-audio';
+        break;
+      case 'video':
+        url = '/admin/upload-video';
+        break;
+    }
+
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('parent_id', parent_id || '');
+    formData.append('topic_name', topic_name || '');
 
-    return this.request<APISTDResposne>('/media/upload', {
+    return this.request<{ file_id: string | { file_id: string }[] }>(url, {
       method: 'POST',
       body: formData,
     });
+  }
+
+  async GetFile(topic_id: string, media_type: MediaType) {
+    let url = '';
+
+    switch (media_type) {
+      case 'background':
+        url = '/admin/get-background';
+        break;
+      case 'description':
+        url = '/admin/get-description';
+        break;
+      case 'tile':
+        url = '/admin/get-tile';
+        break;
+      case 'audio':
+        url = '/admin/get-audio';
+        break;
+      case 'video':
+        url = '/admin/get-video';
+        break;
+    }
+
+    return this.request<string[]>(`${url}/${topic_id}`);
   }
 
   async serveFile(file_id: string) {

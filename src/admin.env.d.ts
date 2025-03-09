@@ -18,22 +18,11 @@ type CollectionTopic = {
   available: string;
 };
 
-enum Tense {
-  PastTense = 'past',
-  PresentTense = 'present',
-  FutureTense = 'future',
-}
+type Tense = 'past' | 'present' | 'future';
 
-enum StoryStyle {
-  Descriptive = 'descriptive',
-  Narrative = 'narrative',
-  Expository = 'expository',
-}
+type StoryStyle = 'descriptive' | 'narrative' | 'expository';
 
-enum VoiceStyle {
-  Active = 'active',
-  Passive = 'passive',
-}
+type VoiceStyle = 'active' | 'passive';
 
 // Interfaces
 type Character = {
@@ -66,23 +55,11 @@ type StoryTone = {
   Surreal: number;
 };
 
-enum Difficulty {
-  Max = 'max',
-  Standard = 'standard',
-  Min = 'min',
-}
+type Difficulty = 'max' | 'standard' | 'min';
 
-enum Length {
-  Max = 'max',
-  Standard = 'standard',
-  Min = 'min',
-}
+type Length = 'max' | 'standard' | 'min';
 
-enum Interactivity {
-  Max = 'max',
-  Standard = 'standard',
-  Min = 'min',
-}
+type Interactivity = 'max' | 'standard' | 'min';
 
 type TestPromptRequest = {
   setting: string;
@@ -111,3 +88,5 @@ type CreatePrompt = {
   description: string;
   image_prompt: string;
 };
+
+type MediaType = 'background' | 'description' | 'tile' | 'audio' | 'video';

@@ -1,9 +1,6 @@
-
 // import { IMAGE_UPLOAD_DIR, MUSIC_UPLOAD_DIR } from '@/config';
 
 import { MediaAPI } from '@service/routes';
-
-
 
 class MediaManager {
   private mediaAPI: MediaAPI;
@@ -12,13 +9,77 @@ class MediaManager {
     this.mediaAPI = new MediaAPI();
   }
 
-  async uploadFile(file: File, parent_id?: string) {
+  async uploadFileBackground(file: File, topic_name: string) {
+    const { data, error } = await this.mediaAPI.uploadFile(
+      file,
+      topic_name,
+      'background',
+    );
 
-    return this.mediaAPI.uploadFile(file, parent_id);
+    if (!data) {
+      return {} as { file_id: string };
+    }
+
+    return data;
+  }
+
+  async uploadFileDescription(file: File, topic_name: string) {
+    const { data, error } = await this.mediaAPI.uploadFile(
+      file,
+      topic_name,
+      'description',
+    );
+
+    if (!data) {
+      return {} as { file_id: string };
+    }
+
+    return data;
+  }
+
+  async uploadFileTile(file: File, topic_name: string) {
+    const { data, error } = await this.mediaAPI.uploadFile(
+      file,
+      topic_name,
+      'tile',
+    );
+
+    if (!data) {
+      return {} as { file_id: string };
+    }
+
+    return data;
+  }
+
+  async uploadFileAudio(file: File, topic_name: string) {
+    const { data, error } = await this.mediaAPI.uploadFile(
+      file,
+      topic_name,
+      'audio',
+    );
+
+    if (!data) {
+      return {} as { file_id: string };
+    }
+
+    return data;
+  }
+
+  async fetchTopicMedia(topic_id: string, media_type: MediaType) {
+    const { data, error } = await this.mediaAPI.GetFile(topic_id, media_type);
+
+    if (!data) {
+      // if (error) {
+      //   throw new Error(error.details);
+      // }
+      return []
+    }
+
+    return data;
   }
 
   async getFolderContents(folder_id: string): Promise<FolderContent | null> {
-    const { data, error} = await this.mediaAPI.getFolderContent(folder_id);
+    const { data, error } = await this.mediaAPI.getFolderContent(folder_id);
 
     if (!data) {
       if (error) {
@@ -28,7 +89,7 @@ class MediaManager {
       return null;
     }
 
-    const folderContent =  data;
+    const folderContent = data;
 
     console.log('Folder content:', folderContent.name);
     return folderContent;

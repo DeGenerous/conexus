@@ -34,11 +34,7 @@ type SignIn = {
   password: string;
 };
 
-enum Roles {
-  ADMIN = 'admin',
-  USER = 'user',
-  ARTIST = 'artist',
-}
+type Roles = 'admin' | 'user' | 'artist';
 
 type ReferralCode = {
   ID: number;

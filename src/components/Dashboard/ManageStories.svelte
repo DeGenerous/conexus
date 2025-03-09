@@ -1,6 +1,11 @@
 <script>
   let stories = [];
 
+  async function fetchStories() {
+    // const res = await fetch('/api/stories');
+    // stories = await res.json();
+  }
+
   async function deleteStory(id) {
     await fetch(`/api/stories/${id}`, { method: 'DELETE' });
     stories = stories.filter((story) => story.id !== id);

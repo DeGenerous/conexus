@@ -67,7 +67,7 @@ export default class AdminAPI extends Fetcher {
     });
   }
 
-  async editSection(section: Section) {
+  async editSectionData(section: Section) {
     return this.request<APISTDResposne>('/admin/edit-section', {
       method: 'POST',
       body: JSON.stringify(section),
@@ -81,7 +81,7 @@ export default class AdminAPI extends Fetcher {
     });
   }
 
-  async editCategory(category: Category) {
+  async editCategoryData(category: Category) {
     return this.request<{ category: Category }>('/admin/edit-category', {
       method: 'POST',
       body: JSON.stringify(category),

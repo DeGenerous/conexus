@@ -90,3 +90,16 @@ type CreatePrompt = {
 };
 
 type MediaType = 'background' | 'description' | 'tile' | 'audio' | 'video';
+
+type NewTopic = {
+  id: number;
+  name: string;
+  category_id: number;
+  image_prompt: string;
+  description: string;
+  description_image: string;
+  genres: string;
+  prompt: string;
+  prompt_id: number;
+  available: string;
+}

@@ -6,7 +6,7 @@
 
   let mediaManager = new MediaManager();
 
-  let topic_name = 'Escape'; // Default topic_name
+  export let topic_name = 'Escape'; // Default topic_name
   let topic_id = '1'; // Default topic_id
 
   let isLoading = true;

@@ -45,6 +45,11 @@ type Category = {
   topics: Topic[];
 };
 
+type CategoryView = {
+  id: number;
+  name: string;
+}
+
 type StepData = {
   step: number;
   title?: string;
@@ -80,6 +85,7 @@ type Web3Signin = {
 };
 
 type Section = {
+  id: number;
   name: string;
   tile_image1?: string;
   tile_image2?: string;
@@ -88,28 +94,6 @@ type Section = {
 type Genre = {
   id: number;
   name: string;
-};
-
-type SectionCategory = {
-  name: string;
-  order: number;
-  topics: {
-    name: string;
-    order: number;
-    available: boolean;
-    title_image1?: string;
-    title_image2?: string;
-    created_at?: Date;
-  }[];
-  created_at?: Date;
-};
-
-type SectionTopic = {
-  name: string;
-  image_prompt?: string;
-  description?: string;
-  description_image?: string;
-  genres?: string;
 };
 
 type FolderContent = {
@@ -121,7 +105,7 @@ type FolderContent = {
   path: string;
   folders: FolderContent[];
   files: FileContent[];
-}
+};
 
 type FileContent = {
   id: string;
@@ -132,4 +116,4 @@ type FileContent = {
   parent_id: string;
   hash: string;
   data: string;
-}
+};

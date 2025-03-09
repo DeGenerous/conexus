@@ -1,14 +1,6 @@
 /// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
 
-type Collection = {
-  category_id: number;
-  category_name: string;
-  section_id: number;
-  section_name: string;
-  topics: CollectionTopic[];
-};
-
 type CollectionTopic = {
   topic_id: number;
   prompt_id: number;
@@ -16,6 +8,14 @@ type CollectionTopic = {
   order: number;
   genres: string;
   available: string;
+};
+
+type Collection = {
+  category_id: number;
+  category_name: string;
+  section_id: number;
+  section_name: string;
+  topics: CollectionTopic[];
 };
 
 type Tense = 'past' | 'present' | 'future';
@@ -102,4 +102,4 @@ type NewTopic = {
   prompt: string;
   prompt_id: number;
   available: string;
-}
+};

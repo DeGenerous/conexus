@@ -13,7 +13,7 @@
 
   let app: CoNexusApp = new CoNexusApp();
 
-  let categories: SectionCategory[] = [];
+  let categories: CategoryInSection[] = [];
   let genres: Genre[] = [];
 
   onMount(async () => {
@@ -36,9 +36,9 @@
   });
 
   // Search and Sorting
-  let filteredCategories: SectionCategory[];
+  let filteredCategories: CategoryInSection[];
   let isSorting: boolean = false;
-  let sortedCategories: SectionCategory[] = [];
+  let sortedCategories: CategoryInSection[] = [];
   let searchField: string;
   let isSearching: boolean = false;
   let debounceTimeout: NodeJS.Timeout;
@@ -79,7 +79,7 @@
   };
 
   const handleSorting = () => {
-    sortedCategories = filteredCategories.map((cat: SectionCategory) => {
+    sortedCategories = filteredCategories.map((cat: CategoryInSection) => {
       // Clone the category and topics to avoid mutating the original
       return {
         ...cat,

@@ -1,7 +1,7 @@
 <script lang="ts">
   import StoryTile from './StoryTile.svelte';
 
-  export let category: SectionCategory | null = null;
+  export let category: CategoryInSection | null = null;
   export let section: string = '';
 </script>
 

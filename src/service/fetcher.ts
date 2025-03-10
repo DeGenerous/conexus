@@ -55,7 +55,7 @@ export default class Fetcher {
     responseType: 'json' | 'blob' = 'json',
   ): Promise<APIResponse<T>> {
     const headers: HeadersInit = {
-      'Content-Type': 'application/json',
+      // 'Content-Type': 'application/json',
       ...options.headers,
     };
 

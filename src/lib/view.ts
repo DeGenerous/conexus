@@ -1,6 +1,7 @@
 import { api_error } from '@errors/index';
 import { ViewAPI } from '@service/routes';
 import { toastStore } from '@stores/toast';
+import { availableGenres } from '@stores/view';
 
 export class CoNexusApp extends ViewAPI {
   private static instance: CoNexusApp;
@@ -32,7 +33,7 @@ export class CoNexusApp extends ViewAPI {
     return data;
   }
 
-  async getSectionCategories(section: string): Promise<SectionCategory[]> {
+  async getSectionCategories(section: string): Promise<CategoryInSection[]> {
     const { data, error } = await this.sectionCategories(section);
 
     if (!data) {
@@ -43,7 +44,7 @@ export class CoNexusApp extends ViewAPI {
     }
 
     const orderedCategories = data.sort(
-      (a: SectionCategory, b: SectionCategory) => {
+      (a: CategoryInSection, b: CategoryInSection) => {
         if (a.order < b.order) return -1;
         if (a.order > b.order) return 1;
         return 0;
@@ -56,7 +57,7 @@ export class CoNexusApp extends ViewAPI {
   async searchSectionCategories(
     section: string,
     topic: string,
-  ): Promise<SectionCategory[]> {
+  ): Promise<CategoryInSection[]> {
     const { data, error } = await this.searchSectionByTopic(section, topic);
 
     if (!data) {
@@ -81,13 +82,15 @@ export class CoNexusApp extends ViewAPI {
       return [];
     }
 
-    return data;
+    availableGenres.set(data);
+
+    return data; // TODO: add to store
   }
 
   async getGenreTopics(
     genre: string,
     section: string,
-  ): Promise<SectionCategory[]> {
+  ): Promise<CategoryInSection[]> {
     const { data, error } = await this.genreTopics(genre, section);
 
     if (!data) {

@@ -1,14 +1,6 @@
 /// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
 
-type Collection = {
-  category_id: number;
-  category_name: string;
-  section_id: number;
-  section_name: string;
-  topics: CollectionTopic[];
-};
-
 type CollectionTopic = {
   topic_id: number;
   prompt_id: number;
@@ -18,22 +10,19 @@ type CollectionTopic = {
   available: string;
 };
 
-enum Tense {
-  PastTense = 'past',
-  PresentTense = 'present',
-  FutureTense = 'future',
-}
+type Collection = {
+  category_id: number;
+  category_name: string;
+  section_id: number;
+  section_name: string;
+  topics: CollectionTopic[];
+};
 
-enum StoryStyle {
-  Descriptive = 'descriptive',
-  Narrative = 'narrative',
-  Expository = 'expository',
-}
+type Tense = 'past' | 'present' | 'future';
 
-enum VoiceStyle {
-  Active = 'active',
-  Passive = 'passive',
-}
+type StoryStyle = 'descriptive' | 'narrative' | 'expository';
+
+type VoiceStyle = 'active' | 'passive';
 
 // Interfaces
 type Character = {
@@ -66,23 +55,11 @@ type StoryTone = {
   Surreal: number;
 };
 
-enum Difficulty {
-  Max = 'max',
-  Standard = 'standard',
-  Min = 'min',
-}
+type Difficulty = 'max' | 'standard' | 'min';
 
-enum Length {
-  Max = 'max',
-  Standard = 'standard',
-  Min = 'min',
-}
+type Length = 'max' | 'standard' | 'min';
 
-enum Interactivity {
-  Max = 'max',
-  Standard = 'standard',
-  Min = 'min',
-}
+type Interactivity = 'max' | 'standard' | 'min';
 
 type TestPromptRequest = {
   setting: string;
@@ -105,9 +82,27 @@ type TestPromptRequest = {
 };
 
 type CreatePrompt = {
-  prompt: string;
-  category: number;
   topic: string;
   description: string;
   image_prompt: string;
+  category: number;
+  prompt: string;
 };
+
+type MediaType = 'background' | 'description' | 'tile' | 'audio' | 'video';
+
+type ThumbnailTopic = {
+  name: string;
+  genres: string;
+  description: string;
+};
+
+type ViewTopic = {
+  id: number;
+  category_id: number;
+  image_prompt: string;
+  prompt_id: number;
+  prompt: string;
+  media_folder_id?: string;
+  available: string;
+} & ThumbnailTopic;

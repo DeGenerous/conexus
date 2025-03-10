@@ -5,7 +5,7 @@ import Fetcher from '@service/fetcher';
  */
 export default class GameAPI extends Fetcher {
   async topicByName(name: string) {
-    return this.request<SectionTopic>(`/view/topic/${name}`);
+    return this.request<ThumbnailTopic>(`/view/topic/${name}`);
   }
 
   /**

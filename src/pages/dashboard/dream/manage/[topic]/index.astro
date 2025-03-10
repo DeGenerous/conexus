@@ -1,7 +1,7 @@
 ---
 import Layout from '@layouts/Layout.astro';
 
-import ManageStories from '@components/Dashboard/ManageStories.svelte';
+import ExploreStory from '@components/Dashboard/ExploreStory.svelte';
 
 const { topic } = Astro.params;
 
@@ -10,5 +10,5 @@ if (!topic) {
 }
 ---
 <Layout>
-    <ManageStories client:load />
+  <ExploreStory topic_name={topic} client:load />
 </Layout>

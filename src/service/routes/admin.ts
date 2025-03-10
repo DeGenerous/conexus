@@ -6,11 +6,11 @@ export default class AdminAPI extends Fetcher {
   }
 
   async categories() {
-    return this.request<Category[]>('/admin/categories');
+    return this.request<CategoryView[]>('/admin/categories');
   }
 
-  async topics() {
-    return this.request<CollectionTopic[]>('/admin/topics');
+  async topic(name: string) {
+    return this.request<ViewTopic>(`/admin/topic/${name}`);
   }
 
   async generatePrompt(prompt: TestPromptRequest) {
@@ -24,7 +24,7 @@ export default class AdminAPI extends Fetcher {
   }
 
   async createNewPrompt(prompt: CreatePrompt) {
-    return this.request<{ topic_id: string; prompt_id: string }>(
+    return this.request<number>(
       '/admin/create-new-prompt',
       {
         method: 'POST',
@@ -61,35 +61,35 @@ export default class AdminAPI extends Fetcher {
   }
 
   async createNewSection(name: string) {
-    return this.request<APISTDResposne>('/admin/create-new-section', {
+    return this.request<number>('/admin/create-new-section', {
       method: 'POST',
       body: JSON.stringify({ name }),
     });
   }
 
-  async editSection(section: Section) {
-    return this.request<APISTDResposne>('/admin/edit-section', {
-      method: 'POST',
-      body: JSON.stringify(section),
-    });
-  }
+  // async editSectionData(section: Section) {
+  //   return this.request<APISTDResposne>('/admin/edit-section', {
+  //     method: 'POST',
+  //     body: JSON.stringify(section),
+  //   });
+  // }
 
   async createNewCategory(category: Category) {
-    return this.request<{ category: Category }>('/admin/create-new-category', {
+    return this.request<number>('/admin/create-new-category', {
       method: 'POST',
       body: JSON.stringify(category),
     });
   }
 
-  async editCategory(category: Category) {
-    return this.request<{ category: Category }>('/admin/edit-category', {
-      method: 'POST',
-      body: JSON.stringify(category),
-    });
-  }
+  // async editCategoryData(category: Category) {
+  //   return this.request<{ category: Category }>('/admin/edit-category', {
+  //     method: 'POST',
+  //     body: JSON.stringify(category),
+  //   });
+  // }
 
   async changeTopicCategorySection(topic: Topic) {
-    return this.request<{ topic: Topic }>(
+    return this.request<APISTDResposne>(
       '/admin/change-topic-category-section',
       {
         method: 'POST',
@@ -98,45 +98,45 @@ export default class AdminAPI extends Fetcher {
     );
   }
 
-  async changeTopicsName(topic: Topic) {
-    return this.request<{ topic: Topic }>('/admin/change-topics-name', {
+  async changeTopicsName(old_name: string, new_name: string) {
+    return this.request<APISTDResposne>('/admin/change-topics-name', {
       method: 'POST',
-      body: JSON.stringify(topic),
+      body: JSON.stringify({ old_name, new_name }),
     });
   }
 
-  async changeTopicsOrder(topic: Topic) {
-    return this.request<{ topic: Topic }>('/admin/change-topics-order', {
+  async changeTopicsOrder(topic_id: number, order: number) {
+    return this.request<APISTDResposne>('/admin/change-topics-order', {
       method: 'POST',
-      body: JSON.stringify(topic),
+      body: JSON.stringify({ topic_id, order }),
     });
   }
 
-  async changeTopicsCategory(topic: Topic) {
-    return this.request<{ topic: Topic }>('/admin/change-topics-category', {
+  async changeTopicsCategory(topic_id: number, category_id: number) {
+    return this.request<APISTDResposne>('/admin/change-topics-category', {
       method: 'POST',
-      body: JSON.stringify(topic),
+      body: JSON.stringify({ topic_id, category_id }),
     });
   }
 
   async changeTopicsDescription(topic: Topic) {
-    return this.request<{ topic: Topic }>('/admin/change-topics-description', {
+    return this.request<APISTDResposne>('/admin/change-topics-description', {
       method: 'POST',
       body: JSON.stringify(topic),
     });
   }
 
-  async addTopicGenre(topic: Topic) {
-    return this.request<{ topic: Topic }>('/admin/add-topic-genre', {
-      method: 'GET',
-      body: JSON.stringify(topic),
+  async addTopicGenre(topic_id: number, genre_id: number) {
+    return this.request<APISTDResposne>('/admin/add-topic-genre', {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, genre_id }),
     });
   }
 
-  async removeTopicGenre(topic: Topic) {
-    return this.request<{ topic: Topic }>('/admin/remove-topic-genre', {
-      method: 'POST',
-      body: JSON.stringify(topic),
+  async removeTopicGenre(topic_id: number, genre_id: number) {
+    return this.request<APISTDResposne>('/admin/remove-topic-genre', {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, genre_id }),
     });
   }
 }

@@ -6,13 +6,13 @@ export default class ViewAPI extends Fetcher {
   }
 
   async sectionCategories(section: string) {
-    return this.request<SectionCategory[]>(
+    return this.request<CategoryInSection[]>(
       `/view/section-categories/${section}`,
     );
   }
 
   async searchSectionByTopic(section: string, topic: string) {
-    return this.request<SectionCategory[]>(
+    return this.request<CategoryInSection[]>(
       `/view/topics/search/${section}?name=${topic}`,
     );
   }
@@ -22,7 +22,7 @@ export default class ViewAPI extends Fetcher {
   }
 
   async genreTopics(genre: string, section: string) {
-    return this.request<SectionCategory[]>(
+    return this.request<CategoryInSection[]>(
       `/view/genre-topics/${section}?name=${genre}`,
     );
   }

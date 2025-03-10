@@ -89,6 +89,7 @@ button:disabled:active {
   border-color: rgba(51, 226, 230, 0.5);
   background-color: rgba(56, 117, 250, 0.5);
   filter: none;
+  text-shadow: none;
   transform: none;
   cursor: not-allowed;
 }
@@ -184,7 +185,7 @@ h3 a:active {
   text-align: center;
   font-size: 1.25vw;
   line-height: 1.5vw;
-  color: rgba(255, 50, 50, 0.75);
+  color: rgba(255, 50, 50, 0.9);
 }
 
 .highlighted-border {
@@ -192,15 +193,15 @@ h3 a:active {
 }
 
 .red-border {
-  border: 0.1vw solid rgba(255, 50, 50, 0.75) !important;
+  outline: 0.15vw solid rgba(255, 50, 50, 0.75) !important;
 }
 
 .green {
-  color: rgba(0, 185, 55, 0.75);
+  color: rgba(0, 185, 55, 0.9);
 }
 
 .gray {
-  color: rgba(150, 150, 150, 0.75);
+  color: rgba(150, 150, 150, 0.9);
 }
 
 main {

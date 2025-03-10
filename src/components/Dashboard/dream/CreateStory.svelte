@@ -1,27 +1,30 @@
 <script lang="ts">
   import countries from '../../../data/countries.json';
   import dreamData from '../../../data/dream';
-  import { promptSettings, openPrompt, tablePrompt } from '@stores/dream';
+  import { storyData, promptSettings, openPrompt, tablePrompt, clearAllData } from '@stores/dream';
   import generatePrompt from '@utils/prompt';
+  import { AdminApp } from '@lib/admin';
 
   import Slider from './create/Slider.svelte';
   import Characters from './create/Characters.svelte';
   import Scenario from './create/Scenario.svelte';
   import WritingStyle from './create/WritingStyle.svelte';
 
+  let admin = new AdminApp();
+
   let promptFormat: 'Table' | 'Open' = 'Table';
 
   let newImagePrompt: string = '';
   const addImagePrompt = () => {
     if (newImagePrompt === '') return;
-    $promptSettings.imagePrompts = [
-      ...$promptSettings.imagePrompts,
+    $storyData.imagePrompts = [
+      ...$storyData.imagePrompts,
       newImagePrompt,
     ];
     newImagePrompt = '';
   };
   const removeImagePrompt = (index: number) => {
-    $promptSettings.imagePrompts = $promptSettings.imagePrompts.filter(
+    $storyData.imagePrompts = $storyData.imagePrompts.filter(
       (prompt, nr) => {
         return nr !== index;
       },
@@ -41,12 +44,15 @@
   }
 
   const generateStory = () => {
-    const storyData: TablePrompt | string =
+    const promptData: TablePrompt | string =
       promptFormat === 'Table'
         ? $tablePrompt
         : $openPrompt;
-    generatePrompt($promptSettings, storyData);
+    admin.createNewStory(generatePrompt($storyData, $promptSettings, promptData));
   };
+
+  $: validation = $storyData.name && $storyData.description
+    && $storyData.description.length > 100 && $storyData.imagePrompts.length > 0;
 </script>
 
 <svelte:window on:keypress={handleEnterKey} />
@@ -64,9 +70,10 @@
       <input
         id="topic"
         class="story-input dream-textfield"
+        class:red-border={!$storyData.name}
         type="text"
         placeholder="Enter Story Name"
-        bind:value={$promptSettings.name}
+        bind:value={$storyData.name}
       />
     </div>
 
@@ -75,18 +82,25 @@
       <textarea
         id="description"
         class="story-input dream-textfield"
+        class:red-border={$storyData.description.length < 100}
         placeholder="Describe the overall story, its key themes, and what kind of journey the main character will take. Is it an epic adventure, a gripping mystery, or a heartwarming romance? Keep it engaging and set the stage for the reader!"
         rows="3"
-        bind:value={$promptSettings.description}
+        bind:value={$storyData.description}
       ></textarea>
+      {#if $storyData.description && $storyData.description.length < 100}
+        <p class="validation">
+          Description should be longer!
+          Enter {100 - $storyData.description.length} more characters
+        </p>
+      {/if}
     </div>
 
     <hr />
 
     <h3>Image Generation Instructions</h3>
-    {#if $promptSettings.imagePrompts.length > 0}
+    {#if $storyData.imagePrompts.length > 0}
       <ul class="container-wrapper image-prompts">
-        {#each $promptSettings.imagePrompts as prompt, index}
+        {#each $storyData.imagePrompts as prompt, index}
           <li class="buttons-wrapper added-prompt">
             <h3>{prompt}</h3>
             <button
@@ -102,11 +116,15 @@
     <textarea
       id="image-prompts"
       class="story-input dream-textfield"
+      class:red-border={$storyData.imagePrompts.length < 1}
       placeholder="E.g. A breathtaking cosmic landscape filled with swirling galaxies, ancient ruins, and a lone traveler standing at the edge of destiny."
       rows="2"
       bind:value={newImagePrompt}
     ></textarea>
-    <button on:click={addImagePrompt}>Add Image Prompt</button>
+    {#if $storyData.imagePrompts.length < 1}
+      <p class="validation">Add at least one image prompt</p>
+    {/if}
+    <button on:click={addImagePrompt} disabled={newImagePrompt === ''}>Add Image Prompt</button>
   </div>
 
   <!-- MAIN SETTINGS -->
@@ -267,13 +285,25 @@
       ></textarea>
     </div>
   {/if}
+  
+  {#if !validation}
+    <p class="validation">Fill all required fields!</p>
+  {/if}
 
   <div class="buttons-wrapper">
-    <button class="red-button blur">CLEAR</button>
-    <button class="blur">SAVE DRAFT</button>
-    <button class="green-button blur" on:click={generateStory}
-      >CREATE A DREAM</button
+    <button
+      class="red-button blur"
+      on:click={clearAllData}
     >
+      RESET
+    </button>
+    <button
+      class="green-button blur"
+      on:click={generateStory}
+      disabled={!validation}
+    >
+      CREATE A DREAM
+    </button>
   </div>
 </section>
 

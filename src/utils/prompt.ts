@@ -1,9 +1,15 @@
 function generatePrompt (
+  props: StoryData,
   settings: PromptSettings,
   data: TablePrompt | string
 ) {
-  console.log(settings);
-  console.log(data);
+  let imagePrompt: string = "";
+  if (props.imagePrompts.length > 1) {
+    imagePrompt += "Image prompts:\n";
+    props.imagePrompts.map((prompt) => {
+      imagePrompt += `- ${prompt}\n`;
+    })
+  } else imagePrompt = props.imagePrompts[0];
 
   const setUpSettings = () => {
     let promptSettings: string = "Note: Consider the following characteristics for the story, follow these strictly especially the premise.\n\n";
@@ -64,24 +70,38 @@ function generatePrompt (
 
     let promptData = "";
     
-    promptData += `Premise: ${data.premise}\n`;
+    if (data.premise) promptData += `Premise: ${data.premise}\n`;
 
-    promptData += `Environment: ${data.environment}\n`;
+    if (data.environment) promptData += `Environment: ${data.environment}\n`;
 
-    promptData += `Exposition: ${data.exposition}\n`;
+    if (data.exposition) promptData += `Exposition: ${data.exposition}\n`;
 
-    promptData += `First Act: ${data.firstAction}\n`;
+    if (data.firstAction) promptData += `First Act: ${data.firstAction}\n`;
 
     // CHARACTERS
     promptData += "\n";
     promptData += "The following characters are involved in the story:\n";
 
-    promptData += `Main Character: name: ${data.mainCharacter.name}, description: ${data.mainCharacter.description}, physicality: ${data.mainCharacter.name}, psychology: ${data.mainCharacter.name}\n`;
+    promptData += `Main Character: name: ${data.mainCharacter.name}, description: ${data.mainCharacter.description}`;
+
+    if (data.mainCharacter.physicality)
+      promptData += `, physicality: ${data.mainCharacter.physicality}`;
+
+    if (data.mainCharacter.physicality)
+      promptData += `, psychology: ${data.mainCharacter.psychology}`;
+
+    promptData += "\n";
 
     if (data.sideCharacters.length > 0) {
       promptData += "Side Characters:\n";
       data.sideCharacters.map((character: Character) => {
-        promptData += `name: ${character.name}, description: ${character.description}, physicality: ${character.name}, psychology: ${character.name}\n`;
+        promptData += `name: ${character.name}, description: ${character.description}`;
+
+        if (character.physicality) promptData += `, physicality: ${character.physicality}`;
+  
+        if (character.physicality) promptData += `, psychology: ${character.psychology}`;
+  
+        promptData += "\n";
       })
     }
 
@@ -120,8 +140,10 @@ function generatePrompt (
     }
 
     // WRITING STYLE
-    promptData += "\n";
-    promptData += `Tell the story from the point of view of: ${data.POV}\n`;
+    if (data.POV) {
+      promptData += "\n";
+      promptData += `Tell the story from the point of view of: ${data.POV}\n`;
+    }
 
     promptData += "\n";
     switch (data.storyArcs) {
@@ -171,7 +193,17 @@ function generatePrompt (
   const storySettings = setUpSettings();
   const storyPrompt = setUpPrompt();
 
+  const fullStory = {
+    topic: props.name,
+    description: props.description,
+    image_prompt: imagePrompt,
+    category: 1,
+    prompt: storySettings + storyPrompt,
+  }
+
   console.log(storySettings + storyPrompt);
+  
+  return fullStory;
 }
 
 export default generatePrompt;

@@ -23,9 +23,6 @@ type Tone = {
 }[];
 
 interface PromptSettings {
-  name: string;
-  description: string;
-  imagePrompts: string[];
   imageStyle: string;
   language: string;
   interactivity: Min_Max;
@@ -52,3 +49,17 @@ interface TablePrompt {
   POV?: string;
   tone: Tone;
 }
+
+interface StoryData {
+  name: string;
+  description: string;
+  imagePrompts: string[];
+}
+
+type CreatePrompt = {
+  topic: string;
+  description: string;
+  image_prompt: string;
+  category: number;
+  prompt: string;
+};

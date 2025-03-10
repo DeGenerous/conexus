@@ -69,6 +69,11 @@
     if (type === 'enemies') return `rgba(255, 60, 64, ${opacity})`;
     return `rgba(150, 150, 150, ${opacity})`;
   };
+
+  $: characterValidation = newSideCharacter.name && newSideCharacter.description;
+
+  $: relationsValidation = newRelationship.connection[0] && newRelationship.connection[1]
+    && (newRelationship.connection[0] !== newRelationship.connection[1]);
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -116,7 +121,10 @@
     <NewCharacter bind:character={newSideCharacter} />
   </div>
 
-  <button on:click={addSideCharacter}>Add Side Character</button>
+  {#if (newSideCharacter.name || newSideCharacter.description) && !characterValidation}
+    <p class="validation">Provide both Name and Description for the new character</p>
+  {/if}
+  <button on:click={addSideCharacter} disabled={!characterValidation}>Add Side Character</button>
 
   <hr />
 
@@ -183,6 +191,9 @@
           bind:value={newRelationship.connection[0]}
         >
           <option value="" selected={true} disabled hidden>Select</option>
+          {#if $tablePrompt.mainCharacter.name}
+            <option value={$tablePrompt.mainCharacter.name}>{$tablePrompt.mainCharacter.name}</option>
+          {/if}
           {#if $tablePrompt.sideCharacters}
             {#each $tablePrompt.sideCharacters as { name }}
               <option value={name}>{name}</option>
@@ -209,6 +220,9 @@
           bind:value={newRelationship.connection[1]}
         >
           <option value="" selected={true} disabled hidden>Select</option>
+          {#if $tablePrompt.mainCharacter.name}
+            <option value={$tablePrompt.mainCharacter.name}>{$tablePrompt.mainCharacter.name}</option>
+          {/if}
           {#if $tablePrompt.sideCharacters}
             {#each $tablePrompt.sideCharacters as { name }}
               <option value={name}>{name}</option>
@@ -221,7 +235,14 @@
     </div>
   </div>
 
-  <button on:click={addRelationship}>Add Relationship</button>
+  {#if newRelationship.connection[0] && newRelationship.connection[1] && newRelationship.connection[0] == newRelationship.connection[1]}
+    <p class="validation">
+      A character cannot have a relationship with themselves!
+      Please select two different characters.
+    </p>
+  {/if}
+
+  <button on:click={addRelationship} disabled={!relationsValidation}>Add Relationship</button>
 </Dropdown>
 
 <style>

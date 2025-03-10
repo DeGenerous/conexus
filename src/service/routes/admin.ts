@@ -13,16 +13,6 @@ export default class AdminAPI extends Fetcher {
     return this.request<ViewTopic>(`/admin/topic/${name}`);
   }
 
-  async generatePrompt(prompt: TestPromptRequest) {
-    return this.request<{ full: string; short: string; image_prompt: string }>(
-      '/admin/generate-prompt',
-      {
-        method: 'POST',
-        body: JSON.stringify(prompt),
-      },
-    );
-  }
-
   async createNewPrompt(prompt: CreatePrompt) {
     return this.request<number>(
       '/admin/create-new-prompt',
@@ -74,10 +64,10 @@ export default class AdminAPI extends Fetcher {
   //   });
   // }
 
-  async createNewCategory(category: Category) {
+  async createNewCategory(name: string) {
     return this.request<number>('/admin/create-new-category', {
       method: 'POST',
-      body: JSON.stringify(category),
+      body: JSON.stringify({ name }),
     });
   }
 
@@ -88,12 +78,12 @@ export default class AdminAPI extends Fetcher {
   //   });
   // }
 
-  async changeTopicCategorySection(topic: Topic) {
+  async changeTopicCategorySection(section_id: number, category_id: number) {
     return this.request<APISTDResposne>(
       '/admin/change-topic-category-section',
       {
         method: 'POST',
-        body: JSON.stringify(topic),
+        body: JSON.stringify({ section_id, category_id }),
       },
     );
   }
@@ -119,10 +109,10 @@ export default class AdminAPI extends Fetcher {
     });
   }
 
-  async changeTopicsDescription(topic: Topic) {
+  async changeTopicsDescription(topic_id: number, description: string) {
     return this.request<APISTDResposne>('/admin/change-topics-description', {
       method: 'POST',
-      body: JSON.stringify(topic),
+      body: JSON.stringify({ topic_id, description }),
     });
   }
 

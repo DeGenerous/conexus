@@ -1,3 +1,12 @@
+/**
+ * Generates a prompt for a story based on provided story data, settings, and additional data.
+ *
+ * @param props - The story data including name, description, and image prompts.
+ * @param settings - The settings for the prompt including language, image style, interactivity, difficulty, and length.
+ * @param data - Additional data for the prompt which can be a string or an object containing premise, environment, exposition, first action, characters, relationships, scenarios, POV, story arcs, pacing, writing style, and tone.
+ * 
+ * @returns The generated prompt object containing topic, description, image prompt, category, and the full prompt text.
+ */
 function generatePrompt (
   props: StoryData,
   settings: PromptSettings,

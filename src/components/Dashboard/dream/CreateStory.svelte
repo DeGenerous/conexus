@@ -43,12 +43,12 @@
     }
   }
 
-  const generateStory = () => {
+  const generateStory = async () => {
     const promptData: TablePrompt | string =
       promptFormat === 'Table'
         ? $tablePrompt
         : $openPrompt;
-    admin.createNewStory(generatePrompt($storyData, $promptSettings, promptData));
+    await admin.createNewStory(generatePrompt($storyData, $promptSettings, promptData));
   };
 
   $: validation = $storyData.name && $storyData.description

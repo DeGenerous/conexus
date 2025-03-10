@@ -3,13 +3,13 @@
   import { writable } from 'svelte/store';
 
   import { CoNexusApp } from '@lib/view';
+  import { availableGenres } from '@stores/view';
 
   let viewApp = new CoNexusApp();
 
   export let topic: ViewTopic;
-  export let handleGenreChange: (genreId: number, method: 'add' | 'remove') => void;
+  export let handleGenreChange = async (genreId: number, method: 'add' | 'remove') => {};
   
-  let availableGenres = writable<Genre[]>([]);
   let genres = writable<string[]>([]);
   let newGenre = writable('');
 
@@ -18,13 +18,13 @@
     genres.set(topic.genres.split(',').map((genre: string) => genre.trim()));
   });
 
-  function handleRemoveGenre(genreToRemove: string) {
+  async function handleRemoveGenre(genreToRemove: string) {
     genres.update((prevGenres) =>
       prevGenres.filter((genre) => genre !== genreToRemove),
     );
 
     const genre = $availableGenres.find((g: Genre) => g.name === genreToRemove);
-    if (genre) handleGenreChange(genre.id, 'remove');
+    if (genre)  await handleGenreChange(genre.id, 'remove');
   }
 
   function handleAddGenre() {
@@ -41,8 +41,6 @@
 
   onMount(async () => {
     const genres_ = await viewApp.getGenres();
-
-    console.log(genres_);
 
     if (genres_) {
       availableGenres.set(genres_);

@@ -1,12 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { writable } from 'svelte/store';
 
   import Media from '@components/Dashboard/Media.svelte';
   import { AdminApp } from '@lib/admin';
 
-  import TopicHeader from './TopicHeader.svelte';
   import GenreTags from './GenreTags.svelte';
+  import TopicHeader from './TopicHeader.svelte';
   // import AvailableButton from './AvailableButton.svelte';
   // import Modal from './Modal.svelte'; // Assuming you have a separate Modal component
 
@@ -14,7 +13,7 @@
 
   export let topic_name = 'escape'; // Default topic_name
 
-  export let topic: ViewTopic;
+  export let topic: ViewTopic | null = null;
   export let user: User;
   export let categories: CategoryView[];
 
@@ -38,6 +37,7 @@
   }
 
   async function handleGenreChange(genre_id: number, method: 'add' | 'remove') {
+    if (!topic) return;
     switch (method) {
       case 'add':
         await adminApp.addGenre(topic.id, genre_id);
@@ -90,88 +90,101 @@
   });
 </script>
 
-<div class="container">
-  <div class="header">
-    <TopicHeader
-      {topic_name}
-      is_admin={user?.role === 'admin'}
-      changeTopicName={handleChangeTopicName}
-    />
-    {#if categories && topic !== null}
-      <select
-        bind:value={topic.category_id}
-        on:change={(e) =>
-          handleTopicCategoryChange(
-            topic.id,
-            (e.target as HTMLSelectElement).value,
-          )}
-      >
-        <option value="">Select a category</option>
-        {#each categories as category}
-          <option value={category.id}>{category.name}</option>
-        {/each}
-      </select>
-    {/if}
-  </div>
+{#if !topic || topic === null || topic === undefined}
+  <div>Loading...</div>
+{:else}
+  <div class="container">
+    <div class="header">
+      <TopicHeader
+        {topic_name}
+        is_admin={user?.role === 'admin'}
+        changeTopicName={handleChangeTopicName}
+      />
+      {#if categories && topic !== null}
+        <select
+          bind:value={topic.category_id}
+          on:change={(e) => {
+            if (topic)
+              handleTopicCategoryChange(
+                topic.id,
+                (e.target as HTMLSelectElement).value,
+              );
+          }}
+        >
+          <option value="">Select a category</option>
+          {#each categories as category}
+            <option value={category.id}>{category.name}</option>
+          {/each}
+        </select>
+      {/if}
+    </div>
 
-  <div class="tags-container">
-    <GenreTags {topic} {handleGenreChange} />
-  </div>
+    <div class="tags-container">
+      <GenreTags bind:topic {handleGenreChange} />
+    </div>
 
-  <div class="button-group">
-    <a href="#image-gallery" class="btn blue">Image Gallery</a>
-    <a href="#music-gallery" class="btn green">Audio Gallery</a>
+    <div class="button-group">
+      <a href="#image-gallery" class="btn blue">Image Gallery</a>
+      <a href="#music-gallery" class="btn green">Audio Gallery</a>
+      {#if topic}
+        <button
+          class="btn yellow"
+          on:click={() => {
+            if (topic) {
+              handleOpenImagePromptModal(topic.id, topic.image_prompt);
+            }
+          }}
+        >
+          Image Prompt
+        </button>
+      {/if}
+      {#if user?.role === 'admin' && topic}
+        <button
+          class="btn red"
+          on:click={() => {
+            if (topic) {
+              handleOpenDeleteModal(topic.prompt_id, topic.name);
+            }
+          }}
+        >
+          Delete
+        </button>
+      {/if}
+    </div>
+
+    <div class="description">
+      <h2>Description</h2>
+      {#if openTopicDescription}
+        <textarea bind:value={topicDescription.description} rows="10"
+        ></textarea>
+        <button
+          class="btn green"
+          on:click={() => {
+            handleTopicDescriptionChange();
+            openTopicDescription = false;
+          }}
+        >
+          Save
+        </button>
+        <button class="btn red" on:click={() => (openTopicDescription = false)}>
+          Cancel
+        </button>
+      {:else}
+        <button
+          class="description-btn"
+          on:click={() => (openTopicDescription = true)}
+          aria-label="Edit topic description"
+        >
+          {topic?.description ?? 'Add a description'}
+        </button>
+      {/if}
+    </div>
+
     {#if topic}
-      <button
-        class="btn yellow"
-        on:click={() =>
-          handleOpenImagePromptModal(topic.id, topic.image_prompt)}
-      >
-        Image Prompt
-      </button>
+      <Media {topic_name} topic_id={topic.id} />
     {/if}
-    {#if user?.role === 'admin' && topic}
-      <button
-        class="btn red"
-        on:click={() => handleOpenDeleteModal(topic.prompt_id, topic.name)}
-      >
-        Delete
-      </button>
-    {/if}
-  </div>
 
-  <div class="description">
-    <h2>Description</h2>
-    {#if openTopicDescription}
-      <textarea bind:value={topicDescription.description} rows="10"></textarea>
-      <button
-        class="btn green"
-        on:click={() => {
-          handleTopicDescriptionChange();
-          openTopicDescription = false;
-        }}
-      >
-        Save
-      </button>
-      <button class="btn red" on:click={() => (openTopicDescription = false)}>
-        Cancel
-      </button>
-    {:else}
-      <button
-        class="description-btn"
-        on:click={() => (openTopicDescription = true)}
-        aria-label="Edit topic description"
-      >
-        {topic?.description ?? 'Add a description'}
-      </button>
-    {/if}
-  </div>
-
-  {#if topic}
-    <Media {topic_name} topic_id={topic.id} />
-  {/if}
-
-  <!-- <div id="image-gallery" class="gallery">
+    <!-- <div id="image-gallery" class="gallery">
     <h2>Image Gallery</h2>
     <Gallery folder={topic?.name} folderPath="backgrounds" type="image" />
     <Gallery folder={topic?.name} folderPath="description" type="image" />
@@ -181,7 +194,8 @@
     <h2>Audio Gallery</h2>
     <Gallery folder={topic?.name} type="music" />
   </div> -->
-</div>
+  </div>
+{/if}
 
 <style>
   .container {

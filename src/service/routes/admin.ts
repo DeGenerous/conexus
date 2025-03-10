@@ -128,14 +128,14 @@ export default class AdminAPI extends Fetcher {
 
   async addTopicGenre(topic_id: number, genre_id: number) {
     return this.request<APISTDResposne>('/admin/add-topic-genre', {
-      method: 'GET',
+      method: 'PATCH',
       body: JSON.stringify({ topic_id, genre_id }),
     });
   }
 
   async removeTopicGenre(topic_id: number, genre_id: number) {
     return this.request<APISTDResposne>('/admin/remove-topic-genre', {
-      method: 'POST',
+      method: 'PATCH',
       body: JSON.stringify({ topic_id, genre_id }),
     });
   }

@@ -82,11 +82,11 @@ type TestPromptRequest = {
 };
 
 type CreatePrompt = {
-  prompt: string;
-  category: number;
   topic: string;
   description: string;
   image_prompt: string;
+  category: number;
+  prompt: string;
 };
 
 type MediaType = 'background' | 'description' | 'tile' | 'audio' | 'video';

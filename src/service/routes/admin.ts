@@ -98,24 +98,24 @@ export default class AdminAPI extends Fetcher {
     );
   }
 
-  async changeTopicsName(topic: Topic) {
+  async changeTopicsName(old_name: string, new_name: string) {
     return this.request<APISTDResposne>('/admin/change-topics-name', {
       method: 'POST',
-      body: JSON.stringify(topic),
+      body: JSON.stringify({ old_name, new_name }),
     });
   }
 
-  async changeTopicsOrder(topic: Topic) {
+  async changeTopicsOrder(topic_id: number, order: number) {
     return this.request<APISTDResposne>('/admin/change-topics-order', {
       method: 'POST',
-      body: JSON.stringify(topic),
+      body: JSON.stringify({ topic_id, order }),
     });
   }
 
-  async changeTopicsCategory(topic: Topic) {
+  async changeTopicsCategory(topic_id: number, category_id: number) {
     return this.request<APISTDResposne>('/admin/change-topics-category', {
       method: 'POST',
-      body: JSON.stringify(topic),
+      body: JSON.stringify({ topic_id, category_id }),
     });
   }
 
@@ -126,17 +126,17 @@ export default class AdminAPI extends Fetcher {
     });
   }
 
-  async addTopicGenre(topic: Topic) {
+  async addTopicGenre(topic_id: number, genre_id: number) {
     return this.request<APISTDResposne>('/admin/add-topic-genre', {
       method: 'GET',
-      body: JSON.stringify(topic),
+      body: JSON.stringify({ topic_id, genre_id }),
     });
   }
 
-  async removeTopicGenre(topic: Topic) {
+  async removeTopicGenre(topic_id: number, genre_id: number) {
     return this.request<APISTDResposne>('/admin/remove-topic-genre', {
       method: 'POST',
-      body: JSON.stringify(topic),
+      body: JSON.stringify({ topic_id, genre_id }),
     });
   }
 }

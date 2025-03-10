@@ -6,8 +6,8 @@
 
   let mediaManager = new MediaManager();
 
-  export let topic_name = 'Escape'; // Default topic_name
-  export let topic_id: number = 1; // Default topic_id
+  export let topic_name: string; // Default topic_name
+  export let topic_id: number; // Default topic_id
 
   let isLoading = true;
 
@@ -140,7 +140,7 @@
   {#if isLoading}
     <p>Loading media...</p>
   {:else}
-    <h1>Story Builder</h1>
+    <h1>Media Manager</h1>
 
     <div class="media-sections">
       <!-- Background Upload -->

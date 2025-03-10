@@ -1,38 +1,51 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-
-  // import PromptHeader from './PromptHeader.svelte';
-  // import GenreTags from './GenreTags.svelte';
-  // import AvailableButton from './AvailableButton.svelte';
-  // import Gallery from './Gallery.svelte';
-  // import { goto } from '$app/navigation';
+  import { writable } from 'svelte/store';
 
   import Media from '@components/Dashboard/Media.svelte';
   import { AdminApp } from '@lib/admin';
 
+  import TopicHeader from './TopicHeader.svelte';
+  import GenreTags from './GenreTags.svelte';
+  // import AvailableButton from './AvailableButton.svelte';
   // import Modal from './Modal.svelte'; // Assuming you have a separate Modal component
 
   let adminApp = new AdminApp();
 
   export let topic_name = 'escape'; // Default topic_name
 
-  export let topic: ViewTopic;;
+  export let topic: ViewTopic;
   export let user: User;
-  export let categories;
-  // export let genres;
-  // export let refreshPage;
+  export let categories: CategoryView[];
 
-  let openTopicDescription = false;
   let openPrompt = false;
-  // let topicDescription = { id: 1, description: 'topic.description' };
-  let topicDescription;
   let promptText = {};
+  let openTopicDescription = false;
+  let topicDescription: { id: number; description: string } = {
+    id: 1,
+    description: '',
+  };
 
-  function handleTopicCategoryChange(
+  async function handleTopicCategoryChange(
     topicId: number,
-    categoryId: string | null,
+    categoryId: string,
   ) {
-    console.log(`Changing category for ${topicId} to ${categoryId}`);
+    await adminApp.editTopicCategory(topicId, parseInt(categoryId));
+  }
+
+  async function handleChangeTopicName(old_name: string, new_name: string) {
+    adminApp.editTopicName(old_name, new_name);
+  }
+
+  async function handleGenreChange(genre_id: number, method: 'add' | 'remove') {
+    switch (method) {
+      case 'add':
+        await adminApp.addGenre(topic.id, genre_id);
+        break;
+      case 'remove':
+        await adminApp.removeGenre(topic.id, genre_id);
+        break;
+    }
   }
 
   function navigate(path) {
@@ -61,17 +74,29 @@
 
   onMount(async () => {
     const view_topic = await adminApp.fetchTopic(topic_name);
-    categories = await adminApp.fetchCategories();
 
     if (view_topic) {
       topic = view_topic;
-      topicDescription = { id: topic.id ?? 1, description: topic.description }
+      topicDescription = { id: topic.id ?? 1, description: topic.description };
+    }
+  });
+
+  onMount(async () => {
+    categories = await adminApp.fetchCategories();
+
+    if (categories) {
+      categories = categories;
     }
   });
 </script>
 
 <div class="container">
   <div class="header">
+    <TopicHeader
+      {topic_name}
+      is_admin={user?.role === 'admin'}
+      changeTopicName={handleChangeTopicName}
+    />
     {#if categories && topic !== null}
       <select
         bind:value={topic.category_id}
@@ -90,7 +115,7 @@
   </div>
 
   <div class="tags-container">
-    <!-- <GenreTags {topic} availableGenres={genres} /> -->
+    <GenreTags {topic} {handleGenreChange} />
   </div>
 
   <div class="button-group">
@@ -128,10 +153,7 @@
       >
         Save
       </button>
-      <button
-        class="btn red"
-        on:click={() => (openTopicDescription = false)}
-      >
+      <button class="btn red" on:click={() => (openTopicDescription = false)}>
         Cancel
       </button>
     {:else}

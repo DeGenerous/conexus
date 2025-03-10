@@ -192,8 +192,8 @@ export class AdminApp extends AdminAPI {
     return data;
   }
 
-  async editTopicName(topic: Topic) {
-    const { data, error } = await this.changeTopicsName(topic);
+  async editTopicName(old_name: string, new_name: string) {
+    const { data, error } = await this.changeTopicsName(old_name, new_name);
 
     if (!data) {
       if (error) {
@@ -205,8 +205,8 @@ export class AdminApp extends AdminAPI {
     return data;
   }
 
-  async editTopicOrder(topic: Topic) {
-    const { data, error } = await this.changeTopicsOrder(topic);
+  async editTopicOrder(topic_id: number, order: number) {
+    const { data, error } = await this.changeTopicsOrder(topic_id, order);
 
     if (!data) {
       if (error) {
@@ -218,8 +218,8 @@ export class AdminApp extends AdminAPI {
     return data;
   }
 
-  async editTopicCategory(topic: Topic) {
-    const { data, error } = await this.changeTopicsCategory(topic);
+  async editTopicCategory(topic_id: number, category_id: number) {
+    const { data, error } = await this.changeTopicsCategory(topic_id, category_id);
 
     if (!data) {
       if (error) {
@@ -244,8 +244,8 @@ export class AdminApp extends AdminAPI {
     return data;
   }
 
-  async addGenre(topic: Topic) {
-    const { data, error } = await this.addTopicGenre(topic);
+  async addGenre(topic_id: number, genre_id: number) {
+    const { data, error } = await this.addTopicGenre(topic_id, genre_id);
 
     if (!data) {
       if (error) {
@@ -257,8 +257,8 @@ export class AdminApp extends AdminAPI {
     return data;
   }
 
-  async removeGenre(topic: Topic) {
-    const { data, error } = await this.removeTopicGenre(topic);
+  async removeGenre(topic_id: number, genre_id: number) {
+    const { data, error } = await this.removeTopicGenre(topic_id, genre_id);
 
     if (!data) {
       if (error) {

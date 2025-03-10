@@ -1,6 +1,7 @@
 import { api_error } from '@errors/index';
 import { ViewAPI } from '@service/routes';
 import { toastStore } from '@stores/toast';
+import { availableGenres } from '@stores/view';
 
 export class CoNexusApp extends ViewAPI {
   private static instance: CoNexusApp;
@@ -81,7 +82,9 @@ export class CoNexusApp extends ViewAPI {
       return [];
     }
 
-    return data;
+    availableGenres.set(data);
+
+    return data; // TODO: add to store
   }
 
   async getGenreTopics(

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import countries from '../../../data/countries.json';
-  import dreamData from '../../../data/dream';
+  import countries from '@constants/countries.json';
+  import dreamData from '@constants/dream';
+  import { AdminApp } from '@lib/admin';
   import { storyData, promptSettings, openPrompt, tablePrompt, clearAllData } from '@stores/dream';
   import generatePrompt from '@utils/prompt';
-  import { AdminApp } from '@lib/admin';
 
   import Slider from './create/Slider.svelte';
   import Characters from './create/Characters.svelte';

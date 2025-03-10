@@ -2,7 +2,7 @@ function generatePrompt (
   props: StoryData,
   settings: PromptSettings,
   data: TablePrompt | string
-) {
+): CreatePrompt {
   let imagePrompt: string = "";
   if (props.imagePrompts.length > 1) {
     imagePrompt += "Image prompts:\n";
@@ -193,7 +193,7 @@ function generatePrompt (
   const storySettings = setUpSettings();
   const storyPrompt = setUpPrompt();
 
-  const fullStory = {
+  const fullStory: CreatePrompt = {
     topic: props.name,
     description: props.description,
     image_prompt: imagePrompt,

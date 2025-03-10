@@ -1,6 +1,6 @@
 <!-- WritingStyleComp.svelte -->
 <script>
-  import dreamData from '../../../../data/dream';
+  import dreamData from '@constants/dream';
   import { tablePrompt } from '@stores/dream';
 
   import Dropdown from './Dropdown.svelte';

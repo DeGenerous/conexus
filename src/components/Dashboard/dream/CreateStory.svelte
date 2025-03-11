@@ -2,7 +2,13 @@
   import countries from '@constants/countries.json';
   import dreamData from '@constants/dream';
   import { AdminApp } from '@lib/admin';
-  import { storyData, promptSettings, openPrompt, tablePrompt, clearAllData } from '@stores/dream';
+  import {
+    storyData,
+    promptSettings,
+    openPrompt,
+    tablePrompt,
+    clearAllData,
+  } from '@stores/dream';
   import generatePrompt from '@utils/prompt';
 
   import Slider from './create/Slider.svelte';
@@ -17,18 +23,13 @@
   let newImagePrompt: string = '';
   const addImagePrompt = () => {
     if (newImagePrompt === '') return;
-    $storyData.imagePrompts = [
-      ...$storyData.imagePrompts,
-      newImagePrompt,
-    ];
+    $storyData.imagePrompts = [...$storyData.imagePrompts, newImagePrompt];
     newImagePrompt = '';
   };
   const removeImagePrompt = (index: number) => {
-    $storyData.imagePrompts = $storyData.imagePrompts.filter(
-      (prompt, nr) => {
-        return nr !== index;
-      },
-    );
+    $storyData.imagePrompts = $storyData.imagePrompts.filter((prompt, nr) => {
+      return nr !== index;
+    });
   };
 
   function handleEnterKey(event: KeyboardEvent) {
@@ -45,14 +46,17 @@
 
   const generateStory = async () => {
     const promptData: TablePrompt | string =
-      promptFormat === 'Table'
-        ? $tablePrompt
-        : $openPrompt;
-    await admin.createNewStory(generatePrompt($storyData, $promptSettings, promptData));
+      promptFormat === 'Table' ? $tablePrompt : $openPrompt;
+    await admin.createNewStory(
+      generatePrompt($storyData, $promptSettings, promptData),
+    );
   };
 
-  $: validation = $storyData.name && $storyData.description
-    && $storyData.description.length > 100 && $storyData.imagePrompts.length > 0;
+  $: validation =
+    $storyData.name &&
+    $storyData.description &&
+    $storyData.description.length > 100 &&
+    $storyData.imagePrompts.length > 0;
 </script>
 
 <svelte:window on:keypress={handleEnterKey} />
@@ -89,8 +93,8 @@
       ></textarea>
       {#if $storyData.description && $storyData.description.length < 100}
         <p class="validation">
-          Description should be longer!
-          Enter {100 - $storyData.description.length} more characters
+          Description should be longer! Enter {100 -
+            $storyData.description.length} more characters
         </p>
       {/if}
     </div>
@@ -124,7 +128,9 @@
     {#if $storyData.imagePrompts.length < 1}
       <p class="validation">Add at least one image prompt</p>
     {/if}
-    <button on:click={addImagePrompt} disabled={newImagePrompt === ''}>Add Image Prompt</button>
+    <button on:click={addImagePrompt} disabled={newImagePrompt === ''}
+      >Add Image Prompt</button
+    >
   </div>
 
   <!-- MAIN SETTINGS -->
@@ -285,18 +291,13 @@
       ></textarea>
     </div>
   {/if}
-  
+
   {#if !validation}
     <p class="validation">Fill all required fields!</p>
   {/if}
 
   <div class="buttons-wrapper">
-    <button
-      class="red-button blur"
-      on:click={clearAllData}
-    >
-      RESET
-    </button>
+    <button class="red-button blur" on:click={clearAllData}> RESET </button>
     <button
       class="green-button blur"
       on:click={generateStory}

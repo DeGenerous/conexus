@@ -1,14 +1,21 @@
 ---
 import Layout from '@layouts/Layout.astro';
 
-import ManageStories from '@components/Dashboard/ManageStories.svelte';
+import ManageStories from '@components/dashboard/dream/ManageStories.svelte';
 
 const { topic } = Astro.params;
+
+const arrow = true;
+
+const meta = {
+  header: 'Manage',
+};
 
 if (!topic) {
   Astro.redirect('/');
 }
 ---
-<Layout>
-    <ManageStories client:load />
+
+<Layout {...meta} {arrow}>
+  <ManageStories client:load />
 </Layout>

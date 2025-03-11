@@ -1,14 +1,21 @@
 ---
 import Layout from '@layouts/Layout.astro';
 
-import ExploreStory from '@components/Dashboard/ExploreStory.svelte';
+import ExploreStory from '@components/dashboard/dream/manage/ExploreStory.svelte';
 
 const { topic } = Astro.params;
+
+const arrow = true;
+
+const meta = {
+  header: topic,
+};
 
 if (!topic) {
   Astro.redirect('/');
 }
 ---
-<Layout>
+
+<Layout {...meta} {arrow}>
   <ExploreStory topic_name={topic} client:load />
 </Layout>

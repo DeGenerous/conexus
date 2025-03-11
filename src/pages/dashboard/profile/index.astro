@@ -1,7 +1,7 @@
 ---
 import Layout from '@layouts/Layout.astro';
 
-import ProfileSettings from '@components/dashboard/ProfileSettings.svelte';
+import Profile from '@components/dashboard/Profile.svelte';
 
 const arrow = true;
 
@@ -11,5 +11,5 @@ const meta = {
 ---
 
 <Layout {...meta} {arrow}>
-  <ProfileSettings client:load />
+  <Profile client:load />
 </Layout>

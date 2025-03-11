@@ -1,4 +1,3 @@
-<!-- PromptRadioButtons.svelte -->
 <script lang="ts">
   export let parameters: string[] = ['none', 'min', 'standard', 'max'];
   export let inputValue = 1;

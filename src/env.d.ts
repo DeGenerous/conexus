@@ -48,7 +48,7 @@ type Category = {
 type CategoryView = {
   id: number;
   name: string;
-}
+};
 
 type StepData = {
   step: number;

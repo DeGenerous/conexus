@@ -8,14 +8,17 @@
   let viewApp = new CoNexusApp();
 
   export let topic: ViewTopic;
-  export let handleGenreChange = async (genreId: number, method: 'add' | 'remove') => {};
-  
+  export let handleGenreChange = async (
+    genreId: number,
+    method: 'add' | 'remove',
+  ) => {};
+
   let genres = writable<string[]>([]);
   let newGenre = writable('');
 
   onMount(() => {
-  if (topic && topic.genres && topic.genres.length)
-    genres.set(topic.genres.split(',').map((genre: string) => genre.trim()));
+    if (topic && topic.genres && topic.genres.length)
+      genres.set(topic.genres.split(',').map((genre: string) => genre.trim()));
   });
 
   async function handleRemoveGenre(genreToRemove: string) {
@@ -24,7 +27,7 @@
     );
 
     const genre = $availableGenres.find((g: Genre) => g.name === genreToRemove);
-    if (genre)  await handleGenreChange(genre.id, 'remove');
+    if (genre) await handleGenreChange(genre.id, 'remove');
   }
 
   function handleAddGenre() {

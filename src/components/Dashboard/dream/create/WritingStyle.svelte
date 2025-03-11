@@ -1,4 +1,3 @@
-<!-- WritingStyleComp.svelte -->
 <script>
   import dreamData from '@constants/dream';
   import { tablePrompt } from '@stores/dream';

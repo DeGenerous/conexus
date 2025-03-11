@@ -1,1 +1,1 @@
-export const serveUrl = '/api/media/serve/'
+export const serveUrl = '/api/media/serve/';

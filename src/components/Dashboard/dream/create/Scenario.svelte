@@ -1,4 +1,3 @@
-<!-- Scenarios.svelte -->
 <script lang="ts">
   import { tablePrompt } from '@stores/dream';
   import Dropdown from './Dropdown.svelte';
@@ -98,7 +97,9 @@
     placeholder="How does the story reach a happy or victorious ending? List key moments that lead to success."
     bind:value={newWinningScenario}
   />
-  <button on:click={addWinningScenario} disabled={newWinningScenario === ''}>Add Winning Scenario</button>
+  <button on:click={addWinningScenario} disabled={newWinningScenario === ''}
+    >Add Winning Scenario</button
+  >
 
   <hr />
 
@@ -125,7 +126,9 @@
     placeholder="What leads to failure, loss, or tragedy? List key missteps and dangers that lead to downfall."
     bind:value={newLosingScenario}
   />
-  <button on:click={addLosingScenario} disabled={newLosingScenario === ''}>Add Losing Scenario</button>
+  <button on:click={addLosingScenario} disabled={newLosingScenario === ''}
+    >Add Losing Scenario</button
+  >
 
   <hr />
 
@@ -149,7 +152,9 @@
     placeholder="What major events shape the story? List key twists, challenges, or turning points."
     bind:value={newKeyEvent}
   />
-  <button on:click={addKeyEvent} disabled={newKeyEvent === ''}>Add Key Event</button>
+  <button on:click={addKeyEvent} disabled={newKeyEvent === ''}
+    >Add Key Event</button
+  >
 </Dropdown>
 
 <style>

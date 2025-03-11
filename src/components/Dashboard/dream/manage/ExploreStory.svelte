@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import Media from '@components/Dashboard/Media.svelte';
+  import Media from './Media.svelte';
   import { AdminApp } from '@lib/admin';
 
   import GenreTags from './GenreTags.svelte';

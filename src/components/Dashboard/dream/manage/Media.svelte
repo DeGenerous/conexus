@@ -161,7 +161,9 @@
         <div class="media-grid">
           {#each backgrounds as bg}
             <img src={`${serveUrl}${bg}`} alt="Background" class="preview" />
-            <button on:click={() => handleDelete(bg, 'background')}>Delete</button>
+            <button on:click={() => handleDelete(bg, 'background')}
+              >Delete</button
+            >
           {/each}
         </div>
       </div>

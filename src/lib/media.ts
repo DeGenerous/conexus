@@ -9,7 +9,11 @@ class MediaManager {
     this.mediaAPI = new MediaAPI();
   }
 
-  async uploadTopicMedia(file: File, topic_name: string, media_type: MediaType) {
+  async uploadTopicMedia(
+    file: File,
+    topic_name: string,
+    media_type: MediaType,
+  ) {
     const { data, error } = await this.mediaAPI.uploadFile(
       file,
       topic_name,
@@ -30,14 +34,22 @@ class MediaManager {
       // if (error) {
       //   throw new Error(error.details);
       // }
-      return []
+      return [];
     }
 
     return data;
   }
 
-  async deleteTopicMedia(topic_id: number, file_id: string, media_type: MediaType) {
-    const { data, error } = await this.mediaAPI.DeleteFile(topic_id, file_id, media_type);
+  async deleteTopicMedia(
+    topic_id: number,
+    file_id: string,
+    media_type: MediaType,
+  ) {
+    const { data, error } = await this.mediaAPI.DeleteFile(
+      topic_id,
+      file_id,
+      media_type,
+    );
 
     if (!data) {
       if (error) {

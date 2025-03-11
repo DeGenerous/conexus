@@ -1,82 +1,64 @@
 <script>
-  let stories = [];
+  import { AdminApp } from "@lib/admin";
+  import { onMount } from "svelte";
 
-  async function fetchStories() {
-    // const res = await fetch('/api/stories');
-    // stories = await res.json();
-  }
+  let admin = new AdminApp();
 
-  async function deleteStory(id) {
-    await fetch(`/api/stories/${id}`, { method: 'DELETE' });
-    stories = stories.filter((story) => story.id !== id);
-  }
+  onMount(() => {
+    admin.fetchCollections().then((res) => {
+      console.log(res)
+    })
+  })
 </script>
 
-<h2>Manage Stories</h2>
-
-{#await fetch('/api/stories') then stories}
-  {#if stories.length === 0}
-    <p>No stories available.</p>
-  {:else}
-    {#each stories as story}
-      <div class="container">
-        <h2>{story.title}</h2>
-        <p>{story.content}</p>
-        <button class="delete-button" on:click={() => deleteStory(story.id)}
-          >Delete</button
-        >
-      </div>
+<section class="container-wrapper">
+  {#await admin.fetchCollections()}
+    <h2>Loading collections...</h2>
+  {:then { collections }}
+    {#each collections as { category_name, section_name, topics }}
+      <section class="container blur">
+        <div class="buttons-wrapper">
+          <p class="collection-header">{category_name}</p>
+          <select
+            class="selector blur"
+            value={section_name}
+          >
+            <option value={section_name}>{section_name}</option>
+          </select>
+        </div>
+        <div class="tiles-collection">
+          {#each topics as {topic_name, order, available}}
+            <a class="tile" href="/dashboard/dream/manage/{topic_name}">
+              <h2>{topic_name}</h2>
+              <h3>Order: {order}</h3>
+              <button
+                class:green-button={available === 'available'}
+                class:red-button={available === 'unavailable'}
+                on:click|preventDefault
+              >
+                {available}
+              </button>
+            </a>
+          {/each}
+        </div>
+      </section>
     {/each}
-  {/if}
-{/await}
-
-<!-- examples -->
-<div class="container">
-  <h3>Shadow of the Shogun</h3>
-  <p>
-    In the shadowed chaos of 16th-century Japan, you lead the Iga Ninja Clan as
-    warlords clash for dominion. With Oda Nobunaga’s armies marching to
-    annihilate your people, every decision—be it guerrilla warfare,
-    assassination, or betrayal—shapes the fate of your clan. Infiltrate enemy
-    castles, manipulate powerful daimyo, and master the art of deception to
-    survive the bloodstained Sengoku era, where honor is fleeting, and the blade
-    is absolute.
-  </p>
-  <div class="buttons-wrapper">
-    <button class="red-button" on:click={() => deleteStory(story.id)}>
-      Delete
-    </button>
-    <button>Play Demo</button>
-    <button class="green-button">Submit</button>
-  </div>
-</div>
-
-<div class="container">
-  <h3>Che Guevara: Revolution</h3>
-  <p>
-    Step into the boots of Ernesto "Che" Guevara, the Argentine doctor turned
-    revolutionary icon. From the battlefields of Cuba to the jungles of Bolivia,
-    every decision shapes history—will you forge a lasting rebellion, or meet
-    your fate as a martyr of the revolution?
-  </p>
-  <div class="buttons-wrapper">
-    <button class="red-button" on:click={() => deleteStory(story.id)}>
-      Delete
-    </button>
-    <button>Play Demo</button>
-    <button class="green-button">Submit</button>
-  </div>
-</div>
+  {/await}
+</section>
 
 <style>
-  .container h3 {
-    color: rgba(51, 226, 230, 0.9);
+  .container {
+    width: 100vw;
+    padding-inline: 0;
+    border-radius: 0;
   }
 
-  @media only screen and (max-width: 600px) {
-    .container {
-      width: 100vw;
-      border-radius: 0;
-    }
+  .tile {
+    padding: 1vw;
+    gap: 1vw;
+  }
+
+  button {
+    text-transform: capitalize;
   }
 </style>

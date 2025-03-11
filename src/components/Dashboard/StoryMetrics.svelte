@@ -9,6 +9,7 @@
   }
 </script>
 
+<section class="container blur">
 <div class="buttons-wrapper">
   <p class="collection-header">Story Metrics:</p>
   <select
@@ -22,7 +23,7 @@
   </select>
 </div>
 
-<div class="tiles-collection blur">
+<div class="tiles-collection">
   <!-- examples -->
   <StoryTile section="Community Picks" topicName="Swipe Right, Fall Hard" />
   <StoryTile section="Dischordian Saga" topicName="Escape" />
@@ -36,3 +37,12 @@
   <StoryTile section="Community Picks" topicName="Adam and Eve" />
   <StoryTile section="Community Picks" topicName="Bros & Beers" />
 </div>
+</section>
+
+<style>
+  .container {
+    width: 100vw;
+    padding-inline: 0;
+    border-radius: 0;
+  }
+</style>

@@ -96,7 +96,7 @@
 {#if $story === null}
   {#await game.getTopic(story_name)}
     <header>
-      <BackArrow href="./" />
+      <BackArrow />
       <Profile />
     </header>
 
@@ -124,7 +124,7 @@
     </div>
   {:then topic: ThumbnailTopic}
     <header>
-      <BackArrow href="./" />
+      <BackArrow />
       <h1 class="fade-in">
         {(topic.name.charAt(0).toUpperCase() + topic.name.slice(1)).trim()}
       </h1>
@@ -190,7 +190,7 @@
     </div>
   {:catch}
     <header>
-      <BackArrow href="./" />
+      <BackArrow />
       <Profile />
     </header>
 

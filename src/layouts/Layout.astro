@@ -12,6 +12,7 @@ import '@styles/global.css';
 import '@styles/rainbow-kit.css';
 import '@styles/icons.css';
 import '@styles/utils.css';
+import '@styles/tiles.css';
 import '@styles/dream.css';
 
 const {
@@ -58,7 +59,7 @@ const {
     {
       !story && (
         <header>
-          {arrow && <BackArrow client:load />}
+          {arrow && <BackArrow href="/" client:load />}
           {!arrow && (
             <a
               href="https://degenerousdao.com/"

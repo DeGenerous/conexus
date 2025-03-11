@@ -191,11 +191,11 @@ export class AdminApp extends AdminAPI {
    * If the deletion is successful, it shows a success message using `toastStore`.
    * If the deletion fails, it shows an error message using `api_error` or `toastStore`.
    *
-   * @param id - The ID of the prompt to be deleted.
+   * @param topic_id - The ID of the topic to delete.
    * @returns A promise that resolves to void.
    */
-  async deletePrompt(id: string): Promise<void> {
-    const { data, error } = await this.deleteTopicPrompt(id);
+  async deletePrompt(topic_id: string): Promise<void> {
+    const { data, error } = await this.deleteTopic(topic_id);
 
     if (!data) {
       if (error) {

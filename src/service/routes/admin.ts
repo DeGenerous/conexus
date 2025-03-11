@@ -34,9 +34,10 @@ export default class AdminAPI extends Fetcher {
     });
   }
 
-  async deleteTopicPrompt(id: string) {
-    return this.request<APISTDResposne>(`/admin/delete-topic-prompt/${id}`, {
+  async deleteTopic(topic_id: string) {
+    return this.request<APISTDResposne>(`/admin/delete-topic`, {
       method: 'DELETE',
+      body: JSON.stringify({ topic_id }),
     });
   }
 

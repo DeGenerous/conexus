@@ -48,6 +48,7 @@ interface TablePrompt {
   pacing: Min_Max;
   POV?: string;
   tone: Tone;
+  additionalData: string;
 }
 
 interface StoryData {

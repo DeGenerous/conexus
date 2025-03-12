@@ -286,7 +286,7 @@
       </h2>
       <textarea
         class="story-input dream-textfield additional-filed"
-        placeholder="Add any additional details, twists, character ideas, or world-building elements you’d like to include in your story."
+        placeholder="Add any additional styling, references, details, twists, character ideas, or world-building elements you’d like to include in your story."
         rows="2"
         bind:value={$tablePrompt.additionalData}
       ></textarea>

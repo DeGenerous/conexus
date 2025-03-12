@@ -27,7 +27,7 @@ export default class AdminAPI extends Fetcher {
     });
   }
 
-  async editTopicImagePrompt(topic_id: string, image_prompt: string) {
+  async editTopicImagePrompt(topic_id: number, image_prompt: string) {
     return this.request<APISTDResposne>('/admin/edit-topic-image-prompt', {
       method: 'PATCH',
       body: JSON.stringify({ topic_id, image_prompt }),
@@ -130,7 +130,7 @@ export default class AdminAPI extends Fetcher {
     });
   }
 
-  async deleteTopic(topic_id: string) {
+  async deleteTopic(topic_id: number) {
     return this.request<APISTDResposne>(`/admin/delete-topic`, {
       method: 'DELETE',
       body: JSON.stringify({ topic_id }),

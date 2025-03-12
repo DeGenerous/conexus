@@ -140,7 +140,7 @@ export class AdminApp extends AdminAPI {
    * @throws Will show an error toast if the edit operation fails.
    * @throws Will show an info toast with the success message if the edit operation succeeds.
    */
-  async editImagePrompt(topic_id: string, image_prompt: string): Promise<void> {
+  async editImagePrompt(topic_id: number, image_prompt: string): Promise<void> {
     const { data, error } = await this.editTopicImagePrompt(
       topic_id,
       image_prompt,
@@ -160,23 +160,21 @@ export class AdminApp extends AdminAPI {
   }
 
   /**
-   * Deletes a prompt by its ID.
+   * Deletes a topic by its ID.
    *
-   * This function attempts to delete a prompt using the provided ID by calling the `deleteTopicPrompt` method.
-   * If the deletion is successful, it shows a success message using `toastStore`.
-   * If the deletion fails, it shows an error message using `api_error` or `toastStore`.
+   * @param {number} topic_id - The ID of the topic which will be removed.
+   * @returns {Promise<void>} A promise that resolves when the topic is removed.
    *
-   * @param topic_id - The ID of the topic to delete.
-   * @returns A promise that resolves to void.
+   * @throws Will show an error message if the topic could not be removed.
    */
-  async deletePrompt(topic_id: string): Promise<void> {
+  async deleteStory(topic_id: number): Promise<void> {
     const { data, error } = await this.deleteTopic(topic_id);
 
     if (!data) {
       if (error) {
         api_error(error);
       } else {
-        toastStore.show('Error deleting prompt', 'error');
+        toastStore.show('Error deleting story', 'error');
       }
       return;
     }

@@ -12,9 +12,10 @@
 
   onMount(async () => {
     await view.getSections().then((data) => (sections = data));
+    console.log(await admin.fetchCollections())
   });
 
-  let availability: string = '';
+  let availabilityKey: string = '';
   const switchAvailable = (available: string) => {
     if (available === 'available') return 'unavailable';
     else return 'available';
@@ -39,7 +40,7 @@
 </script>
 
 <section class="container-wrapper">
-  {#key availability}
+  {#key availabilityKey}
     {#await admin.fetchCollections()}
       <h2>Loading collections...</h2>
     {:then collections}
@@ -47,13 +48,13 @@
         <section class="container blur">
           <div class="buttons-wrapper category-header">
             <p class="collection-header">{category_name}</p>
-            <div>
+            <div class="buttons-wrapper">
               <label for="section">Select section:</label>
               {#if sections}
                 <select
                   class="selector blur"
                   value={section_id}
-                  on:change|preventDefault={(event) => {
+                  on:change={(event) => {
                     const target = event.target as HTMLSelectElement;
                     if (target) {
                       admin.changeCategorySection(
@@ -90,7 +91,7 @@
                   on:click|preventDefault={() =>
                     admin
                       .changeAvailability(prompt_id, switchAvailable(available))
-                      .then(() => (availability = available))}
+                      .then(() => (availabilityKey = available + topic_name))}
                 >
                   {available}
                 </button>
@@ -145,5 +146,20 @@
 
   button {
     text-transform: capitalize;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .category-header {
+      flex-direction: column;
+    }
+
+    .tile {
+      padding: 1em;
+      gap: 1em;
+    }
+
+    .order-input {
+      padding: 0.5em 1em;
+    }
   }
 </style>

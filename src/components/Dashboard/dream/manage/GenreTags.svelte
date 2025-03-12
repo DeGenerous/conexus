@@ -51,21 +51,47 @@
   });
 </script>
 
-<div class="container">
-  <div class="tags">
-    {#each $genres as genre (genre)}
-      <div class="tag">
-        <span>{genre}</span>
-        <button on:click={() => handleRemoveGenre(genre)} title="Remove genre"
-          >✕</button
-        >
-      </div>
-    {/each}
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<div class="dream-box blur genres-list">
+  <div class="buttons-wrapper">
+    <h2>Genres</h2>
+    <div class="container buttons-wrapper genres-wrapper">
+      {#if $genres.length > 0}
+        {#each $genres as genre (genre)}
+          <div class="genre">
+            <h3>{genre}</h3>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="-100 -100 200 200"
+              class="close-svg"
+              stroke="rgba(255, 60, 64, 0.85)"
+              stroke-width="30"
+              stroke-linecap="round"
+              on:click={() => handleRemoveGenre(genre)}
+              role="button"
+              tabindex="0"
+            >
+              <path
+                d="
+                    M -65 -65
+                    L 65 65
+                    M -65 65
+                    L 65 -65
+                  "
+                fill="none"
+              />
+            </svg>
+          </div>
+        {/each}
+      {:else}
+          <h3>No genres selected</h3>
+      {/if}
+    </div>
   </div>
 
-  <div class="dropdown">
-    <select bind:value={$newGenre}>
-      <option value="">Select genre to add</option>
+  <div class="buttons-wrapper">
+    <select class="selector" bind:value={$newGenre}>
+      <option value="" hidden disabled>Select</option>
       {#each $availableGenres.filter((g) => !$genres.includes(g.name)) as genre}
         <option value={genre.name}>{genre.name}</option>
       {/each}
@@ -75,57 +101,51 @@
 </div>
 
 <style>
-  .container {
-    text-align: center;
-    color: #333;
-    font-size: 1.125rem;
-    margin-top: 0.5rem;
-  }
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .tag {
-    display: flex;
+  .genres-list {
     align-items: center;
-    background-color: #e5e7eb;
-    color: #374151;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.5rem;
-    margin: 0.25rem;
-    position: relative;
+    width: auto;
+    max-width: 95vw;
   }
-  .tag button {
-    margin-left: 0.5rem;
-    color: #ef4444;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    visibility: hidden;
+
+  .genres-wrapper {
+    flex-flow: row wrap;
+    justify-content: center !important;
   }
-  .tag:hover button {
-    visibility: visible;
+
+  .genre {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
+    padding: 1vw;
+    background-color: rgba(56, 117, 250, 0.5);
+    border-radius: 1vw;
+    box-shadow: 0 0.25vw 0.5vw #010020;
   }
-  .dropdown {
-    margin-top: 1rem;
+
+  .genre h3 {
+    color: #dedede;
   }
-  select {
-    padding: 0.5rem;
-    border-radius: 0.375rem;
-    border: 1px solid #d1d5db;
-  }
-  button {
-    margin-left: 0.5rem;
-    padding: 0.5rem 1rem;
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 0.375rem;
-    cursor: pointer;
-  }
-  button:hover {
-    background-color: #2563eb;
+
+  @media only screen and (max-width: 600px) {
+    .genres-list {
+      width: 100vw;
+      max-width: none;
+    }
+
+    .genres-list .container {
+      flex-flow: row wrap;
+    }
+
+    .selector {
+      width: 95vw;
+    }
+
+    .genre {
+      gap: 1em;
+      padding: 1em;
+      border-radius: 0.5em;
+    }
   }
 </style>

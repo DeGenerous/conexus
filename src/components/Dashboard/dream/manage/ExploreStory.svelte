@@ -1,49 +1,72 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-
-  import Media from './Media.svelte';
   import { AdminApp } from '@lib/admin';
+  import {
+    showModal,
+    secondButton,
+    handleSecondButton,
+    modalContent,
+  } from '@stores/modal';
 
   import GenreTags from './GenreTags.svelte';
-  import TopicHeader from './TopicHeader.svelte';
-  // import AvailableButton from './AvailableButton.svelte';
-  // import Modal from './Modal.svelte'; // Assuming you have a separate Modal component
-
-  let adminApp = new AdminApp();
+  import Media from './Media.svelte';
 
   export let topic_name = 'escape'; // Default topic_name
 
-  export let topic: ViewTopic | null = null;
-  export let user: User;
-  export let categories: CategoryView[];
+  let admin = new AdminApp();
+  let topic: Nullable<ViewTopic> = null;
 
-  let openPrompt = false;
-  let promptText = {};
-  let openTopicDescription = false;
-  let topicDescription: { id: number; description: string } = {
-    id: 1,
-    description: '',
-  };
+  let storyName = topic_name;
+  
+  let topic_description: string = '';
+  $: storyDescription = topic_description;
 
-  async function handleTopicCategoryChange(
-    topicId: number,
-    categoryId: string,
-  ) {
-    await adminApp.editTopicCategory(topicId, parseInt(categoryId));
-  }
+  let topic_prompt: string = '';
+  $: storyPrompt = topic_prompt;
 
-  async function handleChangeTopicName(old_name: string, new_name: string) {
-    adminApp.editTopicName(old_name, new_name);
+  let topic_imagePrompt: string = '';
+  $: storyImagePrompt = topic_imagePrompt;
+
+  onMount(async () => {
+    topic = await admin.fetchTopic(topic_name);
+
+    topic_description = topic!.description;
+    topic_prompt = topic!.prompt;
+    topic_imagePrompt = topic!.image_prompt;
+
+    console.log(topic);
+  })
+
+  let editingName: boolean = false;
+  let editingDescription: boolean = false;
+  let editingPrompt: boolean = false;
+  let editingImagePrompt: boolean = false;
+
+  const activeInputStyling = `
+    color: rgb(51, 226, 230);
+    background-color: rgba(51, 226, 230, 0.1);
+    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
+    cursor: text;
+  `;
+
+  function openModal() {
+    $secondButton = `Delete story: ${topic_name}`;
+    $handleSecondButton = () => {
+      admin.deleteStory(topic!.id);
+      $showModal = false;
+    };
+    $modalContent = `<h2>Are you sure you want to delete this story?</h2>
+        <h3>This action is irreversible. You will lose it forever!</h3>`;
+    $showModal = true;
   }
 
   async function handleGenreChange(genre_id: number, method: 'add' | 'remove') {
-    if (!topic) return;
     switch (method) {
       case 'add':
-        await adminApp.addGenre(topic.id, genre_id);
+        await admin.addGenre(topic!.id, genre_id);
         break;
       case 'remove':
-        await adminApp.removeGenre(topic.id, genre_id);
+        await admin.removeGenre(topic!.id, genre_id);
         break;
     }
   }
@@ -67,231 +90,298 @@
   function handleSave(promptId, topicId, text, available) {
     console.log('Saving:', { promptId, topicId, text, available });
   }
-
-  function handleTopicDescriptionChange() {
-    console.log('Updating topic description:', topicDescription);
-  }
-
-  onMount(async () => {
-    const view_topic = await adminApp.fetchTopic(topic_name);
-
-    if (view_topic) {
-      topic = view_topic;
-      topicDescription = { id: topic.id ?? 1, description: topic.description };
-    }
-  });
-
-  onMount(async () => {
-    categories = await adminApp.fetchCategories();
-
-    if (categories) {
-      categories = categories;
-    }
-  });
 </script>
 
-{#if !topic || topic === null || topic === undefined}
-  <div>Loading...</div>
-{:else}
-  <div class="container">
-    <div class="header">
-      <TopicHeader
-        {topic_name}
-        is_admin={user?.role === 'admin'}
-        changeTopicName={handleChangeTopicName}
-      />
-      {#if categories && topic !== null}
-        <select
-          bind:value={topic.category_id}
-          on:change={(e) => {
-            if (topic)
-              handleTopicCategoryChange(
-                topic.id,
-                (e.target as HTMLSelectElement).value,
-              );
-          }}
-        >
-          <option value="">Select a category</option>
-          {#each categories as category}
-            <option value={category.id}>{category.name}</option>
-          {/each}
-        </select>
-      {/if}
+<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
+<section class="container-wrapper">
+  {#if !topic}
+    <h2>Loading story...</h2>
+  {:else}
+    <!-- NAME, CATEGORY -->
+    <div class="container blur">
+      <div class="story-title">
+        {#if editingName}
+          <img
+            class="edit-name"
+            src="/icons/close.png"
+            alt="Cancel"
+            role="button"
+            tabindex="0"
+            on:click={() => {
+              editingName = false;
+              storyName = topic_name;
+            }}
+          />
+          <img
+            class="edit-name"
+            src="/icons/checkmark.png"
+            alt="Save"
+            role="button"
+            tabindex="0"
+            on:click={() => {
+              editingName = false;
+              if (topic_name == storyName) return;
+              admin.editTopicName(topic_name, storyName);
+              window.open('/dashboard/dream/manage/', '_self');
+            }}
+          />
+        {:else}
+          <img
+            class="edit-name"
+            src="/icons/edit.png"
+            alt="Edit"
+            role="button"
+            tabindex="0"
+            on:click={() => {
+              editingName = true;
+            }}
+          />
+        {/if}
+        <input
+          bind:value={storyName}
+          style={editingName ? activeInputStyling : ""}
+          type="text"
+          size={storyName.length}
+          maxlength="50"
+          disabled={!editingName}
+        />
+      </div>
+
+      <div class="input-container">
+        <label for="category">Category:</label>
+        {#await admin.fetchCategories() then categories}
+          <select
+            class="selector"
+            value={topic!.category_id}
+            on:change={(event) => {
+              const target = event.target as HTMLSelectElement;
+              if (target) {
+                admin.editTopicCategory(
+                  topic!.id,
+                  parseInt(target.value)
+                );
+              }
+            }}
+          >
+            {#each categories as { id, name }}
+              <option value={id}>{name}</option>
+            {/each}
+          </select>
+        {/await}
+      </div>
     </div>
 
-    <div class="tags-container">
-      <GenreTags bind:topic {handleGenreChange} />
+    <!-- GENRES -->
+    <GenreTags {topic} {handleGenreChange} />
+
+    <!-- DESCRIPTION -->
+    <div class="dream-box blur open-prompt">
+      <div class="buttons-wrapper box-header">
+        <h2>Description</h2>
+        <div class="buttons-wrapper">
+          {#if editingDescription}
+            <button class="red-button" on:click={() => (editingDescription = false)}>CANCEL</button>
+            <button class="green-button" on:click={() => {
+                editingDescription = false;
+                if (topic_description == storyDescription) return;
+                admin.editTopicDescription(topic!.id, storyDescription)
+              }}
+            >
+              SAVE
+            </button>
+          {:else}
+            <button on:click={() => (editingDescription = true)}>EDIT</button>
+          {/if}
+        </div>
+      </div>
+      <textarea
+        id="description"
+        class="story-input dream-textfield"
+        placeholder="Describe the overall story, its key themes, and what kind of journey the main character will take. Is it an epic adventure, a gripping mystery, or a heartwarming romance? Keep it engaging and set the stage for the reader!"
+        rows="5"
+        bind:value={storyDescription}
+        disabled={!editingDescription}
+      ></textarea>
     </div>
 
-    <div class="button-group">
-      <a href="#image-gallery" class="btn blue">Image Gallery</a>
-      <a href="#music-gallery" class="btn green">Audio Gallery</a>
-      {#if topic}
-        <button
-          class="btn yellow"
-          on:click={() => {
-            if (topic) {
-              handleOpenImagePromptModal(topic.id, topic.image_prompt);
-            }
-          }}
-        >
-          Image Prompt
-        </button>
-      {/if}
-      {#if user?.role === 'admin' && topic}
-        <button
-          class="btn red"
-          on:click={() => {
-            if (topic) {
-              handleOpenDeleteModal(topic.prompt_id, topic.name);
-            }
-          }}
-        >
-          Delete
-        </button>
-      {/if}
+    <!-- IMAGE-PROMPT -->
+    <div class="dream-box blur open-prompt">
+      <div class="buttons-wrapper box-header">
+        <h2>Image Generation Instructions</h2>
+        <div class="buttons-wrapper">
+          {#if editingImagePrompt}
+            <button class="red-button" on:click={() => (editingImagePrompt = false)}>CANCEL</button>
+            <button class="green-button" on:click={() => {
+                editingImagePrompt = false;
+                if (topic_imagePrompt == storyImagePrompt) return;
+                admin.editImagePrompt(topic!.id, storyImagePrompt)
+              }}
+            >
+              SAVE
+            </button>
+          {:else}
+            <button on:click={() => (editingImagePrompt = true)}>EDIT</button>
+          {/if}
+        </div>
+      </div>
+      <textarea
+        id="image-prompt"
+        class="story-input dream-textfield"
+        placeholder="E.g. A breathtaking cosmic landscape filled with swirling galaxies, ancient ruins, and a lone traveler standing at the edge of destiny."
+        rows="2"
+        bind:value={storyImagePrompt}
+        disabled={!editingImagePrompt}
+      ></textarea>
     </div>
 
-    <div class="description">
-      <h2>Description</h2>
-      {#if openTopicDescription}
-        <textarea bind:value={topicDescription.description} rows="10"
-        ></textarea>
-        <button
-          class="btn green"
-          on:click={() => {
-            handleTopicDescriptionChange();
-            openTopicDescription = false;
-          }}
-        >
-          Save
-        </button>
-        <button class="btn red" on:click={() => (openTopicDescription = false)}>
-          Cancel
-        </button>
-      {:else}
-        <button
-          class="description-btn"
-          on:click={() => (openTopicDescription = true)}
-          aria-label="Edit topic description"
-        >
-          {topic?.description ?? 'Add a description'}
-        </button>
-      {/if}
+    <!-- PROMPT -->
+    <div class="dream-box blur open-prompt">
+      <div class="buttons-wrapper box-header">
+        <h2>Prompt</h2>
+        <div class="buttons-wrapper">
+          {#if editingPrompt}
+            <button class="red-button" on:click={() => (editingPrompt = false)}>CANCEL</button>
+            <button class="green-button" on:click={() => {
+                editingPrompt = false;
+                if (topic_prompt == storyPrompt) return;
+                admin.editPrompt(storyPrompt, topic!.id, topic!.prompt_id);
+              }}
+            >
+              SAVE
+            </button>
+          {:else}
+            <button on:click={() => (editingPrompt = true)}>EDIT</button>
+          {/if}
+        </div>
+      </div>
+      <textarea
+        id="prompt"
+        class="story-input dream-textfield"
+        placeholder="Describe any scenario you want, and the AI will turn it into a story! Whether it's a thrilling mystery, an epic fantasy, or a hilarious adventure, your imagination sets the stage. You can be as detailed or vague as you like—every idea sparks a unique tale. E.g. Make a unique Sherlock Holmes story where during an investigation he ends up taking a new type of drug, deeply affecting him so he’ll lead a fight both versus himself and a serial killer."
+        rows="10"
+        bind:value={storyPrompt}
+        disabled={!editingPrompt}
+      ></textarea>
     </div>
 
-    {#if topic}
-      <Media {topic_name} topic_id={topic.id} />
-    {/if}
-
-    <!-- <div id="image-gallery" class="gallery">
-    <h2>Image Gallery</h2>
-    <Gallery folder={topic?.name} folderPath="backgrounds" type="image" />
-    <Gallery folder={topic?.name} folderPath="description" type="image" />
-  </div>
-
-  <div id="music-gallery" class="gallery">
-    <h2>Audio Gallery</h2>
-    <Gallery folder={topic?.name} type="music" />
-  </div> -->
-  </div>
-{/if}
+    <button class="red-button" on:click={openModal}>DELETE STORY</button>
+  {/if}
+</section>
 
 <style>
-  .container {
+  .story-title {
     display: flex;
-    flex-direction: column;
+    flex-flow: row nowrap;
+    justify-content: center;
     align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-height: 100vh;
-    padding: 1rem;
-    color: white;
+    padding: 1vw;
+    background-color: rgba(51, 226, 230, 0.15);
+    border-radius: 1vw;
+    box-shadow:
+      inset 0 0 0.5vw rgba(51, 226, 230, 0.25),
+      0 0 0.5vw #010020;
   }
 
-  .header {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 500px;
-    padding: 1rem;
-    background-color: #2d3748;
-    border-radius: 8px;
-  }
-
-  select {
-    border: 1px solid #ccc;
-    padding: 0.5rem;
-    border-radius: 5px;
-    color: black;
-  }
-
-  .tags-container {
-    width: 100%;
-    max-width: 500px;
-    padding: 1rem;
-    margin-top: 1rem;
-  }
-
-  textarea {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-bottom: 1rem;
-  }
-
-  .button-group {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin: 1rem;
-  }
-
-  .btn {
-    padding: 10px 20px;
-    border-radius: 8px;
-    color: white;
-    text-decoration: none;
-    border: none;
+  .edit-name {
+    width: 2vw;
+    margin-right: 1vw;
     cursor: pointer;
+    opacity: 0.75;
   }
 
-  .blue {
-    background-color: #2563eb;
+  .edit-name:hover,
+  .edit-name:active {
+    opacity: 1;
+    transform: scale(1.05);
   }
 
-  .green {
-    background-color: #059669;
-  }
-
-  .yellow {
-    background-color: #ca8a04;
-  }
-
-  .red {
-    background-color: #dc2626;
-  }
-
-  .description {
-    width: 100%;
-    max-width: 500px;
+  input {
+    border: none;
+    outline: none;
+    width: auto;
     text-align: center;
-    margin-top: 1rem;
+    color: rgba(51, 226, 230, 0.85);
+    font-size: 2vw;
+    line-height: 2vw;
+    box-shadow: inset 0 0 0.5vw #010020;
+    background-color: rgba(1, 0, 32, 0.35);
+    border-radius: 1vw;
+    padding: 1vw;
+    text-overflow: ellipsis;
   }
 
-  .description-btn {
-    padding: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9fafb;
-    color: black;
-    text-align: left;
-    width: 100%;
+  .open-prompt {
+    align-items: center;
+    padding: 0.5vw;
   }
 
-  h2 {
-    color: #d1d5db;
+  .open-prompt h2 {
+    line-height: 4vw;
+  }
+
+  #description, 
+  #prompt,
+  #image-prompt {
+    width: 90vw;
+  }
+
+  #description:disabled,
+  #prompt:disabled,
+  #image-prompt:disabled {
+    color: #bebebe;
+    cursor: not-allowed;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .container {
+      width: 100vw;
+      border-radius: 0;
+    }
+
+    .story-title {
+      width: 90vw;
+      padding: 0.5em;
+      border-radius: 1em;
+      gap: 0.5em;
+    }
+
+    .edit-name {
+      width: 1.5em;
+      margin-right: 0.5em;
+    }
+
+    input {
+      font-size: 1.5em;
+      line-height: 1.5em;
+      padding: 0.25em 0.5em;
+      border-radius: 0.5em;
+      max-width: 50vw;
+    }
+
+    .open-prompt {
+      padding: 1em;
+    }
+
+    .open-prompt h2 {
+      line-height: 1.5em;
+    }
+
+    .box-header {
+      flex-flow: row wrap !important;
+    }
+
+    .box-header .buttons-wrapper {
+      flex-direction: row;
+      width: auto;
+    }
+
+    #description,
+    #prompt {
+      min-height: 50vh;
+    }
+
+    #image-prompt {
+      min-height: 12em;
+    }
   }
 </style>

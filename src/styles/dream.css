@@ -2,6 +2,9 @@ textarea {
   width: 90vw;
   min-height: 6vw;
   max-height: 80vh;
+  font-family: inherit;
+  font-family: inherit;
+  resize: vertical;
 }
 
 .story-input {
@@ -20,11 +23,6 @@ textarea {
 
 .dream-wrapper input {
   font-family: inherit;
-}
-
-.dream-wrapper textarea {
-  font-family: inherit;
-  resize: vertical;
 }
 
 .dream-wrapper .container {

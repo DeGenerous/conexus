@@ -6,7 +6,6 @@
 
   let mediaManager = new MediaManager();
 
-  export let topic_name: string;
   export let topic_id: number;
 
   let isLoading = true;
@@ -65,7 +64,7 @@
         for (const file of files) {
           const response = await mediaManager.uploadTopicMedia(
             file,
-            topic_name,
+            topic_id,
             'background',
           );
           if (response.file_id) {
@@ -82,7 +81,7 @@
         if (type === 'description') {
           const response = await mediaManager.uploadTopicMedia(
             files[0],
-            topic_name,
+            topic_id,
             'description',
           );
           const fileUrl = `${response.file_id}`;
@@ -90,7 +89,7 @@
         } else if (type === 'tile') {
           const response = await mediaManager.uploadTopicMedia(
             files[0],
-            topic_name,
+            topic_id,
             'tile',
           );
           const fileUrl = `${response.file_id}`;
@@ -98,7 +97,7 @@
         } else if (type === 'audio') {
           const response = await mediaManager.uploadTopicMedia(
             files[0],
-            topic_name,
+            topic_id,
             'audio',
           );
           const fileUrl = `${response.file_id}`;
@@ -141,34 +140,34 @@
 {:else}
   <div class="container blur media-wrapper">
     <!-- Background Upload -->
-      <h2>Backgrounds</h2>
-      {#if backgrounds.length >= 3}
-        <h3>You've already uploaded 3 backgrounds.</h3>
-      {:else}
-        <label for="backgrounds-upload">Upload Backgrounds (Max 3)</label>
-        <input
-          id="backgrounds-upload"
-          type="file"
-          multiple
-          on:change={(e) => handleFileUpload(e, 'background')}
-        />
-      {/if}
+    <h2>Backgrounds</h2>
+    {#if backgrounds.length >= 3}
+      <h3>You've already uploaded 3 backgrounds.</h3>
+    {:else}
+      <label for="backgrounds-upload">Upload Backgrounds (Max 3)</label>
+      <input
+        id="backgrounds-upload"
+        type="file"
+        multiple
+        on:change={(e) => handleFileUpload(e, 'background')}
+      />
+    {/if}
 
-      <div class="media-grid">
-        {#each backgrounds as bg}
-          <div class="preview-wrapper">
-            <img src={`${serveUrl}${bg}`} alt="Background" class="preview" />
-            <button
-              class="red-button"
-              on:click={() => handleDelete(bg, 'background')}
-            >
-              Delete
-            </button>
-          </div>
-        {/each}
-      </div>
+    <div class="media-grid">
+      {#each backgrounds as bg}
+        <div class="preview-wrapper">
+          <img src={`${serveUrl}${bg}`} alt="Background" class="preview" />
+          <button
+            class="red-button"
+            on:click={() => handleDelete(bg, 'background')}
+          >
+            Delete
+          </button>
+        </div>
+      {/each}
+    </div>
 
-    <hr>
+    <hr />
 
     <!-- Description Upload -->
     <h2>Description</h2>
@@ -184,9 +183,15 @@
         alt="Description"
         class="preview"
       />
+      <button
+        class="red-button"
+        on:click={() => handleDelete(description ?? '', 'description')}
+      >
+        Delete
+      </button>
     {/if}
 
-    <hr>
+    <hr />
 
     <!-- Tile Upload -->
     <h2>Tile</h2>
@@ -198,9 +203,15 @@
     />
     {#if tile}
       <img src={` ${serveUrl}${tile}`} alt="Tile" class="preview" />
+      <button
+        class="red-button"
+        on:click={() => handleDelete(tile ?? '', 'tile')}
+      >
+        Delete
+      </button>
     {/if}
 
-    <hr>
+    <hr />
 
     <!-- Audio Upload -->
     <h2>Audio</h2>
@@ -215,12 +226,18 @@
         <source src={` ${serveUrl}${audio}`} type="audio/mpeg" />
         Your browser does not support the audio element.
       </audio>
+      <button
+        class="red-button"
+        on:click={() => handleDelete(audio ?? '', 'audio')}
+      >
+        Delete
+      </button>
     {/if}
   </div>
 {/if}
 
 <style>
-  input[type="file"] {
+  input[type='file'] {
     display: none;
   }
 
@@ -271,7 +288,7 @@
     border-radius: 1vw;
     box-shadow: 0 0.25vw 0.5vw #010020;
   }
-  
+
   @media only screen and (max-width: 600px) {
     .media-wrapper {
       width: 100vw;
@@ -291,7 +308,7 @@
     .preview-wrapper {
       gap: 1em;
     }
-    
+
     .preview {
       width: 90vw;
       border-radius: 0.5em;

@@ -265,7 +265,7 @@
     </div>
 
     <!-- MEDIA FILES -->
-    <Media {topic_name} topic_id={topic!.id} />
+    <Media topic_id={topic!.id} />
 
     <button class="red-button blur" on:click={openModal}>DELETE STORY</button>
   {/if}

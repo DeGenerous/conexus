@@ -11,12 +11,12 @@ class MediaManager {
 
   async uploadTopicMedia(
     file: File,
-    topic_name: string,
+    topic_id: number,
     media_type: MediaType,
   ) {
     const { data } = await this.mediaAPI.uploadFile(
       file,
-      topic_name,
+      topic_id,
       media_type,
     );
 

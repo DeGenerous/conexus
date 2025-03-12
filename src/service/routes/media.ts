@@ -1,7 +1,7 @@
 import Fetcher from '@service/fetcher';
 
 export default class MediaAPI extends Fetcher {
-  async uploadFile(file: File, topic_name: string, media_type: MediaType) {
+  async uploadFile(file: File, topic_id: number, media_type: MediaType) {
     let url = '';
 
     switch (media_type) {
@@ -24,7 +24,7 @@ export default class MediaAPI extends Fetcher {
 
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('topic_name', topic_name || '');
+    formData.append('topic_id', topic_id.toString() || '');
 
     return this.request<{ file_id: string | { file_id: string }[] }>(url, {
       method: 'POST',

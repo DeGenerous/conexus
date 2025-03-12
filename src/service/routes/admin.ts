@@ -22,29 +22,24 @@ export default class AdminAPI extends Fetcher {
 
   async editTopicPrompt(prompt: string, topic_id: number, prompt_id: number) {
     return this.request<APISTDResposne>('/admin/edit-topic-prompt', {
-      method: 'POST',
+      method: 'PATCH',
       body: JSON.stringify({ prompt, topic_id, prompt_id }),
     });
   }
 
   async editTopicImagePrompt(topic_id: string, image_prompt: string) {
     return this.request<APISTDResposne>('/admin/edit-topic-image-prompt', {
-      method: 'POST',
+      method: 'PATCH',
       body: JSON.stringify({ topic_id, image_prompt }),
     });
   }
 
-  async deleteTopic(topic_id: string) {
-    return this.request<APISTDResposne>(`/admin/delete-topic`, {
-      method: 'DELETE',
-      body: JSON.stringify({ topic_id }),
-    });
-  }
+  
 
-  async changePromptAvailability(prompt_id: number, available: string) {
+  async changePromptAvailability(prompt_id: number, availability: string) {
     return this.request<APISTDResposne>('/admin/change-prompt-availability', {
       method: 'PATCH',
-      body: JSON.stringify({ prompt_id: prompt_id, availability: available }),
+      body: JSON.stringify({ prompt_id, availability }),
     });
   }
 
@@ -57,7 +52,7 @@ export default class AdminAPI extends Fetcher {
 
   // async editSectionData(section: Section) {
   //   return this.request<APISTDResposne>('/admin/edit-section', {
-  //     method: 'POST',
+  //     method: 'PATCH',
   //     body: JSON.stringify(section),
   //   });
   // }
@@ -71,7 +66,7 @@ export default class AdminAPI extends Fetcher {
 
   // async editCategoryData(category: Category) {
   //   return this.request<{ category: Category }>('/admin/edit-category', {
-  //     method: 'POST',
+  //     method: 'PATCH',
   //     body: JSON.stringify(category),
   //   });
   // }
@@ -80,36 +75,43 @@ export default class AdminAPI extends Fetcher {
     return this.request<APISTDResposne>(
       '/admin/change-topic-category-section',
       {
-        method: 'POST',
+        method: 'PATCH',
         body: JSON.stringify({ section_id, category_id }),
       },
     );
   }
 
+  async changeCategoryOrder(category_id: number, order: number) {
+    return this.request<APISTDResposne>('/admin/change-category-order', {
+      method: 'PATCH',
+      body: JSON.stringify({ category_id, order }),
+    });
+  }
+
   async changeTopicsName(old_name: string, new_name: string) {
     return this.request<APISTDResposne>('/admin/change-topics-name', {
-      method: 'POST',
+      method: 'PATCH',
       body: JSON.stringify({ old_name, new_name }),
     });
   }
 
   async changeTopicsOrder(topic_id: number, order: number) {
     return this.request<APISTDResposne>('/admin/change-topics-order', {
-      method: 'POST',
+      method: 'PATCH',
       body: JSON.stringify({ topic_id, order }),
     });
   }
 
   async changeTopicsCategory(topic_id: number, category_id: number) {
     return this.request<APISTDResposne>('/admin/change-topics-category', {
-      method: 'POST',
+      method: 'PATCH',
       body: JSON.stringify({ topic_id, category_id }),
     });
   }
 
   async changeTopicsDescription(topic_id: number, description: string) {
     return this.request<APISTDResposne>('/admin/change-topics-description', {
-      method: 'POST',
+      method: 'PATCH',
       body: JSON.stringify({ topic_id, description }),
     });
   }
@@ -125,6 +127,13 @@ export default class AdminAPI extends Fetcher {
     return this.request<APISTDResposne>('/admin/remove-topic-genre', {
       method: 'PATCH',
       body: JSON.stringify({ topic_id, genre_id }),
+    });
+  }
+
+  async deleteTopic(topic_id: string) {
+    return this.request<APISTDResposne>(`/admin/delete-topic`, {
+      method: 'DELETE',
+      body: JSON.stringify({ topic_id }),
     });
   }
 }

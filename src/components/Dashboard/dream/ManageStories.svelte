@@ -1,41 +1,53 @@
-<script>
-  import { AdminApp } from "@lib/admin";
-  import { onMount } from "svelte";
+<script lang="ts">
+  import { AdminApp } from '@lib/admin';
+  import { CoNexusApp } from '@lib/view';
 
   let admin = new AdminApp();
-
-  onMount(() => {
-    admin.fetchCollections().then((res) => {
-      console.log(res)
-    })
-  })
+  let view = new CoNexusApp();
 
   const switchAvailable = (available) => {
     if (available === 'available') return 'unavailable';
     else return 'available';
-  }
+  };
 </script>
 
 <section class="container-wrapper">
   {#await admin.fetchCollections()}
     <h2>Loading collections...</h2>
-  {:then { collections }}
-    {#each collections as { category_name, section_name, topics }}
+  {:then collections}
+    {#each collections as { category_id, category_name, section_id, topics }}
       <section class="container blur">
         <div class="buttons-wrapper category-header">
           <p class="collection-header">{category_name}</p>
           <div>
             <label for="section">Select section:</label>
-            <select
-              class="selector blur"
-              value={section_name}
-            >
-              <option value={section_name}>{section_name}</option>
-            </select>
+            {#await view.getSections()}
+              <select class="selector blur" value={section_id}>
+                <option value={section_id}>{section_id}</option>
+              </select>
+            {:then sections}
+              <select
+                class="selector blur"
+                value={section_id}
+                on:change|preventDefault={(event) => {
+                  const target = event.target as HTMLSelectElement;
+                  if (target) {
+                    admin.changeCategorySection(
+                      parseInt(target.value),
+                      category_id,
+                    );
+                  }
+                }}
+              >
+                {#each sections as { id, name }}
+                  <option value={id}>{name}</option>
+                {/each}
+              </select>
+            {/await}
           </div>
         </div>
         <div class="tiles-collection">
-          {#each topics as {topic_name, order, available, prompt_id}}
+          {#each topics as { topic_name, order, available, prompt_id }}
             <a class="tile" href="/dashboard/dream/manage/{topic_name}">
               <h2>{topic_name}</h2>
               <h3>Order: {order}</h3>
@@ -43,8 +55,10 @@
                 class:green-button={available === 'available'}
                 class:red-button={available === 'unavailable'}
                 on:click|preventDefault={() =>
-                  (admin.changeAvailability(prompt_id, switchAvailable(available)))
-                }
+                  admin.changeAvailability(
+                    prompt_id,
+                    switchAvailable(available),
+                  )}
               >
                 {available}
               </button>

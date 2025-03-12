@@ -6,8 +6,8 @@
 
   let mediaManager = new MediaManager();
 
-  export let topic_name: string; // Default topic_name
-  export let topic_id: number; // Default topic_id
+  export let topic_name: string;
+  export let topic_id: number;
 
   let isLoading = true;
 
@@ -136,146 +136,165 @@
   });
 </script>
 
-<div class="container">
-  {#if isLoading}
-    <p>Loading media...</p>
-  {:else}
-    <h1>Media Manager</h1>
+{#if isLoading}
+  <h2>Loading media...</h2>
+{:else}
+  <div class="container blur media-wrapper">
+    <!-- Background Upload -->
+      <h2>Backgrounds</h2>
+      {#if backgrounds.length >= 3}
+        <h3>You've already uploaded 3 backgrounds.</h3>
+      {:else}
+        <label for="backgrounds-upload">Upload Backgrounds (Max 3)</label>
+        <input
+          id="backgrounds-upload"
+          type="file"
+          multiple
+          on:change={(e) => handleFileUpload(e, 'background')}
+        />
+      {/if}
 
-    <div class="media-sections">
-      <!-- Background Upload -->
-      <div class="media-group">
-        <h2>Backgrounds</h2>
-        {#if backgrounds.length >= 3}
-          <p>Max 3 backgrounds uploaded.</p>
-        {:else}
-          <label for="backgrounds-upload">Upload Backgrounds (Max 3):</label>
-          <input
-            id="backgrounds-upload"
-            type="file"
-            multiple
-            on:change={(e) => handleFileUpload(e, 'background')}
-          />
-        {/if}
-
-        <div class="media-grid">
-          {#each backgrounds as bg}
+      <div class="media-grid">
+        {#each backgrounds as bg}
+          <div class="preview-wrapper">
             <img src={`${serveUrl}${bg}`} alt="Background" class="preview" />
-            <button on:click={() => handleDelete(bg, 'background')}
-              >Delete</button
+            <button
+              class="red-button"
+              on:click={() => handleDelete(bg, 'background')}
             >
-          {/each}
-        </div>
+              Delete
+            </button>
+          </div>
+        {/each}
       </div>
 
-      <!-- Description Upload -->
-      <div class="media-group">
-        <h2>Description</h2>
-        <label for="description-upload">Upload Description:</label>
-        <input
-          id="description-upload"
-          type="file"
-          on:change={(e) => handleFileUpload(e, 'description')}
-        />
-        {#if description}
-          <img
-            src={`${serveUrl}${description}`}
-            alt="Description"
-            class="preview"
-          />
-        {/if}
-      </div>
+    <hr>
 
-      <!-- Tile Upload -->
-      <div class="media-group">
-        <h2>Tile</h2>
-        <label for="tile-upload">Upload Tile:</label>
-        <input
-          id="tile-upload"
-          type="file"
-          on:change={(e) => handleFileUpload(e, 'tile')}
-        />
-        {#if tile}
-          <img src={` ${serveUrl}${tile}`} alt="Tile" class="preview" />
-        {/if}
-      </div>
+    <!-- Description Upload -->
+    <h2>Description</h2>
+    <label for="description-upload">Upload Description Picture</label>
+    <input
+      id="description-upload"
+      type="file"
+      on:change={(e) => handleFileUpload(e, 'description')}
+    />
+    {#if description}
+      <img
+        src={`${serveUrl}${description}`}
+        alt="Description"
+        class="preview"
+      />
+    {/if}
 
-      <!-- Audio Upload -->
-      <div class="media-group">
-        <h2>Audio</h2>
-        <label for="audio-upload">Upload Audio:</label>
-        <input
-          id="audio-upload"
-          type="file"
-          on:change={(e) => handleFileUpload(e, 'audio')}
-        />
-        {#if audio}
-          <audio controls>
-            <source src={` ${serveUrl}${audio}`} type="audio/mpeg" />
-            Your browser does not support the audio element.
-          </audio>
-        {/if}
-      </div>
-    </div>
-  {/if}
-</div>
+    <hr>
+
+    <!-- Tile Upload -->
+    <h2>Tile</h2>
+    <label for="tile-upload">Upload Tile Picture</label>
+    <input
+      id="tile-upload"
+      type="file"
+      on:change={(e) => handleFileUpload(e, 'tile')}
+    />
+    {#if tile}
+      <img src={` ${serveUrl}${tile}`} alt="Tile" class="preview" />
+    {/if}
+
+    <hr>
+
+    <!-- Audio Upload -->
+    <h2>Audio</h2>
+    <label for="audio-upload">Upload Audio</label>
+    <input
+      id="audio-upload"
+      type="file"
+      on:change={(e) => handleFileUpload(e, 'audio')}
+    />
+    {#if audio}
+      <audio controls>
+        <source src={` ${serveUrl}${audio}`} type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+    {/if}
+  </div>
+{/if}
 
 <style>
-  .container {
-    padding: 1.5rem;
-    max-width: 600px;
-    width: 100%;
-    margin: auto;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  h1 {
-    text-align: center;
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .media-sections {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .media-group {
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-  }
-
-  h2 {
-    font-size: 1.3rem;
-    margin-bottom: 0.5rem;
+  input[type="file"] {
+    display: none;
   }
 
   label {
-    font-weight: 500;
-    display: block;
-    margin-bottom: 0.5rem;
+    cursor: pointer;
+    padding: 1vw;
+    font-size: 1.5vw;
+    line-height: 1.5vw;
+    color: #dedede;
+    background-color: rgba(56, 117, 250, 0.5);
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
+    border-radius: 1vw;
   }
 
-  input[type='file'] {
-    display: block;
-    margin-bottom: 0.8rem;
+  label:hover,
+  label:active {
+    color: rgba(51, 226, 230, 0.9);
+    background-color: rgba(56, 117, 250, 0.9);
+    border-color: rgba(51, 226, 230, 0.9);
+    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.5));
+    text-shadow: 0 0 0.25vw rgba(1, 0, 32, 0.5);
+    transform: scale(1.05);
+  }
+
+  .media-wrapper {
+    width: 95vw;
   }
 
   .media-grid {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
+  }
+
+  .preview-wrapper {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5vw;
   }
 
   .preview {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 5px;
-    border: 1px solid #ddd;
+    width: 20vw;
+    aspect-ratio: 1/1;
+    border-radius: 1vw;
+    box-shadow: 0 0.25vw 0.5vw #010020;
+  }
+  
+  @media only screen and (max-width: 600px) {
+    .media-wrapper {
+      width: 100vw;
+    }
+
+    label {
+      font-size: 1em;
+      line-height: 1.75em;
+      padding: 0.25em 1em;
+      border-radius: 0.5em;
+    }
+
+    .media-grid {
+      gap: 1em;
+    }
+
+    .preview-wrapper {
+      gap: 1em;
+    }
+    
+    .preview {
+      width: 90vw;
+      border-radius: 0.5em;
+    }
   }
 </style>

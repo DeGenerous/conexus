@@ -11,7 +11,7 @@
   import GenreTags from './GenreTags.svelte';
   import Media from './Media.svelte';
 
-  export let topic_name = 'escape'; // Default topic_name
+  export let topic_name = 'story';
 
   let admin = new AdminApp();
   let topic: Nullable<ViewTopic> = null;
@@ -264,7 +264,10 @@
       ></textarea>
     </div>
 
-    <button class="red-button" on:click={openModal}>DELETE STORY</button>
+    <!-- MEDIA FILES -->
+    <Media {topic_name} topic_id={topic!.id} />
+
+    <button class="red-button blur" on:click={openModal}>DELETE STORY</button>
   {/if}
 </section>
 

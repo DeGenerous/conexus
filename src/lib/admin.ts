@@ -31,31 +31,6 @@ export class AdminApp extends AdminAPI {
   }
 
   /**
-   * Fetches the categories sections.
-   *
-   * This method retrieves the sections of categories by calling the `categories` method.
-   * If the data is successfully fetched, it returns the sections. If there is an error,
-   * it handles the error by either calling `api_error` with the error message or showing
-   * a toast notification with an error message.
-   *
-   * @returns {Promise<Section[]>} A promise that resolves to an array of sections.
-   */
-  async fetchCategoriesSections(): Promise<Section[]> {
-    const { data, error } = await this.categories();
-
-    if (!data) {
-      if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error fetching view', 'error');
-      }
-      return [];
-    }
-
-    return data;
-  }
-
-  /**
    * Fetches the list of categories.
    *
    * This method asynchronously retrieves the categories by calling the `categories` method.

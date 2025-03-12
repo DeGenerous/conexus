@@ -45,4 +45,9 @@
     padding-inline: 0;
     border-radius: 0;
   }
+
+  .tiles-collection {
+    background-image: none;
+    background-color: rgba(22, 30, 95, 0.75);
+  }
 </style>

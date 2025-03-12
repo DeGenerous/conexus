@@ -14,7 +14,7 @@ class MediaManager {
     topic_name: string,
     media_type: MediaType,
   ) {
-    const { data, error } = await this.mediaAPI.uploadFile(
+    const { data } = await this.mediaAPI.uploadFile(
       file,
       topic_name,
       media_type,
@@ -28,12 +28,9 @@ class MediaManager {
   }
 
   async fetchTopicMedia(topic_id: string, media_type: MediaType) {
-    const { data, error } = await this.mediaAPI.GetFile(topic_id, media_type);
+    const { data } = await this.mediaAPI.GetFile(topic_id, media_type);
 
     if (!data) {
-      // if (error) {
-      //   throw new Error(error.details);
-      // }
       return [];
     }
 

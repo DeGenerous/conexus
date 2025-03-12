@@ -54,8 +54,6 @@
     const files = Array.from(input.files);
 
     try {
-      let fileUrls: string[] = [];
-
       if (type === 'background') {
         if (files.length + backgrounds.length > 3) {
           alert('You can only upload up to 3 background images.');
@@ -67,11 +65,8 @@
             topic_id,
             'background',
           );
-          if (response.file_id) {
-            fileUrls.push(` ${serveUrl}${response.file_id}`);
-          }
+          backgrounds = [...backgrounds, ...response].slice(0, 3); // Keep max 3
         }
-        backgrounds = [...backgrounds, ...fileUrls].slice(0, 3); // Keep max 3
       } else {
         if (files.length > 1) {
           alert('Only one file is allowed for this type.');
@@ -84,24 +79,21 @@
             topic_id,
             'description',
           );
-          const fileUrl = `${response.file_id}`;
-          description = fileUrl;
+          description = response[0];
         } else if (type === 'tile') {
           const response = await mediaManager.uploadTopicMedia(
             files[0],
             topic_id,
             'tile',
           );
-          const fileUrl = `${response.file_id}`;
-          tile = fileUrl;
+          tile = response[0];
         } else if (type === 'audio') {
           const response = await mediaManager.uploadTopicMedia(
             files[0],
             topic_id,
             'audio',
           );
-          const fileUrl = `${response.file_id}`;
-          audio = fileUrl;
+          audio = response[0];
         }
 
         // Reset input value
@@ -149,6 +141,8 @@
         id="backgrounds-upload"
         type="file"
         multiple
+        max="3"
+        accept="image/*"
         on:change={(e) => handleFileUpload(e, 'background')}
       />
     {/if}
@@ -171,12 +165,18 @@
 
     <!-- Description Upload -->
     <h2>Description</h2>
-    <label for="description-upload">Upload Description Picture</label>
-    <input
-      id="description-upload"
-      type="file"
-      on:change={(e) => handleFileUpload(e, 'description')}
-    />
+    {#if description}
+      <h3>You've already uploaded a description picture.</h3>
+    {:else}
+      <label for="description-upload">Upload Description Picture</label>
+      <input
+        id="description-upload"
+        type="file"
+        max="1"
+        accept="image/*"
+        on:change={(e) => handleFileUpload(e, 'description')}
+      />
+    {/if}
     {#if description}
       <img
         src={`${serveUrl}${description}`}
@@ -195,12 +195,18 @@
 
     <!-- Tile Upload -->
     <h2>Tile</h2>
-    <label for="tile-upload">Upload Tile Picture</label>
-    <input
-      id="tile-upload"
-      type="file"
-      on:change={(e) => handleFileUpload(e, 'tile')}
-    />
+    {#if tile}
+      <h3>You've already uploaded a tile picture.</h3>
+    {:else}
+      <label for="tile-upload">Upload Tile Picture</label>
+      <input
+        id="tile-upload"
+        type="file"
+        max="1"
+        accept="image/*"
+        on:change={(e) => handleFileUpload(e, 'tile')}
+      />
+    {/if}
     {#if tile}
       <img src={` ${serveUrl}${tile}`} alt="Tile" class="preview" />
       <button
@@ -215,12 +221,18 @@
 
     <!-- Audio Upload -->
     <h2>Audio</h2>
-    <label for="audio-upload">Upload Audio</label>
-    <input
-      id="audio-upload"
-      type="file"
-      on:change={(e) => handleFileUpload(e, 'audio')}
-    />
+    {#if audio}
+      <h3>You've already uploaded an audio file.</h3>
+    {:else}
+      <label for="audio-upload">Upload Audio</label>
+      <input
+        id="audio-upload"
+        type="file"
+        max="1"
+        accept="audio/*"
+        on:change={(e) => handleFileUpload(e, 'audio')}
+      />
+    {/if}
     {#if audio}
       <audio controls>
         <source src={` ${serveUrl}${audio}`} type="audio/mpeg" />

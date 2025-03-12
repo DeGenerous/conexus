@@ -21,7 +21,7 @@ class MediaManager {
     );
 
     if (!data) {
-      return {} as { file_id: string };
+      return [];
     }
 
     return data;

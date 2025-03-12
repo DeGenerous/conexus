@@ -26,7 +26,7 @@ export default class MediaAPI extends Fetcher {
     formData.append('file', file);
     formData.append('topic_id', topic_id.toString() || '');
 
-    return this.request<{ file_id: string | { file_id: string }[] }>(url, {
+    return this.request<string[]>(url, {
       method: 'POST',
       body: formData,
     });

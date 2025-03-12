@@ -70,26 +70,6 @@
         break;
     }
   }
-
-  function navigate(path) {
-    console.log(`Navigating to ${path}`);
-  }
-
-  function handleOpenImagePromptModal(topicId, imagePrompt) {
-    console.log(`Open image prompt for ${topicId}: ${imagePrompt}`);
-  }
-
-  function handleMigrate(data) {
-    console.log('Migrating:', data);
-  }
-
-  function handleOpenDeleteModal(promptId, topicName) {
-    console.log(`Deleting ${topicName} with prompt ID ${promptId}`);
-  }
-
-  function handleSave(promptId, topicId, text, available) {
-    console.log('Saving:', { promptId, topicId, text, available });
-  }
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->

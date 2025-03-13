@@ -34,8 +34,6 @@ export default class AdminAPI extends Fetcher {
     });
   }
 
-  
-
   async changePromptAvailability(prompt_id: number, availability: string) {
     return this.request<APISTDResposne>('/admin/change-prompt-availability', {
       method: 'PATCH',

@@ -93,7 +93,7 @@ export const tablePrompt = writable<TablePrompt>({
       value: 'none',
     },
   ],
-  additionalData: ''
+  additionalData: '',
 });
 
 export const clearAllData = () => {
@@ -187,6 +187,6 @@ export const clearAllData = () => {
         value: 'none',
       },
     ],
-    additionalData: ''
+    additionalData: '',
   });
 };

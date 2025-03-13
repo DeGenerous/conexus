@@ -84,7 +84,7 @@
           </div>
         {/each}
       {:else}
-          <h3>No genres selected</h3>
+        <h3>No genres selected</h3>
       {/if}
     </div>
   </div>

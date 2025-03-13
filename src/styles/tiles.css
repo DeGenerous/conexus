@@ -174,7 +174,7 @@
   cursor: pointer;
 }
 
-.loading-menu-tile:hover, 
+.loading-menu-tile:hover,
 .loading-menu-tile:active {
   background-color: rgba(22, 30, 95, 0.75);
   box-shadow:

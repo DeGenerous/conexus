@@ -15,7 +15,10 @@
             class="tile-picture loading-tile-picture loading-animation"
             style="cursor: inherit;"
           ></div>
-          <p class="tile-title loading-tile-title loading-animation" style="cursor: inherit;"></p>
+          <p
+            class="tile-title loading-tile-title loading-animation"
+            style="cursor: inherit;"
+          ></p>
         </div>
       {/each}
     </div>

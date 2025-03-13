@@ -282,7 +282,8 @@
 
     <div class="dream-box blur open-prompt">
       <h2>
-        If you have anything else you wish to add to improve the story, you may write it here:
+        If you have anything else you wish to add to improve the story, you may
+        write it here:
       </h2>
       <textarea
         class="story-input dream-textfield additional-filed"
@@ -364,7 +365,8 @@
     line-height: 4vw;
   }
 
-  #blank, .additional-filed {
+  #blank,
+  .additional-filed {
     width: 90vw;
   }
 

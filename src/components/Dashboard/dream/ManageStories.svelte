@@ -12,7 +12,7 @@
 
   onMount(async () => {
     await view.getSections().then((data) => (sections = data));
-    console.log(await admin.fetchCollections())
+    console.log(await admin.fetchCollections());
   });
 
   let availabilityKey: string = '';

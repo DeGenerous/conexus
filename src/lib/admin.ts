@@ -315,15 +315,18 @@ export class AdminApp extends AdminAPI {
 
   /**
    * Change category order in section.
-   * 
+   *
    * @param category_id - The ID of the category to change order.
    * @param order - The new order value for the category.
    * @returns A promise that resolves to void.
-   * 
+   *
    * @throws Will show an error toast if the operation fails.
    * @throws Will show an info toast with the success message if the operation succeeds.
    */
-  async changeSectionCategoryOrder(category_id: number, order: number): Promise<void> {
+  async changeSectionCategoryOrder(
+    category_id: number,
+    order: number,
+  ): Promise<void> {
     const { data, error } = await this.changeCategoryOrder(category_id, order);
 
     if (!data) {

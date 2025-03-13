@@ -25,8 +25,12 @@
     <div class="conexus-menu-tiles loading-conexus-menu-tiles">
       {#each Array(3) as _}
         <div class="menu-tile loading-menu-tile">
-          <div class="menu-tile-picture loading-menu-tile-picture loading-animation"></div>
-          <p class="menu-tile-title loading-menu-tile-title loading-animation"></p>
+          <div
+            class="menu-tile-picture loading-menu-tile-picture loading-animation"
+          ></div>
+          <p
+            class="menu-tile-title loading-menu-tile-title loading-animation"
+          ></p>
         </div>
       {/each}
     </div>

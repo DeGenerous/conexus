@@ -17,7 +17,7 @@
   let topic: Nullable<ViewTopic> = null;
 
   let storyName = topic_name;
-  
+
   let topic_description: string = '';
   $: storyDescription = topic_description;
 
@@ -35,7 +35,7 @@
     topic_imagePrompt = topic!.image_prompt;
 
     console.log(topic);
-  })
+  });
 
   let editingName: boolean = false;
   let editingDescription: boolean = false;
@@ -72,7 +72,7 @@
   }
 
   const switchAvailable = (available: string) => {
-    console.log(available)
+    console.log(available);
     if (available === 'available') return 'unavailable';
     else return 'available';
   };
@@ -125,7 +125,7 @@
         {/if}
         <input
           bind:value={storyName}
-          style={editingName ? activeInputStyling : ""}
+          style={editingName ? activeInputStyling : ''}
           type="text"
           size={storyName.length}
           maxlength="50"
@@ -135,15 +135,23 @@
 
       {#key topic}
         <div class="buttons-wrapper">
-          <button 
+          <button
             class:green-button={topic.available === 'available'}
             class:red-button={topic.available === 'unavailable'}
             on:click={() =>
               admin
-                .changeAvailability(topic!.prompt_id, switchAvailable(topic!.available))
+                .changeAvailability(
+                  topic!.prompt_id,
+                  switchAvailable(topic!.available),
+                )
                 .then(async () => (topic = await admin.fetchTopic(topic_name)))}
-          >{topic.available}</button>
-          <button on:click={() => {console.log('DEMO')}}>Play Demo</button>
+            >{topic.available}</button
+          >
+          <button
+            on:click={() => {
+              console.log('DEMO');
+            }}>Play Demo</button
+          >
         </div>
       {/key}
 
@@ -156,10 +164,7 @@
             on:change={(event) => {
               const target = event.target as HTMLSelectElement;
               if (target) {
-                admin.editTopicCategory(
-                  topic!.id,
-                  parseInt(target.value)
-                );
+                admin.editTopicCategory(topic!.id, parseInt(target.value));
               }
             }}
           >
@@ -180,11 +185,16 @@
         <h2>Description</h2>
         <div class="buttons-wrapper">
           {#if editingDescription}
-            <button class="red-button" on:click={() => (editingDescription = false)}>CANCEL</button>
-            <button class="green-button" on:click={() => {
+            <button
+              class="red-button"
+              on:click={() => (editingDescription = false)}>CANCEL</button
+            >
+            <button
+              class="green-button"
+              on:click={() => {
                 editingDescription = false;
                 if (topic_description == storyDescription) return;
-                admin.editTopicDescription(topic!.id, storyDescription)
+                admin.editTopicDescription(topic!.id, storyDescription);
               }}
             >
               SAVE
@@ -210,11 +220,16 @@
         <h2>Image Generation Instructions</h2>
         <div class="buttons-wrapper">
           {#if editingImagePrompt}
-            <button class="red-button" on:click={() => (editingImagePrompt = false)}>CANCEL</button>
-            <button class="green-button" on:click={() => {
+            <button
+              class="red-button"
+              on:click={() => (editingImagePrompt = false)}>CANCEL</button
+            >
+            <button
+              class="green-button"
+              on:click={() => {
                 editingImagePrompt = false;
                 if (topic_imagePrompt == storyImagePrompt) return;
-                admin.editImagePrompt(topic!.id, storyImagePrompt)
+                admin.editImagePrompt(topic!.id, storyImagePrompt);
               }}
             >
               SAVE
@@ -240,8 +255,12 @@
         <h2>Prompt</h2>
         <div class="buttons-wrapper">
           {#if editingPrompt}
-            <button class="red-button" on:click={() => (editingPrompt = false)}>CANCEL</button>
-            <button class="green-button" on:click={() => {
+            <button class="red-button" on:click={() => (editingPrompt = false)}
+              >CANCEL</button
+            >
+            <button
+              class="green-button"
+              on:click={() => {
                 editingPrompt = false;
                 if (topic_prompt == storyPrompt) return;
                 admin.editPrompt(storyPrompt, topic!.id, topic!.prompt_id);
@@ -326,7 +345,7 @@
     line-height: 4vw;
   }
 
-  #description, 
+  #description,
   #prompt,
   #image-prompt {
     width: 90vw;

@@ -217,7 +217,8 @@ function generatePrompt(
       if (value !== 'none') promptData += `- ${name}: ${value};\n`;
     });
 
-    if (data.additionalData) promptData += `\nAlso consider:\n${data.additionalData}`;
+    if (data.additionalData)
+      promptData += `\nAlso consider:\n${data.additionalData}`;
 
     return promptData;
   };

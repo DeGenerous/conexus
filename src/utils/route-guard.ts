@@ -21,7 +21,7 @@ const isRouteMatched = (path: string, patterns: RegExp[]) =>
   patterns.some((pattern) => pattern.test(path));
 
 // Function to check user state
-export async function checkUserState(path: string): Promise<void> {
+export async function checkUserState(path: string, checkAdmin: boolean): Promise<void> {
   // Skip checks for excluded routes
   if (isRouteMatched(path, excludedRoutes)) {
     return;

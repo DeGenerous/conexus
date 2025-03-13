@@ -6,7 +6,7 @@
   import StoryMetrics from './dashboard/StoryMetrics.svelte';
 
   onMount(async () => {
-    await checkUserState('/story', checkAdmin = true);
+    await checkUserState('/story', true);
   });
 </script>
 

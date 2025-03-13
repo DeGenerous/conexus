@@ -21,7 +21,7 @@ const isRouteMatched = (path: string, patterns: RegExp[]) =>
   patterns.some((pattern) => pattern.test(path));
 
 // Function to check user state
-export async function checkUserState(path: string, checkAdmin: boolean): Promise<void> {
+export async function checkUserState(path: string, checkAdmin: boolean = false): Promise<void> {
   // Skip checks for excluded routes
   if (isRouteMatched(path, excludedRoutes)) {
     return;
@@ -37,6 +37,11 @@ export async function checkUserState(path: string, checkAdmin: boolean): Promise
 
     authenticated.set({ user: user, loggedIn: true });
     web3LoggedIn.set(true);
+
+    if (checkAdmin && user.role !== 'admin') {
+      redirectTo('/');
+      return;
+    }
 
     if (isRouteMatched(path, verifiedRoutes) && !user.referred) {
       redirectTo('/referral');

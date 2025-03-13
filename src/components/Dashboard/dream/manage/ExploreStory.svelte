@@ -70,6 +70,12 @@
         break;
     }
   }
+
+  const switchAvailable = (available: string) => {
+    console.log(available)
+    if (available === 'available') return 'unavailable';
+    else return 'available';
+  };
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
@@ -126,6 +132,20 @@
           disabled={!editingName}
         />
       </div>
+
+      {#key topic}
+        <div class="buttons-wrapper">
+          <button 
+            class:green-button={topic.available === 'available'}
+            class:red-button={topic.available === 'unavailable'}
+            on:click={() =>
+              admin
+                .changeAvailability(topic!.prompt_id, switchAvailable(topic!.available))
+                .then(async () => (topic = await admin.fetchTopic(topic_name)))}
+          >{topic.available}</button>
+          <button on:click={() => {console.log('DEMO')}}>Play Demo</button>
+        </div>
+      {/key}
 
       <div class="input-container">
         <label for="category">Category:</label>
@@ -247,11 +267,15 @@
     <!-- MEDIA FILES -->
     <Media topic_id={topic!.id} />
 
-    <button class="red-button blur" on:click={openModal}>DELETE STORY</button>
+    <button class="red-button blur" on:click={openModal}>Delete Story</button>
   {/if}
 </section>
 
 <style>
+  button {
+    text-transform: uppercase;
+  }
+
   .story-title {
     display: flex;
     flex-flow: row nowrap;

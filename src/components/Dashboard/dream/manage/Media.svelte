@@ -188,7 +188,7 @@
         id="backgrounds-upload"
         type="file"
         multiple
-        max="3"
+        max={3 - backgrounds.length}
         accept="image/avif"
         on:change={(e) => handleFileUpload(e, 'background')}
       />

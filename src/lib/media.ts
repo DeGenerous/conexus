@@ -1,6 +1,7 @@
 // import { IMAGE_UPLOAD_DIR, MUSIC_UPLOAD_DIR } from '@/config';
 
 import { MediaAPI } from '@service/routes';
+import { toastStore } from '@stores/toast';
 
 class MediaManager {
   private mediaAPI: MediaAPI;
@@ -10,9 +11,27 @@ class MediaManager {
   }
 
   async uploadTopicMedia(file: File, topic_id: number, media_type: MediaType) {
-    const { data } = await this.mediaAPI.uploadFile(file, topic_id, media_type);
+    const { data, error } = await this.mediaAPI.uploadFile(
+      file,
+      topic_id,
+      media_type,
+    );
 
     if (!data) {
+      if (error) {
+        if (error.details) {
+          if (
+            error.details.includes(
+              'pq: duplicate key value violates unique constraint',
+            )
+          ) {
+            toastStore.show('This file already exists', 'error');
+            return [];
+          }
+        }
+        toastStore.show(error.message, 'error');
+        return [];
+      }
       return [];
     }
 

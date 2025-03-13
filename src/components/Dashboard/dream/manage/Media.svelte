@@ -15,6 +15,14 @@
   let tile: string | null = null;
   let audio: string | null = null;
 
+  let tooMuchFiles: boolean = false;
+  let tooBigFile = {
+    background: false,
+    description: false,
+    tile: false,
+    audio: false
+  }
+
   // Fetch stored media on load
   const loadMedia = async () => {
     try {
@@ -55,10 +63,20 @@
 
     try {
       if (type === 'background') {
+        // Check for files length
         if (files.length + backgrounds.length > 3) {
-          alert('You can only upload up to 3 background images.');
+          tooMuchFiles = true;
           return;
         }
+        // Check for every file size
+        let abortLoading: boolean = false;
+        files.map((file) => {
+          if (!checkFileSize(file)) {
+            abortLoading = true;
+            tooBigFile.background = true;
+          }
+        })
+        if (abortLoading) return;
         for (const file of files) {
           const response = await mediaManager.uploadTopicMedia(
             file,
@@ -67,6 +85,7 @@
           );
           backgrounds = [...backgrounds, ...response].slice(0, 3); // Keep max 3
         }
+        if (tooBigFile.background) tooBigFile.background = false;
       } else {
         if (files.length > 1) {
           alert('Only one file is allowed for this type.');
@@ -74,26 +93,47 @@
         }
 
         if (type === 'description') {
+          // Check for file size
+          if (!checkFileSize(files[0])) {
+            tooBigFile.description = true;
+            return;
+          }
           const response = await mediaManager.uploadTopicMedia(
             files[0],
             topic_id,
             'description',
           );
           description = response[0];
+          if (tooBigFile.description) tooBigFile.description = false;
+          if (tooMuchFiles) tooMuchFiles = false;
+
         } else if (type === 'tile') {
+          // Check for file size
+          if (!checkFileSize(files[0])) {
+            tooBigFile.tile = true;
+            return;
+          }
           const response = await mediaManager.uploadTopicMedia(
             files[0],
             topic_id,
             'tile',
           );
           tile = response[0];
+          if (tooBigFile.tile) tooBigFile.tile = false;
+
         } else if (type === 'audio') {
+          // Check for file size
+          if (!checkFileSize(files[0], 'audio')) {
+            tooBigFile.audio = true;
+            return;
+          }
           const response = await mediaManager.uploadTopicMedia(
             files[0],
             topic_id,
             'audio',
           );
           audio = response[0];
+          if (tooBigFile.audio) tooBigFile.audio = false;
         }
 
         // Reset input value
@@ -103,6 +143,13 @@
       console.error('File upload failed:', error);
     }
   };
+
+  function checkFileSize(file: File, type: 'image' | 'audio' = 'image') {
+    // image - 1.5 MB / audio - 6 MB
+    const allowedSize = type === 'image' ? 1572864 : 6291456;
+    if (file.size > allowedSize) return false;
+    return true;
+  }
 
   const handleDelete = async (fileId: string, type: MediaType) => {
     try {
@@ -142,9 +189,16 @@
         type="file"
         multiple
         max="3"
-        accept="image/*"
+        accept="image/avif"
         on:change={(e) => handleFileUpload(e, 'background')}
       />
+      <h3>Only AVIF format is accepted.</h3>
+      {#if tooBigFile.background}
+        <p class="validation">Picture size should be less than 1.5 MB!</p>
+      {/if}
+      {#if tooMuchFiles}
+        <p class="validation">You can only upload up to 3 background images!</p>
+      {/if}
     {/if}
 
     <div class="media-grid">
@@ -173,9 +227,13 @@
         id="description-upload"
         type="file"
         max="1"
-        accept="image/*"
+        accept="image/avif"
         on:change={(e) => handleFileUpload(e, 'description')}
       />
+      <h3>Only AVIF format is accepted.</h3>
+      {#if tooBigFile.description}
+        <p class="validation">Picture size should be less than 1.5 MB!</p>
+      {/if}
     {/if}
     {#if description}
       <img
@@ -203,9 +261,13 @@
         id="tile-upload"
         type="file"
         max="1"
-        accept="image/*"
+        accept="image/avif"
         on:change={(e) => handleFileUpload(e, 'tile')}
       />
+      <h3>Only AVIF format is accepted.</h3>
+      {#if tooBigFile.tile}
+        <p class="validation">Picture size should be less than 1.5 MB!</p>
+      {/if}
     {/if}
     {#if tile}
       <img src={` ${serveUrl}${tile}`} alt="Tile" class="preview" />
@@ -229,9 +291,13 @@
         id="audio-upload"
         type="file"
         max="1"
-        accept="audio/*"
+        accept="audio/mp3"
         on:change={(e) => handleFileUpload(e, 'audio')}
       />
+      <h3>Only MP3 format is accepted.</h3>
+      {#if tooBigFile.audio}
+        <p class="validation">Audio file size should be less than 6 MB!</p>
+      {/if}
     {/if}
     {#if audio}
       <audio controls>

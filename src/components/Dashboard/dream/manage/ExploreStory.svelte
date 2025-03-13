@@ -76,6 +76,9 @@
     if (available === 'available') return 'unavailable';
     else return 'available';
   };
+
+  // SVG Icons
+  let editSvgHover: boolean = false;
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
@@ -87,41 +90,87 @@
     <div class="container blur">
       <div class="story-title">
         {#if editingName}
-          <img
-            class="edit-name"
-            src="/icons/close.png"
-            alt="Cancel"
-            role="button"
-            tabindex="0"
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="-100 -100 200 200"
+            class="close-svg"
+            stroke="rgba(255, 60, 64, 0.85)"
+            stroke-width="30"
+            stroke-linecap="round"
             on:click={() => {
               editingName = false;
               storyName = topic_name;
             }}
-          />
-          <img
-            class="edit-name"
-            src="/icons/checkmark.png"
-            alt="Save"
             role="button"
             tabindex="0"
+          >
+            <path
+              d="M -65 -65 L 65 65 M -65 65 L 65 -65"
+              fill="none"
+            />
+          </svg>
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            viewBox="-100 -100 200 200"
+            class="checkmark-svg"
+            fill="rgba(51, 226, 230, 0.75)"
+            stroke-width="30"
             on:click={() => {
               editingName = false;
               if (topic_name == storyName) return;
               admin.editTopicName(topic_name, storyName);
               window.open('/dashboard/dream/manage/', '_self');
             }}
-          />
-        {:else}
-          <img
-            class="edit-name"
-            src="/icons/edit.png"
-            alt="Edit"
             role="button"
             tabindex="0"
+          >
+            <defs>
+              <mask id="checkmark-svg-mask">
+                <circle
+                  r="85"
+                  stroke="none"
+                  fill="white"
+                />
+                <path
+                  d="M -50 0 L -15 30 L 50 -35"
+                  fill="none"
+                  stroke="black"
+                />
+              </mask>
+            </defs>
+            <circle
+              r="85"
+              stroke="none"
+              mask="url(#checkmark-svg-mask)"
+            />
+          </svg>
+        {:else}
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            viewBox="-100 -100 200 200"
+            class="edit-svg"
+            stroke="rgba(51, 226, 230, 0.75)"
+            fill="none"
+            stroke-width="15"
+            stroke-linecap="round"
+            stroke-linejoin="round"
             on:click={() => {
               editingName = true;
+              editSvgHover = false;
             }}
-          />
+            on:pointerover={() => (editSvgHover = true)}
+            on:pointerout={() => (editSvgHover = false)}
+            role="button"
+            tabindex="0"
+          >
+            <path
+              d="M -10 -60 L -75 -60 L -75 75 L 60 75 L 60 10"
+            />  
+            <path
+              d="M -30 30 L -25 0 L 45 -70 M -30 30 L 0 25 L 70 -45 C  90 -60 60 -90 45 -70"
+              transform={editSvgHover ? "translate(-10 10)" : ""}
+            />
+          </svg>
         {/if}
         <input
           bind:value={storyName}
@@ -295,30 +344,22 @@
     text-transform: uppercase;
   }
 
+  .close-svg:hover {
+    transform: scale(1.05);
+  }
+
   .story-title {
     display: flex;
     flex-flow: row nowrap;
     justify-content: center;
     align-items: center;
+    gap: 0.5vw;
     padding: 1vw;
     background-color: rgba(51, 226, 230, 0.15);
     border-radius: 1vw;
     box-shadow:
       inset 0 0 0.5vw rgba(51, 226, 230, 0.25),
       0 0 0.5vw #010020;
-  }
-
-  .edit-name {
-    width: 2vw;
-    margin-right: 1vw;
-    cursor: pointer;
-    opacity: 0.75;
-  }
-
-  .edit-name:hover,
-  .edit-name:active {
-    opacity: 1;
-    transform: scale(1.05);
   }
 
   input {
@@ -368,12 +409,7 @@
       width: 90vw;
       padding: 0.5em;
       border-radius: 1em;
-      gap: 0.5em;
-    }
-
-    .edit-name {
-      width: 1.5em;
-      margin-right: 0.5em;
+      gap: 0.75em;
     }
 
     input {
@@ -381,7 +417,7 @@
       line-height: 1.5em;
       padding: 0.25em 0.5em;
       border-radius: 0.5em;
-      max-width: 50vw;
+      max-width: 60vw;
     }
 
     .open-prompt {

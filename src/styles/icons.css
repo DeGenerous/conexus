@@ -37,7 +37,9 @@ svg * {
 .chain-svg,
 .gradient-arrow-svg,
 .calendar-svg,
-.death-svg {
+.death-svg,
+.checkmark-svg,
+.edit-svg {
   cursor: pointer;
   transition: all 0.3s ease-in-out;
 }
@@ -53,7 +55,9 @@ svg * {
 .star-svg:hover,
 .refresh-svg:hover,
 .warning-svg:hover,
-.chain-svg:hover {
+.chain-svg:hover,
+.checkmark-svg:hover,
+.edit-svg:hover {
   fill: rgb(51, 226, 230);
   transform: scale(1.05);
 }
@@ -63,7 +67,8 @@ svg * {
 .volume-svg:hover,
 .replay-svg:hover,
 .refresh-svg:hover,
-.chain-svg:hover {
+.chain-svg:hover,
+.edit-svg:hover {
   stroke: rgb(51, 226, 230);
 }
 
@@ -109,7 +114,8 @@ svg * {
 }
 
 .eye-svg,
-.calendar-svg {
+.calendar-svg,
+.edit-svg {
   fill: none !important;
 }
 
@@ -162,7 +168,8 @@ svg * {
 .contract-svg *,
 .location-svg *,
 .warning-svg *,
-.chain-svg * {
+.chain-svg *,
+.edit-svg * {
   transition:
     transform 0.3s ease-in-out,
     opacity 0.3s ease-in-out;

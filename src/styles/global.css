@@ -23,7 +23,7 @@ html {
   font-size: 1em;
   word-spacing: 0.2em;
   line-height: 2em;
-  padding-bottom: 7.5vw;
+  padding-bottom: 5vw;
 }
 
 html::-webkit-scrollbar {
@@ -142,7 +142,7 @@ h2 {
 
 h1 {
   font-size: 5vw;
-  line-height: 7.5vw;
+  line-height: 5vw;
   color: rgba(51, 226, 230, 0.85);
   text-shadow: 0 0.5vw 0.5vw #010020;
 }

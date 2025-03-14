@@ -19,6 +19,7 @@ const {
   header,
   subheading,
   nav,
+  arrow,
   story,
   title = 'Welcome to CoNexus',
   description = 'Explore the best stories in the multiverse',
@@ -57,21 +58,25 @@ const {
   <body>
     <ToastContainer client:load />
     {!story && <Navigation activeTab={nav} client:load />}
-    {
-      header === 'CoNexus' ? (
-        <picture>
-          <source srcset="title.avif" type="image/avif" />
-          <img
-            class="title blur"
-            src="title.png"
-            alt="CoNexus"
-            draggable="false"
-          />
-        </picture>
-      ) : (
-        header && <h1>{header}</h1>
-      )
-    }
+    <header style={arrow ? 'width: 100%' : ''}>
+      {arrow && <BackArrow href={arrow} />}
+      {
+        header === 'CoNexus' ? (
+          <picture>
+            <source srcset="title.avif" type="image/avif" />
+            <img
+              class="title blur"
+              src="title.png"
+              alt="CoNexus"
+              draggable="false"
+            />
+          </picture>
+        ) : (
+          header && <h1>{header}</h1>
+        )
+      }
+      {arrow && <span class="circle-icon" />}
+    </header>
     {subheading && <p class="subheading" set:html={subheading} />}
 
     <slot />
@@ -80,6 +85,13 @@ const {
 
     <CookieBanner client:load />
     <style>
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-inline: 1vw;
+      }
+
       picture {
         display: flex;
         justify-content: center;
@@ -108,9 +120,8 @@ const {
         text-shadow: 0 0.25vw 0.25vw #010020;
       }
 
-      a {
-        flex: none;
-        border-radius: 50%;
+      .circle-icon {
+        visibility: hidden;
       }
 
       @media only screen and (max-width: 600px) {

@@ -63,10 +63,6 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <section class="container-wrapper dream-wrapper">
-  <h2 class="page-title">
-    Be the author of your own destiny and the architect of your dreams
-  </h2>
-
   <!-- TITLE, DESCRIPTION, IMAGE PROMPTS -->
   <div class="dream-box blur general-parameters">
     <div class="input-container">
@@ -322,10 +318,6 @@
 </section>
 
 <style>
-  .page-title {
-    text-shadow: 0 0.25vw 0.25vw #010020;
-  }
-
   #topic {
     text-align: center;
     width: 40vw;

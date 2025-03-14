@@ -9,6 +9,7 @@
 
 <nav>
   <a
+    class="circle-icon"
     href="https://degenerousdao.com/"
     target="_blank"
     aria-label="DeGenerous"
@@ -68,8 +69,6 @@
   .logo {
     cursor: inherit;
     border-radius: inherit;
-    height: 5vw;
-    width: 5vw;
     opacity: 0.7;
     transition: all 0.3s ease-in-out;
   }
@@ -87,11 +86,6 @@
 
     section {
       display: none;
-    }
-
-    .logo {
-      width: 3em;
-      height: 3em;
     }
   }
 </style>

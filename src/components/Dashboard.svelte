@@ -2,8 +2,8 @@
   import { onMount } from 'svelte';
   import { checkUserState } from '@utils/route-guard';
 
-  import GeneralInfo from './dashy/GeneralInfo.svelte';
-  import StoryMetrics from './dashy/StoryMetrics.svelte';
+  import GeneralInfo from './dashboard/GeneralInfo.svelte';
+  import StoryMetrics from './dashboard/StoryMetrics.svelte';
 
   onMount(async () => {
     await checkUserState('/story', true);

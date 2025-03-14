@@ -350,15 +350,6 @@
     justify-content: space-between;
     align-items: center;
     padding: 2vw;
-    min-height: 12.5vw;
-  }
-
-  h1 {
-    font-size: 5vw;
-    line-height: 5vw;
-    text-align: center;
-    color: rgba(51, 226, 230, 0.85);
-    text-shadow: 0 0.5vw 0.5vw #010020;
   }
 
   .story-container {
@@ -555,10 +546,6 @@
   }
 
   @media only screen and (max-width: 600px) {
-    :global(html) {
-      padding-top: 0;
-    }
-
     .story-info {
       width: auto;
     }
@@ -576,11 +563,6 @@
       backdrop-filter: blur(2vw);
       z-index: 2;
       min-height: 5em;
-    }
-
-    h1 {
-      font-size: 1.5em;
-      line-height: 1.5em;
     }
 
     .story-container {

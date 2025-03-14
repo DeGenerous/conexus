@@ -1,8 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { authenticated } from '@stores/account';
-  import { CoNexusApp } from '@lib/view';
-
   import BackArrow from './BackArrow.svelte';
   import Profile from '../Profile.svelte';
 
@@ -11,20 +8,10 @@
 
   $: admin = $authenticated.user?.role;
 
-  let app: CoNexusApp = new CoNexusApp();
-  let sections: string[] = [];
+  const sections: string[] = ['Community Picks', 'Collabs', 'Dischordian Saga'];
 
   $: activeSectionIndex = sections.indexOf(activeTab);
-  $: prevSectionIndex = activeSectionIndex !== undefined
-    ? activeSectionIndex == 0
-      ? sections.length - 1
-      : activeSectionIndex - 1
-    : 0;
-
-  onMount(async () => {
-    const sectionList = await app.getSections();
-    sections = sectionList.map((object) => (object.name));
-  })
+  $: prevSectionIndex = activeSectionIndex == 0 ? sections.length - 1 : activeSectionIndex - 1;
 
   const navigateHome = () => {
     window.open('/', '_self');

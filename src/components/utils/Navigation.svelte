@@ -2,9 +2,12 @@
   import { onMount } from 'svelte';
   import { authenticated } from '@stores/account';
   import { CoNexusApp } from '@lib/view';
+
+  import BackArrow from './BackArrow.svelte';
   import Profile from '../Profile.svelte';
 
   export let activeTab: string = 'Home';
+  export let arrow: Nullable<string> = null;
 
   $: admin = $authenticated.user?.role;
 
@@ -47,14 +50,18 @@
 </script>
 
 <nav>
-  <a
-    class="circle-icon"
-    href="https://degenerousdao.com/"
-    target="_blank"
-    aria-label="DeGenerous"
-  >
-    <img class="logo" src="/logo.avif" alt="Logo" />
-  </a>
+  {#if arrow}
+    <BackArrow href={arrow} />
+  {:else}
+    <a
+      class="circle-icon"
+      href="https://degenerousdao.com/"
+      target="_blank"
+      aria-label="DeGenerous"
+    >
+      <img class="logo" src="/logo.avif" alt="Logo" />
+    </a>
+  {/if}
 
   <section>
     {#if activeTab !== 'Home'}
@@ -235,7 +242,7 @@
       justify-content: space-between;
       background-color: rgba(1, 0, 32, 0.75);
       box-shadow: 0 -0.25vw 0.5vw #010020;
-      z-index: 1000;
+      z-index: 2;
     }
 
     .mobile-navigation span {

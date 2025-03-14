@@ -57,9 +57,8 @@ const {
   </head>
   <body>
     <ToastContainer client:load />
-    {!story && <Navigation activeTab={nav} client:load />}
-    <header style={arrow ? 'width: 100%' : ''}>
-      {arrow && <BackArrow href={arrow} />}
+    {!story && <Navigation activeTab={nav} {arrow} client:load />}
+    <header>
       {
         header === 'CoNexus' ? (
           <picture>
@@ -75,7 +74,6 @@ const {
           header && <h1>{header}</h1>
         )
       }
-      {arrow && <span class="circle-icon" />}
     </header>
     {subheading && <p class="subheading" set:html={subheading} />}
 
@@ -86,9 +84,6 @@ const {
     <CookieBanner client:load />
     <style>
       header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
         padding-inline: 1vw;
       }
 

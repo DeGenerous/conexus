@@ -104,13 +104,10 @@
             role="button"
             tabindex="0"
           >
-            <path
-              d="M -65 -65 L 65 65 M -65 65 L 65 -65"
-              fill="none"
-            />
+            <path d="M -65 -65 L 65 65 M -65 65 L 65 -65" fill="none" />
           </svg>
           <svg
-            xmlns='http://www.w3.org/2000/svg'
+            xmlns="http://www.w3.org/2000/svg"
             viewBox="-100 -100 200 200"
             class="checkmark-svg"
             fill="rgba(51, 226, 230, 0.75)"
@@ -126,11 +123,7 @@
           >
             <defs>
               <mask id="checkmark-svg-mask">
-                <circle
-                  r="85"
-                  stroke="none"
-                  fill="white"
-                />
+                <circle r="85" stroke="none" fill="white" />
                 <path
                   d="M -50 0 L -15 30 L 50 -35"
                   fill="none"
@@ -138,15 +131,11 @@
                 />
               </mask>
             </defs>
-            <circle
-              r="85"
-              stroke="none"
-              mask="url(#checkmark-svg-mask)"
-            />
+            <circle r="85" stroke="none" mask="url(#checkmark-svg-mask)" />
           </svg>
         {:else}
           <svg
-            xmlns='http://www.w3.org/2000/svg'
+            xmlns="http://www.w3.org/2000/svg"
             viewBox="-100 -100 200 200"
             class="edit-svg"
             stroke="rgba(51, 226, 230, 0.75)"
@@ -163,12 +152,10 @@
             role="button"
             tabindex="0"
           >
-            <path
-              d="M -10 -60 L -75 -60 L -75 75 L 60 75 L 60 10"
-            />  
+            <path d="M -10 -60 L -75 -60 L -75 75 L 60 75 L 60 10" />
             <path
               d="M -30 30 L -25 0 L 45 -70 M -30 30 L 0 25 L 70 -45 C  90 -60 60 -90 45 -70"
-              transform={editSvgHover ? "translate(-10 10)" : ""}
+              transform={editSvgHover ? 'translate(-10 10)' : ''}
             />
           </svg>
         {/if}
@@ -406,7 +393,7 @@
     }
 
     .story-title {
-      width: 90vw;
+      max-width: 90vw;
       padding: 0.5em;
       border-radius: 1em;
       gap: 0.75em;

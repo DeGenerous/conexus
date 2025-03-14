@@ -232,6 +232,10 @@ main {
 }
 
 @media only screen and (max-width: 600px) {
+  html {
+    padding-bottom: 2em;
+  }
+
   hr {
     width: 100%;
   }

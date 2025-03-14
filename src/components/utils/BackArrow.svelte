@@ -5,7 +5,11 @@
 </script>
 
 <a class="icon arrow" {href} aria-label="Back arrow">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200" class="circle-icon">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="-100 -100 200 200"
+    class="circle-icon"
+  >
     <defs>
       <mask id="back-arrow-svg-mask">
         <circle r="95" fill="white" />

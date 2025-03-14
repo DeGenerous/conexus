@@ -20,12 +20,18 @@
   <section>
     {#if activeTab !== 'Home'}
       <a href="/">Home</a>
-      <a class:active={activeTab === 'Community Picks'} href="/Community Picks">Community Picks</a>
+      <a class:active={activeTab === 'Community Picks'} href="/Community Picks"
+        >Community Picks</a
+      >
       <a class:active={activeTab === 'Collabs'} href="/Collabs">Collabs</a>
-      <a class:active={activeTab === 'Dischordian Saga'} href="/Dischordian Saga">Dischordian Saga</a>
+      <a
+        class:active={activeTab === 'Dischordian Saga'}
+        href="/Dischordian Saga">Dischordian Saga</a
+      >
     {/if}
     {#if admin}
-      <a class:active={activeTab === 'Dashboard'} href="/dashboard">Dashboard</a>
+      <a class:active={activeTab === 'Dashboard'} href="/dashboard">Dashboard</a
+      >
       <a class:active={activeTab === 'Dream'} href="/dashboard/dream">Dream</a>
     {/if}
   </section>
@@ -41,7 +47,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1vw;
-    padding-bottom: 0;
+    padding-bottom: 0 !important;
   }
 
   section {

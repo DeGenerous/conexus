@@ -1272,8 +1272,8 @@
   }
 
   .profile-icon {
-    height: 7vw;
-    width: 7vw;
+    height: 5vw;
+    width: 5vw;
     z-index: 1;
     flex: none;
   }

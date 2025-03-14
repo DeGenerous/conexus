@@ -41,11 +41,14 @@ const meta = {
   image: `https://media.degenerousdao.com/conexus-sections/${sectionImage?.toLocaleLowerCase()}.avif`,
   imageType: 'image/avif',
   url: `https://conexus-v1-test.degenerousdao.com/${section}`,
+  header: section,
+  nav: section,
+  subheading,
 };
 ---
 
 <main>
-  <Layout arrow={true} header={section} {subheading} {...meta}>
+  <Layout {...meta}>
     <CategorySvelte {section} client:load />
   </Layout>
 </main>

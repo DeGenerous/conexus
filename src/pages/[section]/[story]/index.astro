@@ -12,12 +12,13 @@ const storyName = story?.replace(/%20/g, ' ');
 const storyImage = storyName?.toLocaleLowerCase().replace(/[^a-z0-9]/g, '');
 
 const meta = {
-  title: `Welcome to CoNexus - where stories know no bounds `,
-  description: `${storyName} with infinite possibilities!`,
+  title: `Welcome to CoNexus - where stories know no bounds`,
+  description: `Explore ${storyName} story!`,
   image:
     `https://media.degenerousdao.com/conexus-categories/images/${storyImage}/description/description.avif` ||
     '/favicon.ico',
   url: `https://conexus-v1-test.degenerousdao.com/${section}/${story}`,
+  nav: storyName,
 };
 ---
 

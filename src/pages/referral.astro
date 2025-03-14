@@ -2,10 +2,12 @@
 import Layout from '@layouts/Layout.astro';
 import UseReferral from '@components/routes/Referral.svelte';
 
-const title = 'Referral';
-const arrow = true;
+const meta = {
+  title: 'Referral',
+  nav: 'Referral',
+};
 ---
 
-<Layout {title} {arrow}>
+<Layout {...meta}>
   <UseReferral client:load />
 </Layout>

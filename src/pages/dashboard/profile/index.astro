@@ -3,13 +3,11 @@ import Layout from '@layouts/Layout.astro';
 
 import Profile from '@components/dashboard/Profile.svelte';
 
-const arrow = true;
-
 const meta = {
-  header: 'Profile',
+  nav: 'Profile',
 };
 ---
 
-<Layout {...meta} {arrow}>
+<Layout {...meta}>
   <Profile client:load />
 </Layout>

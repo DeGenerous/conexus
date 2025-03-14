@@ -3,13 +3,13 @@ import Layout from '@layouts/Layout.astro';
 
 import CreateStory from '@components/dashboard/dream/CreateStory.svelte';
 
-const arrow = true;
-
 const meta = {
-  header: 'Create Story',
+  nav: 'Create Story',
 };
 ---
 
-<Layout {...meta} {arrow}>
-  <CreateStory client:load />
-</Layout>
+<main>
+  <Layout {...meta}>
+    <CreateStory client:load />
+  </Layout>
+</main>

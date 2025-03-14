@@ -4,9 +4,11 @@ import VerifyEmail from '@components/routes/VerifyEmail.svelte';
 
 const { token } = Astro.params;
 
-const arrow = true;
+const meta = {
+  nav: 'Verify Email',
+};
 ---
 
-<Layout {arrow}>
+<Layout {...meta}>
   <VerifyEmail token={token} client:load />
 </Layout>

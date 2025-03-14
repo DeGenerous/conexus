@@ -546,6 +546,10 @@
   }
 
   @media only screen and (max-width: 600px) {
+    :global(html) {
+      padding-bottom: 2em !important;
+    }
+
     .story-info {
       width: auto;
     }

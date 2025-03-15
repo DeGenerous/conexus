@@ -183,13 +183,12 @@
                 .then(async () => (topic = await admin.fetchTopic(topic_name)))}
             >{topic.available}</button
           >
-          <button>
-            <a
-              href={`/dashboard/dream/manage/demo?demoID=${topic.prompt_id}&demoName=${topic_name}`}
-            >
-              Play Demo
-            </a>
-          </button>
+          <a
+            class="button-anchor"
+            href={`/dashboard/dream/manage/demo?demoID=${topic.prompt_id}&demoName=${topic_name}`}
+          >
+            Play Demo
+          </a>
         </div>
       {/key}
 
@@ -329,7 +328,7 @@
 </section>
 
 <style>
-  button {
+  button, .button-anchor {
     text-transform: uppercase;
   }
 

@@ -54,7 +54,8 @@ input:disabled {
   cursor: not-allowed;
 }
 
-button {
+button,
+.button-anchor {
   font-family: inherit;
   cursor: pointer;
   display: flex;
@@ -72,7 +73,9 @@ button {
 }
 
 button:hover,
-button:active {
+button:active,
+.button-anchor:hover,
+.button-anchor:active {
   color: rgba(51, 226, 230, 0.9);
   background-color: rgba(56, 117, 250, 0.9);
   border-color: rgba(51, 226, 230, 0.9);
@@ -123,6 +126,10 @@ button svg {
   height: 2vw;
   width: 2vw;
   cursor: inherit !important;
+}
+
+.button-anchor {
+  text-decoration: none !important;
 }
 
 [role='button'] {
@@ -240,7 +247,8 @@ main {
     width: 100%;
   }
 
-  button {
+  button,
+  .button-anchor {
     font-size: 1em;
     line-height: 1.75em;
     padding: 0.25em 1em;

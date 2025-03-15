@@ -1,9 +1,16 @@
 ---
 import Layout from '@layouts/Layout.astro';
-
 import DemoNewPrompt from '@components/dashboard/dream/manage/DemoPrompt.svelte';
+
+const meta = {
+  header: 'Step Into Your Story',
+  nav: 'Demo',
+  arrow: '/dashboard/dream/manage',
+};
 ---
 
-<Layout>
-  <DemoNewPrompt client:load />
-</Layout>
+<main>
+  <Layout {...meta}>
+    <DemoNewPrompt client:load />
+  </Layout>
+</main>

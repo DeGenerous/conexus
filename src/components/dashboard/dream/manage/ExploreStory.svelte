@@ -54,6 +54,7 @@
     $handleSecondButton = () => {
       admin.deleteStory(topic!.id);
       $showModal = false;
+      window.open('/dashboard/dream/manage/', '_self');
     };
     $modalContent = `<h2>Are you sure you want to delete this story?</h2>
         <h3>This action is irreversible. You will lose it forever!</h3>`;

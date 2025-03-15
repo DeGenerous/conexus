@@ -23,9 +23,9 @@
 
   const game: CoNexusGame = new CoNexusGame();
 
-  // onMount(async () => {
-  //   await checkUserState('/story');
-  // });
+  onMount(async () => {
+    await checkUserState('/story');
+  });
 
   let deletedStories: string[] = []; // temp storage before reload for immediate removal
   let noUnfinishedStoriesLeft: boolean = false;

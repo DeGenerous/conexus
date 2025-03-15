@@ -1,6 +1,14 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+
+  import { checkUserState } from "@utils/route-guard";
+
   const openCreate = () => window.open('/dashboard/dream/create', '_self');
   const openManage = () => window.open('/dashboard/dream/manage', '_self');
+
+  onMount(async () => {
+    await checkUserState('/dashboard/dream', true);
+  });
 </script>
 
 <section class="container-wrapper">

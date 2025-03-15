@@ -4,11 +4,16 @@
   import { default_sections } from '@constants/data';
   import { AdminApp } from '@lib/admin';
   import { CoNexusApp } from '@lib/view';
+  import { checkUserState } from '@utils/route-guard';
 
   let admin = new AdminApp();
   let view = new CoNexusApp();
 
   let sections: Section[] = default_sections;
+
+  onMount(async () => {
+    await checkUserState('/dashboard/dream/manage', true);
+  });
 
   onMount(async () => {
     await view.getSections().then((data) => (sections = data));

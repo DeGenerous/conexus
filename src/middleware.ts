@@ -4,7 +4,10 @@ import { AccountAPI } from '@service/routes';
 import { authenticated, web3LoggedIn } from '@stores/account';
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  const acctAPI = new AccountAPI(import.meta.env.VITE_API_URL);
+  const url = import.meta.env.VITE_API_URL;
+
+  console.log('API URL:', url);
+  const acctAPI = new AccountAPI(url);
   const request = context.request;
   const currentPath = new URL(request.url).pathname;
 

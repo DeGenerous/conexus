@@ -320,7 +320,7 @@
     </div>
 
     <!-- MEDIA FILES -->
-    <Media topic_id={topic!.id} />
+    <!-- <Media bind:topic_id={topic.id} /> -->
 
     <button class="red-button blur" on:click={openModal}>Delete Story</button>
   {/if}

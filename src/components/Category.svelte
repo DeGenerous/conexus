@@ -17,7 +17,7 @@
   let genres: Genre[] = [];
 
   onMount(async () => {
-    await checkUserState(`/${section}`);
+    // await checkUserState(`/${section}`);
     web3LoggedIn.subscribe((value) => {
       isWeb3LoggedIn = value;
     });

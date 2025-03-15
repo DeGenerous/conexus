@@ -5,10 +5,17 @@
   import GeneralInfo from './dashboard/GeneralInfo.svelte';
   import StoryMetrics from './dashboard/StoryMetrics.svelte';
 
+  let loading = true
+
   onMount(async () => {
     await checkUserState('/dashboard', true);
+    loading = false;
   });
 </script>
+
+{#if loading}
+  <div class="loading">Loading...</div>
+{/if}
 
 <section class="container-wrapper">
   <GeneralInfo />

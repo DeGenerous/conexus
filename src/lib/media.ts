@@ -10,6 +10,10 @@ class MediaManager {
     this.mediaAPI = new MediaAPI();
   }
 
+  async serveFile(file_id: string) {
+    return this.mediaAPI.serveFile(file_id);
+  }
+
   async uploadTopicMedia(file: File, topic_id: number, media_type: MediaType) {
     const { data, error } = await this.mediaAPI.uploadFile(
       file,
@@ -39,7 +43,7 @@ class MediaManager {
   }
 
   async fetchTopicMedia(topic_id: string, media_type: MediaType) {
-    const { data } = await this.mediaAPI.GetFile(topic_id, media_type);
+    const { data } = await this.mediaAPI.getFile(topic_id, media_type);
 
     if (!data) {
       return [];
@@ -66,26 +70,22 @@ class MediaManager {
     }
   }
 
-  async getFolderContents(folder_id: string): Promise<FolderContent | null> {
-    const { data, error } = await this.mediaAPI.getFolderContent(folder_id);
+  // async getFolderContents(folder_id: string): Promise<FolderContent | null> {
+  //   const { data, error } = await this.mediaAPI.getFolderContent(folder_id);
 
-    if (!data) {
-      if (error) {
-        throw new Error(error.details);
-      }
+  //   if (!data) {
+  //     if (error) {
+  //       throw new Error(error.details);
+  //     }
 
-      return null;
-    }
+  //     return null;
+  //   }
 
-    const folderContent = data;
+  //   const folderContent = data;
 
-    console.log('Folder content:', folderContent.name);
-    return folderContent;
-  }
-
-  async serveFile(file_id: string) {
-    return this.mediaAPI.serveFile(file_id);
-  }
+  //   console.log('Folder content:', folderContent.name);
+  //   return folderContent;
+  // }
 
   // static getFolderList(directory: string) {
   //   try {

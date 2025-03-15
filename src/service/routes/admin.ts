@@ -20,6 +20,13 @@ export default class AdminAPI extends Fetcher {
     });
   }
 
+  async demoStoryPrompt(prompt_id: number) {
+    return this.request<GameData>('/admin/demo-story-prompt', {
+      method: 'POST',
+      body: JSON.stringify({ prompt_id }),
+    });
+  }
+
   async editTopicPrompt(prompt: string, topic_id: number, prompt_id: number) {
     return this.request<APISTDResposne>('/admin/edit-topic-prompt', {
       method: 'PATCH',

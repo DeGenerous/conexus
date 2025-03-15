@@ -183,11 +183,13 @@
                 .then(async () => (topic = await admin.fetchTopic(topic_name)))}
             >{topic.available}</button
           >
-          <button
-            on:click={() => {
-              console.log('DEMO');
-            }}>Play Demo</button
-          >
+          <button>
+            <a
+              href={`/dashboard/dream/manage/demo?demoID=${topic.prompt_id}&demoName=${topic_name}`}
+            >
+              Play Demo
+            </a>
+          </button>
         </div>
       {/key}
 

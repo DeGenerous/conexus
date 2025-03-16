@@ -21,9 +21,6 @@
       promptId = urlParams.get('demoID');
       topic_name = urlParams.get('demoName');
 
-      console.log('Prompt ID:', promptId);
-      console.log('Topic Name:', topic_name);
-
       if (!promptId) {
         window.history.back();
       }
@@ -37,7 +34,6 @@
     if (promptId) {
       story = await adminApp.demoPrompt(parseInt(promptId));
       loading = false;
-      console.log(story);
     }
   };
 
@@ -46,7 +42,6 @@
     const { data } = await game.respond(story_id, choice);
     if (data) story = data;
     nextStepLoading = false;
-    console.log(data);
   };
 
   $: step = story as StepData;

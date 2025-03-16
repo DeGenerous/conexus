@@ -33,8 +33,6 @@
     topic_description = topic!.description;
     topic_prompt = topic!.prompt;
     topic_imagePrompt = topic!.image_prompt;
-
-    console.log(topic);
   });
 
   let editingName: boolean = false;
@@ -73,7 +71,6 @@
   }
 
   const switchAvailable = (available: string) => {
-    console.log(available);
     if (available === 'available') return 'unavailable';
     else return 'available';
   };

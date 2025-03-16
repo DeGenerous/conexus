@@ -2,6 +2,7 @@
 /// <reference types="astro/client" />
 
 type TopicInCategoryInSection = {
+  id: number;
   name: string;
   order: number;
   available: boolean;

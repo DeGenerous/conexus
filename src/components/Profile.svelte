@@ -513,10 +513,10 @@
                     {/each}
                   </ul>
                   <div class="buttons-container">
-                    <WalletConnect
+                    <!-- <WalletConnect
                       linking={true}
                       title={'Add another address'}
-                    />
+                    /> -->
                   </div>
                 </div>
 
@@ -526,7 +526,7 @@
               {/if}
             {:else}
               <div class="buttons-container">
-                <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
+                <!-- <WalletConnect linking={true} title={'Connect Web3 Wallet'} /> -->
               </div>
             {/if}
           </div>
@@ -771,7 +771,7 @@
                 <img class="sign-icon" src="/icons/email.png" alt="Google" />
                 <p class="sign-lable">with email</p>
               </button>
-              <WalletConnect title={'with Web3 wallet'} />
+              <!-- <WalletConnect title={'with Web3 wallet'} /> -->
             </div>
             <hr />
             <h3>Don't have an account yet?</h3>

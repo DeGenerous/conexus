@@ -26,7 +26,7 @@
     <p class="collection-header">{category.name}</p>
     <div class="tiles-collection blur">
       {#each category.topics as topic}
-        <StoryTile {section} topicName={topic.name} />
+        <StoryTile {section} topicID={topic.id} topicName={topic.name} />
       {/each}
     </div>
   {/if}

@@ -1,6 +1,7 @@
+import { serveUrl } from '@constants/media';
 import { tracks } from '@constants/tracks';
 import { api_error } from '@errors/index';
-import { GameAPI } from '@service/routes';
+import { GameAPI, MediaAPI } from '@service/routes';
 import {
   background_image,
   background_music,
@@ -71,6 +72,39 @@ export class CoNexusGame extends GameAPI {
     return null;
   }
 
+  async fetch_story_imagev2(
+    topic_id: number,
+    type: 'tile' | 'description',
+  ): Promise<string> {
+    const blankPicture: string = '/blank.avif';
+
+    const image = await CoNexusGame.fetch_story_media(topic_id, type);
+
+    if (image.length === 0) {
+      return blankPicture;
+    }
+
+    return serveUrl(image[0]);
+  }
+
+  private static async fetch_story_media(
+    topic_id: number,
+    type: MediaType,
+  ): Promise<string[]> {
+    const media = new MediaAPI(import.meta.env.PUBLIC_BACKEND);
+
+    const { data, error } = await media.getFile(topic_id.toString(), type);
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      }
+      return [];
+    }
+
+    return data;
+  }
+
   async storyContinuables(topic: string): Promise<ContinuableStory[]> {
     const { data, error } = await this.continuablesByTopic(topic);
 
@@ -95,7 +129,8 @@ export class CoNexusGame extends GameAPI {
   }
 
   // Start New Game
-  async startGame(story_name: string): Promise<void> {
+  async startGame(story_name: string, topic_id: number): Promise<void> {
+    //TODO: change all story_name to topic_id
     loading.set(true);
 
     const { data, error } = await this.start(story_name);
@@ -109,8 +144,13 @@ export class CoNexusGame extends GameAPI {
       return;
     }
 
-    CoNexusGame.setBackgroundImage(story_name);
-    CoNexusGame.playBackgroundMusic(story_name);
+    // CoNexusGame.setBackgroundImage(story_name);
+    // CoNexusGame.playBackgroundMusic(story_name);
+
+    storyTitle = story_name;
+
+    CoNexusGame.setBackgroundImagev2(topic_id);
+    CoNexusGame.playBackgroundMusicv2(topic_id);
 
     await this.#setStepData(data); // ✅ Use this instead of new instance
   }
@@ -131,9 +171,11 @@ export class CoNexusGame extends GameAPI {
       return;
     }
 
+    storyTitle = continuable.category;
+
     // Set background image and music
-    CoNexusGame.setBackgroundImage(continuable.category);
-    CoNexusGame.playBackgroundMusic(continuable.category);
+    CoNexusGame.setBackgroundImagev2(continuable.topic_id);
+    CoNexusGame.playBackgroundMusicv2(continuable.topic_id);
 
     // Initialize game
 
@@ -212,12 +254,38 @@ export class CoNexusGame extends GameAPI {
     localStorage.setItem('queue', JSON.stringify(queue));
   }
 
+  private static async playBackgroundMusicv2(topic_id: number): Promise<void> {
+    let queue: string[] = JSON.parse(localStorage.getItem('queue') ?? '[]');
+
+    const audio = await this.fetch_story_media(topic_id, 'audio');
+
+    if (audio.length > 0) {
+      background_music.set(serveUrl(audio[0]));
+      return;
+    }
+
+    if (queue.length === 0) {
+      queue = this.#shuffle([...tracks]);
+    }
+    background_music.set(queue.pop());
+    localStorage.setItem('queue', JSON.stringify(queue));
+  }
+
   // Get story background image
   private static async setBackgroundImage(story_name: string) {
     let url = await this.#fetch_background_image(story_name);
 
     if (url) {
       background_image.set(url);
+    }
+  }
+
+  private static async setBackgroundImagev2(topic_id: number) {
+    let images = await this.fetch_story_media(topic_id, 'background');
+
+    if (images.length > 0) {
+      let randomImage = images[Math.floor(Math.random() * images.length)];
+      background_image.set(serveUrl(randomImage));
     }
   }
 

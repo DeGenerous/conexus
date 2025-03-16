@@ -60,8 +60,6 @@
     }
   }
 
-  const blankPicture: string = '/blank.avif'; // temp
-
   // SVG Icons
   const handleDeleteSvg = (id: string, state: 'focus' | 'blur') => {
     const deleteSvgIcon = document.getElementById(`delete-icon-${id}`);
@@ -133,12 +131,12 @@
       </header>
 
       <div class="story-container blur">
-        {#await game.fetch_story_image(story_name!, 'description')}
+        {#await game.fetch_story_imagev2(topic.id, 'description')}
           <div class="picture default-picture"></div>
         {:then storyImage}
           <img
             class="picture fade-in"
-            src={storyImage ?? blankPicture}
+            src={storyImage}
             alt={topic?.name}
             draggable="false"
             width="1024"
@@ -159,7 +157,8 @@
           <div class="story-buttons-container">
             <Share />
             <button
-              on:click={() => topic && game.startGame(topic.name)}
+              on:click={() =>
+                topic && game.startGame(topic.name, topic.id)}
               disabled={$loading}
               style={$loading ? 'color: rgb(51, 226, 230)' : ''}
             >

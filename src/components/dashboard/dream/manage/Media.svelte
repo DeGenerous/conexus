@@ -159,7 +159,7 @@
     <div class="media-grid">
       {#each backgrounds as bg}
         <div class="preview-wrapper">
-          <img src={`${serveUrl}${bg}`} alt="Background" class="preview" />
+          <img src={serveUrl(bg)} alt="Background" class="preview" />
           <button
             class="red-button"
             on:click={() => handleDelete(bg, 'background')}
@@ -189,11 +189,7 @@
       <h3>Only AVIF format is accepted.</h3>
     {/if}
     {#if description}
-      <img
-        src={`${serveUrl}${description}`}
-        alt="Description"
-        class="preview"
-      />
+      <img src={serveUrl(description)} alt="Description" class="preview" />
       <button
         class="red-button"
         on:click={() => handleDelete(description ?? '', 'description')}
@@ -221,7 +217,7 @@
       <h3>Only AVIF format is accepted.</h3>
     {/if}
     {#if tile}
-      <img src={` ${serveUrl}${tile}`} alt="Tile" class="preview" />
+      <img src={serveUrl(tile)} alt="Tile" class="preview" />
       <button
         class="red-button"
         on:click={() => handleDelete(tile ?? '', 'tile')}
@@ -250,7 +246,7 @@
     {/if}
     {#if audio}
       <audio controls>
-        <source src={` ${serveUrl}${audio}`} type="audio/mpeg" />
+        <source src={serveUrl(audio)} type="audio/mpeg" />
         Your browser does not support the audio element.
       </audio>
       <button

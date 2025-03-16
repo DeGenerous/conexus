@@ -1,1 +1,1 @@
-export const serveUrl = '/api/media/serve/';
+export const serveUrl = (path: string) => `/api/media/serve/${path}`;

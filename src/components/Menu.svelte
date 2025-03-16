@@ -1,6 +1,6 @@
 <script lang="ts">
   import DoorSVG from '@components/icons/Door.svelte';
-  import { authenticated } from '@stores/account';
+  import { authenticated, userCheck } from '@stores/account';
   import { showProfile } from '@stores/modal';
 
   import Intro from './Intro.svelte';
@@ -15,21 +15,25 @@
 
 <!-- Logged In -->
 
-{#if isLogged}
-  <Intro />
+{#if $userCheck}
+  <img class="loading" src="/icons/loading.png" alt="Loading" />
 {:else}
-  <section class="blur">
-    <h3>Please</h3>
-    <button
-      on:click={() => ($showProfile = true)}
-      on:pointerover={() => (signInSvgFocus = true)}
-      on:pointerout={() => (signInSvgFocus = false)}
-    >
-      <DoorSVG state="inside" {signInSvgFocus} />
-      Sign in your Profile
-    </button>
-    <h3>to access stories.</h3>
-  </section>
+  {#if isLogged}
+    <Intro />
+  {:else}
+    <section class="blur">
+      <h3>Please</h3>
+      <button
+        on:click={() => ($showProfile = true)}
+        on:pointerover={() => (signInSvgFocus = true)}
+        on:pointerout={() => (signInSvgFocus = false)}
+      >
+        <DoorSVG state="inside" {signInSvgFocus} />
+        Sign in your Profile
+      </button>
+      <h3>to access stories.</h3>
+    </section>
+  {/if}
 {/if}
 
 <style>
@@ -48,12 +52,47 @@
       0 0 0.5vw #010020;
   }
 
+  .loading {
+    height: 13.1vw;
+    width: auto;
+    opacity: 0;
+    transform: scale(0);
+    filter: grayscale(100%);
+    animation: loadingLogo 5s cubic-bezier(0.14, 0.75, 0.2, 1) forwards;
+  }
+
   @media only screen and (max-width: 600px) {
     section {
       width: 95%;
       gap: 0.5em;
       padding: 1em;
       border-radius: 1em;
+    }
+
+    .loading {
+      height: 32vw;
+    }
+  }
+
+  @keyframes loadingLogo {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+      filter: grayscale(100%);
+    }
+    10% {
+      transform: scale(1.5);
+      opacity: 1;
+      filter: brightness(125%);
+    }
+    20% {
+      transform: scale(1);
+      opacity: 1;
+      filter: none;
+    }
+    100% {
+      transform: scale(2) rotate(-1080deg);
+      opacity: 0;
     }
   }
 </style>

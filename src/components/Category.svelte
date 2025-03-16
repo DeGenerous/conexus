@@ -23,6 +23,11 @@
     });
     checkWeb3LoginState(isWeb3LoggedIn, section);
 
+    await app.getSections().then((sections) => {
+      const sectionNames = sections.map((object) => object.name);
+      if (!sectionNames.includes(section)) window.open('/404', '_self');
+    });
+
     try {
       categories = await app.getSectionCategories(section);
     } catch (error) {

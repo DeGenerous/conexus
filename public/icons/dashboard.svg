@@ -1,0 +1,14 @@
+<svg
+  xmlns='http://www.w3.org/2000/svg'
+  viewBox="-100 -100 200 200"
+  fill="none"
+  stroke="white"
+  stroke-width="10"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect x="-60" y="-60" width="45" height="67.5" />
+  <rect x="-60" y="30" width="45" height="30" />
+  <rect x="7.5" y="-60" width="52.5" height="30" />
+  <rect x="7.5" y="-7.5" width="52.5" height="67.5" />
+</svg>

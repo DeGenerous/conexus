@@ -1,4 +1,6 @@
 <script>
+  import { onMount } from 'svelte';
+
   import { toastStore } from '@stores/toast';
 
   import Toast from './Toast.svelte';
@@ -11,6 +13,20 @@
   const handleClose = (id) => {
     toastStore.close(id);
   };
+
+  let message = '';
+
+  onMount(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      message = urlParams.get('message');
+
+      if (message) {
+        toastStore.show(message, 'error');
+        history.replaceState(null, '', window.location.pathname); // Remove message from URL
+      }
+    }
+  });
 </script>
 
 <div class="toast-container">

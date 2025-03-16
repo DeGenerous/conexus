@@ -94,221 +94,226 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $story === null}
-  {#await game.getTopic(story_name)}
-    <header>
-      <BackArrow />
-      <Profile />
-    </header>
+  <section class="container-wrapper">
+    {#await game.getTopic(story_name)}
+      <header>
+        <BackArrow />
+        <Profile />
+      </header>
 
-    <div class="story-container blur">
-      <div class="picture default-picture loading-animation"></div>
+      <div class="story-container blur">
+        <div class="picture default-picture loading-animation"></div>
 
-      <section class="story-info">
-        <article>
+        <section class="story-info">
           <article>
-            <div class="genres" style="opacity: 0.5">
-              <p>Genres:</p>
-              <p class="genres-list default-genres loading-animation"></p>
-            </div>
-            <div class="default-line loading-animation"></div>
-            <div class="default-line loading-animation"></div>
-            <div class="default-line loading-animation"></div>
-            <div class="default-line loading-animation last-line"></div>
+            <article>
+              <div class="genres" style="opacity: 0.5">
+                <p>Genres:</p>
+                <p class="genres-list default-genres loading-animation"></p>
+              </div>
+              <div class="default-line loading-animation"></div>
+              <div class="default-line loading-animation"></div>
+              <div class="default-line loading-animation"></div>
+              <div class="default-line loading-animation last-line"></div>
+            </article>
           </article>
-        </article>
-        <div class="story-buttons-container">
-          <button disabled>SHARE</button>
-          <button disabled>PLAY NOW</button>
-        </div>
-      </section>
-    </div>
-  {:then topic: ThumbnailTopic}
-    <header>
-      <BackArrow />
-      <h1 class="fade-in">
-        {(topic.name.charAt(0).toUpperCase() + topic.name.slice(1)).trim()}
-      </h1>
-      <Profile />
-    </header>
-
-    <div class="story-container blur">
-      {#await game.fetch_story_image(story_name!, 'description')}
-        <div class="picture default-picture"></div>
-      {:then storyImage}
-        <img
-          class="picture fade-in"
-          src={storyImage ?? blankPicture}
-          alt={topic?.name}
-          draggable="false"
-          width="1024"
-          height="1024"
-        />
-      {/await}
-
-      <section class="story-info">
-        <article>
-          {#if topic.genres !== ''}
-            <div class="genres">
-              <p>Genres:</p>
-              <p class="genres-list fade-in">{topic.genres}</p>
-            </div>
-          {/if}
-          <p class="description fade-in">{topic.description}</p>
-        </article>
-        <div class="story-buttons-container">
-          <Share />
-          <button
-            on:click={() => topic && game.startGame(topic.name)}
-            disabled={$loading}
-            style={$loading ? 'color: rgb(51, 226, 230)' : ''}
-          >
-            {#if $loading}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 100 100"
-                class="loading-svg"
-                stroke="transparent"
-                stroke-width="7.5"
-                stroke-dasharray="288.5"
-                stroke-linecap="round"
-                fill="none"
-              >
-                <path
-                  d="
-                      M 50 96 a 46 46 0 0 1 0 -92 46 46 0 0 1 0 92
-                    "
-                  transform-origin="50 50"
-                />
-              </svg>
-              Loading...
-            {:else}
-              PLAY NOW
-            {/if}
-          </button>
-        </div>
-      </section>
-    </div>
-  {:catch}
-    <header>
-      <BackArrow />
-      <Profile />
-    </header>
-
-    <div class="story-container blur">
-      <div class="picture default-picture"></div>
-
-      <section class="story-info">
-        <article>
-          <article>
-            <div class="genres" style="opacity: 0.5">
-              <p>Failed to fetch story...</p>
-            </div>
-            <div class="genres" style="opacity: 0.5">
-              <p>Please try again or contact support.</p>
-            </div>
-          </article>
-        </article>
-        <div class="story-buttons-container">
-          <button disabled>SHARE</button>
-          <button disabled>ERROR</button>
-        </div>
-      </section>
-    </div>
-  {/await}
-
-  {#await game.storyContinuables(story_name!) then continuables: ContinuableStory[]}
-    {#if continuables.length > 0}
-      {#if !noUnfinishedStoriesLeft}
-        <section class="unfinished-stories fade-in blur">
-          <h3>Continue Shaping:</h3>
-          <div class="continue-shaping-container">
-            {#each continuables as continuable}
-              {#if !deletedStories.includes(continuable.story_id)}
-                <div class="unfinished-story">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="-100 -100 200 200"
-                    class="delete-svg continue-shaping-btn"
-                    fill="none"
-                    stroke={$loading ? '#010020' : 'rgb(255, 60, 64)'}
-                    stroke-width="15"
-                    stroke-linecap="round"
-                    on:click|preventDefault={() => {
-                      if (!$loading) openModal(continuable);
-                    }}
-                    on:pointerover={() => {
-                      if (!$loading)
-                        handleDeleteSvg(continuable.story_id, 'focus');
-                    }}
-                    on:pointerout={() => {
-                      if (!$loading)
-                        handleDeleteSvg(continuable.story_id, 'blur');
-                    }}
-                    role="button"
-                    tabindex="0"
-                    style={$loading ? 'cursor: not-allowed' : ''}
-                  >
-                    <path
-                      id="delete-icon-{continuable.story_id}"
-                      d="
-                          M -35 -35
-                          L 35 35
-                          M -35 35
-                          L 35 -35
-                        "
-                    />
-                    <circle id="delete-circle-{continuable.story_id}" r="90" />
-                  </svg>
-                  <h3>
-                    {continuable.story_id.split('-')[0]} - {new Date(
-                      continuable.created ?? '',
-                    ).toLocaleDateString()}
-                  </h3>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="-100 -100 200 200"
-                    class="play-svg continue-shaping-btn"
-                    fill="none"
-                    stroke={$loading ? '#010020' : 'rgb(0, 185, 55)'}
-                    stroke-width="15"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    on:click|preventDefault={() => {
-                      if (!$loading) game.continueGame(continuable);
-                    }}
-                    on:pointerover={() => {
-                      if (!$loading)
-                        handlePlaySvg(continuable.story_id, 'focus');
-                    }}
-                    on:pointerout={() => {
-                      if (!$loading)
-                        handlePlaySvg(continuable.story_id, 'blur');
-                    }}
-                    role="button"
-                    tabindex="0"
-                    style={$loading ? 'cursor: not-allowed' : ''}
-                  >
-                    <polygon
-                      id="play-icon-{continuable.story_id}"
-                      points="
-                        -26 -36 -26 36 36 0
-                      "
-                      fill={$loading ? '#010020' : 'rgb(0, 185, 55)'}
-                    />
-                    <circle id="play-circle-{continuable.story_id}" r="90" />
-                  </svg>
-                </div>
-              {/if}
-            {/each}
+          <div class="story-buttons-container">
+            <button disabled>SHARE</button>
+            <button disabled>PLAY NOW</button>
           </div>
         </section>
+      </div>
+    {:then topic: ThumbnailTopic}
+      <header>
+        <BackArrow />
+        <h1 class="fade-in">
+          {(topic.name.charAt(0).toUpperCase() + topic.name.slice(1)).trim()}
+        </h1>
+        <Profile />
+      </header>
+
+      <div class="story-container blur">
+        {#await game.fetch_story_image(story_name!, 'description')}
+          <div class="picture default-picture"></div>
+        {:then storyImage}
+          <img
+            class="picture fade-in"
+            src={storyImage ?? blankPicture}
+            alt={topic?.name}
+            draggable="false"
+            width="1024"
+            height="1024"
+          />
+        {/await}
+
+        <section class="story-info">
+          <article>
+            {#if topic.genres !== ''}
+              <div class="genres">
+                <p>Genres:</p>
+                <p class="genres-list fade-in">{topic.genres}</p>
+              </div>
+            {/if}
+            <p class="description fade-in">{topic.description}</p>
+          </article>
+          <div class="story-buttons-container">
+            <Share />
+            <button
+              on:click={() => topic && game.startGame(topic.name)}
+              disabled={$loading}
+              style={$loading ? 'color: rgb(51, 226, 230)' : ''}
+            >
+              {#if $loading}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 100 100"
+                  class="loading-svg"
+                  stroke="transparent"
+                  stroke-width="7.5"
+                  stroke-dasharray="288.5"
+                  stroke-linecap="round"
+                  fill="none"
+                >
+                  <path
+                    d="
+                        M 50 96 a 46 46 0 0 1 0 -92 46 46 0 0 1 0 92
+                      "
+                    transform-origin="50 50"
+                  />
+                </svg>
+                Loading...
+              {:else}
+                PLAY NOW
+              {/if}
+            </button>
+          </div>
+        </section>
+      </div>
+    {:catch}
+      <header>
+        <BackArrow />
+        <Profile />
+      </header>
+
+      <div class="story-container blur">
+        <div class="picture default-picture"></div>
+
+        <section class="story-info">
+          <article>
+            <article>
+              <div class="genres" style="opacity: 0.5">
+                <p>Failed to fetch story...</p>
+              </div>
+              <div class="genres" style="opacity: 0.5">
+                <p>Please try again or contact support.</p>
+              </div>
+            </article>
+          </article>
+          <div class="story-buttons-container">
+            <button disabled>SHARE</button>
+            <button disabled>ERROR</button>
+          </div>
+        </section>
+      </div>
+    {/await}
+
+    {#await game.storyContinuables(story_name!) then continuables: ContinuableStory[]}
+      {#if continuables.length > 0}
+        {#if !noUnfinishedStoriesLeft}
+          <section class="unfinished-stories fade-in blur">
+            <h3>Continue Shaping:</h3>
+            <div class="continue-shaping-container">
+              {#each continuables as continuable}
+                {#if !deletedStories.includes(continuable.story_id)}
+                  <div class="unfinished-story">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="-100 -100 200 200"
+                      class="delete-svg continue-shaping-btn"
+                      fill="none"
+                      stroke={$loading ? '#010020' : 'rgb(255, 60, 64)'}
+                      stroke-width="15"
+                      stroke-linecap="round"
+                      on:click|preventDefault={() => {
+                        if (!$loading) openModal(continuable);
+                      }}
+                      on:pointerover={() => {
+                        if (!$loading)
+                          handleDeleteSvg(continuable.story_id, 'focus');
+                      }}
+                      on:pointerout={() => {
+                        if (!$loading)
+                          handleDeleteSvg(continuable.story_id, 'blur');
+                      }}
+                      role="button"
+                      tabindex="0"
+                      style={$loading ? 'cursor: not-allowed' : ''}
+                    >
+                      <path
+                        id="delete-icon-{continuable.story_id}"
+                        d="
+                            M -35 -35
+                            L 35 35
+                            M -35 35
+                            L 35 -35
+                          "
+                      />
+                      <circle
+                        id="delete-circle-{continuable.story_id}"
+                        r="90"
+                      />
+                    </svg>
+                    <h3>
+                      {continuable.story_id.split('-')[0]} - {new Date(
+                        continuable.created ?? '',
+                      ).toLocaleDateString()}
+                    </h3>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="-100 -100 200 200"
+                      class="play-svg continue-shaping-btn"
+                      fill="none"
+                      stroke={$loading ? '#010020' : 'rgb(0, 185, 55)'}
+                      stroke-width="15"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      on:click|preventDefault={() => {
+                        if (!$loading) game.continueGame(continuable);
+                      }}
+                      on:pointerover={() => {
+                        if (!$loading)
+                          handlePlaySvg(continuable.story_id, 'focus');
+                      }}
+                      on:pointerout={() => {
+                        if (!$loading)
+                          handlePlaySvg(continuable.story_id, 'blur');
+                      }}
+                      role="button"
+                      tabindex="0"
+                      style={$loading ? 'cursor: not-allowed' : ''}
+                    >
+                      <polygon
+                        id="play-icon-{continuable.story_id}"
+                        points="
+                          -26 -36 -26 36 36 0
+                        "
+                        fill={$loading ? '#010020' : 'rgb(0, 185, 55)'}
+                      />
+                      <circle id="play-circle-{continuable.story_id}" r="90" />
+                    </svg>
+                  </div>
+                {/if}
+              {/each}
+            </div>
+          </section>
+        {/if}
       {/if}
-    {/if}
-  {:catch}
-    <section class="unfinished-stories blur">
-      <h3>Failed to fetch unfinished stories...</h3>
-    </section>
-  {/await}
+    {:catch}
+      <section class="unfinished-stories blur">
+        <h3>Failed to fetch unfinished stories...</h3>
+      </section>
+    {/await}
+  </section>
 {:else}
   <BackgroundMusic />
   <Tts />
@@ -349,16 +354,11 @@
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
-    padding: 2vw;
-    min-height: 12.5vw;
+    padding: 1vw;
   }
 
-  h1 {
-    font-size: 5vw;
-    line-height: 5vw;
-    text-align: center;
-    color: rgba(51, 226, 230, 0.85);
-    text-shadow: 0 0.5vw 0.5vw #010020;
+  header h1 {
+    font-size: 4vw;
   }
 
   .story-container {
@@ -556,7 +556,7 @@
 
   @media only screen and (max-width: 600px) {
     :global(html) {
-      padding-top: 0;
+      padding-bottom: 2em !important;
     }
 
     .story-info {
@@ -575,12 +575,11 @@
       -webkit-backdrop-filter: blur(2vw);
       backdrop-filter: blur(2vw);
       z-index: 2;
-      min-height: 5em;
+      padding: 1em;
     }
 
-    h1 {
+    header h1 {
       font-size: 1.5em;
-      line-height: 1.5em;
     }
 
     .story-container {

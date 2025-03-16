@@ -71,10 +71,7 @@
               role="button"
               tabindex="0"
             >
-              <path
-                d="M -65 -65 L 65 65 M -65 65 L 65 -65"
-                fill="none"
-              />
+              <path d="M -65 -65 L 65 65 M -65 65 L 65 -65" fill="none" />
             </svg>
           </div>
         {/each}

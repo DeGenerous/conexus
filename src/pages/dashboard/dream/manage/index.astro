@@ -5,17 +5,21 @@ import ManageStories from '@components/dashboard/dream/ManageStories.svelte';
 
 const { topic } = Astro.params;
 
-const arrow = true;
-
-const meta = {
-  header: 'Manage Stories',
-};
-
 if (!topic) {
   Astro.redirect('/');
 }
+
+const meta = {
+  header: 'Manage Stories',
+  nav: 'Manage Stories',
+  arrow: '/dashboard/dream',
+  subheading:
+    'Edit, organize, and enhance your creations—fine-tune every detail to perfection.',
+};
 ---
 
-<Layout {...meta} {arrow}>
-  <ManageStories client:load />
-</Layout>
+<main>
+  <Layout {...meta}>
+    <ManageStories client:load />
+  </Layout>
+</main>

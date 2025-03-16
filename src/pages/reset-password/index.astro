@@ -2,16 +2,11 @@
 import Layout from '@layouts/Layout.astro';
 import ForgotPassword from '@components/routes/ForgotPassword.svelte';
 
-const arrow = true;
-
 const meta = {
-  title: 'Welcome to CoNexus',
-  description: 'Explore the best stories in the multiverse',
-  image: '/favicon.ico',
-  url: 'https://conexus-v1-test.degenerousdao.com/',
+  nav: 'Forgot Password',
 };
 ---
 
-<Layout {...meta} {arrow}>
+<Layout {...meta}>
   <ForgotPassword client:load />
 </Layout>

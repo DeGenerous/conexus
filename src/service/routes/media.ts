@@ -1,30 +1,17 @@
 import Fetcher from '@service/fetcher';
 
 export default class MediaAPI extends Fetcher {
-  async uploadFile(file: File, topic_id: number, media_type: MediaType) {
-    let url = '';
+  async serveFile(file_id: string) {
+    return this.request<Blob>(`/media/serve/${file_id}`);
+  }
 
-    switch (media_type) {
-      case 'background':
-        url = '/media/upload-background';
-        break;
-      case 'description':
-        url = '/media/upload-description';
-        break;
-      case 'tile':
-        url = '/media/upload-tile';
-        break;
-      case 'audio':
-        url = '/media/upload-audio';
-        break;
-      case 'video':
-        url = '/media/upload-video';
-        break;
-    }
+  async uploadFile(file: File, topic_id: number, media_type: MediaType) {
+    let url = '/media/upload-media';
 
     const formData = new FormData();
     formData.append('file', file);
     formData.append('topic_id', topic_id.toString() || '');
+    formData.append('media_type', media_type);
 
     return this.request<string[]>(url, {
       method: 'POST',
@@ -32,59 +19,21 @@ export default class MediaAPI extends Fetcher {
     });
   }
 
-  async GetFile(topic_id: string, media_type: MediaType) {
-    let url = '';
+  async getFile(topic_id: string, media_type: MediaType) {
+    let url = '/media/get-media';
 
-    switch (media_type) {
-      case 'background':
-        url = '/media/get-background';
-        break;
-      case 'description':
-        url = '/media/get-description';
-        break;
-      case 'tile':
-        url = '/media/get-tile';
-        break;
-      case 'audio':
-        url = '/media/get-audio';
-        break;
-      case 'video':
-        url = '/media/get-video';
-        break;
-    }
-
-    return this.request<string[]>(`${url}/${topic_id}`);
+    return this.request<string[]>(
+      `${url}/${topic_id}?media_type=${media_type}`,
+    );
   }
 
   async DeleteFile(topic_id: number, file_id: string, media_type: MediaType) {
-    let url = '';
-
-    switch (media_type) {
-      case 'background':
-        url = '/media/delete-background';
-        break;
-      case 'description':
-        url = '/media/delete-description';
-        break;
-      case 'tile':
-        url = '/media/delete-tile';
-        break;
-      case 'audio':
-        url = '/media/delete-audio';
-        break;
-      case 'video':
-        url = '/media/delete-video';
-        break;
-    }
+    let url = '/media/delete-media';
 
     return this.request<APISTDResposne>(url, {
       method: 'DELETE',
-      body: JSON.stringify({ topic_id, file_id }),
+      body: JSON.stringify({ topic_id, file_id, media_type }),
     });
-  }
-
-  async serveFile(file_id: string) {
-    return this.request<Blob>(`/media/serve/${file_id}`);
   }
 
   async moveFile(parent_id: string, file_id: string) {

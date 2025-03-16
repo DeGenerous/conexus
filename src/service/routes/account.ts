@@ -8,8 +8,10 @@ export default class AccountAPI extends Fetcher {
    * Sends a request to get the current user's details.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    */
-  async me() {
-    return this.request<{ user: User }>('/account/me');
+  async me(token?: string) {
+    return this.request<{ user: User }>('/account/me', {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
   }
 
   /**

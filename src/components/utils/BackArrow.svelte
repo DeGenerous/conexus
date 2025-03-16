@@ -4,8 +4,16 @@
   let backArrowSvgFocus: boolean = false;
 </script>
 
-<a class="icon arrow" {href} aria-label="Back arrow">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
+<a
+  class="icon arrow"
+  href={href === 'back' ? 'javascript:window.history.back()' : href}
+  aria-label="Back arrow"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="-100 -100 200 200"
+    class="circle-icon"
+  >
     <defs>
       <mask id="back-arrow-svg-mask">
         <circle r="95" fill="white" />
@@ -43,7 +51,6 @@
 
 <style>
   a {
-    flex: none;
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -52,14 +59,5 @@
 
   a svg {
     cursor: inherit;
-    height: 7vw;
-    width: 7vw;
-  }
-
-  @media only screen and (max-width: 600px) {
-    a svg {
-      height: 3em;
-      width: 3em;
-    }
   }
 </style>

@@ -97,6 +97,27 @@ export class AdminApp extends AdminAPI {
   }
 
   /**
+   * Demos a story prompt by its prompt ID.
+   *
+   * @param prompt_id - The ID of the prompt to demo.
+   * @returns A promise that resolves when the prompt is successfully demoed.
+   */
+  async demoPrompt(prompt_id: number): Promise<GameData | null> {
+    const { data, error } = await this.demoStoryPrompt(prompt_id);
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error demoing prompt', 'error');
+      }
+      return null;
+    }
+
+    return data;
+  }
+
+  /**
    * Edits a prompt for a given topic.
    *
    * @param prompt - The new prompt text to be updated.

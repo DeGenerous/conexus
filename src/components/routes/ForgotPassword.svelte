@@ -30,7 +30,7 @@
       on:click={() => acct.forgotPassword(email)}
       disabled={!email || !emailValidation}
     >
-      Send verification link
+      Send Verification Link
     </button>
   </div>
 </div>

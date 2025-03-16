@@ -23,7 +23,7 @@ html {
   font-size: 1em;
   word-spacing: 0.2em;
   line-height: 2em;
-  padding-bottom: 7.5vw;
+  padding-bottom: 5vw;
 }
 
 html::-webkit-scrollbar {
@@ -54,7 +54,8 @@ input:disabled {
   cursor: not-allowed;
 }
 
-button {
+button,
+.button-anchor {
   font-family: inherit;
   cursor: pointer;
   display: flex;
@@ -72,7 +73,9 @@ button {
 }
 
 button:hover,
-button:active {
+button:active,
+.button-anchor:hover,
+.button-anchor:active {
   color: rgba(51, 226, 230, 0.9);
   background-color: rgba(56, 117, 250, 0.9);
   border-color: rgba(51, 226, 230, 0.9);
@@ -125,6 +128,10 @@ button svg {
   cursor: inherit !important;
 }
 
+.button-anchor {
+  text-decoration: none !important;
+}
+
 [role='button'] {
   cursor: pointer;
 }
@@ -138,8 +145,13 @@ h1,
 h2 {
   text-align: center;
   color: #dedede;
-  font-size: 3vw;
-  line-height: 3vw;
+}
+
+h1 {
+  font-size: 5vw;
+  line-height: 5vw;
+  color: rgba(51, 226, 230, 0.85);
+  text-shadow: 0 0.5vw 0.5vw #010020;
 }
 
 h2 {
@@ -228,14 +240,15 @@ main {
 
 @media only screen and (max-width: 600px) {
   html {
-    padding-top: 25%;
+    padding-bottom: 2em;
   }
 
   hr {
     width: 100%;
   }
 
-  button {
+  button,
+  .button-anchor {
     font-size: 1em;
     line-height: 1.75em;
     padding: 0.25em 1em;
@@ -254,7 +267,7 @@ main {
 
   h1 {
     font-size: 1.5em;
-    line-height: 1.75em;
+    line-height: 2em;
   }
 
   h2 {
@@ -315,6 +328,15 @@ main {
   animation: searching 1s linear infinite;
 }
 
+.loading-icon {
+  height: 15vw;
+  width: auto;
+  opacity: 0;
+  transform: scale(0);
+  filter: grayscale(100%);
+  animation: loadingLogo 5s cubic-bezier(0.14, 0.75, 0.2, 1) forwards;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -344,5 +366,27 @@ main {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes loadingLogo {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+    filter: grayscale(100%);
+  }
+  10% {
+    transform: scale(1.5);
+    opacity: 1;
+    filter: brightness(125%);
+  }
+  20% {
+    transform: scale(1);
+    opacity: 1;
+    filter: none;
+  }
+  100% {
+    transform: scale(2) rotate(-1080deg);
+    opacity: 0;
   }
 }

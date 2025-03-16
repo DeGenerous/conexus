@@ -4,6 +4,7 @@
   import { default_sections } from '@constants/data';
   import { AdminApp } from '@lib/admin';
   import { CoNexusApp } from '@lib/view';
+  import { checkUserState } from '@utils/route-guard';
 
   let admin = new AdminApp();
   let view = new CoNexusApp();
@@ -11,8 +12,11 @@
   let sections: Section[] = default_sections;
 
   onMount(async () => {
+    await checkUserState('/dashboard/dream/manage', true);
+  });
+
+  onMount(async () => {
     await view.getSections().then((data) => (sections = data));
-    console.log(await admin.fetchCollections());
   });
 
   let availabilityKey: string = '';
@@ -30,24 +34,33 @@
     debounceTimeout = setTimeout(async () => {
       if (input.value == '') input.value = '0';
       await admin.changeTopicsOrder(topic_id, Number(input.value));
-    }, 3000);
+    }, 1000);
   };
 
   const selectOrder = (event: Event) => {
     const input = event.target as HTMLInputElement;
     input.select();
   };
+
+  const sortTopicsByOrder = (topics: CollectionTopic[]) => {
+    const sortedTopics = topics.sort((a, b) => {
+      if (a.order < b.order) return -1;
+      if (a.order > b.order) return 1;
+      return 0;
+    });
+    return sortedTopics;
+  };
 </script>
 
 <section class="container-wrapper">
   {#key availabilityKey}
     {#await admin.fetchCollections()}
-      <h2>Loading collections...</h2>
+      <img class="loading-icon" src="/icons/loading.png" alt="Loading" />
     {:then collections}
       {#each collections as { category_id, category_name, section_id, topics }}
         <section class="container blur">
           <div class="buttons-wrapper category-header">
-            <p class="collection-header">{category_name}</p>
+            <p class="collection-header">{category_name}: {topics.length}</p>
             <div class="buttons-wrapper">
               <label for="section">Select section:</label>
               {#if sections}
@@ -72,7 +85,7 @@
             </div>
           </div>
           <div class="tiles-collection">
-            {#each topics as { topic_name, order, available, prompt_id, topic_id }}
+            {#each sortTopicsByOrder(topics) as { topic_name, order, available, prompt_id, topic_id }}
               <a class="tile" href="/dashboard/dream/manage/{topic_name}">
                 <h2>{topic_name}</h2>
                 <div class="buttons-wrapper">
@@ -160,6 +173,7 @@
 
     .order-input {
       padding: 0.5em 1em;
+      width: 1.5em;
     }
   }
 </style>

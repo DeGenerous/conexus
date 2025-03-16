@@ -5,10 +5,12 @@ import ExploreStory from '@components/dashboard/dream/manage/ExploreStory.svelte
 
 const { topic } = Astro.params;
 
-const arrow = true;
-
 const meta = {
-  header: topic,
+  header: 'Refine & Enhance',
+  nav: topic,
+  arrow: '/dashboard/dream/manage',
+  subheading:
+    'Polish your idea and set the stage for an unforgettable journey.',
 };
 
 if (!topic) {
@@ -16,6 +18,8 @@ if (!topic) {
 }
 ---
 
-<Layout {...meta} {arrow}>
-  <ExploreStory topic_name={topic} client:load />
-</Layout>
+<main>
+  <Layout {...meta}>
+    <ExploreStory topic_name={topic} client:load />
+  </Layout>
+</main>

@@ -18,7 +18,13 @@ type Collection = {
   topics: CollectionTopic[];
 };
 
-type MediaType = 'background' | 'description' | 'tile' | 'audio' | 'video';
+type MediaType =
+  | 'background'
+  | 'description'
+  | 'tile'
+  | 'audio'
+  | 'video'
+  | 'document';
 
 type ThumbnailTopic = {
   name: string;

@@ -1,23 +1,24 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { checkUserState } from '@utils/route-guard';
 
-  import GeneralInfo from './dashy/GeneralInfo.svelte';
-  import StoryMetrics from './dashy/StoryMetrics.svelte';
+  import { checkUserState } from '@utils/route-guard';
+  import GeneralInfo from './dashboard/GeneralInfo.svelte';
+  import StoryMetrics from './dashboard/StoryMetrics.svelte';
+
+  let loading = true;
 
   onMount(async () => {
-    await checkUserState('/story', true);
+    await checkUserState('/dashboard', true);
+    loading = false;
   });
 </script>
 
-<section class="container-wrapper">
-  <div class="container buttons-wrapper blur">
-    <a href="/dashboard/dream">Dream</a>
-    |
-    <a href="/dashboard/profile">Profile</a>
-  </div>
+{#if loading}
+  <img class="loading-icon" src="/icons/loading.png" alt="Loading" />
+{:else}
+  <section class="container-wrapper">
+    <GeneralInfo />
 
-  <GeneralInfo />
-
-  <StoryMetrics />
-</section>
+    <StoryMetrics />
+  </section>
+{/if}

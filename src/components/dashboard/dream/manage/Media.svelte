@@ -84,7 +84,6 @@
             'description',
           );
           description = response[0];
-
         } else if (type === 'tile') {
           const response = await mediaManager.uploadTopicMedia(
             files[0],
@@ -92,7 +91,6 @@
             'tile',
           );
           tile = response[0];
-
         } else if (type === 'audio') {
           const response = await mediaManager.uploadTopicMedia(
             files[0],

@@ -1,10 +1,9 @@
 ---
 // import { ClientRouter } from 'astro:transitions';
 
-import Profile from '@components/Profile.svelte';
 import ToastContainer from '@components/utils/ToastContainer.svelte';
 import Modal from '@components/utils/Modal.svelte';
-import BackArrow from '@components/utils/BackArrow.svelte';
+import Navigation from '@components/utils/Navigation.svelte';
 import CookieBanner from '@components/utils/CookieBanner.svelte';
 
 import '@styles/reset.css';
@@ -18,6 +17,7 @@ import '@styles/dream.css';
 const {
   header,
   subheading,
+  nav,
   arrow,
   story,
   title = 'Welcome to CoNexus',
@@ -56,66 +56,40 @@ const {
   </head>
   <body>
     <ToastContainer client:load />
-    {
-      !story && (
-        <header>
-          {arrow && <BackArrow href="/" client:load />}
-          {!arrow && (
-            <a
-              href="https://degenerousdao.com/"
-              target="_blank"
-              aria-label="dgrs-logo"
-            >
-              <img class="logo" src="/logo.avif" alt="Logo" />
-            </a>
-          )}
-          {header === 'CoNexus' ? (
-            <picture>
-              <source srcset="title.avif" type="image/avif" />
-              <img
-                class="title blur"
-                src="title.png"
-                alt="CoNexus"
-                draggable="false"
-              />
-            </picture>
-          ) : (
-            <h1 class="header">{header}</h1>
-          )}
-          <Profile client:load />
-        </header>
-      )
-    }
+    {!story && <Navigation activeTab={nav} {arrow} client:load />}
+    <header>
+      {
+        header === 'CoNexus' ? (
+          <picture>
+            <source srcset="title.avif" type="image/avif" />
+            <img
+              class="title blur"
+              src="title.png"
+              alt="CoNexus"
+              draggable="false"
+            />
+          </picture>
+        ) : (
+          header && <h1>{header}</h1>
+        )
+      }
+    </header>
     {subheading && <p class="subheading" set:html={subheading} />}
 
     <slot />
 
     <Modal client:load />
 
-    <CookieBanner />
+    <CookieBanner client:load />
     <style>
+      header {
+        padding-inline: 1vw;
+      }
+
       picture {
         display: flex;
         justify-content: center;
         align-items: center;
-      }
-
-      header {
-        width: 100vw;
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: space-between;
-        align-items: center;
-        padding: 2vw;
-        min-height: 12.5vw;
-      }
-
-      .header {
-        font-size: 5vw;
-        line-height: 5vw;
-        text-align: center;
-        color: rgba(51, 226, 230, 0.85);
-        text-shadow: 0 0.5vw 0.5vw #010020;
       }
 
       .title {
@@ -140,46 +114,19 @@ const {
         text-shadow: 0 0.25vw 0.25vw #010020;
       }
 
-      a {
-        flex: none;
-        border-radius: 50%;
-      }
-
-      .logo {
-        cursor: inherit;
-        border-radius: inherit;
-        height: 7vw;
-        width: 7vw;
-        opacity: 0.7;
-        transition: all 0.3s ease-in-out;
-      }
-
-      .logo:hover,
-      .logo:active {
-        opacity: 1;
-        transform: scale(1.05);
+      .circle-icon {
+        visibility: hidden;
       }
 
       @media only screen and (max-width: 600px) {
         header {
-          position: fixed;
-          top: 0;
-          background-color: rgba(1, 0, 32, 0.75);
-          filter: drop-shadow(0 1vw 1vw rgba(1, 0, 32, 0.75));
-          -webkit-backdrop-filter: blur(2vw);
-          backdrop-filter: blur(2vw);
-          z-index: 200;
-          min-height: 5em;
-        }
-
-        .header {
-          font-size: 1.5em;
-          line-height: 1.5em;
+          padding-inline: 1em;
         }
 
         .title {
-          width: 40vw;
-          padding: 2vw 4vw;
+          width: 75vw;
+          border-radius: 1em;
+          padding: 0.75em 1.5em;
         }
 
         .subheading {
@@ -193,16 +140,6 @@ const {
             inset 0 0 0.5vw rgba(51, 226, 230, 0.5),
             0 0 0.5vw #010020;
           border-radius: 1em;
-        }
-
-        .logo {
-          width: 3em;
-          height: 3em;
-        }
-
-        .profile-icon {
-          width: 3em;
-          height: 3em;
         }
       }
     </style>

@@ -187,7 +187,7 @@
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"
-    class="profile-icon"
+    class="circle-icon"
   >
     <defs>
       <mask id="profile-svg-mask">
@@ -1271,13 +1271,6 @@
     align-items: center;
   }
 
-  .profile-icon {
-    height: 7vw;
-    width: 7vw;
-    z-index: 1;
-    flex: none;
-  }
-
   @media only screen and (max-width: 600px) {
     dialog {
       width: 100vw;
@@ -1382,11 +1375,6 @@
 
     .newsletter-subscription {
       gap: 0.5em;
-    }
-
-    .profile-icon {
-      width: 3em;
-      height: 3em;
     }
   }
 

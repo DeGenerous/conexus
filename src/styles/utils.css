@@ -138,6 +138,11 @@
   background-color: rgb(255, 60, 64);
 }
 
+.circle-icon {
+  height: 5vw;
+  width: 5vw;
+}
+
 @media only screen and (max-width: 600px) {
   .sign-icon {
     height: 0.8em;
@@ -197,5 +202,10 @@
   .buttons-wrapper {
     flex-wrap: wrap;
     gap: 0.5em;
+  }
+
+  .circle-icon {
+    height: 3em;
+    width: 3em;
   }
 }

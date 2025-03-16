@@ -33,8 +33,6 @@
     topic_description = topic!.description;
     topic_prompt = topic!.prompt;
     topic_imagePrompt = topic!.image_prompt;
-
-    console.log(topic);
   });
 
   let editingName: boolean = false;
@@ -54,6 +52,7 @@
     $handleSecondButton = () => {
       admin.deleteStory(topic!.id);
       $showModal = false;
+      window.open('/dashboard/dream/manage/', '_self');
     };
     $modalContent = `<h2>Are you sure you want to delete this story?</h2>
         <h3>This action is irreversible. You will lose it forever!</h3>`;
@@ -72,7 +71,6 @@
   }
 
   const switchAvailable = (available: string) => {
-    console.log(available);
     if (available === 'available') return 'unavailable';
     else return 'available';
   };
@@ -84,7 +82,7 @@
 <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
 <section class="container-wrapper">
   {#if !topic}
-    <h2>Loading story...</h2>
+    <img class="loading-icon" src="/icons/loading.png" alt="Loading" />
   {:else}
     <!-- NAME, CATEGORY -->
     <div class="container blur">
@@ -104,13 +102,10 @@
             role="button"
             tabindex="0"
           >
-            <path
-              d="M -65 -65 L 65 65 M -65 65 L 65 -65"
-              fill="none"
-            />
+            <path d="M -65 -65 L 65 65 M -65 65 L 65 -65" fill="none" />
           </svg>
           <svg
-            xmlns='http://www.w3.org/2000/svg'
+            xmlns="http://www.w3.org/2000/svg"
             viewBox="-100 -100 200 200"
             class="checkmark-svg"
             fill="rgba(51, 226, 230, 0.75)"
@@ -126,11 +121,7 @@
           >
             <defs>
               <mask id="checkmark-svg-mask">
-                <circle
-                  r="85"
-                  stroke="none"
-                  fill="white"
-                />
+                <circle r="85" stroke="none" fill="white" />
                 <path
                   d="M -50 0 L -15 30 L 50 -35"
                   fill="none"
@@ -138,15 +129,11 @@
                 />
               </mask>
             </defs>
-            <circle
-              r="85"
-              stroke="none"
-              mask="url(#checkmark-svg-mask)"
-            />
+            <circle r="85" stroke="none" mask="url(#checkmark-svg-mask)" />
           </svg>
         {:else}
           <svg
-            xmlns='http://www.w3.org/2000/svg'
+            xmlns="http://www.w3.org/2000/svg"
             viewBox="-100 -100 200 200"
             class="edit-svg"
             stroke="rgba(51, 226, 230, 0.75)"
@@ -163,12 +150,10 @@
             role="button"
             tabindex="0"
           >
-            <path
-              d="M -10 -60 L -75 -60 L -75 75 L 60 75 L 60 10"
-            />  
+            <path d="M -10 -60 L -75 -60 L -75 75 L 60 75 L 60 10" />
             <path
               d="M -30 30 L -25 0 L 45 -70 M -30 30 L 0 25 L 70 -45 C  90 -60 60 -90 45 -70"
-              transform={editSvgHover ? "translate(-10 10)" : ""}
+              transform={editSvgHover ? 'translate(-10 10)' : ''}
             />
           </svg>
         {/if}
@@ -176,7 +161,7 @@
           bind:value={storyName}
           style={editingName ? activeInputStyling : ''}
           type="text"
-          size={storyName.length}
+          size={storyName.length + 1}
           maxlength="50"
           disabled={!editingName}
         />
@@ -196,11 +181,12 @@
                 .then(async () => (topic = await admin.fetchTopic(topic_name)))}
             >{topic.available}</button
           >
-          <button
-            on:click={() => {
-              console.log('DEMO');
-            }}>Play Demo</button
+          <a
+            class="button-anchor"
+            href={`/dashboard/dream/manage/demo?demoID=${topic.prompt_id}&demoName=${topic_name}`}
           >
+            Play Demo
+          </a>
         </div>
       {/key}
 
@@ -333,14 +319,15 @@
     </div>
 
     <!-- MEDIA FILES -->
-    <Media topic_id={topic!.id} />
+    <Media bind:topic_id={topic.id} />
 
     <button class="red-button blur" on:click={openModal}>Delete Story</button>
   {/if}
 </section>
 
 <style>
-  button {
+  button,
+  .button-anchor {
     text-transform: uppercase;
   }
 
@@ -406,7 +393,7 @@
     }
 
     .story-title {
-      width: 90vw;
+      max-width: 90vw;
       padding: 0.5em;
       border-radius: 1em;
       gap: 0.75em;

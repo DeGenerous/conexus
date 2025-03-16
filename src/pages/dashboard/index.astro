@@ -3,13 +3,16 @@ import Layout from '@layouts/Layout.astro';
 
 import Dashboard from '@components/Dashboard.svelte';
 
-const arrow = true;
-
 const meta = {
-  header: 'Dashboard',
+  header: 'Track Your Universe',
+  nav: 'Dashboard',
+  subheading:
+    'Monitor plays, optimize engagement, and keep your best stories at the top.',
 };
 ---
 
-<Layout {...meta} {arrow}>
-  <Dashboard client:load />
-</Layout>
+<main>
+  <Layout {...meta}>
+    <Dashboard client:load />
+  </Layout>
+</main>

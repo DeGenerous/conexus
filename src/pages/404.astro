@@ -1,0 +1,20 @@
+---
+import Layout from '@layouts/Layout.astro';
+import UseReferral from '@components/routes/Referral.svelte';
+
+const meta = {
+  header: 'You’ve Entered the Void…',
+  nav: '404',
+  arrow: 'back',
+};
+---
+
+<main>
+  <Layout {...meta}>
+    <div class="container blur">
+      <h3>Page couldn’t be found. Try heading back home.</h3>
+      <a class="button-anchor" href="/"> HOME </a>
+      <h3>This part of the realm is still unwritten.</h3>
+    </div>
+  </Layout>
+</main>

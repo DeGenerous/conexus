@@ -258,7 +258,10 @@
                             L 35 -35
                           "
                       />
-                      <circle id="delete-circle-{continuable.story_id}" r="90" />
+                      <circle
+                        id="delete-circle-{continuable.story_id}"
+                        r="90"
+                      />
                     </svg>
                     <h3>
                       {continuable.story_id.split('-')[0]} - {new Date(

@@ -1,6 +1,12 @@
 import { api_error } from '@errors/index';
 import { AccountAPI, AuthAPI } from '@service/routes';
-import { authenticated, referralCodes, web3LoggedIn, userCheck, accountError } from '@stores/account';
+import {
+  authenticated,
+  referralCodes,
+  web3LoggedIn,
+  userCheck,
+  accountError,
+} from '@stores/account';
 import { toastStore } from '@stores/toast';
 
 export class Account {

@@ -90,7 +90,9 @@ export default class Fetcher {
         }
 
         // check if error contains failed to parse /api/ and retry
-        if ((error as Error).message.includes('Failed to parse URL from /api/')) {
+        if (
+          (error as Error).message.includes('Failed to parse URL from /api/')
+        ) {
           return this.request(endpoint, options, responseType, retries, delay);
         }
 

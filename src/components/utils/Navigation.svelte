@@ -11,29 +11,33 @@
   const sections: string[] = ['Community Picks', 'Collabs', 'Dischordian Saga'];
 
   $: activeSectionIndex = sections.indexOf(activeTab);
-  $: prevSectionIndex = activeSectionIndex == 0 ? sections.length - 1 : activeSectionIndex - 1;
+  $: prevSectionIndex =
+    activeSectionIndex == 0 ? sections.length - 1 : activeSectionIndex - 1;
 
   const navigateHome = () => {
     window.open('/', '_self');
-  }
+  };
 
   const navigateDashboard = () => {
     window.open('/dashboard', '_self');
-  }
+  };
 
   const navigateDream = () => {
     window.open('/dashboard/dream', '_self');
-  }
+  };
 
   const navigateBackSection = () => {
     if (!sections.includes(activeTab)) return;
     window.open(`/${sections[prevSectionIndex]}`, '_self');
-  }
+  };
 
   const navigateNextSection = () => {
     if (!sections.includes(activeTab)) return;
-    window.open(`/${sections[(activeSectionIndex + 1) % sections.length]}`, '_self');
-  }
+    window.open(
+      `/${sections[(activeSectionIndex + 1) % sections.length]}`,
+      '_self',
+    );
+  };
 </script>
 
 <nav>
@@ -81,10 +85,7 @@
     role="button"
     tabindex="0"
   >
-    <img
-      src="/icons/switch-arrow.svg"
-      alt="Switch"
-    />
+    <img src="/icons/switch-arrow.svg" alt="Switch" />
     {#if sections.includes(activeTab)}
       <p>{sections[prevSectionIndex]}</p>
     {/if}
@@ -98,10 +99,7 @@
       role="button"
       tabindex="0"
     >
-      <img
-        src="/icons/dashboard.svg"
-        alt="Switch"
-      />
+      <img src="/icons/dashboard.svg" alt="Switch" />
       <p>Dashboard</p>
     </span>
   {/if}
@@ -113,11 +111,7 @@
     role="button"
     tabindex="0"
   >
-    <img
-      class="home"
-      src="/icons/home.svg"
-      alt="Home"
-    />
+    <img class="home" src="/icons/home.svg" alt="Home" />
     <p>Home</p>
   </span>
 
@@ -129,10 +123,7 @@
       role="button"
       tabindex="0"
     >
-      <img
-        src="/icons/dream.svg"
-        alt="Dream"
-      />
+      <img src="/icons/dream.svg" alt="Dream" />
       <p>Dream</p>
     </span>
   {/if}

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount } from 'svelte';
 
-  import { checkUserState } from "@utils/route-guard";
+  import { checkUserState } from '@utils/route-guard';
 
   onMount(async () => {
     await checkUserState('/dashboard/dream', true);

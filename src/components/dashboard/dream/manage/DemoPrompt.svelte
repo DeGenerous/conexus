@@ -37,7 +37,7 @@
     if (promptId) {
       story = await adminApp.demoPrompt(parseInt(promptId));
       loading = false;
-      console.log(story)
+      console.log(story);
     }
   };
 
@@ -46,7 +46,7 @@
     const { data } = await game.respond(story_id, choice);
     if (data) story = data;
     nextStepLoading = false;
-    console.log(data)
+    console.log(data);
   };
 
   $: step = story as StepData;
@@ -54,7 +54,7 @@
 
 <section class="container-wrapper">
   <div class="container blur" class:story-container={story}>
-  <h3 class:hide={story}>Experience how your prompt comes to life.</h3>
+    <h3 class:hide={story}>Experience how your prompt comes to life.</h3>
     {#if !demoStarted}
       <button class="start-btn" on:click={startDemo} disabled={!topic_name}>
         {#if topic_name}
@@ -96,7 +96,8 @@
           {#each step.options as option, i}
             <button
               class="option"
-              on:click={() => story && handleResponse(story.id.toString(), i + 1)}
+              on:click={() =>
+                story && handleResponse(story.id.toString(), i + 1)}
               disabled={nextStepLoading}
             >
               <svg
@@ -139,7 +140,9 @@
         <h3>Step {step.step}</h3>
       </div>
     {/if}
-  <h3 class:hide={story}>Play through the opening moments of your creation and refine your vision.</h3>
+    <h3 class:hide={story}>
+      Play through the opening moments of your creation and refine your vision.
+    </h3>
   </div>
 </section>
 

@@ -98,7 +98,7 @@ export class AdminApp extends AdminAPI {
 
   /**
    * Demos a story prompt by its prompt ID.
-   * 
+   *
    * @param prompt_id - The ID of the prompt to demo.
    * @returns A promise that resolves when the prompt is successfully demoed.
    */
@@ -114,7 +114,7 @@ export class AdminApp extends AdminAPI {
       return null;
     }
 
-    return data
+    return data;
   }
 
   /**

@@ -164,7 +164,7 @@
           bind:value={storyName}
           style={editingName ? activeInputStyling : ''}
           type="text"
-          size={storyName.length}
+          size={storyName.length + 1}
           maxlength="50"
           disabled={!editingName}
         />
@@ -329,7 +329,8 @@
 </section>
 
 <style>
-  button, .button-anchor {
+  button,
+  .button-anchor {
     text-transform: uppercase;
   }
 

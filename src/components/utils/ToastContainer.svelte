@@ -22,7 +22,7 @@
       message = urlParams.get('message');
 
       if (message) {
-        toastStore.show(message, "error")
+        toastStore.show(message, 'error');
         history.replaceState(null, '', window.location.pathname); // Remove message from URL
       }
     }

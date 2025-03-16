@@ -17,23 +17,21 @@
 
 {#if $userCheck}
   <img class="loading" src="/icons/loading.png" alt="Loading" />
+{:else if isLogged}
+  <Intro />
 {:else}
-  {#if isLogged}
-    <Intro />
-  {:else}
-    <section class="blur">
-      <h3>Please</h3>
-      <button
-        on:click={() => ($showProfile = true)}
-        on:pointerover={() => (signInSvgFocus = true)}
-        on:pointerout={() => (signInSvgFocus = false)}
-      >
-        <DoorSVG state="inside" {signInSvgFocus} />
-        Sign in your Profile
-      </button>
-      <h3>to access stories.</h3>
-    </section>
-  {/if}
+  <section class="blur">
+    <h3>Please</h3>
+    <button
+      on:click={() => ($showProfile = true)}
+      on:pointerover={() => (signInSvgFocus = true)}
+      on:pointerout={() => (signInSvgFocus = false)}
+    >
+      <DoorSVG state="inside" {signInSvgFocus} />
+      Sign in your Profile
+    </button>
+    <h3>to access stories.</h3>
+  </section>
 {/if}
 
 <style>

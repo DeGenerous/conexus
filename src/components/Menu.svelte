@@ -16,7 +16,7 @@
 <!-- Logged In -->
 
 {#if $userCheck}
-  <img class="loading" src="/icons/loading.png" alt="Loading" />
+  <img class="loading-icon" src="/icons/loading.png" alt="Loading" />
 {:else if isLogged}
   <Intro />
 {:else}
@@ -50,13 +50,8 @@
       0 0 0.5vw #010020;
   }
 
-  .loading {
+  .loading-icon {
     height: 13.1vw;
-    width: auto;
-    opacity: 0;
-    transform: scale(0);
-    filter: grayscale(100%);
-    animation: loadingLogo 5s cubic-bezier(0.14, 0.75, 0.2, 1) forwards;
   }
 
   @media only screen and (max-width: 600px) {
@@ -67,30 +62,8 @@
       border-radius: 1em;
     }
 
-    .loading {
+    .loading-icon {
       height: 32vw;
-    }
-  }
-
-  @keyframes loadingLogo {
-    0% {
-      transform: scale(0);
-      opacity: 0;
-      filter: grayscale(100%);
-    }
-    10% {
-      transform: scale(1.5);
-      opacity: 1;
-      filter: brightness(125%);
-    }
-    20% {
-      transform: scale(1);
-      opacity: 1;
-      filter: none;
-    }
-    100% {
-      transform: scale(2) rotate(-1080deg);
-      opacity: 0;
     }
   }
 </style>

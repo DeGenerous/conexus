@@ -85,7 +85,7 @@
 <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
 <section class="container-wrapper">
   {#if !topic}
-    <h2>Loading story...</h2>
+    <img class="loading-icon" src="/icons/loading.png" alt="Loading" />
   {:else}
     <!-- NAME, CATEGORY -->
     <div class="container blur">

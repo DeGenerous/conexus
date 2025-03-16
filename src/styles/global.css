@@ -328,6 +328,15 @@ main {
   animation: searching 1s linear infinite;
 }
 
+.loading-icon {
+  height: 15vw;
+  width: auto;
+  opacity: 0;
+  transform: scale(0);
+  filter: grayscale(100%);
+  animation: loadingLogo 5s cubic-bezier(0.14, 0.75, 0.2, 1) forwards;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -357,5 +366,27 @@ main {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes loadingLogo {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+    filter: grayscale(100%);
+  }
+  10% {
+    transform: scale(1.5);
+    opacity: 1;
+    filter: brightness(125%);
+  }
+  20% {
+    transform: scale(1);
+    opacity: 1;
+    filter: none;
+  }
+  100% {
+    transform: scale(2) rotate(-1080deg);
+    opacity: 0;
   }
 }

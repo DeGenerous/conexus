@@ -55,7 +55,7 @@
 <section class="container-wrapper">
   {#key availabilityKey}
     {#await admin.fetchCollections()}
-      <h2>Loading collections...</h2>
+      <img class="loading-icon" src="/icons/loading.png" alt="Loading" />
     {:then collections}
       {#each collections as { category_id, category_name, section_id, topics }}
         <section class="container blur">

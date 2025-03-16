@@ -14,7 +14,7 @@
 </script>
 
 {#if loading}
-  <h2 class="loading">Loading data...</h2>
+  <img class="loading-icon" src="/icons/loading.png" alt="Loading" />
 {:else}
   <section class="container-wrapper">
     <GeneralInfo />

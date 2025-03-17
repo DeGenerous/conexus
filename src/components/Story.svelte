@@ -284,7 +284,7 @@
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       on:click|preventDefault={() => {
-                        if (!$loading) game.continueGame(continuable);
+                        if (!$loading) game.continueGame(continuable, handleSetMedia);
                       }}
                       on:pointerover={() => {
                         if (!$loading)

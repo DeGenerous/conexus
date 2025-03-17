@@ -136,6 +136,20 @@ export class Account {
   }
 
   async subscriptionStatus(): Promise<SubscriptionStatus> {
+    const CACHE_KEY = 'subscription_status';
+    const CACHE_EXPIRY_KEY = 'subscription_status_expiry';
+    const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
+
+    const cachedData = localStorage.getItem(CACHE_KEY);
+    const cacheExpiry = localStorage.getItem(CACHE_EXPIRY_KEY);
+    const now = Date.now();
+
+    // Check if cache exists and is still valid
+    if (cachedData && cacheExpiry && now < parseInt(cacheExpiry)) {
+      return JSON.parse(cachedData);
+    }
+
+    // Fetch fresh data
     const { data, error } = await this.accountAPI.subscriptionStatus();
 
     if (!data) {
@@ -147,6 +161,13 @@ export class Account {
       }
       return { is_active: false, subscribed_at: null, unsubscribed_at: null };
     }
+
+    // Store in localStorage with expiry timestamp
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    localStorage.setItem(
+      CACHE_EXPIRY_KEY,
+      (now + CACHE_DURATION_MS).toString(),
+    );
 
     return data;
   }
@@ -189,6 +210,27 @@ export class Account {
 
   async me(): Promise<void> {
     userCheck.set(true);
+
+    // Try getting user data from localStorage
+    const cachedUser = localStorage.getItem('user');
+
+    if (cachedUser) {
+      const { user, timestamp } = JSON.parse(cachedUser);
+      const now = Date.now();
+
+      // Check if cached data is still valid (1 minute expiration)
+      if (now - timestamp < 60000) {
+        authenticated.set({ user, loggedIn: true });
+        web3LoggedIn.set(true);
+        userCheck.set(false);
+        return;
+      } else {
+        // Remove expired cache
+        localStorage.removeItem('user');
+      }
+    }
+
+    // If no valid cached user, fetch from API
     const { data, error } = await this.accountAPI.me();
     userCheck.set(false);
 
@@ -200,6 +242,15 @@ export class Account {
       }
       return;
     }
+
+    // Store user data in localStorage with timestamp
+    localStorage.setItem(
+      'user',
+      JSON.stringify({
+        user: data.user,
+        timestamp: Date.now(),
+      }),
+    );
 
     authenticated.set({ user: data.user, loggedIn: true });
     web3LoggedIn.set(true);
@@ -288,7 +339,28 @@ export class Account {
     // window.location.reload();
   }
 
-  async getReferraLCodes(): Promise<void> {
+  async getReferralCodes(): Promise<void> {
+    const CACHE_KEY = 'referral_codes';
+    const CACHE_DURATION_MS = 10 * 60 * 1000; // 5 minutes
+
+    const cachedData = localStorage.getItem(CACHE_KEY);
+
+    if (cachedData) {
+      const { referralCodes, timestamp } = JSON.parse(cachedData);
+
+      const now = Date.now();
+
+      // Check if cache exists and is still valid
+      if (referralCodes && timestamp && now < parseInt(timestamp)) {
+        referralCodes.set(referralCodes);
+        return;
+      } else {
+        // Remove expired cache
+        localStorage.removeItem(CACHE_KEY);
+      }
+    }
+
+    // Fetch fresh data
     const { data, error } = await this.accountAPI.getReferralCodes();
 
     if (!data) {
@@ -299,6 +371,15 @@ export class Account {
       }
       return;
     }
+
+    // Store in localStorage with expiry timestamp
+    localStorage.setItem(
+      CACHE_KEY,
+      JSON.stringify({
+        referralCodes: data.codes,
+        timestamp: Date.now() + CACHE_DURATION_MS,
+      }),
+    );
 
     referralCodes.set(data.codes);
   }

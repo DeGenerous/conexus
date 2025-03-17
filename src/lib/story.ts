@@ -8,7 +8,6 @@ import {
   story,
 } from '@stores/conexus';
 import { toastStore } from '@stores/toast';
-import { set } from 'astro:schema';
 
 export let storyTitle: string;
 
@@ -96,7 +95,7 @@ export class CoNexusGame extends GameAPI {
   }
 
   // Start New Game
-  async startGame(story_name: string, topic_id: number, setMedia: (topic_id: number) => void): Promise<void> {
+  async startGame(story_name: string, topic_id: number, setMedia: (topic_id: number) => Promise<void>): Promise<void> {
     //TODO: change all story_name to topic_id
     loading.set(true);
 
@@ -111,14 +110,16 @@ export class CoNexusGame extends GameAPI {
       return;
     }
 
+    storyTitle = story_name;
+
     // Set background image and music
-    setMedia(topic_id);
+    await setMedia(topic_id);
 
     await this.#setStepData(data); // ✅ Use this instead of new instance
   }
 
   // Continue pre-existing game
-  async continueGame(continuable: ContinuableStory): Promise<void> {
+  async continueGame(continuable: ContinuableStory, setMedia: (topic_id: number) => Promise<void>): Promise<void> {
     loading.set(true);
 
     // Start new game
@@ -133,9 +134,10 @@ export class CoNexusGame extends GameAPI {
       return;
     }
 
+    storyTitle = continuable.category;
+
     // Set background image and music
-    CoNexusGame.setBackgroundImage(continuable.category);
-    CoNexusGame.playBackgroundMusic(continuable.category);
+    await setMedia(continuable.topic_id);
 
     // Initialize game
 

@@ -50,10 +50,13 @@
   let loginMail: string = '';
   let loginPassword: string = '';
 
+  let subStatus: SubscriptionStatus | null = null;
+
   let account: Account = new Account();
 
   onMount(async () => {
-    account.me();
+    await account.me();
+    subStatus = await account.subscriptionStatus();
   });
 
   authenticated.subscribe((value) => {
@@ -62,7 +65,7 @@
   });
 
   $: if (isLogged && account) {
-    account.getReferraLCodes();
+    account.getReferralCodes();
   }
 
   // Change password
@@ -631,14 +634,16 @@
         {/if}
 
         {#key updateNewsletterStatus}
-          {#await account.subscriptionStatus() then { is_active, subscribed_at }}
+          {#if subStatus}
             <hr />
 
-            {#if is_active}
+            {#if subStatus.is_active}
               <h2>Newsletter Subscription</h2>
 
-              {#if subscribed_at}
-                <h3>Active since: {dateToString(subscribed_at.Time)}</h3>
+              {#if subStatus.subscribed_at}
+                <h3>
+                  Active since: {dateToString(subStatus.subscribed_at.Time)}
+                </h3>
               {/if}
               <h3
                 class="unsubscribe-button"
@@ -666,7 +671,7 @@
                 </button>
               </div>
             {/if}
-          {/await}
+          {/if}
         {/key}
 
         {#if $accountError && $accountError.subscribeNewsletter}

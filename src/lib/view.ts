@@ -17,8 +17,21 @@ export class CoNexusApp extends ViewAPI {
     return CoNexusApp.instance;
   }
 
-  // Fetch the view
   async getSections(): Promise<Section[]> {
+    const CACHE_KEY = 'sections';
+    const CACHE_EXPIRY_KEY = 'sections_expiry';
+    const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+    const cachedData = localStorage.getItem(CACHE_KEY);
+    const cacheExpiry = localStorage.getItem(CACHE_EXPIRY_KEY);
+    const now = Date.now();
+
+    // Return cached data if valid
+    if (cachedData && cacheExpiry && now < parseInt(cacheExpiry)) {
+      return JSON.parse(cachedData);
+    }
+
+    // Fetch fresh data
     const { data, error } = await this.sections();
 
     if (!data) {
@@ -29,6 +42,13 @@ export class CoNexusApp extends ViewAPI {
       }
       return [];
     }
+
+    // Store in localStorage with expiry timestamp
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    localStorage.setItem(
+      CACHE_EXPIRY_KEY,
+      (now + CACHE_DURATION_MS).toString(),
+    );
 
     return data;
   }
@@ -71,6 +91,22 @@ export class CoNexusApp extends ViewAPI {
   }
 
   async getGenres(): Promise<Genre[]> {
+    const CACHE_KEY = 'genres';
+    const CACHE_EXPIRY_KEY = 'genres_expiry';
+    const CACHE_DURATION_MS = 5 * 60 * 60 * 1000; // 5 hours
+
+    const cachedData = localStorage.getItem(CACHE_KEY);
+    const cacheExpiry = localStorage.getItem(CACHE_EXPIRY_KEY);
+    const now = Date.now();
+
+    // Return cached data if valid
+    if (cachedData && cacheExpiry && now < parseInt(cacheExpiry)) {
+      const genres = JSON.parse(cachedData);
+      availableGenres.set(genres); // Update store with cached data
+      return genres;
+    }
+
+    // Fetch fresh data
     const { data, error } = await this.genres();
 
     if (!data) {
@@ -82,9 +118,16 @@ export class CoNexusApp extends ViewAPI {
       return [];
     }
 
-    availableGenres.set(data);
+    // Store in localStorage with expiry timestamp
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    localStorage.setItem(
+      CACHE_EXPIRY_KEY,
+      (now + CACHE_DURATION_MS).toString(),
+    );
 
-    return data; // TODO: add to store
+    availableGenres.set(data); // Update store
+
+    return data;
   }
 
   async getGenreTopics(

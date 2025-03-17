@@ -4,6 +4,7 @@
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
   import Tts from '@components/music/Tts.svelte';
   import Step from '@components/Step.svelte';
+  import MediaManager from '@lib/media';
   import { CoNexusGame } from '@lib/story';
   import { loading, story, background_image } from '@stores/conexus';
   import {
@@ -22,6 +23,7 @@
   export let story_name: string;
 
   const game: CoNexusGame = new CoNexusGame();
+  const media: MediaManager = new MediaManager();
 
   onMount(async () => {
     await checkUserState('/story');
@@ -30,6 +32,11 @@
   let deletedStories: string[] = []; // temp storage before reload for immediate removal
   let noUnfinishedStoriesLeft: boolean = false;
   let backgroundImageUrl: string = '/defaultBG.avif';
+
+  const handleSetMedia = async (topic_id: number) => {
+    await media.setBackgroundImage(topic_id);
+    await media.playBackgroundMusic(topic_id);
+  };
 
   background_image.subscribe((value) => {
     if (value) {
@@ -131,7 +138,7 @@
       </header>
 
       <div class="story-container blur">
-        {#await game.fetch_story_imagev2(topic.id, 'description')}
+        {#await media.fetchStoryImage(topic.id, 'description')}
           <div class="picture default-picture"></div>
         {:then storyImage}
           <img
@@ -158,7 +165,7 @@
             <Share />
             <button
               on:click={() =>
-                topic && game.startGame(topic.name, topic.id)}
+                topic && game.startGame(topic.name, topic.id, handleSetMedia)}
               disabled={$loading}
               style={$loading ? 'color: rgb(51, 226, 230)' : ''}
             >

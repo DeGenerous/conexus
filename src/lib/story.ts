@@ -8,6 +8,7 @@ import {
   story,
 } from '@stores/conexus';
 import { toastStore } from '@stores/toast';
+import { set } from 'astro:schema';
 
 export let storyTitle: string;
 
@@ -95,7 +96,7 @@ export class CoNexusGame extends GameAPI {
   }
 
   // Start New Game
-  async startGame(story_name: string, topic_id: number): Promise<void> {
+  async startGame(story_name: string, topic_id: number, setMedia: (topic_id: number) => void): Promise<void> {
     //TODO: change all story_name to topic_id
     loading.set(true);
 
@@ -110,8 +111,8 @@ export class CoNexusGame extends GameAPI {
       return;
     }
 
-    CoNexusGame.setBackgroundImage(story_name);
-    CoNexusGame.playBackgroundMusic(story_name);
+    // Set background image and music
+    setMedia(topic_id);
 
     await this.#setStepData(data); // ✅ Use this instead of new instance
   }

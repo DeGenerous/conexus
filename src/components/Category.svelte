@@ -17,26 +17,38 @@
   let genres: Genre[] = [];
 
   onMount(async () => {
-    await checkUserState(`/${section}`);
-    web3LoggedIn.subscribe((value) => {
-      isWeb3LoggedIn = value;
-    });
-    checkWeb3LoginState(isWeb3LoggedIn, section);
-
-    await app.getSections().then((sections) => {
-      const sectionNames = sections.map((object) => object.name);
-      if (!sectionNames.includes(section)) window.open('/404', '_self');
-    });
-
     try {
-      categories = await app.getSectionCategories(section);
+      await checkUserState(`/${section}`);
+
+      // Subscribe to web3LoggedIn and check login state
+      const unsubscribe = web3LoggedIn.subscribe((value) => {
+        isWeb3LoggedIn = value;
+        checkWeb3LoginState(isWeb3LoggedIn, section);
+      });
+
+      // Fetch sections and verify if the section exists
+      const sections = await app.getSections();
+      if (!sections.some(({ name }) => name === section)) {
+        window.location.href = '/404';
+        return;
+      }
+
+      // Fetch categories and genres in parallel
+      [categories, genres] = await Promise.all([
+        app.getSectionCategories(section).catch((err) => {
+          console.error('Failed to fetch categories:', err);
+          return []; // Fallback to an empty array
+        }),
+        app.getGenres().catch((err) => {
+          console.error('Failed to fetch genres:', err);
+          return []; // Fallback to an empty array
+        }),
+      ]);
+
+      // Unsubscribe when done to avoid memory leaks (optional)
+      unsubscribe();
     } catch (error) {
-      console.error('Failed to fetch categories:', error);
-    }
-    try {
-      genres = await app.getGenres();
-    } catch (error) {
-      console.error('Failed to fetch genres:', error);
+      console.error('Error in onMount:', error);
     }
   });
 

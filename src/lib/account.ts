@@ -1,3 +1,14 @@
+import {
+  USER_CACHE_KEY,
+  USER_CACHE_TTL,
+  REFERRAL_CODES_CACHE_KEY,
+  REFERRAL_CODES_CACHE_TTL,
+  SUBSCRIPTIONSTATUS_CACHE_KEY,
+  SUBSCRIPTIONSTATUS_CACHE_TTL,
+  ClearCache,
+  GetCache,
+  SetCache,
+} from '@constants/cache';
 import { api_error } from '@errors/index';
 import { AccountAPI, AuthAPI } from '@service/routes';
 import {
@@ -136,17 +147,11 @@ export class Account {
   }
 
   async subscriptionStatus(): Promise<SubscriptionStatus> {
-    const CACHE_KEY = 'subscription_status';
-    const CACHE_EXPIRY_KEY = 'subscription_status_expiry';
-    const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
-
-    const cachedData = localStorage.getItem(CACHE_KEY);
-    const cacheExpiry = localStorage.getItem(CACHE_EXPIRY_KEY);
-    const now = Date.now();
-
-    // Check if cache exists and is still valid
-    if (cachedData && cacheExpiry && now < parseInt(cacheExpiry)) {
-      return JSON.parse(cachedData);
+    const cachedData = GetCache<SubscriptionStatus>(
+      SUBSCRIPTIONSTATUS_CACHE_KEY,
+    );
+    if (cachedData) {
+      return cachedData;
     }
 
     // Fetch fresh data
@@ -163,11 +168,7 @@ export class Account {
     }
 
     // Store in localStorage with expiry timestamp
-    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-    localStorage.setItem(
-      CACHE_EXPIRY_KEY,
-      (now + CACHE_DURATION_MS).toString(),
-    );
+    SetCache(SUBSCRIPTIONSTATUS_CACHE_KEY, data, SUBSCRIPTIONSTATUS_CACHE_TTL);
 
     return data;
   }
@@ -212,22 +213,12 @@ export class Account {
     userCheck.set(true);
 
     // Try getting user data from localStorage
-    const cachedUser = localStorage.getItem('user');
-
+    const cachedUser = GetCache<User>(USER_CACHE_KEY);
     if (cachedUser) {
-      const { user, timestamp } = JSON.parse(cachedUser);
-      const now = Date.now();
-
-      // Check if cached data is still valid (1 minute expiration)
-      if (now - timestamp < 60000) {
-        authenticated.set({ user, loggedIn: true });
-        web3LoggedIn.set(true);
-        userCheck.set(false);
-        return;
-      } else {
-        // Remove expired cache
-        localStorage.removeItem('user');
-      }
+      authenticated.set({ user: cachedUser, loggedIn: true });
+      web3LoggedIn.set(true);
+      userCheck.set(false);
+      return;
     }
 
     // If no valid cached user, fetch from API
@@ -240,17 +231,12 @@ export class Account {
       } else {
         toastStore.show('Error getting current user', 'error');
       }
+      ClearCache('auth');
       return;
     }
 
     // Store user data in localStorage with timestamp
-    localStorage.setItem(
-      'user',
-      JSON.stringify({
-        user: data.user,
-        timestamp: Date.now(),
-      }),
-    );
+    SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
     authenticated.set({ user: data.user, loggedIn: true });
     web3LoggedIn.set(true);
@@ -264,6 +250,7 @@ export class Account {
       if (error) {
         api_error(error);
       }
+      ClearCache('auth');
       return null;
     }
 
@@ -299,6 +286,9 @@ export class Account {
       }
       return;
     }
+
+    // clear
+    ClearCache('auth');
 
     authenticated.set({ user: null, loggedIn: false });
     web3LoggedIn.set(false);
@@ -340,24 +330,10 @@ export class Account {
   }
 
   async getReferralCodes(): Promise<void> {
-    const CACHE_KEY = 'referral_codes';
-    const CACHE_DURATION_MS = 10 * 60 * 1000; // 5 minutes
-
-    const cachedData = localStorage.getItem(CACHE_KEY);
-
+    const cachedData = GetCache<ReferralCode[]>(REFERRAL_CODES_CACHE_KEY);
     if (cachedData) {
-      const { referralCodes, timestamp } = JSON.parse(cachedData);
-
-      const now = Date.now();
-
-      // Check if cache exists and is still valid
-      if (referralCodes && timestamp && now < parseInt(timestamp)) {
-        referralCodes.set(referralCodes);
-        return;
-      } else {
-        // Remove expired cache
-        localStorage.removeItem(CACHE_KEY);
-      }
+      referralCodes.set(cachedData);
+      return;
     }
 
     // Fetch fresh data
@@ -373,13 +349,7 @@ export class Account {
     }
 
     // Store in localStorage with expiry timestamp
-    localStorage.setItem(
-      CACHE_KEY,
-      JSON.stringify({
-        referralCodes: data.codes,
-        timestamp: Date.now() + CACHE_DURATION_MS,
-      }),
-    );
+    SetCache(REFERRAL_CODES_CACHE_KEY, data.codes, REFERRAL_CODES_CACHE_TTL);
 
     referralCodes.set(data.codes);
   }

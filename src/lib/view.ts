@@ -1,3 +1,13 @@
+import {
+  GENRE_CACHE_KEY,
+  GENRE_CACHE_TTL,
+  SECTION_CACHE_KEY,
+  SECTION_CACHE_TTL,
+  SECTION_CATEGORY_CACHE_KEY,
+  SECTION_CATEGORY_CACHE_TTL,
+  GetCache,
+  SetCache,
+} from '@constants/cache';
 import { api_error } from '@errors/index';
 import { ViewAPI } from '@service/routes';
 import { toastStore } from '@stores/toast';
@@ -18,17 +28,10 @@ export class CoNexusApp extends ViewAPI {
   }
 
   async getSections(): Promise<Section[]> {
-    const CACHE_KEY = 'sections';
-    const CACHE_EXPIRY_KEY = 'sections_expiry';
-    const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
-
-    const cachedData = localStorage.getItem(CACHE_KEY);
-    const cacheExpiry = localStorage.getItem(CACHE_EXPIRY_KEY);
-    const now = Date.now();
-
     // Return cached data if valid
-    if (cachedData && cacheExpiry && now < parseInt(cacheExpiry)) {
-      return JSON.parse(cachedData);
+    const cachedData = GetCache<Section[]>(SECTION_CACHE_KEY);
+    if (cachedData) {
+      return cachedData;
     }
 
     // Fetch fresh data
@@ -43,17 +46,18 @@ export class CoNexusApp extends ViewAPI {
       return [];
     }
 
-    // Store in localStorage with expiry timestamp
-    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-    localStorage.setItem(
-      CACHE_EXPIRY_KEY,
-      (now + CACHE_DURATION_MS).toString(),
-    );
+    // Store in localStorage
+    SetCache(SECTION_CACHE_KEY, data, SECTION_CACHE_TTL);
 
     return data;
   }
 
   async getSectionCategories(section: string): Promise<CategoryInSection[]> {
+    const cachedData = GetCache<CategoryInSection[]>(`${SECTION_CATEGORY_CACHE_KEY}_${section}`);
+    if (cachedData) {
+      return cachedData;
+    }
+
     const { data, error } = await this.sectionCategories(section);
 
     if (!data) {
@@ -70,6 +74,8 @@ export class CoNexusApp extends ViewAPI {
         return 0;
       },
     );
+
+    SetCache(`${SECTION_CATEGORY_CACHE_KEY}_${section}`, orderedCategories, SECTION_CATEGORY_CACHE_TTL);
 
     return orderedCategories;
   }
@@ -91,19 +97,9 @@ export class CoNexusApp extends ViewAPI {
   }
 
   async getGenres(): Promise<Genre[]> {
-    const CACHE_KEY = 'genres';
-    const CACHE_EXPIRY_KEY = 'genres_expiry';
-    const CACHE_DURATION_MS = 5 * 60 * 60 * 1000; // 5 hours
-
-    const cachedData = localStorage.getItem(CACHE_KEY);
-    const cacheExpiry = localStorage.getItem(CACHE_EXPIRY_KEY);
-    const now = Date.now();
-
-    // Return cached data if valid
-    if (cachedData && cacheExpiry && now < parseInt(cacheExpiry)) {
-      const genres = JSON.parse(cachedData);
-      availableGenres.set(genres); // Update store with cached data
-      return genres;
+    const cachedData = GetCache<Genre[]>(GENRE_CACHE_KEY);
+    if (cachedData) {
+      return cachedData;
     }
 
     // Fetch fresh data
@@ -118,12 +114,7 @@ export class CoNexusApp extends ViewAPI {
       return [];
     }
 
-    // Store in localStorage with expiry timestamp
-    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-    localStorage.setItem(
-      CACHE_EXPIRY_KEY,
-      (now + CACHE_DURATION_MS).toString(),
-    );
+    SetCache(GENRE_CACHE_KEY, data, GENRE_CACHE_TTL);
 
     availableGenres.set(data); // Update store
 

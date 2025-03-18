@@ -36,7 +36,7 @@
     </div>
   {:then sections}
     <div class="conexus-menu-tiles">
-      {#each sections as section}
+      {#each sections as section (section.id)}
         <MenuTile {section} />
       {/each}
     </div>

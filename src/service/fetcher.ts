@@ -58,9 +58,50 @@ export default class Fetcher {
   ): Promise<APIResponse<T>> {
     const headers: HeadersInit = {
       ...options.headers,
+      'Cache-Control': 'no-cache',
+    };
+
+    try {
+      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+        ...options,
+        headers,
+        credentials: 'include',
+      });
+
+      const contentType = response.headers.get('Content-Type');
+      const isJson = contentType && contentType.includes('application/json');
+
+      let responseData: APIResponse<T>;
+
+      if (responseType === 'json' && isJson) {
+        responseData = await response.json();
+      } else if (responseType === 'blob') {
+        responseData = { data: (await response.blob()) as T };
+      } else {
+        responseData = { data: (await response.text()) as unknown as T };
+      }
+
+      return responseData;
+    } catch (error) {
+      return { error: { message: (error as Error).message, details: error } };
+    }
+  }
+
+  protected async requestRetry<T>(
+    endpoint: string,
+    options: RequestInit = {},
+    responseType: 'json' | 'blob' = 'json',
+    retries = 3, // Number of retries before failing
+    delay = 500, // Initial delay in ms (doubles each retry)
+  ): Promise<APIResponse<T>> {
+    const headers: HeadersInit = {
+      ...options.headers,
+      'Cache-Control': 'no-cache',
     };
 
     for (let attempt = 0; attempt <= retries; attempt++) {
+      console.warn(`Fetching ${endpoint} (Attempt ${attempt + 1}/${retries})`);
+
       try {
         const response = await fetch(`${this.baseUrl}${endpoint}`, {
           ...options,
@@ -70,6 +111,7 @@ export default class Fetcher {
 
         const contentType = response.headers.get('Content-Type');
         const isJson = contentType && contentType.includes('application/json');
+
         let responseData: APIResponse<T>;
 
         if (responseType === 'json' && isJson) {
@@ -82,18 +124,26 @@ export default class Fetcher {
 
         return responseData;
       } catch (error) {
+        console.error(`Request failed to ${endpoint}:`, error);
+
         if (attempt < retries) {
           await new Promise((res) =>
             setTimeout(res, delay * Math.pow(2, attempt)),
-          ); // Exponential backoff
+          );
           continue;
         }
 
-        // check if error contains failed to parse /api/ and retry
         if (
-          (error as Error).message.includes('Failed to parse URL from /api/')
+          (error as Error).message.includes('Failed to parse URL from /api/') &&
+          retries > 0
         ) {
-          return this.request(endpoint, options, responseType, retries, delay);
+          return this.request(
+            endpoint,
+            options,
+            responseType,
+            retries - 1,
+            delay,
+          );
         }
 
         return { error: error as Error };

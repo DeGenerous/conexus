@@ -6,6 +6,7 @@
   import { background_volume, tts_volume } from '@stores/volumes';
 
   import Slider from './music/Slider.svelte';
+  import ImageDisplay from './utils/ImageDisplay.svelte';
 
   let fullWidthImage: boolean = false;
   let imageWrapper: HTMLDivElement;
@@ -174,14 +175,11 @@
     bind:this={imageWrapper}
     on:click={() => (fullWidthImage = !fullWidthImage)}
   >
-    {#if step.image}
-      <img class="image" src={`data:image/png;base64,${step.image}`} alt="" />
-    {:else}
-      <img class="image loading-image" src="/icons/loading.png" alt="" />
-      {#if width <= 600}
-        <p class="click-hint">Click to change image size</p>
-      {/if}
-    {/if}
+    <ImageDisplay
+      bind:image={step.image}
+      bind:image_type={step.image_type}
+      bind:width={width}
+    />
   </div>
 
   {#if step.title}
@@ -1037,39 +1035,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-
-  .image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 1em;
-  }
-
-  .loading-image {
-    object-fit: contain;
-    animation: pulse 5s linear infinite;
-  }
-
-  @keyframes pulse {
-    0% {
-      opacity: 0;
-    }
-    50% {
-      opacity: 0.5;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
-
-  .click-hint {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    bottom: 1em;
-    color: rgb(51, 226, 230);
-    animation: pulse 5s linear infinite;
   }
 
   .step-title {

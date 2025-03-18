@@ -31,6 +31,7 @@ type VolumeControl = {
 
 type ContinuableStory = {
   story_id: string;
+  topic_id: number;
   category: string;
   created?: string;
 };
@@ -60,6 +61,7 @@ type StepData = {
   trait_description?: string;
   options: string[];
   image?: string;
+  image_type?: ImageType;
   choice?: number;
   tts?: Blob;
 };

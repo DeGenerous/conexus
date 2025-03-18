@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { CoNexusGame } from '@lib/story';
+  import MediaManager from '@lib/media';
 
   export let section: string;
+  export let topicID: number;
   export let topicName: string;
 
-  const game: CoNexusGame = new CoNexusGame();
+  const media: MediaManager = new MediaManager();
 
   const storyName: string = (
     topicName.charAt(0).toUpperCase() + topicName.slice(1)
@@ -13,8 +14,8 @@
   const blankPicture = '/blank.avif';
 </script>
 
-<a class="tile" href="/{section}/{topicName}">
-  {#await game.fetch_story_image(topicName!, 'tile')}
+<a class="tile" href="/{section}/{topicName}?id={topicID}">
+  {#await media.fetchStoryImage(topicID, 'tile')}
     <img
       class="tile-picture"
       loading="lazy"
@@ -28,7 +29,7 @@
     <img
       class="tile-picture"
       loading="lazy"
-      src={storyImage ?? blankPicture}
+      src={storyImage}
       alt={storyName}
       draggable="false"
       height="1024"

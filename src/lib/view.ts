@@ -1,3 +1,13 @@
+import {
+  GENRE_CACHE_KEY,
+  GENRE_CACHE_TTL,
+  SECTION_CACHE_KEY,
+  SECTION_CACHE_TTL,
+  SECTION_CATEGORY_CACHE_KEY,
+  SECTION_CATEGORY_CACHE_TTL,
+  GetCache,
+  SetCache,
+} from '@constants/cache';
 import { api_error } from '@errors/index';
 import { ViewAPI } from '@service/routes';
 import { toastStore } from '@stores/toast';
@@ -17,8 +27,14 @@ export class CoNexusApp extends ViewAPI {
     return CoNexusApp.instance;
   }
 
-  // Fetch the view
   async getSections(): Promise<Section[]> {
+    // Return cached data if valid
+    const cachedData = GetCache<Section[]>(SECTION_CACHE_KEY);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // Fetch fresh data
     const { data, error } = await this.sections();
 
     if (!data) {
@@ -30,10 +46,18 @@ export class CoNexusApp extends ViewAPI {
       return [];
     }
 
+    // Store in localStorage
+    SetCache(SECTION_CACHE_KEY, data, SECTION_CACHE_TTL);
+
     return data;
   }
 
   async getSectionCategories(section: string): Promise<CategoryInSection[]> {
+    const cachedData = GetCache<CategoryInSection[]>(`${SECTION_CATEGORY_CACHE_KEY}_${section}`);
+    if (cachedData) {
+      return cachedData;
+    }
+
     const { data, error } = await this.sectionCategories(section);
 
     if (!data) {
@@ -50,6 +74,8 @@ export class CoNexusApp extends ViewAPI {
         return 0;
       },
     );
+
+    SetCache(`${SECTION_CATEGORY_CACHE_KEY}_${section}`, orderedCategories, SECTION_CATEGORY_CACHE_TTL);
 
     return orderedCategories;
   }
@@ -71,6 +97,12 @@ export class CoNexusApp extends ViewAPI {
   }
 
   async getGenres(): Promise<Genre[]> {
+    const cachedData = GetCache<Genre[]>(GENRE_CACHE_KEY);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // Fetch fresh data
     const { data, error } = await this.genres();
 
     if (!data) {
@@ -82,9 +114,11 @@ export class CoNexusApp extends ViewAPI {
       return [];
     }
 
-    availableGenres.set(data);
+    SetCache(GENRE_CACHE_KEY, data, GENRE_CACHE_TTL);
 
-    return data; // TODO: add to store
+    availableGenres.set(data); // Update store
+
+    return data;
   }
 
   async getGenreTopics(

@@ -1,3 +1,5 @@
+
+import { GetCache, SetCache, CATEGORY_CACHE_KEY, CATEGORY_CACHE_TTL } from '@constants/cache';
 import { api_error } from '@errors/index';
 import { AdminAPI } from '@service/routes';
 import { toastStore } from '@stores/toast';
@@ -41,6 +43,11 @@ export class AdminApp extends AdminAPI {
    * @returns {Promise<CategoryView[]>} A promise that resolves to an array of `CategoryView` objects.
    */
   async fetchCategories(): Promise<CategoryView[]> {
+    const cached = GetCache<CategoryView[]>(CATEGORY_CACHE_KEY);
+    if (cached) {
+      return cached;
+    }
+
     const { data, error } = await this.categories();
 
     if (!data) {
@@ -51,6 +58,8 @@ export class AdminApp extends AdminAPI {
       }
       return [];
     }
+
+    SetCache(CATEGORY_CACHE_KEY, data, CATEGORY_CACHE_TTL);
 
     return data;
   }

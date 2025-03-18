@@ -1,5 +1,6 @@
-import { Account } from '@lib/account';
-import { authenticated, web3LoggedIn } from '@stores/account';
+// import { Account } from '@lib/account';
+import { GetCache, USER_CACHE_KEY } from '@constants/cache';
+import { authenticated } from '@stores/account';
 
 function redirectTo(path: string) {
   if (typeof window !== 'undefined') {
@@ -31,15 +32,24 @@ export async function checkUserState(
   }
 
   if (isRouteMatched(path, protectedRoutes)) {
-    const user = await Account.getUser();
+    // get user from store if not in store try from cache
+    let user: Nullable<User>
+
+    authenticated.subscribe((value) => {
+      user = value.user
+    })
 
     if (!user) {
-      redirectTo('/');
-      return;
-    }
+      const cache = GetCache<User>(USER_CACHE_KEY);
+      if (cache) {
+        user = cache as User;
+      }
 
-    authenticated.set({ user: user, loggedIn: true });
-    web3LoggedIn.set(true);
+      if (!user) {
+        redirectTo('/');
+        return;
+      }
+    }
 
     if (checkAdmin && user.role !== 'admin') {
       redirectTo('/');

@@ -27,6 +27,7 @@ type MediaType =
   | 'document';
 
 type ThumbnailTopic = {
+  id: number;
   name: string;
   genres: string;
   description: string;

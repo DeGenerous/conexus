@@ -14,10 +14,10 @@
     "@sveltejs/vite-plugin-svelte": "5.0.3"
   },
   "devDependencies": {
-    "@astrojs/svelte": "7.0.4",
+    "@astrojs/svelte": "7.0.6",
     "@sveltejs/vite-plugin-svelte": "5.0.3",
-    "astro": "^5.4.2",
-    "svelte": "5.20.5"
+    "astro": "^5.5.2",
+    "svelte": "5.23.0"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -25,18 +25,18 @@
     "@astrojs/vercel": "^8.0.4",
     "@coinbase/wallet-sdk": "4.3.0",
     "@metamask/detect-provider": "^2.0.0",
-    "@metamask/sdk": "0.32.0",
+    "@metamask/sdk": "0.32.1",
     "@rainbow-me/rainbowkit": "2.2.4",
-    "@tanstack/react-query": "5.66.9",
+    "@tanstack/react-query": "5.68.0",
     "ethers": "6.13.5",
     "metamask": "^0.0.1-security",
-    "prettier": "3.5.2",
+    "prettier": "3.5.3",
     "prettier-plugin-svelte": "3.3.3",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "solc": "0.8.28",
-    "typescript": "5.7.3",
-    "viem": "2.23.5",
-    "wagmi": "2.14.12"
+    "solc": "0.8.29",
+    "typescript": "5.8.2",
+    "viem": "2.23.11",
+    "wagmi": "2.14.13"
   }
 }

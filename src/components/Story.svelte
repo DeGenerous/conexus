@@ -4,6 +4,7 @@
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
   import Tts from '@components/music/Tts.svelte';
   import Step from '@components/Step.svelte';
+  import MediaManager from '@lib/media';
   import { CoNexusGame } from '@lib/story';
   import { loading, story, background_image } from '@stores/conexus';
   import {
@@ -21,7 +22,10 @@
 
   export let story_name: string;
 
+  let scroll: number;
+
   const game: CoNexusGame = new CoNexusGame();
+  const media: MediaManager = new MediaManager();
 
   onMount(async () => {
     await checkUserState('/story');
@@ -30,6 +34,11 @@
   let deletedStories: string[] = []; // temp storage before reload for immediate removal
   let noUnfinishedStoriesLeft: boolean = false;
   let backgroundImageUrl: string = '/defaultBG.avif';
+
+  const handleSetMedia = async (topic_id: number) => {
+    await media.setBackgroundImage(topic_id);
+    await media.playBackgroundMusic(topic_id);
+  };
 
   background_image.subscribe((value) => {
     if (value) {
@@ -60,8 +69,6 @@
     }
   }
 
-  const blankPicture: string = '/blank.avif'; // temp
-
   // SVG Icons
   const handleDeleteSvg = (id: string, state: 'focus' | 'blur') => {
     const deleteSvgIcon = document.getElementById(`delete-icon-${id}`);
@@ -91,6 +98,8 @@
     }
   };
 </script>
+
+<svelte:window bind:scrollY={scroll} />
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $story === null}
@@ -133,12 +142,12 @@
       </header>
 
       <div class="story-container blur">
-        {#await game.fetch_story_image(story_name!, 'description')}
+        {#await media.fetchStoryImage(topic.id, 'description')}
           <div class="picture default-picture"></div>
         {:then storyImage}
           <img
             class="picture fade-in"
-            src={storyImage ?? blankPicture}
+            src={storyImage}
             alt={topic?.name}
             draggable="false"
             width="1024"
@@ -159,7 +168,8 @@
           <div class="story-buttons-container">
             <Share />
             <button
-              on:click={() => topic && game.startGame(topic.name)}
+              on:click={() =>
+                topic && game.startGame(topic.name, topic.id, handleSetMedia)}
               disabled={$loading}
               style={$loading ? 'color: rgb(51, 226, 230)' : ''}
             >
@@ -278,7 +288,7 @@
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       on:click|preventDefault={() => {
-                        if (!$loading) game.continueGame(continuable);
+                        if (!$loading) game.continueGame(continuable, handleSetMedia);
                       }}
                       on:pointerover={() => {
                         if (!$loading)
@@ -322,10 +332,14 @@
 {/if}
 
 <div
-  class="bg-container"
-  style="
-      background-image: url({backgroundImageUrl});
-      "
+  class="pc-background"
+  style:background-image={`url(${backgroundImageUrl})`}
+></div>
+
+<div
+  class="mobile-background"
+  style:background-image={`url(${backgroundImageUrl})`}
+  style:top={`max(-${scroll / 25}vh, -100vh)`}
 ></div>
 
 <style>
@@ -334,18 +348,23 @@
     background-color: black;
   }
 
-  .bg-container {
+  .pc-background {
+    display: block;
     z-index: -1000;
     position: fixed;
     top: 0;
     left: 0;
-    min-width: 100vw;
-    min-height: 100vh;
+    width: 100vw;
+    height: 100vh;
     background-size: cover;
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-position: center;
     opacity: 0.25;
+  }
+
+  .mobile-background {
+    display: none;
   }
 
   header {
@@ -557,6 +576,25 @@
   @media only screen and (max-width: 600px) {
     :global(html) {
       padding-bottom: 2em !important;
+    }
+
+    .pc-background {
+      display: none;
+    }
+
+    .mobile-background {
+      display: block;
+      z-index: -1000;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 200vh;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: top;
+      opacity: 0.25;
+      transition: none;
     }
 
     .story-info {

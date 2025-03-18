@@ -1,22 +1,33 @@
 <script>
   import { onMount } from 'svelte';
+  import {
+    GetCache,
+    SetCache,
+    COOKIE_CONSENT_KEY,
+    COOKIE_CONSENT_TTL,
+  } from '@constants/cache';
 
   let showBanner = false;
   let analyticsEnabled = false;
 
   onMount(() => {
-    const consent = localStorage.getItem('cookieConsent');
-    if (!consent) {
+    const cachedConsent = GetCache(COOKIE_CONSENT_KEY);
+    if (!cachedConsent) {
       showBanner = true;
     } else {
-      analyticsEnabled = consent === 'full';
+      analyticsEnabled = cachedConsent === 'full';
       if (analyticsEnabled) loadAnalytics();
     }
   });
 
   function acceptCookies(fullConsent) {
     analyticsEnabled = fullConsent;
-    localStorage.setItem('cookieConsent', fullConsent ? 'full' : 'essential');
+    
+    SetCache(
+      COOKIE_CONSENT_KEY,
+      fullConsent ? 'full' : 'essential',
+      COOKIE_CONSENT_TTL,
+    );
 
     if (fullConsent) {
       loadAnalytics();

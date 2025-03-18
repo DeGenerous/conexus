@@ -238,6 +238,38 @@ main {
   gap: 1vw;
 }
 
+/* Animations */
+
+.loading-animation {
+  background-image: linear-gradient(
+    to right,
+    rgba(51, 226, 230, 0),
+    rgba(51, 226, 230, 0),
+    rgba(51, 226, 230, 0.025),
+    rgba(51, 226, 230, 0),
+    rgba(51, 226, 230, 0)
+  );
+  background-size: 200% auto;
+  animation: flashlight 7.5s cubic-bezier(0.14, 0.75, 0.2, 1) infinite;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+.searching {
+  animation: searching 1s linear infinite;
+}
+
+.loading-icon {
+  height: 15vw;
+  width: auto;
+  opacity: 0;
+  transform: scale(0);
+  filter: grayscale(100%);
+  animation: loadingLogo 5s cubic-bezier(0.14, 0.75, 0.2, 1) forwards;
+}
+
 @media only screen and (max-width: 600px) {
   html {
     padding-bottom: 2em;
@@ -303,38 +335,10 @@ main {
     width: 75vw;
     gap: 1em;
   }
-}
 
-/* Animations */
-
-.loading-animation {
-  background-image: linear-gradient(
-    to right,
-    rgba(51, 226, 230, 0),
-    rgba(51, 226, 230, 0),
-    rgba(51, 226, 230, 0.025),
-    rgba(51, 226, 230, 0),
-    rgba(51, 226, 230, 0)
-  );
-  background-size: 200% auto;
-  animation: flashlight 7.5s cubic-bezier(0.14, 0.75, 0.2, 1) infinite;
-}
-
-.fade-in {
-  animation: fadeIn 0.5s ease-in-out forwards;
-}
-
-.searching {
-  animation: searching 1s linear infinite;
-}
-
-.loading-icon {
-  height: 15vw;
-  width: auto;
-  opacity: 0;
-  transform: scale(0);
-  filter: grayscale(100%);
-  animation: loadingLogo 5s cubic-bezier(0.14, 0.75, 0.2, 1) forwards;
+  .loading-icon {
+    height: 40vw;
+  }
 }
 
 @keyframes fadeIn {

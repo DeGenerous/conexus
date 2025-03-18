@@ -50,10 +50,12 @@
   let loginMail: string = '';
   let loginPassword: string = '';
 
+  let subStatus: SubscriptionStatus | null = null;
+
   let account: Account = new Account();
 
   onMount(async () => {
-    account.me();
+    await account.me();
   });
 
   authenticated.subscribe((value) => {
@@ -62,7 +64,8 @@
   });
 
   $: if (isLogged && account) {
-    account.getReferraLCodes();
+    account.getReferralCodes();
+    checkSubscription()
   }
 
   // Change password
@@ -169,7 +172,10 @@
   let signOutSvgFocus: boolean = false;
 
   // Newsletter
-  let updateNewsletterStatus: boolean | null = null;
+  const checkSubscription = async () => {
+    subStatus = await account.subscriptionStatus();
+  }
+
   const dateToString = (date: Date) => {
     const dateObject: Date = new Date(date);
 
@@ -630,44 +636,44 @@
           {/if}
         {/if}
 
-        {#key updateNewsletterStatus}
-          {#await account.subscriptionStatus() then { is_active, subscribed_at }}
-            <hr />
+        {#if subStatus}
+          <hr />
 
-            {#if is_active}
-              <h2>Newsletter Subscription</h2>
+          {#if subStatus.is_active}
+            <h2>Newsletter Subscription</h2>
 
-              {#if subscribed_at}
-                <h3>Active since: {dateToString(subscribed_at.Time)}</h3>
-              {/if}
-              <h3
-                class="unsubscribe-button"
+            {#if subStatus.subscribed_at}
+              <h3>
+                Active since: {dateToString(subStatus.subscribed_at.Time)}
+              </h3>
+            {/if}
+            <h3
+              class="unsubscribe-button"
+              on:click={() => {
+                account
+                  .unsubscribeNewsletter()
+                  .then(() => (checkSubscription()));
+              }}
+              role="button"
+              tabindex="0"
+            >
+              Unsubscribe
+            </h3>
+          {:else}
+            <div class="newsletter-subscription">
+              <h3>Subscribe to Newsletter:</h3>
+              <button
                 on:click={() => {
                   account
-                    .unsubscribeNewsletter()
-                    .then(() => (updateNewsletterStatus = true));
+                    .subscribeNewsletter()
+                    .then(() => (checkSubscription()));
                 }}
-                role="button"
-                tabindex="0"
               >
-                Unsubscribe
-              </h3>
-            {:else}
-              <div class="newsletter-subscription">
-                <h3>Subscribe to Newsletter:</h3>
-                <button
-                  on:click={() => {
-                    account
-                      .subscribeNewsletter()
-                      .then(() => (updateNewsletterStatus = false));
-                  }}
-                >
-                  Subscribe
-                </button>
-              </div>
-            {/if}
-          {/await}
-        {/key}
+                Subscribe
+              </button>
+            </div>
+          {/if}
+        {/if}
 
         {#if $accountError && $accountError.subscribeNewsletter}
           <p class="validation">{$accountError.subscribeNewsletter}</p>

@@ -1,12 +1,12 @@
-import { tracks } from '@constants/tracks';
+import {
+  GetCache,
+  SetCache,
+  TOPICS_CACHE_KEY,
+  TOPICS_CACHE_TTL,
+} from '@constants/cache';
 import { api_error } from '@errors/index';
 import { GameAPI } from '@service/routes';
-import {
-  background_image,
-  background_music,
-  loading,
-  story,
-} from '@stores/conexus';
+import { loading, story } from '@stores/conexus';
 import { toastStore } from '@stores/toast';
 
 export let storyTitle: string;
@@ -42,6 +42,14 @@ export class CoNexusGame extends GameAPI {
   }
 
   async getTopic(topic: string): Promise<ThumbnailTopic> {
+    const KEY = `${TOPICS_CACHE_KEY}_${topic}`
+    // TODO: change to topic_id later
+
+    const cachedData = GetCache<ThumbnailTopic>(KEY);
+    if (cachedData) {
+      return cachedData;
+    }
+
     const { data, error } = await this.topicByName(topic);
 
     if (!data) {
@@ -53,22 +61,9 @@ export class CoNexusGame extends GameAPI {
       throw new Error('Error fetching topic');
     }
 
+    SetCache(KEY, data, TOPICS_CACHE_TTL);
+
     return data;
-  }
-
-  async fetch_story_image(
-    category: string,
-    type: 'tile' | 'description',
-  ): Promise<string | null> {
-    let formattedFileName = CoNexusGame.#formatFileName(category);
-    let folderUrl = `https://media.degenerousdao.com/conexus-categories/images/${formattedFileName}/description/${type}.avif`;
-
-    let valid = await CoNexusGame.#isValidImageUrl(folderUrl);
-    if (valid) {
-      return folderUrl;
-    }
-
-    return null;
   }
 
   async storyContinuables(topic: string): Promise<ContinuableStory[]> {
@@ -94,8 +89,15 @@ export class CoNexusGame extends GameAPI {
     toastStore.show(data?.message || 'Story deleted', 'info');
   }
 
+  /* GAME */
+
   // Start New Game
-  async startGame(story_name: string): Promise<void> {
+  async startGame(
+    story_name: string,
+    topic_id: number,
+    setMedia: (topic_id: number) => Promise<void>,
+  ): Promise<void> {
+    //TODO: change all story_name to topic_id
     loading.set(true);
 
     const { data, error } = await this.start(story_name);
@@ -109,14 +111,18 @@ export class CoNexusGame extends GameAPI {
       return;
     }
 
-    CoNexusGame.setBackgroundImage(story_name);
-    CoNexusGame.playBackgroundMusic(story_name);
+    storyTitle = story_name;
+
+    await setMedia(topic_id);
 
     await this.#setStepData(data); // ✅ Use this instead of new instance
   }
 
   // Continue pre-existing game
-  async continueGame(continuable: ContinuableStory): Promise<void> {
+  async continueGame(
+    continuable: ContinuableStory,
+    setMedia: (topic_id: number) => Promise<void>,
+  ): Promise<void> {
     loading.set(true);
 
     // Start new game
@@ -131,11 +137,10 @@ export class CoNexusGame extends GameAPI {
       return;
     }
 
-    // Set background image and music
-    CoNexusGame.setBackgroundImage(continuable.category);
-    CoNexusGame.playBackgroundMusic(continuable.category);
+    storyTitle = continuable.category;
 
-    // Initialize game
+    // Set background image and music
+    await setMedia(continuable.topic_id);
 
     // Set step data
     await this.#setStepData(data);
@@ -183,44 +188,6 @@ export class CoNexusGame extends GameAPI {
 
   /* Media */
 
-  // Play background music
-  private static async playBackgroundMusic(story_name: string): Promise<void> {
-    let queue: string[] = JSON.parse(localStorage.getItem('queue') ?? '[]');
-
-    let categoryTrackURL: string | null = null;
-
-    if (story_name) {
-      categoryTrackURL = await this.#fetchRandomMusicUrl(story_name);
-      if (categoryTrackURL) {
-        const categoryFileExists = await fetch(categoryTrackURL).then(
-          (res) => res.ok,
-        );
-
-        if (categoryFileExists) {
-          background_music.set(categoryTrackURL);
-          return;
-        }
-      }
-    }
-
-    if (queue.length === 0) {
-      queue = this.#shuffle([...tracks]);
-    }
-
-    background_music.set(queue.pop());
-
-    localStorage.setItem('queue', JSON.stringify(queue));
-  }
-
-  // Get story background image
-  private static async setBackgroundImage(story_name: string) {
-    let url = await this.#fetch_background_image(story_name);
-
-    if (url) {
-      background_image.set(url);
-    }
-  }
-
   // Load the specified step image
   async #loadGameStepImage(step: number): Promise<void> {
     const { data, error } = await this.loadStepImage(this.step_data.id, step);
@@ -234,7 +201,9 @@ export class CoNexusGame extends GameAPI {
       return;
     }
 
-    this.step_data.image = data;
+    this.step_data.image = data.image;
+    this.step_data.image_type = data.type;
+
     story.set(this);
   }
 
@@ -252,6 +221,8 @@ export class CoNexusGame extends GameAPI {
     }
 
     this.step_data.image = data.image;
+    this.step_data.image_type = data.type;
+
     story.set(this);
   }
 
@@ -268,9 +239,18 @@ export class CoNexusGame extends GameAPI {
       return;
     }
 
-    this.jobID = data.job_id;
-    this.hasFetched = true;
-    this.#start_interval();
+    if ('job_id' in data) {
+      this.jobID = data.job_id;
+      this.hasFetched = true;
+      this.#start_interval();
+    }
+
+    if ('image' in data) {
+      this.step_data.image = data.image;
+      this.step_data.image_type = data.type;
+
+      story.set(this);
+    }
   }
 
   // Generate image status v2
@@ -286,6 +266,8 @@ export class CoNexusGame extends GameAPI {
 
       if (data.status === 'ready') {
         this.step_data.image = data.image;
+        this.step_data.image_type = data.type;
+
         story.set(this);
         this.#clear_interval();
       }
@@ -314,86 +296,6 @@ export class CoNexusGame extends GameAPI {
   }
 
   /* Helper */
-
-  static #formatFileName(category: string): string {
-    let fileName = category.toLowerCase();
-    let formattedFileName = fileName.replace(/[^a-z0-9]/g, '');
-
-    storyTitle = category;
-
-    return formattedFileName;
-  }
-
-  static #isValidImageUrl(url: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.src = url;
-      img.onload = () => resolve(true);
-      img.onerror = () => resolve(false);
-    });
-  }
-
-  static async #fetchRandomMusicUrl(category: string): Promise<string | null> {
-    const formattedFileName = this.#formatFileName(category);
-
-    const folderURL = `https://media.degenerousdao.com/conexus-categories/music/${formattedFileName}`;
-
-    const response = await fetch(folderURL);
-
-    if (!response.ok) {
-      return null;
-    }
-
-    const files = await response.json();
-
-    if (Array.isArray(files) && files.length > 0) {
-      let randomFile = files[Math.floor(Math.random() * files.length)];
-      let url = `${folderURL}/${randomFile.name}`;
-
-      return url;
-    }
-
-    return null;
-  }
-
-  static async #fetch_background_image(
-    category: string,
-  ): Promise<string | null> {
-    let formattedFileName = this.#formatFileName(category);
-    let folderUrl = `https://media.degenerousdao.com/conexus-categories/images/${formattedFileName}/backgrounds`;
-
-    let response = await fetch(folderUrl);
-    let files = await response.json();
-
-    if (Array.isArray(files) && files.length > 0) {
-      let randomFile = files[Math.floor(Math.random() * files.length)];
-      let url = `${folderUrl}/${randomFile.name}`;
-
-      let valid = await this.#isValidImageUrl(url);
-      if (valid) {
-        return url;
-      }
-    }
-
-    return null;
-  }
-
-  static #shuffle = <T>(array: T[]): T[] => {
-    let currentIndex = array.length,
-      randomIndex: number;
-
-    while (currentIndex !== 0) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex],
-        array[currentIndex],
-      ];
-    }
-
-    return array;
-  };
 
   #start_interval() {
     this.interval = setInterval(async () => {

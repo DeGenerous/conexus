@@ -22,6 +22,8 @@
 
   export let story_name: string;
 
+  let scroll: number;
+
   const game: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
 
@@ -96,6 +98,8 @@
     }
   };
 </script>
+
+<svelte:window bind:scrollY={scroll} />
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $story === null}
@@ -328,10 +332,14 @@
 {/if}
 
 <div
-  class="bg-container"
-  style="
-      background-image: url({backgroundImageUrl});
-      "
+  class="pc-background"
+  style:background-image={`url(${backgroundImageUrl})`}
+></div>
+
+<div
+  class="mobile-background"
+  style:background-image={`url(${backgroundImageUrl})`}
+  style:top={`max(-${scroll / 25}vh, -100vh)`}
 ></div>
 
 <style>
@@ -340,18 +348,23 @@
     background-color: black;
   }
 
-  .bg-container {
+  .pc-background {
+    display: block;
     z-index: -1000;
     position: fixed;
     top: 0;
     left: 0;
-    min-width: 100vw;
-    min-height: 100vh;
+    width: 100vw;
+    height: 100vh;
     background-size: cover;
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-position: center;
     opacity: 0.25;
+  }
+
+  .mobile-background {
+    display: none;
   }
 
   header {
@@ -563,6 +576,25 @@
   @media only screen and (max-width: 600px) {
     :global(html) {
       padding-bottom: 2em !important;
+    }
+
+    .pc-background {
+      display: none;
+    }
+
+    .mobile-background {
+      display: block;
+      z-index: -1000;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 200vh;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: top;
+      opacity: 0.25;
+      transition: none;
     }
 
     .story-info {

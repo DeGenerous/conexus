@@ -175,25 +175,11 @@
     bind:this={imageWrapper}
     on:click={() => (fullWidthImage = !fullWidthImage)}
   >
-    <!-- <ImageDisplay
+    <ImageDisplay
       bind:image={step.image}
       bind:image_type={step.image_type}
       bind:width={width}
-    /> -->
-    {#if step.image}
-      <img
-        class="image"
-        src={step.image_type === 'url'
-          ? step.image
-          : `data:image/png;base64,${step.image}`}
-        alt=""
-      />
-    {:else}
-      <img class="image loading-image" src="/icons/loading.png" alt="" />
-      {#if width <= 600}
-        <p class="click-hint">Click to change image size</p>
-      {/if}
-    {/if}
+    />
   </div>
 
   {#if step.title}
@@ -1049,39 +1035,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-
-  .image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 1em;
-  }
-
-  .loading-image {
-    object-fit: contain;
-    animation: pulse 5s linear infinite;
-  }
-
-  @keyframes pulse {
-    0% {
-      opacity: 0;
-    }
-    50% {
-      opacity: 0.5;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
-
-  .click-hint {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    bottom: 1em;
-    color: rgb(51, 226, 230);
-    animation: pulse 5s linear infinite;
   }
 
   .step-title {

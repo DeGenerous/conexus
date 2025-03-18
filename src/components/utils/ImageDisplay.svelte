@@ -58,7 +58,7 @@
 
   .loading-image {
     object-fit: contain;
-    animation: pulse 1.5s linear infinite;
+    animation: pulse 5s linear infinite;
   }
 
   @keyframes pulse {
@@ -79,6 +79,6 @@
     text-align: center;
     bottom: 1em;
     color: rgb(51, 226, 230);
-    animation: pulse 2s linear infinite;
+    animation: pulse 5s linear infinite;
   }
 </style>

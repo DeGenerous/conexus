@@ -56,6 +56,7 @@
     await admin.createNewStory(
       generatePrompt($storyData, $promptSettings, promptData),
     );
+    window.location.reload();
   };
 
   $: validation =

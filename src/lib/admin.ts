@@ -102,6 +102,8 @@ export class AdminApp extends AdminAPI {
       toastStore.show('Error creating new story', 'error');
     }
 
+    toastStore.show(`${prompt.topic} story created`, 'info');
+
     return;
   }
 

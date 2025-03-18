@@ -2,13 +2,13 @@ export const COOKIE_CONSENT_KEY = 'cookie_consent';
 export const COOKIE_CONSENT_TTL = 1000 * 60 * 60 * 24 * 30; // 1 month
 
 export const USER_CACHE_KEY = 'user';
-export const USER_CACHE_TTL = 1000 * 60 * 5; // 5 minutes
+export const USER_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
 
 export const SUBSCRIPTIONSTATUS_CACHE_KEY = 'subscription_status';
 export const SUBSCRIPTIONSTATUS_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
 
 export const REFERRAL_CODES_CACHE_KEY = 'referral_codes';
-export const REFERRAL_CODES_CACHE_TTL = 1000 * 60 * 5; // 5 minutes
+export const REFERRAL_CODES_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
 
 export const SECTION_CACHE_KEY = 'sections';
 export const SECTION_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours

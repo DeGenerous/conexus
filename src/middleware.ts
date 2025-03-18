@@ -1,6 +1,6 @@
 import { defineMiddleware } from 'astro:middleware';
 
-export const onRequest = defineMiddleware(async (context, next) => {
+export const onRequest = defineMiddleware(async (_context, next) => {
   // Add your middleware code here
   return next();
 });
@@ -95,25 +95,25 @@ export const onRequest = defineMiddleware(async (context, next) => {
 /* Helper functions */
 
 // Define patterns for excluded, protected, and verified routes
-const excludedRoutes = [
-  /^\/referral$/, // Bypass for the referral page
-];
+// const excludedRoutes = [
+//   /^\/referral$/, // Bypass for the referral page
+// ];
 
-const protectedRoutes = [
-  /^\/story(\/.*)?$/, // Matches /story and dynamic segments
-  /^\/dashboard(\/.*)?$/, // Matches /dashboard and dynamic segments
-  /^\/[^/]+$/, // Matches /<dynamic name> (any single-segment route)
-];
+// const protectedRoutes = [
+//   /^\/story(\/.*)?$/, // Matches /story and dynamic segments
+//   /^\/dashboard(\/.*)?$/, // Matches /dashboard and dynamic segments
+//   /^\/[^/]+$/, // Matches /<dynamic name> (any single-segment route)
+// ];
 
-const adminProtectedRoutes = [
-  /^\/dashboard(\/.*)?$/, // Matches /admin and dynamic segments
-];
+// const adminProtectedRoutes = [
+//   /^\/dashboard(\/.*)?$/, // Matches /admin and dynamic segments
+// ];
 
-const verifiedRoutes = [
-  /^\/story(\/.*)?$/, // Matches /story and dynamic segments
-  /^\/[^/]+$/, // Matches /<dynamic name> (any single-segment route)
-];
+// const verifiedRoutes = [
+//   /^\/story(\/.*)?$/, // Matches /story and dynamic segments
+//   /^\/[^/]+$/, // Matches /<dynamic name> (any single-segment route)
+// ];
 
-// Helper function to check if a route matches a pattern
-const isRouteMatched = (path: string, patterns: RegExp[]) =>
-  patterns.some((pattern) => pattern.test(path));
+// // Helper function to check if a route matches a pattern
+// const isRouteMatched = (path: string, patterns: RegExp[]) =>
+//   patterns.some((pattern) => pattern.test(path));

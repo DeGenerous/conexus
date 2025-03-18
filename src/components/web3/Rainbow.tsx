@@ -12,7 +12,7 @@ import {
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createSiweMessage } from 'viem/siwe';
-import { WagmiProvider, createConfig } from 'wagmi';
+import { WagmiProvider } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains';
 
 import { web3LoggedIn, authenticated } from '@stores/account';

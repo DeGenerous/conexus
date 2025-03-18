@@ -53,8 +53,6 @@ export default class Fetcher {
     endpoint: string,
     options: RequestInit = {},
     responseType: 'json' | 'blob' = 'json',
-    retries = 3, // Number of retries before failing
-    delay = 500, // Initial delay in ms (doubles each retry)
   ): Promise<APIResponse<T>> {
     const headers: HeadersInit = {
       ...options.headers,
@@ -137,7 +135,7 @@ export default class Fetcher {
           (error as Error).message.includes('Failed to parse URL from /api/') &&
           retries > 0
         ) {
-          return this.request(
+          return this.requestRetry(
             endpoint,
             options,
             responseType,

@@ -115,6 +115,14 @@ export class Account {
   async subscribeNewsletter(): Promise<void> {
     const { data, error } = await this.accountAPI.subscribeNewsletter();
 
+    const cachedData = GetCache<SubscriptionStatus>(
+      SUBSCRIPTIONSTATUS_CACHE_KEY,
+    );
+    if (cachedData) {
+      cachedData.is_active = true;
+      SetCache<SubscriptionStatus>(SUBSCRIPTIONSTATUS_CACHE_KEY, cachedData, SUBSCRIPTIONSTATUS_CACHE_TTL)
+    }
+
     if (!data) {
       if (error) {
         accountError.set({ subscribeNewsletter: error.message });
@@ -131,6 +139,14 @@ export class Account {
 
   async unsubscribeNewsletter(): Promise<void> {
     const { data, error } = await this.accountAPI.unsubscribeNewsletter();
+
+    const cachedData = GetCache<SubscriptionStatus>(
+      SUBSCRIPTIONSTATUS_CACHE_KEY,
+    );
+    if (cachedData) {
+      cachedData.is_active = false;
+      SetCache<SubscriptionStatus>(SUBSCRIPTIONSTATUS_CACHE_KEY, cachedData, SUBSCRIPTIONSTATUS_CACHE_TTL)
+    }
 
     if (!data) {
       if (error) {

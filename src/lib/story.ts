@@ -43,6 +43,7 @@ export class CoNexusGame extends GameAPI {
 
   async getTopic(topic: string): Promise<ThumbnailTopic> {
     const KEY = `${TOPICS_CACHE_KEY}_${topic}`
+    // TODO: change to topic_id later
 
     const cachedData = GetCache<ThumbnailTopic>(KEY);
     if (cachedData) {

@@ -1,5 +1,10 @@
 // import { IMAGE_UPLOAD_DIR, MUSIC_UPLOAD_DIR } from '@/config';
-
+import {
+  GetCache,
+  SetCache,
+  MEDIA_CACHE_KEY,
+  MEDIA_CACHE_TTL,
+} from '@constants/cache';
 import { serveUrl } from '@constants/media';
 import { tracks } from '@constants/tracks';
 import { MediaAPI } from '@service/routes';
@@ -10,7 +15,7 @@ class MediaManager {
   private mediaAPI: MediaAPI;
 
   constructor() {
-    this.mediaAPI = new MediaAPI();
+    this.mediaAPI = new MediaAPI(import.meta.env.PUBLIC_BACKEND);
   }
 
   async serveFile(file_id: string) {
@@ -49,11 +54,20 @@ class MediaManager {
     topic_id: string,
     media_type: MediaType,
   ): Promise<string[]> {
+    const KEY = `${MEDIA_CACHE_KEY}_${topic_id}_${media_type}`;
+
+    const cachedData = GetCache<string[]>(KEY);
+    if (cachedData) {
+      return cachedData;
+    }
+
     const { data } = await this.mediaAPI.getFile(topic_id, media_type);
 
     if (!data) {
       return [];
     }
+
+    SetCache<string[]>(KEY, data, MEDIA_CACHE_TTL);
 
     return data;
   }

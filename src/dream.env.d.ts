@@ -64,3 +64,5 @@ type CreatePrompt = {
   category: number;
   prompt: string;
 };
+
+type ImageType = 'url' | 'base64';

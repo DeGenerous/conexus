@@ -6,6 +6,7 @@
   import { background_volume, tts_volume } from '@stores/volumes';
 
   import Slider from './music/Slider.svelte';
+  import ImageDisplay from './utils/ImageDisplay.svelte';
 
   let fullWidthImage: boolean = false;
   let imageWrapper: HTMLDivElement;
@@ -174,8 +175,19 @@
     bind:this={imageWrapper}
     on:click={() => (fullWidthImage = !fullWidthImage)}
   >
+    <!-- <ImageDisplay
+      bind:image={step.image}
+      bind:image_type={step.image_type}
+      bind:width={width}
+    /> -->
     {#if step.image}
-      <img class="image" src={`data:image/png;base64,${step.image}`} alt="" />
+      <img
+        class="image"
+        src={step.image_type === 'url'
+          ? step.image
+          : `data:image/png;base64,${step.image}`}
+        alt=""
+      />
     {:else}
       <img class="image loading-image" src="/icons/loading.png" alt="" />
       {#if width <= 600}

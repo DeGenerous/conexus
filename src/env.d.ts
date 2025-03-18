@@ -61,6 +61,7 @@ type StepData = {
   trait_description?: string;
   options: string[];
   image?: string;
+  image_type?: ImageType;
   choice?: number;
   tts?: Blob;
 };

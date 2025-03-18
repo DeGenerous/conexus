@@ -1,3 +1,9 @@
+import {
+  GetCache,
+  SetCache,
+  TOPICS_CACHE_KEY,
+  TOPICS_CACHE_TTL,
+} from '@constants/cache';
 import { api_error } from '@errors/index';
 import { GameAPI } from '@service/routes';
 import { loading, story } from '@stores/conexus';
@@ -36,6 +42,13 @@ export class CoNexusGame extends GameAPI {
   }
 
   async getTopic(topic: string): Promise<ThumbnailTopic> {
+    const KEY = `${TOPICS_CACHE_KEY}_${topic}`
+
+    const cachedData = GetCache<ThumbnailTopic>(KEY);
+    if (cachedData) {
+      return cachedData;
+    }
+
     const { data, error } = await this.topicByName(topic);
 
     if (!data) {
@@ -46,6 +59,8 @@ export class CoNexusGame extends GameAPI {
       }
       throw new Error('Error fetching topic');
     }
+
+    SetCache(KEY, data, TOPICS_CACHE_TTL);
 
     return data;
   }
@@ -185,7 +200,9 @@ export class CoNexusGame extends GameAPI {
       return;
     }
 
-    this.step_data.image = data;
+    this.step_data.image = data.image;
+    this.step_data.image_type = data.type;
+
     story.set(this);
   }
 
@@ -203,6 +220,8 @@ export class CoNexusGame extends GameAPI {
     }
 
     this.step_data.image = data.image;
+    this.step_data.image_type = data.type;
+
     story.set(this);
   }
 
@@ -219,9 +238,18 @@ export class CoNexusGame extends GameAPI {
       return;
     }
 
-    this.jobID = data.job_id;
-    this.hasFetched = true;
-    this.#start_interval();
+    if ('job_id' in data) {
+      this.jobID = data.job_id;
+      this.hasFetched = true;
+      this.#start_interval();
+    }
+
+    if ('image' in data) {
+      this.step_data.image = data.image;
+      this.step_data.image_type = data.type;
+
+      story.set(this);
+    }
   }
 
   // Generate image status v2
@@ -237,6 +265,8 @@ export class CoNexusGame extends GameAPI {
 
       if (data.status === 'ready') {
         this.step_data.image = data.image;
+        this.step_data.image_type = data.type;
+
         story.set(this);
         this.#clear_interval();
       }

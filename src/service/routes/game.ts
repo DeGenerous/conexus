@@ -76,10 +76,13 @@ export default class GameAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async loadStepImage(story_id: string, step: number) {
-    return this.request<string>(`/game/load-step-image/${step}`, {
-      method: 'POST',
-      body: JSON.stringify({ story_id }),
-    });
+    return this.request<{ image: string; type: ImageType }>(
+      `/game/load-step-image/${step}`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ story_id }),
+      },
+    );
   }
 
   /**
@@ -102,7 +105,7 @@ export default class GameAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    */
   async image(story_id: string) {
-    return this.request<{ image: string }>(`/game/image-v1`, {
+    return this.request<{ image: string; type: ImageType }>(`/game/image-v1`, {
       method: 'POST',
       body: JSON.stringify({ story_id }),
     });
@@ -114,7 +117,9 @@ export default class GameAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    */
   async imageV2(story_id: string) {
-    return this.request<{ job_id: string }>(`/game/image-v2`, {
+    return this.request<
+      { job_id: string } | { image: string; type: ImageType }
+    >(`/game/image-v2`, {
       method: 'POST',
       body: JSON.stringify({ story_id }),
     });
@@ -126,7 +131,7 @@ export default class GameAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    */
   async imageStatusV2(story_id: string, job_id: string) {
-    return this.request<{ status: string; image?: string }>(
+    return this.request<{ status: string; image?: string; type?: ImageType }>(
       `/game/image-v2-status/${job_id}`,
       {
         method: 'POST',

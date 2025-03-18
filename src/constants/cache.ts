@@ -1,3 +1,6 @@
+export const COOKIE_CONSENT_KEY = 'cookie_consent';
+export const COOKIE_CONSENT_TTL = 1000 * 60 * 60 * 24 * 30; // 1 month
+
 export const USER_CACHE_KEY = 'user';
 export const USER_CACHE_TTL = 1000 * 60 * 5; // 5 minutes
 
@@ -13,11 +16,17 @@ export const SECTION_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
 export const SECTION_CATEGORY_CACHE_KEY = 'section_categories';
 export const SECTION_CATEGORY_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
 
+export const CATEGORY_CACHE_KEY = 'categories';
+export const CATEGORY_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
+
 export const GENRE_CACHE_KEY = 'genres';
 export const GENRE_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
 
-export const COOKIE_CONSENT_KEY = 'cookie_consent';
-export const COOKIE_CONSENT_TTL = 1000 * 60 * 60 * 24 * 30; // 1 month
+export const TOPICS_CACHE_KEY = 'topics';
+export const TOPICS_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
+
+export const MEDIA_CACHE_KEY = 'media';
+export const MEDIA_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
 
 export const SetCache = <T>(key: string, value: T, ttl: number) => {
   localStorage.setItem(
@@ -51,6 +60,7 @@ export const ClearCache = (key: string | 'auth' | 'full') => {
       localStorage.removeItem(SECTION_CACHE_KEY);
       localStorage.removeItem(SECTION_CATEGORY_CACHE_KEY);
       localStorage.removeItem(GENRE_CACHE_KEY);
+      localStorage.removeItem(TOPICS_CACHE_KEY);
       break;
     case 'full':
       localStorage.clear();

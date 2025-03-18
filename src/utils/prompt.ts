@@ -230,7 +230,7 @@ function generatePrompt(
     topic: props.name,
     description: props.description,
     image_prompt: imagePrompt,
-    category: 1,
+    category: props.category!,
     prompt: storySettings + storyPrompt,
   };
 

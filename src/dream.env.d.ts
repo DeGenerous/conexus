@@ -55,6 +55,7 @@ interface StoryData {
   name: string;
   description: string;
   imagePrompts: string[];
+  category: Nullable<number>;
 }
 
 type CreatePrompt = {

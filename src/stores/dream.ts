@@ -4,6 +4,7 @@ export const storyData = writable<StoryData>({
   name: '',
   description: '',
   imagePrompts: [],
+  category: null
 });
 
 export const promptSettings = writable<PromptSettings>({
@@ -101,6 +102,7 @@ export const clearAllData = () => {
     name: '',
     description: '',
     imagePrompts: [],
+    category: null
   });
   promptSettings.set({
     imageStyle: 'Realist',

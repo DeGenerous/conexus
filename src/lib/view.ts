@@ -53,9 +53,13 @@ export class CoNexusApp extends ViewAPI {
   }
 
   async getSectionCategories(section: string): Promise<CategoryInSection[]> {
-    const cachedData = GetCache<CategoryInSection[]>(`${SECTION_CATEGORY_CACHE_KEY}_${section}`);
+    type SectionCategory = {
+      [section: string]: CategoryInSection[];
+    };
+
+    const cachedData = GetCache<SectionCategory>(SECTION_CATEGORY_CACHE_KEY);
     if (cachedData) {
-      return cachedData;
+      return cachedData[section];
     }
 
     const { data, error } = await this.sectionCategories(section);
@@ -75,7 +79,7 @@ export class CoNexusApp extends ViewAPI {
       },
     );
 
-    SetCache(`${SECTION_CATEGORY_CACHE_KEY}_${section}`, orderedCategories, SECTION_CATEGORY_CACHE_TTL);
+    SetCache(SECTION_CATEGORY_CACHE_KEY, { [section]: orderedCategories }, SECTION_CATEGORY_CACHE_TTL);
 
     return orderedCategories;
   }

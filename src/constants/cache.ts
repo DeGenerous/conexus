@@ -58,6 +58,10 @@ export const ClearCache = (key: string | 'auth' | 'full') => {
       localStorage.removeItem(SUBSCRIPTIONSTATUS_CACHE_KEY);
       localStorage.removeItem(REFERRAL_CODES_CACHE_KEY);
       localStorage.removeItem(SECTION_CACHE_KEY);
+      localStorage.removeItem(SECTION_CATEGORY_CACHE_KEY);
+      localStorage.removeItem(CATEGORY_CACHE_KEY);
+      localStorage.removeItem(TOPICS_CACHE_KEY);
+      localStorage.removeItem(MEDIA_CACHE_KEY);
       localStorage.removeItem(GENRE_CACHE_KEY);
       break;
     case 'full':

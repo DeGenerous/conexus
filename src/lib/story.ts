@@ -41,13 +41,15 @@ export class CoNexusGame extends GameAPI {
     return CoNexusGame.instance;
   }
 
+  // TODO: change to topic_id later
   async getTopic(topic: string): Promise<ThumbnailTopic> {
-    const KEY = `${TOPICS_CACHE_KEY}_${topic}`
-    // TODO: change to topic_id later
+    type TopicCache = {
+      [key: string]: ThumbnailTopic;
+    };
 
-    const cachedData = GetCache<ThumbnailTopic>(KEY);
+    const cachedData = GetCache<TopicCache>(TOPICS_CACHE_KEY);
     if (cachedData) {
-      return cachedData;
+      return cachedData[topic];
     }
 
     const { data, error } = await this.topicByName(topic);
@@ -61,7 +63,7 @@ export class CoNexusGame extends GameAPI {
       throw new Error('Error fetching topic');
     }
 
-    SetCache(KEY, data, TOPICS_CACHE_TTL);
+    SetCache(TOPICS_CACHE_KEY, { [topic]: data }, TOPICS_CACHE_TTL);
 
     return data;
   }

@@ -23,7 +23,7 @@ export const GENRE_CACHE_KEY = 'genres';
 export const GENRE_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
 
 export const TOPICS_CACHE_KEY = 'topics';
-export const TOPICS_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
+export const TOPICS_CACHE_TTL = 1000 * 60 * 10 // 10 minutes
 
 export const MEDIA_CACHE_KEY = 'media';
 export const MEDIA_CACHE_TTL = 1000 * 60 * 10 // 10 minutes
@@ -59,7 +59,6 @@ export const ClearCache = (key: string | 'auth' | 'full') => {
       localStorage.removeItem(REFERRAL_CODES_CACHE_KEY);
       localStorage.removeItem(SECTION_CACHE_KEY);
       localStorage.removeItem(GENRE_CACHE_KEY);
-      localStorage.removeItem(TOPICS_CACHE_KEY);
       break;
     case 'full':
       localStorage.clear();

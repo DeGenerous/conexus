@@ -4,6 +4,7 @@ import {
   SetCache,
   MEDIA_CACHE_KEY,
   MEDIA_CACHE_TTL,
+  ClearCache,
 } from '@constants/cache';
 import { serveUrl } from '@constants/media';
 import { tracks } from '@constants/tracks';
@@ -77,6 +78,8 @@ class MediaManager {
     file_id: string,
     media_type: MediaType,
   ) {
+    const KEY = `${MEDIA_CACHE_KEY}_${topic_id}_${media_type}`;
+
     const { data, error } = await this.mediaAPI.DeleteFile(
       topic_id,
       file_id,
@@ -88,6 +91,8 @@ class MediaManager {
         throw new Error(error.details);
       }
     }
+
+    ClearCache(KEY);
   }
 
   async fetchMedia(topic_id: number, media_type: MediaType): Promise<string[]> {

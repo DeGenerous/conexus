@@ -225,7 +225,7 @@ function generatePrompt(
   const storyPrompt = setUpPrompt();
 
   const fullStory: CreatePrompt = {
-    topic: props.name,
+    topic: props.name.trim(),
     description: props.description,
     image_prompt: imagePrompt,
     category: props.category!,

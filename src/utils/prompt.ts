@@ -12,15 +12,13 @@ function generatePrompt(
   settings: PromptSettings,
   data: TablePrompt | string,
 ): CreatePrompt {
-  let imagePrompt: string = '';
+  let imagePrompt: string = `Use ${settings.imageStyle} style.\n\n`;
   if (props.imagePrompts.length > 1) {
     imagePrompt += 'Image prompts:\n';
     props.imagePrompts.map((prompt) => {
       imagePrompt += `- ${prompt}\n`;
     });
   } else imagePrompt = props.imagePrompts[0];
-
-  imagePrompt += `Use ${settings.imageStyle} style for all pictures.`;
 
   const setUpSettings = () => {
     let promptSettings: string =

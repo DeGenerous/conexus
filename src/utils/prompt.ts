@@ -20,13 +20,13 @@ function generatePrompt(
     });
   } else imagePrompt = props.imagePrompts[0];
 
+  imagePrompt += `Use ${settings.imageStyle} style for all pictures.`;
+
   const setUpSettings = () => {
     let promptSettings: string =
       'Note: Consider the following characteristics for the story, follow these strictly especially the premise.\n\n';
 
     promptSettings += `You will only write in ${settings.language}.\n`;
-
-    promptSettings += `Use ${settings.imageStyle} style.\n\n`;
 
     if (settings.interactivity !== 'standard')
       promptSettings +=

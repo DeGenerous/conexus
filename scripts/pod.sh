@@ -39,3 +39,5 @@ podman pod rm -f $POD_NAME-service
 # --pod="$POD_NAME" \
 # -p 4323:4321 \
 # $APP_NAME
+
+podman start $POD_NAME-service

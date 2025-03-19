@@ -244,6 +244,12 @@
     </div>
   </div>
 
+  {#if $tablePrompt.sideCharacters.length < 1 && !$tablePrompt.mainCharacter.name}
+    <p class="validation">
+      There is no characters added.
+    </p>
+  {/if}
+
   {#if newRelationship.connection[0] && newRelationship.connection[1] && newRelationship.connection[0] == newRelationship.connection[1]}
     <p class="validation">
       A character cannot have a relationship with themselves! Please select two

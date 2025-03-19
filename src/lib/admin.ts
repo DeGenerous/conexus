@@ -1,5 +1,10 @@
-
-import { GetCache, SetCache, CATEGORY_CACHE_KEY, CATEGORY_CACHE_TTL, ClearCache, SECTION_CATEGORY_CACHE_KEY, TOPICS_CACHE_KEY } from '@constants/cache';
+import {
+  GetCache,
+  SetCache,
+  ClearCache,
+  CATEGORY_CACHE_KEY,
+  CATEGORY_CACHE_TTL,
+} from '@constants/cache';
 import { api_error } from '@errors/index';
 import { AdminAPI } from '@service/routes';
 import { toastStore } from '@stores/toast';
@@ -211,8 +216,7 @@ export class AdminApp extends AdminAPI {
       return;
     }
 
-    ClearCache(TOPICS_CACHE_KEY);
-    ClearCache(SECTION_CATEGORY_CACHE_KEY);
+    this.clearCache();
 
     toastStore.show(data.message, 'info');
   }
@@ -244,8 +248,7 @@ export class AdminApp extends AdminAPI {
       return;
     }
 
-    ClearCache(TOPICS_CACHE_KEY);
-    ClearCache(SECTION_CATEGORY_CACHE_KEY);
+    this.clearCache();
 
     toastStore.show(data.message, 'info');
   }
@@ -304,6 +307,8 @@ export class AdminApp extends AdminAPI {
       return -1;
     }
 
+    ClearCache(CATEGORY_CACHE_KEY);
+
     return data;
   }
 
@@ -348,7 +353,7 @@ export class AdminApp extends AdminAPI {
       return;
     }
 
-    ClearCache(SECTION_CATEGORY_CACHE_KEY);
+    this.clearCache();
 
     toastStore.show(data.message, 'info');
   }
@@ -378,6 +383,8 @@ export class AdminApp extends AdminAPI {
       return;
     }
 
+    this.clearCache();
+
     toastStore.show(data.message, 'info');
   }
 
@@ -401,6 +408,8 @@ export class AdminApp extends AdminAPI {
       }
       return;
     }
+
+    this.clearCache();
 
     toastStore.show(data.message, 'info');
   }
@@ -428,6 +437,8 @@ export class AdminApp extends AdminAPI {
       }
       return;
     }
+
+    this.clearCache();
 
     toastStore.show(data.message, 'info');
   }
@@ -459,8 +470,7 @@ export class AdminApp extends AdminAPI {
       return;
     }
 
-    ClearCache(SECTION_CATEGORY_CACHE_KEY);
-    ClearCache(TOPICS_CACHE_KEY);
+    this.clearCache();
 
     toastStore.show(data.message, 'info');
   }
@@ -492,6 +502,8 @@ export class AdminApp extends AdminAPI {
       return;
     }
 
+    this.clearCache();
+
     toastStore.show(data.message, 'info');
   }
 
@@ -517,6 +529,8 @@ export class AdminApp extends AdminAPI {
       return;
     }
 
+    this.clearCache();
+
     toastStore.show(data.message, 'info');
   }
 
@@ -541,6 +555,12 @@ export class AdminApp extends AdminAPI {
       return;
     }
 
+    this.clearCache();
+
     toastStore.show(data.message, 'info');
+  }
+
+  private clearCache() {
+    ClearCache('manage');
   }
 }

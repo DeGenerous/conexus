@@ -18,11 +18,6 @@ export class CoNexusGame extends GameAPI {
   step_data: GameData; // The data for the current step of the story.
   maxStep: number = 0; // The maximum step number of the story.
 
-  hasFetched = false; // Whether the story has been fetched.
-  jobID: string; // The ID of the job (Image) that is currently running.
-
-  interval: NodeJS.Timer | null = null; // The interval for checking the status of the job.
-
   // Constructor
   constructor(data?: GameData) {
     super(import.meta.env.PUBLIC_BACKEND);
@@ -230,39 +225,44 @@ export class CoNexusGame extends GameAPI {
 
   // Generate image for current step v2
   async #generateImage(): Promise<void> {
-    const { data, error } = await this.imageV2(this.step_data.id);
+    try {
+      const { data } = await this.imageV2(this.step_data.id);
 
-    if (!data) {
-      if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error getting image', 'error');
+      if (!data) {
+        this.#image();
+        return;
       }
-      return;
-    }
 
-    if ('job_id' in data) {
-      this.jobID = data.job_id;
-      this.hasFetched = true;
-      this.#start_interval();
-    }
+      if ('job_id' in data) {
+        this.#generateImageStatus(data.job_id);
+      }
 
-    if ('image' in data) {
-      this.step_data.image = data.image;
-      this.step_data.image_type = data.type;
+      if ('image' in data) {
+        this.step_data.image = data.image;
+        this.step_data.image_type = data.type;
 
-      story.set(this);
+        story.set(this);
+      }
+    } catch (error) {
+      console.error('Error in #generateImage:', error);
+      this.#image();
     }
   }
 
   // Generate image status v2
-  async #generateImageStatus(): Promise<void> {
+  async #generateImageStatus(job_id: string): Promise<void> {
     try {
-      const { data } = await this.imageStatusV2(this.step_data.id, this.jobID);
+      const { data } = await this.imageStatusV2(this.step_data.id, job_id);
 
       if (!data) {
         this.#image();
-        this.#clear_interval();
+        return;
+      }
+
+      if (data.status === 'pending') {
+        // Wait 5 seconds before retrying
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        await this.#generateImageStatus(job_id);
         return;
       }
 
@@ -271,14 +271,13 @@ export class CoNexusGame extends GameAPI {
         this.step_data.image_type = data.type;
 
         story.set(this);
-        this.#clear_interval();
+        return;
       }
+
+      this.#image();
     } catch (error) {
-      console.error(error);
-    } finally {
-      setTimeout(() => {
-        this.hasFetched = false;
-      }, 5000); // Adjust the delay as needed
+      console.error('Error in #generateImageStatus:', error);
+      this.#image();
     }
   }
 
@@ -298,19 +297,6 @@ export class CoNexusGame extends GameAPI {
   }
 
   /* Helper */
-
-  #start_interval() {
-    this.interval = setInterval(async () => {
-      await this.#generateImageStatus();
-    }, 10000);
-  }
-
-  #clear_interval() {
-    if (this.interval) {
-      clearInterval(this.interval as NodeJS.Timeout);
-      this.interval = null;
-    }
-  }
 
   async #setStepData(data: GameData): Promise<void> {
     this.step_data = data;

@@ -234,7 +234,9 @@ export class CoNexusGame extends GameAPI {
       }
 
       if ('job_id' in data) {
-        this.#generateImageStatus(data.job_id);
+        // wait 3 seconds before checking status
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        await this.#generateImageStatus(data.job_id);
       }
 
       if ('image' in data) {
@@ -261,7 +263,7 @@ export class CoNexusGame extends GameAPI {
 
       if (data.status === 'pending') {
         // Wait 5 seconds before retrying
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+        await new Promise((resolve) => setTimeout(resolve, 10000));
         await this.#generateImageStatus(job_id);
         return;
       }

@@ -245,9 +245,7 @@
   </div>
 
   {#if $tablePrompt.sideCharacters.length < 1 && !$tablePrompt.mainCharacter.name}
-    <p class="validation">
-      There is no characters added.
-    </p>
+    <p class="validation">There is no characters added.</p>
   {/if}
 
   {#if newRelationship.connection[0] && newRelationship.connection[1] && newRelationship.connection[0] == newRelationship.connection[1]}

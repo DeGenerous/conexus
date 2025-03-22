@@ -33,11 +33,11 @@ export async function checkUserState(
 
   if (isRouteMatched(path, protectedRoutes)) {
     // get user from store if not in store try from cache
-    let user: Nullable<User>
+    let user: Nullable<User>;
 
     authenticated.subscribe((value) => {
-      user = value.user
-    })
+      user = value.user;
+    });
 
     if (!user) {
       const cache = GetCache<User>(USER_CACHE_KEY);

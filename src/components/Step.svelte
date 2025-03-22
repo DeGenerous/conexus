@@ -178,7 +178,7 @@
     <ImageDisplay
       bind:image={step.image}
       bind:image_type={step.image_type}
-      bind:width={width}
+      bind:width
     />
   </div>
 

@@ -65,7 +65,7 @@
 
   $: if (isLogged && account) {
     account.getReferralCodes();
-    checkSubscription()
+    checkSubscription();
   }
 
   // Change password
@@ -174,7 +174,7 @@
   // Newsletter
   const checkSubscription = async () => {
     subStatus = await account.subscriptionStatus();
-  }
+  };
 
   const dateToString = (date: Date) => {
     const dateObject: Date = new Date(date);
@@ -374,7 +374,9 @@
               />
             </div>
             {#if !user.email_confirmed}
-              <p class="validation">Please check your inbox and confirm email.</p>
+              <p class="validation">
+                Please check your inbox and confirm email.
+              </p>
             {/if}
             <div class="input-container">
               <label for="first-name">First name</label>
@@ -656,7 +658,7 @@
                 on:click={() => {
                   account
                     .unsubscribeNewsletter()
-                    .then(() => (checkSubscription()));
+                    .then(() => checkSubscription());
                 }}
                 role="button"
                 tabindex="0"
@@ -670,7 +672,7 @@
                   on:click={() => {
                     account
                       .subscribeNewsletter()
-                      .then(() => (checkSubscription()));
+                      .then(() => checkSubscription());
                   }}
                 >
                   Subscribe

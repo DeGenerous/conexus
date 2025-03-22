@@ -120,7 +120,11 @@ export class Account {
     );
     if (cachedData) {
       cachedData.is_active = true;
-      SetCache<SubscriptionStatus>(SUBSCRIPTIONSTATUS_CACHE_KEY, cachedData, SUBSCRIPTIONSTATUS_CACHE_TTL)
+      SetCache<SubscriptionStatus>(
+        SUBSCRIPTIONSTATUS_CACHE_KEY,
+        cachedData,
+        SUBSCRIPTIONSTATUS_CACHE_TTL,
+      );
     }
 
     if (!data) {
@@ -145,7 +149,11 @@ export class Account {
     );
     if (cachedData) {
       cachedData.is_active = false;
-      SetCache<SubscriptionStatus>(SUBSCRIPTIONSTATUS_CACHE_KEY, cachedData, SUBSCRIPTIONSTATUS_CACHE_TTL)
+      SetCache<SubscriptionStatus>(
+        SUBSCRIPTIONSTATUS_CACHE_KEY,
+        cachedData,
+        SUBSCRIPTIONSTATUS_CACHE_TTL,
+      );
     }
 
     if (!data) {

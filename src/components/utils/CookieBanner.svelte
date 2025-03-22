@@ -22,7 +22,7 @@
 
   function acceptCookies(fullConsent) {
     analyticsEnabled = fullConsent;
-    
+
     SetCache(
       COOKIE_CONSENT_KEY,
       fullConsent ? 'full' : 'essential',

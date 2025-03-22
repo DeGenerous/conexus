@@ -49,10 +49,6 @@
   cursor: text;
 }
 
-.user-input:disabled {
-  opacity: 1; /* for iOS */
-}
-
 .input-container {
   display: flex;
   flex-flow: column nowrap;

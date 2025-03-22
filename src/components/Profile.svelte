@@ -1223,10 +1223,6 @@
     background-color: rgba(0, 0, 0, 0);
   }
 
-  .ref-code:disabled {
-    opacity: 1; /* for iOS */
-  }
-
   .copy-svg {
     width: 2vw;
     height: 2vw;

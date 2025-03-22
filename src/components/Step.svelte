@@ -301,7 +301,7 @@
           <div class="story-info-container">
             <button
               class="quit"
-              on:click={() => window.open('./', '_self')}
+              on:click={() => window.location.reload()}
               on:pointerover={() => (quitSvgWindowFocus = true)}
               on:pointerout={() => (quitSvgWindowFocus = false)}
               aria-label="quit"
@@ -573,7 +573,7 @@
               xmlns="http://www.w3.org/2000/svg"
               viewBox="-100 -100 200 200"
               class="quit-svg-element"
-              on:click={() => window.open('./', '_self')}
+              on:click={() => window.location.reload()}
               role="button"
               tabindex="0"
             >
@@ -779,7 +779,7 @@
             class="quit-button-svg"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="-100 -100 200 200"
-            on:click={() => window.open('./', '_self')}
+            on:click={() => window.location.reload()}
             role="button"
             tabindex="0"
           >

@@ -373,6 +373,9 @@
                 disabled
               />
             </div>
+            {#if !user.email_confirmed}
+              <p class="validation">Please check your inbox and confirm email.</p>
+            {/if}
             <div class="input-container">
               <label for="first-name">First name</label>
               <input
@@ -636,53 +639,55 @@
           {/if}
         {/if}
 
-        {#if subStatus}
-          <hr />
+        {#if user.email_confirmed}
+          {#if subStatus}
+            <hr />
 
-          {#if subStatus.is_active}
-            <h2>Newsletter Subscription</h2>
+            {#if subStatus.is_active}
+              <h2>Newsletter Subscription</h2>
 
-            {#if subStatus.subscribed_at}
-              <h3>
-                Active since: {dateToString(subStatus.subscribed_at.Time)}
-              </h3>
-            {/if}
-            <h3
-              class="unsubscribe-button"
-              on:click={() => {
-                account
-                  .unsubscribeNewsletter()
-                  .then(() => (checkSubscription()));
-              }}
-              role="button"
-              tabindex="0"
-            >
-              Unsubscribe
-            </h3>
-          {:else}
-            <div class="newsletter-subscription">
-              <h3>Subscribe to Newsletter:</h3>
-              <button
+              {#if subStatus.subscribed_at}
+                <h3>
+                  Active since: {dateToString(subStatus.subscribed_at.Time)}
+                </h3>
+              {/if}
+              <h3
+                class="unsubscribe-button"
                 on:click={() => {
                   account
-                    .subscribeNewsletter()
+                    .unsubscribeNewsletter()
                     .then(() => (checkSubscription()));
                 }}
+                role="button"
+                tabindex="0"
               >
-                Subscribe
-              </button>
-            </div>
+                Unsubscribe
+              </h3>
+            {:else}
+              <div class="newsletter-subscription">
+                <h3>Subscribe to Newsletter:</h3>
+                <button
+                  on:click={() => {
+                    account
+                      .subscribeNewsletter()
+                      .then(() => (checkSubscription()));
+                  }}
+                >
+                  Subscribe
+                </button>
+              </div>
+            {/if}
           {/if}
-        {/if}
 
-        {#if $accountError && $accountError.subscribeNewsletter}
-          <p class="validation">{$accountError.subscribeNewsletter}</p>
-        {/if}
-        {#if $accountError && $accountError.unsubscribeNewsletter}
-          <p class="validation">{$accountError.unsubscribeNewsletter}</p>
-        {/if}
-        {#if $accountError && $accountError.subscriptionStatus}
-          <p class="validation">{$accountError.subscriptionStatus}</p>
+          {#if $accountError && $accountError.subscribeNewsletter}
+            <p class="validation">{$accountError.subscribeNewsletter}</p>
+          {/if}
+          {#if $accountError && $accountError.unsubscribeNewsletter}
+            <p class="validation">{$accountError.unsubscribeNewsletter}</p>
+          {/if}
+          {#if $accountError && $accountError.subscriptionStatus}
+            <p class="validation">{$accountError.subscriptionStatus}</p>
+          {/if}
         {/if}
       </section>
     {:else}

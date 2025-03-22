@@ -66,7 +66,9 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <section class="container-wrapper">
-  {#await Account.getUser() then user}
+  {#await Account.getUser()}
+    <h2>Loading user data...</h2>
+  {:then user}
     {#if user?.available}
       <div class="stories-count blur">
         <h3>
@@ -102,6 +104,10 @@
           disabled={true}
         />
       </div>
+
+      {#if !user?.email_confirmed}
+        <p class="validation">Please check your inbox and confirm email.</p>
+      {/if}
 
       <div class="input-container">
         <label for="first-name">First name</label>
@@ -198,7 +204,7 @@
         </div>
       {/if}
     </div>
-  {/await}
+
 
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   {#if $referralCodes}
@@ -289,6 +295,7 @@
   {/if}
 
   <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
+  {#if user?.email_confirmed}
   {#key updateNewsletterStatus}
     {#await account.subscriptionStatus() then { is_active, subscribed_at }}
       <hr />
@@ -330,6 +337,8 @@
       {/if}
     {/await}
   {/key}
+  {/if}
+  {/await}
 </section>
 
 <style>

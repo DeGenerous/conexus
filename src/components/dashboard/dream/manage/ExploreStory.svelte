@@ -15,6 +15,7 @@
 
   let admin = new AdminApp();
   let topic: ViewTopic;
+  let categories: CategoryView[] = [];
 
   let storyName = topic_name;
 
@@ -39,11 +40,24 @@
 
     topic = topic_;
 
-    jsonBlob = new Blob([JSON.stringify(topic)], { type: 'application/json' });
-
     topic_description = topic.description;
     topic_prompt = topic.prompt;
     topic_imagePrompt = topic.image_prompt;
+
+    categories = await admin.fetchCategories();
+
+    const exportObject = {
+      title: topic.name,
+      description: topic.description,
+      prompt: topic.prompt,
+      image_prompt: topic.image_prompt,
+      genres: topic.genres,
+      category: categories.find((c) => c.id === topic.category_id)?.name,
+    };
+
+    jsonBlob = new Blob([JSON.stringify(exportObject)], {
+      type: 'application/json',
+    });
   });
 
   let editingName: boolean = false;
@@ -220,9 +234,11 @@
         </div>
       {/key}
 
+      <button on:click={downloadTopicJson}>Export JSON</button>
+
       <div class="input-container">
         <label for="category">Category:</label>
-        {#await admin.fetchCategories() then categories}
+        {#if categories}
           <select
             class="selector"
             value={topic.category_id}
@@ -237,7 +253,7 @@
               <option value={id}>{name}</option>
             {/each}
           </select>
-        {/await}
+        {/if}
       </div>
     </div>
 
@@ -350,8 +366,6 @@
 
     <!-- MEDIA FILES -->
     <Media bind:topic_id={topic.id} />
-
-    <button on:click={downloadTopicJson}>Export JSON</button>
 
     <button class="red-button blur" on:click={openModal}>Delete Story</button>
   {/if}

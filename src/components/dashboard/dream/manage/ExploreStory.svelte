@@ -14,7 +14,7 @@
   export let topic_name = 'story';
 
   let admin = new AdminApp();
-  let topic: Nullable<ViewTopic> = null;
+  let topic: ViewTopic;
 
   let storyName = topic_name;
 
@@ -27,12 +27,23 @@
   let topic_imagePrompt: string = '';
   $: storyImagePrompt = topic_imagePrompt;
 
-  onMount(async () => {
-    topic = await admin.fetchTopic(topic_name);
+  let jsonBlob: Nullable<Blob> = null;
 
-    topic_description = topic!.description;
-    topic_prompt = topic!.prompt;
-    topic_imagePrompt = topic!.image_prompt;
+  onMount(async () => {
+    const topic_ = await admin.fetchTopic(topic_name);
+
+    if (!topic_) {
+      window.open('/dashboard/dream/manage/', '_self');
+      return;
+    }
+
+    topic = topic_;
+
+    jsonBlob = new Blob([JSON.stringify(topic)], { type: 'application/json' });
+
+    topic_description = topic.description;
+    topic_prompt = topic.prompt;
+    topic_imagePrompt = topic.image_prompt;
   });
 
   let editingName: boolean = false;
@@ -50,7 +61,7 @@
   function openModal() {
     $secondButton = `Delete story: ${topic_name}`;
     $handleSecondButton = () => {
-      admin.deleteStory(topic!.id);
+      admin.deleteStory(topic.id);
       $showModal = false;
       window.open('/dashboard/dream/manage/', '_self');
     };
@@ -62,10 +73,10 @@
   async function handleGenreChange(genre_id: number, method: 'add' | 'remove') {
     switch (method) {
       case 'add':
-        await admin.addGenre(topic!.id, genre_id);
+        await admin.addGenre(topic.id, genre_id);
         break;
       case 'remove':
-        await admin.removeGenre(topic!.id, genre_id);
+        await admin.removeGenre(topic.id, genre_id);
         break;
     }
   }
@@ -73,6 +84,17 @@
   const switchAvailable = (available: string) => {
     if (available === 'available') return 'unavailable';
     else return 'available';
+  };
+
+  const downloadTopicJson = () => {
+    if (jsonBlob) {
+      const url = URL.createObjectURL(jsonBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${topic_name}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
   };
 
   // SVG Icons
@@ -167,6 +189,8 @@
         />
       </div>
 
+      <button on:click={downloadTopicJson}>Export JSON</button>
+
       {#key topic}
         <div class="buttons-wrapper">
           <button
@@ -175,11 +199,19 @@
             on:click={() =>
               admin
                 .changeAvailability(
-                  topic!.prompt_id,
-                  switchAvailable(topic!.available),
+                  topic.prompt_id,
+                  switchAvailable(topic.available),
                 )
-                .then(async () => (topic = await admin.fetchTopic(topic_name)))}
-            >{topic.available}</button
+                .then(async () => {
+                  const topic_ = await admin.fetchTopic(topic_name);
+
+                  if (!topic_) {
+                    window.open('/dashboard/dream/manage/', '_self');
+                    return;
+                  }
+
+                  topic = topic_;
+                })}>{topic.available}</button
           >
           <a
             class="button-anchor"
@@ -195,11 +227,11 @@
         {#await admin.fetchCategories() then categories}
           <select
             class="selector"
-            value={topic!.category_id}
+            value={topic.category_id}
             on:change={(event) => {
               const target = event.target as HTMLSelectElement;
               if (target) {
-                admin.editTopicCategory(topic!.id, parseInt(target.value));
+                admin.editTopicCategory(topic.id, parseInt(target.value));
               }
             }}
           >
@@ -229,7 +261,7 @@
               on:click={() => {
                 editingDescription = false;
                 if (topic_description == storyDescription) return;
-                admin.editTopicDescription(topic!.id, storyDescription);
+                admin.editTopicDescription(topic.id, storyDescription);
               }}
             >
               SAVE
@@ -264,7 +296,7 @@
               on:click={() => {
                 editingImagePrompt = false;
                 if (topic_imagePrompt == storyImagePrompt) return;
-                admin.editImagePrompt(topic!.id, storyImagePrompt);
+                admin.editImagePrompt(topic.id, storyImagePrompt);
               }}
             >
               SAVE
@@ -298,7 +330,7 @@
               on:click={() => {
                 editingPrompt = false;
                 if (topic_prompt == storyPrompt) return;
-                admin.editPrompt(storyPrompt, topic!.id, topic!.prompt_id);
+                admin.editPrompt(storyPrompt, topic.id, topic.prompt_id);
               }}
             >
               SAVE

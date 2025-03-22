@@ -47,12 +47,12 @@
     categories = await admin.fetchCategories();
 
     const exportObject = {
-      title: topic.name,
+      topic: topic.name,
       description: topic.description,
       prompt: topic.prompt,
       image_prompt: topic.image_prompt,
       genres: topic.genres,
-      category: categories.find((c) => c.id === topic.category_id)?.name,
+      category: topic.category_id,
     };
 
     jsonBlob = new Blob([JSON.stringify(exportObject)], {

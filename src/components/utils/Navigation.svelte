@@ -1,7 +1,7 @@
 <script lang="ts">
   import { authenticated } from '@stores/account';
-  import BackArrow from './BackArrow.svelte';
-  import Profile from '../Profile.svelte';
+  import BackArrow from '@components/utils/BackArrow.svelte';
+  import Profile from '@components/Profile.svelte';
 
   export let activeTab: string = 'Home';
   export let arrow: Nullable<string> = null;

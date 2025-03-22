@@ -1,6 +1,6 @@
 // import { Account } from '@lib/account';
 import { GetCache, USER_CACHE_KEY } from '@constants/cache';
-import { authenticated } from '@stores/account';
+import { authenticated, web3LoggedIn } from '@stores/account';
 
 function redirectTo(path: string) {
   if (typeof window !== 'undefined') {
@@ -43,6 +43,8 @@ export async function checkUserState(
       const cache = GetCache<User>(USER_CACHE_KEY);
       if (cache) {
         user = cache as User;
+        authenticated.set({ user, loggedIn: true });
+        web3LoggedIn.set(true);
       }
 
       if (!user) {

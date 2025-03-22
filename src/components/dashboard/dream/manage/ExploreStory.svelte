@@ -189,8 +189,6 @@
         />
       </div>
 
-      <button on:click={downloadTopicJson}>Export JSON</button>
-
       {#key topic}
         <div class="buttons-wrapper">
           <button
@@ -352,6 +350,8 @@
 
     <!-- MEDIA FILES -->
     <Media bind:topic_id={topic.id} />
+
+    <button on:click={downloadTopicJson}>Export JSON</button>
 
     <button class="red-button blur" on:click={openModal}>Delete Story</button>
   {/if}

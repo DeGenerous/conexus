@@ -55,12 +55,12 @@ class MediaManager {
     topic_id: string,
     media_type: MediaType,
   ): Promise<string[]> {
-    const KEY = `${MEDIA_CACHE_KEY}_${topic_id}_${media_type}`;
+    // const KEY = `${MEDIA_CACHE_KEY}_${topic_id}_${media_type}`;
 
-    const cachedData = GetCache<string[]>(KEY);
-    if (cachedData) {
-      return cachedData;
-    }
+    // const cachedData = GetCache<string[]>(KEY);
+    // if (cachedData) {
+    //   return cachedData;
+    // }
 
     const { data } = await this.mediaAPI.getFile(topic_id, media_type);
 
@@ -68,7 +68,7 @@ class MediaManager {
       return [];
     }
 
-    SetCache<string[]>(KEY, data, MEDIA_CACHE_TTL);
+    // SetCache<string[]>(KEY, data, MEDIA_CACHE_TTL);
 
     return data;
   }
@@ -78,7 +78,7 @@ class MediaManager {
     file_id: string,
     media_type: MediaType,
   ) {
-    const KEY = `${MEDIA_CACHE_KEY}_${topic_id}_${media_type}`;
+    // const KEY = `${MEDIA_CACHE_KEY}_${topic_id}_${media_type}`;
 
     const { data, error } = await this.mediaAPI.DeleteFile(
       topic_id,
@@ -92,7 +92,7 @@ class MediaManager {
       }
     }
 
-    ClearCache(KEY);
+    // ClearCache(KEY);
   }
 
   async fetchMedia(topic_id: number, media_type: MediaType): Promise<string[]> {

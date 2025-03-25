@@ -15,6 +15,7 @@ import { createSiweMessage } from 'viem/siwe';
 import { WagmiProvider } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains';
 
+import { SetCache, USER_CACHE_KEY, USER_CACHE_TTL } from '@constants/cache';
 import { web3LoggedIn, authenticated } from '@stores/account';
 import { AccountAPI, AuthAPI } from '@service/routes';
 
@@ -98,6 +99,8 @@ const Web3Provider = ({ linking, children }) => {
         AUTHENTICATION_STATUS = 'unauthenticated';
         return false;
       }
+
+      SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
       web3LoggedIn.set(true);
       authenticated.set({ user: data.user, loggedIn: true });

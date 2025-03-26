@@ -6,7 +6,8 @@
   import { web3LoggedIn } from '@stores/account';
 
   import Links from './utils/Links.svelte';
-  import StoryCollection from './utils/StoryCollection.svelte';
+  import StoryCollection from '@components/utils/StoryCollection.svelte';
+  import SpotifyIframe from '@components/music/SpotifyIframe.svelte';
 
   export let section: string;
   let isWeb3LoggedIn: boolean = false;
@@ -330,6 +331,10 @@
       {/each}
     </div>
   {/key}
+
+  {#if section === 'Dischordian Saga'}
+    <SpotifyIframe />
+  {/if}
 {:else}
   <section class="filters">
     <div class="sort-genres-filters">

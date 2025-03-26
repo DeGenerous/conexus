@@ -199,6 +199,15 @@
           </div>
         </section>
       </div>
+
+      {#await media.fetchStoryImage(topic.id, 'video') then storyVideo}
+        {#if storyVideo}
+          <video class="blur story-video" controls>
+            <source src={storyVideo} type="video/mp4"/>
+            <track kind="captions">
+          </video>
+        {/if}
+      {/await}
     {:catch}
       <header>
         <BackArrow />

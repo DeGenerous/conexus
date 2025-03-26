@@ -13,8 +13,8 @@
   let backgrounds: string[] = [];
   let description: string | null = null;
   let tile: string | null = null;
-  let video: string | null = null;
   let audio: string | null = null;
+  let video: string | null = null;
 
   let tooMuchFiles: boolean = false;
 
@@ -33,13 +33,13 @@
         topic_id.toString(),
         'tile',
       );
-      const videoData = await mediaManager.fetchTopicMedia(
-        topic_id.toString(),
-        'video',
-      );
       const audioData = await mediaManager.fetchTopicMedia(
         topic_id.toString(),
         'audio',
+      );
+      const videoData = await mediaManager.fetchTopicMedia(
+        topic_id.toString(),
+        'video',
       );
 
       backgrounds = [...bgData];
@@ -97,13 +97,6 @@
             'tile',
           );
           tile = response[0];
-        } else if (type === 'video') {
-          const response = await mediaManager.uploadTopicMedia(
-            files[0],
-            topic_id,
-            'video',
-          );
-          tile = response[0];
         } else if (type === 'audio') {
           const response = await mediaManager.uploadTopicMedia(
             files[0],
@@ -111,6 +104,13 @@
             'audio',
           );
           audio = response[0];
+        } else if (type === 'video') {
+          const response = await mediaManager.uploadTopicMedia(
+            files[0],
+            topic_id,
+            'video',
+          );
+          video = response[0];
         }
 
         // Reset input value
@@ -131,10 +131,10 @@
         description = null;
       } else if (type === 'tile') {
         tile = null;
-      } else if (type === 'video') {
-        video = null;
       } else if (type === 'audio') {
         audio = null;
+      } else if (type === 'video') {
+        video = null;
       }
     } catch (error) {
       console.error('Failed to delete media:', error);
@@ -243,34 +243,6 @@
 
     <hr />
 
-    <!-- Video Upload -->
-    <h2>Video</h2>
-    {#if video}
-      <h3>You've already uploaded a video file.</h3>
-    {:else}
-      <label for="video-upload">Upload Video File</label>
-      <input
-        id="video-upload"
-        type="file"
-        max="1"
-        size="12582912"
-        accept="video/mp4"
-        on:change={(e) => handleFileUpload(e, 'video')}
-      />
-      <h3>Only MP4 format is accepted.</h3>
-    {/if}
-    {#if video}
-      <img src={serveUrl(video)} alt="Video" class="preview" />
-      <button
-        class="red-button"
-        on:click={() => handleDelete(tile ?? '', 'video')}
-      >
-        Delete
-      </button>
-    {/if}
-
-    <hr />
-
     <!-- Audio Upload -->
     <h2>Audio</h2>
     {#if audio}
@@ -295,6 +267,43 @@
       <button
         class="red-button"
         on:click={() => handleDelete(audio ?? '', 'audio')}
+      >
+        Delete
+      </button>
+    {/if}
+
+    <hr />
+
+    <!-- Video Upload -->
+    <h2>Video</h2>
+    {#if video}
+      <h3>You've already uploaded a video file.</h3>
+    {:else}
+      <label for="video-upload">Upload Video File</label>
+      <input
+        id="video-upload"
+        type="file"
+        max="1"
+        size="12582912"
+        accept="video/mp4"
+        on:change={(e) => handleFileUpload(e, 'video')}
+      />
+      <h3>Only MP4 format is accepted.</h3>
+    {/if}
+    {#if video}
+      <video controls class="preview">
+        <source src={serveUrl(video)} type="video/mp4" />
+        <track
+          kind="captions"
+          src="path/to/captions.vtt"
+          srclang="en"
+          label="English"
+        />
+        Your browser does not support the video tag.
+      </video>
+      <button
+        class="red-button"
+        on:click={() => handleDelete(video ?? '', 'video')}
       >
         Delete
       </button>

@@ -13,6 +13,7 @@
   let backgrounds: string[] = [];
   let description: string | null = null;
   let tile: string | null = null;
+  let video: string | null = null;
   let audio: string | null = null;
 
   let tooMuchFiles: boolean = false;
@@ -32,6 +33,10 @@
         topic_id.toString(),
         'tile',
       );
+      const videoData = await mediaManager.fetchTopicMedia(
+        topic_id.toString(),
+        'video',
+      );
       const audioData = await mediaManager.fetchTopicMedia(
         topic_id.toString(),
         'audio',
@@ -40,6 +45,7 @@
       backgrounds = [...bgData];
       description = descData.length ? descData[0] : null;
       tile = tileData.length ? tileData[0] : null;
+      video = videoData.length ? videoData[0] : null;
       audio = audioData.length ? audioData[0] : null;
     } catch (error) {
       console.error('Failed to load media:', error);
@@ -91,6 +97,13 @@
             'tile',
           );
           tile = response[0];
+        } else if (type === 'video') {
+          const response = await mediaManager.uploadTopicMedia(
+            files[0],
+            topic_id,
+            'video',
+          );
+          tile = response[0];
         } else if (type === 'audio') {
           const response = await mediaManager.uploadTopicMedia(
             files[0],
@@ -118,6 +131,8 @@
         description = null;
       } else if (type === 'tile') {
         tile = null;
+      } else if (type === 'video') {
+        video = null;
       } else if (type === 'audio') {
         audio = null;
       }
@@ -228,6 +243,34 @@
 
     <hr />
 
+    <!-- Video Upload -->
+    <h2>Video</h2>
+    {#if video}
+      <h3>You've already uploaded a video file.</h3>
+    {:else}
+      <label for="video-upload">Upload Video File</label>
+      <input
+        id="video-upload"
+        type="file"
+        max="1"
+        size="12582912"
+        accept="video/mp4"
+        on:change={(e) => handleFileUpload(e, 'video')}
+      />
+      <h3>Only MP4 format is accepted.</h3>
+    {/if}
+    {#if video}
+      <img src={serveUrl(video)} alt="Video" class="preview" />
+      <button
+        class="red-button"
+        on:click={() => handleDelete(tile ?? '', 'video')}
+      >
+        Delete
+      </button>
+    {/if}
+
+    <hr />
+
     <!-- Audio Upload -->
     <h2>Audio</h2>
     {#if audio}
@@ -310,6 +353,7 @@
     aspect-ratio: 1/1;
     border-radius: 1vw;
     box-shadow: 0 0.25vw 0.5vw #010020;
+    background-color: rgba(51, 226, 230, 0.1);
   }
 
   @media only screen and (max-width: 600px) {

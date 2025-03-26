@@ -6,7 +6,7 @@
   export let activeTab: string = 'Home';
   export let arrow: Nullable<string> = null;
 
-  $: admin = $authenticated.user?.role;
+  $: admin = $authenticated.user?.role === 'admin';
 
   const sections: string[] = ['Community Picks', 'Collabs', 'Dischordian Saga'];
 

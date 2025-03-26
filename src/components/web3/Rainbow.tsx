@@ -135,7 +135,6 @@ const Web3Provider = ({ linking, children }) => {
           status={AUTHENTICATION_STATUS}
         >
           <RainbowKitProvider
-            coolMode
             modalSize="wide"
             theme={darkTheme({
               accentColor: 'rgb(51, 226, 230)',

@@ -28,6 +28,7 @@
   };
 
   let debounceTimeout: NodeJS.Timeout;
+
   const handleChangeOrder = (event: Event, topic_id: number) => {
     clearTimeout(debounceTimeout);
     const input = event.target as HTMLInputElement;
@@ -38,6 +39,17 @@
       await admin.changeTopicsOrder(topic_id, Number(input.value));
     }, 1000);
   };
+
+  const handleChangeCategoryOrder = (event: Event, category_id: number) => {
+    clearTimeout(debounceTimeout);
+    const input = event.target as HTMLInputElement;
+    if (Number(input.value) < 0) input.value = '0';
+    if (Number(input.value) > 99) input.value = '99';
+    debounceTimeout = setTimeout(async () => {
+      if (input.value == '') input.value = '0';
+      await admin.changeSectionCategoryOrder(category_id, Number(input.value))
+    }, 1000);
+  }
 
   const selectOrder = (event: Event) => {
     const input = event.target as HTMLInputElement;
@@ -59,10 +71,22 @@
     {#await admin.fetchCollections()}
       <img class="loading-icon" src="/icons/loading.png" alt="Loading" />
     {:then collections}
-      {#each collections as { category_id, category_name, section_id, topics }}
+      {#each collections as { category_id, category_name, category_order, section_id, topics }}
         <section class="container blur">
           <div class="buttons-wrapper category-header">
+            <div class="buttons-wrapper">
+              <label for="category-order">Order:</label>
+              <input
+                class="story-input order-input"
+                type="number"
+                value={category_order}
+                on:click|preventDefault={selectOrder}
+                on:input={(event) => handleChangeCategoryOrder(event, category_id)}
+              />
+            </div>
+
             <p class="collection-header">{category_name}: {topics.length}</p>
+
             <div class="buttons-wrapper">
               <label for="section">Select section:</label>
               {#if sections}
@@ -191,7 +215,9 @@
 
   @media only screen and (max-width: 600px) {
     .category-header {
-      flex-direction: column;
+      flex-flow: row-reverse wrap;
+      justify-content: center;
+      gap: 0.5em 2em;
     }
 
     .tile {
@@ -200,7 +226,7 @@
     }
 
     .order-input {
-      padding: 0.5em 1em;
+      padding: 0.25em 0.5em;
       width: 1.5em;
     }
 

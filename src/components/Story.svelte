@@ -338,7 +338,7 @@
   <BackgroundMusic />
   <Tts />
 
-  <Step />
+  <Step story_name={story_name} />
 {/if}
 
 <div

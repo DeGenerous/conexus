@@ -1,12 +1,23 @@
 <script lang="ts">
   import { afterUpdate } from 'svelte';
 
-  import { storyTitle as _storyTitle } from '@lib/story';
+  import MediaManager from '@lib/media';
+  import { CoNexusGame } from '@lib/story';
   import { fullscreen, story, loading } from '@stores/conexus';
   import { background_volume, tts_volume } from '@stores/volumes';
 
-  import Slider from './music/Slider.svelte';
-  import ImageDisplay from './utils/ImageDisplay.svelte';
+  import Slider from '@components/music/Slider.svelte';
+  import ImageDisplay from '@components/utils/ImageDisplay.svelte';
+
+  export let story_name: string;
+
+  const game: CoNexusGame = new CoNexusGame();
+  const media: MediaManager = new MediaManager();
+
+  const handleSetMedia = async (topic_id: number) => {
+    await media.setBackgroundImage(topic_id);
+    await media.playBackgroundMusic(topic_id);
+  };
 
   let fullWidthImage: boolean = false;
   let imageWrapper: HTMLDivElement;
@@ -30,7 +41,7 @@
   let stepFont: string = 'Verdana';
   let width: number;
   const storyTitle: string = (
-    _storyTitle.charAt(0).toUpperCase() + _storyTitle.slice(1)
+    story_name.charAt(0).toUpperCase() + story_name.slice(1)
   ).trim();
 
   let activeOptionNumber: number = 0;
@@ -185,6 +196,20 @@
   {#if step.title}
     <h3 class="step-title">{step.title}</h3>
   {/if}
+
+  <!-- Restart -->
+  {#await game.getTopic(story_name)}
+    <p>Loading...</p>
+  {:then topic}
+    <button
+      class="option menu-option"
+      on:click={() => {
+        game.startGame(topic.name, topic.id, handleSetMedia);
+      }}
+    >
+      Restart
+    </button>
+  {/await}
 
   <article class="story-text" style={textWrapperStyling}>
     {#each step.story.split('\n') as paragraph}

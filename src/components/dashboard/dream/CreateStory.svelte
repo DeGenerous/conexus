@@ -63,7 +63,7 @@
     $storyData.name &&
     $storyData.description &&
     $storyData.description.length > 100 &&
-    $storyData.imagePrompts.length > 0 && 
+    $storyData.imagePrompts.length > 0 &&
     $storyData.category;
 </script>
 
@@ -73,13 +73,17 @@
 <section class="container-wrapper dream-wrapper">
   <div class="buttons-wrapper">
     <label for="section">Select Category:</label>
-    <select class="selector" class:red-border={!$storyData.category} bind:value={$storyData.category}>
+    <select
+      class="selector"
+      class:red-border={!$storyData.category}
+      bind:value={$storyData.category}
+    >
       <option value={null} selected={true} disabled hidden>Select</option>
-        {#await admin.fetchCategories() then categories}
-          {#each categories as { name, id }}
-            <option value={id}>{name}</option>
-          {/each}
-        {/await}
+      {#await admin.fetchCategories() then categories}
+        {#each categories as { name, id }}
+          <option value={id}>{name}</option>
+        {/each}
+      {/await}
     </select>
   </div>
 

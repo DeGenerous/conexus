@@ -42,10 +42,10 @@
       let match: boolean = false;
       topics.map((topic) => {
         if (topic.name == story_name) match = true;
-      })
+      });
       if (match) return { name, topics };
-    })
-    categoryTopics = selectedCategory[0]!.topics.map(({ name }) => (name));
+    });
+    categoryTopics = selectedCategory[0]!.topics.map(({ name }) => name);
 
     activeStoryIndex = categoryTopics?.indexOf(story_name);
     console.log(categoryTopics);
@@ -163,16 +163,23 @@
       </header>
 
       <div class="buttons-wrapper stories-switcher">
-        <a class="buttons-wrapper switch-arrow" href="/{section}/{categoryTopics[prevStoryIndex]}">
-          <img
-            src="/icons/switch-arrow.svg"
-            alt="Switch"
-          />
+        <a
+          class="buttons-wrapper switch-arrow"
+          href="/{section}/{categoryTopics[prevStoryIndex]}"
+        >
+          <img src="/icons/switch-arrow.svg" alt="Switch" />
           <h3>{categoryTopics[prevStoryIndex]}</h3>
-          </a>
+        </a>
 
-        <a class="buttons-wrapper switch-arrow" href="/{section}/{categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]}">
-          <h3>{categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]}</h3>
+        <a
+          class="buttons-wrapper switch-arrow"
+          href="/{section}/{categoryTopics[
+            (activeStoryIndex + 1) % categoryTopics.length
+          ]}"
+        >
+          <h3>
+            {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]}
+          </h3>
           <img
             src="/icons/switch-arrow.svg"
             alt="Switch"
@@ -243,8 +250,8 @@
       {#await media.fetchStoryImage(topic.id, 'video') then storyVideo}
         {#if storyVideo !== '/blank.avif'}
           <video class="blur story-video" controls autoplay loop muted>
-            <source src={storyVideo} type="video/mp4"/>
-            <track kind="captions">
+            <source src={storyVideo} type="video/mp4" />
+            <track kind="captions" />
           </video>
         {/if}
       {/await}
@@ -378,7 +385,7 @@
   <BackgroundMusic />
   <Tts />
 
-  <Step story_name={story_name} />
+  <Step {story_name} />
 {/if}
 
 <div

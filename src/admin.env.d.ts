@@ -16,6 +16,7 @@ type Collection = {
   section_id: number;
   section_name: string;
   topics: CollectionTopic[];
+  order: number;
 };
 
 type MediaType =

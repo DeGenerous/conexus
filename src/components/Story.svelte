@@ -201,7 +201,7 @@
       </div>
 
       {#await media.fetchStoryImage(topic.id, 'video') then storyVideo}
-        {#if storyVideo}
+        {#if storyVideo !== '/blank.avif'}
           <video class="blur story-video" controls>
             <source src={storyVideo} type="video/mp4"/>
             <track kind="captions">

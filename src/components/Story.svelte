@@ -202,7 +202,7 @@
 
       {#await media.fetchStoryImage(topic.id, 'video') then storyVideo}
         {#if storyVideo !== '/blank.avif'}
-          <video class="blur story-video" controls>
+          <video class="blur story-video" controls autoplay loop muted>
             <source src={storyVideo} type="video/mp4"/>
             <track kind="captions">
           </video>

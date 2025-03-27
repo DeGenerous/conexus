@@ -6,6 +6,7 @@
   import Step from '@components/Step.svelte';
   import MediaManager from '@lib/media';
   import { CoNexusGame } from '@lib/story';
+  import { CoNexusApp } from '@lib/view';
   import { loading, story, background_image } from '@stores/conexus';
   import {
     showModal,
@@ -20,15 +21,35 @@
   import BackArrow from './utils/BackArrow.svelte';
   import Share from './utils/Share.svelte';
 
+  export let section: string;
   export let story_name: string;
 
   let scroll: number;
 
+  const app: CoNexusApp = new CoNexusApp();
   const game: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
 
+  let categoryTopics: string[] = [];
+  let activeStoryIndex: number = 0;
+  $: prevStoryIndex =
+    activeStoryIndex == 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
   onMount(async () => {
     await checkUserState('/story');
+
+    const categories = await app.getSectionCategories(section);
+    const selectedCategory = categories.map(({ name, topics }) => {
+      let match: boolean = false;
+      topics.map((topic) => {
+        if (topic.name == story_name) match = true;
+      })
+      if (match) return { name, topics };
+    })
+    categoryTopics = selectedCategory[0]!.topics.map(({ name }) => (name));
+
+    activeStoryIndex = categoryTopics?.indexOf(story_name);
+    console.log(categoryTopics);
+    console.log(activeStoryIndex);
   });
 
   let deletedStories: string[] = []; // temp storage before reload for immediate removal
@@ -140,6 +161,25 @@
         </h1>
         <Profile />
       </header>
+
+      <div class="buttons-wrapper stories-switcher">
+        <a class="buttons-wrapper switch-arrow" href="/{section}/{categoryTopics[prevStoryIndex]}">
+          <img
+            src="/icons/switch-arrow.svg"
+            alt="Switch"
+          />
+          <h3>{categoryTopics[prevStoryIndex]}</h3>
+          </a>
+
+        <a class="buttons-wrapper switch-arrow" href="/{section}/{categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]}">
+          <h3>{categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]}</h3>
+          <img
+            src="/icons/switch-arrow.svg"
+            alt="Switch"
+            style="transform: rotate(180deg)"
+          />
+        </a>
+      </div>
 
       <div class="story-container blur">
         {#await media.fetchStoryImage(topic.id, 'description')}
@@ -555,6 +595,30 @@
     width: 1.5vw;
   }
 
+  .stories-switcher {
+    width: 90%;
+    justify-content: space-between;
+  }
+
+  .switch-arrow img {
+    width: 3vw;
+    height: 3vw;
+  }
+
+  .switch-arrow h3 {
+    color: white;
+  }
+
+  .switch-arrow {
+    opacity: 0.75;
+    text-decoration: none !important;
+  }
+
+  .switch-arrow:hover,
+  .switch-arrow:active {
+    opacity: 1;
+  }
+
   /* LOADING */
 
   .default-picture {
@@ -631,7 +695,6 @@
     }
 
     .story-container {
-      margin-top: 25%;
       max-width: 100%;
       flex-direction: column;
       gap: 1.5em;
@@ -723,6 +786,20 @@
 
     .continue-shaping-btn {
       height: 2em !important;
+    }
+
+    .stories-switcher {
+      margin-top: 25%;
+    }
+
+    .switch-arrow img {
+      width: 2em;
+      height: 2em;
+    }
+
+    .switch-arrow {
+      flex-wrap: nowrap;
+      justify-content: center;
     }
 
     .default-picture {

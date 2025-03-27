@@ -15,8 +15,6 @@
 
   onMount(async () => {
     await checkUserState('/dashboard/dream/manage', true);
-
-    console.log(await admin.fetchCollections());
   });
 
   onMount(async () => {
@@ -118,7 +116,7 @@
         </section>
       {/each}
 
-      <div class="container buttons-wrapper new-category">
+      <div class="container blur buttons-wrapper new-category">
         <input
           class="story-input"
           bind:value={newCategoryName}

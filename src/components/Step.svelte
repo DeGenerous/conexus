@@ -197,20 +197,6 @@
     <h3 class="step-title">{step.title}</h3>
   {/if}
 
-  <!-- Restart -->
-  {#await game.getTopic(story_name)}
-    <p>Loading...</p>
-  {:then topic}
-    <button
-      class="option menu-option"
-      on:click={() => {
-        game.startGame(topic.name, topic.id, handleSetMedia);
-      }}
-    >
-      Restart
-    </button>
-  {/await}
-
   <article class="story-text" style={textWrapperStyling}>
     {#each step.story.split('\n') as paragraph}
       <p>{paragraph}</p>
@@ -235,6 +221,19 @@
     {/if}
 
     <div class="options-container blur">
+      {#await game.getTopic(story_name)}
+        <p>Loading...</p>
+      {:then topic}
+        <button
+          class="option menu-option"
+          on:click={() => {
+            game.startGame(topic.name, topic.id, handleSetMedia);
+          }}
+        >
+          Start again
+        </button>
+      {/await}
+
       <button
         id="option-0"
         class="option menu-option"

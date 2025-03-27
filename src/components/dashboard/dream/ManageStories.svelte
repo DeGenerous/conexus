@@ -11,8 +11,12 @@
 
   let sections: Section[] = default_sections;
 
+  let newCategoryName: string = '';
+
   onMount(async () => {
     await checkUserState('/dashboard/dream/manage', true);
+
+    console.log(await admin.fetchCollections())
   });
 
   onMount(async () => {
@@ -113,6 +117,11 @@
           </div>
         </section>
       {/each}
+
+      <div class="container buttons-wrapper new-category">
+        <input class="story-input" bind:value={newCategoryName} placeholder="Enter Name" />
+        <button on:click={() => (admin.newCategory(newCategoryName))}>Add New Category</button>
+      </div>
     {/await}
   {/key}
 </section>
@@ -161,6 +170,21 @@
     text-transform: capitalize;
   }
 
+  .new-category {
+    width: 50vw;
+    padding: 2vw;
+    gap: 2vw;
+    border-radius: 1.5vw;
+  }
+
+  .new-category input {
+    width: 30vw;
+  }
+
+  .new-category button {
+    width: 20vw;
+  }
+
   @media only screen and (max-width: 600px) {
     .category-header {
       flex-direction: column;
@@ -174,6 +198,22 @@
     .order-input {
       padding: 0.5em 1em;
       width: 1.5em;
+    }
+
+    .new-category {
+      width: 100vw;
+      padding: 1.5em 1em;
+      gap: 1em;
+      border-radius: 0;
+    }
+
+    .new-category input {
+      width: 95vw;
+      text-align: center;
+    }
+
+    .new-category button {
+      width: 50vw;
     }
   }
 </style>

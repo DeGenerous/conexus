@@ -47,9 +47,9 @@
     if (Number(input.value) > 99) input.value = '99';
     debounceTimeout = setTimeout(async () => {
       if (input.value == '') input.value = '0';
-      await admin.changeSectionCategoryOrder(category_id, Number(input.value))
+      await admin.changeSectionCategoryOrder(category_id, Number(input.value));
     }, 1000);
-  }
+  };
 
   const selectOrder = (event: Event) => {
     const input = event.target as HTMLInputElement;
@@ -81,7 +81,8 @@
                 type="number"
                 value={category_order}
                 on:click|preventDefault={selectOrder}
-                on:input={(event) => handleChangeCategoryOrder(event, category_id)}
+                on:input={(event) =>
+                  handleChangeCategoryOrder(event, category_id)}
               />
             </div>
 

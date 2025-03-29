@@ -174,7 +174,12 @@
     <div class="media-grid">
       {#each backgrounds as bg}
         <div class="preview-wrapper">
-          <img src={serveUrl(bg)} alt="Background" class="preview" draggable="false" />
+          <img
+            src={serveUrl(bg)}
+            alt="Background"
+            class="preview"
+            draggable="false"
+          />
           <button
             class="red-button"
             on:click={() => handleDelete(bg, 'background')}
@@ -204,7 +209,12 @@
       <h3>Only AVIF format is accepted.</h3>
     {/if}
     {#if description}
-      <img src={serveUrl(description)} alt="Description" class="preview" draggable="false" />
+      <img
+        src={serveUrl(description)}
+        alt="Description"
+        class="preview"
+        draggable="false"
+      />
       <button
         class="red-button"
         on:click={() => handleDelete(description ?? '', 'description')}

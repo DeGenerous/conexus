@@ -34,13 +34,11 @@ export class AdminApp extends AdminAPI {
       return [];
     }
 
-    const orderedCollections = data.sort(
-      (a: Collection, b: Collection) => {
-        if (a.category_order < b.category_order) return -1;
-        if (a.category_order > b.category_order) return 1;
-        return 0;
-      },
-    );
+    const orderedCollections = data.sort((a: Collection, b: Collection) => {
+      if (a.category_order < b.category_order) return -1;
+      if (a.category_order > b.category_order) return 1;
+      return 0;
+    });
 
     return orderedCollections;
   }

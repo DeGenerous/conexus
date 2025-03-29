@@ -174,7 +174,7 @@
     <div class="media-grid">
       {#each backgrounds as bg}
         <div class="preview-wrapper">
-          <img src={serveUrl(bg)} alt="Background" class="preview" />
+          <img src={serveUrl(bg)} alt="Background" class="preview" draggable="false" />
           <button
             class="red-button"
             on:click={() => handleDelete(bg, 'background')}
@@ -204,7 +204,7 @@
       <h3>Only AVIF format is accepted.</h3>
     {/if}
     {#if description}
-      <img src={serveUrl(description)} alt="Description" class="preview" />
+      <img src={serveUrl(description)} alt="Description" class="preview" draggable="false" />
       <button
         class="red-button"
         on:click={() => handleDelete(description ?? '', 'description')}
@@ -232,7 +232,7 @@
       <h3>Only AVIF format is accepted.</h3>
     {/if}
     {#if tile}
-      <img src={serveUrl(tile)} alt="Tile" class="preview" />
+      <img src={serveUrl(tile)} alt="Tile" class="preview" draggable="false" />
       <button
         class="red-button"
         on:click={() => handleDelete(tile ?? '', 'tile')}
@@ -291,7 +291,7 @@
       <h3>Only MP4 format is accepted.</h3>
     {/if}
     {#if video}
-      <video controls class="preview">
+      <video controls class="preview video-preview" draggable="false">
         <source src={serveUrl(video)} type="video/mp4" />
         <track
           kind="captions"
@@ -359,10 +359,26 @@
 
   .preview {
     width: 20vw;
-    aspect-ratio: 1/1;
     border-radius: 1vw;
     box-shadow: 0 0.25vw 0.5vw #010020;
     background-color: rgba(51, 226, 230, 0.1);
+  }
+
+  .preview:hover,
+  .preview:active {
+    transform: scale(1.1);
+    filter: brightness(125%);
+  }
+
+  .video-preview {
+    width: 50vw;
+    transform: none !important;
+    filter: none !important;
+    cursor: pointer;
+  }
+
+  audio {
+    width: 30vw;
   }
 
   @media only screen and (max-width: 600px) {
@@ -388,6 +404,10 @@
     .preview {
       width: 90vw;
       border-radius: 0.5em;
+    }
+
+    audio {
+      width: 90vw;
     }
   }
 </style>

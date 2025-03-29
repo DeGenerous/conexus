@@ -466,7 +466,6 @@
   .picture {
     min-width: 25vw;
     width: 25vw;
-    aspect-ratio: 1/1;
     filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
     border-radius: 1vw;
   }

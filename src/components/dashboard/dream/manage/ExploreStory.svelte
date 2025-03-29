@@ -231,10 +231,9 @@
           >
             Play Demo
           </a>
+          <button on:click={downloadTopicJson}>Export JSON</button>
         </div>
       {/key}
-
-      <button on:click={downloadTopicJson}>Export JSON</button>
 
       <div class="input-container">
         <label for="category">Category:</label>

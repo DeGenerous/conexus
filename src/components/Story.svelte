@@ -5,6 +5,7 @@
   import Tts from '@components/music/Tts.svelte';
   import Step from '@components/Step.svelte';
   import MediaManager from '@lib/media';
+  import { AdminApp } from '@lib/admin';
   import { CoNexusGame } from '@lib/story';
   import { CoNexusApp } from '@lib/view';
   import { loading, story, background_image } from '@stores/conexus';
@@ -26,6 +27,7 @@
 
   let scroll: number;
 
+  const admin = new AdminApp();
   const app: CoNexusApp = new CoNexusApp();
   const game: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
@@ -37,17 +39,19 @@
   onMount(async () => {
     await checkUserState('/story');
 
-    const categories = await app.getSectionCategories(section);
-    const selectedCategory = categories.map(({ name, topics }) => {
-      let match: boolean = false;
-      topics.map((topic) => {
-        if (topic.name == story_name) match = true;
-      });
-      if (match) return { name, topics };
-    });
-    categoryTopics = selectedCategory[0]!.topics.map(({ name }) => name);
+    const topic = await admin.fetchTopic(story_name);
 
-    activeStoryIndex = categoryTopics?.indexOf(story_name);
+    if (!topic) {
+      window.open('./', '_self');
+      return;
+    }
+
+    const collections = await admin.fetchCollections();
+    const topicCategory = collections.filter(
+      (col) => col.category_id === topic.category_id,
+    )[0];
+    categoryTopics = topicCategory.topics.map((story) => story.topic_name);
+    activeStoryIndex = categoryTopics?.indexOf(topic.name);
   });
 
   let deletedStories: string[] = []; // temp storage before reload for immediate removal

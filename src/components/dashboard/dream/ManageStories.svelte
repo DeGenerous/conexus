@@ -66,10 +66,10 @@
   };
 
   const storeAllTopics = (collections: Collection[]) => {
-    const allTopics = collections.map((collection) => (collection.topics)).flat();
-    const topicNames = allTopics.map(({ topic_name }) => (topic_name));
+    const allTopics = collections.map((collection) => collection.topics).flat();
+    const topicNames = allTopics.map(({ topic_name }) => topic_name);
     localStorage.setItem('all topics', topicNames.join());
-  }
+  };
 </script>
 
 <section class="container-wrapper">
@@ -77,7 +77,7 @@
     {#await admin.fetchCollections()}
       <img class="loading-icon" src="/icons/loading.png" alt="Loading" />
     {:then collections}
-    {storeAllTopics(collections)}
+      {storeAllTopics(collections)}
       {#each collections as { category_id, category_name, category_order, section_id, topics }}
         <section class="container blur">
           <div class="buttons-wrapper category-header">

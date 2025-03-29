@@ -28,7 +28,7 @@
   const game: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
 
-  let categoryTopics: {name: string; id: number;}[] = [];
+  let categoryTopics: { name: string; id: number }[] = [];
   let activeStoryIndex: number = 0;
   $: prevStoryIndex =
     activeStoryIndex == 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
@@ -36,13 +36,15 @@
     await checkUserState('/story');
 
     categoryTopics = JSON.parse(
-      localStorage.getItem(`${section} topics`) as string
+      localStorage.getItem(`${section} topics`) as string,
     );
-    const categoryTopicNames: string[] = categoryTopics.map((story) => (story.name));
+    const categoryTopicNames: string[] = categoryTopics.map(
+      (story) => story.name,
+    );
     activeStoryIndex = categoryTopicNames?.indexOf(story_name);
 
-    console.log(categoryTopics)
-    console.log(activeStoryIndex)
+    console.log(categoryTopics);
+    console.log(activeStoryIndex);
   });
 
   let deletedStories: string[] = []; // temp storage before reload for immediate removal
@@ -158,7 +160,8 @@
       <div class="buttons-wrapper stories-switcher">
         <a
           class="buttons-wrapper switch-arrow"
-          href="/{section}/{categoryTopics[prevStoryIndex].name}?id={categoryTopics[prevStoryIndex].id}"
+          href="/{section}/{categoryTopics[prevStoryIndex]
+            .name}?id={categoryTopics[prevStoryIndex].id}"
         >
           <img src="/icons/switch-arrow.svg" alt="Switch" />
           <h3>{categoryTopics[prevStoryIndex].name}</h3>
@@ -173,7 +176,8 @@
           ].id}"
         >
           <h3>
-            {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length].name}
+            {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
+              .name}
           </h3>
           <img
             src="/icons/switch-arrow.svg"

@@ -48,8 +48,6 @@
     categoryTopics = selectedCategory[0]!.topics.map(({ name }) => name);
 
     activeStoryIndex = categoryTopics?.indexOf(story_name);
-    console.log(categoryTopics);
-    console.log(activeStoryIndex);
   });
 
   let deletedStories: string[] = []; // temp storage before reload for immediate removal

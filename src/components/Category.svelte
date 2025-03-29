@@ -46,6 +46,14 @@
         }),
       ]);
 
+      const sectionTopics = categories.map((cat) => (cat.topics)).flat();
+      localStorage.setItem(`${section} topics`, JSON.stringify(sectionTopics.map((topic) => {
+        return {
+          name: topic.name,
+          id: topic.id
+        }
+      })))
+
       // Unsubscribe when done to avoid memory leaks (optional)
       unsubscribe();
     } catch (error) {

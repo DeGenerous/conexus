@@ -5,9 +5,7 @@
   import Tts from '@components/music/Tts.svelte';
   import Step from '@components/Step.svelte';
   import MediaManager from '@lib/media';
-  import { AdminApp } from '@lib/admin';
   import { CoNexusGame } from '@lib/story';
-  import { CoNexusApp } from '@lib/view';
   import { loading, story, background_image } from '@stores/conexus';
   import {
     showModal,
@@ -27,31 +25,24 @@
 
   let scroll: number;
 
-  const admin = new AdminApp();
-  const app: CoNexusApp = new CoNexusApp();
   const game: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
 
-  let categoryTopics: string[] = [];
+  let categoryTopics: {name: string; id: number;}[] = [];
   let activeStoryIndex: number = 0;
   $: prevStoryIndex =
     activeStoryIndex == 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
   onMount(async () => {
     await checkUserState('/story');
 
-    const topic = await admin.fetchTopic(story_name);
+    categoryTopics = JSON.parse(
+      localStorage.getItem(`${section} topics`) as string
+    );
+    const categoryTopicNames: string[] = categoryTopics.map((story) => (story.name));
+    activeStoryIndex = categoryTopicNames?.indexOf(story_name);
 
-    if (!topic) {
-      window.open('./', '_self');
-      return;
-    }
-
-    const collections = await admin.fetchCollections();
-    const topicCategory = collections.filter(
-      (col) => col.category_id === topic.category_id,
-    )[0];
-    categoryTopics = topicCategory.topics.map((story) => story.topic_name);
-    activeStoryIndex = categoryTopics?.indexOf(topic.name);
+    console.log(categoryTopics)
+    console.log(activeStoryIndex)
   });
 
   let deletedStories: string[] = []; // temp storage before reload for immediate removal
@@ -167,20 +158,22 @@
       <div class="buttons-wrapper stories-switcher">
         <a
           class="buttons-wrapper switch-arrow"
-          href="/{section}/{categoryTopics[prevStoryIndex]}"
+          href="/{section}/{categoryTopics[prevStoryIndex].name}?id={categoryTopics[prevStoryIndex].id}"
         >
           <img src="/icons/switch-arrow.svg" alt="Switch" />
-          <h3>{categoryTopics[prevStoryIndex]}</h3>
+          <h3>{categoryTopics[prevStoryIndex].name}</h3>
         </a>
 
         <a
           class="buttons-wrapper switch-arrow"
           href="/{section}/{categoryTopics[
             (activeStoryIndex + 1) % categoryTopics.length
-          ]}"
+          ].name}?id={categoryTopics[
+            (activeStoryIndex + 1) % categoryTopics.length
+          ].id}"
         >
           <h3>
-            {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]}
+            {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length].name}
           </h3>
           <img
             src="/icons/switch-arrow.svg"

@@ -64,11 +64,7 @@
       type: 'application/json',
     });
 
-    const collections = await admin.fetchCollections();
-    const topicCategory = collections.filter(
-      (col) => col.category_id === topic.category_id,
-    )[0];
-    categoryTopics = topicCategory.topics.map((story) => story.topic_name);
+    categoryTopics = localStorage.getItem('all topics')!.split(',');
     activeStoryIndex = categoryTopics?.indexOf(topic.name);
   });
 

@@ -30,6 +30,11 @@
 
   let jsonBlob: Nullable<Blob> = null;
 
+  let categoryTopics: string[] = [];
+  let activeStoryIndex: number = 0;
+  $: prevStoryIndex =
+    activeStoryIndex == 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
+
   onMount(async () => {
     const topic_ = await admin.fetchTopic(topic_name);
 
@@ -58,6 +63,13 @@
     jsonBlob = new Blob([JSON.stringify(exportObject)], {
       type: 'application/json',
     });
+
+    const collections = await admin.fetchCollections();
+    const topicCategory = collections.filter(
+      (col) => col.category_id === topic.category_id,
+    )[0];
+    categoryTopics = topicCategory.topics.map((story) => story.topic_name);
+    activeStoryIndex = categoryTopics?.indexOf(topic.name);
   });
 
   let editingName: boolean = false;
@@ -120,6 +132,32 @@
   {#if !topic}
     <img class="loading-icon" src="/icons/loading.png" alt="Loading" />
   {:else}
+    <div class="buttons-wrapper stories-switcher">
+      <a
+        class="buttons-wrapper switch-arrow"
+        href="/dashboard/dream/manage/{categoryTopics[prevStoryIndex]}"
+      >
+        <img src="/icons/switch-arrow.svg" alt="Switch" />
+        <h3>{categoryTopics[prevStoryIndex]}</h3>
+      </a>
+
+      <a
+        class="buttons-wrapper switch-arrow"
+        href="/dashboard/dream/manage/{categoryTopics[
+          (activeStoryIndex + 1) % categoryTopics.length
+        ]}"
+      >
+        <h3>
+          {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]}
+        </h3>
+        <img
+          src="/icons/switch-arrow.svg"
+          alt="Switch"
+          style="transform: rotate(180deg)"
+        />
+      </a>
+    </div>
+
     <!-- NAME, CATEGORY -->
     <div class="container blur">
       <div class="story-title">

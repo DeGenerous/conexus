@@ -599,30 +599,6 @@
     width: 1.5vw;
   }
 
-  .stories-switcher {
-    width: 90%;
-    justify-content: space-between;
-  }
-
-  .switch-arrow img {
-    width: 3vw;
-    height: 3vw;
-  }
-
-  .switch-arrow h3 {
-    color: white;
-  }
-
-  .switch-arrow {
-    opacity: 0.75;
-    text-decoration: none !important;
-  }
-
-  .switch-arrow:hover,
-  .switch-arrow:active {
-    opacity: 1;
-  }
-
   /* LOADING */
 
   .default-picture {
@@ -792,20 +768,6 @@
       height: 2em !important;
     }
 
-    .stories-switcher {
-      margin-top: 25%;
-    }
-
-    .switch-arrow img {
-      width: 2em;
-      height: 2em;
-    }
-
-    .switch-arrow {
-      flex-wrap: nowrap;
-      justify-content: center;
-    }
-
     .default-picture {
       height: 90vw;
     }
@@ -829,6 +791,10 @@
     .loading-svg {
       height: 1em;
       width: 1em;
+    }
+
+    .stories-switcher {
+      margin-top: 25%;
     }
   }
 </style>

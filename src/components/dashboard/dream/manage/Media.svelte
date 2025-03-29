@@ -166,6 +166,7 @@
         on:change={(e) => handleFileUpload(e, 'background')}
       />
       <h3>Only AVIF format is accepted.</h3>
+      <h3 class="mobile-note">Only &lt1.5MB files.</h3>
       {#if tooMuchFiles}
         <p class="validation">You can only upload up to 3 background images!</p>
       {/if}
@@ -207,6 +208,7 @@
         on:change={(e) => handleFileUpload(e, 'description')}
       />
       <h3>Only AVIF format is accepted.</h3>
+      <h3 class="mobile-note">Only &lt1.5MB files.</h3>
     {/if}
     {#if description}
       <img
@@ -240,6 +242,7 @@
         on:change={(e) => handleFileUpload(e, 'tile')}
       />
       <h3>Only AVIF format is accepted.</h3>
+      <h3 class="mobile-note">Only &lt1.5MB files.</h3>
     {/if}
     {#if tile}
       <img src={serveUrl(tile)} alt="Tile" class="preview" draggable="false" />
@@ -268,6 +271,7 @@
         on:change={(e) => handleFileUpload(e, 'audio')}
       />
       <h3>Only MP3 format is accepted.</h3>
+      <h3 class="mobile-note">Only &lt6MB files.</h3>
     {/if}
     {#if audio}
       <audio controls>
@@ -294,11 +298,12 @@
         id="video-upload"
         type="file"
         max="1"
-        size="12582912"
+        size="10485760"
         accept="video/mp4"
         on:change={(e) => handleFileUpload(e, 'video')}
       />
       <h3>Only MP4 format is accepted.</h3>
+      <h3 class="mobile-note">Only &lt10MB files.</h3>
     {/if}
     {#if video}
       <video controls class="preview video-preview" draggable="false">
@@ -391,6 +396,10 @@
     width: 30vw;
   }
 
+  .mobile-note {
+    display: none;
+  }
+
   @media only screen and (max-width: 600px) {
     .media-wrapper {
       width: 100vw;
@@ -418,6 +427,10 @@
 
     audio {
       width: 90vw;
+    }
+
+    .mobile-note {
+      display: block;
     }
   }
 </style>

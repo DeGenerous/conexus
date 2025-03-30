@@ -97,7 +97,7 @@ export class CoNexusGame extends GameAPI {
     //TODO: change all story_name to topic_id
     loading.set(true);
 
-    const { data, error } = await this.start(story_name);
+    const { data, error } = await this.start(story_name, topic_id);
 
     if (!data) {
       if (error) {

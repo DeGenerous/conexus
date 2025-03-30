@@ -566,6 +566,82 @@ export class AdminApp extends AdminAPI {
     toastStore.show(data.message, 'info');
   }
 
+  /**
+   * Gate a topic by its ID with an NFT.
+   *
+   * @param gate_params - The parameters for gating the topic.
+   * @returns A promise that resolves to void.
+   */
+  async gateTopic(gate_params: TopicNFTGate): Promise<void> {
+    const { data, error } = await this.gateTopicWithNFT(
+      gate_params.topic_id,
+      gate_params.contract_name,
+      gate_params.token_id,
+    );
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error gating topic', 'error');
+      }
+      return;
+    }
+
+    this.clearCache();
+
+    toastStore.show(data.message, 'info');
+  }
+
+  /**
+   * Removes the NFT gate from a topic.
+   *
+   * @param topic_id - The ID of the topic to remove the gate from.
+   * @param contract_names - The names of the contracts to remove the gate from.
+   * @param token_ids - The IDs of the tokens to remove the gate from.
+   * @returns A promise that resolves to void.
+   */
+  async removeTopicGate(
+    topic_id: number,
+    contract_names?: SupportedContracts,
+    token_ids?: number[],
+  ): Promise<void> {
+    const { data, error } = await this.removeTopicNFTGate(
+      topic_id,
+      contract_names,
+      token_ids,
+    );
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error removing topic gate', 'error');
+      }
+      return;
+    }
+    this.clearCache();
+    toastStore.show(data.message, 'info');
+  }
+
+  /**
+   * Fetches the NFT gates for a specific topic.
+   *
+   * @param topic_id - The ID of the topic to fetch gates for.
+   * @returns A promise that resolves to an array of TopicNFTGate objects.
+   */
+  async fetchTopicGates(topic_id: number): Promise<TopicNFTGate[]> {
+    const { data, error } = await this.getTopicNFTGates(topic_id);
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error fetching topic gates', 'error');
+      }
+      return [];
+    }
+    return data;
+  }
+
   private clearCache() {
     ClearCache('manage');
   }

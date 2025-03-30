@@ -145,7 +145,7 @@ export default class AdminAPI extends Fetcher {
   async gateTopicWithNFT(
     topic_id: number,
     contract_name: SupportedContracts,
-    token_id: number,
+    token_id?: number,
   ) {
     return this.request<APISTDResposne>('/admin/gate-topic', {
       method: 'POST',

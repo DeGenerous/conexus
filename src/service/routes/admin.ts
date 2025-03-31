@@ -152,10 +152,10 @@ export default class AdminAPI extends Fetcher {
       body: JSON.stringify({ topic_id, contract_name, token_id }),
     });
   }
-  async removeTopicNFTGate(topic_id: number, contract_names?: SupportedContracts, token_ids?: number[]) {
+  async removeTopicNFTGate(topic_id: number, contract_name?: SupportedContracts, token_id?: number) {
     return this.request<APISTDResposne>('/admin/remove-topic-gate', {
       method: 'DELETE',
-      body: JSON.stringify({ topic_id, contract_names, token_ids }),
+      body: JSON.stringify({ topic_id, contract_name, token_id }),
     });
   }
   async getTopicNFTGates(topic_id: number) {

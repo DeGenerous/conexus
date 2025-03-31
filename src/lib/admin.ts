@@ -569,15 +569,21 @@ export class AdminApp extends AdminAPI {
   /**
    * Gate a topic by its ID with an NFT.
    *
-   * @param gate_params - The parameters for gating the topic.
+   * @param topic_id - The ID of the topic to remove the gate from.
+   * @param contract_name - The name of the contracts to remove the gate from.
+   * @param token_id - The ID of the tokens to remove the gate from.
    * @returns A promise that resolves to void.
    */
-  async gateTopic(gate_params: TopicNFTGate): Promise<void> {
+  async gateTopic(
+    topic_id: number,
+    contract_name: SupportedContracts,
+    token_id?: number,
+  ): Promise<void> {
     const { data, error } = await this.gateTopicWithNFT(
-      gate_params.topic_id,
-      gate_params.contract_name,
-      gate_params.token_id,
-    );
+      topic_id,
+      contract_name,
+      token_id,
+    )
 
     if (!data) {
       if (error) {
@@ -597,19 +603,19 @@ export class AdminApp extends AdminAPI {
    * Removes the NFT gate from a topic.
    *
    * @param topic_id - The ID of the topic to remove the gate from.
-   * @param contract_names - The names of the contracts to remove the gate from.
-   * @param token_ids - The IDs of the tokens to remove the gate from.
+   * @param contract_name - The name of the contracts to remove the gate from.
+   * @param token_id - The ID of the tokens to remove the gate from.
    * @returns A promise that resolves to void.
    */
   async removeTopicGate(
     topic_id: number,
-    contract_names?: SupportedContracts,
-    token_ids?: number[],
+    contract_name?: SupportedContracts,
+    token_id?: number,
   ): Promise<void> {
     const { data, error } = await this.removeTopicNFTGate(
       topic_id,
-      contract_names,
-      token_ids,
+      contract_name,
+      token_id,
     );
     if (!data) {
       if (error) {
@@ -634,8 +640,6 @@ export class AdminApp extends AdminAPI {
     if (!data) {
       if (error) {
         api_error(error);
-      } else {
-        toastStore.show('Error fetching topic gates', 'error');
       }
       return [];
     }

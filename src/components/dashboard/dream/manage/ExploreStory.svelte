@@ -10,6 +10,7 @@
 
   import GenreTags from './GenreTags.svelte';
   import Media from './Media.svelte';
+  import NftGating from './NftGating.svelte';
 
   export let topic_name = 'story';
 
@@ -101,6 +102,21 @@
         await admin.removeGenre(topic.id, genre_id);
         break;
     }
+  }
+
+  async function handleGatingChange(topic_id: number, contract_name: SupportedContracts, method: 'add' | 'remove') {
+    switch (method) {
+      case 'add':
+        await admin.gateTopic(topic_id, contract_name);
+        break;
+      case 'remove':
+        await admin.removeTopicGate(topic_id, contract_name);
+        break;
+    }
+  }
+
+  async function getTopicGates(topic_id: number) {
+    return await admin.fetchTopicGates(topic_id);
   }
 
   const switchAvailable = (available: string) => {
@@ -399,6 +415,8 @@
 
     <!-- MEDIA FILES -->
     <Media bind:topic_id={topic.id} />
+
+    <NftGating {topic} {handleGatingChange} {getTopicGates} />
 
     <button class="red-button blur" on:click={openModal}>Delete Story</button>
   {/if}

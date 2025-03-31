@@ -88,7 +88,7 @@
         <option value={genre.name}>{genre.name}</option>
       {/each}
     </select>
-    <button on:click={handleAddGenre}>Add Genre</button>
+    <button on:click={handleAddGenre} disabled={!$newGenre}>Add Genre</button>
   </div>
 </div>
 

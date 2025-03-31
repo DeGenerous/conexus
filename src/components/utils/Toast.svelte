@@ -48,7 +48,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 1vw;
-    max-width: 35vw;
+    max-width: 65vw;
     opacity: 1;
     animation: fade-out 5s ease-in-out;
   }
@@ -63,6 +63,11 @@
 
   .close-btn {
     cursor: pointer;
+  }
+
+  .close-btn:hover,
+  .close-btn:active {
+    color: #010020;
   }
 
   @keyframes fade-out {
@@ -87,6 +92,7 @@
       padding: 1em;
       gap: 1em;
       border-radius: 1em;
+      width: 90vw;
       max-width: 90vw;
     }
   }

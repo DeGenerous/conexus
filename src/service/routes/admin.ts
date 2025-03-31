@@ -158,7 +158,8 @@ export default class AdminAPI extends Fetcher {
       body: JSON.stringify({ topic_id, contract_names, token_ids }),
     });
   }
+  
   async getTopicNFTGates(topic_id: number) {
-    return this.request<TopicNFTGate[]>(`/admin/get-topic-gates/${topic_id}`);
+    return this.request<TopicNFTGate[]>(`/view/get-topic-gates/${topic_id}`);
   }
 }

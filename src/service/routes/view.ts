@@ -26,4 +26,8 @@ export default class ViewAPI extends Fetcher {
       `/view/genre-topics/${section}?name=${genre}`,
     );
   }
+
+  async getTopicNFTGates(topic_id: number) {
+    return this.request<TopicNFTGate[]>(`/view/get-topic-gates/${topic_id}`);
+  }
 }

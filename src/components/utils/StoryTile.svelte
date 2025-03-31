@@ -1,11 +1,13 @@
 <script lang="ts">
   import MediaManager from '@lib/media';
+  import { CoNexusApp } from '@lib/view';
 
   export let section: string;
   export let topicID: number;
   export let topicName: string;
 
   const media: MediaManager = new MediaManager();
+  const view: CoNexusApp = new CoNexusApp();
 
   const storyName: string = (
     topicName.charAt(0).toUpperCase() + topicName.slice(1)

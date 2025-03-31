@@ -71,9 +71,8 @@ type ImageType = 'url' | 'base64';
 type SupportedContracts = 'Potential' | 'Ark' | 'Moonsign' | 'Apes' | 'All';
 
 type TopicNFTGate = {
-	id?: number;
 	topic_id: number;
 	contract_name: SupportedContracts;
-	token_id?: number
-	created_at?: Date
+	token_ids: number[]
+	created_at: Date
 }

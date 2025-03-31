@@ -577,12 +577,12 @@ export class AdminApp extends AdminAPI {
   async gateTopic(
     topic_id: number,
     contract_name: SupportedContracts,
-    token_id?: number,
+    token_ids?: number[],
   ): Promise<void> {
     const { data, error } = await this.gateTopicWithNFT(
       topic_id,
       contract_name,
-      token_id,
+      token_ids,
     )
 
     if (!data) {
@@ -609,13 +609,15 @@ export class AdminApp extends AdminAPI {
    */
   async removeTopicGate(
     topic_id: number,
-    contract_name?: SupportedContracts,
-    token_id?: number,
+    contract_name: SupportedContracts,
+    token_ids?: number[],
   ): Promise<void> {
+    const contract_names = [contract_name]
+    
     const { data, error } = await this.removeTopicNFTGate(
       topic_id,
-      contract_name,
-      token_id,
+      contract_names,
+      token_ids,
     );
     if (!data) {
       if (error) {

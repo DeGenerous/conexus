@@ -105,6 +105,7 @@ export class CoNexusGame extends GameAPI {
       } else {
         toastStore.show('Error starting game', 'error');
       }
+      loading.set(false);
       return;
     }
 
@@ -131,6 +132,7 @@ export class CoNexusGame extends GameAPI {
       } else {
         toastStore.show('Error continuing game', 'error');
       }
+      loading.set(false);
       return;
     }
 

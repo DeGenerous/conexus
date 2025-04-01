@@ -647,11 +647,15 @@ export class AdminApp extends AdminAPI {
     return data;
   }
 
-  async createNewClassGate(class_obj: ClassGate) {
+  async createNewClassGate(
+    name: string,
+    start_token_id: number,
+    end_token_id: number
+  ) {
     const { data, error } = await this.createClassGate(
-      class_obj.name,
-      class_obj.start_token_id,
-      class_obj.end_token_id,
+      name,
+      start_token_id,
+      end_token_id
     );
 
     if (!data) {

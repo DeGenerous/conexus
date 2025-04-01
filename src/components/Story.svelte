@@ -30,7 +30,6 @@
   const game: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
 
-  let topicGatings: TopicNFTGate[] = [];
   let categoryTopics: { name: string; id: number }[] = [];
   let activeStoryIndex: number = 0;
   $: prevStoryIndex =
@@ -49,6 +48,10 @@
 
   const fetchGates = async (topic_id: number) => {
     return await view.fetchTopicGates(topic_id);
+  }
+
+  const fetchClass = async (id: number) => {
+    return await view.fetchClassGate(id);
   }
 
   let deletedStories: string[] = []; // temp storage before reload for immediate removal
@@ -258,9 +261,18 @@
             </span>
             <h3 class="pc-gating-title">This story is only available to NFT holders:</h3>
             <h3 class="mobile-gating-title">Only for NFT holders:</h3>
-            <span>
-              <h3>{topicGatings.map((gate) => (gate.contract_name)).join(', ')}</h3>
-            </span>
+            {#each topicGatings as { contract_name, class_id }}
+              <span>
+                <h3>
+                  {contract_name}
+                  {#if class_id}
+                    {#await fetchClass(class_id) then className}
+                      ({className})
+                    {/await}
+                  {/if}
+                </h3>
+              </span>
+            {/each}
           </div>
         {/if}
       {/await}

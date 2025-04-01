@@ -20,6 +20,7 @@
 
   const fetchGates = async () => {
     topicGatings = await viewApp.fetchTopicGates(topic.id);
+    console.log(topicGatings) //
   };
 
   onMount(fetchGates);
@@ -28,7 +29,6 @@
     topicGatings: TopicNFTGate[],
     gatingToRemove: string,
   ) {
-    console.log(topicGatings);
     topicGatings.map(async (gate) => {
       if (gate.contract_name === gatingToRemove)
         await handleGatingChange(
@@ -40,7 +40,6 @@
     topicGatings = topicGatings.filter(
       (gating) => gating.contract_name !== gatingToRemove,
     );
-    console.log(topicGatings);
   }
 
   async function handleAddGating() {
@@ -51,6 +50,15 @@
     );
 
     newGating = '';
+    newClassGating = '';
+  }
+
+  const setClassGating = (id: number) => {
+    if (newClassGating === id.toString()) {
+      newClassGating = '';
+      return;
+    }
+    newClassGating = id.toString();
   }
 </script>
 
@@ -58,16 +66,23 @@
 <div class="dream-box blur contracts-list">
   <div class="buttons-wrapper">
     <h2>Web3 Gating</h2>
-    <div class="container buttons-wrapper">
+    <div class="container buttons-wrapper added-gatings">
       {#if topicGatings.length > 0}
-        {#each topicGatings as { contract_name }}
+        {#each topicGatings as { contract_name, class_id }}
           <div class="gating">
-            <h3>{contract_name}</h3>
+            <h3>
+              {contract_name}
+              {#if class_id}
+                {#await viewApp.fetchClassGate(class_id) then classGate}
+                  ({classGate})
+                {/await}
+              {/if}
+            </h3>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="-100 -100 200 200"
               class="close-svg"
-              stroke="rgba(255, 60, 64, 0.85)"
+              stroke="rgba(32, 0, 1, 0.85)"
               stroke-width="30"
               stroke-linecap="round"
               on:click={() => handleRemoveGating(topicGatings, contract_name)}
@@ -84,7 +99,7 @@
     </div>
   </div>
 
-  <div class="buttons-wrapper add-gating">
+  <div class="buttons-wrapper">
     <select class="selector" bind:value={newGating}>
       <option value="" hidden disabled>Select</option>
       {#each availableContracts.filter((contract) => !topicGatings
@@ -94,28 +109,40 @@
       {/each}
     </select>
 
-    {#if newGating === 'Potential'}
-      <div class="buttons-wrapper">
-        <h3>Potential Class Gating</h3>
-        <select class="selector" bind:value={newClassGating}>
-          <option value="" hidden disabled>Select</option>
-          {#await viewApp.fetchClassGates()}
-            <option value="" hidden disabled>Select</option>
-          {:then classGating}
-            {#each classGating as { id, name }}
-              <option value={id}>{name}</option>
-            {/each}
-          {/await}
-        </select>
-      </div>
-    {/if}
     <button on:click={handleAddGating} disabled={!newGating}>Gate Story</button>
   </div>
+
+  {#if newGating === 'Potential'}
+    <hr />
+    <h2>Class Restriction (Optional)</h2>
+
+    {#await viewApp.fetchClassGates() then classGating}
+      <div class="buttons-wrapper">
+        <div class="container dream-radio-buttons">
+          {#if classGating.length > 0}
+            <div class="buttons-wrapper nft-classes">
+              {#each classGating as { id, name }}
+                <span
+                  class:active={newClassGating == id.toString()}
+                  on:click={() => (setClassGating(id))}
+                  role="button"
+                  tabindex="0"
+                >
+                  {name}
+                </span>
+              {/each}
+            </div>
+          {/if}
+        </div>
+      </div>
+    {/await}
+  {/if}
 </div>
 
 <style>
   .contracts-list {
     width: auto;
+    align-items: center;
     max-width: 95vw;
   }
 
@@ -126,24 +153,19 @@
     align-items: center;
     gap: 1vw;
     padding: 1vw;
-    background-color: rgba(56, 117, 250, 0.5);
+    background-color: rgba(255, 140, 0, 0.75);;
     border-radius: 1vw;
     box-shadow: 0 0.25vw 0.5vw #010020;
   }
 
   .gating h3 {
-    color: #dedede;
+    color: #010020;
   }
 
-  .add-gating {
-    width: 100%;
+  .added-gatings {
+    flex-flow: row wrap !important;
+    justify-content: center !important;
   }
-
-  /* .buttons-wrapper input {
-    background-color: rgba(36, 65, 189, 0.1);
-    border-color: rgb(36, 65, 189);
-    text-align: center;
-  } */
 
   @media only screen and (max-width: 600px) {
     .contracts-list {

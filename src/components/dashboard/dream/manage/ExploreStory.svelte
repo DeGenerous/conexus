@@ -107,7 +107,6 @@
   async function handleGatingChange(
     topic_id: number,
     contract_name: SupportedContracts,
-    // token_ids: number[] = [],
     method: 'add' | 'remove',
     class_id?: string,
   ) {
@@ -115,14 +114,12 @@
       case 'add':
         await admin.gateTopic(
           { topic_id, contract_name, class_id: parseInt(class_id!) },
-          // token_ids
         );
         break;
       case 'remove':
         await admin.removeTopicGate(
           topic_id,
           contract_name,
-          // token_ids
         );
         break;
     }

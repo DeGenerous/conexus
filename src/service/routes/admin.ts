@@ -143,13 +143,13 @@ export default class AdminAPI extends Fetcher {
   }
 
   async createClassGate(
-    class_name: string,
+    name: string,
     start_token_id: number,
     end_token_id: number,
   ) {
     return this.request<APISTDResposne>('/admin/create-class-gate', {
       method: 'POST',
-      body: JSON.stringify({ class: class_name, start_token_id, end_token_id }),
+      body: JSON.stringify({ name, start_token_id, end_token_id }),
     });
   }
 

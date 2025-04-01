@@ -267,7 +267,7 @@
                   {contract_name}
                   {#if class_id}
                     {#await fetchClass(class_id) then className}
-                      ({className})
+                      ({className?.name})
                     {/await}
                   {/if}
                 </h3>

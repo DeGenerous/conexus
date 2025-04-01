@@ -36,6 +36,6 @@ export default class ViewAPI extends Fetcher {
   }
 
   async getGateClass(class_ID: number) {
-    return this.request<ClassGate>(`/view/get-class-gate/${class_ID}`);
+    return this.request<ClassGate>(`/view/get-gate-class/${class_ID}`);
   }
 }

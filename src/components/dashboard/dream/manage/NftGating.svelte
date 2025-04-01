@@ -74,7 +74,7 @@
               {contract_name}
               {#if class_id}
                 {#await viewApp.fetchClassGate(class_id) then classGate}
-                  ({classGate})
+                  ({classGate?.name})
                 {/await}
               {/if}
             </h3>

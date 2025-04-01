@@ -142,6 +142,31 @@ export default class AdminAPI extends Fetcher {
     });
   }
 
+  async createClassGate(
+    class_name: string,
+    start_token_id: number,
+    end_token_id: number,
+  ) {
+    return this.request<APISTDResposne>('/admin/create-class-gate', {
+      method: 'POST',
+      body: JSON.stringify({ class: class_name, start_token_id, end_token_id }),
+    });
+  }
+
+  async getClassGates() {
+    return this.request<ClassGate[]>('/admin/get-class-gates');
+  }
+
+  async getGateClass(class_ID: number) {
+    return this.request<ClassGate>(`/admin/get-class-gate/${class_ID}`);
+  }
+
+  async deleteClassGate(class_ID: number) {
+    return this.request<APISTDResposne>(`/admin/delete-class-gate/${class_ID}`, {
+      method: 'DELETE',
+    });
+  }
+
   async gateTopicWithNFT(
     topic_id: number,
     contract_name: SupportedContracts,

@@ -8,6 +8,7 @@
     topic_id: number,
     contract_name: SupportedContracts,
     method: 'add' | 'remove',
+    class_id?: string,
   ) => {};
 
   let viewApp = new CoNexusApp();
@@ -15,27 +16,39 @@
   let topicGatings: TopicNFTGate[] = [];
   const availableContracts: SupportedContracts[] = ['Potential', 'Ark', 'Apes'];
   let newGating = '';
+  let newClassGating = '';
 
   const fetchGates = async () => {
     topicGatings = await viewApp.fetchTopicGates(topic.id);
-  }
+  };
 
   onMount(fetchGates);
 
-  async function handleRemoveGating(topicGatings: TopicNFTGate[], gatingToRemove: string) {
-    console.log(topicGatings)
+  async function handleRemoveGating(
+    topicGatings: TopicNFTGate[],
+    gatingToRemove: string,
+  ) {
+    console.log(topicGatings);
     topicGatings.map(async (gate) => {
       if (gate.contract_name === gatingToRemove)
-      await handleGatingChange(gate.topic_id, gate.contract_name, 'remove').then(fetchGates);
+        await handleGatingChange(
+          gate.topic_id,
+          gate.contract_name,
+          'remove',
+        ).then(fetchGates);
     });
-    topicGatings = topicGatings.filter((gating) => (gating.contract_name !== gatingToRemove));
-    console.log(topicGatings)
+    topicGatings = topicGatings.filter(
+      (gating) => gating.contract_name !== gatingToRemove,
+    );
+    console.log(topicGatings);
   }
 
   async function handleAddGating() {
     if (!newGating) return;
 
-    handleGatingChange(topic.id, newGating as SupportedContracts, 'add').then(fetchGates);
+    handleGatingChange(topic.id, newGating as SupportedContracts, 'add', newClassGating).then(
+      fetchGates,
+    );
 
     newGating = '';
   }
@@ -74,12 +87,28 @@
   <div class="buttons-wrapper add-gating">
     <select class="selector" bind:value={newGating}>
       <option value="" hidden disabled>Select</option>
-      {#each availableContracts.filter((contract) => (
-        !topicGatings.map((gate) => (gate.contract_name)).includes(contract)
-      )) as gating}
+      {#each availableContracts.filter((contract) => !topicGatings
+            .map((gate) => gate.contract_name)
+            .includes(contract)) as gating}
         <option value={gating}>{gating}</option>
       {/each}
     </select>
+
+    {#if newGating === 'Potential'}
+      <div class="buttons-wrapper">
+        <h3>Potential Class Gating</h3>
+        <select class="selector" bind:value={newClassGating}>
+          <option value="" hidden disabled>Select</option>
+          {#await viewApp.fetchClassGates()}
+            <option value="" hidden disabled>Select</option>
+          {:then classGating}
+            {#each classGating as { id, name }}
+              <option value={id}>{name}</option>
+            {/each}
+          {/await}
+        </select>
+      </div>
+    {/if}
     <button on:click={handleAddGating} disabled={!newGating}>Gate Story</button>
   </div>
 </div>

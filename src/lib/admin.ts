@@ -575,15 +575,14 @@ export class AdminApp extends AdminAPI {
    * @returns A promise that resolves to void.
    */
   async gateTopic(
-    topic_id: number,
-    contract_name: SupportedContracts,
-    token_ids?: number[],
+    gate_obj: TopicNFTGate,
   ): Promise<void> {
     const { data, error } = await this.gateTopicWithNFT(
-      topic_id,
-      contract_name,
-      token_ids,
-    )
+      gate_obj.topic_id,
+      gate_obj.contract_name,
+      gate_obj.class_id,
+      gate_obj.token_ids,
+    );
 
     if (!data) {
       if (error) {
@@ -612,8 +611,8 @@ export class AdminApp extends AdminAPI {
     contract_name: SupportedContracts,
     token_ids?: number[],
   ): Promise<void> {
-    const contract_names = [contract_name]
-    
+    const contract_names = [contract_name];
+
     const { data, error } = await this.removeTopicNFTGate(
       topic_id,
       contract_names,
@@ -646,6 +645,37 @@ export class AdminApp extends AdminAPI {
       return [];
     }
     return data;
+  }
+
+  async createNewClassGate(class_obj: ClassGate) {
+    const { data, error } = await this.createClassGate(
+      class_obj.name,
+      class_obj.start_token_id,
+      class_obj.end_token_id,
+    );
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      }
+      return;
+    }
+
+    this.clearCache();
+
+    toastStore.show(data.message, 'info');
+  }
+
+  async deleteClassGate(class_ID: number): Promise<void> {
+    const { data, error } = await this.deleteClassGater(class_ID);
+    if (!data) {
+      if (error) {
+        api_error(error);
+      }
+      return;
+    }
+    this.clearCache();
+    toastStore.show(data.message, 'info');
   }
 
   private clearCache() {

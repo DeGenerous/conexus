@@ -5,6 +5,7 @@
   import Tts from '@components/music/Tts.svelte';
   import Step from '@components/Step.svelte';
   import MediaManager from '@lib/media';
+  import { CoNexusApp } from '@lib/view';
   import { CoNexusGame } from '@lib/story';
   import { loading, story, background_image } from '@stores/conexus';
   import {
@@ -25,9 +26,11 @@
 
   let scroll: number;
 
+  const view: CoNexusApp = new CoNexusApp();
   const game: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
 
+  let topicGatings: TopicNFTGate[] = [];
   let categoryTopics: { name: string; id: number }[] = [];
   let activeStoryIndex: number = 0;
   $: prevStoryIndex =
@@ -42,10 +45,11 @@
       (story) => story.name,
     );
     activeStoryIndex = categoryTopicNames?.indexOf(story_name);
-
-    console.log(categoryTopics);
-    console.log(activeStoryIndex);
   });
+
+  const fetchGates = async (topic_id: number) => {
+    return await view.fetchTopicGates(topic_id);
+  }
 
   let deletedStories: string[] = []; // temp storage before reload for immediate removal
   let noUnfinishedStoriesLeft: boolean = false;
@@ -245,6 +249,21 @@
           </div>
         </section>
       </div>
+
+      {#await fetchGates(topic.id) then topicGatings}
+        {#if topicGatings.length > 0}
+          <div class="gating">
+            <span>
+              <img class="gating-icon" src="/icons/lock.svg" alt="Restricted" />
+            </span>
+            <h3 class="pc-gating-title">This story is only available to NFT holders:</h3>
+            <h3 class="mobile-gating-title">Only for NFT holders:</h3>
+            <span>
+              <h3>{topicGatings.map((gate) => (gate.contract_name)).join(', ')}</h3>
+            </span>
+          </div>
+        {/if}
+      {/await}
 
       {#await media.fetchStoryImage(topic.id, 'video') then storyVideo}
         {#if storyVideo !== '/blank.avif'}
@@ -600,6 +619,47 @@
     width: 1.5vw;
   }
 
+  .gating {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
+    padding: 0.5vw;
+    border-radius: 1vw;
+    background-color: rgba(255, 140, 0, 0.75);
+  }
+
+  .gating-icon {
+    width: 2vw;
+    height: 2vw;
+  }
+
+  .gating h3 {
+    color: #010020;
+  }
+
+  .gating span h3 {
+    color: rgb(255, 165, 40);
+    line-height: 2vw;
+  }
+
+  .gating span {
+    display: flex;
+    justify-content: center;
+    padding: 1vw;
+    border-radius: 0.75vw;
+    background-color: rgba(32, 0, 1, 0.75);
+  }
+
+  .pc-gating-title {
+    display: block;
+  }
+
+  .mobile-gating-title {
+    display: none;
+  }
+
   /* LOADING */
 
   .default-picture {
@@ -796,6 +856,41 @@
 
     .stories-switcher {
       margin-top: 25%;
+    }
+
+    .gating {
+      width: 100%;
+      flex-wrap: wrap;
+      gap: 1em;
+      padding: 0.5em;
+      border-radius: 0;
+      background-color: rgba(32, 0, 1, 0.75);
+      border-top: 0.1em solid rgba(255, 140, 0, 0.5);
+      border-bottom: 0.1em solid rgba(255, 140, 0, 0.5);
+    }
+
+    .gating-icon {
+      width: 1.25em;
+      height: 1.25em;
+    }
+
+    .gating span h3 {
+      line-height: 1.25em;
+    }
+
+    .gating span {
+      padding: 1em;
+      border-radius: 1em;
+      background-color: transparent;
+    }
+
+    .pc-gating-title {
+      display: none;
+    }
+
+    .mobile-gating-title {
+      color: rgb(255, 165, 40) !important;
+      display: block;
     }
   }
 </style>

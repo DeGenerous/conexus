@@ -17,7 +17,6 @@
   let topicGatings: TopicNFTGate[] = [];
   onMount(async () => {
     topicGatings = await view.fetchTopicGates(topicID);
-    console.log(topicGatings)
   })
 
   const blankPicture = '/blank.avif';

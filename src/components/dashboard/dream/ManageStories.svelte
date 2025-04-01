@@ -189,14 +189,7 @@
     text-shadow: 0 0 0.1vw #010020;
   }
 
-  .order-input::-webkit-outer-spin-button,
-  .order-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
   .order-input {
-    appearance: textfield;
     text-align: center;
     padding: 0;
     width: 3.5vw;

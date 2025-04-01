@@ -104,19 +104,29 @@
     }
   }
 
-  async function handleGatingChange(topic_id: number, contract_name: SupportedContracts, method: 'add' | 'remove') {
+  async function handleGatingChange(
+    topic_id: number,
+    contract_name:
+    SupportedContracts,
+    // token_ids: number[] = [],
+    method: 'add' | 'remove'
+  ) {
     switch (method) {
       case 'add':
-        await admin.gateTopic(topic_id, contract_name);
+        await admin.gateTopic(
+          topic_id,
+          contract_name,
+          // token_ids
+        );
         break;
       case 'remove':
-        await admin.removeTopicGate(topic_id, contract_name);
+        await admin.removeTopicGate(
+          topic_id,
+          contract_name,
+          // token_ids
+        );
         break;
     }
-  }
-
-  async function getTopicGates(topic_id: number) {
-    return await admin.fetchTopicGates(topic_id);
   }
 
   const switchAvailable = (available: string) => {
@@ -413,10 +423,11 @@
       ></textarea>
     </div>
 
+    <!-- NFT RESTRICTIONS -->
+    <NftGating {topic} {handleGatingChange} />
+
     <!-- MEDIA FILES -->
     <Media bind:topic_id={topic.id} />
-
-    <NftGating {topic} {handleGatingChange} {getTopicGates} />
 
     <button class="red-button blur" on:click={openModal}>Delete Story</button>
   {/if}

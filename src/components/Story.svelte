@@ -11,6 +11,7 @@
   import {
     showModal,
     secondButton,
+    secondButtonClass,
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
@@ -73,6 +74,7 @@
     $secondButton = `Delete story: ${
       story.category.charAt(0).toUpperCase() + story.category.slice(1)
     }`;
+    $secondButtonClass = "red-button";
     $handleSecondButton = () => DeleteStory(story.story_id);
     $modalContent = `<h2>Are you sure you want to delete this story?</h2>
         <h3>This action is irreversible. You will lose all progress on this story.</h3>`;

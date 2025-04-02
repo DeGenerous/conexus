@@ -2,6 +2,7 @@
   import {
     showModal,
     secondButton,
+    secondButtonClass,
     handleSecondButton,
     modalContent,
   } from '@stores/modal.ts';
@@ -16,6 +17,9 @@
 
   const closeDialog = () => {
     $showModal = false;
+    $secondButton = '';
+    $secondButtonClass = '';
+    $handleSecondButton = () => {};
     dialog?.close();
   };
 </script>
@@ -33,7 +37,7 @@
     <section>
       <button on:click={() => ($showModal = false)}> Close </button>
       {#if $secondButton}
-        <button on:click={$handleSecondButton}>
+        <button class={$secondButtonClass} on:click={$handleSecondButton}>
           {$secondButton}
         </button>
       {/if}

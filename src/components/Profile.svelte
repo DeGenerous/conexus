@@ -10,6 +10,7 @@
     showModal,
     showProfile,
     secondButton,
+    secondButtonClass,
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
@@ -148,6 +149,7 @@
 
   const walletSelectConfirm = (address: string) => {
     $secondButton = 'Select';
+    $secondButtonClass = "green-button";
     $handleSecondButton = () => {
       handleWalletSelect(address);
       $showModal = false;

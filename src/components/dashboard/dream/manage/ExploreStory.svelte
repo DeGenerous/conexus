@@ -4,6 +4,7 @@
   import {
     showModal,
     secondButton,
+    secondButtonClass,
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
@@ -83,6 +84,7 @@
 
   function openModal() {
     $secondButton = `Delete story: ${topic_name}`;
+    $secondButtonClass = "red-button";
     $handleSecondButton = () => {
       admin.deleteStory(topic.id);
       $showModal = false;

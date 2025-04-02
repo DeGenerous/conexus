@@ -11,6 +11,7 @@ import { toastStore } from '@stores/toast';
 import {
   showModal,
   secondButton,
+  secondButtonClass,
   handleSecondButton,
   modalContent,
 } from '@stores/modal';
@@ -117,6 +118,7 @@ export class CoNexusGame extends GameAPI {
 
           if (primaryLink) {
             secondButton.set("Visit Marketplace");
+            secondButtonClass.set("orange-button");
             handleSecondButton.set(() => (window.open(
               "https" + primaryLink.slice(0, primaryLink.indexOf(",")),
               "_blank"

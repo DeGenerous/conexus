@@ -27,7 +27,9 @@
   align-items: center;
   gap: 1.5vw;
   background-color: rgba(1, 0, 32, 0.75);
-  box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.5);
+  box-shadow:
+    inset 0 0 0.5vw rgba(51, 226, 230, 0.5),
+    0 0 0.5vw #010020;
   border-radius: 1.5vw;
   padding: 2vw 3vw;
 }
@@ -47,16 +49,37 @@
   cursor: text;
 }
 
-.user-input:disabled {
-  opacity: 1; /* for iOS */
-}
-
 .input-container {
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
   gap: 0.5vw;
+}
+
+.selector {
+  font-size: 1.5vw;
+  line-height: 3vw;
+  padding-block: 0.75vw;
+  width: 20vw;
+  text-align: center;
+  outline: none;
+  border: 0.1vw solid rgba(51, 226, 230, 0.5);
+  border-radius: 0.5vw;
+  cursor: pointer;
+  /* color: rgba(1, 0, 32, 0.9); */
+  /* background-color: rgba(51, 226, 230, 0.5); */
+  color: rgba(51, 226, 230, 0.9);
+  background-color: rgba(22, 30, 95, 0.9);
+}
+
+.selector-label {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1vw;
+  white-space: nowrap;
 }
 
 .password-input-container {
@@ -77,6 +100,122 @@
   height: 3vw;
 }
 
+.buttons-wrapper {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1vw;
+}
+
+.green-button {
+  background-color: rgba(0, 185, 55, 0.75);
+}
+
+.green-button:hover,
+.green-button:active {
+  color: #010020;
+  background-color: rgb(0, 185, 55);
+}
+
+.green-button:disabled,
+.green-button:disabled:hover,
+.green-button:disabled:active {
+  background-color: rgba(0, 185, 55, 0.5);
+}
+
+.red-button {
+  background-color: rgba(255, 60, 64, 0.75);
+}
+
+.red-button:hover,
+.red-button:active {
+  color: #010020;
+  background-color: rgb(255, 60, 64);
+}
+
+.orange-button {
+  color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 140, 0, 0.75);
+}
+
+.orange-button:hover,
+.orange-button:active {
+  color: #010020;
+  background-color: rgba(255, 165, 40, 0.9);
+}
+
+.orange-button:disabled,
+.orange-button:disabled:hover,
+.orange-button:disabled:active {
+  background-color: rgba(255, 140, 0, 0.5);
+}
+
+.purple-button {
+  background-color: rgba(95, 80, 160, 0.75);
+}
+
+.purple-button:hover,
+.purple-button:active {
+  background-color: rgba(120, 100, 190, 0.9);
+}
+
+.rose-button {
+  background-color: rgba(200, 140, 140, 0.75);
+}
+
+.rose-button:hover,
+.rose-button:active {
+  color: #010020;
+  background-color: rgba(230, 175, 175, 0.9);
+}
+
+.circle-icon {
+  height: 5vw;
+  width: 5vw;
+}
+
+.story-video {
+  width: 50vw;
+  height: auto;
+  border-radius: 1.5vw;
+  background-color: rgba(51, 226, 230, 0.1);
+  box-shadow: 0 0.25vw 0.25vw #010020;
+}
+
+.stories-switcher {
+  width: 90%;
+  justify-content: space-between;
+}
+
+.switch-arrow img {
+  width: 3vw;
+  height: 3vw;
+}
+
+.switch-arrow h3 {
+  color: white !important;
+}
+
+.switch-arrow {
+  opacity: 0.75;
+  text-decoration: none !important;
+}
+
+.switch-arrow:hover,
+.switch-arrow:active {
+  opacity: 1;
+}
+
+.nft-link {
+  color: rgb(255, 140, 0);
+}
+
+.nft-link:hover,
+.nft-link:active {
+  color: rgb(255, 165, 40);
+}
+
 @media only screen and (max-width: 600px) {
   .sign-icon {
     height: 0.8em;
@@ -95,8 +234,10 @@
 
   .user-input {
     width: 70vw;
+    padding: 0.25em 0.5em;
     font-size: 1.1em;
-    line-height: 1.75em;
+    line-height: 2em;
+    border-radius: 0.5em;
   }
 
   .input-container {
@@ -116,5 +257,43 @@
   .big-icon {
     width: 1.5em;
     height: 1.5em;
+  }
+
+  .selector {
+    font-size: inherit;
+    line-height: 1.5;
+    border-radius: 0.5em;
+    padding-block: 0.5em;
+    width: 100%;
+    min-width: 30vw;
+  }
+
+  .selector-label {
+    gap: 1em;
+  }
+
+  .buttons-wrapper {
+    flex-wrap: wrap;
+    gap: 0.5em;
+  }
+
+  .circle-icon {
+    height: 3em;
+    width: 3em;
+  }
+
+  .story-video {
+    width: 100vw;
+    border-radius: 0;
+  }
+
+  .switch-arrow img {
+    width: 2em;
+    height: 2em;
+  }
+
+  .switch-arrow {
+    flex-wrap: nowrap;
+    justify-content: center;
   }
 }

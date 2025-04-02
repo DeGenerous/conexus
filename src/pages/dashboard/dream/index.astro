@@ -1,0 +1,18 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import Dream from '@components/dashboard/Dream.svelte';
+
+const meta = {
+  header: 'Your Story Starts Here',
+  nav: 'Dream',
+  subheading:
+    'Create entire worlds, weave immersive stories, and bring your imagination to life with AI-powered storytelling.',
+};
+---
+
+<main>
+  <Layout {...meta}>
+    <Dream client:load />
+  </Layout>
+</main>

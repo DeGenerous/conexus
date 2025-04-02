@@ -1,20 +1,26 @@
 <script lang="ts">
-  import Account from '@lib/auth';
+  import { onMount } from 'svelte';
+
+  import { Account } from '@lib/account';
 
   export let token: string;
+
+  const acct: Account = new Account();
+
+  onMount(() => {
+    acct.confirmEmail(token).then((res) => {
+      if (res === true) {
+        window.location.href = '/';
+      }
+    });
+  });
 </script>
 
 <section class="container-wrapper">
   <div class="container blur">
-    {#await Account.confirmEmail(token)}
-      <h2 style="color: rgb(150, 150, 150)">Verifying Email...</h2>
-    {:then response}
-      <h2 style="color: rgb(0, 185, 55)">Email Verified</h2>
-      <h3>Your email has been verified. You can now login to your account.</h3>
-    {:catch error}
-      <h2 style="color: rgb(255, 60, 64)">Error</h2>
-      <h3>{error.message}</h3>
-    {/await}
+    <h1>Verifying email...</h1>
+    <h3>Please wait while we verify your email address.</h3>
+    <h3>If you are not redirected, please click the button below.</h3>
     <button on:click={() => window.open('/', '_self')}>Return home</button>
   </div>
 </section>

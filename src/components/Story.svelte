@@ -4,30 +4,65 @@
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
   import Tts from '@components/music/Tts.svelte';
   import Step from '@components/Step.svelte';
-  import { CoNexus } from '@lib/conexus';
-  import type { DynTopic, ContinuableStory } from '@lib/conexus';
+  import MediaManager from '@lib/media';
+  import { CoNexusApp } from '@lib/view';
+  import { CoNexusGame } from '@lib/story';
   import { loading, story, background_image } from '@stores/conexus';
-  import { checkUserState } from '@utils/route-guard';
-
   import {
     showModal,
     secondButton,
+    secondButtonClass,
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
-  import Share from './utils/Share.svelte';
+
+  import { checkUserState } from '@utils/route-guard';
+
   import Profile from './Profile.svelte';
   import BackArrow from './utils/BackArrow.svelte';
+  import Share from './utils/Share.svelte';
 
+  export let section: string;
   export let story_name: string;
 
+  let scroll: number;
+
+  const view: CoNexusApp = new CoNexusApp();
+  const game: CoNexusGame = new CoNexusGame();
+  const media: MediaManager = new MediaManager();
+
+  let categoryTopics: { name: string; id: number }[] = [];
+  let activeStoryIndex: number = 0;
+  $: prevStoryIndex =
+    activeStoryIndex == 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
   onMount(async () => {
     await checkUserState('/story');
+
+    categoryTopics = JSON.parse(
+      localStorage.getItem(`${section} topics`) as string,
+    );
+    const categoryTopicNames: string[] = categoryTopics.map(
+      (story) => story.name,
+    );
+    activeStoryIndex = categoryTopicNames?.indexOf(story_name);
   });
+
+  const fetchGates = async (topic_id: number) => {
+    return await view.fetchTopicGates(topic_id);
+  };
+
+  const fetchClass = async (id: number) => {
+    return await view.fetchClassGate(id);
+  };
 
   let deletedStories: string[] = []; // temp storage before reload for immediate removal
   let noUnfinishedStoriesLeft: boolean = false;
   let backgroundImageUrl: string = '/defaultBG.avif';
+
+  const handleSetMedia = async (topic_id: number) => {
+    await media.setBackgroundImage(topic_id);
+    await media.playBackgroundMusic(topic_id);
+  };
 
   background_image.subscribe((value) => {
     if (value) {
@@ -39,26 +74,25 @@
     $secondButton = `Delete story: ${
       story.category.charAt(0).toUpperCase() + story.category.slice(1)
     }`;
+    $secondButtonClass = 'red-button';
     $handleSecondButton = () => DeleteStory(story.story_id);
     $modalContent = `<h2>Are you sure you want to delete this story?</h2>
-      <h3>This action is irreversible. You will lose all progress on this story.</h3>`;
+        <h3>This action is irreversible. You will lose all progress on this story.</h3>`;
     $showModal = true;
   }
 
   async function DeleteStory(story_id: any) {
     try {
-      await CoNexus.delete(story_id);
+      await game.delete(story_id);
       deletedStories[deletedStories.length] = story_id;
       $showModal = false;
-      await CoNexus.storyContinuable(story_name!).then((continuables) => {
+      await game.storyContinuables(story_name!).then((continuables) => {
         if (continuables.length == 0) noUnfinishedStoriesLeft = true;
       });
     } catch (error) {
       console.log('Failed to delete story: ' + error);
     }
   }
-
-  const blankPicture: string = '/blank.avif'; // temp
 
   // SVG Icons
   const handleDeleteSvg = (id: string, state: 'focus' | 'blur') => {
@@ -90,235 +124,310 @@
   };
 </script>
 
+<svelte:window bind:scrollY={scroll} />
+
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $story === null}
-  {#await CoNexus.getTopic(story_name!)}
-    <header>
-      <BackArrow href="./" />
-      <Profile />
-    </header>
+  <section class="container-wrapper">
+    {#await game.getTopic(story_name)}
+      <header>
+        <BackArrow />
+        <Profile />
+      </header>
 
-    <div class="story-container blur">
-      <div class="picture default-picture loading-animation"></div>
+      <div class="story-container blur">
+        <div class="picture default-picture loading-animation"></div>
 
-      <section class="story-info">
-        <article>
+        <section class="story-info">
           <article>
-            <div class="genres" style="opacity: 0.5">
-              <p>Genres:</p>
-              <p class="genres-list default-genres loading-animation"></p>
-            </div>
-            <div class="default-line loading-animation"></div>
-            <div class="default-line loading-animation"></div>
-            <div class="default-line loading-animation"></div>
-            <div class="default-line loading-animation last-line"></div>
+            <article>
+              <div class="genres" style="opacity: 0.5">
+                <p>Genres:</p>
+                <p class="genres-list default-genres loading-animation"></p>
+              </div>
+              <div class="default-line loading-animation"></div>
+              <div class="default-line loading-animation"></div>
+              <div class="default-line loading-animation"></div>
+              <div class="default-line loading-animation last-line"></div>
+            </article>
           </article>
-        </article>
-        <div class="story-buttons-container">
-          <button disabled>SHARE</button>
-          <button disabled>PLAY NOW</button>
-        </div>
-      </section>
-    </div>
-  {:then topic: DynTopic}
-    <header>
-      <BackArrow href="./" />
-      <h1 class="fade-in">
-        {(topic.name.charAt(0).toUpperCase() + topic.name.slice(1)).trim()}
-      </h1>
-      <Profile />
-    </header>
-
-    <div class="story-container blur">
-      {#await CoNexus.fetch_story_image(story_name!, 'description')}
-        <div class="picture default-picture"></div>
-      {:then storyImage}
-        <img
-          class="picture fade-in"
-          src={storyImage ?? blankPicture}
-          alt={topic?.name}
-          draggable="false"
-          width="1024"
-          height="1024"
-        />
-      {/await}
-
-      <section class="story-info">
-        <article>
-          {#if topic.genres !== ''}
-            <div class="genres">
-              <p>Genres:</p>
-              <p class="genres-list fade-in">{topic.genres}</p>
-            </div>
-          {/if}
-          <p class="description fade-in">{topic.description}</p>
-        </article>
-        <div class="story-buttons-container">
-          <Share />
-          <button
-            on:click={() => topic && CoNexus.start(topic.name)}
-            disabled={$loading}
-            style={$loading ? 'color: rgb(51, 226, 230)' : ''}
-          >
-            {#if $loading}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 100 100"
-                class="loading-svg"
-                stroke="transparent"
-                stroke-width="7.5"
-                stroke-dasharray="288.5"
-                stroke-linecap="round"
-                fill="none"
-              >
-                <path
-                  d="
-                    M 50 96 a 46 46 0 0 1 0 -92 46 46 0 0 1 0 92
-                  "
-                  transform-origin="50 50"
-                />
-              </svg>
-              Loading...
-            {:else}
-              PLAY NOW
-            {/if}
-          </button>
-        </div>
-      </section>
-    </div>
-  {:catch}
-    <header>
-      <BackArrow href="./" />
-      <Profile />
-    </header>
-
-    <div class="story-container blur">
-      <div class="picture default-picture"></div>
-
-      <section class="story-info">
-        <article>
-          <article>
-            <div class="genres" style="opacity: 0.5">
-              <p>Failed to fetch story...</p>
-            </div>
-            <div class="genres" style="opacity: 0.5">
-              <p>Please try again or contact support.</p>
-            </div>
-          </article>
-        </article>
-        <div class="story-buttons-container">
-          <button disabled>SHARE</button>
-          <button disabled>ERROR</button>
-        </div>
-      </section>
-    </div>
-  {/await}
-
-  {#await CoNexus.storyContinuable(story_name!) then continuables: ContinuableStory[]}
-    {#if continuables.length > 0}
-      {#if !noUnfinishedStoriesLeft}
-        <section class="unfinished-stories fade-in blur">
-          <h3>Continue Shaping:</h3>
-          <div class="continue-shaping-container">
-            {#each continuables as continuable}
-              {#if !deletedStories.includes(continuable.story_id)}
-                <div class="unfinished-story">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="-100 -100 200 200"
-                    class="delete-svg continue-shaping-btn"
-                    fill="none"
-                    stroke={$loading ? '#010020' : 'rgb(255, 60, 64)'}
-                    stroke-width="15"
-                    stroke-linecap="round"
-                    on:click|preventDefault={() => {
-                      if (!$loading) openModal(continuable);
-                    }}
-                    on:pointerover={() => {
-                      if (!$loading)
-                        handleDeleteSvg(continuable.story_id, 'focus');
-                    }}
-                    on:pointerout={() => {
-                      if (!$loading)
-                        handleDeleteSvg(continuable.story_id, 'blur');
-                    }}
-                    role="button"
-                    tabindex="0"
-                    style={$loading ? 'cursor: not-allowed' : ''}
-                  >
-                    <path
-                      id="delete-icon-{continuable.story_id}"
-                      d="
-                        M -35 -35
-                        L 35 35
-                        M -35 35
-                        L 35 -35
-                      "
-                    />
-                    <circle id="delete-circle-{continuable.story_id}" r="90" />
-                  </svg>
-                  <h3>
-                    {continuable.story_id.split('-')[0]} - {new Date(
-                      continuable.created ?? '',
-                    ).toLocaleDateString()}
-                  </h3>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="-100 -100 200 200"
-                    class="play-svg continue-shaping-btn"
-                    fill="none"
-                    stroke={$loading ? '#010020' : 'rgb(0, 185, 55)'}
-                    stroke-width="15"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    on:click|preventDefault={() => {
-                      if (!$loading) CoNexus.continue(continuable);
-                    }}
-                    on:pointerover={() => {
-                      if (!$loading)
-                        handlePlaySvg(continuable.story_id, 'focus');
-                    }}
-                    on:pointerout={() => {
-                      if (!$loading)
-                        handlePlaySvg(continuable.story_id, 'blur');
-                    }}
-                    role="button"
-                    tabindex="0"
-                    style={$loading ? 'cursor: not-allowed' : ''}
-                  >
-                    <polygon
-                      id="play-icon-{continuable.story_id}"
-                      points="
-                        -26 -36 -26 36 36 0
-                      "
-                      fill={$loading ? '#010020' : 'rgb(0, 185, 55)'}
-                    />
-                    <circle id="play-circle-{continuable.story_id}" r="90" />
-                  </svg>
-                </div>
-              {/if}
-            {/each}
+          <div class="story-buttons-container">
+            <button disabled>SHARE</button>
+            <button disabled>PLAY NOW</button>
           </div>
         </section>
+      </div>
+    {:then topic: ThumbnailTopic}
+      <header>
+        <BackArrow />
+        <h1 class="fade-in">
+          {(topic.name.charAt(0).toUpperCase() + topic.name.slice(1)).trim()}
+        </h1>
+        <Profile />
+      </header>
+
+      <div class="buttons-wrapper stories-switcher">
+        <a
+          class="buttons-wrapper switch-arrow"
+          href="/{section}/{categoryTopics[prevStoryIndex]
+            .name}?id={categoryTopics[prevStoryIndex].id}"
+        >
+          <img src="/icons/switch-arrow.svg" alt="Switch" />
+          <h3>{categoryTopics[prevStoryIndex].name}</h3>
+        </a>
+
+        <a
+          class="buttons-wrapper switch-arrow"
+          href="/{section}/{categoryTopics[
+            (activeStoryIndex + 1) % categoryTopics.length
+          ].name}?id={categoryTopics[
+            (activeStoryIndex + 1) % categoryTopics.length
+          ].id}"
+        >
+          <h3>
+            {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
+              .name}
+          </h3>
+          <img
+            src="/icons/switch-arrow.svg"
+            alt="Switch"
+            style="transform: rotate(180deg)"
+          />
+        </a>
+      </div>
+
+      <div class="story-container blur">
+        {#await media.fetchStoryImage(topic.id, 'description')}
+          <div class="picture default-picture"></div>
+        {:then storyImage}
+          <img
+            class="picture fade-in"
+            src={storyImage}
+            alt={topic?.name}
+            draggable="false"
+            width="1024"
+            height="1024"
+          />
+        {/await}
+
+        <section class="story-info">
+          <article>
+            {#if topic.genres !== ''}
+              <div class="genres">
+                <p>Genres:</p>
+                <p class="genres-list fade-in">{topic.genres}</p>
+              </div>
+            {/if}
+            <p class="description fade-in">{topic.description}</p>
+          </article>
+          <div class="story-buttons-container">
+            <Share />
+            <button
+              on:click={() =>
+                topic && game.startGame(topic.name, topic.id, handleSetMedia)}
+              disabled={$loading}
+              style={$loading ? 'color: rgb(51, 226, 230)' : ''}
+            >
+              {#if $loading}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 100 100"
+                  class="loading-svg"
+                  stroke="transparent"
+                  stroke-width="7.5"
+                  stroke-dasharray="288.5"
+                  stroke-linecap="round"
+                  fill="none"
+                >
+                  <path
+                    d="
+                        M 50 96 a 46 46 0 0 1 0 -92 46 46 0 0 1 0 92
+                      "
+                    transform-origin="50 50"
+                  />
+                </svg>
+                Loading...
+              {:else}
+                PLAY NOW
+              {/if}
+            </button>
+          </div>
+        </section>
+      </div>
+
+      {#await fetchGates(topic.id) then topicGatings}
+        {#if topicGatings.length > 0}
+          <div class="gating">
+            <span class="gating-icon-wrapper">
+              <img class="gating-icon" src="/icons/lock.svg" alt="Restricted" />
+            </span>
+            <h3>This story is only available to NFT holders:</h3>
+            {#each topicGatings as { contract_name, class_id }}
+              <span>
+                <h3>
+                  {contract_name}
+                  {#if class_id}
+                    {#await fetchClass(class_id) then className}
+                      ({className?.name})
+                    {/await}
+                  {/if}
+                </h3>
+              </span>
+            {/each}
+          </div>
+        {/if}
+      {/await}
+
+      {#await media.fetchStoryImage(topic.id, 'video') then storyVideo}
+        {#if storyVideo !== '/blank.avif'}
+          <video class="blur story-video" controls autoplay loop muted>
+            <source src={storyVideo} type="video/mp4" />
+            <track kind="captions" />
+          </video>
+        {/if}
+      {/await}
+    {:catch}
+      <header>
+        <BackArrow />
+        <Profile />
+      </header>
+
+      <div class="story-container blur">
+        <div class="picture default-picture"></div>
+
+        <section class="story-info">
+          <article>
+            <article>
+              <div class="genres" style="opacity: 0.5">
+                <p>Failed to fetch story...</p>
+              </div>
+              <div class="genres" style="opacity: 0.5">
+                <p>Please try again or contact support.</p>
+              </div>
+            </article>
+          </article>
+          <div class="story-buttons-container">
+            <button disabled>SHARE</button>
+            <button disabled>ERROR</button>
+          </div>
+        </section>
+      </div>
+    {/await}
+
+    {#await game.storyContinuables(story_name!) then continuables: ContinuableStory[]}
+      {#if continuables.length > 0}
+        {#if !noUnfinishedStoriesLeft}
+          <section class="unfinished-stories fade-in blur">
+            <h3>Continue Shaping:</h3>
+            <div class="continue-shaping-container">
+              {#each continuables as continuable}
+                {#if !deletedStories.includes(continuable.story_id)}
+                  <div class="unfinished-story">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="-100 -100 200 200"
+                      class="delete-svg continue-shaping-btn"
+                      fill="none"
+                      stroke={$loading ? '#010020' : 'rgb(255, 60, 64)'}
+                      stroke-width="15"
+                      stroke-linecap="round"
+                      on:click|preventDefault={() => {
+                        if (!$loading) openModal(continuable);
+                      }}
+                      on:pointerover={() => {
+                        if (!$loading)
+                          handleDeleteSvg(continuable.story_id, 'focus');
+                      }}
+                      on:pointerout={() => {
+                        if (!$loading)
+                          handleDeleteSvg(continuable.story_id, 'blur');
+                      }}
+                      role="button"
+                      tabindex="0"
+                      style={$loading ? 'cursor: not-allowed' : ''}
+                    >
+                      <path
+                        id="delete-icon-{continuable.story_id}"
+                        d="
+                            M -35 -35
+                            L 35 35
+                            M -35 35
+                            L 35 -35
+                          "
+                      />
+                      <circle
+                        id="delete-circle-{continuable.story_id}"
+                        r="90"
+                      />
+                    </svg>
+                    <h3>
+                      {continuable.story_id.split('-')[0]} - {new Date(
+                        continuable.created ?? '',
+                      ).toLocaleDateString()}
+                    </h3>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="-100 -100 200 200"
+                      class="play-svg continue-shaping-btn"
+                      fill="none"
+                      stroke={$loading ? '#010020' : 'rgb(0, 185, 55)'}
+                      stroke-width="15"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      on:click|preventDefault={() => {
+                        if (!$loading)
+                          game.continueGame(continuable, handleSetMedia);
+                      }}
+                      on:pointerover={() => {
+                        if (!$loading)
+                          handlePlaySvg(continuable.story_id, 'focus');
+                      }}
+                      on:pointerout={() => {
+                        if (!$loading)
+                          handlePlaySvg(continuable.story_id, 'blur');
+                      }}
+                      role="button"
+                      tabindex="0"
+                      style={$loading ? 'cursor: not-allowed' : ''}
+                    >
+                      <polygon
+                        id="play-icon-{continuable.story_id}"
+                        points="
+                          -26 -36 -26 36 36 0
+                        "
+                        fill={$loading ? '#010020' : 'rgb(0, 185, 55)'}
+                      />
+                      <circle id="play-circle-{continuable.story_id}" r="90" />
+                    </svg>
+                  </div>
+                {/if}
+              {/each}
+            </div>
+          </section>
+        {/if}
       {/if}
-    {/if}
-  {:catch}
-    <section class="unfinished-stories blur">
-      <h3>Failed to fetch unfinished stories...</h3>
-    </section>
-  {/await}
+    {:catch}
+      <section class="unfinished-stories blur">
+        <h3>Failed to fetch unfinished stories...</h3>
+      </section>
+    {/await}
+  </section>
 {:else}
   <BackgroundMusic />
   <Tts />
 
-  <Step />
+  <Step {story_name} />
 {/if}
 
 <div
-  class="bg-container"
-  style="
-    background-image: url({backgroundImageUrl});
-    "
+  class="pc-background"
+  style:background-image={`url(${backgroundImageUrl})`}
+></div>
+
+<div
+  class="mobile-background"
+  style:background-image={`url(${backgroundImageUrl})`}
+  style:top={`max(-${scroll / 25}vh, -100vh)`}
 ></div>
 
 <style>
@@ -327,18 +436,23 @@
     background-color: black;
   }
 
-  .bg-container {
+  .pc-background {
+    display: block;
     z-index: -1000;
     position: fixed;
     top: 0;
     left: 0;
-    min-width: 100vw;
-    min-height: 100vh;
+    width: 100vw;
+    height: 100vh;
     background-size: cover;
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-position: center;
     opacity: 0.25;
+  }
+
+  .mobile-background {
+    display: none;
   }
 
   header {
@@ -347,16 +461,11 @@
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
-    padding: 2vw;
-    min-height: 12.5vw;
+    padding: 1vw;
   }
 
-  h1 {
-    font-size: 5vw;
-    line-height: 5vw;
-    text-align: center;
-    color: rgba(51, 226, 230, 0.85);
-    text-shadow: 0 0.5vw 0.5vw #010020;
+  header h1 {
+    font-size: 4vw;
   }
 
   .story-container {
@@ -386,9 +495,9 @@
   }
 
   .picture {
-    min-width: 25vw;
-    width: 25vw;
-    aspect-ratio: 1/1;
+    min-height: 25vw;
+    height: 25vw;
+    width: auto;
     filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
     border-radius: 1vw;
   }
@@ -511,8 +620,9 @@
     transform: scale(1.025) translateY(-0.25vw);
   }
 
-  .continue-shaping-btn {
-    height: 3vw !important;
+  .unfinished-story svg {
+    width: 2.5vw;
+    height: 2.5vw;
   }
 
   .story-buttons-container button {
@@ -522,6 +632,55 @@
   .loading-svg {
     height: 1.5vw;
     width: 1.5vw;
+  }
+
+  .stories-switcher {
+    width: 100vw;
+    padding-inline: 2vw;
+    gap: 2vw;
+    flex-flow: row nowrap;
+  }
+
+  .switch-arrow {
+    flex-flow: row nowrap;
+    gap: 1vw;
+  }
+
+  .switch-arrow img {
+    flex: none;
+  }
+
+  .gating {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
+    padding: 0.5vw;
+    border-radius: 1vw;
+    background-color: rgba(255, 140, 0, 0.75);
+  }
+
+  .gating-icon {
+    width: 2vw;
+    height: 2vw;
+  }
+
+  .gating h3 {
+    color: #010020;
+  }
+
+  .gating span h3 {
+    color: rgb(255, 165, 40);
+    line-height: 2vw;
+  }
+
+  .gating span {
+    display: flex;
+    justify-content: center;
+    padding: 1vw;
+    border-radius: 0.75vw;
+    background-color: rgba(32, 0, 1, 0.75);
   }
 
   /* LOADING */
@@ -554,7 +713,26 @@
 
   @media only screen and (max-width: 600px) {
     :global(html) {
-      padding-top: 0;
+      padding-bottom: 2em !important;
+    }
+
+    .pc-background {
+      display: none;
+    }
+
+    .mobile-background {
+      display: block;
+      z-index: -1000;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 200vh;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: top;
+      opacity: 0.25;
+      transition: none;
     }
 
     .story-info {
@@ -573,16 +751,14 @@
       -webkit-backdrop-filter: blur(2vw);
       backdrop-filter: blur(2vw);
       z-index: 2;
-      min-height: 5em;
+      padding: 1em;
     }
 
-    h1 {
+    header h1 {
       font-size: 1.5em;
-      line-height: 1.5em;
     }
 
     .story-container {
-      margin-top: 25%;
       max-width: 100%;
       flex-direction: column;
       gap: 1.5em;
@@ -593,6 +769,7 @@
     }
 
     .picture {
+      height: auto;
       width: 90vw;
       border-radius: 0.5em;
     }
@@ -661,7 +838,7 @@
 
     .unfinished-story {
       gap: 1em;
-      padding: 0.25em;
+      padding: 0.5em;
       width: 90vw;
       justify-content: space-between;
       border-radius: 1em;
@@ -670,10 +847,6 @@
     .unfinished-story svg {
       width: 1.75em;
       height: 1.75em;
-    }
-
-    .continue-shaping-btn {
-      height: 2em !important;
     }
 
     .default-picture {
@@ -699,6 +872,42 @@
     .loading-svg {
       height: 1em;
       width: 1em;
+    }
+
+    .stories-switcher {
+      margin-top: 25%;
+      gap: 1em;
+      padding-inline: 1em;
+    }
+
+    .switch-arrow {
+      gap: 0.5em;
+    }
+
+    .gating {
+      width: 100%;
+      flex-direction: column;
+      gap: 0.5em;
+      padding: 0.5em;
+      border-radius: 0;
+    }
+
+    .gating-icon {
+      width: 1.25em;
+      height: 1.25em;
+    }
+
+    .gating span h3 {
+      line-height: 1.25em;
+    }
+
+    .gating span {
+      padding: 0.5em 1em;
+      border-radius: 0.5em;
+    }
+
+    .gating-icon-wrapper {
+      display: none !important;
     }
   }
 </style>

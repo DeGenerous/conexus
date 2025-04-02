@@ -1,26 +1,19 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import Account, { Roles } from '@lib/auth';
-  import {
-    authenticated,
-    referralCodes,
-    web3loginError,
-    availables,
-  } from '@stores/account';
+  import DoorSVG from '@components/icons/Door.svelte';
+  import EyeSVG from '@components/icons/Eye.svelte';
+  import WalletConnect from '@components/web3/WalletConnect.svelte';
+  import { Account } from '@lib/account';
+  import { authenticated, referralCodes, accountError } from '@stores/account';
   import {
     showModal,
     showProfile,
     secondButton,
+    secondButtonClass,
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
-  import { isAvailable } from '@utils/validation';
-
-  import WalletConnect from '@components/web3/WalletConnect.svelte';
-
-  import DoorSVG from '@components/icons/Door.svelte';
-  import EyeSVG from '@components/icons/Eye.svelte';
   import passwordVisible from '@stores/password-visibility';
 
   let dialog: HTMLDialogElement;
@@ -32,8 +25,6 @@
     if (!isLogged) {
       signUp = false;
       signInWithEmail = false;
-      invalidCredentials = false;
-      $web3loginError = false;
     } else {
       editingPassword = false;
     }
@@ -53,47 +44,30 @@
 
   // Sign-in
   let user: Nullable<User>;
-  let available: Available | APIError;
   let isLogged: boolean;
 
   let signUp: boolean;
   let signInWithEmail: boolean;
   let loginMail: string = '';
   let loginPassword: string = '';
-  let invalidCredentials: boolean = false;
 
-  onMount(() => {
-    Account.cookie();
+  let subStatus: SubscriptionStatus | null = null;
+
+  let account: Account = new Account();
+
+  onMount(async () => {
+    await account.me();
   });
-
-  Account.me();
 
   authenticated.subscribe((value) => {
     user = value.user;
     isLogged = value.loggedIn;
   });
-  availables.subscribe((value) => {
-    available = value;
-  });
 
-  $: if (isLogged) {
-    Account.referraLCodes();
+  $: if (isLogged && account) {
+    account.getReferralCodes();
+    checkSubscription();
   }
-
-  const handleSignIn = async (event: Event) => {
-    event.preventDefault();
-    try {
-      await Account.signin({
-        email: loginMail,
-        password: loginPassword,
-      });
-      setTimeout(() => {
-        if (!isLogged) invalidCredentials = true;
-      });
-    } catch (error) {
-      invalidCredentials = true;
-    }
-  };
 
   // Change password
   let editingPassword: boolean = false;
@@ -103,17 +77,14 @@
   $: editPasswordMatch =
     editPassword.length >= 8 && editPassword === editPasswordConfirm;
 
-  const saveChangedPassword = () => {
-    try {
-      Account.changePassword({
-        old_password: editOldPassword,
-        new_password: editPassword,
-      });
+  const saveChangedPassword = async () => {
+    $accountError = null as AccountError;
+    await account.changePassword({
+      old_password: editOldPassword,
+      new_password: editPassword,
+    });
+    if (!$accountError || !$accountError.changePassword)
       editingPassword = false;
-    } catch (error) {
-      console.log('Old password is invalid!');
-      console.log(error);
-    }
   };
 
   // Sign-up form
@@ -125,9 +96,12 @@
   let confirmPassword: string = '';
   let email: string = '';
 
-  $: mandatoryFields = email && first_name && last_name && password;
+  $: mandatoryFields = emailValidation && first_name && last_name && password;
   $: passwordsMatch =
     password && confirmPassword ? password == confirmPassword : false;
+  $: emailValidation = email.match(
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+  );
   let termsAccepted: boolean = false;
   let newsletterSignup: boolean = false;
 
@@ -142,7 +116,7 @@
   $: if (referralCode.length < 16) referralCodeValid = false;
   async function validateReferralCode() {
     const referralObject: ReferralCode | null =
-      await Account.validateReferralCode(referralCode);
+      await account.validateReferralCode(referralCode);
     if (referralObject) {
       referralCodeValid = true;
     } else {
@@ -152,14 +126,14 @@
 
   const referralSignup = async (event: Event) => {
     event.preventDefault();
-    await Account.signupReferral({
+    await account.signup({
       user: {
         first_name,
         last_name,
         email,
         password,
         referred: referralCodeValid,
-        role: Roles.USER,
+        role: 'user',
       },
       referral_code: referralCode,
       newsletter: newsletterSignup,
@@ -175,6 +149,7 @@
 
   const walletSelectConfirm = (address: string) => {
     $secondButton = 'Select';
+    $secondButtonClass = 'green-button';
     $handleSecondButton = () => {
       handleWalletSelect(address);
       $showModal = false;
@@ -185,13 +160,10 @@
   };
 
   const handleWalletSelect = async (address: string) => {
-    try {
-      await Account.setMainWallet(address);
-      // reload the page to update the user object
-      location.reload();
-    } catch (error) {
-      console.error(error);
-    }
+    await account.selectMainWallet(address);
+    if ($accountError && $accountError.selectMainWallet) return;
+    // reload the page to update the user object
+    location.reload();
   };
 
   // SVG Icons
@@ -200,6 +172,22 @@
   let closeSvgFocus: boolean = false;
   let signInSvgFocus: boolean = false;
   let signOutSvgFocus: boolean = false;
+
+  // Newsletter
+  const checkSubscription = async () => {
+    subStatus = await account.subscriptionStatus();
+  };
+
+  const dateToString = (date: Date) => {
+    const dateObject: Date = new Date(date);
+
+    const day: string = ('0' + dateObject.getDate()).slice(-2);
+    const month: string = ('0' + (dateObject.getMonth() + 1)).slice(-2);
+    const year: number = dateObject.getFullYear();
+
+    const fullDate: string = `${day}.${month}.${year}`;
+    return fullDate;
+  };
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
@@ -207,7 +195,7 @@
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"
-    class="profile-icon"
+    class="circle-icon"
   >
     <defs>
       <mask id="profile-svg-mask">
@@ -220,12 +208,12 @@
           <circle cy="-25" r="30" />
           <path
             d="
-              M -55 55
-              Q -60 20 -25 15
-              L 25 15
-              Q 60 20 55 55
-              Z
-            "
+                M -55 55
+                Q -60 20 -25 15
+                L 25 15
+                Q 60 20 55 55
+                Z
+              "
           />
         </g>
       </mask>
@@ -260,7 +248,7 @@
         <button
           class="login-button"
           on:click={() => {
-            Account.signout();
+            account.signout();
           }}
           on:pointerover={() => (signOutSvgFocus = true)}
           on:pointerout={() => (signOutSvgFocus = false)}
@@ -281,12 +269,12 @@
                 <path
                   class="quit-svg-mask"
                   d="
-                    M 50 0
-                    L -50 0
-                    L 0 -50
-                    M -50 0
-                    L 0 50
-                  "
+                      M 50 0
+                      L -50 0
+                      L 0 -50
+                      M -50 0
+                      L 0 50
+                    "
                   fill="none"
                   stroke="black"
                   stroke-width="25"
@@ -299,12 +287,12 @@
 
             <circle
               style="
-                transition: all 0.3s ease-in-out;
-                transform: {backArrowSvgFocus ? 'scale(1.05);' : 'none'}
-                fill: {backArrowSvgFocus
+                  transition: all 0.3s ease-in-out;
+                  transform: {backArrowSvgFocus ? 'scale(1.05);' : 'none'}
+                  fill: {backArrowSvgFocus
                 ? 'rgb(51, 226, 230)'
                 : 'rgba(51, 226, 230, 0.75)'}
-              "
+                "
               fill="rgba(51, 226, 230, 0.75)"
               r="95"
               mask="url(#quit-svg-mask)"
@@ -326,19 +314,19 @@
           stroke-width="30"
           stroke-linecap="round"
           style="
-            transform: {closeSvgFocus ? 'scale(1.2);' : 'none'}
-            stroke: {closeSvgFocus
+              transform: {closeSvgFocus ? 'scale(1.2);' : 'none'}
+              stroke: {closeSvgFocus
             ? 'rgb(255, 60, 64)'
             : 'rgba(255, 60, 64, 0.85)'}
-          "
+            "
         >
           <path
             d="
-              M -65 -65
-              L 65 65
-              M -65 65
-              L 65 -65
-            "
+                M -65 -65
+                L 65 65
+                M -65 65
+                L 65 -65
+              "
             fill="none"
           />
         </svg>
@@ -346,29 +334,31 @@
     </header>
 
     <!-- USER PROFILE -->
-    {#if isLogged}
+    {#if isLogged && user}
       <section class="profile-window">
         <hr />
 
-        {#if isAvailable(available)}
+        {#if user.available}
           <div class="stories-count">
             <h3>
               You have used
-              <strong>{available.used} / {available.available} weekly</strong>
+              <strong
+                >{user.available.used} / {user.available.available} weekly</strong
+              >
               stories
             </h3>
 
-            {#if available.bonus > 0}
+            {#if user.available.bonus > 0}
               <h3>
                 You have
-                <strong>{available.bonus} bonus</strong>
+                <strong>{user.available.bonus} bonus</strong>
                 stories
               </h3>
             {/if}
           </div>
         {:else}
           <div class="error-message">
-            <p><strong>Error:</strong> {available.message}</p>
+            <p><strong>Error:</strong>Unavailable</p>
           </div>
         {/if}
 
@@ -385,6 +375,11 @@
                 disabled
               />
             </div>
+            {#if !user.email_confirmed}
+              <p class="validation">
+                Please check your inbox and confirm email.
+              </p>
+            {/if}
             <div class="input-container">
               <label for="first-name">First name</label>
               <input
@@ -453,6 +448,10 @@
                 <p class="validation">Please confirm new password</p>
               {:else if editPasswordConfirm && !editPasswordMatch}
                 <p class="validation">Passwords do not match!</p>
+              {/if}
+
+              {#if $accountError && $accountError.changePassword}
+                <p class="validation">{$accountError.changePassword}</p>
               {/if}
             {/if}
 
@@ -533,6 +532,10 @@
                     />
                   </div>
                 </div>
+
+                {#if $accountError && $accountError.selectMainWallet}
+                  <p class="validation">{$accountError.selectMainWallet}</p>
+                {/if}
               {/if}
             {:else}
               <div class="buttons-container">
@@ -587,10 +590,10 @@
                             />
                             <path
                               d="
-                                M -10 10
-                                L 10 40
-                                L 50 -20
-                              "
+                                  M -10 10
+                                  L 10 40
+                                  L 50 -20
+                                "
                               fill="none"
                               stroke="black"
                             />
@@ -599,12 +602,12 @@
 
                         <path
                           d="
-                            M 40 -67
-                            L 40 -90
-                            L -90 -90
-                            L -90 60
-                            L -52 60
-                          "
+                              M 40 -67
+                              L 40 -90
+                              L -90 -90
+                              L -90 60
+                              L -52 60
+                            "
                           fill="none"
                         />
                         <rect
@@ -625,30 +628,71 @@
                 .length}
             </h2>
           {:else}
-            <button on:click={Account.generateReferralCode}>
+            <button
+              on:click={() =>
+                account
+                  .generateReferralCode()
+                  .then(() => window.location.reload())}
+            >
               Get referral codes
             </button>
+
+            {#if $accountError && $accountError.generateReferralCode}
+              <p class="validation">{$accountError.generateReferralCode}</p>
+            {/if}
           {/if}
         {/if}
 
-        {#await Account.subscriptionStatus() then {is_active, subscribed_at}}
-          <hr />
+        {#if user.email_confirmed}
+          {#if subStatus}
+            <hr />
 
-          <h2>Newsletter Subscription</h2>
+            {#if subStatus.is_active}
+              <h2>Newsletter Subscription</h2>
 
-          {#if subscribed_at}
-            <h3>Subscribed at: {subscribed_at}</h3>
+              {#if subStatus.subscribed_at}
+                <h3>
+                  Active since: {dateToString(subStatus.subscribed_at.Time)}
+                </h3>
+              {/if}
+              <h3
+                class="unsubscribe-button"
+                on:click={() => {
+                  account
+                    .unsubscribeNewsletter()
+                    .then(() => checkSubscription());
+                }}
+                role="button"
+                tabindex="0"
+              >
+                Unsubscribe
+              </h3>
+            {:else}
+              <div class="newsletter-subscription">
+                <h3>Subscribe to Newsletter:</h3>
+                <button
+                  on:click={() => {
+                    account
+                      .subscribeNewsletter()
+                      .then(() => checkSubscription());
+                  }}
+                >
+                  Subscribe
+                </button>
+              </div>
+            {/if}
           {/if}
 
-          <button
-            on:click={() => {
-              if (is_active) Account.unsubscribeNewsletter();
-              else Account.subscribeNewsletter();
-            }}
-          >
-            {is_active ? "Unsubscribe" : "Subscribe"}
-          </button>
-        {/await}
+          {#if $accountError && $accountError.subscribeNewsletter}
+            <p class="validation">{$accountError.subscribeNewsletter}</p>
+          {/if}
+          {#if $accountError && $accountError.unsubscribeNewsletter}
+            <p class="validation">{$accountError.unsubscribeNewsletter}</p>
+          {/if}
+          {#if $accountError && $accountError.subscriptionStatus}
+            <p class="validation">{$accountError.subscriptionStatus}</p>
+          {/if}
+        {/if}
       </section>
     {:else}
       <section class="sign-container">
@@ -685,12 +729,18 @@
                   <EyeSVG visibility="login" />
                 </div>
               </div>
-              {#if invalidCredentials}
-                <p class="validation">Invalid credentials!</p>
+
+              {#if $accountError && $accountError.signin}
+                <p class="validation">{$accountError.signin}</p>
               {/if}
+
               <button
                 class="sign-in-button"
-                on:click={handleSignIn}
+                on:click|preventDefault={() =>
+                  account.signin({
+                    email: loginMail,
+                    password: loginPassword,
+                  })}
                 on:pointerover={() => {
                   if (loginMail && loginPassword) signInSvgFocus = true;
                 }}
@@ -717,12 +767,17 @@
             <div class="buttons-container">
               <button
                 on:click={() => {
-                  Account.google_login();
+                  account.googleSignin();
                 }}
               >
                 <img class="sign-icon" src="/icons/google.png" alt="Google" />
                 <p class="sign-lable">with Google</p>
               </button>
+
+              {#if $accountError && $accountError.googleSignin}
+                <p class="validation">{$accountError.googleSignin}</p>
+              {/if}
+
               <button
                 on:click={() => {
                   signInWithEmail = true;
@@ -733,11 +788,6 @@
               </button>
               <WalletConnect title={'with Web3 wallet'} />
             </div>
-            {#if $web3loginError}
-              <p class="validation">
-                This wallet is not linked to any account!
-              </p>
-            {/if}
             <hr />
             <h3>Don't have an account yet?</h3>
             <div class="buttons-container">
@@ -759,7 +809,7 @@
               <label for="new-user-mail">Mail</label>
               <input
                 class="user-input"
-                class:red-border={!email}
+                class:red-border={!emailValidation}
                 type="email"
                 id="new-user-mail"
                 placeholder="Enter email"
@@ -845,7 +895,7 @@
             {/if}
 
             {#if referralCode.length === 16}
-              {#await Account.validateReferralCode(referralCode)}
+              {#await account.validateReferralCode(referralCode)}
                 <p class="validation">Checking referral code...</p>
               {:then referralObject}
                 {#if referralObject}
@@ -864,6 +914,10 @@
 
             {#if password && !confirmPassword}
               <p class="validation">Please confirm your password</p>
+            {/if}
+
+            {#if $accountError && $accountError.signup}
+              <p class="validation">{$accountError.signup}</p>
             {/if}
 
             <div class="agreements-container">
@@ -1178,10 +1232,6 @@
     background-color: rgba(0, 0, 0, 0);
   }
 
-  .ref-code:disabled {
-    opacity: 1; /* for iOS */
-  }
-
   .copy-svg {
     width: 2vw;
     height: 2vw;
@@ -1190,6 +1240,38 @@
   .active-code {
     color: rgba(255, 255, 255, 0.75);
     text-shadow: 0 0 0.1vw rgb(51, 226, 230);
+    cursor: text;
+  }
+
+  /* Newsletter */
+
+  .newsletter-subscription {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
+  }
+
+  .newsletter-subscription button {
+    background-color: rgba(0, 185, 55, 0.75);
+  }
+
+  .newsletter-subscription button:hover,
+  .newsletter-subscription button:active {
+    color: #010020;
+    background-color: rgb(0, 185, 55);
+  }
+
+  .unsubscribe-button {
+    color: rgba(255, 60, 64, 0.75);
+    cursor: pointer;
+  }
+
+  .unsubscribe-button:hover,
+  .unsubscribe-button:active {
+    color: rgb(255, 60, 64);
+    text-decoration: underline;
   }
 
   /* Profile icon */
@@ -1198,13 +1280,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-
-  .profile-icon {
-    height: 7vw;
-    width: 7vw;
-    z-index: 1;
-    flex: none;
   }
 
   @media only screen and (max-width: 600px) {
@@ -1309,9 +1384,8 @@
       height: 1em;
     }
 
-    .profile-icon {
-      width: 3em;
-      height: 3em;
+    .newsletter-subscription {
+      gap: 0.5em;
     }
   }
 

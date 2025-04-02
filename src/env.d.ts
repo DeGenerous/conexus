@@ -3,6 +3,12 @@
 
 type Nullable<T> = T | null | undefined;
 
+declare namespace App {
+  interface Locals {
+    user: User;
+  }
+}
+
 type APISTDResposne = {
   message: string;
 };
@@ -23,70 +29,12 @@ type VolumeControl = {
   restart: boolean;
 };
 
-interface SignUp {
-  first_name: string;
-  last_name: string;
-  email: string;
-  password: string;
-  role: Roles;
-}
-
-interface AuthWallet {
-  wallet: string;
-  faux: boolean;
-  main: boolean;
-}
-
-interface User extends SignUp {
-  ID?: string;
-  oauth_id?: string;
-  email_confirmed?: boolean;
-  referral_count?: number;
-  referred: boolean;
-  wallets?: AuthWallet[];
-  main_wallet?: string;
-  faux?: boolean;
-  email_confirmed?: boolean;
-  is_oauth?: boolean;
-}
-
-interface SignIn {
-  email: string;
-  password: string;
-}
-
-enum Roles {
-  ADMIN = 'admin',
-  USER = 'user',
-  ARTIST = 'artist',
-}
-
-interface ReferralCode {
-  ID: number;
-  code: string;
-  user_id: number;
-  is_used: boolean;
-  used_by: number;
-  created_at: string;
-  updated_at: string;
-}
-
-interface ReferralSignUp {
-  user: User;
-  referral_code: string;
-  newsletter: bool
-}
-
-interface SubscriptionStatus {
-	is_active:       boolean
-	subscribed_at:   Date | null
-	unsubscribed_at: Date | null
-}
-
-interface ContinuableStory {
+type ContinuableStory = {
   story_id: string;
+  topic_id: number;
   category: string;
-}
+  created?: string;
+};
 
 type Topic = {
   name: string;
@@ -98,36 +46,29 @@ type Category = {
   topics: Topic[];
 };
 
-type Available = {
-  available: number;
-  used: number;
-  bonus: number;
-  continuable?: ContinuableStory[];
-  categories?: Category[];
-  has_ape?: boolean;
+type CategoryView = {
+  id: number;
+  name: string;
 };
 
 type StepData = {
   step: number;
+  title?: string;
   story: string;
   end: boolean;
   summary: string;
   trait: string;
+  trait_description?: string;
   options: string[];
   image?: string;
+  image_type?: ImageType;
+  choice?: number;
   tts?: Blob;
 };
 
 type GameData = {
   id: string;
 } & StepData;
-
-// Error
-type ConexusError = {
-  code: number;
-  error?: string = 'Something went wrong, please try again later...';
-  log?: boolean = true;
-};
 
 type ResetPassword = {
   email: string;
@@ -146,6 +87,7 @@ type Web3Signin = {
 };
 
 type Section = {
+  id: number;
   name: string;
   tile_image1?: string;
   tile_image2?: string;
@@ -156,24 +98,24 @@ type Genre = {
   name: string;
 };
 
-type SectionCategory = {
+type FolderContent = {
+  id: string;
   name: string;
-  oder: number;
-  topics: {
-    name: string;
-    order: number;
-    available: boolean;
-    title_image1?: string;
-    title_image2?: string;
-    created_at?: Date;
-  }[];
-  created_at?: Date;
+  description: string;
+  user_id: string;
+  parent_id: string;
+  path: string;
+  folders: FolderContent[];
+  files: FileContent[];
 };
 
-type SectionTopic = {
+type FileContent = {
+  id: string;
   name: string;
-  image_prompt?: string;
-  description?: string;
-  description_image?: string;
-  genres?: string;
+  path: string;
+  content_type: string;
+  size: number;
+  parent_id: string;
+  hash: string;
+  data: string;
 };

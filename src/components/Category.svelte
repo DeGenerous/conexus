@@ -1,44 +1,75 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import {
-    CoNexus,
-    type DynSectionCategory,
-    type DynTopic,
-  } from '@lib/conexus';
+
+  import { CoNexusApp } from '@lib/view';
   import { checkUserState, checkWeb3LoginState } from '@utils/route-guard';
   import { web3LoggedIn } from '@stores/account';
-  import StoryCollection from './utils/StoryCollection.svelte';
+
   import Links from './utils/Links.svelte';
+  import StoryCollection from '@components/utils/StoryCollection.svelte';
+  import SpotifyIframe from '@components/music/SpotifyIframe.svelte';
 
   export let section: string;
   let isWeb3LoggedIn: boolean = false;
 
-  let categories: DynSectionCategory[] = [];
-  let genres: { id: number; name: string }[] = [];
+  let app: CoNexusApp = new CoNexusApp();
+
+  let categories: CategoryInSection[] = [];
+  let genres: Genre[] = [];
 
   onMount(async () => {
-    await checkUserState(`/${section}`);
-    web3LoggedIn.subscribe((value) => {
-      isWeb3LoggedIn = value;
-    });
-    checkWeb3LoginState(isWeb3LoggedIn, section);
+    try {
+      await checkUserState(`/${section}`);
 
-    try {
-      categories = await CoNexus.sectionCategories(section!);
+      // Subscribe to web3LoggedIn and check login state
+      const unsubscribe = web3LoggedIn.subscribe((value) => {
+        isWeb3LoggedIn = value;
+        checkWeb3LoginState(isWeb3LoggedIn, section);
+      });
+
+      // Fetch sections and verify if the section exists
+      const sections = await app.getSections();
+      if (!sections.some(({ name }) => name === section)) {
+        window.location.href = '/404';
+        return;
+      }
+
+      // Fetch categories and genres in parallel
+      [categories, genres] = await Promise.all([
+        app.getSectionCategories(section).catch((err) => {
+          console.error('Failed to fetch categories:', err);
+          return []; // Fallback to an empty array
+        }),
+        app.getGenres().catch((err) => {
+          console.error('Failed to fetch genres:', err);
+          return []; // Fallback to an empty array
+        }),
+      ]);
+
+      const sectionTopics = categories.map((cat) => cat.topics).flat();
+      localStorage.setItem(
+        `${section} topics`,
+        JSON.stringify(
+          sectionTopics.map((topic) => {
+            return {
+              name: topic.name,
+              id: topic.id,
+            };
+          }),
+        ),
+      );
+
+      // Unsubscribe when done to avoid memory leaks (optional)
+      unsubscribe();
     } catch (error) {
-      console.error('Failed to fetch categories:', error);
-    }
-    try {
-      genres = await CoNexus.getGenres();
-    } catch (error) {
-      console.error('Failed to fetch genres:', error);
+      console.error('Error in onMount:', error);
     }
   });
 
   // Search and Sorting
-  let filteredCategories: DynSectionCategory[];
+  let filteredCategories: CategoryInSection[];
   let isSorting: boolean = false;
-  let sortedCategories: DynSectionCategory[] = [];
+  let sortedCategories: CategoryInSection[] = [];
   let searchField: string;
   let isSearching: boolean = false;
   let debounceTimeout: NodeJS.Timeout;
@@ -55,9 +86,9 @@
     resetGenres();
     isSearching = true; // Set isSearching to true when the debounce starts
     debounceTimeout = setTimeout(async () => {
-      filteredCategories = await CoNexus.searchCategories(
-        searchField.replace(/[^a-zA-Z ]/g, ''),
+      filteredCategories = await app.searchSectionCategories(
         section,
+        searchField.replace(/[^a-zA-Z ]/g, ''),
       );
       isSearching = false; // Stop searching after results are returned
       if (isSorting) handleSorting();
@@ -79,7 +110,7 @@
   };
 
   const handleSorting = () => {
-    sortedCategories = filteredCategories.map((cat: DynSectionCategory) => {
+    sortedCategories = filteredCategories.map((cat: CategoryInSection) => {
       // Clone the category and topics to avoid mutating the original
       return {
         ...cat,
@@ -110,7 +141,7 @@
       searchField = '';
       handleSearch();
     }
-    filteredCategories = await CoNexus.getGenreTopics(genre, section);
+    filteredCategories = await app.getGenreTopics(genre, section);
     if (isSorting) handleSorting();
   }
 
@@ -191,7 +222,7 @@
             />
           </svg>
         {/if}
-        <select class="genre-selector" bind:value={activeGenre}>
+        <select class="selector" bind:value={activeGenre}>
           <option value="" selected={true} disabled hidden>Select genre</option>
           {#each genres as genre (genre.id)}
             <option value={genre.name}>{genre.name}</option>
@@ -313,6 +344,10 @@
       {/each}
     </div>
   {/key}
+
+  {#if section === 'Dischordian Saga'}
+    <SpotifyIframe />
+  {/if}
 {:else}
   <section class="filters">
     <div class="sort-genres-filters">
@@ -345,7 +380,7 @@
             "
           />
         </svg>
-        <select class="genre-selector" style="cursor: inherit;">
+        <select class="selector" style="cursor: inherit;">
           <option value="" selected={true} disabled hidden>Select genre</option>
         </select>
       </div>
@@ -457,22 +492,6 @@
     border-radius: 1vw;
   }
 
-  .genre-selector {
-    font-size: 1.5vw;
-    line-height: 3vw;
-    padding-block: 0.75vw;
-    width: 20vw;
-    text-align: center;
-    outline: none;
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 0.5vw;
-    cursor: pointer;
-    /* color: rgba(1, 0, 32, 0.9); */
-    /* background-color: rgba(51, 226, 230, 0.5); */
-    color: rgba(51, 226, 230, 0.9);
-    background-color: rgba(22, 30, 95, 0.9);
-  }
-
   .search-field {
     font-size: 1.5vw;
     line-height: 3vw;
@@ -530,14 +549,6 @@
       gap: 0.25em;
       font-size: 1em;
       line-height: 1.5em;
-      width: 100%;
-    }
-
-    .genre-selector {
-      font-size: inherit;
-      line-height: inherit;
-      border-radius: 0.25em;
-      padding-block: 0.25em;
       width: 100%;
     }
 

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { authenticated } from '@stores/account';
+  import DoorSVG from '@components/icons/Door.svelte';
+  import { authenticated, userCheck } from '@stores/account';
   import { showProfile } from '@stores/modal';
 
   import Intro from './Intro.svelte';
-  import DoorSVG from '@components/icons/Door.svelte';
 
   let isLogged: boolean = false;
   let signInSvgFocus: boolean = false;
@@ -15,7 +15,9 @@
 
 <!-- Logged In -->
 
-{#if isLogged}
+{#if $userCheck}
+  <img class="loading-icon" src="/icons/loading.png" alt="Loading" />
+{:else if isLogged}
   <Intro />
 {:else}
   <section class="blur">
@@ -48,12 +50,20 @@
       0 0 0.5vw #010020;
   }
 
+  .loading-icon {
+    height: 13.1vw;
+  }
+
   @media only screen and (max-width: 600px) {
     section {
       width: 95%;
       gap: 0.5em;
       padding: 1em;
       border-radius: 1em;
+    }
+
+    .loading-icon {
+      height: 32vw;
     }
   }
 </style>

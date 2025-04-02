@@ -5,7 +5,7 @@ import Fetcher from '@service/fetcher';
  */
 export default class GameAPI extends Fetcher {
   async topicByName(name: string) {
-    return this.request<SectionTopic>(`/view/topic/${name}`);
+    return this.request<ThumbnailTopic>(`/view/topic/${name}`);
   }
 
   /**
@@ -13,10 +13,10 @@ export default class GameAPI extends Fetcher {
    * @param category - The category of the game.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
-  async start(category: string) {
+  async start(topic_name: string, topic_id: number) {
     return this.request<GameData>('/game/start', {
       method: 'POST',
-      body: JSON.stringify({ category }),
+      body: JSON.stringify({ topic_name, topic_id }),
     });
   }
 
@@ -76,10 +76,13 @@ export default class GameAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async loadStepImage(story_id: string, step: number) {
-    return this.request<string>(`/game/load-step-image/${step}`, {
-      method: 'POST',
-      body: JSON.stringify({ story_id }),
-    });
+    return this.request<{ image: string; type: ImageType }>(
+      `/game/load-step-image/${step}`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ story_id }),
+      },
+    );
   }
 
   /**
@@ -90,6 +93,7 @@ export default class GameAPI extends Fetcher {
   async deleteStory(story_id: string) {
     return this.request<APISTDResposne>(`/game/delete-story/${story_id}`, {
       method: 'DELETE',
+      body: JSON.stringify({ story_id }),
     });
   }
 
@@ -101,14 +105,10 @@ export default class GameAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    */
   async image(story_id: string) {
-    return this.request<Blob>(
-      `/game/image/`,
-      {
-        method: 'POST',
-        body: JSON.stringify({ story_id }),
-      },
-      'blob',
-    );
+    return this.request<{ image: string; type: ImageType }>(`/game/image-v1`, {
+      method: 'POST',
+      body: JSON.stringify({ story_id }),
+    });
   }
 
   /**
@@ -117,7 +117,9 @@ export default class GameAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    */
   async imageV2(story_id: string) {
-    return this.request<{ jobID: string }>(`/game/image-v2/`, {
+    return this.request<
+      { job_id: string } | { image: string; type: ImageType }
+    >(`/game/image-v2`, {
       method: 'POST',
       body: JSON.stringify({ story_id }),
     });
@@ -129,13 +131,12 @@ export default class GameAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    */
   async imageStatusV2(story_id: string, job_id: string) {
-    return this.request<{ status: string; image?: string }>(
+    return this.request<{ status: string; image?: string; type?: ImageType }>(
       `/game/image-v2-status/${job_id}`,
       {
         method: 'POST',
         body: JSON.stringify({ story_id }),
       },
-      'blob',
     );
   }
 

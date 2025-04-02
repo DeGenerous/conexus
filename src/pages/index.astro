@@ -2,26 +2,22 @@
 import Layout from '@layouts/Layout.astro';
 import Menu from '@components/Menu.svelte';
 
-const header = 'CoNexus';
-const subheading = `
-CoNexus is the gateway to a boundless multiverse with immersive and dynamic interactive Choose-Your-Adventure stories. Powered by cutting-edge artificial intelligence, CoNexus generates captivating narratives in real time, offering you an unparalleled journey into infinite and one-of-a-kind experiences.`;
+const meta = {
+  header: 'CoNexus',
+  subheading: `
+    CoNexus is the gateway to a boundless multiverse with immersive and dynamic interactive Choose-Your-Adventure stories. Powered by cutting-edge artificial intelligence, CoNexus generates captivating narratives in real time, offering you an unparalleled journey into infinite and one-of-a-kind experiences.`,
+  nav: 'Home',
+};
+
 const footerText = [
   'Personalized storylines with endless possibilities lie in your hands.',
   'Your choices and actions will shape the course of your unique narratives.',
   'V2 will launch soon, allowing you to create your own stories.',
 ];
-const arrow = false;
-
-const meta = {
-  title: 'Welcome to CoNexus',
-  description: 'Explore the best stories in the multiverse',
-  image: '/favicon.ico',
-  url: 'https://conexus-v1-test.degenerousdao.com/',
-};
 ---
 
 <main>
-  <Layout {header} {subheading} {footerText} {arrow} {...meta}>
+  <Layout {...meta}>
     <Menu client:load />
     <footer>
       {footerText.map((text: any) => <p class="footer-text">{text}</p>)}

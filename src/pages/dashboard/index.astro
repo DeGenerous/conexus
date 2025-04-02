@@ -1,0 +1,18 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import Dashboard from '@components/Dashboard.svelte';
+
+const meta = {
+  header: 'Track Your Universe',
+  nav: 'Dashboard',
+  subheading:
+    'Monitor plays, optimize engagement, and keep your best stories at the top.',
+};
+---
+
+<main>
+  <Layout {...meta}>
+    <Dashboard client:load />
+  </Layout>
+</main>

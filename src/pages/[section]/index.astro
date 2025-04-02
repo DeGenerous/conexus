@@ -1,5 +1,5 @@
 ---
-import CategorySvelte from '@components/Category.svelte';
+import Category from '@components/Category.svelte';
 import Layout from '@layouts/Layout.astro';
 
 const { section } = Astro.params;
@@ -40,12 +40,16 @@ const meta = {
   description: `Explore all the best stories ${sectionName} has to offer`,
   image: `https://media.degenerousdao.com/conexus-sections/${sectionImage?.toLocaleLowerCase()}.avif`,
   imageType: 'image/avif',
-  url: `https://conexus-v1-test.degenerousdao.com/${section}`,
+  url: `https://conexus-test.degenerousdao.com/${section}`,
+  header: section,
+  nav: section,
+  arrow: '/',
+  subheading,
 };
 ---
 
 <main>
-  <Layout arrow={true} header={section} {subheading} {...meta}>
-    <CategorySvelte {section} client:load />
+  <Layout {...meta}>
+    <Category {section} client:load />
   </Layout>
 </main>

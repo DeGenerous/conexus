@@ -37,7 +37,7 @@ export default class Fetcher {
    * Creates an instance of Fetcher.
    * @param baseUrl - The base URL for the API.
    */
-  constructor(baseUrl: string) {
+  constructor(baseUrl: string = import.meta.env.PUBLIC_BACKEND as string) {
     this.baseUrl = baseUrl;
   }
 
@@ -55,40 +55,99 @@ export default class Fetcher {
     responseType: 'json' | 'blob' = 'json',
   ): Promise<APIResponse<T>> {
     const headers: HeadersInit = {
-      'Content-Type': 'application/json',
       ...options.headers,
+      'Cache-Control': 'no-cache',
     };
 
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      ...options,
-      headers,
-      credentials: 'include', // Ensure cookies are sent with requests
-    });
+    try {
+      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+        ...options,
+        headers,
+        credentials: 'include',
+      });
 
-    const contentType = response.headers.get('Content-Type');
-    const isJson = contentType && contentType.includes('application/json');
-    let responseData: any;
+      const contentType = response.headers.get('Content-Type');
+      const isJson = contentType && contentType.includes('application/json');
 
-    if (responseType === 'json' && isJson) {
-      responseData = await response.json();
-    } else if (responseType === 'blob') {
-      responseData = await response.blob();
-    } else {
-      responseData = await response.text();
+      let responseData: APIResponse<T>;
+
+      if (responseType === 'json' && isJson) {
+        responseData = await response.json();
+      } else if (responseType === 'blob') {
+        responseData = { data: (await response.blob()) as T };
+      } else {
+        responseData = { data: (await response.text()) as unknown as T };
+      }
+
+      return responseData;
+    } catch (error) {
+      return { error: { message: (error as Error).message, details: error } };
+    }
+  }
+
+  protected async requestRetry<T>(
+    endpoint: string,
+    options: RequestInit = {},
+    responseType: 'json' | 'blob' = 'json',
+    retries = 3, // Number of retries before failing
+    delay = 500, // Initial delay in ms (doubles each retry)
+  ): Promise<APIResponse<T>> {
+    const headers: HeadersInit = {
+      ...options.headers,
+      'Cache-Control': 'no-cache',
+    };
+
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      console.warn(`Fetching ${endpoint} (Attempt ${attempt + 1}/${retries})`);
+
+      try {
+        const response = await fetch(`${this.baseUrl}${endpoint}`, {
+          ...options,
+          headers,
+          credentials: 'include',
+        });
+
+        const contentType = response.headers.get('Content-Type');
+        const isJson = contentType && contentType.includes('application/json');
+
+        let responseData: APIResponse<T>;
+
+        if (responseType === 'json' && isJson) {
+          responseData = await response.json();
+        } else if (responseType === 'blob') {
+          responseData = { data: (await response.blob()) as T };
+        } else {
+          responseData = { data: (await response.text()) as unknown as T };
+        }
+
+        return responseData;
+      } catch (error) {
+        console.error(`Request failed to ${endpoint}:`, error);
+
+        if (attempt < retries) {
+          await new Promise((res) =>
+            setTimeout(res, delay * Math.pow(2, attempt)),
+          );
+          continue;
+        }
+
+        if (
+          (error as Error).message.includes('Failed to parse URL from /api/') &&
+          retries > 0
+        ) {
+          return this.requestRetry(
+            endpoint,
+            options,
+            responseType,
+            retries - 1,
+            delay,
+          );
+        }
+
+        return { error: error as Error };
+      }
     }
 
-    return responseData;
-
-    // if (!response.ok) {
-    //   return {
-    //     error: {
-    //       message:
-    //         responseData.error || response.statusText || 'An error occurred',
-    //       details: isJson ? responseData.error : responseData,
-    //     },
-    //   };
-    // }
-
-    // return { data: responseData };
+    return { error: new Error('Max retries exceeded') };
   }
 }

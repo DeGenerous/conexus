@@ -2,9 +2,9 @@
   import { onMount } from 'svelte';
   import { createRoot } from 'react-dom/client';
 
-  import YourApp from './Rainbow';
-
   import { showProfile } from '@stores/modal';
+
+  import RainbowConnect from './Rainbow';
 
   export let linking = false;
   export let title = 'Connect Wallet';
@@ -13,7 +13,7 @@
     const reactRoot = document.getElementById('react-root');
     if (reactRoot) {
       const root = createRoot(reactRoot); // Create a root
-      root.render(YourApp(linking, title));
+      root.render(RainbowConnect(linking, title));
     }
   });
 

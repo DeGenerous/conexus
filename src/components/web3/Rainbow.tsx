@@ -15,14 +15,17 @@ import { createSiweMessage } from 'viem/siwe';
 import { WagmiProvider } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains';
 
-import { web3LoggedIn, authenticated, availables } from '@stores/account';
+import { SetCache, USER_CACHE_KEY, USER_CACHE_TTL } from '@constants/cache';
+import { web3LoggedIn, authenticated } from '@stores/account';
+import { AccountAPI, AuthAPI } from '@service/routes';
 
 import '@rainbow-me/rainbowkit/styles.css';
 
-const url = import.meta.env.PUBLIC_BACKEND;
-
 const Web3Provider = ({ linking, children }) => {
   let AUTHENTICATION_STATUS: AuthenticationStatus = 'unauthenticated';
+
+  const authAPI = new AuthAPI(import.meta.env.PUBLIC_BACKEND);
+  const accountAPI = new AccountAPI(import.meta.env.PUBLIC_BACKEND);
 
   const config = getDefaultConfig({
     appName: 'Degenerous DAO',
@@ -35,18 +38,16 @@ const Web3Provider = ({ linking, children }) => {
 
   const authenticationAdapter = createAuthenticationAdapter({
     getNonce: async () => {
-      const response = await fetch(`${url}/rainbow/nonce`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const { data, error } = await authAPI.web3Getnonce();
 
-      if (!response.ok) {
+      if (!data) {
+        console.error('Failed to fetch nonce:', error);
         throw new Error('Failed to fetch nonce');
       }
 
       AUTHENTICATION_STATUS = 'loading';
 
-      return await response.text();
+      return data.nonce;
     },
 
     createMessage: ({ nonce, address, chainId }) => {
@@ -77,25 +78,32 @@ const Web3Provider = ({ linking, children }) => {
     },
 
     verify: async ({ message, signature }) => {
-      const urlPath = linking ? '/rainbow/linklogin' : '/rainbow/login';
+      let resp: APIResponse<{ user: User }>;
 
-      const response = await fetch(`${url}${urlPath}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message, signature }),
-      });
+      if (linking) {
+        resp = await accountAPI.web3WalletLink({
+          message,
+          signature,
+        });
+      } else {
+        resp = await authAPI.web3WalletSignin({
+          message,
+          signature,
+        });
+      }
 
-      if (!response.ok) {
+      const { data, error } = resp;
+
+      if (!data) {
+        console.error('Failed to verify signature:', error?.details);
         AUTHENTICATION_STATUS = 'unauthenticated';
-        console.error('Verification failed');
         return false;
       }
 
-      const data = await response.json();
+      SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
       web3LoggedIn.set(true);
       authenticated.set({ user: data.user, loggedIn: true });
-      availables.set(data.available);
 
       AUTHENTICATION_STATUS = 'authenticated';
 
@@ -103,12 +111,17 @@ const Web3Provider = ({ linking, children }) => {
     },
 
     signOut: async () => {
-      await fetch(`${url}/signout`, {
-        method: 'POST',
-      });
+      const { data, error } = await accountAPI.logout();
+
+      if (!data) {
+        console.error('Failed to sign out:', error);
+        return;
+      }
 
       web3LoggedIn.set(false);
       authenticated.set({ user: null, loggedIn: false });
+
+      AUTHENTICATION_STATUS = 'unauthenticated';
     },
   });
 
@@ -122,7 +135,6 @@ const Web3Provider = ({ linking, children }) => {
           status={AUTHENTICATION_STATUS}
         >
           <RainbowKitProvider
-            coolMode
             modalSize="wide"
             theme={darkTheme({
               accentColor: 'rgb(51, 226, 230)',
@@ -140,22 +152,7 @@ const Web3Provider = ({ linking, children }) => {
   );
 };
 
-// export const App = () => {
-//   return (
-//     <Web3Provider>
-//       <ConnectButton
-//         label="with Wallet Connect"
-//         showBalance={false}
-//         accountStatus={{
-//           smallScreen: 'avatar',
-//           largeScreen: 'full',
-//         }}
-//       />
-//     </Web3Provider>
-//   );
-// };
-
-const YourApp = (linking: boolean, title: string) => {
+const RainbowConnect = (linking: boolean, title: string) => {
   return (
     <Web3Provider linking={linking}>
       <ConnectButton.Custom>
@@ -242,4 +239,4 @@ const YourApp = (linking: boolean, title: string) => {
   );
 };
 
-export default YourApp;
+export default RainbowConnect;

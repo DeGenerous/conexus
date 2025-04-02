@@ -8,8 +8,45 @@ export default class AccountAPI extends Fetcher {
    * Sends a request to get the current user's details.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    */
-  async me() {
-    return this.request<{ user: User }>('/account/me');
+  async me(token?: string) {
+    return this.request<{ user: User }>('/account/me', {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+  }
+
+  /**
+   * Confirm the user's email address.
+   * @param token - The confirmation token.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   * */
+  async confirmEmail(token: string) {
+    return this.request<APISTDResposne>(
+      `/account/confirm-email?token=${token}`,
+    );
+  }
+
+  /**
+   * Subscribe the user to the newsletter.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   */
+  async subscribeNewsletter() {
+    return this.request<APISTDResposne>('/account/subscribe-newsletter');
+  }
+
+  /**
+   * Unsubscribe the user from the newsletter.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   */
+  async unsubscribeNewsletter() {
+    return this.request<APISTDResposne>('/account/unsubscribe-newsletter');
+  }
+
+  /**
+   * Subscription status of the user.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   */
+  async subscriptionStatus() {
+    return this.request<SubscriptionStatus>('/account/subscription-status');
   }
 
   /**
@@ -46,7 +83,7 @@ export default class AccountAPI extends Fetcher {
   async web3SelectWallet(wallet: string) {
     return this.request<{ user: User }>('/account/web3-select-wallet', {
       method: 'POST',
-      body: JSON.stringify(wallet),
+      body: JSON.stringify({ wallet }),
     });
   }
 
@@ -56,7 +93,7 @@ export default class AccountAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async changePassword(old_password: string, new_password: string) {
-    return this.request<APISTDResposne>('/account/change-password', {
+    return this.request<APISTDResposne>('/account/change-account-password', {
       method: 'POST',
       body: JSON.stringify({ old_password, new_password }),
     });
@@ -95,16 +132,6 @@ export default class AccountAPI extends Fetcher {
   async getReferralCodes() {
     return this.request<{ codes: ReferralCode[] }>(
       '/account/get-referral-codes',
-    );
-  }
-
-  /**
-   * Validate a referral code provided by another user.
-   * @returns A promise that resolves to an APIResponse containing the response data or an error.
-   * */
-  async validateReferralCode(code: string) {
-    return this.request<{ valid: boolean; referral: ReferralCode }>(
-      `/account/validate-referral-code/${code}`,
     );
   }
 }

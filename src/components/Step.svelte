@@ -1,11 +1,23 @@
 <script lang="ts">
+  import { afterUpdate } from 'svelte';
+
+  import MediaManager from '@lib/media';
+  import { CoNexusGame } from '@lib/story';
   import { fullscreen, story, loading } from '@stores/conexus';
   import { background_volume, tts_volume } from '@stores/volumes';
-  import { storyTitle as _storyTitle } from '@lib/conexus';
-  import type { StepData } from '@lib/conexus';
 
-  import Slider from './music/Slider.svelte';
-  import { afterUpdate } from 'svelte';
+  import Slider from '@components/music/Slider.svelte';
+  import ImageDisplay from '@components/utils/ImageDisplay.svelte';
+
+  export let story_name: string;
+
+  const game: CoNexusGame = new CoNexusGame();
+  const media: MediaManager = new MediaManager();
+
+  const handleSetMedia = async (topic_id: number) => {
+    await media.setBackgroundImage(topic_id);
+    await media.playBackgroundMusic(topic_id);
+  };
 
   let fullWidthImage: boolean = false;
   let imageWrapper: HTMLDivElement;
@@ -29,7 +41,7 @@
   let stepFont: string = 'Verdana';
   let width: number;
   const storyTitle: string = (
-    _storyTitle.charAt(0).toUpperCase() + _storyTitle.slice(1)
+    story_name.charAt(0).toUpperCase() + story_name.slice(1)
   ).trim();
 
   let activeOptionNumber: number = 0;
@@ -44,7 +56,7 @@
       case 'ArrowLeft': {
         if ($loading) return;
         if (step.step !== 1) {
-          $story?.loadStep(step.step - 1);
+          $story?.loadGameStep(step.step - 1);
           handleSelectorSvg(activeOptionNumber, 'blur');
           activeOptionNumber = 0;
         } else return;
@@ -53,7 +65,7 @@
       case 'ArrowRight': {
         if ($loading) return;
         if (step.step !== $story?.maxStep) {
-          $story?.loadStep(step.step + 1);
+          $story?.loadGameStep(step.step + 1);
           handleSelectorSvg(activeOptionNumber, 'blur');
           activeOptionNumber = 0;
         } else return;
@@ -174,14 +186,11 @@
     bind:this={imageWrapper}
     on:click={() => (fullWidthImage = !fullWidthImage)}
   >
-    {#if step.image}
-      <img class="image" src={`data:image/png;base64,${step.image}`} alt="" />
-    {:else}
-      <img class="image loading-image" src="/icons/loading.png" alt="" />
-      {#if width <= 600}
-        <p class="click-hint">Click to change image size</p>
-      {/if}
-    {/if}
+    <ImageDisplay
+      bind:image={step.image}
+      bind:image_type={step.image_type}
+      bind:width
+    />
   </div>
 
   {#if step.title}
@@ -212,6 +221,19 @@
     {/if}
 
     <div class="options-container blur">
+      {#await game.getTopic(story_name)}
+        <p>Loading...</p>
+      {:then topic}
+        <button
+          class="option menu-option"
+          on:click={() => {
+            game.startGame(topic.name, topic.id, handleSetMedia);
+          }}
+        >
+          Start again
+        </button>
+      {/await}
+
       <button
         id="option-0"
         class="option menu-option"
@@ -231,7 +253,7 @@
           style="font-family: {stepFont}"
           disabled={$loading || step.step !== $story?.maxStep}
           on:click={() => {
-            $story?.next_step(i + 1);
+            $story?.nextStep(i + 1);
             if (width < 600) return;
             handleSelectorSvg(i, 'blur');
             if (activeOptionNumber !== 0) activeOptionNumber = 0;
@@ -303,7 +325,7 @@
           <div class="story-info-container">
             <button
               class="quit"
-              on:click={() => window.open('./', '_self')}
+              on:click={() => window.location.reload()}
               on:pointerover={() => (quitSvgWindowFocus = true)}
               on:pointerout={() => (quitSvgWindowFocus = false)}
               aria-label="quit"
@@ -450,7 +472,7 @@
             style={$loading ? 'cursor: progress' : ''}
             on:click={() => {
               if (step.step === 2) backStepArrowWindowFocus = false;
-              if (!$loading) $story?.loadStep(step.step - 1);
+              if (!$loading) $story?.loadGameStep(step.step - 1);
             }}
             on:pointerover={() => {
               if (step.step !== 1 && !$loading) backStepArrowWindowFocus = true;
@@ -508,7 +530,7 @@
             on:click={() => {
               if ($story?.maxStep == step.step + 1)
                 nextStepArrowWindowFocus = false;
-              $story?.loadStep(step.step + 1);
+              $story?.loadGameStep(step.step + 1);
             }}
             on:pointerover={() => {
               if (step.step !== $story?.maxStep)
@@ -575,7 +597,7 @@
               xmlns="http://www.w3.org/2000/svg"
               viewBox="-100 -100 200 200"
               class="quit-svg-element"
-              on:click={() => window.open('/', '_self')}
+              on:click={() => window.location.reload()}
               role="button"
               tabindex="0"
             >
@@ -654,7 +676,7 @@
                 mask="url(#fullscreen-back-step-arrow-svg-mask)"
                 on:click={() => {
                   if (step.step !== 1 && !$loading)
-                    $story?.loadStep(step.step - 1);
+                    $story?.loadGameStep(step.step - 1);
                   if (step.step === 2) backStepArrowFullscreenFocus = false;
                 }}
                 on:pointerover={() => {
@@ -712,7 +734,7 @@
                 mask="url(#fullscreen-next-step-arrow-svg-mask)"
                 on:click={() => {
                   if (step.step !== $story?.maxStep)
-                    $story?.loadStep(step.step + 1);
+                    $story?.loadGameStep(step.step + 1);
                   if ($story?.maxStep == step.step + 1)
                     nextStepArrowFullscreenFocus = false;
                 }}
@@ -781,7 +803,7 @@
             class="quit-button-svg"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="-100 -100 200 200"
-            on:click={() => window.open('/', '_self')}
+            on:click={() => window.location.reload()}
             role="button"
             tabindex="0"
           >
@@ -820,7 +842,7 @@
               viewBox="-100 -100 200 200"
               on:click={() => {
                 if (step.step !== 1 && !$loading)
-                  $story?.loadStep(step.step - 1);
+                  $story?.loadGameStep(step.step - 1);
               }}
               role="button"
               tabindex="0"
@@ -864,7 +886,7 @@
               style="transform: rotate(180deg)"
               on:click={() => {
                 if (step.step !== $story?.maxStep)
-                  $story?.loadStep(step.step + 1);
+                  $story?.loadGameStep(step.step + 1);
               }}
               role="button"
               tabindex="0"
@@ -1037,39 +1059,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-
-  .image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 1em;
-  }
-
-  .loading-image {
-    object-fit: contain;
-    animation: pulse 5s linear infinite;
-  }
-
-  @keyframes pulse {
-    0% {
-      opacity: 0;
-    }
-    50% {
-      opacity: 0.5;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
-
-  .click-hint {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    bottom: 1em;
-    color: rgb(51, 226, 230);
-    animation: pulse 5s linear infinite;
   }
 
   .step-title {

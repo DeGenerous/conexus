@@ -1,6 +1,6 @@
 ---
 import Layout from '@layouts/Layout.astro';
-import Topic from '@components/Story.svelte';
+import Story from '@components/Story.svelte';
 
 const { section, story } = Astro.params;
 
@@ -12,17 +12,16 @@ const storyName = story?.replace(/%20/g, ' ');
 const storyImage = storyName?.toLocaleLowerCase().replace(/[^a-z0-9]/g, '');
 
 const meta = {
-  title: `Welcome to CoNexus - where stories know no bounds `,
-  description: `${storyName} with infinite possibilities!`,
+  title: `Welcome to CoNexus - where stories know no bounds`,
+  description: `Explore ${storyName} story!`,
   image:
     `https://media.degenerousdao.com/conexus-categories/images/${storyImage}/description/description.avif` ||
     '/favicon.ico',
-  url: `https://conexus-v1-test.degenerousdao.com/${section}/${story}`,
+  url: `https://conexus-test.degenerousdao.com/${section}/${story}`,
+  nav: storyName,
 };
 ---
 
-<main>
-  <Layout {story} {...meta}>
-    <Topic story_name={story} client:load />
-  </Layout>
-</main>
+<Layout {story} {...meta}>
+  <Story {section} story_name={story} client:load />
+</Layout>

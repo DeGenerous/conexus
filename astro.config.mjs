@@ -1,8 +1,7 @@
 import { defineConfig } from 'astro/config';
 import svelte from '@astrojs/svelte';
 import react from '@astrojs/react';
-
-import vercel from '@astrojs/vercel/serverless';
+import vercel from '@astrojs/vercel';
 
 // https://astro.build/config
 export default defineConfig({
@@ -12,6 +11,7 @@ export default defineConfig({
   vite: {
     server: {
       proxy: {
+        // remove in production
         '/api': {
           target: import.meta.env.VITE_API_URL,
           changeOrigin: true,
@@ -19,6 +19,7 @@ export default defineConfig({
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
       },
+      allowedHosts: ['conexus-test.degenerousdao.com'],
     },
   },
   devToolbar: {

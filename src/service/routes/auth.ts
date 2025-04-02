@@ -29,14 +29,12 @@ export default class AuthAPI extends Fetcher {
   }
 
   /**
-   * Confirm the user's email address.
-   * @param email - The user's email address.
-   * @param token - The confirmation token.
+   * Validate a referral code provided by another user.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
-  async confirmEmail(email: string, token: string) {
-    return this.request<APISTDResposne>(
-      `/auth/confirm-email?email=${email}&token=${token}`,
+  async validateReferralCode(code: string) {
+    return this.request<{ valid: boolean; referral: ReferralCode }>(
+      `/auth/validate-referral-code/${code}`,
     );
   }
 

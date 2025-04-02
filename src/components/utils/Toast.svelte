@@ -28,7 +28,7 @@
   class:info={type === 'info'}
   class:error={type !== 'info'}
 >
-  <p>{message}</p>
+  <p>{@html message}</p>
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"
@@ -64,11 +64,11 @@
   }
 
   .toast.info {
-    background-color: rgba(0, 185, 55, 0.75);
+    background-color: rgba(0, 150, 40, 0.9);
   }
 
   .toast.error {
-    background-color: rgba(255, 50, 50, 0.75);
+    background-color: rgba(200, 30, 30, 0.9);
   }
 
   .close-svg {

@@ -5,11 +5,13 @@
   import Tts from '@components/music/Tts.svelte';
   import Step from '@components/Step.svelte';
   import MediaManager from '@lib/media';
+  import { CoNexusApp } from '@lib/view';
   import { CoNexusGame } from '@lib/story';
   import { loading, story, background_image } from '@stores/conexus';
   import {
     showModal,
     secondButton,
+    secondButtonClass,
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
@@ -25,6 +27,7 @@
 
   let scroll: number;
 
+  const view: CoNexusApp = new CoNexusApp();
   const game: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
 
@@ -42,10 +45,15 @@
       (story) => story.name,
     );
     activeStoryIndex = categoryTopicNames?.indexOf(story_name);
-
-    console.log(categoryTopics);
-    console.log(activeStoryIndex);
   });
+
+  const fetchGates = async (topic_id: number) => {
+    return await view.fetchTopicGates(topic_id);
+  };
+
+  const fetchClass = async (id: number) => {
+    return await view.fetchClassGate(id);
+  };
 
   let deletedStories: string[] = []; // temp storage before reload for immediate removal
   let noUnfinishedStoriesLeft: boolean = false;
@@ -66,6 +74,7 @@
     $secondButton = `Delete story: ${
       story.category.charAt(0).toUpperCase() + story.category.slice(1)
     }`;
+    $secondButtonClass = 'red-button';
     $handleSecondButton = () => DeleteStory(story.story_id);
     $modalContent = `<h2>Are you sure you want to delete this story?</h2>
         <h3>This action is irreversible. You will lose all progress on this story.</h3>`;
@@ -245,6 +254,29 @@
           </div>
         </section>
       </div>
+
+      {#await fetchGates(topic.id) then topicGatings}
+        {#if topicGatings.length > 0}
+          <div class="gating">
+            <span class="gating-icon-wrapper">
+              <img class="gating-icon" src="/icons/lock.svg" alt="Restricted" />
+            </span>
+            <h3>This story is only available to NFT holders:</h3>
+            {#each topicGatings as { contract_name, class_id }}
+              <span>
+                <h3>
+                  {contract_name}
+                  {#if class_id}
+                    {#await fetchClass(class_id) then className}
+                      ({className?.name})
+                    {/await}
+                  {/if}
+                </h3>
+              </span>
+            {/each}
+          </div>
+        {/if}
+      {/await}
 
       {#await media.fetchStoryImage(topic.id, 'video') then storyVideo}
         {#if storyVideo !== '/blank.avif'}
@@ -463,8 +495,9 @@
   }
 
   .picture {
-    min-width: 25vw;
-    width: 25vw;
+    min-height: 25vw;
+    height: 25vw;
+    width: auto;
     filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
     border-radius: 1vw;
   }
@@ -587,8 +620,9 @@
     transform: scale(1.025) translateY(-0.25vw);
   }
 
-  .continue-shaping-btn {
-    height: 3vw !important;
+  .unfinished-story svg {
+    width: 2.5vw;
+    height: 2.5vw;
   }
 
   .story-buttons-container button {
@@ -598,6 +632,55 @@
   .loading-svg {
     height: 1.5vw;
     width: 1.5vw;
+  }
+
+  .stories-switcher {
+    width: 100vw;
+    padding-inline: 2vw;
+    gap: 2vw;
+    flex-flow: row nowrap;
+  }
+
+  .switch-arrow {
+    flex-flow: row nowrap;
+    gap: 1vw;
+  }
+
+  .switch-arrow img {
+    flex: none;
+  }
+
+  .gating {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
+    padding: 0.5vw;
+    border-radius: 1vw;
+    background-color: rgba(255, 140, 0, 0.75);
+  }
+
+  .gating-icon {
+    width: 2vw;
+    height: 2vw;
+  }
+
+  .gating h3 {
+    color: #010020;
+  }
+
+  .gating span h3 {
+    color: rgb(255, 165, 40);
+    line-height: 2vw;
+  }
+
+  .gating span {
+    display: flex;
+    justify-content: center;
+    padding: 1vw;
+    border-radius: 0.75vw;
+    background-color: rgba(32, 0, 1, 0.75);
   }
 
   /* LOADING */
@@ -686,6 +769,7 @@
     }
 
     .picture {
+      height: auto;
       width: 90vw;
       border-radius: 0.5em;
     }
@@ -754,7 +838,7 @@
 
     .unfinished-story {
       gap: 1em;
-      padding: 0.25em;
+      padding: 0.5em;
       width: 90vw;
       justify-content: space-between;
       border-radius: 1em;
@@ -763,10 +847,6 @@
     .unfinished-story svg {
       width: 1.75em;
       height: 1.75em;
-    }
-
-    .continue-shaping-btn {
-      height: 2em !important;
     }
 
     .default-picture {
@@ -796,6 +876,38 @@
 
     .stories-switcher {
       margin-top: 25%;
+      gap: 1em;
+      padding-inline: 1em;
+    }
+
+    .switch-arrow {
+      gap: 0.5em;
+    }
+
+    .gating {
+      width: 100%;
+      flex-direction: column;
+      gap: 0.5em;
+      padding: 0.5em;
+      border-radius: 0;
+    }
+
+    .gating-icon {
+      width: 1.25em;
+      height: 1.25em;
+    }
+
+    .gating span h3 {
+      line-height: 1.25em;
+    }
+
+    .gating span {
+      padding: 0.5em 1em;
+      border-radius: 0.5em;
+    }
+
+    .gating-icon-wrapper {
+      display: none !important;
     }
   }
 </style>

@@ -2,6 +2,7 @@
   import {
     showModal,
     secondButton,
+    secondButtonClass,
     handleSecondButton,
     modalContent,
   } from '@stores/modal.ts';
@@ -16,6 +17,9 @@
 
   const closeDialog = () => {
     $showModal = false;
+    $secondButton = '';
+    $secondButtonClass = '';
+    $handleSecondButton = () => {};
     dialog?.close();
   };
 </script>
@@ -33,7 +37,7 @@
     <section>
       <button on:click={() => ($showModal = false)}> Close </button>
       {#if $secondButton}
-        <button on:click={$handleSecondButton}>
+        <button class={$secondButtonClass} on:click={$handleSecondButton}>
           {$secondButton}
         </button>
       {/if}
@@ -43,6 +47,7 @@
 
 <style>
   dialog {
+    overflow-x: hidden;
     max-width: 80vw;
     border: none;
     color: inherit;
@@ -52,6 +57,7 @@
   }
 
   dialog > div {
+    width: 100%;
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
@@ -82,7 +88,8 @@
 
   @media only screen and (max-width: 600px) {
     dialog {
-      width: 90vw;
+      max-width: none;
+      width: 95vw;
       border-radius: 1em;
     }
 

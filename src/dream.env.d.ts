@@ -67,3 +67,21 @@ type CreatePrompt = {
 };
 
 type ImageType = 'url' | 'base64';
+
+type ClassGate = {
+  id: number;
+  name: string;
+  start_token_id: number;
+  end_token_id: number;
+  created_at: Date;
+};
+
+type SupportedContracts = 'Potential' | 'Ark' | 'Moonsign' | 'Apes' | 'All';
+
+type TopicNFTGate = {
+  topic_id: number;
+  contract_name: SupportedContracts;
+  class_id?: number;
+  token_ids?: number[];
+  created_at?: Date;
+};

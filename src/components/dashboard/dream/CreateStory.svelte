@@ -407,6 +407,7 @@
 
     .general-parameters {
       width: 100%;
+      padding: 1em 0;
     }
 
     .general-parameters h3,

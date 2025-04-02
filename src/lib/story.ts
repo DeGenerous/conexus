@@ -8,6 +8,13 @@ import { api_error } from '@errors/index';
 import { GameAPI } from '@service/routes';
 import { loading, story } from '@stores/conexus';
 import { toastStore } from '@stores/toast';
+import {
+  showModal,
+  secondButton,
+  secondButtonClass,
+  handleSecondButton,
+  modalContent,
+} from '@stores/modal';
 
 export let storyTitle: string;
 
@@ -97,14 +104,26 @@ export class CoNexusGame extends GameAPI {
     //TODO: change all story_name to topic_id
     loading.set(true);
 
-    const { data, error } = await this.start(story_name);
+    const { data, error } = await this.start(story_name, topic_id);
 
     if (!data) {
       if (error) {
-        api_error(error);
+        if (error.message.match('you do not have the required NFTs')) {
+          const errorMessage: string[] = error.message.split('. ');
+
+          const errorTitle = errorMessage[0];
+          const nftLinks = errorMessage[1];
+
+          modalContent.set(`
+            <h2>${errorTitle}</h2>
+            <h3>${nftLinks}</h3>
+          `);
+          showModal.set(true);
+        } else api_error(error);
       } else {
         toastStore.show('Error starting game', 'error');
       }
+      loading.set(false);
       return;
     }
 
@@ -131,6 +150,7 @@ export class CoNexusGame extends GameAPI {
       } else {
         toastStore.show('Error continuing game', 'error');
       }
+      loading.set(false);
       return;
     }
 

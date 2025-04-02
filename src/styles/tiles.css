@@ -62,7 +62,7 @@
   justify-content: space-between;
   width: 20vw;
   background-color: rgba(36, 65, 189, 0.75);
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.75);
   border: 0.1vw solid rgba(51, 226, 230, 0.5);
   border-radius: 1.5vw;
   box-shadow: 0 0 0.5vw #010020;
@@ -196,6 +196,22 @@
   margin-block: 1vw;
   background-color: rgba(51, 226, 230, 0.1);
   cursor: inherit;
+}
+
+.gated-story {
+  color: rgba(255, 255, 255, 0.9);
+  border-color: #010020;
+  background-color: rgba(255, 140, 0, 0.75);
+}
+
+.gated-story .tile-picture {
+  border-color: #010020;
+}
+
+.gated-story:hover,
+.gated-story:active {
+  color: #010020;
+  background-color: rgba(255, 140, 0, 0.9);
 }
 
 @media only screen and (max-width: 600px) {

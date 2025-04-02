@@ -13,12 +13,44 @@ function generatePrompt(
   data: TablePrompt | string,
 ): CreatePrompt {
   let imagePrompt: string = `Use ${settings.imageStyle} style.\n\n`;
+
+  // SETTING UP THE MAIN IMAGE PROMPT
   if (props.imagePrompts.length > 1) {
     imagePrompt += 'Image prompts:\n';
     props.imagePrompts.map((prompt) => {
       imagePrompt += `- ${prompt}\n`;
     });
   } else imagePrompt = props.imagePrompts[0];
+
+  // ADDING CHARACTERS TO THE IMAGE PROMPT
+  if (typeof data !== 'string') {
+    imagePrompt += '\n';
+
+    imagePrompt += `Main Character: name: ${data.mainCharacter.name}, description: ${data.mainCharacter.description}`;
+
+    if (data.mainCharacter.physicality)
+      imagePrompt += `, physicality: ${data.mainCharacter.physicality}`;
+
+    if (data.mainCharacter.physicality)
+      imagePrompt += `, psychology: ${data.mainCharacter.psychology}`;
+
+    imagePrompt += '\n';
+
+    if (data.sideCharacters.length > 0) {
+      imagePrompt += 'Side Characters:\n';
+      data.sideCharacters.map((character: Character) => {
+        imagePrompt += `name: ${character.name}, description: ${character.description}`;
+
+        if (character.physicality)
+          imagePrompt += `, physicality: ${character.physicality}`;
+
+        if (character.physicality)
+          imagePrompt += `, psychology: ${character.psychology}`;
+
+        imagePrompt += '\n';
+      });
+    }
+  }
 
   const setUpSettings = () => {
     let promptSettings: string =

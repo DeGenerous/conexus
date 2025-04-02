@@ -142,4 +142,45 @@ export class CoNexusApp extends ViewAPI {
 
     return data;
   }
+
+  /**
+   * Fetches the NFT gates for a specific topic.
+   *
+   * @param topic_id - The ID of the topic to fetch gates for.
+   * @returns A promise that resolves to an array of TopicNFTGate objects.
+   */
+  async fetchTopicGates(topic_id: number): Promise<TopicNFTGate[]> {
+    const { data, error } = await this.getTopicNFTGates(topic_id);
+    if (!data) {
+      if (error) {
+        api_error(error);
+      }
+      return [];
+    }
+    return data;
+  }
+
+  async fetchClassGates(): Promise<ClassGate[]> {
+    const { data, error } = await this.getClassGates();
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      }
+      return [];
+    }
+
+    return data;
+  }
+
+  async fetchClassGate(class_ID: number): Promise<ClassGate | null> {
+    const { data, error } = await this.getGateClass(class_ID);
+    if (!data) {
+      if (error) {
+        api_error(error);
+      }
+      return null;
+    }
+    return data;
+  }
 }

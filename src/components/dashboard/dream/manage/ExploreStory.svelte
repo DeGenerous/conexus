@@ -4,12 +4,14 @@
   import {
     showModal,
     secondButton,
+    secondButtonClass,
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
 
   import GenreTags from './GenreTags.svelte';
   import Media from './Media.svelte';
+  import NftGating from './NftGating.svelte';
 
   export let topic_name = 'story';
 
@@ -82,6 +84,7 @@
 
   function openModal() {
     $secondButton = `Delete story: ${topic_name}`;
+    $secondButtonClass = 'red-button';
     $handleSecondButton = () => {
       admin.deleteStory(topic.id);
       $showModal = false;
@@ -99,6 +102,26 @@
         break;
       case 'remove':
         await admin.removeGenre(topic.id, genre_id);
+        break;
+    }
+  }
+
+  async function handleGatingChange(
+    topic_id: number,
+    contract_name: SupportedContracts,
+    method: 'add' | 'remove',
+    class_id?: string,
+  ) {
+    switch (method) {
+      case 'add':
+        await admin.gateTopic({
+          topic_id,
+          contract_name,
+          class_id: parseInt(class_id!),
+        });
+        break;
+      case 'remove':
+        await admin.removeTopicGate(topic_id, contract_name);
         break;
     }
   }
@@ -265,7 +288,9 @@
           >
             Play Demo
           </a>
-          <button on:click={downloadTopicJson}>Export JSON</button>
+          <button class="rose-button" on:click={downloadTopicJson}
+            >Export JSON</button
+          >
         </div>
       {/key}
 
@@ -396,6 +421,9 @@
         disabled={!editingPrompt}
       ></textarea>
     </div>
+
+    <!-- NFT RESTRICTIONS -->
+    <NftGating {topic} {handleGatingChange} />
 
     <!-- MEDIA FILES -->
     <Media bind:topic_id={topic.id} />

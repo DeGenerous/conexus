@@ -13,10 +13,10 @@ export default class GameAPI extends Fetcher {
    * @param category - The category of the game.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
-  async start(category: string) {
+  async start(topic_name: string, topic_id: number) {
     return this.request<GameData>('/game/start', {
       method: 'POST',
-      body: JSON.stringify({ category }),
+      body: JSON.stringify({ topic_name, topic_id }),
     });
   }
 

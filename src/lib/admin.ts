@@ -566,6 +566,120 @@ export class AdminApp extends AdminAPI {
     toastStore.show(data.message, 'info');
   }
 
+  /**
+   * Gate a topic by its ID with an NFT.
+   *
+   * @param topic_id - The ID of the topic to remove the gate from.
+   * @param contract_name - The name of the contracts to remove the gate from.
+   * @param token_id - The ID of the tokens to remove the gate from.
+   * @returns A promise that resolves to void.
+   */
+  async gateTopic(gate_obj: TopicNFTGate): Promise<void> {
+    const { data, error } = await this.gateTopicWithNFT(
+      gate_obj.topic_id,
+      gate_obj.contract_name,
+      gate_obj.class_id,
+      gate_obj.token_ids,
+    );
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error gating topic', 'error');
+      }
+      return;
+    }
+
+    this.clearCache();
+
+    toastStore.show(data.message, 'info');
+  }
+
+  /**
+   * Removes the NFT gate from a topic.
+   *
+   * @param topic_id - The ID of the topic to remove the gate from.
+   * @param contract_name - The name of the contracts to remove the gate from.
+   * @param token_id - The ID of the tokens to remove the gate from.
+   * @returns A promise that resolves to void.
+   */
+  async removeTopicGate(
+    topic_id: number,
+    contract_name: SupportedContracts,
+    token_ids?: number[],
+  ): Promise<void> {
+    const contract_names = [contract_name];
+
+    const { data, error } = await this.removeTopicNFTGate(
+      topic_id,
+      contract_names,
+      token_ids,
+    );
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error removing topic gate', 'error');
+      }
+      return;
+    }
+    this.clearCache();
+    toastStore.show(data.message, 'info');
+  }
+
+  /**
+   * Fetches the NFT gates for a specific topic.
+   *
+   * @param topic_id - The ID of the topic to fetch gates for.
+   * @returns A promise that resolves to an array of TopicNFTGate objects.
+   */
+  async fetchTopicGates(topic_id: number): Promise<TopicNFTGate[]> {
+    const { data, error } = await this.getTopicNFTGates(topic_id);
+    if (!data) {
+      if (error) {
+        api_error(error);
+      }
+      return [];
+    }
+    return data;
+  }
+
+  async createNewClassGate(
+    name: string,
+    start_token_id: number,
+    end_token_id: number,
+  ) {
+    const { data, error } = await this.createClassGate(
+      name,
+      start_token_id,
+      end_token_id,
+    );
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      }
+      return;
+    }
+
+    this.clearCache();
+
+    toastStore.show(data.message, 'info');
+  }
+
+  async deleteClassGate(class_ID: number): Promise<void> {
+    const { data, error } = await this.deleteClassGater(class_ID);
+    if (!data) {
+      if (error) {
+        api_error(error);
+      }
+      return;
+    }
+    this.clearCache();
+    toastStore.show(data.message, 'info');
+  }
+
   private clearCache() {
     ClearCache('manage');
   }

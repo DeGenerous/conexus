@@ -141,4 +141,50 @@ export default class AdminAPI extends Fetcher {
       body: JSON.stringify({ topic_id }),
     });
   }
+
+  async createClassGate(
+    name: string,
+    start_token_id: number,
+    end_token_id: number,
+  ) {
+    return this.request<APISTDResposne>('/admin/create-class-gate', {
+      method: 'POST',
+      body: JSON.stringify({ name, start_token_id, end_token_id }),
+    });
+  }
+
+  async deleteClassGater(class_ID: number) {
+    return this.request<APISTDResposne>(
+      `/admin/delete-class-gate/${class_ID}`,
+      {
+        method: 'DELETE',
+      },
+    );
+  }
+
+  async gateTopicWithNFT(
+    topic_id: number,
+    contract_name: SupportedContracts,
+    class_id?: number,
+    token_ids?: number[],
+  ) {
+    return this.request<APISTDResposne>('/admin/gate-topic', {
+      method: 'POST',
+      body: JSON.stringify({ topic_id, contract_name, class_id, token_ids }),
+    });
+  }
+  async removeTopicNFTGate(
+    topic_id: number,
+    contract_names: SupportedContracts[],
+    token_ids?: number[],
+  ) {
+    return this.request<APISTDResposne>('/admin/remove-topic-gate', {
+      method: 'POST',
+      body: JSON.stringify({ topic_id, contract_names, token_ids }),
+    });
+  }
+
+  async getTopicNFTGates(topic_id: number) {
+    return this.request<TopicNFTGate[]>(`/view/get-topic-gates/${topic_id}`);
+  }
 }

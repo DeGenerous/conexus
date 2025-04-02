@@ -1,0 +1,101 @@
+---
+import Layout from '@layouts/Layout.astro';
+---
+
+<Layout title="CoNexus | DeGenerous Arcade">
+  <section>
+    <h1>Maintenance</h1>
+    <div>
+      <h2>The portal is sealed. Systems are being reforged.</h2>
+      <img src="/logo.avif" alt="DeGenerous" />
+      <h2>We'll be back shortly to restore your journey.</h2>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  section {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2vw;
+    padding: 2vw;
+  }
+
+  div {
+    width: 60vw;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
+    background-image: url('/conexusBG.avif');
+    background-color: black;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: bottom;
+    padding: 2vw;
+    border-radius: 2vw;
+    box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.5);
+    overflow-y: hidden;
+  }
+
+  h2 {
+    color: white;
+  }
+
+  img {
+    width: 20vw;
+    height: auto;
+    animation: maintenance 5s linear infinite;
+  }
+
+  @media screen and (max-width: 600px) {
+    section {
+      gap: 2em;
+      padding: 2em 0;
+    }
+
+    div {
+      width: 100vw;
+      height: auto;
+      gap: 1em;
+      border-radius: none;
+      box-shadow: none;
+      background-image: none;
+      background-color: transparent;
+    }
+
+    h1 {
+      font-size: 2em;
+      line-height: 3em;
+    }
+
+    h3 {
+      font-size: 1.5em;
+      padding-inline: 0.5em;
+    }
+
+    img {
+      width: 90vw;
+    }
+  }
+
+  @keyframes maintenance {
+    0% {
+      opacity: 0.1;
+      filter: brightness(50%);
+    }
+    50% {
+      opacity: 1;
+      filter: brightness(125%);
+    }
+    100% {
+      opacity: 0.1;
+      filter: brightness(50%);
+    }
+  }
+</style>

@@ -495,8 +495,9 @@
   }
 
   .picture {
-    min-width: 25vw;
-    width: 25vw;
+    min-height: 25vw;
+    height: 25vw;
+    width: auto;
     filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
     border-radius: 1vw;
   }
@@ -768,6 +769,7 @@
     }
 
     .picture {
+      height: auto;
       width: 90vw;
       border-radius: 0.5em;
     }

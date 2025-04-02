@@ -112,28 +112,11 @@ export class CoNexusGame extends GameAPI {
           const errorMessage: string[] = error.message.split('. ');
 
           const errorTitle = errorMessage[0];
-          const nftLinks = errorMessage[1]
-            .split(', ')
-            .map((link) => `<h3>${link}</h3>`);
-
-          const primaryLink: string | undefined = errorMessage[1]
-            .split('https')
-            .find((item) => item.match('://'));
-
-          if (primaryLink) {
-            secondButton.set('Visit Marketplace');
-            secondButtonClass.set('orange-button');
-            handleSecondButton.set(() =>
-              window.open(
-                'https' + primaryLink.slice(0, primaryLink.indexOf(',')),
-                '_blank',
-              ),
-            );
-          }
+          const nftLinks = errorMessage[1];
 
           modalContent.set(`
             <h2>${errorTitle}</h2>
-            ${nftLinks.join('')}
+            <h3>${nftLinks}</h3>
           `);
           showModal.set(true);
         } else api_error(error);

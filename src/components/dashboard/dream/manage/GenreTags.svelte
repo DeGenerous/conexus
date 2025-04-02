@@ -81,7 +81,7 @@
     </div>
   </div>
 
-  <div class="buttons-wrapper">
+  <div class="buttons-wrapper add-genre-container">
     <select class="selector" bind:value={$newGenre}>
       <option value="" hidden disabled>Select</option>
       {#each $availableGenres.filter((g) => !$genres.includes(g.name)) as genre}
@@ -136,8 +136,12 @@
 
     .genre {
       gap: 1em;
-      padding: 1em;
+      padding: 0.5em;
       border-radius: 0.5em;
+    }
+
+    .add-genre-container {
+      gap: 1em;
     }
   }
 </style>

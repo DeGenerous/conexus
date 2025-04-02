@@ -102,7 +102,7 @@
     </div>
   </div>
 
-  <div class="buttons-wrapper">
+  <div class="buttons-wrapper add-gating-container">
     <select class="selector" bind:value={newGating}>
       <option value="" hidden disabled>Select</option>
       {#each availableContracts.filter((contract) => !topicGatings
@@ -121,24 +121,22 @@
 
   {#if newGating === 'Potential'}
     <hr />
-    <h2>Class Restriction (Optional)</h2>
+    <h3>Select Class Restriction (Optional)</h3>
 
     {#await viewApp.fetchClassGates() then classGating}
       <div class="buttons-wrapper">
         <div class="container dream-radio-buttons">
           {#if classGating.length > 0}
-            <div class="buttons-wrapper nft-classes">
-              {#each classGating as { id, name }}
-                <span
-                  class:active={newClassGating == id.toString()}
-                  on:click={() => setClassGating(id)}
-                  role="button"
-                  tabindex="0"
-                >
-                  {name}
-                </span>
-              {/each}
-            </div>
+            {#each classGating as { id, name }}
+              <span
+                class:active={newClassGating == id.toString()}
+                on:click={() => setClassGating(id)}
+                role="button"
+                tabindex="0"
+              >
+                {name}
+              </span>
+            {/each}
           {/if}
         </div>
       </div>
@@ -195,8 +193,12 @@
 
     .gating {
       gap: 1em;
-      padding: 1em;
+      padding: 0.5em;
       border-radius: 0.5em;
+    }
+
+    .add-gating-container {
+      gap: 1em;
     }
   }
 </style>

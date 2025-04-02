@@ -619,8 +619,9 @@
     transform: scale(1.025) translateY(-0.25vw);
   }
 
-  .continue-shaping-btn {
-    height: 3vw !important;
+  .unfinished-story svg {
+    width: 2.5vw;
+    height: 2.5vw;
   }
 
   .story-buttons-container button {
@@ -835,7 +836,7 @@
 
     .unfinished-story {
       gap: 1em;
-      padding: 0.25em;
+      padding: 0.5em;
       width: 90vw;
       justify-content: space-between;
       border-radius: 1em;
@@ -844,10 +845,6 @@
     .unfinished-story svg {
       width: 1.75em;
       height: 1.75em;
-    }
-
-    .continue-shaping-btn {
-      height: 2em !important;
     }
 
     .default-picture {

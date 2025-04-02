@@ -29,9 +29,19 @@
   class:error={type !== 'info'}
 >
   <p>{message}</p>
-  <div class="close-btn" role="button" tabindex="0" on:click={closeToast}>
-    ✖
-  </div>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="-100 -100 200 200"
+    class="close-svg"
+    stroke="#dedede"
+    stroke-width="30"
+    stroke-linecap="round"
+    on:click={closeToast}
+    role="button"
+    tabindex="0"
+  >
+    <path d="M -65 -65 L 65 65 M -65 65 L 65 -65" fill="none" />
+  </svg>
 </div>
 
 <style>
@@ -41,7 +51,7 @@
   }
 
   .toast {
-    padding: 1vw 2vw;
+    padding: 1vw;
     border-radius: 1vw;
     color: white;
     display: flex;
@@ -50,7 +60,7 @@
     gap: 1vw;
     max-width: 65vw;
     opacity: 1;
-    animation: fade-out 5s ease-in-out;
+    animation: fade-out 5s 5s ease-in-out;
   }
 
   .toast.info {
@@ -61,13 +71,14 @@
     background-color: rgba(255, 50, 50, 0.75);
   }
 
-  .close-btn {
-    cursor: pointer;
+  .close-svg {
+    width: 1.5vw;
+    height: 1.5vw;
   }
 
-  .close-btn:hover,
-  .close-btn:active {
-    color: #010020;
+  .close-svg:hover,
+  .close-svg:active {
+    stroke: #010020;
   }
 
   @keyframes fade-out {
@@ -94,6 +105,11 @@
       border-radius: 1em;
       width: 90vw;
       max-width: 90vw;
+    }
+
+    .close-svg {
+      width: 1em;
+      height: 1em;
     }
   }
 </style>

@@ -207,6 +207,15 @@
   opacity: 1;
 }
 
+.nft-link {
+  color: rgb(255, 140, 0);
+}
+
+.nft-link:hover,
+.nft-link:active {
+  color: rgb(255, 165, 40);
+}
+
 @media only screen and (max-width: 600px) {
   .sign-icon {
     height: 0.8em;

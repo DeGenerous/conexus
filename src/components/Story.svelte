@@ -256,11 +256,10 @@
       {#await fetchGates(topic.id) then topicGatings}
         {#if topicGatings.length > 0}
           <div class="gating">
-            <span>
+            <span class="gating-icon-wrapper">
               <img class="gating-icon" src="/icons/lock.svg" alt="Restricted" />
             </span>
-            <h3 class="pc-gating-title">This story is only available to NFT holders:</h3>
-            <h3 class="mobile-gating-title">Only for NFT holders:</h3>
+            <h3>This story is only available to NFT holders:</h3>
             {#each topicGatings as { contract_name, class_id }}
               <span>
                 <h3>
@@ -631,6 +630,22 @@
     width: 1.5vw;
   }
 
+  .stories-switcher {
+    width: 100vw;
+    padding-inline: 2vw;
+    gap: 2vw;
+    flex-flow: row nowrap;
+  }
+
+  .switch-arrow {
+    flex-flow: row nowrap;
+    gap: 1vw;
+  }
+
+  .switch-arrow img {
+    flex: none;
+  }
+
   .gating {
     display: flex;
     flex-flow: row nowrap;
@@ -662,14 +677,6 @@
     padding: 1vw;
     border-radius: 0.75vw;
     background-color: rgba(32, 0, 1, 0.75);
-  }
-
-  .pc-gating-title {
-    display: block;
-  }
-
-  .mobile-gating-title {
-    display: none;
   }
 
   /* LOADING */
@@ -868,17 +875,20 @@
 
     .stories-switcher {
       margin-top: 25%;
+      gap: 1em;
+      padding-inline: 1em;
+    }
+
+    .switch-arrow {
+      gap: 0.5em;
     }
 
     .gating {
       width: 100%;
-      flex-wrap: wrap;
-      gap: 1em;
+      flex-direction: column;
+      gap: 0.5em;
       padding: 0.5em;
       border-radius: 0;
-      background-color: rgba(32, 0, 1, 0.75);
-      border-top: 0.1em solid rgba(255, 140, 0, 0.5);
-      border-bottom: 0.1em solid rgba(255, 140, 0, 0.5);
     }
 
     .gating-icon {
@@ -891,18 +901,12 @@
     }
 
     .gating span {
-      padding: 1em;
-      border-radius: 1em;
-      background-color: transparent;
+      padding: 0.5em 1em;
+      border-radius: 0.5em;
     }
 
-    .pc-gating-title {
-      display: none;
-    }
-
-    .mobile-gating-title {
-      color: rgb(255, 165, 40) !important;
-      display: block;
+    .gating-icon-wrapper {
+      display: none !important;
     }
   }
 </style>

@@ -208,7 +208,9 @@
         >
       </div>
 
-      {#await fetchClasses() then}
+      {#await fetchClasses()}
+        <h3>Loading classes...</h3>
+      {:then}
         <div class="dream-box blur classes-list">
           <div class="buttons-wrapper">
             <h2>NFT Classes</h2>

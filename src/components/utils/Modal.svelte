@@ -43,6 +43,7 @@
 
 <style>
   dialog {
+    overflow-x: hidden;
     max-width: 80vw;
     border: none;
     color: inherit;
@@ -52,6 +53,7 @@
   }
 
   dialog > div {
+    width: 100%;
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
@@ -82,7 +84,8 @@
 
   @media only screen and (max-width: 600px) {
     dialog {
-      width: 90vw;
+      max-width: none;
+      width: 95vw;
       border-radius: 1em;
     }
 

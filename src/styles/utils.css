@@ -134,6 +134,42 @@
   background-color: rgb(255, 60, 64);
 }
 
+.orange-button {
+  color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 140, 0, 0.75);
+}
+
+.orange-button:hover,
+.orange-button:active {
+  color: #010020;
+  background-color: rgba(255, 165, 40, 0.9);
+}
+
+.orange-button:disabled,
+.orange-button:disabled:hover,
+.orange-button:disabled:active {
+  background-color: rgba(255, 140, 0, 0.5);
+}
+
+.purple-button {
+  background-color: rgba(95, 80, 160, 0.75);
+}
+
+.purple-button:hover,
+.purple-button:active {
+  background-color: rgba(120, 100, 190, 0.9);
+}
+
+.rose-button {
+  background-color: rgba(200, 140, 140, 0.75);
+}
+
+.rose-button:hover,
+.rose-button:active {
+  color: #010020;
+  background-color: rgba(230, 175, 175, 0.9);
+}
+
 .circle-icon {
   height: 5vw;
   width: 5vw;

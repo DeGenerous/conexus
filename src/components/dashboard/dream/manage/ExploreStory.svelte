@@ -287,7 +287,7 @@
           >
             Play Demo
           </a>
-          <button on:click={downloadTopicJson}>Export JSON</button>
+          <button class="rose-button" on:click={downloadTopicJson}>Export JSON</button>
         </div>
       {/key}
 

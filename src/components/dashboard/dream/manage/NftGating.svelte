@@ -109,7 +109,7 @@
       {/each}
     </select>
 
-    <button on:click={handleAddGating} disabled={!newGating}>Gate Story</button>
+    <button class="orange-button" on:click={handleAddGating} disabled={!newGating}>Gate Story</button>
   </div>
 
   {#if newGating === 'Potential'}
@@ -159,12 +159,17 @@
   }
 
   .gating h3 {
-    color: #010020;
+    color: rgba(255, 255, 255, 0.9);
   }
 
   .added-gatings {
     flex-flow: row wrap !important;
     justify-content: center !important;
+  }
+
+  .active {
+    color: rgb(255, 140, 0) !important;
+    text-shadow: 0 0 0.1vw rgb(255, 140, 0);
   }
 
   @media only screen and (max-width: 600px) {

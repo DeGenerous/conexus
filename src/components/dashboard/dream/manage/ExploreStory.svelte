@@ -84,7 +84,7 @@
 
   function openModal() {
     $secondButton = `Delete story: ${topic_name}`;
-    $secondButtonClass = "red-button";
+    $secondButtonClass = 'red-button';
     $handleSecondButton = () => {
       admin.deleteStory(topic.id);
       $showModal = false;

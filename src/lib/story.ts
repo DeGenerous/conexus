@@ -108,30 +108,35 @@ export class CoNexusGame extends GameAPI {
 
     if (!data) {
       if (error) {
-        if (error.message.match("you do not have the required NFTs")) {
-          const errorMessage: string[] = error.message.split(". ");
+        if (error.message.match('you do not have the required NFTs')) {
+          const errorMessage: string[] = error.message.split('. ');
 
           const errorTitle = errorMessage[0];
-          const nftLinks = errorMessage[1].split(", ").map((link) => (`<h3>${link}</h3>`));
+          const nftLinks = errorMessage[1]
+            .split(', ')
+            .map((link) => `<h3>${link}</h3>`);
 
-          const primaryLink: string | undefined = errorMessage[1].split('https').find((item) => (item.match('://')));
+          const primaryLink: string | undefined = errorMessage[1]
+            .split('https')
+            .find((item) => item.match('://'));
 
           if (primaryLink) {
-            secondButton.set("Visit Marketplace");
-            secondButtonClass.set("orange-button");
-            handleSecondButton.set(() => (window.open(
-              "https" + primaryLink.slice(0, primaryLink.indexOf(",")),
-              "_blank"
-            )));
+            secondButton.set('Visit Marketplace');
+            secondButtonClass.set('orange-button');
+            handleSecondButton.set(() =>
+              window.open(
+                'https' + primaryLink.slice(0, primaryLink.indexOf(',')),
+                '_blank',
+              ),
+            );
           }
-          
+
           modalContent.set(`
             <h2>${errorTitle}</h2>
             ${nftLinks.join('')}
           `);
           showModal.set(true);
-        }
-        else api_error(error);
+        } else api_error(error);
       } else {
         toastStore.show('Error starting game', 'error');
       }

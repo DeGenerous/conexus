@@ -149,7 +149,7 @@
 
   const walletSelectConfirm = (address: string) => {
     $secondButton = 'Select';
-    $secondButtonClass = "green-button";
+    $secondButtonClass = 'green-button';
     $handleSecondButton = () => {
       handleWalletSelect(address);
       $showModal = false;

@@ -77,8 +77,8 @@
 
   const fetchClasses = async () => {
     classGates = await view.fetchClassGates();
-    console.log(classGates) //
-  }
+    console.log(classGates); //
+  };
 
   let newClassName: string = '';
   let newClassRangeFrom: number | undefined;
@@ -92,7 +92,7 @@
     if (newClassRangeTo === undefined) return;
     if (newClassRangeFrom > newClassRangeTo)
       newClassRangeFrom = newClassRangeTo - 1;
-  }
+  };
 
   const validateRangeTo = () => {
     if (newClassRangeTo === undefined) return;
@@ -102,16 +102,14 @@
     if (newClassRangeFrom === undefined) return;
     if (newClassRangeTo < newClassRangeFrom)
       newClassRangeTo = newClassRangeFrom + 1;
-  }
+  };
 
   $: classValidation = newClassName && newClassRangeFrom && newClassRangeTo;
 
   function handleAddClass() {
-    admin.createNewClassGate(
-      newClassName,
-      newClassRangeFrom!,
-      newClassRangeTo!
-    ).then(fetchClasses);
+    admin
+      .createNewClassGate(newClassName, newClassRangeFrom!, newClassRangeTo!)
+      .then(fetchClasses);
     newClassName = '';
     newClassRangeFrom = undefined;
     newClassRangeTo = undefined;
@@ -230,7 +228,10 @@
                       role="button"
                       tabindex="0"
                     >
-                      <path d="M -65 -65 L 65 65 M -65 65 L 65 -65" fill="none" />
+                      <path
+                        d="M -65 -65 L 65 65 M -65 65 L 65 -65"
+                        fill="none"
+                      />
                     </svg>
                   </div>
                 {/each}
@@ -280,7 +281,11 @@
             </div>
           </section>
 
-          <button class="orange-button" on:click={handleAddClass} disabled={!classValidation}>Add New Class</button>
+          <button
+            class="orange-button"
+            on:click={handleAddClass}
+            disabled={!classValidation}>Add New Class</button
+          >
         </div>
       {/await}
     {/await}

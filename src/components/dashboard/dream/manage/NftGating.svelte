@@ -20,7 +20,7 @@
 
   const fetchGates = async () => {
     topicGatings = await viewApp.fetchTopicGates(topic.id);
-    console.log(topicGatings) //
+    console.log(topicGatings); //
   };
 
   onMount(fetchGates);
@@ -45,9 +45,12 @@
   async function handleAddGating() {
     if (!newGating) return;
 
-    handleGatingChange(topic.id, newGating as SupportedContracts, 'add', newClassGating).then(
-      fetchGates,
-    );
+    handleGatingChange(
+      topic.id,
+      newGating as SupportedContracts,
+      'add',
+      newClassGating,
+    ).then(fetchGates);
 
     newGating = '';
     newClassGating = '';
@@ -59,7 +62,7 @@
       return;
     }
     newClassGating = id.toString();
-  }
+  };
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -109,7 +112,11 @@
       {/each}
     </select>
 
-    <button class="orange-button" on:click={handleAddGating} disabled={!newGating}>Gate Story</button>
+    <button
+      class="orange-button"
+      on:click={handleAddGating}
+      disabled={!newGating}>Gate Story</button
+    >
   </div>
 
   {#if newGating === 'Potential'}
@@ -124,7 +131,7 @@
               {#each classGating as { id, name }}
                 <span
                   class:active={newClassGating == id.toString()}
-                  on:click={() => (setClassGating(id))}
+                  on:click={() => setClassGating(id)}
                   role="button"
                   tabindex="0"
                 >
@@ -153,7 +160,7 @@
     align-items: center;
     gap: 1vw;
     padding: 1vw;
-    background-color: rgba(255, 140, 0, 0.75);;
+    background-color: rgba(255, 140, 0, 0.75);
     border-radius: 1vw;
     box-shadow: 0 0.25vw 0.5vw #010020;
   }

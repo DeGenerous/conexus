@@ -112,15 +112,14 @@
   ) {
     switch (method) {
       case 'add':
-        await admin.gateTopic(
-          { topic_id, contract_name, class_id: parseInt(class_id!) },
-        );
-        break;
-      case 'remove':
-        await admin.removeTopicGate(
+        await admin.gateTopic({
           topic_id,
           contract_name,
-        );
+          class_id: parseInt(class_id!),
+        });
+        break;
+      case 'remove':
+        await admin.removeTopicGate(topic_id, contract_name);
         break;
     }
   }
@@ -287,7 +286,9 @@
           >
             Play Demo
           </a>
-          <button class="rose-button" on:click={downloadTopicJson}>Export JSON</button>
+          <button class="rose-button" on:click={downloadTopicJson}
+            >Export JSON</button
+          >
         </div>
       {/key}
 

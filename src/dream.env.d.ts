@@ -79,9 +79,9 @@ type ClassGate = {
 type SupportedContracts = 'Potential' | 'Ark' | 'Moonsign' | 'Apes' | 'All';
 
 type TopicNFTGate = {
-	topic_id: number;
-	contract_name: SupportedContracts;
+  topic_id: number;
+  contract_name: SupportedContracts;
   class_id?: number;
-	token_ids?: number[]
-	created_at?: Date
-}
+  token_ids?: number[];
+  created_at?: Date;
+};

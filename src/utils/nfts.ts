@@ -29,7 +29,7 @@ export const getPotentialClassName = (range: number[]): string => {
   }
 
   return className;
-}
+};
 
 export const getPotentialIDsRange = (className: string): number[] => {
   let range;
@@ -62,4 +62,4 @@ export const getPotentialIDsRange = (className: string): number[] => {
   }
 
   return range;
-}
+};

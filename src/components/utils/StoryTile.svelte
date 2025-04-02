@@ -17,12 +17,16 @@
   let topicGatings: TopicNFTGate[] = [];
   onMount(async () => {
     topicGatings = await view.fetchTopicGates(topicID);
-  })
+  });
 
   const blankPicture = '/blank.avif';
 </script>
 
-<a class="tile" class:gated-story={topicGatings.length > 0} href="/{section}/{topicName}?id={topicID}">
+<a
+  class="tile"
+  class:gated-story={topicGatings.length > 0}
+  href="/{section}/{topicName}?id={topicID}"
+>
   {#await media.fetchStoryImage(topicID, 'tile')}
     <img
       class="tile-picture"
@@ -48,7 +52,7 @@
   {#if topicGatings.length > 0}
     <div class="gatings">
       <img class="gating-icon" src="/icons/lock.svg" alt="Restricted" />
-      <h3>{topicGatings.map((gate) => (gate.contract_name)).join(', ')}</h3>
+      <h3>{topicGatings.map((gate) => gate.contract_name).join(', ')}</h3>
     </div>
   {/if}
 </a>

@@ -48,11 +48,11 @@
 
   const fetchGates = async (topic_id: number) => {
     return await view.fetchTopicGates(topic_id);
-  }
+  };
 
   const fetchClass = async (id: number) => {
     return await view.fetchClassGate(id);
-  }
+  };
 
   let deletedStories: string[] = []; // temp storage before reload for immediate removal
   let noUnfinishedStoriesLeft: boolean = false;

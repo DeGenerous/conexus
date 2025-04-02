@@ -172,7 +172,7 @@ export class CoNexusApp extends ViewAPI {
 
     return data;
   }
-  
+
   async fetchClassGate(class_ID: number): Promise<ClassGate | null> {
     const { data, error } = await this.getGateClass(class_ID);
     if (!data) {

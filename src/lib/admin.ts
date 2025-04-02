@@ -574,9 +574,7 @@ export class AdminApp extends AdminAPI {
    * @param token_id - The ID of the tokens to remove the gate from.
    * @returns A promise that resolves to void.
    */
-  async gateTopic(
-    gate_obj: TopicNFTGate,
-  ): Promise<void> {
+  async gateTopic(gate_obj: TopicNFTGate): Promise<void> {
     const { data, error } = await this.gateTopicWithNFT(
       gate_obj.topic_id,
       gate_obj.contract_name,
@@ -650,12 +648,12 @@ export class AdminApp extends AdminAPI {
   async createNewClassGate(
     name: string,
     start_token_id: number,
-    end_token_id: number
+    end_token_id: number,
   ) {
     const { data, error } = await this.createClassGate(
       name,
       start_token_id,
-      end_token_id
+      end_token_id,
     );
 
     if (!data) {

@@ -255,23 +255,23 @@
         </section>
       </div>
 
-      {#await fetchGates(topic.id) then topicGatings}
+      {#await fetchGates(topic.id) then topicGatings: TopicNFTGateWithContract[]}
         {#if topicGatings.length > 0}
           <div class="gating">
             <span class="gating-icon-wrapper">
               <img class="gating-icon" src="/icons/lock.svg" alt="Restricted" />
             </span>
             <h3>This story is only available to NFT holders:</h3>
-            {#each topicGatings as { contract_name, class_id }}
+            {#each topicGatings as { name, class_id, link }}
               <span>
-                <h3>
-                  {contract_name}
+                <a href={link} class:inactive-link={!link}>
+                  {name}
                   {#if class_id}
                     {#await fetchClass(class_id) then className}
                       ({className?.name})
                     {/await}
                   {/if}
-                </h3>
+                </a>
               </span>
             {/each}
           </div>
@@ -670,9 +670,14 @@
     color: #010020;
   }
 
-  .gating span h3 {
+  .gating span a {
     color: rgb(255, 165, 40);
     line-height: 2vw;
+  }
+
+  .inactive-link {
+    text-decoration: none !important;
+    cursor: not-allowed;
   }
 
   .gating span {
@@ -897,7 +902,7 @@
       height: 1.25em;
     }
 
-    .gating span h3 {
+    .gating span a {
       line-height: 1.25em;
     }
 

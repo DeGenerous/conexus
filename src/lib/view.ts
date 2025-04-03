@@ -12,6 +12,7 @@ import { api_error } from '@errors/index';
 import { ViewAPI } from '@service/routes';
 import { toastStore } from '@stores/toast';
 import { availableGenres } from '@stores/view';
+import contracts from '@constants/contracts';
 
 export class CoNexusApp extends ViewAPI {
   private static instance: CoNexusApp;
@@ -147,9 +148,9 @@ export class CoNexusApp extends ViewAPI {
    * Fetches the NFT gates for a specific topic.
    *
    * @param topic_id - The ID of the topic to fetch gates for.
-   * @returns A promise that resolves to an array of TopicNFTGate objects.
+   * @returns A promise that resolves to an array of TopicNFTGateWithContract objects.
    */
-  async fetchTopicGates(topic_id: number): Promise<TopicNFTGate[]> {
+  async fetchTopicGates(topic_id: number): Promise<TopicNFTGateWithContract[]> {
     const { data, error } = await this.getTopicNFTGates(topic_id);
     if (!data) {
       if (error) {
@@ -157,6 +158,15 @@ export class CoNexusApp extends ViewAPI {
       }
       return [];
     }
+
+    data.map((gate: TopicNFTGate) => {
+      const gateWithContract = gate as TopicNFTGateWithContract;
+      const gatingContract = contracts.get(gate.contract_name);
+      gateWithContract.name = gatingContract.name;
+      gateWithContract.link = gatingContract.link;
+      return gateWithContract;
+    })
+    
     return data;
   }
 

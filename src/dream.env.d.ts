@@ -85,3 +85,10 @@ type TopicNFTGate = {
   token_ids?: number[];
   created_at?: Date;
 };
+
+type ContractGate = {
+  name?: string;
+  link?: string;
+}
+
+interface TopicNFTGateWithContract extends TopicNFTGate, ContractGate {};

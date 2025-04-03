@@ -1,7 +1,8 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import MediaManager from '@lib/media';
   import { CoNexusApp } from '@lib/view';
-  import { onMount } from 'svelte';
 
   export let section: string;
   export let topicID: number;
@@ -14,7 +15,7 @@
     topicName.charAt(0).toUpperCase() + topicName.slice(1)
   ).trim();
 
-  let topicGatings: TopicNFTGate[] = [];
+  let topicGatings: TopicNFTGateWithContract[] = [];
   onMount(async () => {
     topicGatings = await view.fetchTopicGates(topicID);
   });
@@ -52,7 +53,7 @@
   {#if topicGatings.length > 0}
     <div class="gatings">
       <img class="gating-icon" src="/icons/lock.svg" alt="Restricted" />
-      <h3>{topicGatings.map((gate) => gate.contract_name).join(', ')}</h3>
+      <h3>{topicGatings.map((gate) => gate.name).join(', ')}</h3>
     </div>
   {/if}
 </a>

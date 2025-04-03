@@ -32,7 +32,7 @@ type CategoriesInSection = {
 };
 
 type NFTGate = {
-  contract_name: string;
+  contract_name: SupportedContracts;
   class_name?: string;
 }
 

@@ -53,9 +53,16 @@ export class CoNexusApp extends ViewAPI {
     return data;
   }
 
-  async getSectionCategories(section: string, page: number, pageSize: number): Promise<CategoriesInSection[]> {
-
-    const { data, error } = await this.sectionCategories(section, page, pageSize);
+  async getSectionCategories(
+    section: string,
+    page: number,
+    pageSize: number,
+  ): Promise<CategoriesInSection[]> {
+    const { data, error } = await this.sectionCategories(
+      section,
+      page,
+      pageSize,
+    );
 
     if (!data) {
       if (error) {
@@ -74,9 +81,17 @@ export class CoNexusApp extends ViewAPI {
 
     return orderedCategories;
   }
-  
-  async getCategoryTopics(category_id: number, page: number, pageSize: number): Promise<TopicInCategory[]> {
-    const { data, error } = await this.categoryTopics(category_id, page, pageSize);
+
+  async getCategoryTopics(
+    category_id: number,
+    page: number,
+    pageSize: number,
+  ): Promise<TopicInCategory[]> {
+    const { data, error } = await this.categoryTopics(
+      category_id,
+      page,
+      pageSize,
+    );
 
     if (!data) {
       if (error) {
@@ -85,13 +100,11 @@ export class CoNexusApp extends ViewAPI {
       return [];
     }
 
-    const ordereTopics = data.sort(
-      (a: TopicInCategory, b: TopicInCategory) => {
-        if (a.order < b.order) return -1;
-        if (a.order > b.order) return 1;
-        return 0;
-      },
-    );
+    const ordereTopics = data.sort((a: TopicInCategory, b: TopicInCategory) => {
+      if (a.order < b.order) return -1;
+      if (a.order > b.order) return 1;
+      return 0;
+    });
 
     return ordereTopics;
   }
@@ -173,9 +186,11 @@ export class CoNexusApp extends ViewAPI {
     data.map((gate: TopicNFTGate) => {
       const gateWithContract = gate as TopicNFTGateWithContract;
       const gatingContract = contracts.get(gate.contract_name);
-      gateWithContract.name = gatingContract.name;
-      gateWithContract.link = gatingContract.link;
-      return gateWithContract;
+      if (gatingContract) {
+        gateWithContract.name = gatingContract.name;
+        gateWithContract.link = gatingContract.link;
+        return gateWithContract;
+      }
     });
 
     return data;

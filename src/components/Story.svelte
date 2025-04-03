@@ -21,6 +21,8 @@
   import BackArrow from './utils/BackArrow.svelte';
   import Share from './utils/Share.svelte';
   import { blankImage, serveUrl } from '@constants/media';
+  import { contractGetter } from '@constants/contracts';
+  import { get } from 'svelte/store';
 
   export let section: string;
   export let story_name: string;
@@ -252,12 +254,20 @@
           <h3>This story is only available to NFT holders:</h3>
           {#each topic.nft_gate as { contract_name, class_name }}
             <span>
-              <h3>
-                {contract_name}
-                {#if class_name}
-                  ({class_name})
-                {/if}
-              </h3>
+              {#if contractGetter(contract_name)}
+                {#await Promise.resolve(contractGetter(contract_name)) then contract}
+                  <a
+                    href={contract.link || '#'}
+                    class:inactive-link={!contract.link}
+                    target="_blank"
+                  >
+                    {contract.name}
+                    {#if class_name}
+                      ({class_name})
+                    {/if}
+                  </a>
+                {/await}
+              {/if}
             </span>
           {/each}
         </div>

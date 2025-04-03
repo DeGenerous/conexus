@@ -417,21 +417,21 @@
     }
   }
 
-  @media screen and (min-width: 1920px) {
+  @media screen and (min-width: 1280px) {
     div {
-      height: 3.5rem;
+      height: 3rem;
       padding: 0.5rem 1rem;
       gap: 1rem;
       border-width: 0.05rem;
     }
 
     svg {
-      height: 1.5rem;
-      width: 1.5rem;
+      height: 1.25rem;
+      width: 1.25rem;
     }
 
     input {
-      width: 10rem;
+      width: 7.5rem;
     }
   }
 </style>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { afterUpdate } from 'svelte';
+  import { afterUpdate, onMount } from 'svelte';
 
   import MediaManager from '@lib/media';
   import { CoNexusGame } from '@lib/story';
@@ -46,6 +46,7 @@
 
   let activeOptionNumber: number = 0;
   let pointerOverOption: boolean = false;
+
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.repeat) return;
     switch (event.key) {
@@ -100,8 +101,43 @@
         activeOption?.focus();
         break;
       }
+      case "-": {
+        event.preventDefault();
+        let stepZoom = zoom - 0.05;
+        zoom = setZoom(stepZoom);
+        break;
+      }
+      case "=": {
+        event.preventDefault();
+        let stepZoom = zoom + 0.05;
+        zoom = setZoom(stepZoom);
+        break;
+      }
     }
   };
+
+  // Zoom
+  let zoom: number = 1;
+
+  onMount(() => {
+    const storedZoom = localStorage.getItem("step-zoom");
+    if (storedZoom) zoom = setZoom(Number(storedZoom));
+  })
+
+  const handleZoomWheel = (event: WheelEvent) => {
+    const { deltaY, ctrlKey, metaKey } = event;
+    if (!(ctrlKey || metaKey)) return;
+    event.preventDefault();
+    let stepZoom: number;
+    stepZoom = deltaY > 0 ? zoom - 0.05 : zoom + 0.05;
+    zoom = setZoom(stepZoom);
+  };
+
+  function setZoom(zoom: number): number {
+    const finalZoom = zoom < 0.3 ? 0.3 : zoom > (width / 1280) ? (width / 1280) : zoom;
+    localStorage.setItem("step-zoom", finalZoom.toString());
+    return finalZoom;
+  }
 
   // SVG Icons
   let quitSvgWindowFocus: boolean = false;
@@ -177,10 +213,64 @@
   };
 </script>
 
-<svelte:window bind:outerWidth={width} on:keydown={handleKeyDown} />
+<svelte:window bind:outerWidth={width} on:keydown={handleKeyDown} on:wheel={handleZoomWheel} />
+
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<div class="zoom-slider">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="-100 -100 200 200"
+    class="search-svg filter-image"
+    stroke="#dedede"
+    stroke-width="15"
+    stroke-linecap="round"
+    fill="none"
+    on:click={() => {
+      let stepZoom = zoom - 0.05;
+      zoom = setZoom(stepZoom);
+    }}
+    role="button"
+    tabindex="0"
+    aria-label="Zoom out"
+  >
+    <circle cx="-20" cy="-20" r="70" />
+    <line x1="34" y1="34" x2="85" y2="80" stroke-width="25" />
+    <line x1="-55" y1="-20" x2="15" y2="-20" />
+  </svg>
+  <input
+    type="range"
+    min="0.3"
+    max={width / 1280}
+    step="0.005"
+    autocomplete="off"
+    bind:value={zoom}
+    on:change={() => (localStorage.setItem("step-zoom", zoom.toString()))}
+  />
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="-100 -100 200 200"
+    class="search-svg filter-image"
+    stroke="#dedede"
+    stroke-width="15"
+    stroke-linecap="round"
+    fill="none"
+    on:click={() => {
+      let stepZoom = zoom + 0.05;
+        zoom = setZoom(stepZoom);
+    }}
+    role="button"
+    tabindex="0"
+    aria-label="Zoom in"
+    >
+    <circle cx="-20" cy="-20" r="70" />
+    <line x1="34" y1="34" x2="85" y2="80" stroke-width="25" />
+    <line x1="-55" y1="-20" x2="15" y2="-20" />
+    <line x1="-20" y1="-55" x2="-20" y2="15" />
+  </svg>
+</div>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions a11y-no-static-element-interactions -->
-<section class="step-wrapper" style="font-family: {stepFont}">
+<section class="step-wrapper" style:font-family={stepFont} style:zoom>
   <div
     class="image-wrapper"
     bind:this={imageWrapper}
@@ -1048,6 +1138,43 @@
     padding: 2vw;
   }
 
+  .zoom-slider {
+    position: fixed;
+    top: 45vh;
+    right: -45vh;
+    width: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1vh;
+    padding: 2vh;
+    transform: rotate(-90deg);
+    z-index: 100;
+  }
+
+  .zoom-slider input {
+    width: 50vh;
+    cursor: pointer;
+  }
+
+  .zoom-slider svg {
+    transform: rotate(90deg);
+  }
+
+  .zoom-slider {
+    display: none;
+  }
+
+  .zoom-slider * {
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+  }
+
+  .zoom-slider:hover *,
+  .zoom-slider:active * {
+    opacity: 1 !important;
+  }
+
   .image-wrapper {
     position: relative;
     width: 100%;
@@ -1384,7 +1511,15 @@
     }
   }
 
-  @media screen and (min-width: 1920px) {
+  @media screen and (min-width: 1280px) {
+    .zoom-slider {
+      display: flex;
+    }
+
+    .zoom-slider * {
+      display: block;
+    }
+
     button {
       padding: 0.25rem !important;
       border-width: 0.05rem !important;
@@ -1392,8 +1527,8 @@
     }
 
     button svg {
-      height: 3rem !important;
-      width: 3rem !important;
+      height: 2rem !important;
+      width: 2rem !important;
     }
 
     .fullscreen {
@@ -1401,8 +1536,8 @@
     }
 
     .fullscreen svg {
-      height: 2.5rem !important;
-      width: 2.5rem !important;
+      height: 1.75rem !important;
+      width: 1.75rem !important;
     }
 
     hr {
@@ -1410,17 +1545,17 @@
     }
 
     h2 {
-      font-size: 1.75rem;
-      line-height: 1.75rem;
+      font-size: 1.25rem;
+      line-height: 1.25rem;
     }
 
     h3 {
-      font-size: 1.75rem;
-      line-height: 1.75rem;
+      font-size: 1.25rem;
+      line-height: 1.25rem;
     }
 
     .controls-container h3 {
-      max-width: 65rem;
+      max-width: 20rem;
     }
 
     .story-info-container {
@@ -1428,27 +1563,27 @@
     }
 
     .step-wrapper {
-      gap: 2rem;
-      padding: 2rem;
+      gap: 1.5rem;
+      padding: 1rem;
     }
 
     .image-wrapper {
-      width: 100rem;
+      width: 80rem;
       box-shadow: 0 0 0.5rem #010020;
     }
 
     .story-text,
     .summary-text {
-      width: 100rem;
-      font-size: 1.5rem;
-      line-height: 3rem;
+      width: 80rem;
+      font-size: 1rem;
+      line-height: 2rem;
       padding-inline: 1rem;
       gap: 1rem;
     }
 
     .options-container {
-      width: 100rem;
-      padding: 1.5rem;
+      width: 80rem;
+      padding: 1rem;
       gap: 1rem;
       box-shadow:
         inset 0 0 0.5rem rgba(51, 226, 230, 0.25),
@@ -1456,9 +1591,9 @@
     }
 
     .option {
-      font-size: 1.75rem;
-      line-height: 3.5rem;
-      padding: 2rem;
+      font-size: 1.25rem;
+      line-height: 2.5rem;
+      padding: 1rem;
     }
 
     .option:hover,
@@ -1467,21 +1602,12 @@
     }
 
     .option-selector-svg {
-      height: 2rem !important;
-      width: 2rem !important;
+      height: 1.5rem !important;
+      width: 1.5rem !important;
     }
 
     .controls-container {
-      width: 100rem;
-    }
-
-    .controls-container svg {
-      width: 2.5rem;
-      height: 2.5rem;
-    }
-
-    .controls-container h3 {
-      max-width: 25rem;
+      width: 80rem;
     }
 
     .control-bar,
@@ -1491,6 +1617,7 @@
       box-shadow: 0 0.5rem 0.5rem #010020;
       border-radius: 1rem;
       border-width: 0.05rem;
+      height: 5rem;
     }
 
     .control-bar-fullscreen {
@@ -1503,13 +1630,6 @@
 
     .controls {
       gap: 1rem;
-    }
-
-    .quit-svg-element,
-    .step-button-svg-element,
-    .fullscreen-svg-element {
-      height: 3rem;
-      width: 3rem;
     }
   }
 </style>

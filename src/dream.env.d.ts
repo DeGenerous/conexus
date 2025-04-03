@@ -89,6 +89,6 @@ type TopicNFTGate = {
 type ContractGate = {
   name?: string;
   link?: string;
-}
+};
 
-interface TopicNFTGateWithContract extends TopicNFTGate, ContractGate {};
+interface TopicNFTGateWithContract extends TopicNFTGate, ContractGate {}

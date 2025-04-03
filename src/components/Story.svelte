@@ -173,7 +173,9 @@
             .name}?id={categoryTopics[prevStoryIndex].id}"
         >
           <img src="/icons/switch-arrow.svg" alt="Switch" />
-          <h3 style:text-align={"left"}>{categoryTopics[prevStoryIndex].name}</h3>
+          <h3 style:text-align={'left'}>
+            {categoryTopics[prevStoryIndex].name}
+          </h3>
         </a>
 
         <a
@@ -184,7 +186,7 @@
             (activeStoryIndex + 1) % categoryTopics.length
           ].id}"
         >
-          <h3 style:text-align={"right"}>
+          <h3 style:text-align={'right'}>
             {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
               .name}
           </h3>
@@ -264,7 +266,7 @@
             <h3>This story is only available to NFT holders:</h3>
             {#each topicGatings as { name, class_id, link }}
               <span>
-                <a href={link} class:inactive-link={!link}>
+                <a href={link} class:inactive-link={!link} target="_blank">
                   {name}
                   {#if class_id}
                     {#await fetchClass(class_id) then className}
@@ -675,8 +677,14 @@
     line-height: 2vw;
   }
 
+  .gating span a:hover,
+  .gating span a:active {
+    filter: brightness(125%);
+  }
+
   .inactive-link {
     text-decoration: none !important;
+    filter: none !important;
     cursor: not-allowed;
   }
 

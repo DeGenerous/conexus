@@ -165,8 +165,8 @@ export class CoNexusApp extends ViewAPI {
       gateWithContract.name = gatingContract.name;
       gateWithContract.link = gatingContract.link;
       return gateWithContract;
-    })
-    
+    });
+
     return data;
   }
 

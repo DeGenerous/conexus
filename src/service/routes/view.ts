@@ -5,9 +5,15 @@ export default class ViewAPI extends Fetcher {
     return this.request<Section[]>('/view/sections');
   }
 
-  async sectionCategories(section: string) {
-    return this.request<CategoryInSection[]>(
-      `/view/section-categories/${section}`,
+  async sectionCategories(section: string, page: number, pageSize: number) {
+    return this.request<CategoriesInSection[]>(
+      `/view/section-categories/${section}?page=${page}&limit=${pageSize}`,
+    );
+  }
+
+  async categoryTopics(category_id: number, page: number, pageSize: number) {
+    return this.request<TopicInCategory[]>(
+      `/view/category-topics/${category_id}?page=${page}&limit=${pageSize}`,
     );
   }
 

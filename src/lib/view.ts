@@ -53,17 +53,9 @@ export class CoNexusApp extends ViewAPI {
     return data;
   }
 
-  async getSectionCategories(section: string): Promise<CategoryInSection[]> {
-    // type SectionCategory = {
-    //   [section: string]: CategoryInSection[];
-    // };
+  async getSectionCategories(section: string, page: number, pageSize: number): Promise<CategoriesInSection[]> {
 
-    // const cachedData = GetCache<SectionCategory>(SECTION_CATEGORY_CACHE_KEY);
-    // if (cachedData) {
-    //   return cachedData[section];
-    // }
-
-    const { data, error } = await this.sectionCategories(section);
+    const { data, error } = await this.sectionCategories(section, page, pageSize);
 
     if (!data) {
       if (error) {
@@ -73,16 +65,35 @@ export class CoNexusApp extends ViewAPI {
     }
 
     const orderedCategories = data.sort(
-      (a: CategoryInSection, b: CategoryInSection) => {
+      (a: CategoriesInSection, b: CategoriesInSection) => {
         if (a.order < b.order) return -1;
         if (a.order > b.order) return 1;
         return 0;
       },
     );
 
-    // SetCache(SECTION_CATEGORY_CACHE_KEY, { [section]: orderedCategories }, SECTION_CATEGORY_CACHE_TTL);
-
     return orderedCategories;
+  }
+  
+  async getCategoryTopics(category_id: number, page: number, pageSize: number): Promise<TopicInCategory[]> {
+    const { data, error } = await this.categoryTopics(category_id, page, pageSize);
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      }
+      return [];
+    }
+
+    const ordereTopics = data.sort(
+      (a: TopicInCategory, b: TopicInCategory) => {
+        if (a.order < b.order) return -1;
+        if (a.order > b.order) return 1;
+        return 0;
+      },
+    );
+
+    return ordereTopics;
   }
 
   async searchSectionCategories(

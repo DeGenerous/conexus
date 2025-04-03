@@ -1,8 +1,69 @@
 <script lang="ts">
-  import StoryTile from './StoryTile.svelte';
+  import { onMount } from 'svelte';
+  import StoryTile from '@components/utils/StoryTile.svelte';
+  import { CoNexusApp } from '@lib/view';
 
-  export let category: CategoryInSection | null = null;
+  const view = new CoNexusApp();
+
+  export let category: CategoriesInSection | null = null;
   export let section: string = '';
+
+  let page: number = 1;
+  let pageSize: number = 5;
+  let total: number = 0;
+  let loading: boolean = false;
+  let isEndReached: boolean = false;
+
+  let topics: TopicInCategory[] = [];
+
+  const fetchTopics = async () => {
+    if (!category || loading || isEndReached) return;
+
+    loading = true;
+
+    const response = await view.getCategoryTopics(category.id, page, pageSize);
+
+    // if topics add the topics to the array
+    if (response && response.length > 0) {
+      topics = [...topics, ...response];
+      total += response.length;
+      page++; // Move to next page
+
+      if (page > 1) {
+        pageSize = 2; // After the first page, set pageSize to 2
+      }
+
+      // Stop fetching when we've loaded all topics
+      if (total >= category.topic_count) {
+        isEndReached = true;
+      }
+    }
+
+    loading = false;
+  };
+
+  // Debounce function to avoid rapid API calls
+  let debounceTimer: NodeJS.Timeout;
+  const debounceFetch = () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      fetchTopics();
+    }, 1000); // 1 second debounce time
+  };
+
+  // Detect when user scrolls to the end of the StoryTile container
+  const handleScroll = (event: Event) => {
+    if (loading || isEndReached) return;
+
+    const target = event.target as HTMLElement;
+    if (target.scrollLeft + target.clientWidth >= target.scrollWidth - 20) {
+      debounceFetch(); // Load next set of topics with debounce
+    }
+  };
+
+  onMount(() => {
+    fetchTopics();
+  });
 </script>
 
 <section>
@@ -24,9 +85,9 @@
     </div>
   {:else}
     <p class="collection-header">{category.name}</p>
-    <div class="tiles-collection blur">
-      {#each category.topics as topic}
-        <StoryTile {section} topicID={topic.id} topicName={topic.name} />
+    <div class="tiles-collection blur" on:scroll={handleScroll}>
+      {#each topics as topic}
+        <StoryTile {section} bind:topic bind:loading />
       {/each}
     </div>
   {/if}

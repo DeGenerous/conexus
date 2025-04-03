@@ -3,7 +3,12 @@
 
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
   import Tts from '@components/music/Tts.svelte';
+  import Profile from '@components/Profile.svelte';
   import Step from '@components/Step.svelte';
+  import BackArrow from '@components/utils/BackArrow.svelte';
+  import Share from '@components/utils/Share.svelte';
+  import { blankImage, serveUrl } from '@constants/media';
+  import { contractGetter } from '@constants/contracts';
   import MediaManager from '@lib/media';
   import { CoNexusGame } from '@lib/story';
   import { loading, story, background_image } from '@stores/conexus';
@@ -14,15 +19,7 @@
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
-
   import { checkUserState } from '@utils/route-guard';
-
-  import Profile from './Profile.svelte';
-  import BackArrow from './utils/BackArrow.svelte';
-  import Share from './utils/Share.svelte';
-  import { blankImage, serveUrl } from '@constants/media';
-  import { contractGetter } from '@constants/contracts';
-  import { get } from 'svelte/store';
 
   export let section: string;
   export let story_name: string;

@@ -29,10 +29,6 @@
       total += response.length;
       page++; // Move to next page
 
-      if (page > 1) {
-        pageSize = 2; // After the first page, set pageSize to 2
-      }
-
       // Stop fetching when we've loaded all topics
       if (total >= category.topic_count) {
         isEndReached = true;

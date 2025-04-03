@@ -30,23 +30,12 @@
     const response = await app.getSectionCategories(section, page, pageSize);
 
     if (response && response.length > 0) {
-      categories = [...categories, ...response];
+      // categories = [...categories, ...response];
+      setTimeout(() => {
+        categories = [...categories, ...response];
+      }, 1000); // Simulate loading delay
+      showNoCategoriesMessage = false; // Hide message if categories are found
       page++; // Move to the next page
-
-      const sectionTopics = categories
-        .flatMap((cat) => cat.topics)
-        .sort((a, b) => a.topic_order - b.topic_order);
-
-      localStorage.setItem(
-        `${section} topics`,
-        JSON.stringify(
-          sectionTopics.map((topic) => ({
-            order: topic.topic_order,
-            id: topic.topic_id,
-            name: topic.topic_name,
-          })),
-        ),
-      );
     } else {
       allLoaded = true; // Stop fetching more categories
     }
@@ -113,6 +102,21 @@
   $: {
     if (categories.length > 0) {
       setTimeout(observeLastCategory, 500);
+
+      const sectionTopics = categories
+        .flatMap((cat) => cat.topics)
+        .sort((a, b) => a.topic_order - b.topic_order);
+
+      localStorage.setItem(
+        `${section} topics`,
+        JSON.stringify(
+          sectionTopics.map((topic) => ({
+            order: topic.topic_order,
+            id: topic.topic_id,
+            name: topic.topic_name,
+          })),
+        ),
+      );
     }
   }
 </script>
@@ -133,7 +137,7 @@
       <p class="loading-text">Loading more categories...</p>
     {/if}
 
-    {#if allLoaded}
+    {#if allLoaded && !loading}
       <p class="end-text">No more categories available.</p>
     {/if}
   {:else if showNoCategoriesMessage}
@@ -153,7 +157,6 @@
   .filters {
     z-index: 100;
     width: 95vw;
-    height: auto;
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
@@ -162,7 +165,7 @@
 
   .categories-container {
     width: 100vw;
-    height: 80vh;
+    height: 90vh;
     overflow-y: auto;
     scroll-behavior: smooth;
   }

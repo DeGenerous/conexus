@@ -91,4 +91,5 @@ type ContractGate = {
   link?: string;
 };
 
+type TopicNFTGateWithContract = {} & TopicNFTGate & ContractGate;
 interface TopicNFTGateWithContract extends TopicNFTGate, ContractGate {}

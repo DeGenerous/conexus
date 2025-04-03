@@ -173,7 +173,7 @@
             .name}?id={categoryTopics[prevStoryIndex].id}"
         >
           <img src="/icons/switch-arrow.svg" alt="Switch" />
-          <h3>{categoryTopics[prevStoryIndex].name}</h3>
+          <h3 style:text-align={"left"}>{categoryTopics[prevStoryIndex].name}</h3>
         </a>
 
         <a
@@ -184,7 +184,7 @@
             (activeStoryIndex + 1) % categoryTopics.length
           ].id}"
         >
-          <h3>
+          <h3 style:text-align={"right"}>
             {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
               .name}
           </h3>
@@ -749,7 +749,7 @@
     }
 
     header {
-      position: fixed;
+      position: sticky;
       top: 0;
       background-color: rgba(1, 0, 32, 0.75);
       box-shadow: 0 0.5vw 0.5vw #010020;
@@ -880,7 +880,6 @@
     }
 
     .stories-switcher {
-      margin-top: 25%;
       gap: 1em;
       padding-inline: 1em;
     }

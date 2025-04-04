@@ -3,8 +3,6 @@ import {
   GENRE_CACHE_TTL,
   SECTION_CACHE_KEY,
   SECTION_CACHE_TTL,
-  SECTION_CATEGORY_CACHE_KEY,
-  SECTION_CATEGORY_CACHE_TTL,
   GetCache,
   SetCache,
 } from '@constants/cache';
@@ -49,6 +47,31 @@ export class CoNexusApp extends ViewAPI {
 
     // Store in localStorage
     SetCache(SECTION_CACHE_KEY, data, SECTION_CACHE_TTL);
+
+    return data;
+  }
+
+  async getGenres(): Promise<Genre[]> {
+    const cachedData = GetCache<Genre[]>(GENRE_CACHE_KEY);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // Fetch fresh data
+    const { data, error } = await this.genres();
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error fetching genres', 'error');
+      }
+      return [];
+    }
+
+    SetCache(GENRE_CACHE_KEY, data, GENRE_CACHE_TTL);
+
+    availableGenres.set(data); // Update store
 
     return data;
   }
@@ -112,8 +135,17 @@ export class CoNexusApp extends ViewAPI {
   async searchSectionCategories(
     section: string,
     topic: string,
-  ): Promise<CategoryInSection[]> {
-    const { data, error } = await this.searchSectionByTopic(section, topic);
+    page: number = 1,
+    pageSize: number = 5,
+    sort_order: TopicSortOrder = 'name',
+  ): Promise<TopicInCategory[]> {
+    const { data, error } = await this.searchSectionByTopic(
+      section,
+      topic,
+      page,
+      pageSize,
+      sort_order,
+    );
 
     if (!data) {
       if (error) {
@@ -121,31 +153,6 @@ export class CoNexusApp extends ViewAPI {
       }
       return [];
     }
-
-    return data;
-  }
-
-  async getGenres(): Promise<Genre[]> {
-    const cachedData = GetCache<Genre[]>(GENRE_CACHE_KEY);
-    if (cachedData) {
-      return cachedData;
-    }
-
-    // Fetch fresh data
-    const { data, error } = await this.genres();
-
-    if (!data) {
-      if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error fetching genres', 'error');
-      }
-      return [];
-    }
-
-    SetCache(GENRE_CACHE_KEY, data, GENRE_CACHE_TTL);
-
-    availableGenres.set(data); // Update store
 
     return data;
   }
@@ -153,8 +160,17 @@ export class CoNexusApp extends ViewAPI {
   async getGenreTopics(
     genre: string,
     section: string,
-  ): Promise<CategoryInSection[]> {
-    const { data, error } = await this.genreTopics(genre, section);
+    page: number = 1,
+    pageSize: number = 5,
+    sort_order: TopicSortOrder = 'name',
+  ): Promise<TopicInCategory[]> {
+    const { data, error } = await this.genreTopics(
+      genre,
+      section,
+      page,
+      pageSize,
+      sort_order,
+    );
 
     if (!data) {
       if (error) {

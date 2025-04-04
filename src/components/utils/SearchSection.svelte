@@ -1,20 +1,12 @@
 <script lang="ts">
-  export let filteredCategories: CategoriesInSection[] = [];
-  export let categories: CategoriesInSection[] = [];
-  export let isSorting: boolean = false;
-  export let handleSorting: () => void;
-  export let resetGenres: () => void;
-  export let searchSectionCategories: (
-    searchField: string,
-  ) => Promise<CategoriesInSection[]>;
+  export let searchField: string;
+  export let handleSearch: () => void;
 
-  let debounceTimeout: NodeJS.Timeout;
-  let sortedCategories: CategoryInSection[] = [];
-  let searchField: string;
   let isSearching: boolean = false;
 
   let searchInput: HTMLInputElement | null;
   let searchFocus = false;
+
   const handleSearchFocus = () => {
     if (!searchInput) return;
     if (!searchFocus) {
@@ -25,24 +17,6 @@
       searchInput.blur();
       searchFocus = true;
     }
-  };
-
-  const handleSearch = async () => {
-    clearTimeout(debounceTimeout);
-    if (!searchField) {
-      filteredCategories = categories;
-      isSearching = false;
-      return;
-    }
-    resetGenres();
-    isSearching = true; // Set isSearching to true when the debounce starts
-    debounceTimeout = setTimeout(async () => {
-      filteredCategories = await searchSectionCategories(
-        searchField.replace(/[^a-zA-Z ]/g, ''),
-      );
-      isSearching = false; // Stop searching after results are returned
-      if (isSorting) handleSorting();
-    }, 3750); // 3.75-second debounce delay
   };
 
   // SVG Icons

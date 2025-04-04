@@ -3,7 +3,9 @@
 
   import SpotifyIframe from '@components/music/SpotifyIframe.svelte';
   import Links from '@components/utils/Links.svelte';
+  import SearchAndGenre from '@components/utils/SearchAndGenre.svelte';
   import StoryCollection from '@components/utils/StoryCollection.svelte';
+  import StoryTile from '@components/utils/StoryTile.svelte';
   import { CoNexusApp } from '@lib/view';
   import { checkUserState, checkWeb3LoginState } from '@utils/route-guard';
   import { web3LoggedIn } from '@stores/account';
@@ -14,13 +16,12 @@
 
   let isWeb3LoggedIn: boolean = false;
 
+  let categories: CategoriesInSection[] = [];
+
   let page: number = 1;
   let pageSize: number = 1;
   let loading: boolean = false;
   let allLoaded: boolean = false; // Prevent further requests when empty response
-
-  let categories: CategoriesInSection[] = [];
-  let genres: Genre[] = [];
   let showNoCategoriesMessage: boolean = false;
 
   const fetchCategories = async () => {
@@ -60,7 +61,6 @@
       }
 
       await fetchCategories();
-      genres = await app.getGenres();
 
       // If no categories after 2 seconds, show "No categories found"
       setTimeout(() => {
@@ -118,27 +118,55 @@
       );
     }
   }
+
+  const searchSectionTopics = async (search_filed: string) => {
+    return await app.searchSectionCategories(
+      section,
+      search_filed.replace(/[^a-zA-Z ]/g, ''),
+    );
+  };
+
+  const getGenreTopics = async (genre: string) => {
+    return await app.getGenreTopics(section, genre);
+  };
+
+  let filteredTopics: TopicInCategory[] = [];
 </script>
 
-<section class="filters"></section>
+<SearchAndGenre
+  bind:filteredTopics
+  getGenres={app.getGenres}
+  {getGenreTopics}
+  {searchSectionTopics}
+/>
 
 <section class="categories-container" on:scroll={handleScroll}>
-  {#if categories.length > 0}
-    {#each categories as category (category.name)}
-      <div class="category">
-        <StoryCollection {category} {section} />
-      </div>
+  {#if filteredTopics.length > 0}
+    {#each filteredTopics as topic}
+      <StoryTile {section} bind:topic bind:loading />
     {/each}
-
-    {#if loading}
-      <h3>Loading more categories...</h3>
-    {:else if allLoaded && !loading}
-      <h3>No more categories available.</h3>
-    {/if}
-  {:else if showNoCategoriesMessage}
-    <h3>No categories found for this section.</h3>
   {:else}
-    <StoryCollection {section} category={null} />
+    {#if categories.length === 0 && !loading && !showNoCategoriesMessage}
+      <h3>Loading categories...</h3>
+    {/if}
+
+    {#if categories.length > 0}
+      {#each categories as category (category.name)}
+        <div class="category">
+          <StoryCollection {category} {section} />
+        </div>
+      {/each}
+
+      {#if loading}
+        <h3>Loading more categories...</h3>
+      {:else if allLoaded && !loading}
+        <h3>No more categories available.</h3>
+      {/if}
+    {:else if showNoCategoriesMessage}
+      <h3>No categories found for this section.</h3>
+    {:else}
+      <StoryCollection {section} category={null} />
+    {/if}
   {/if}
 </section>
 
@@ -149,15 +177,6 @@
 <Links {section} />
 
 <style>
-  .filters {
-    z-index: 100;
-    width: 95vw;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-    gap: 1vw;
-  }
-
   .categories-container {
     width: 100vw;
     display: flex;
@@ -172,12 +191,6 @@
   }
 
   @media only screen and (max-width: 600px) {
-    .filters {
-      width: 90%;
-      gap: 1em;
-      flex-direction: column;
-    }
-
     .categories-container {
       gap: 1em;
     }

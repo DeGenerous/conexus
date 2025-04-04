@@ -1,60 +1,10 @@
 <script lang="ts">
   export let genres: Genre[];
-  export let filteredCategories: CategoriesInSection[] = [];
-  export let categories: CategoriesInSection[] = [];
-  export let searchField: string = '';
+  export let activeGenre: string;
   export let isSorting: boolean = false;
-  export let handleSearch: () => void;
-  export let getGenreTopics: (genre: string) => Promise<CategoriesInSection[]>;
-
-  let sortedCategories: CategoriesInSection[] = [];
-
-  const handleSorting = () => {
-    sortedCategories = filteredCategories.map((cat: CategoriesInSection) => {
-      // Clone the category and topics to avoid mutating the original
-      return {
-        ...cat,
-        topics: [...cat.topics].sort((a, b) => {
-          const firstTopic = (
-            a.topic_name.charAt(0).toUpperCase() + a.topic_name.slice(1)
-          ).trim();
-          const secondTopic = (
-            b.topic_name.charAt(0).toUpperCase() + b.topic_name.slice(1)
-          ).trim();
-          // Sorting all topics in the category alphabetically
-          if (firstTopic < secondTopic) return -1;
-          if (firstTopic > secondTopic) return 1;
-          return 0;
-        }),
-      };
-    });
-
-    filteredCategories = sortedCategories;
-  };
-
-  // Genres
-  let activeGenre: string;
-  $: getGenre(activeGenre);
-
-  async function getGenre(genre: string) {
-    if (!genre) return;
-    if (searchField) {
-      searchField = '';
-      handleSearch();
-    }
-    filteredCategories = await getGenreTopics(genre);
-    if (isSorting) handleSorting();
-  }
-
-  const resetGenres = () => {
-    if (!activeGenre) return;
-    activeGenre = '';
-    filteredCategories = categories.map((cat) => ({
-      ...cat,
-      topics: [...cat.topics], // Ensure a fresh copy of topics
-    }));
-    if (isSorting) handleSorting();
-  };
+  export let getGenre: (genre: string) => Promise<void>;
+  export let handleSorting: () => void;
+  export let resetGenres: () => void;
 </script>
 
 <div class="sort-genres-filters">
@@ -184,7 +134,7 @@
     flex-flow: row nowrap;
     gap: 1vw;
   }
-  
+
   @media only screen and (max-width: 600px) {
     .sort-genres-filters {
       gap: 1em;

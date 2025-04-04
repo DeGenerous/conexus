@@ -7,14 +7,14 @@
 
   export let category: CategoriesInSection | null = null;
   export let section: string = '';
+  
+  let topics: TopicInCategory[] = [];
 
   let page: number = 1;
   let pageSize: number = 5;
   let total: number = 0;
   let loading: boolean = false;
   let isEndReached: boolean = false;
-
-  let topics: TopicInCategory[] = [];
 
   const fetchTopics = async () => {
     if (!category || loading || isEndReached) return;

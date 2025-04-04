@@ -55,3 +55,5 @@ type TopicInCategory = {
   category_id: number;
   tile_file_id?: string;
 } & TopicView;
+
+type TopicSortOrder = 'name' | 'category';

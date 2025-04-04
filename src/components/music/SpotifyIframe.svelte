@@ -22,7 +22,7 @@
 <style>
   iframe {
     width: 95vw;
-    height: 25vw;
+    height: 70vh;
     border-radius: 1.5vw;
     background-color: rgba(51, 226, 230, 0.1);
     box-shadow: 0 0.25vw 0.25vw #010020;
@@ -30,8 +30,6 @@
 
   @media only screen and (max-width: 600px) {
     iframe {
-      width: 95%;
-      height: auto;
       min-height: 9.5em;
       border-radius: 0;
       background-color: transparent;

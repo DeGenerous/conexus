@@ -80,7 +80,7 @@
         if (continuables.length == 0) noUnfinishedStoriesLeft = true;
       });
     } catch (error) {
-      console.log('Failed to delete story: ' + error);
+      console.error('Failed to delete story: ' + error);
     }
   }
 

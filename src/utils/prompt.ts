@@ -264,8 +264,6 @@ function generatePrompt(
     prompt: storySettings + storyPrompt,
   };
 
-  console.log(storySettings + storyPrompt);
-
   return fullStory;
 }
 

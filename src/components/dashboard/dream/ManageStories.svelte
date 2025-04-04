@@ -77,7 +77,6 @@
 
   const fetchClasses = async () => {
     classGates = await view.fetchClassGates();
-    console.log(classGates); //
   };
 
   let newClassName: string = '';

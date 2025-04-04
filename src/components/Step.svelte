@@ -102,12 +102,14 @@
         break;
       }
       case "-": {
+        if (width < 1280) return;
         event.preventDefault();
         let stepZoom = zoom - 0.05;
         zoom = setZoom(stepZoom);
         break;
       }
       case "=": {
+        if (width < 1280) return;
         event.preventDefault();
         let stepZoom = zoom + 0.05;
         zoom = setZoom(stepZoom);
@@ -125,6 +127,7 @@
   })
 
   const handleZoomWheel = (event: WheelEvent) => {
+    if (width < 1280) return;
     const { deltaY, ctrlKey, metaKey } = event;
     if (!(ctrlKey || metaKey)) return;
     event.preventDefault();

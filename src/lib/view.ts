@@ -162,7 +162,7 @@ export class CoNexusApp extends ViewAPI {
     section: string,
     page: number = 1,
     pageSize: number = 5,
-    sort_order: TopicSortOrder = 'name',
+    sort_order: TopicSortOrder = 'category',
   ): Promise<TopicInCategory[]> {
     const { data, error } = await this.genreTopics(
       genre,

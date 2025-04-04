@@ -5,7 +5,6 @@
   import Links from '@components/utils/Links.svelte';
   import SearchAndGenre from '@components/utils/SearchAndGenre.svelte';
   import StoryCollection from '@components/utils/StoryCollection.svelte';
-  import StoryTile from '@components/utils/StoryTile.svelte';
   import { CoNexusApp } from '@lib/view';
   import { checkUserState, checkWeb3LoginState } from '@utils/route-guard';
   import { web3LoggedIn } from '@stores/account';
@@ -119,33 +118,45 @@
     }
   }
 
-  const searchSectionTopics = async (search_filed: string) => {
-    return await app.searchSectionCategories(
-      section,
-      search_filed.replace(/[^a-zA-Z ]/g, ''),
-    );
-  };
-
-  const getGenreTopics = async (genre: string) => {
-    return await app.getGenreTopics(section, genre);
+  const getTopics = async (
+    text: string,
+    which: 'search' | 'genre',
+    page: number = 1,
+    pageSize: number = 5,
+    sort_order: TopicSortOrder = 'category',
+  ) => {
+    switch (which) {
+      case 'search':
+        return await app.searchSectionCategories(
+          section,
+          text.replace(/[^a-zA-Z ]/g, ''),
+          page,
+          pageSize,
+          sort_order,
+        );
+      case 'genre':
+        return await app.getGenreTopics(
+          section,
+          text,
+          page,
+          pageSize,
+          sort_order,
+        );
+    }
   };
 
   let filteredTopics: TopicInCategory[] = [];
 </script>
 
 <SearchAndGenre
+  {section}
   bind:filteredTopics
   getGenres={app.getGenres}
-  {getGenreTopics}
-  {searchSectionTopics}
+  {getTopics}
 />
 
 <section class="categories-container" on:scroll={handleScroll}>
-  {#if filteredTopics.length > 0}
-    {#each filteredTopics as topic}
-      <StoryTile {section} bind:topic bind:loading />
-    {/each}
-  {:else}
+  {#if filteredTopics.length > 0}{:else}
     {#if categories.length === 0 && !loading && !showNoCategoriesMessage}
       <h3>Loading categories...</h3>
     {/if}

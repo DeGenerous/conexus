@@ -1,14 +1,12 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
   import GenreSelect from '@components/utils/GenreSelect.svelte';
   import SearchSection from '@components/utils/SearchSection.svelte';
   import StoryTile from '@components/utils/StoryTile.svelte';
 
   export let section: string;
   export let filteredTopics: TopicInCategory[] = [];
+  export let genres: Genre[] = [];
 
-  export let getGenres: () => Promise<Genre[]>;
   export let getTopics: (
     text: string,
     which: 'search' | 'genre',
@@ -17,7 +15,6 @@
     sort_order?: TopicSortOrder,
   ) => Promise<TopicInCategory[]>;
 
-  let genres: Genre[] = [];
 
   let debounceTimeout: NodeJS.Timeout;
 
@@ -35,7 +32,6 @@
   $: getGenre(activeGenre);
 
   async function getGenre(genre: string) {
-    console.log('Genre selected:', genre);
     if (!genre) return;
     if (searchField) {
       searchField = '';
@@ -83,10 +79,6 @@
   };
 
   const handleSorting = () => {};
-
-  onMount(async () => {
-    genres = await getGenres();
-  });
 </script>
 
 <section class="filters">

@@ -52,13 +52,18 @@ export class CoNexusApp extends ViewAPI {
   }
 
   async getGenres(): Promise<Genre[]> {
+    console.log('Fetching genres');
+
     const cachedData = GetCache<Genre[]>(GENRE_CACHE_KEY);
     if (cachedData) {
+      console.log('Using cached genres', cachedData);
       return cachedData;
     }
 
     // Fetch fresh data
     const { data, error } = await this.genres();
+
+    console.log('Fetched genres', data);
 
     if (!data) {
       if (error) {

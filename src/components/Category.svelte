@@ -16,6 +16,7 @@
   let isWeb3LoggedIn: boolean = false;
 
   let categories: CategoriesInSection[] = [];
+  let genres: Genre[] = [];
 
   let page: number = 1;
   let pageSize: number = 1;
@@ -60,6 +61,7 @@
       }
 
       await fetchCategories();
+      genres = await app.getGenres();
 
       // If no categories after 2 seconds, show "No categories found"
       setTimeout(() => {
@@ -151,7 +153,7 @@
 <SearchAndGenre
   {section}
   bind:filteredTopics
-  getGenres={app.getGenres}
+  {genres}
   {getTopics}
 />
 

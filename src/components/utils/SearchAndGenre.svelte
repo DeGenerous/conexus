@@ -4,8 +4,9 @@
   import StoryTile from '@components/utils/StoryTile.svelte';
 
   export let section: string;
-  export let filteredTopics: TopicInCategory[] = [];
   export let genres: Genre[] = [];
+
+  let filteredTopics: TopicInCategory[] = [];
 
   export let getTopics: (
     text: string,
@@ -20,11 +21,11 @@
 
   let searchField: string = '';
   let page: number = 1;
-  let pageSize: number = 3;
+  let pageSize: number = 5;
   let search_sort_order: TopicSortOrder = 'name';
   let genre_sort_order: TopicSortOrder = 'category';
-  let isSearching: boolean = false;
 
+  let isSearching: boolean = false;
   let isSorting: boolean = false;
 
   // Genres
@@ -90,16 +91,58 @@
     {handleSorting}
     {resetGenres}
   />
-  <SearchSection {handleSearch} bind:searchField />
+  <SearchSection {handleSearch} bind:searchField bind:isSearching />
 </section>
 
-<div>
-  {#each filteredTopics as topic}
-    <StoryTile {section} bind:topic bind:loading={isSearching} />
-  {/each}
-</div>
+{#if filteredTopics.length > 0}
+  <section>
+    <p class="collection-header">Filtered Stories</p>
+    <div class="tiles-collection blur">
+      {#each filteredTopics as topic}
+        <StoryTile {section} bind:topic bind:loading={isSearching} />
+      {/each}
+    </div>
+  </section>
+{/if}
 
 <style>
+  section {
+    width: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    gap: 1vw;
+  }
+
+  .collection-header {
+    color: rgb(0, 185, 55);
+    -webkit-text-stroke: 0;
+  }
+
+  .tiles-collection {
+    background-image: none;
+    background-color: rgba(0, 185, 55, 0.25);
+    box-shadow:
+      inset 0 0 0.5vw rgba(0, 185, 55, 0.25),
+      0 0 0.5vw #010020;
+  }
+
+  .tiles-collection::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      to right,
+      rgba(0, 185, 55, 0.15),
+      rgba(0, 185, 55, 0.3),
+      rgba(0, 185, 55, 0.15)
+    );
+    border-radius: 1vw;
+    cursor: pointer;
+  }
+
+  .tiles-collection::-webkit-scrollbar-thumb:hover,
+  .tiles-collection::-webkit-scrollbar-thumb:active {
+    background: rgba(0, 185, 55, 0.5);
+  }
+
   .filters {
     z-index: 100;
     width: 95vw;
@@ -110,6 +153,10 @@
   }
 
   @media only screen and (max-width: 600px) {
+    section {
+      gap: 0.5em;
+    }
+
     .filters {
       width: 90%;
       gap: 1em;

@@ -2,7 +2,7 @@
   export let searchField: string;
   export let handleSearch: () => void;
 
-  let isSearching: boolean = false;
+  export let isSearching: boolean = false;
 
   let searchInput: HTMLInputElement | null;
   let searchFocus = false;
@@ -41,9 +41,7 @@
       fill="none"
     >
       <path
-        d="
-              M 50 96 a 46 46 0 0 1 0 -92 46 46 0 0 1 0 92
-            "
+        d="M 50 96 a 46 46 0 0 1 0 -92 46 46 0 0 1 0 92"
         transform-origin="50 50"
       />
     </svg>
@@ -77,29 +75,6 @@
 </div>
 
 <style>
-  .filter {
-    padding: 0 1vw;
-    color: #dedede;
-  }
-
-  .filter-image {
-    height: 2vw !important;
-    width: auto;
-  }
-
-  .filter-wrapper {
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-    gap: 1vw;
-    padding: 0.5vw;
-    padding-left: 1vw;
-    font-size: 1.5vw;
-    background-color: rgba(56, 117, 250, 0.5);
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 1vw;
-  }
-
   .search-field {
     font-size: 1.5vw;
     line-height: 3vw;
@@ -121,26 +96,6 @@
   }
 
   @media only screen and (max-width: 600px) {
-    .filter {
-      border-radius: 0.5em;
-      padding: 0.25em;
-      width: 33%;
-    }
-
-    .filter-image {
-      height: 1.5em !important;
-      padding: 0.25em;
-    }
-
-    .filter-wrapper {
-      padding: 0.25em;
-      border-radius: 0.5em;
-      gap: 0.25em;
-      font-size: 1em;
-      line-height: 1.5em;
-      width: 100%;
-    }
-
     .search-field {
       font-size: inherit;
       line-height: inherit;

@@ -146,42 +146,37 @@
         );
     }
   };
-
-  let filteredTopics: TopicInCategory[] = [];
 </script>
 
 <SearchAndGenre
   {section}
-  bind:filteredTopics
   {genres}
   {getTopics}
 />
 
 <section class="categories-container" on:scroll={handleScroll}>
-  {#if filteredTopics.length > 0}{:else}
-    {#if categories.length === 0 && !loading && !showNoCategoriesMessage}
-      <h3>Loading categories...</h3>
-    {/if}
+  {#if categories.length > 0}
+    {#each categories as category (category.name)}
+      <div class="category">
+        <StoryCollection {section} {category} />
+      </div>
+    {/each}
 
-    {#if categories.length > 0}
-      {#each categories as category (category.name)}
-        <div class="category">
-          <StoryCollection {category} {section} />
-        </div>
-      {/each}
-
-      {#if loading}
-        <h3>Loading more categories...</h3>
-      {:else if allLoaded && !loading}
-        <h3>No more categories available.</h3>
-      {/if}
-    {:else if showNoCategoriesMessage}
-      <h3>No categories found for this section.</h3>
-    {:else}
-      <StoryCollection {section} category={null} />
+    {#if loading}
+      <h3>Loading more categories...</h3>
+    {:else if allLoaded && !loading}
+      <h3>No more categories available.</h3>
     {/if}
+  {:else if showNoCategoriesMessage}
+    <h3>No categories found for this section.</h3>
+  {:else}
+    <StoryCollection {section} category={null} />
   {/if}
 </section>
+
+{#if categories.length === 0 && !loading && !showNoCategoriesMessage}
+  <h3>Loading categories...</h3>
+{/if}
 
 {#if section === 'Dischordian Saga'}
   <SpotifyIframe />

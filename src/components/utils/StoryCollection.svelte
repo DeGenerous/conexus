@@ -44,7 +44,7 @@
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
       fetchTopics();
-    }, 1000); // 1 second debounce time
+    }, 600); // 0.6 second debounce time
   };
 
   // Detect when user scrolls to the end of the StoryTile container
@@ -66,7 +66,7 @@
   {#if !category || !section}
     <p class="collection-header">Loading stories...</p>
     <div class="tiles-collection blur">
-      {#each Array(7) as _}
+      {#each Array(5) as _}
         <div class="tile loading-tile" style="cursor: progress;">
           <div
             class="tile-picture loading-tile-picture loading-animation"
@@ -85,6 +85,9 @@
       {#each topics as topic}
         <StoryTile {section} bind:topic bind:loading />
       {/each}
+      {#if !isEndReached}
+        <StoryTile {section} topic={null} loading={true} />
+      {/if}
     </div>
   {/if}
 </section>

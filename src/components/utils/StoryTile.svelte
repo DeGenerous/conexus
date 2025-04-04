@@ -2,12 +2,21 @@
   import { blankImage, serveUrl } from '@constants/media';
 
   export let section: string;
-  export let topic: TopicInCategory;
+  export let topic: Nullable<TopicInCategory>;
   export let loading: boolean;
 
-  const storyName: string = (
+  const storyName: string = topic ? (
     topic.name.charAt(0).toUpperCase() + topic.name.slice(1)
-  ).trim();
+  ).trim() : '';
+
+  const listTopicGates = (topic: TopicInCategory) => {
+    const gates = topic.nft_gate?.map((gate) => {
+      const name = gate.contract_name;
+      const className = gate.class_name;
+      return className ? `${name} (${className})` : name;
+    }).join(', ');
+    return gates;
+  }
 </script>
 
 <!-- if loading show loader -->
@@ -22,7 +31,7 @@
       style="cursor: inherit;"
     ></p>
   </div>
-{:else}
+{:else if topic}
   <a
     class="tile"
     class:gated-story={topic.nft_gate && topic.nft_gate.length > 0}
@@ -41,7 +50,7 @@
     {#if topic.nft_gate && topic.nft_gate.length > 0}
       <div class="gatings">
         <img class="gating-icon" src="/icons/lock.svg" alt="Restricted" />
-        <h3>{topic.nft_gate.map((gate) => gate.contract_name).join(', ')}</h3>
+        <h3>{listTopicGates(topic)}</h3>
       </div>
     {/if}
   </a>

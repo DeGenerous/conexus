@@ -35,6 +35,7 @@
   $: getGenre(activeGenre);
 
   async function getGenre(genre: string) {
+    console.log('Genre selected:', genre);
     if (!genre) return;
     if (searchField) {
       searchField = '';
@@ -91,7 +92,7 @@
 <section class="filters">
   <GenreSelect
     {genres}
-    {activeGenre}
+    bind:activeGenre
     {isSorting}
     {getGenre}
     {handleSorting}

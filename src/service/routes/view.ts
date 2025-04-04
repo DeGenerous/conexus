@@ -34,8 +34,8 @@ export default class ViewAPI extends Fetcher {
   }
 
   async genreTopics(
-    genre: string,
     section: string,
+    genre: string,
     page: number = 1,
     pageSize: number = 5,
     sort_order: TopicSortOrder = 'name',

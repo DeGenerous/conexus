@@ -158,15 +158,15 @@ export class CoNexusApp extends ViewAPI {
   }
 
   async getGenreTopics(
-    genre: string,
     section: string,
+    genre: string,
     page: number = 1,
     pageSize: number = 5,
     sort_order: TopicSortOrder = 'category',
   ): Promise<TopicInCategory[]> {
     const { data, error } = await this.genreTopics(
-      genre,
       section,
+      genre,
       page,
       pageSize,
       sort_order,
@@ -175,8 +175,6 @@ export class CoNexusApp extends ViewAPI {
     if (!data) {
       if (error) {
         api_error(error);
-      } else {
-        toastStore.show('Error fetching genre topics', 'error');
       }
       return [];
     }

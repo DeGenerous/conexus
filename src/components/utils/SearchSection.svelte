@@ -146,31 +146,33 @@
     width: 27.5vw;
   }
 
-  .filter {
-    border-radius: 0.5em;
-    padding: 0.25em;
-    width: 33%;
-  }
+  @media only screen and (max-width: 600px) {
+    .filter {
+      border-radius: 0.5em;
+      padding: 0.25em;
+      width: 33%;
+    }
 
-  .filter-image {
-    height: 1.5em !important;
-    padding: 0.25em;
-  }
+    .filter-image {
+      height: 1.5em !important;
+      padding: 0.25em;
+    }
 
-  .filter-wrapper {
-    padding: 0.25em;
-    border-radius: 0.5em;
-    gap: 0.25em;
-    font-size: 1em;
-    line-height: 1.5em;
-    width: 100%;
-  }
+    .filter-wrapper {
+      padding: 0.25em;
+      border-radius: 0.5em;
+      gap: 0.25em;
+      font-size: 1em;
+      line-height: 1.5em;
+      width: 100%;
+    }
 
-  .search-field {
-    font-size: inherit;
-    line-height: inherit;
-    border-radius: 0.25em;
-    padding: 0.25em 0.5em;
-    width: 100% !important;
+    .search-field {
+      font-size: inherit;
+      line-height: inherit;
+      border-radius: 0.25em;
+      padding: 0.25em 0.5em;
+      width: 100% !important;
+    }
   }
 </style>

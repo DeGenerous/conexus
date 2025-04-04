@@ -9,6 +9,7 @@
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
 
+  export let section: string;
   export let story_name: string;
 
   const game: CoNexusGame = new CoNexusGame();
@@ -314,7 +315,7 @@
     {/if}
 
     <div class="options-container blur">
-      {#await game.getTopic(story_name)}
+      {#await game.getTopic(section, story_name)}
         <p>Loading...</p>
       {:then topic}
         <button

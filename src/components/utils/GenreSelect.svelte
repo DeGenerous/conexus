@@ -184,8 +184,11 @@
     flex-flow: row nowrap;
     gap: 1vw;
   }
-  .sort-genres-filters {
-    gap: 1em;
-    justify-content: space-between;
+  
+  @media only screen and (max-width: 600px) {
+    .sort-genres-filters {
+      gap: 1em;
+      justify-content: space-between;
+    }
   }
 </style>

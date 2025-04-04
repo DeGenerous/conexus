@@ -406,7 +406,7 @@
   <BackgroundMusic />
   <Tts />
 
-  <Step {story_name} />
+  <Step {section} {story_name} />
 {/if}
 
 <div

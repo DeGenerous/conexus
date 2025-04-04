@@ -30,17 +30,16 @@
     const response = await app.getSectionCategories(section, page, pageSize);
 
     if (response && response.length > 0) {
-      // categories = [...categories, ...response];
       setTimeout(() => {
         categories = [...categories, ...response];
-      }, 1000); // Simulate loading delay
+        loading = false;
+      }, 600); // Simulate loading delay
       showNoCategoriesMessage = false; // Hide message if categories are found
       page++; // Move to the next page
     } else {
       allLoaded = true; // Stop fetching more categories
+      loading = false;
     }
-
-    loading = false;
   };
 
   let observer: IntersectionObserver;
@@ -63,7 +62,7 @@
       await fetchCategories();
       genres = await app.getGenres();
 
-      // If no categories after 5 seconds, show "No categories found"
+      // If no categories after 2 seconds, show "No categories found"
       setTimeout(() => {
         if (categories.length === 0) {
           showNoCategoriesMessage = true;
@@ -125,23 +124,19 @@
 
 <section class="categories-container" on:scroll={handleScroll}>
   {#if categories.length > 0}
-    <div class="categories-wrapper">
-      {#each categories as category (category.name)}
-        <div class="category">
-          <StoryCollection {category} {section} />
-        </div>
-      {/each}
-    </div>
+    {#each categories as category (category.name)}
+      <div class="category">
+        <StoryCollection {category} {section} />
+      </div>
+    {/each}
 
     {#if loading}
-      <p class="loading-text">Loading more categories...</p>
-    {/if}
-
-    {#if allLoaded && !loading}
-      <p class="end-text">No more categories available.</p>
+      <h3>Loading more categories...</h3>
+    {:else if allLoaded && !loading}
+      <h3>No more categories available.</h3>
     {/if}
   {:else if showNoCategoriesMessage}
-    <p class="no-categories-text">No categories found for this section.</p>
+    <h3>No categories found for this section.</h3>
   {:else}
     <StoryCollection {section} category={null} />
   {/if}
@@ -165,26 +160,26 @@
 
   .categories-container {
     width: 100vw;
-    height: 90vh;
-    overflow-y: auto;
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 2vw;
     scroll-behavior: smooth;
   }
 
-  .categories-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 2vw;
+  h3 {
+    color: rgba(51, 226, 230, 0.75);
+    text-shadow: 0 0.25vw 0.25vw #010020;
   }
 
-  .category {
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-  }
+  @media only screen and (max-width: 600px) {
+    .filters {
+      width: 90%;
+      gap: 1em;
+      flex-direction: column;
+    }
 
-  .loading-text,
-  .end-text {
-    text-align: center;
-    margin-top: 10px;
-    font-weight: bold;
+    .categories-container {
+      gap: 1em;
+    }
   }
 </style>

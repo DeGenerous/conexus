@@ -217,7 +217,7 @@
   };
 </script>
 
-<svelte:window bind:outerWidth={width} on:keydown={handleKeyDown} on:wheel={handleZoomWheel} />
+<svelte:window bind:innerWidth={width} on:keydown={handleKeyDown} on:wheel={handleZoomWheel} />
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div class="zoom-slider">
@@ -1634,6 +1634,12 @@
 
     .controls {
       gap: 1rem;
+    }
+  }
+
+  @media screen and (max-width: 1280px) {
+    .step-wrapper {
+      zoom: 1 !important;
     }
   }
 </style>

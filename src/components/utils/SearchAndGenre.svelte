@@ -16,7 +16,6 @@
     sort_order?: TopicSortOrder,
   ) => Promise<TopicInCategory[]>;
 
-
   let debounceTimeout: NodeJS.Timeout;
 
   let searchField: string = '';
@@ -26,24 +25,36 @@
   let genre_sort_order: TopicSortOrder = 'category';
 
   let isSearching: boolean = false;
+  let isEndReached: boolean = false;
+
+  let activeGetTopics: 'genres' | 'search' = 'genres';
 
   // Genres
   let activeGenre: string;
   $: getGenre(activeGenre);
 
   async function getGenre(genre: string) {
-    if (!genre) return;
+    if (!genre || isEndReached) return;
     if (searchField) {
       searchField = '';
       handleSearch();
     }
-    filteredTopics = await getTopics(
+    const newTopics = await getTopics(
       genre,
       'genre',
       page,
       pageSize,
       genre_sort_order,
     );
+
+    if (newTopics.length === 0) {
+      isEndReached = true; // Stop fetching when we've loaded all topics
+      return;
+    }
+
+    filteredTopics = [...filteredTopics, ...newTopics];
+
+    activeGetTopics = 'genres';
   }
 
   const handleSearch = async () => {
@@ -51,36 +62,66 @@
     if (!searchField) {
       filteredTopics = [];
       isSearching = false;
+      isEndReached = false; // Reset end reached when search field is cleared
       return;
     }
+
+    if (isEndReached) return;
+
     resetGenres();
 
     isSearching = true; // Set isSearching to true when the debounce starts
     debounceTimeout = setTimeout(async () => {
-      filteredTopics = await getTopics(
+      const newTopics = await getTopics(
         searchField.replace(/[^a-zA-Z ]/g, ''),
         'search',
         page,
         pageSize,
         search_sort_order,
       );
+
+      if (newTopics.length === 0) {
+        isEndReached = true; // Stop fetching when we've loaded all topics
+        isSearching = false; // Stop searching if no results
+        return;
+      }
+
+      filteredTopics = [...filteredTopics, ...newTopics];
+
       isSearching = false; // Stop searching after results are returned
     }, 3750); // 3.75-second debounce delay
+
+    activeGetTopics = 'search';
+  };
+
+  const handleScroll = (event: Event) => {
+    if (isSearching) return;
+
+    const target = event.target as HTMLElement;
+    if (target.scrollLeft + target.clientWidth >= target.scrollWidth - 20) {
+      page++;
+      // getGenre(activeGenre);
+      switch (activeGetTopics) {
+        case 'search':
+          handleSearch();
+          break;
+        case 'genres':
+          getGenre(activeGenre);
+          break;
+      }
+    }
   };
 
   const resetGenres = () => {
     if (!activeGenre) return;
     activeGenre = '';
+    isEndReached = false;
     filteredTopics = [];
   };
 </script>
 
 <section class="filters">
-  <GenreSelect
-    {genres}
-    bind:activeGenre
-    {resetGenres}
-  />
+  <GenreSelect {genres} bind:activeGenre {resetGenres} />
   <SearchSection {handleSearch} bind:searchField bind:isSearching />
 </section>
 
@@ -89,7 +130,7 @@
     <div class="collection-header">
       <p>Filtered Stories</p>
     </div>
-    <div class="tiles-collection blur">
+    <div class="tiles-collection blur" on:scroll={handleScroll}>
       {#each filteredTopics as topic}
         <StoryTile {section} bind:topic bind:loading={isSearching} />
       {/each}

@@ -76,7 +76,6 @@
       case 'ArrowUp': {
         if (step.step !== $story?.maxStep || $loading || pointerOverOption)
           return;
-        event.preventDefault();
         handleSelectorSvg(activeOptionNumber, 'blur');
         if ($story?.step_data?.end) activeOptionNumber = 0;
         else if (activeOptionNumber !== 0) activeOptionNumber--;
@@ -90,7 +89,6 @@
       case 'ArrowDown': {
         if (step.step !== $story?.maxStep || $loading || pointerOverOption)
           return;
-        event.preventDefault();
         handleSelectorSvg(activeOptionNumber, 'blur');
         if ($story?.step_data?.end) activeOptionNumber = 0;
         else if (activeOptionNumber !== step.options.length - 1)
@@ -104,14 +102,12 @@
       }
       case '-': {
         if (width < 1280) return;
-        event.preventDefault();
         let stepZoom = zoom - 0.05;
         zoom = setZoom(stepZoom);
         break;
       }
       case '=': {
         if (width < 1280) return;
-        event.preventDefault();
         let stepZoom = zoom + 0.05;
         zoom = setZoom(stepZoom);
         break;
@@ -220,7 +216,7 @@
 
 <svelte:window
   bind:innerWidth={width}
-  on:keydown={handleKeyDown}
+  on:keydown|preventDefault={handleKeyDown}
   on:wheel={handleZoomWheel}
 />
 

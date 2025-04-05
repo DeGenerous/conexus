@@ -1,7 +1,6 @@
 <script lang="ts">
   export let searchField: string;
   export let handleSearch: () => void;
-
   export let isSearching: boolean = false;
 
   let searchInput: HTMLInputElement | null;

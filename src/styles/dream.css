@@ -7,10 +7,6 @@ textarea {
   resize: vertical;
 }
 
-textarea::-webkit-scrollbar {
-  width: 0;
-}
-
 .story-input {
   width: 100%;
   font-size: 1.75vw;

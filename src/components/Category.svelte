@@ -11,7 +11,7 @@
   import {
     SetCache,
     SECTION_TOPICS_KEY,
-    SECTION_TOPICS_TTL
+    SECTION_TOPICS_TTL,
   } from '@constants/cache';
 
   let app: CoNexusApp = new CoNexusApp();
@@ -121,8 +121,8 @@
             name: topic.topic_name,
           })),
         ),
-        SECTION_TOPICS_TTL
-      )
+        SECTION_TOPICS_TTL,
+      );
     }
   }
 

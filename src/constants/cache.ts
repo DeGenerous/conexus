@@ -22,7 +22,8 @@ export const CATEGORY_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
 export const GENRE_CACHE_KEY = 'genres';
 export const GENRE_CACHE_TTL = 1000 * 60 * 60 * 24 * 30; // 30 days
 
-export const SECTION_TOPICS_KEY = (section: string): string => (`${section} topics`);
+export const SECTION_TOPICS_KEY = (section: string): string =>
+  `${section} topics`;
 export const SECTION_TOPICS_TTL = 1000 * 60 * 60 * 24; // 24 hours
 
 export const ALL_TOPICS_KEY = 'all_topics';
@@ -54,9 +55,9 @@ const viewKeys = [
   MEDIA_CACHE_KEY,
   GENRE_CACHE_KEY,
   ALL_TOPICS_KEY,
-  "Community Picks topics",
-  "Collabs topics",
-  "Dischordian Saga topics"
+  'Community Picks topics',
+  'Collabs topics',
+  'Dischordian Saga topics',
 ];
 
 const manageKeys = [

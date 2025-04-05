@@ -27,11 +27,9 @@
 <div class="collection-header">
   <p>Stories Played Last Week</p>
 </div>
-<div class="tiles-collection blur">
-</div>
+<div class="tiles-collection blur"></div>
 
 <div class="collection-header">
   <p>Top Performing Stories</p>
 </div>
-<div class="tiles-collection blur">
-</div>
+<div class="tiles-collection blur"></div>

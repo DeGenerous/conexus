@@ -25,8 +25,7 @@
     </select>
   </div>
 
-  <div class="tiles-collection">
-  </div>
+  <div class="tiles-collection"></div>
 </section>
 
 <style>

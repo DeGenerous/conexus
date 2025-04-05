@@ -20,10 +20,7 @@
     modalContent,
   } from '@stores/modal';
   import { checkUserState } from '@utils/route-guard';
-  import {
-    GetCache,
-    SECTION_TOPICS_KEY
-  } from '@constants/cache';
+  import { GetCache, SECTION_TOPICS_KEY } from '@constants/cache';
 
   export let section: string;
   export let story_name: string;
@@ -41,7 +38,9 @@
   onMount(async () => {
     await checkUserState('/story');
 
-    const storedTopics: Nullable<string> = GetCache(SECTION_TOPICS_KEY(section));
+    const storedTopics: Nullable<string> = GetCache(
+      SECTION_TOPICS_KEY(section),
+    );
     if (storedTopics) categoryTopics = JSON.parse(storedTopics);
     const categoryTopicNames: string[] = categoryTopics!.map(
       (story) => story.name,

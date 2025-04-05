@@ -8,10 +8,7 @@
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
-  import {
-    GetCache,
-    ALL_TOPICS_KEY
-  } from '@constants/cache';
+  import { GetCache, ALL_TOPICS_KEY } from '@constants/cache';
 
   import GenreTags from './GenreTags.svelte';
   import Media from './Media.svelte';

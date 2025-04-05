@@ -73,7 +73,10 @@
 
     if (newTopics.length === 0) {
       if (filteredTopics.length === 0) {
-        toastStore.show('Couldn’t find what you’re looking for. No matching stories in this realm.', 'error');
+        toastStore.show(
+          'Couldn’t find what you’re looking for. No matching stories in this realm.',
+          'error',
+        );
       }
 
       isEndReached = true;

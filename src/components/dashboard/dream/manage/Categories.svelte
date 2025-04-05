@@ -33,19 +33,21 @@
     width: 20vw;
   }
 
-  .new-category {
-    width: 100vw;
-    padding: 1.5em 1em;
-    gap: 1em;
-    border-radius: 0;
-  }
+  @media only screen and (max-width: 600px) {
+    .new-category {
+      width: 100vw;
+      padding: 1.5em 1em;
+      gap: 1em;
+      border-radius: 0;
+    }
 
-  .new-category input {
-    width: 95vw;
-    text-align: center;
-  }
+    .new-category input {
+      width: 95vw;
+      text-align: center;
+    }
 
-  .new-category button {
-    width: 50vw;
+    .new-category button {
+      width: 50vw;
+    }
   }
 </style>

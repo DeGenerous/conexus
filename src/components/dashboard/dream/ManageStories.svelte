@@ -82,40 +82,45 @@
   };
 
   type NAV = 'collection' | 'categories' | 'nft-gates';
-  let nav: NAV = 'collection';
+  // let nav: NAV = 'collection';
+  let nav: NAV = 'categories';
   const setNav = (newNav: NAV) => {
     nav = newNav;
   };
 </script>
 
-<div class="container blur buttons-wrapper">
-  <button
-    class="nav-button"
+<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_to_interactive_role -->
+<nav class="blur">
+  <h3
     on:click={() => setNav('collection')}
     class:selected={nav === 'collection'}
+    role="button"
+    tabindex="0"
   >
-    Collection
-  </button>
-  <button
-    class="nav-button"
+    Collections
+  </h3>
+  <h3
     on:click={() => setNav('categories')}
     class:selected={nav === 'categories'}
+    role="button"
+    tabindex="0"
   >
     Categories
-  </button>
-  <button
-    class="nav-button"
+  </h3>
+  <h3
     on:click={() => setNav('nft-gates')}
     class:selected={nav === 'nft-gates'}
+    role="button"
+    tabindex="0"
   >
     NFT Gates
-  </button>
-</div>
+  </h3>
+</nav>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <section class="container-wrapper">
-  {#key availabilityKey}
-    {#if nav === 'collection'}
+  {#if nav === 'collection'}
+    {#key availabilityKey}
       {#await admin.fetchCollections()}
         <img class="loading-icon" src="/icons/loading.png" alt="Loading" />
       {:then collections}
@@ -135,7 +140,9 @@
                 />
               </form>
 
-              <p class="collection-header">{category_name}: {topics.length}</p>
+              <div class="collection-header">
+                <p>{category_name}: {topics.length}</p>
+              </div>
 
               <form id="section" class="buttons-wrapper">
                 <label for="section">Select section:</label>
@@ -193,15 +200,46 @@
           </section>
         {/each}
       {/await}
-    {:else if nav === 'nft-gates'}
-      <NFTGates {classGates} {fetchClasses} {selectInput} />
-    {:else if nav === 'categories'}
-      <Categories />
-    {/if}
-  {/key}
+    {/key}
+  {:else if nav === 'nft-gates'}
+    <NFTGates {classGates} {fetchClasses} {selectInput} />
+  {:else if nav === 'categories'}
+    <Categories />
+  {/if}
 </section>
 
 <style>
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100vw;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    align-items: center;
+    background-color: rgba(36, 65, 189, 0.75);
+    box-shadow: 0 0.25vw 0.5vw #010020;
+  }
+
+  nav h3 {
+    width: 100%;
+    color: rgba(255, 255, 255, 0.75);
+    padding: 1vw;
+  }
+
+  nav h3:hover,
+  nav h3:active {
+    filter: brightness(125%);
+    background-color: rgba(45, 90, 216, 0.5);
+  }
+
+  .selected {
+    color: rgb(51, 226, 230);
+    text-shadow: 0 0 0.1vw rgb(51, 226, 230);
+    background-color: rgba(45, 90, 216, 0.5);
+  }
+
   .container:not(.buttons-wrapper) {
     width: 100vw;
     padding-inline: 0;
@@ -239,6 +277,10 @@
   }
 
   @media only screen and (max-width: 600px) {
+    nav h3 {
+      padding: 1em;
+    }
+
     .category-header {
       flex-flow: row-reverse wrap;
       justify-content: center;

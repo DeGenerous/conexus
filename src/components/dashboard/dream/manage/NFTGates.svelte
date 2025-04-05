@@ -178,31 +178,33 @@
     padding: 0.5vw;
   }
 
-  .classes-list {
-    width: 100vw;
-    max-width: none;
-  }
+  @media only screen and (max-width: 600px) {
+    .classes-list {
+      width: 100vw;
+      max-width: none;
+    }
 
-  .nft-class {
-    gap: 1em;
-    padding: 0.5em;
-    border-radius: 0.5em;
-  }
+    .nft-class {
+      gap: 1em;
+      padding: 0.5em;
+      border-radius: 0.5em;
+    }
 
-  .class-range {
-    flex-direction: row;
-  }
+    .class-range {
+      flex-direction: row;
+    }
 
-  .new-class {
-    gap: 1em;
-    padding: 0;
-  }
+    .new-class {
+      gap: 1em;
+      padding: 0;
+    }
 
-  .classes-list input {
-    width: 90vw;
-  }
+    .classes-list input {
+      width: 90vw;
+    }
 
-  .range-input {
-    width: 35vw !important;
+    .range-input {
+      width: 35vw !important;
+    }
   }
 </style>

@@ -38,7 +38,7 @@
       isEndReached = true;
     }
 
-    handleSorting();
+    sortedTopics = applySorting(topics);
 
     loading = false;
   };
@@ -65,6 +65,10 @@
   onMount(() => {
     fetchTopics();
   });
+
+  function applySorting(data: TopicInCategory[]) {
+    return isSorting ? sortByName(data) : sortByOrder(data);
+  }
 
   const handleSorting = () => {
     if (isSorting) sortedTopics = sortByName(topics);

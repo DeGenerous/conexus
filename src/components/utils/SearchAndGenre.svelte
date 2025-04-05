@@ -3,6 +3,7 @@
   import SearchSection from '@components/utils/SearchSection.svelte';
   import StoryTile from '@components/utils/StoryTile.svelte';
 
+  export let categories: CategoriesInSection[] = [];
   export let section: string;
   export let genres: Genre[] = [];
   export let getTopics: (
@@ -164,12 +165,72 @@
 </script>
 
 <section class="filters">
-  <GenreSelect {genres} bind:activeGenre {resetGenres} />
-  <SearchSection
-    handleSearch={handleSearchDebounced}
-    bind:searchField
-    bind:isSearching
-  />
+  {#if categories && categories.length > 0}
+    <GenreSelect {genres} bind:activeGenre {resetGenres} />
+    <SearchSection
+      handleSearch={handleSearchDebounced}
+      bind:searchField
+      bind:isSearching
+    />
+  {:else}
+    <div
+      class="filter filter-wrapper loading-animation blur"
+      style="cursor: not-allowed;"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="-100 -100 200 200"
+        class="filter-svg filter-image"
+        fill="#dedede"
+        stroke="#dedede"
+        stroke-width="6"
+        stroke-linejoin="round"
+        style="cursor: inherit;"
+      >
+        <path
+          d="
+            M -25 60
+            L -25 -15
+            L -95 -85
+            L -95 -95
+            L 95 -95
+            L 95 -85
+            L 25 -15
+            L 25 95
+            L 20 95
+            Z
+          "
+        />
+      </svg>
+      <select class="selector" style="cursor: inherit;">
+        <option value="" selected={true} disabled hidden>Select genre</option>
+      </select>
+    </div>
+
+    <div
+      class="filter filter-wrapper loading-animation blur"
+      style="cursor: not-allowed;"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="-100 -100 200 200"
+        class="search-svg filter-image"
+        stroke="#dedede"
+        stroke-linecap="round"
+        fill="none"
+        style="cursor: inherit;"
+      >
+        <circle cx="-20" cy="-20" r="70" stroke-width="15" />
+        <line x1="34" y1="34" x2="85" y2="80" stroke-width="25" />
+      </svg>
+      <input
+        class="search-field"
+        placeholder="Search story..."
+        disabled
+        style="cursor: inherit;"
+      />
+    </div>
+  {/if}
 </section>
 
 {#if filteredTopics.length > 0}
@@ -277,6 +338,26 @@
     gap: 1vw;
   }
 
+  .search-field {
+    font-size: 1.5vw;
+    line-height: 3vw;
+    padding-inline: 0.5vw;
+    color: rgba(51, 226, 230, 0.9);
+    background-color: rgba(22, 30, 95, 0.9);
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
+    border-radius: 0.5vw;
+    outline: none;
+    width: 19vw;
+  }
+
+  .search-field::placeholder {
+    color: rgba(51, 226, 230, 0.5);
+  }
+
+  .search-field:focus {
+    width: 27.5vw;
+  }
+
   @media only screen and (max-width: 600px) {
     section {
       gap: 0.5em;
@@ -286,6 +367,14 @@
       width: 90%;
       gap: 1em;
       flex-direction: column;
+    }
+
+    .search-field {
+      font-size: inherit;
+      line-height: inherit;
+      border-radius: 0.25em;
+      padding: 0.25em 0.5em;
+      width: 100% !important;
     }
   }
 </style>

@@ -268,7 +268,7 @@
             on:click={() =>
               admin
                 .changeAvailability(
-                  topic.prompt_id,
+                  topic.id,
                   switchAvailable(topic.available),
                 )
                 .then(async () => {

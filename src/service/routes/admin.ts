@@ -41,10 +41,10 @@ export default class AdminAPI extends Fetcher {
     });
   }
 
-  async changePromptAvailability(prompt_id: number, availability: string) {
+  async changePromptAvailability(topic_id: number, availability: string) {
     return this.request<APISTDResposne>('/admin/change-prompt-availability', {
       method: 'PATCH',
-      body: JSON.stringify({ prompt_id, availability }),
+      body: JSON.stringify({ topic_id, availability }),
     });
   }
 

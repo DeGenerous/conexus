@@ -200,7 +200,7 @@
 
         <section class="story-info">
           <article>
-            {#if topic.genres !== ''}
+            {#if topic.genres}
               <div class="genres">
                 <p>Genres:</p>
                 <p class="genres-list fade-in">{topic.genres}</p>

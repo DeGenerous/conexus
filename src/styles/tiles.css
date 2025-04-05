@@ -224,7 +224,7 @@
 
 .gated-story:hover,
 .gated-story:active {
-  color: rgba(32, 0, 1, 0.5);
+  color: rgba(32, 0, 1);
   background-color: rgba(255, 140, 0, 0.9);
 }
 

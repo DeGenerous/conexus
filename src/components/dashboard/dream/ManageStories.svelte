@@ -82,8 +82,7 @@
   };
 
   type NAV = 'collection' | 'categories' | 'nft-gates';
-  // let nav: NAV = 'collection';
-  let nav: NAV = 'categories';
+  let nav: NAV = 'collection';
   const setNav = (newNav: NAV) => {
     nav = newNav;
   };

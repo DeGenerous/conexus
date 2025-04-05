@@ -383,7 +383,7 @@
         id="image-prompt"
         class="story-input dream-textfield"
         placeholder="E.g. A breathtaking cosmic landscape filled with swirling galaxies, ancient ruins, and a lone traveler standing at the edge of destiny."
-        rows="5"
+        rows="10"
         bind:value={storyImagePrompt}
         disabled={!editingImagePrompt}
       ></textarea>

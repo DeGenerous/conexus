@@ -184,8 +184,18 @@
 }
 
 .stories-switcher {
-  width: 90%;
+  width: 100vw;
+  padding-inline: 2vw;
+  gap: 2vw;
   justify-content: space-between;
+  flex-flow: row nowrap !important;
+}
+
+.switch-arrow {
+  flex-flow: row nowrap !important;
+  gap: 1vw;
+  opacity: 0.75;
+  text-decoration: none !important;
 }
 
 .switch-arrow img {
@@ -195,11 +205,6 @@
 
 .switch-arrow h3 {
   color: white !important;
-}
-
-.switch-arrow {
-  opacity: 0.75;
-  text-decoration: none !important;
 }
 
 .switch-arrow:hover,
@@ -310,14 +315,18 @@
     border-radius: 0;
   }
 
-  .switch-arrow img {
-    width: 2em;
-    height: 2em;
+  .stories-switcher {
+    gap: 1em;
+    padding-inline: 1em;
   }
 
   .switch-arrow {
-    flex-wrap: nowrap;
-    justify-content: center;
+    gap: 0.5em;
+  }
+
+  .switch-arrow img {
+    width: 2em;
+    height: 2em;
   }
 
   .filter {

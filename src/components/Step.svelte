@@ -1081,7 +1081,7 @@
   </section>
   {#if width <= 600}
     <div
-      class="theme-switcher"
+      class="theme-switcher blur"
       on:click={switchTheme}
       role="button"
       tabindex="0"

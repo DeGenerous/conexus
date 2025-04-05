@@ -160,7 +160,7 @@
           href="/dashboard/dream/manage/{categoryTopics[prevStoryIndex]}"
         >
           <img src="/icons/switch-arrow.svg" alt="Switch" />
-          <h3>{categoryTopics[prevStoryIndex]}</h3>
+          <h3 style:text-align="left">{categoryTopics[prevStoryIndex]}</h3>
         </a>
 
         <a
@@ -169,7 +169,7 @@
             (activeStoryIndex + 1) % categoryTopics.length
           ]}"
         >
-          <h3>
+          <h3 style:text-align="right">
             {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]}
           </h3>
           <img

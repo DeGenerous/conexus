@@ -167,7 +167,7 @@
               .name}?id={categoryTopics[prevStoryIndex].id}"
           >
             <img src="/icons/switch-arrow.svg" alt="Switch" />
-            <h3 style:text-align={'left'}>
+            <h3 style:text-align="left">
               {categoryTopics[prevStoryIndex].name}
             </h3>
           </a>
@@ -180,7 +180,7 @@
               (activeStoryIndex + 1) % categoryTopics.length
             ].id}"
           >
-            <h3 style:text-align={'right'}>
+            <h3 style:text-align="right">
               {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
                 .name}
             </h3>

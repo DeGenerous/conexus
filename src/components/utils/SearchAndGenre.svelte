@@ -81,7 +81,6 @@
   // Genres
   const resetGenres = () => {
     activeGenre = '';
-    activeGenre = '';
     filteredTopics = [];
     sortedTopics = [];
     isEndReached = false;
@@ -93,6 +92,7 @@
   // Search
   function handleSearchDebounced() {
     if (debounceTimeout) clearTimeout(debounceTimeout);
+    isSearching = true;
     debounceTimeout = setTimeout(() => {
       if (!searchField.trim()) {
         // Clear state
@@ -100,12 +100,14 @@
         sortedTopics = [];
         isEndReached = false;
         activeMode = null;
+        isSearching = false;
         return;
       }
 
       activeGenre = '';
 
       resetAndFetch({ text: searchField, mode: 'search' });
+      isSearching = false;
     }, 600);
   }
 

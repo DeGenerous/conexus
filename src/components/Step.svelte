@@ -1318,7 +1318,7 @@
     gap: 1vw;
     padding: 1vw;
     background-color: rgba(36, 65, 189, 0.75);
-    border: 0.1rem solid rgba(51, 226, 230, 0.5);
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
     border-radius: 1vw;
     box-shadow: 0 0.5vw 0.5vw #010020;
   }

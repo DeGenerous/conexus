@@ -26,7 +26,6 @@
   let genre_sort_order: TopicSortOrder = 'category';
 
   let isSearching: boolean = false;
-  let isSorting: boolean = false;
 
   // Genres
   let activeGenre: string;
@@ -45,7 +44,6 @@
       pageSize,
       genre_sort_order,
     );
-    if (isSorting) handleSorting();
   }
 
   const handleSearch = async () => {
@@ -67,7 +65,6 @@
         search_sort_order,
       );
       isSearching = false; // Stop searching after results are returned
-      if (isSorting) handleSorting();
     }, 3750); // 3.75-second debounce delay
   };
 
@@ -75,20 +72,13 @@
     if (!activeGenre) return;
     activeGenre = '';
     filteredTopics = [];
-
-    if (isSorting) handleSorting();
   };
-
-  const handleSorting = () => {};
 </script>
 
 <section class="filters">
   <GenreSelect
     {genres}
     bind:activeGenre
-    {isSorting}
-    {getGenre}
-    {handleSorting}
     {resetGenres}
   />
   <SearchSection {handleSearch} bind:searchField bind:isSearching />
@@ -96,7 +86,9 @@
 
 {#if filteredTopics.length > 0}
   <section>
-    <p class="collection-header">Filtered Stories</p>
+    <div class="collection-header">
+      <p>Filtered Stories</p>
+    </div>
     <div class="tiles-collection blur">
       {#each filteredTopics as topic}
         <StoryTile {section} bind:topic bind:loading={isSearching} />
@@ -114,7 +106,7 @@
     gap: 1vw;
   }
 
-  .collection-header {
+  .collection-header p {
     color: rgb(0, 185, 55);
     -webkit-text-stroke: 0;
   }

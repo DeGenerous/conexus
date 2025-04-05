@@ -123,13 +123,7 @@ export class CoNexusApp extends ViewAPI {
       return [];
     }
 
-    const ordereTopics = data.sort((a: TopicInCategory, b: TopicInCategory) => {
-      if (a.order < b.order) return -1;
-      if (a.order > b.order) return 1;
-      return 0;
-    });
-
-    return ordereTopics;
+    return data;
   }
 
   async searchSectionCategories(

@@ -47,12 +47,26 @@
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-between;
+  gap: 1vw;
   padding-inline: 2.5vw;
+}
+
+.collection-header p {
   font-size: 3vw;
   line-height: 3vw;
   color: rgba(51, 226, 230, 0.85);
   -webkit-text-stroke: 0.03vw #33e2e6;
   text-shadow: 0 0.25vw 0.25vw #010020;
+}
+
+.collection-header button {
+  padding: 1vw;
+  flex: none;
+}
+
+.collection-header button:hover,
+.collection-header button:active {
+  color: #dedede;
 }
 
 .tile {
@@ -89,7 +103,7 @@
   border: 0.1vw solid rgba(51, 226, 230, 0.5);
   border-radius: 1vw;
   flex: 1;
-  background-color: rgba(51, 226, 230, 0.1);
+  background-color: rgba(0, 0, 0, 0.25);
   cursor: pointer;
 }
 
@@ -200,17 +214,17 @@
 
 .gated-story {
   color: rgba(255, 255, 255, 0.9);
-  border-color: #010020;
+  border-color: rgba(32, 0, 1, 0.5);
   background-color: rgba(255, 140, 0, 0.75);
 }
 
 .gated-story .tile-picture {
-  border-color: #010020;
+  border-color: rgba(32, 0, 1, 0.5);
 }
 
 .gated-story:hover,
 .gated-story:active {
-  color: #010020;
+  color: rgba(32, 0, 1, 0.5);
   background-color: rgba(255, 140, 0, 0.9);
 }
 
@@ -224,13 +238,19 @@
   }
 
   .collection-header {
-    flex-flow: column-reverse nowrap;
     align-items: center;
-    justify-content: center;
-    padding: 0;
-    gap: 0.5em;
+    gap: 1em;
+    padding-inline: 1em;
+  }
+
+  .collection-header p {
     font-size: 1.5em;
     line-height: 1.5em;
+  }
+
+  .collection-header button {
+    padding: 0.5em 1em;
+    width: auto;
   }
 
   .tile {

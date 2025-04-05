@@ -166,8 +166,6 @@
 
     {#if loading}
       <h3>Loading more categories...</h3>
-    {:else if allLoaded && !loading}
-      <h3>No more categories available.</h3>
     {/if}
   {:else if showNoCategoriesMessage}
     <h3>No categories found for this section.</h3>

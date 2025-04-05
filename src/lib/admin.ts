@@ -237,11 +237,11 @@ export class AdminApp extends AdminAPI {
    * @throws Will show an error message if the availability change fails.
    */
   async changeAvailability(
-    prompt_id: number,
+    topic_id: number,
     available: 'available' | 'unavailable',
   ): Promise<void> {
     const { data, error } = await this.changePromptAvailability(
-      prompt_id,
+      topic_id,
       available,
     );
 

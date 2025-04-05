@@ -44,7 +44,7 @@ export class CoNexusGame extends GameAPI {
   }
 
   // TODO: change to topic_id later
-  async getTopic(topic: string): Promise<ThumbnailTopic> {
+  async getTopic(section: string, topic: string): Promise<TopicThumbnail> {
     // type TopicCache = {
     //   [key: string]: ThumbnailTopic;
     // };
@@ -54,7 +54,7 @@ export class CoNexusGame extends GameAPI {
     //   return cachedData[topic];
     // }
 
-    const { data, error } = await this.topicByName(topic);
+    const { data, error } = await this.topicByName(section, topic);
 
     if (!data) {
       if (error) {

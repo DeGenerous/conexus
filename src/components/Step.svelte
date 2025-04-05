@@ -9,6 +9,7 @@
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
 
+  export let section: string;
   export let story_name: string;
 
   const game: CoNexusGame = new CoNexusGame();
@@ -101,14 +102,14 @@
         activeOption?.focus();
         break;
       }
-      case "-": {
+      case '-': {
         if (width < 1280) return;
         event.preventDefault();
         let stepZoom = zoom - 0.05;
         zoom = setZoom(stepZoom);
         break;
       }
-      case "=": {
+      case '=': {
         if (width < 1280) return;
         event.preventDefault();
         let stepZoom = zoom + 0.05;
@@ -122,9 +123,9 @@
   let zoom: number = 1;
 
   onMount(() => {
-    const storedZoom = localStorage.getItem("step-zoom");
+    const storedZoom = localStorage.getItem('step-zoom');
     if (storedZoom) zoom = setZoom(Number(storedZoom));
-  })
+  });
 
   const handleZoomWheel = (event: WheelEvent) => {
     if (width < 1280) return;
@@ -137,8 +138,9 @@
   };
 
   function setZoom(zoom: number): number {
-    const finalZoom = zoom < 0.3 ? 0.3 : zoom > (width / 1280) ? (width / 1280) : zoom;
-    localStorage.setItem("step-zoom", finalZoom.toString());
+    const finalZoom =
+      zoom < 0.3 ? 0.3 : zoom > width / 1280 ? width / 1280 : zoom;
+    localStorage.setItem('step-zoom', finalZoom.toString());
     return finalZoom;
   }
 
@@ -216,7 +218,11 @@
   };
 </script>
 
-<svelte:window bind:outerWidth={width} on:keydown={handleKeyDown} on:wheel={handleZoomWheel} />
+<svelte:window
+  bind:innerWidth={width}
+  on:keydown={handleKeyDown}
+  on:wheel={handleZoomWheel}
+/>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div class="zoom-slider">
@@ -247,7 +253,7 @@
     step="0.005"
     autocomplete="off"
     bind:value={zoom}
-    on:change={() => (localStorage.setItem("step-zoom", zoom.toString()))}
+    on:change={() => localStorage.setItem('step-zoom', zoom.toString())}
   />
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -259,12 +265,12 @@
     fill="none"
     on:click={() => {
       let stepZoom = zoom + 0.05;
-        zoom = setZoom(stepZoom);
+      zoom = setZoom(stepZoom);
     }}
     role="button"
     tabindex="0"
     aria-label="Zoom in"
-    >
+  >
     <circle cx="-20" cy="-20" r="70" />
     <line x1="34" y1="34" x2="85" y2="80" stroke-width="25" />
     <line x1="-55" y1="-20" x2="15" y2="-20" />
@@ -314,7 +320,7 @@
     {/if}
 
     <div class="options-container blur">
-      {#await game.getTopic(story_name)}
+      {#await game.getTopic(section, story_name)}
         <p>Loading...</p>
       {:then topic}
         <button
@@ -1633,6 +1639,12 @@
 
     .controls {
       gap: 1rem;
+    }
+  }
+
+  @media screen and (max-width: 1280px) {
+    .step-wrapper {
+      zoom: 1 !important;
     }
   }
 </style>

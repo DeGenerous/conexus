@@ -3,9 +3,13 @@
 
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
   import Tts from '@components/music/Tts.svelte';
+  import Profile from '@components/Profile.svelte';
   import Step from '@components/Step.svelte';
+  import BackArrow from '@components/utils/BackArrow.svelte';
+  import Share from '@components/utils/Share.svelte';
+  import { blankImage, serveUrl } from '@constants/media';
+  import { contractGetter } from '@constants/contracts';
   import MediaManager from '@lib/media';
-  import { CoNexusApp } from '@lib/view';
   import { CoNexusGame } from '@lib/story';
   import { loading, story, background_image } from '@stores/conexus';
   import {
@@ -15,45 +19,35 @@
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
-
   import { checkUserState } from '@utils/route-guard';
-
-  import Profile from './Profile.svelte';
-  import BackArrow from './utils/BackArrow.svelte';
-  import Share from './utils/Share.svelte';
+  import {
+    GetCache,
+    SECTION_TOPICS_KEY
+  } from '@constants/cache';
 
   export let section: string;
   export let story_name: string;
 
   let scroll: number;
 
-  const view: CoNexusApp = new CoNexusApp();
   const game: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
 
   let categoryTopics: { name: string; id: number }[] = [];
   let activeStoryIndex: number = 0;
   $: prevStoryIndex =
-    activeStoryIndex == 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
+    activeStoryIndex == 0 ? categoryTopics!.length - 1 : activeStoryIndex - 1;
+
   onMount(async () => {
     await checkUserState('/story');
 
-    categoryTopics = JSON.parse(
-      localStorage.getItem(`${section} topics`) as string,
-    );
-    const categoryTopicNames: string[] = categoryTopics.map(
+    const storedTopics: Nullable<string> = GetCache(SECTION_TOPICS_KEY(section));
+    if (storedTopics) categoryTopics = JSON.parse(storedTopics);
+    const categoryTopicNames: string[] = categoryTopics!.map(
       (story) => story.name,
     );
     activeStoryIndex = categoryTopicNames?.indexOf(story_name);
   });
-
-  const fetchGates = async (topic_id: number) => {
-    return await view.fetchTopicGates(topic_id);
-  };
-
-  const fetchClass = async (id: number) => {
-    return await view.fetchClassGate(id);
-  };
 
   let deletedStories: string[] = []; // temp storage before reload for immediate removal
   let noUnfinishedStoriesLeft: boolean = false;
@@ -90,7 +84,7 @@
         if (continuables.length == 0) noUnfinishedStoriesLeft = true;
       });
     } catch (error) {
-      console.log('Failed to delete story: ' + error);
+      console.error('Failed to delete story: ' + error);
     }
   }
 
@@ -129,7 +123,7 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $story === null}
   <section class="container-wrapper">
-    {#await game.getTopic(story_name)}
+    {#await game.getTopic(section, story_name)}
       <header>
         <BackArrow />
         <Profile />
@@ -157,7 +151,7 @@
           </div>
         </section>
       </div>
-    {:then topic: ThumbnailTopic}
+    {:then topic: TopicThumbnail}
       <header>
         <BackArrow />
         <h1 class="fade-in">
@@ -166,55 +160,53 @@
         <Profile />
       </header>
 
-      <div class="buttons-wrapper stories-switcher">
-        <a
-          class="buttons-wrapper switch-arrow"
-          href="/{section}/{categoryTopics[prevStoryIndex]
-            .name}?id={categoryTopics[prevStoryIndex].id}"
-        >
-          <img src="/icons/switch-arrow.svg" alt="Switch" />
-          <h3 style:text-align={'left'}>
-            {categoryTopics[prevStoryIndex].name}
-          </h3>
-        </a>
+      {#if categoryTopics.length > 0}
+        <div class="buttons-wrapper stories-switcher">
+          <a
+            class="buttons-wrapper switch-arrow"
+            href="/{section}/{categoryTopics[prevStoryIndex]
+              .name}?id={categoryTopics[prevStoryIndex].id}"
+          >
+            <img src="/icons/switch-arrow.svg" alt="Switch" />
+            <h3 style:text-align={'left'}>
+              {categoryTopics[prevStoryIndex].name}
+            </h3>
+          </a>
 
-        <a
-          class="buttons-wrapper switch-arrow"
-          href="/{section}/{categoryTopics[
-            (activeStoryIndex + 1) % categoryTopics.length
-          ].name}?id={categoryTopics[
-            (activeStoryIndex + 1) % categoryTopics.length
-          ].id}"
-        >
-          <h3 style:text-align={'right'}>
-            {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
-              .name}
-          </h3>
-          <img
-            src="/icons/switch-arrow.svg"
-            alt="Switch"
-            style="transform: rotate(180deg)"
-          />
-        </a>
-      </div>
+          <a
+            class="buttons-wrapper switch-arrow"
+            href="/{section}/{categoryTopics[
+              (activeStoryIndex + 1) % categoryTopics.length
+            ].name}?id={categoryTopics[
+              (activeStoryIndex + 1) % categoryTopics.length
+            ].id}"
+          >
+            <h3 style:text-align={'right'}>
+              {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
+                .name}
+            </h3>
+            <img
+              src="/icons/switch-arrow.svg"
+              alt="Switch"
+              style="transform: rotate(180deg)"
+            />
+          </a>
+        </div>
+      {/if}
 
       <div class="story-container blur">
-        {#await media.fetchStoryImage(topic.id, 'description')}
-          <div class="picture default-picture"></div>
-        {:then storyImage}
-          <img
-            class="picture fade-in"
-            src={storyImage}
-            alt={topic?.name}
-            draggable="false"
-            width="1024"
-            height="1024"
-          />
-        {/await}
+        <img
+          class="picture fade-in"
+          src={serveUrl(topic?.description_file_id) ?? blankImage}
+          alt={topic?.name}
+          draggable="false"
+          width="1024"
+          height="1024"
+        />
 
         <section class="story-info">
           <article>
-            {#if topic.genres !== ''}
+            {#if topic.genres}
               <div class="genres">
                 <p>Genres:</p>
                 <p class="genres-list fade-in">{topic.genres}</p>
@@ -257,37 +249,39 @@
         </section>
       </div>
 
-      {#await fetchGates(topic.id) then topicGatings: TopicNFTGateWithContract[]}
-        {#if topicGatings.length > 0}
-          <div class="gating">
-            <span class="gating-icon-wrapper">
-              <img class="gating-icon" src="/icons/lock.svg" alt="Restricted" />
+      {#if topic.nft_gate && topic.nft_gate.length > 0}
+        <div class="gating">
+          <span class="gating-icon-wrapper">
+            <img class="gating-icon" src="/icons/lock.svg" alt="Restricted" />
+          </span>
+          <h3>This story is only available to NFT holders:</h3>
+          {#each topic.nft_gate as { contract_name, class_name }}
+            <span>
+              {#if contractGetter(contract_name)}
+                {#await Promise.resolve(contractGetter(contract_name)) then contract}
+                  <a
+                    href={contract.link || '#'}
+                    class:inactive-link={!contract.link}
+                    target="_blank"
+                  >
+                    {contract.name}
+                    {#if class_name}
+                      ({class_name})
+                    {/if}
+                  </a>
+                {/await}
+              {/if}
             </span>
-            <h3>This story is only available to NFT holders:</h3>
-            {#each topicGatings as { name, class_id, link }}
-              <span>
-                <a href={link} class:inactive-link={!link} target="_blank">
-                  {name}
-                  {#if class_id}
-                    {#await fetchClass(class_id) then className}
-                      ({className?.name})
-                    {/await}
-                  {/if}
-                </a>
-              </span>
-            {/each}
-          </div>
-        {/if}
-      {/await}
+          {/each}
+        </div>
+      {/if}
 
-      {#await media.fetchStoryImage(topic.id, 'video') then storyVideo}
-        {#if storyVideo !== '/blank.avif'}
-          <video class="blur story-video" controls autoplay loop muted>
-            <source src={storyVideo} type="video/mp4" />
-            <track kind="captions" />
-          </video>
-        {/if}
-      {/await}
+      {#if topic?.video_file_id}
+        <video class="blur story-video" controls autoplay loop muted>
+          <source src={serveUrl(topic?.video_file_id)} type="video/mp4" />
+          <track kind="captions" />
+        </video>
+      {/if}
     {:catch}
       <header>
         <BackArrow />
@@ -418,7 +412,7 @@
   <BackgroundMusic />
   <Tts />
 
-  <Step {story_name} />
+  <Step {section} {story_name} />
 {/if}
 
 <div

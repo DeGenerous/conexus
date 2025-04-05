@@ -5,25 +5,43 @@ export default class ViewAPI extends Fetcher {
     return this.request<Section[]>('/view/sections');
   }
 
-  async sectionCategories(section: string) {
-    return this.request<CategoryInSection[]>(
-      `/view/section-categories/${section}`,
-    );
-  }
-
-  async searchSectionByTopic(section: string, topic: string) {
-    return this.request<CategoryInSection[]>(
-      `/view/topics/search/${section}?name=${topic}`,
-    );
-  }
-
   async genres() {
     return this.request<Genre[]>('/view/genres');
   }
 
-  async genreTopics(genre: string, section: string) {
-    return this.request<CategoryInSection[]>(
-      `/view/genre-topics/${section}?name=${genre}`,
+  async sectionCategories(section: string, page: number, pageSize: number) {
+    return this.request<CategoriesInSection[]>(
+      `/view/section-categories/${section}?page=${page}&limit=${pageSize}`,
+    );
+  }
+
+  async categoryTopics(category_id: number, page: number, pageSize: number) {
+    return this.request<TopicInCategory[]>(
+      `/view/category-topics/${category_id}?page=${page}&limit=${pageSize}`,
+    );
+  }
+
+  async searchSectionByTopic(
+    section: string,
+    topic: string,
+    page: number = 1,
+    pageSize: number = 5,
+    sort_order: TopicSortOrder = 'name',
+  ) {
+    return this.request<TopicInCategory[]>(
+      `/view/topics/search/${section}/${topic}?page=${page}&limit=${pageSize}&sort_order=${sort_order}`,
+    );
+  }
+
+  async genreTopics(
+    section: string,
+    genre: string,
+    page: number = 1,
+    pageSize: number = 5,
+    sort_order: TopicSortOrder = 'name',
+  ) {
+    return this.request<TopicInCategory[]>(
+      `/view/genre-topics/${section}/${genre}?page=${page}&limit=${pageSize}&sort_order=${sort_order}`,
     );
   }
 

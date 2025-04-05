@@ -8,6 +8,10 @@
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
+  import {
+    GetCache,
+    ALL_TOPICS_KEY
+  } from '@constants/cache';
 
   import GenreTags from './GenreTags.svelte';
   import Media from './Media.svelte';
@@ -66,7 +70,8 @@
       type: 'application/json',
     });
 
-    categoryTopics = localStorage.getItem('all topics')!.split(',');
+    const storedTopics: Nullable<string> = GetCache(ALL_TOPICS_KEY);
+    if (storedTopics) categoryTopics = storedTopics.split(',');
     activeStoryIndex = categoryTopics?.indexOf(topic.name);
   });
 
@@ -151,31 +156,33 @@
   {#if !topic}
     <img class="loading-icon" src="/icons/loading.png" alt="Loading" />
   {:else}
-    <div class="buttons-wrapper stories-switcher">
-      <a
-        class="buttons-wrapper switch-arrow"
-        href="/dashboard/dream/manage/{categoryTopics[prevStoryIndex]}"
-      >
-        <img src="/icons/switch-arrow.svg" alt="Switch" />
-        <h3>{categoryTopics[prevStoryIndex]}</h3>
-      </a>
+    {#if categoryTopics.length > 0}
+      <div class="buttons-wrapper stories-switcher">
+        <a
+          class="buttons-wrapper switch-arrow"
+          href="/dashboard/dream/manage/{categoryTopics[prevStoryIndex]}"
+        >
+          <img src="/icons/switch-arrow.svg" alt="Switch" />
+          <h3>{categoryTopics[prevStoryIndex]}</h3>
+        </a>
 
-      <a
-        class="buttons-wrapper switch-arrow"
-        href="/dashboard/dream/manage/{categoryTopics[
-          (activeStoryIndex + 1) % categoryTopics.length
-        ]}"
-      >
-        <h3>
-          {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]}
-        </h3>
-        <img
-          src="/icons/switch-arrow.svg"
-          alt="Switch"
-          style="transform: rotate(180deg)"
-        />
-      </a>
-    </div>
+        <a
+          class="buttons-wrapper switch-arrow"
+          href="/dashboard/dream/manage/{categoryTopics[
+            (activeStoryIndex + 1) % categoryTopics.length
+          ]}"
+        >
+          <h3>
+            {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]}
+          </h3>
+          <img
+            src="/icons/switch-arrow.svg"
+            alt="Switch"
+            style="transform: rotate(180deg)"
+          />
+        </a>
+      </div>
+    {/if}
 
     <!-- NAME, CATEGORY -->
     <div class="container blur">
@@ -267,10 +274,7 @@
             class:red-button={topic.available === 'unavailable'}
             on:click={() =>
               admin
-                .changeAvailability(
-                  topic.prompt_id,
-                  switchAvailable(topic.available),
-                )
+                .changeAvailability(topic.id, switchAvailable(topic.available))
                 .then(async () => {
                   const topic_ = await admin.fetchTopic(topic_name);
 

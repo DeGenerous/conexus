@@ -5,9 +5,6 @@
 
   export let section: string;
   export let genres: Genre[] = [];
-
-  let filteredTopics: TopicInCategory[] = [];
-
   export let getTopics: (
     text: string,
     which: 'search' | 'genre',
@@ -16,124 +13,125 @@
     sort_order?: TopicSortOrder,
   ) => Promise<TopicInCategory[]>;
 
-  let debounceTimeout: NodeJS.Timeout;
+  let filteredTopics: TopicInCategory[] = [];
+  let sortedTopics: TopicInCategory[] = [];
 
   let searchField: string = '';
+  let activeGenre: string;
+
   let page: number = 1;
   let pageSize: number = 5;
+
+  let isSearching = false;
+  let isSorting = false;
+  let isEndReached = false;
+
+  let activeMode: 'genre' | 'search' | null = null;
+
   let search_sort_order: TopicSortOrder = 'name';
   let genre_sort_order: TopicSortOrder = 'category';
 
-  let isSearching: boolean = false;
-  let isEndReached: boolean = false;
+  let debounceTimeout: NodeJS.Timeout | null = null;
 
-  let activeGetTopics: 'genres' | 'search' = 'genres';
+  async function resetAndFetch({
+    text = '',
+    mode,
+  }: {
+    text?: string;
+    mode: 'genre' | 'search';
+  }) {
+    // Cancel ongoing debounce
+    if (debounceTimeout) clearTimeout(debounceTimeout);
 
-  let isSorting: boolean = false;
-  let sortedTopics: TopicInCategory[] = [];
+    // Reset state
+    page = 1;
+    isEndReached = false;
+    filteredTopics = [];
 
-  // GENRES
-  let activeGenre: string;
-  $: getGenre(activeGenre);
+    // Update active mode
+    activeMode = mode;
 
-  async function getGenre(genre: string) {
-    if (!genre || isEndReached) return;
-    if (searchField) {
-      searchField = '';
-      handleSearch();
-    }
-    const newTopics = await getTopics(
-      genre,
-      'genre',
-      page,
-      pageSize,
-      genre_sort_order,
-    );
+    await fetchTopics({ text, mode });
+  }
+
+  async function fetchTopics({
+    text = '',
+    mode,
+  }: {
+    text?: string;
+    mode: 'genre' | 'search';
+  }) {
+    if (isEndReached) return;
+
+    const query = mode === 'search' ? text.replace(/[^a-zA-Z ]/g, '') : text;
+
+    const sortOrder = mode === 'search' ? search_sort_order : genre_sort_order;
+
+    const newTopics = await getTopics(query, mode, page, pageSize, sortOrder);
 
     if (newTopics.length === 0) {
-      isEndReached = true; // Stop fetching when we've loaded all topics
+      isEndReached = true;
       return;
     }
 
     filteredTopics = [...filteredTopics, ...newTopics];
-    sortedTopics = filteredTopics;
-
-    activeGetTopics = 'genres';
+    sortedTopics = applySorting(filteredTopics);
   }
 
+  // Genres
   const resetGenres = () => {
-    if (!activeGenre) return;
     activeGenre = '';
-    isEndReached = false;
+    activeGenre = '';
     filteredTopics = [];
+    sortedTopics = [];
+    isEndReached = false;
+    activeMode = null;
+    page = 1;
+    isSorting = false;
   };
 
-  // SEARCH
-  const handleSearch = async () => {
-    clearTimeout(debounceTimeout);
-    if (!searchField) {
-      filteredTopics = [];
-      isSearching = false;
-      isEndReached = false; // Reset end reached when search field is cleared
-      return;
-    }
-
-    if (isEndReached) return;
-
-    resetGenres();
-
-    isSearching = true; // Set isSearching to true when the debounce starts
-    debounceTimeout = setTimeout(async () => {
-      const newTopics = await getTopics(
-        searchField.replace(/[^a-zA-Z ]/g, ''),
-        'search',
-        page,
-        pageSize,
-        search_sort_order,
-      );
-
-      if (newTopics.length === 0) {
-        isEndReached = true; // Stop fetching when we've loaded all topics
-        isSearching = false; // Stop searching if no results
+  // Search
+  function handleSearchDebounced() {
+    if (debounceTimeout) clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(() => {
+      if (!searchField.trim()) {
+        // Clear state
+        filteredTopics = [];
+        sortedTopics = [];
+        isEndReached = false;
+        activeMode = null;
         return;
       }
 
-      filteredTopics = [...filteredTopics, ...newTopics];
-      sortedTopics = filteredTopics;
+      activeGenre = '';
 
-      isSearching = false; // Stop searching after results are returned
-    }, 600); // 3.75-second debounce delay
+      resetAndFetch({ text: searchField, mode: 'search' });
+    }, 600);
+  }
 
-    activeGetTopics = 'search';
-  };
+  $: if (activeGenre) {
+    searchField = '';
+    resetAndFetch({ text: activeGenre, mode: 'genre' });
+  }
 
-  // Debounce function to avoid rapid API calls
-  let debounceTimer: NodeJS.Timeout;
-  const debounceFetch = (handleGetTopics: Function) => {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-      handleGetTopics();
-    }, 600); // 0.6 second debounce time
-  };
-
-  const handleScroll = (event: Event) => {
-    if (isSearching) return;
+  function handleScroll(event: Event) {
+    if (isSearching || isEndReached || !activeMode) return;
 
     const target = event.target as HTMLElement;
     if (target.scrollLeft + target.clientWidth >= target.scrollWidth - 20) {
       page++;
-      switch (activeGetTopics) {
-        case 'search':
-          debounceFetch(() => handleSearch());
-          break;
-        case 'genres':
-          debounceFetch(() => getGenre(activeGenre));
-          break;
-      }
+      fetchTopics({
+        text: activeMode === 'genre' ? activeGenre : searchField,
+        mode: activeMode,
+      });
     }
-  };
+  }
 
-  // SORTING
+  // Sorting
+  function applySorting(data: TopicInCategory[]) {
+    return isSorting ? sortByName(data) : sortByOrder(data);
+  }
+
   const handleSorting = () => {
     if (isSorting) sortedTopics = sortByName(filteredTopics);
     else sortedTopics = sortByOrder(filteredTopics);
@@ -165,7 +163,11 @@
 
 <section class="filters">
   <GenreSelect {genres} bind:activeGenre {resetGenres} />
-  <SearchSection {handleSearch} bind:searchField bind:isSearching />
+  <SearchSection
+    handleSearch={handleSearchDebounced}
+    bind:searchField
+    bind:isSearching
+  />
 </section>
 
 {#if filteredTopics.length > 0}
@@ -213,16 +215,16 @@
         A-Z
       </button>
     </div>
-    {#key sortedTopics}
-      <div class="tiles-collection blur" on:scroll={handleScroll}>
+    <div class="tiles-collection blur" on:scroll={handleScroll}>
+      {#key sortedTopics}
         {#each filteredTopics as topic}
           <StoryTile {section} bind:topic bind:loading={isSearching} />
         {/each}
-        {#if !isEndReached}
-          <StoryTile {section} topic={null} loading={true} />
+        {#if !isEndReached && isSearching}
+          <StoryTile {section} topic={null} loading={isSearching} />
         {/if}
-      </div>
-    {/key}
+      {/key}
+    </div>
   </section>
 {/if}
 

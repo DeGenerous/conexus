@@ -20,6 +20,10 @@
     modalContent,
   } from '@stores/modal';
   import { checkUserState } from '@utils/route-guard';
+  import {
+    GetCache,
+    SECTION_TOPICS_KEY
+  } from '@constants/cache';
 
   export let section: string;
   export let story_name: string;
@@ -32,14 +36,14 @@
   let categoryTopics: { name: string; id: number }[] = [];
   let activeStoryIndex: number = 0;
   $: prevStoryIndex =
-    activeStoryIndex == 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
+    activeStoryIndex == 0 ? categoryTopics!.length - 1 : activeStoryIndex - 1;
+
   onMount(async () => {
     await checkUserState('/story');
 
-    categoryTopics = JSON.parse(
-      localStorage.getItem(`${section} topics`) as string,
-    );
-    const categoryTopicNames: string[] = categoryTopics.map(
+    const storedTopics: Nullable<string> = GetCache(SECTION_TOPICS_KEY(section));
+    if (storedTopics) categoryTopics = JSON.parse(storedTopics);
+    const categoryTopicNames: string[] = categoryTopics!.map(
       (story) => story.name,
     );
     activeStoryIndex = categoryTopicNames?.indexOf(story_name);
@@ -156,37 +160,39 @@
         <Profile />
       </header>
 
-      <div class="buttons-wrapper stories-switcher">
-        <a
-          class="buttons-wrapper switch-arrow"
-          href="/{section}/{categoryTopics[prevStoryIndex]
-            .name}?id={categoryTopics[prevStoryIndex].id}"
-        >
-          <img src="/icons/switch-arrow.svg" alt="Switch" />
-          <h3 style:text-align={'left'}>
-            {categoryTopics[prevStoryIndex].name}
-          </h3>
-        </a>
+      {#if categoryTopics.length > 0}
+        <div class="buttons-wrapper stories-switcher">
+          <a
+            class="buttons-wrapper switch-arrow"
+            href="/{section}/{categoryTopics[prevStoryIndex]
+              .name}?id={categoryTopics[prevStoryIndex].id}"
+          >
+            <img src="/icons/switch-arrow.svg" alt="Switch" />
+            <h3 style:text-align={'left'}>
+              {categoryTopics[prevStoryIndex].name}
+            </h3>
+          </a>
 
-        <a
-          class="buttons-wrapper switch-arrow"
-          href="/{section}/{categoryTopics[
-            (activeStoryIndex + 1) % categoryTopics.length
-          ].name}?id={categoryTopics[
-            (activeStoryIndex + 1) % categoryTopics.length
-          ].id}"
-        >
-          <h3 style:text-align={'right'}>
-            {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
-              .name}
-          </h3>
-          <img
-            src="/icons/switch-arrow.svg"
-            alt="Switch"
-            style="transform: rotate(180deg)"
-          />
-        </a>
-      </div>
+          <a
+            class="buttons-wrapper switch-arrow"
+            href="/{section}/{categoryTopics[
+              (activeStoryIndex + 1) % categoryTopics.length
+            ].name}?id={categoryTopics[
+              (activeStoryIndex + 1) % categoryTopics.length
+            ].id}"
+          >
+            <h3 style:text-align={'right'}>
+              {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
+                .name}
+            </h3>
+            <img
+              src="/icons/switch-arrow.svg"
+              alt="Switch"
+              style="transform: rotate(180deg)"
+            />
+          </a>
+        </div>
+      {/if}
 
       <div class="story-container blur">
         <img

@@ -8,6 +8,11 @@
   import { CoNexusApp } from '@lib/view';
   import { checkUserState, checkWeb3LoginState } from '@utils/route-guard';
   import { web3LoggedIn } from '@stores/account';
+  import {
+    SetCache,
+    SECTION_TOPICS_KEY,
+    SECTION_TOPICS_TTL
+  } from '@constants/cache';
 
   let app: CoNexusApp = new CoNexusApp();
 
@@ -107,8 +112,8 @@
         .flatMap((cat) => cat.topics)
         .sort((a, b) => a.topic_order - b.topic_order);
 
-      localStorage.setItem(
-        `${section} topics`,
+      SetCache(
+        SECTION_TOPICS_KEY(section),
         JSON.stringify(
           sectionTopics.map((topic) => ({
             order: topic.topic_order,
@@ -116,7 +121,8 @@
             name: topic.topic_name,
           })),
         ),
-      );
+        SECTION_TOPICS_TTL
+      )
     }
   }
 

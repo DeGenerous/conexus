@@ -5,6 +5,11 @@
   import { AdminApp } from '@lib/admin';
   import { CoNexusApp } from '@lib/view';
   import { checkUserState } from '@utils/route-guard';
+  import {
+    SetCache,
+    ALL_TOPICS_KEY,
+    ALL_TOPICS_TTL
+  } from '@constants/cache';
 
   import Categories from '@components/dashboard/dream/manage/Categories.svelte';
   import NFTGates from '@components/dashboard/dream/manage/NFTGates.svelte';
@@ -40,7 +45,11 @@
   const storeAllTopics = (collections: Collection[]) => {
     const allTopics = collections.map((collection) => collection.topics).flat();
     const topicNames = allTopics.map(({ topic_name }) => topic_name);
-    localStorage.setItem('all topics', topicNames.join());
+    SetCache(
+      ALL_TOPICS_KEY,
+      topicNames.join(),
+      ALL_TOPICS_TTL
+    )
   };
 
   const switchAvailable = (available: string) => {

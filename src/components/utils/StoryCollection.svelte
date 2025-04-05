@@ -7,7 +7,7 @@
 
   export let category: CategoriesInSection | null = null;
   export let section: string = '';
-  
+
   let topics: TopicInCategory[] = [];
 
   let isSorting: boolean = false;
@@ -37,7 +37,7 @@
     if (response.length == 0 || total >= category.topic_count) {
       isEndReached = true;
     }
-    
+
     handleSorting();
 
     loading = false;
@@ -99,7 +99,10 @@
   {#if !category || !section}
     <div class="collection-header">
       <p>Loading stories...</p>
-      <button class="filter blur disabled-btn-styling" style:cursor="not-allowed">
+      <button
+        class="filter blur disabled-btn-styling"
+        style:cursor="not-allowed"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="-100 -100 200 200"

@@ -32,7 +32,7 @@
   let isSorting: boolean = false;
   let sortedTopics: TopicInCategory[] = [];
 
-  // Genres
+  // GENRES
   let activeGenre: string;
   $: getGenre(activeGenre);
 
@@ -61,6 +61,14 @@
     activeGetTopics = 'genres';
   }
 
+  const resetGenres = () => {
+    if (!activeGenre) return;
+    activeGenre = '';
+    isEndReached = false;
+    filteredTopics = [];
+  };
+
+  // SEARCH
   const handleSearch = async () => {
     clearTimeout(debounceTimeout);
     if (!searchField) {
@@ -125,13 +133,7 @@
     }
   };
 
-  const resetGenres = () => {
-    if (!activeGenre) return;
-    activeGenre = '';
-    isEndReached = false;
-    filteredTopics = [];
-  };
-
+  // SORTING
   const handleSorting = () => {
     if (isSorting) sortedTopics = sortByName(filteredTopics);
     else sortedTopics = sortByOrder(filteredTopics);

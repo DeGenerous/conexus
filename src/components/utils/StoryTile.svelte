@@ -5,18 +5,20 @@
   export let topic: Nullable<TopicInCategory>;
   export let loading: boolean;
 
-  const storyName: string = topic ? (
-    topic.name.charAt(0).toUpperCase() + topic.name.slice(1)
-  ).trim() : '';
+  const storyName: string = topic
+    ? (topic.name.charAt(0).toUpperCase() + topic.name.slice(1)).trim()
+    : '';
 
   const listTopicGates = (topic: TopicInCategory) => {
-    const gates = topic.nft_gate?.map((gate) => {
-      const name = gate.contract_name;
-      const className = gate.class_name;
-      return className ? `${name} (${className})` : name;
-    }).join(', ');
+    const gates = topic.nft_gate
+      ?.map((gate) => {
+        const name = gate.contract_name;
+        const className = gate.class_name;
+        return className ? `${name} (${className})` : name;
+      })
+      .join(', ');
     return gates;
-  }
+  };
 </script>
 
 <!-- if loading show loader -->

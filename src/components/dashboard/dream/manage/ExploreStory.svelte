@@ -267,10 +267,7 @@
             class:red-button={topic.available === 'unavailable'}
             on:click={() =>
               admin
-                .changeAvailability(
-                  topic.id,
-                  switchAvailable(topic.available),
-                )
+                .changeAvailability(topic.id, switchAvailable(topic.available))
                 .then(async () => {
                   const topic_ = await admin.fetchTopic(topic_name);
 

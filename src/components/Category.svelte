@@ -148,11 +148,7 @@
   };
 </script>
 
-<SearchAndGenre
-  {section}
-  {genres}
-  {getTopics}
-/>
+<SearchAndGenre {section} {genres} {getTopics} />
 
 <section class="categories-container" on:scroll={handleScroll}>
   {#if categories.length > 0}

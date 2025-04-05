@@ -21,20 +21,20 @@ type TopicsInSection = {
   topic_id: number;
   topic_name: string;
   topic_order: number;
-}
+};
 
 type CategoriesInSection = {
   id: number;
   name: string;
   order: number;
-  topic_count: number
+  topic_count: number;
   topics: TopicsInSection[];
 };
 
 type NFTGate = {
   contract_name: SupportedContracts;
   class_name?: string;
-}
+};
 
 type TopicView = {
   id: number;

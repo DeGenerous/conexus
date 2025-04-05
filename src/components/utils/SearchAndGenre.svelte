@@ -2,6 +2,7 @@
   import GenreSelect from '@components/utils/GenreSelect.svelte';
   import SearchSection from '@components/utils/SearchSection.svelte';
   import StoryTile from '@components/utils/StoryTile.svelte';
+  import { toastStore } from '@stores/toast';
 
   export let categories: CategoriesInSection[] = [];
   export let section: string;
@@ -71,6 +72,10 @@
     const newTopics = await getTopics(query, mode, page, pageSize, sortOrder);
 
     if (newTopics.length === 0) {
+      if (filteredTopics.length === 0) {
+        toastStore.show('Couldn’t find what you’re looking for. No matching stories in this realm.', 'error');
+      }
+
       isEndReached = true;
       return;
     }

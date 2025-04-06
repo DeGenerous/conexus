@@ -74,6 +74,7 @@
         break;
       }
       case 'ArrowUp': {
+        event.preventDefault();
         if (step.step !== $story?.maxStep || $loading || pointerOverOption)
           return;
         handleSelectorSvg(activeOptionNumber, 'blur');
@@ -87,6 +88,7 @@
         break;
       }
       case 'ArrowDown': {
+        event.preventDefault();
         if (step.step !== $story?.maxStep || $loading || pointerOverOption)
           return;
         handleSelectorSvg(activeOptionNumber, 'blur');
@@ -101,12 +103,14 @@
         break;
       }
       case '-': {
+        event.preventDefault();
         if (width < 1280) return;
         let stepZoom = zoom - 0.05;
         zoom = setZoom(stepZoom);
         break;
       }
       case '=': {
+        event.preventDefault();
         if (width < 1280) return;
         let stepZoom = zoom + 0.05;
         zoom = setZoom(stepZoom);
@@ -216,7 +220,7 @@
 
 <svelte:window
   bind:innerWidth={width}
-  on:keydown|preventDefault={handleKeyDown}
+  on:keydown={handleKeyDown}
   on:wheel={handleZoomWheel}
 />
 
@@ -1546,6 +1550,7 @@
     }
 
     hr {
+      width: 75rem;
       border: 0.1rem solid rgba(51, 226, 230, 0.5);
     }
 

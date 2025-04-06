@@ -36,7 +36,7 @@
   let categoryTopics: string[] = [];
   let activeStoryIndex: number = 0;
   $: prevStoryIndex =
-    activeStoryIndex == 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
+    activeStoryIndex <= 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
 
   onMount(async () => {
     const topic_ = await admin.fetchTopic(topic_name);
@@ -68,8 +68,10 @@
     });
 
     const storedTopics: Nullable<string> = GetCache(ALL_TOPICS_KEY);
-    if (storedTopics) categoryTopics = storedTopics.split(',');
-    activeStoryIndex = categoryTopics?.indexOf(topic.name);
+    if (storedTopics) {
+      categoryTopics = storedTopics.split(',');
+      activeStoryIndex = categoryTopics?.indexOf(topic.name);
+    }
   });
 
   let editingName: boolean = false;

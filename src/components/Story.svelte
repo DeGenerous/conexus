@@ -33,7 +33,7 @@
   let categoryTopics: { name: string; id: number }[] = [];
   let activeStoryIndex: number = 0;
   $: prevStoryIndex =
-    activeStoryIndex == 0 ? categoryTopics!.length - 1 : activeStoryIndex - 1;
+    activeStoryIndex <= 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
 
   onMount(async () => {
     await checkUserState('/story');
@@ -41,11 +41,14 @@
     const storedTopics: Nullable<string> = GetCache(
       SECTION_TOPICS_KEY(section),
     );
-    if (storedTopics) categoryTopics = JSON.parse(storedTopics);
-    const categoryTopicNames: string[] = categoryTopics!.map(
-      (story) => story.name,
-    );
-    activeStoryIndex = categoryTopicNames?.indexOf(story_name);
+    if (storedTopics) {
+      categoryTopics = JSON.parse(storedTopics);
+      const categoryTopicNames: string[] = categoryTopics!.map(
+        (story) => story.name,
+      );
+      activeStoryIndex = categoryTopicNames?.indexOf(story_name);
+    }
+
   });
 
   let deletedStories: string[] = []; // temp storage before reload for immediate removal

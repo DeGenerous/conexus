@@ -34,9 +34,12 @@
     localStorage.setItem(`${type}-volume`, JSON.stringify($volume));
   };
 
-  const update = (e: Event) => {
-    const target = e.target as HTMLInputElement;
-    volume.set({ muted: false, volume: +target.value, restart: false });
+  const update = () => {
+    volume.set({
+      muted: false,
+      volume: inputValue,
+      restart: false
+    });
     localStorage.setItem(`${type}-volume`, JSON.stringify($volume));
   };
 
@@ -301,7 +304,7 @@
     min="0"
     max="1"
     step="0.01"
-    value={inputValue}
+    bind:value={inputValue}
     on:change={update}
     disabled={disabledInput}
   />

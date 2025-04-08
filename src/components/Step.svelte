@@ -125,6 +125,7 @@
   onMount(() => {
     const storedZoom = localStorage.getItem('step-zoom');
     if (storedZoom) zoom = setZoom(Number(storedZoom));
+    iOSdevice = detectIOS();
   });
 
   const handleZoomWheel = (event: WheelEvent) => {
@@ -216,6 +217,20 @@
     }
     localStorage.setItem('theme', theme);
   };
+
+  let iOSdevice: boolean = false;
+  const detectIOS = () => {
+    return [
+      'iPad Simulator',
+      'iPhone Simulator',
+      'iPod Simulator',
+      'iPad',
+      'iPhone',
+      'iPod'
+    ].includes(navigator.platform)
+    // iPad on iOS 13 detection
+    || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+  }
 </script>
 
 <svelte:window
@@ -1076,10 +1091,12 @@
             </svg>
           {/if}
         </div>
-        <div class="mobile-sliders">
-          <Slider type="music" volume={background_volume} />
-          <Slider type="voice" volume={tts_volume} restartable />
-        </div>
+        {#if !iOSdevice}
+          <div class="mobile-sliders">
+            <Slider type="music" volume={background_volume} />
+            <Slider type="voice" volume={tts_volume} restartable />
+          </div>
+        {/if}
       </div>
     {/if}
   </section>

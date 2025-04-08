@@ -43,22 +43,13 @@
     loading = false;
   };
 
-  // Debounce function to avoid rapid API calls
-  let debounceTimer: NodeJS.Timeout;
-  const debounceFetch = () => {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-      fetchTopics();
-    }, 600); // 0.6 second debounce time
-  };
-
   // Detect when user scrolls to the end of the StoryTile container
   const handleScroll = (event: Event) => {
     if (loading || isEndReached) return;
 
     const target = event.target as HTMLElement;
     if (target.scrollLeft + target.clientWidth >= target.scrollWidth - 20) {
-      debounceFetch(); // Load next set of topics with debounce
+      fetchTopics(); // Load next set of topics with debounce
     }
   };
 
@@ -194,16 +185,13 @@
         A-Z
       </button>
     </div>
-    {#key sortedTopics}
-      <div class="tiles-collection blur" on:scroll={handleScroll}>
+    <div class="tiles-collection blur" on:scroll={handleScroll}>
+      {#key sortedTopics}
         {#each sortedTopics as topic}
           <StoryTile {section} bind:topic bind:loading />
         {/each}
-        {#if !isEndReached}
-          <StoryTile {section} topic={null} loading={true} />
-        {/if}
-      </div>
-    {/key}
+      {/key}
+    </div>
   {/if}
 </section>
 

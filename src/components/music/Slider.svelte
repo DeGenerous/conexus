@@ -34,9 +34,12 @@
     localStorage.setItem(`${type}-volume`, JSON.stringify($volume));
   };
 
-  const update = (e: Event) => {
-    const target = e.target as HTMLInputElement;
-    volume.set({ muted: false, volume: +target.value, restart: false });
+  const update = () => {
+    volume.set({
+      muted: false,
+      volume: inputValue,
+      restart: false
+    });
     localStorage.setItem(`${type}-volume`, JSON.stringify($volume));
   };
 
@@ -301,7 +304,7 @@
     min="0"
     max="1"
     step="0.01"
-    value={inputValue}
+    bind:value={inputValue}
     on:change={update}
     disabled={disabledInput}
   />
@@ -417,21 +420,21 @@
     }
   }
 
-  @media screen and (min-width: 1920px) {
+  @media screen and (min-width: 1280px) {
     div {
-      height: 3.5rem;
+      height: 3rem;
       padding: 0.5rem 1rem;
       gap: 1rem;
       border-width: 0.05rem;
     }
 
     svg {
-      height: 1.5rem;
-      width: 1.5rem;
+      height: 1.25rem;
+      width: 1.25rem;
     }
 
     input {
-      width: 10rem;
+      width: 7.5rem;
     }
   }
 </style>

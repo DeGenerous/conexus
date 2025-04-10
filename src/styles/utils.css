@@ -184,8 +184,18 @@
 }
 
 .stories-switcher {
-  width: 90%;
+  width: 100vw;
+  padding-inline: 2vw;
+  gap: 2vw;
   justify-content: space-between;
+  flex-flow: row nowrap !important;
+}
+
+.switch-arrow {
+  flex-flow: row nowrap !important;
+  gap: 1vw;
+  opacity: 0.75;
+  text-decoration: none !important;
 }
 
 .switch-arrow img {
@@ -195,11 +205,6 @@
 
 .switch-arrow h3 {
   color: white !important;
-}
-
-.switch-arrow {
-  opacity: 0.75;
-  text-decoration: none !important;
 }
 
 .switch-arrow:hover,
@@ -214,6 +219,29 @@
 .nft-link:hover,
 .nft-link:active {
   color: rgb(255, 165, 40);
+}
+
+.filter {
+  padding: 0 1vw;
+  color: #dedede;
+}
+
+.filter-image {
+  height: 2vw !important;
+  width: auto;
+}
+
+.filter-wrapper {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 1vw;
+  padding: 0.5vw;
+  padding-left: 1vw;
+  font-size: 1.5vw;
+  background-color: rgba(56, 117, 250, 0.5);
+  border: 0.1vw solid rgba(51, 226, 230, 0.5);
+  border-radius: 1vw;
 }
 
 @media only screen and (max-width: 600px) {
@@ -287,13 +315,37 @@
     border-radius: 0;
   }
 
+  .stories-switcher {
+    gap: 1em;
+    padding-inline: 1em;
+  }
+
+  .switch-arrow {
+    gap: 0.5em;
+  }
+
   .switch-arrow img {
     width: 2em;
     height: 2em;
   }
 
-  .switch-arrow {
-    flex-wrap: nowrap;
-    justify-content: center;
+  .filter {
+    border-radius: 0.5em;
+    padding: 0.25em;
+    width: 33%;
+  }
+
+  .filter-image {
+    height: 1.5em !important;
+    padding: 0.25em;
+  }
+
+  .filter-wrapper {
+    padding: 0.25em;
+    border-radius: 0.5em;
+    gap: 0.25em;
+    font-size: 1em;
+    line-height: 1.5em;
+    width: 100%;
   }
 }

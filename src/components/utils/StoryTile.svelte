@@ -1,61 +1,62 @@
 <script lang="ts">
-  import MediaManager from '@lib/media';
-  import { CoNexusApp } from '@lib/view';
-  import { onMount } from 'svelte';
+  import { blankImage, serveUrl } from '@constants/media';
 
   export let section: string;
-  export let topicID: number;
-  export let topicName: string;
+  export let topic: Nullable<TopicInCategory>;
+  export let loading: boolean;
 
-  const media: MediaManager = new MediaManager();
-  const view: CoNexusApp = new CoNexusApp();
+  const storyName: string = topic
+    ? (topic.name.charAt(0).toUpperCase() + topic.name.slice(1)).trim()
+    : '';
 
-  const storyName: string = (
-    topicName.charAt(0).toUpperCase() + topicName.slice(1)
-  ).trim();
-
-  let topicGatings: TopicNFTGate[] = [];
-  onMount(async () => {
-    topicGatings = await view.fetchTopicGates(topicID);
-  });
-
-  const blankPicture = '/blank.avif';
+  const listTopicGates = (topic: TopicInCategory) => {
+    const gates = topic.nft_gate
+      ?.map((gate) => {
+        const name = gate.contract_name;
+        const className = gate.class_name;
+        return className ? `${name} (${className})` : name;
+      })
+      .join(', ');
+    return gates;
+  };
 </script>
 
-<a
-  class="tile"
-  class:gated-story={topicGatings.length > 0}
-  href="/{section}/{topicName}?id={topicID}"
->
-  {#await media.fetchStoryImage(topicID, 'tile')}
+<!-- if loading show loader -->
+{#if loading}
+  <div class="tile loading-tile" style="cursor: progress;">
+    <div
+      class="tile-picture loading-tile-picture loading-animation"
+      style="cursor: inherit;"
+    ></div>
+    <p
+      class="tile-title loading-tile-title loading-animation"
+      style="cursor: inherit;"
+    ></p>
+  </div>
+{:else if topic}
+  <a
+    class="tile"
+    class:gated-story={topic.nft_gate && topic.nft_gate.length > 0}
+    href="/{section}/{topic.name}?id={topic.id}"
+  >
     <img
       class="tile-picture"
       loading="lazy"
-      src={blankPicture}
+      src={serveUrl(topic.tile_file_id) ?? blankImage}
       alt={storyName}
       draggable="false"
       height="1024"
       width="1024"
     />
-  {:then storyImage}
-    <img
-      class="tile-picture"
-      loading="lazy"
-      src={storyImage}
-      alt={storyName}
-      draggable="false"
-      height="1024"
-      width="1024"
-    />
-  {/await}
-  <p class="tile-title">{storyName}</p>
-  {#if topicGatings.length > 0}
-    <div class="gatings">
-      <img class="gating-icon" src="/icons/lock.svg" alt="Restricted" />
-      <h3>{topicGatings.map((gate) => gate.contract_name).join(', ')}</h3>
-    </div>
-  {/if}
-</a>
+    <p class="tile-title">{storyName}</p>
+    {#if topic.nft_gate && topic.nft_gate.length > 0}
+      <div class="gatings">
+        <img class="gating-icon" src="/icons/lock.svg" alt="Restricted" />
+        <h3>{listTopicGates(topic)}</h3>
+      </div>
+    {/if}
+  </a>
+{/if}
 
 <style>
   .gatings {

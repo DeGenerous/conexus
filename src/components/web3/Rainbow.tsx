@@ -34,6 +34,7 @@ const Web3Provider = ({ linking, children }) => {
     projectId: '0b8a3fac6220753a719b9aeceb8f19fb',
     chains: [mainnet, polygon, optimism, arbitrum, base],
     ssr: false, // If your dApp uses server side rendering (SSR)
+    pollingInterval: 12000, // How often (in ms) to poll for updates
   });
 
   const authenticationAdapter = createAuthenticationAdapter({

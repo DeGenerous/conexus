@@ -13,14 +13,13 @@
 
   let viewApp = new CoNexusApp();
 
-  let topicGatings: TopicNFTGate[] = [];
+  let topicGatings: TopicNFTGateWithContract[] = [];
   const availableContracts: SupportedContracts[] = ['Potential', 'Ark', 'Apes'];
   let newGating = '';
   let newClassGating = '';
 
   const fetchGates = async () => {
     topicGatings = await viewApp.fetchTopicGates(topic.id);
-    console.log(topicGatings); //
   };
 
   onMount(fetchGates);

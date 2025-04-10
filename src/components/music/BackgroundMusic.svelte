@@ -2,25 +2,19 @@
   import { onMount } from 'svelte';
 
   import { background_music } from '@stores/conexus';
-  import { background_volume, tts_volume } from '@stores/volumes';
+  import { background_volume } from '@stores/volumes';
 
   let audio: HTMLAudioElement;
 
+  $: if (audio && $background_volume) setVolume();
+
   onMount(() => {
-    background_music.subscribe((src) => {
-      if (src == null) {
-        return;
-      }
-
-      audio.src = src;
-      audio.loop = true;
-      audio.play();
-    });
-
-    background_volume.subscribe(({ muted, volume }) => {
-      audio.volume = !muted ? volume : 0;
-    });
+    audio.src = $background_music!;
+    audio.loop = true;
+    audio.play();
   });
+
+  const setVolume = () => (audio.volume = $background_volume.muted ? 0 : $background_volume.volume);
 </script>
 
 <audio bind:this={audio}></audio>

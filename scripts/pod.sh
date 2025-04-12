@@ -18,7 +18,7 @@ podman rm -f $CONTAINER_NAME
 podman pod rm -f $POD_NAME
 
 # Create a new pod
-podman pod create --name $POD_NAME -p 4324:4321
+podman pod create --name $POD_NAME -p 4329:4321
 
 # Run the container in the pod
 podman run -d --name $CONTAINER_NAME --pod $POD_NAME $APP_NAME

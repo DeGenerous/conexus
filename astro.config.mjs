@@ -10,15 +10,7 @@ export default defineConfig({
   adapter: vercel(),
   vite: {
     server: {
-      proxy: {
-        // remove in production
-        '/api': {
-          target: import.meta.env.VITE_API_URL,
-          changeOrigin: true,
-          secure: false,
-          rewrite: (path) => path.replace(/^\/api/, ''),
-        },
-      },
+      
       allowedHosts: ['conexus.degenerousdao.com', 'conexus-test.degenerousdao.com'],
     },
   },

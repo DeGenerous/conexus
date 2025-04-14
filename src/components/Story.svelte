@@ -682,6 +682,7 @@
     text-decoration: none !important;
     filter: none !important;
     cursor: not-allowed;
+    pointer-events: none;
   }
 
   .gating span {

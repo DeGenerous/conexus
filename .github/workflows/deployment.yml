@@ -5,9 +5,7 @@ name: Go
 
 on:
   push:
-    branches: [ "staging" ]
-  pull_request:
-    branches: [ "staging" ]
+    branches: [ "main" ]
 
 jobs:
 
@@ -24,9 +22,9 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         script: |
-            cd ~/git/frontend/conexus-test
+            cd ~/git/frontend/conexus
             pwd
-            git checkout staging
+            git checkout main
             git pull
             cd scripts
             ./pod.sh

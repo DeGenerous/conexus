@@ -24,7 +24,7 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         script: |
-            cd ~/git/conexus
+            cd ~/git/frontend/conexus-test
             pwd
             git checkout staging
             git pull

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { blankImage, serveUrl } from '@constants/media';
+  import { contractGetter } from '@constants/contracts';
 
   export let section: string;
   export let topic: Nullable<TopicInCategory>;
@@ -14,7 +15,8 @@
       ?.map((gate) => {
         const name = gate.contract_name;
         const className = gate.class_name;
-        return className ? `${name} (${className})` : name;
+        const convertedName = contractGetter(name).name;
+        return className ? `${convertedName} (${className})` : convertedName;
       })
       .join(', ');
     return gates;

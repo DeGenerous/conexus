@@ -315,6 +315,8 @@ export class AdminApp extends AdminAPI {
 
     ClearCache(CATEGORY_CACHE_KEY);
 
+    toastStore.show(`Created new category - ID: ${data}`, 'info');
+
     return data;
   }
 

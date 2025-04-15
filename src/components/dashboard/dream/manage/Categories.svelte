@@ -12,7 +12,11 @@
   })
 
   const createNewCategory = async () => {
-    await admin.newCategory(newCategoryName);
+    await admin.newCategory(newCategoryName)
+      .then(async () => {
+        categories = await admin.fetchCategories();
+        newCategoryName = '';
+      });
   }
 </script>
 

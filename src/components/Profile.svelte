@@ -137,7 +137,7 @@
       },
       referral_code: referralCode,
       newsletter: newsletterSignup,
-    });
+    }).then(() => (location.reload()));
   };
 
   // Utility functions

@@ -108,19 +108,18 @@
     if (categories.length > 0) {
       setTimeout(observeLastCategory, 500);
 
-      const sectionTopics = categories
-        .flatMap((cat) => cat.topics)
-        .sort((a, b) => a.topic_order - b.topic_order);
+      const sectionTopics = categories.map((cat) => {
+        return cat.topics.map(({topic_id, topic_name}) => {
+          return {
+            id: topic_id,
+            name: topic_name
+          };
+        })
+      }).flat();
 
       SetCache(
         SECTION_TOPICS_KEY(section),
-        JSON.stringify(
-          sectionTopics.map((topic) => ({
-            order: topic.topic_order,
-            id: topic.topic_id,
-            name: topic.topic_name,
-          })),
-        ),
+        JSON.stringify(sectionTopics),
         SECTION_TOPICS_TTL,
       );
     }

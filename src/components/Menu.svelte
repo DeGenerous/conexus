@@ -33,7 +33,7 @@
     on:pointerout={() => (signInSvgFocus = false)}
   >
     <DoorSVG state="inside" {signInSvgFocus} />
-    Sign in your Profile
+    PLAY NOW
   </button>
 {/if}
 

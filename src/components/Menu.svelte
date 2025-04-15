@@ -20,7 +20,7 @@
 {:else if isLogged}
   <Intro />
 {:else}
-  <video controls autoplay loop muted>
+  <video class="blur" controls autoplay loop muted>
     <source src="CoNexusTrailer.webm" type="video/webm" />
     <source src="CoNexusTrailer.mp4" type="video/mp4" />
     <track kind="captions" />

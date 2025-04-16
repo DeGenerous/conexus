@@ -20,9 +20,15 @@
 {:else if isLogged}
   <Intro />
 {:else}
-  <video class="blur" controls autoplay loop muted>
+  <video class="blur pc-video" controls autoplay loop muted>
     <source src="CoNexusTrailer.webm" type="video/webm" />
     <source src="CoNexusTrailer.mp4" type="video/mp4" />
+    <track kind="captions" />
+  </video>
+
+  <video class="blur mobile-video" controls autoplay loop muted>
+    <source src="CoNexusTrailerMobile.webm" type="video/webm" />
+    <source src="CoNexusTrailerMobile.mp4" type="video/mp4" />
     <track kind="captions" />
   </video>
   
@@ -48,6 +54,14 @@
       0 0 0.5vw #010020;
   }
 
+  .pc-video {
+    display: block;
+  }
+
+  .mobile-video {
+    display: none;
+  }
+
   .loading-icon {
     height: 13.1vw;
   }
@@ -57,6 +71,14 @@
       width: 90%;
       padding: 0;
       border-radius: 1em;
+    }
+
+    .pc-video {
+      display: none;
+    }
+
+    .mobile-video {
+      display: block;
     }
 
     .loading-icon {

@@ -16,6 +16,7 @@ import { WagmiProvider } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains';
 
 import { SetCache, USER_CACHE_KEY, USER_CACHE_TTL } from '@constants/cache';
+import { assetsURL } from '@constants/media';
 import { web3LoggedIn, authenticated } from '@stores/account';
 import { AccountAPI, AuthAPI } from '@service/routes';
 
@@ -29,7 +30,7 @@ const Web3Provider = ({ linking, children }) => {
 
   const config = getDefaultConfig({
     appName: 'Degenerous DAO',
-    appIcon: 'https://media.degenerousdao.com/assets/logo.png',
+    appIcon: `${assetsURL}/logo.png`,
     appUrl: 'https://degenerousdao.com',
     projectId: '0b8a3fac6220753a719b9aeceb8f19fb',
     chains: [mainnet, polygon, optimism, arbitrum, base],

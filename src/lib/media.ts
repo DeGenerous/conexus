@@ -1,11 +1,5 @@
 // import { IMAGE_UPLOAD_DIR, MUSIC_UPLOAD_DIR } from '@/config';
-import {
-  GetCache,
-  SetCache,
-  MEDIA_CACHE_KEY,
-  MEDIA_CACHE_TTL,
-  ClearCache,
-} from '@constants/cache';
+
 import { serveUrl } from '@constants/media';
 import { tracks } from '@constants/tracks';
 import { MediaAPI } from '@service/routes';

@@ -1,6 +1,7 @@
 ---
-import Layout from '@layouts/Layout.astro';
 import Story from '@components/Story.svelte';
+import { mediaURL } from '@constants/media';
+import Layout from '@layouts/Layout.astro';
 
 const { section, story } = Astro.params;
 
@@ -15,7 +16,7 @@ const meta = {
   title: `Welcome to CoNexus - where stories know no bounds`,
   description: `Explore ${storyName} story!`,
   image:
-    `https://media.degenerousdao.com/conexus-categories/images/${storyImage}/description/description.avif` ||
+    `${mediaURL}/conexus-categories/images/${storyImage}/description/description.avif` ||
     '/favicon.ico',
   url: `https://conexus-test.degenerousdao.com/${section}/${story}`,
   nav: storyName,

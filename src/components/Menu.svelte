@@ -1,5 +1,6 @@
 <script lang="ts">
   import DoorSVG from '@components/icons/Door.svelte';
+  import { trailerURL } from '@constants/media';
   import { authenticated, userCheck } from '@stores/account';
   import { showProfile } from '@stores/modal';
 
@@ -21,17 +22,17 @@
   <Intro />
 {:else}
   <video class="blur pc-video" controls autoplay loop muted>
-    <source src="CoNexusTrailer.webm" type="video/webm" />
-    <source src="CoNexusTrailer.mp4" type="video/mp4" />
+    <source src={`${trailerURL}/CoNexusTrailer.webm`} type="video/webm" />
+    <source src={`${trailerURL}/CoNexusTrailer.mp4`} type="video/mp4" />
     <track kind="captions" />
   </video>
 
   <video class="blur mobile-video" controls autoplay loop muted>
-    <source src="CoNexusTrailerMobile.webm" type="video/webm" />
-    <source src="CoNexusTrailerMobile.mp4" type="video/mp4" />
+    <source src={`${trailerURL}/CoNexusTrailerMobile.webm`} type="video/webm" />
+    <source src={`${trailerURL}/CoNexusTrailerMobile.mp4`} type="video/mp4" />
     <track kind="captions" />
   </video>
-  
+
   <button
     class="blur"
     on:click={() => ($showProfile = true)}

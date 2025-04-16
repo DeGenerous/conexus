@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { CATEGORY_CACHE_KEY } from '@constants/cache';
   import { AdminApp } from '@lib/admin';
   import { onMount } from 'svelte';
 
@@ -14,6 +15,9 @@
   const createNewCategory = async () => {
     await admin.newCategory(newCategoryName)
       .then(async () => {
+        // delete categories from localstorage
+        localStorage.removeItem(CATEGORY_CACHE_KEY);
+        // fetch categories again
         categories = await admin.fetchCategories();
         newCategoryName = '';
       });

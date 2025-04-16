@@ -57,3 +57,8 @@ type TopicInCategory = {
 } & TopicView;
 
 type TopicSortOrder = 'name' | 'category';
+
+type VideoPlaylist = {
+  src: string;
+  type: string;
+}

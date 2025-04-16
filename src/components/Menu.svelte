@@ -3,6 +3,7 @@
   import { trailerURL } from '@constants/media';
   import { authenticated, userCheck } from '@stores/account';
   import { showProfile } from '@stores/modal';
+  import VideoPlayer from './VideoPlayer.svelte';
 
   import Intro from './Intro.svelte';
 
@@ -21,7 +22,7 @@
 {:else if isLogged}
   <Intro />
 {:else}
-  <video class="blur pc-video" controls autoplay loop muted>
+  <!-- <video class="blur pc-video" controls autoplay loop muted>
     <source src={`${trailerURL}/CoNexusTrailer.webm`} type="video/webm" />
     <source src={`${trailerURL}/CoNexusTrailer.mp4`} type="video/mp4" />
     <track kind="captions" />
@@ -31,7 +32,17 @@
     <source src={`${trailerURL}/CoNexusTrailerMobile.webm`} type="video/webm" />
     <source src={`${trailerURL}/CoNexusTrailerMobile.mp4`} type="video/mp4" />
     <track kind="captions" />
-  </video>
+  </video> -->
+  <VideoPlayer
+    webSources={[
+      { src: `${trailerURL}/CoNexusTrailer.webm`, type: 'video/webm' },
+      { src: `${trailerURL}/CoNexusTrailer.mp4`, type: 'video/mp4' },
+    ]}
+    mobileSources={[
+      { src: `${trailerURL}/CoNexusTrailerMobile.webm`, type: 'video/webm' },
+      { src: `${trailerURL}/CoNexusTrailerMobile.mp4`, type: 'video/mp4' },
+    ]}
+  />
 
   <button
     class="blur"

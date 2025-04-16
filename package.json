@@ -14,10 +14,10 @@
     "@sveltejs/vite-plugin-svelte": "5.0.3"
   },
   "devDependencies": {
-    "@astrojs/svelte": "7.0.6",
+    "@astrojs/svelte": "7.0.10",
     "@sveltejs/vite-plugin-svelte": "5.0.3",
     "astro": "^5.5.2",
-    "svelte": "5.23.0"
+    "svelte": "5.27.0"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

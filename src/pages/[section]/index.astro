@@ -1,5 +1,6 @@
 ---
 import Category from '@components/Category.svelte';
+import { mediaURL } from '@constants/media';
 import Layout from '@layouts/Layout.astro';
 
 const { section } = Astro.params;
@@ -38,7 +39,7 @@ const sectionName = section?.replace(/%20/g, ' ');
 const meta = {
   title: `Welcome to CoNexus - where stories know no bounds `,
   description: `Explore all the best stories ${sectionName} has to offer`,
-  image: `https://media.degenerousdao.com/conexus-sections/${sectionImage?.toLocaleLowerCase()}.avif`,
+  image: `${mediaURL}/conexus-sections/${sectionImage?.toLocaleLowerCase()}.avif`,
   imageType: 'image/avif',
   url: `https://conexus-test.degenerousdao.com/${section}`,
   header: section,

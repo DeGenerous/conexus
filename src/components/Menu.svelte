@@ -1,5 +1,6 @@
 <script lang="ts">
   import DoorSVG from '@components/icons/Door.svelte';
+  import { trailerURL } from '@constants/media';
   import { authenticated, userCheck } from '@stores/account';
   import { showProfile } from '@stores/modal';
 
@@ -20,34 +21,46 @@
 {:else if isLogged}
   <Intro />
 {:else}
-  <section class="blur">
-    <h3>Please</h3>
-    <button
-      on:click={() => ($showProfile = true)}
-      on:pointerover={() => (signInSvgFocus = true)}
-      on:pointerout={() => (signInSvgFocus = false)}
-    >
-      <DoorSVG state="inside" {signInSvgFocus} />
-      Sign in your Profile
-    </button>
-    <h3>to access stories.</h3>
-  </section>
+  <video class="blur pc-video" controls autoplay loop muted>
+    <source src={`${trailerURL}/CoNexusTrailer.webm`} type="video/webm" />
+    <source src={`${trailerURL}/CoNexusTrailer.mp4`} type="video/mp4" />
+    <track kind="captions" />
+  </video>
+
+  <video class="blur mobile-video" controls autoplay loop muted>
+    <source src={`${trailerURL}/CoNexusTrailerMobile.webm`} type="video/webm" />
+    <source src={`${trailerURL}/CoNexusTrailerMobile.mp4`} type="video/mp4" />
+    <track kind="captions" />
+  </video>
+
+  <button
+    class="blur"
+    on:click={() => ($showProfile = true)}
+    on:pointerover={() => (signInSvgFocus = true)}
+    on:pointerout={() => (signInSvgFocus = false)}
+  >
+    <DoorSVG state="inside" {signInSvgFocus} />
+    PLAY NOW
+  </button>
 {/if}
 
 <style>
-  section {
-    width: 50vw;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vw;
-    padding: 2vw;
+  video {
+    width: 75vw;
     background-color: rgba(1, 0, 32, 0.75);
     border-radius: 1.5vw;
+    padding: 0.25vw;
     box-shadow:
       inset 0 0 0.5vw rgba(51, 226, 230, 0.5),
       0 0 0.5vw #010020;
+  }
+
+  .pc-video {
+    display: block;
+  }
+
+  .mobile-video {
+    display: none;
   }
 
   .loading-icon {
@@ -55,11 +68,18 @@
   }
 
   @media only screen and (max-width: 600px) {
-    section {
-      width: 95%;
-      gap: 0.5em;
-      padding: 1em;
+    video {
+      width: 90%;
+      padding: 0;
       border-radius: 1em;
+    }
+
+    .pc-video {
+      display: none;
+    }
+
+    .mobile-video {
+      display: block;
     }
 
     .loading-icon {

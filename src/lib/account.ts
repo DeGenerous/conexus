@@ -51,7 +51,7 @@ export class Account {
     web3LoggedIn.set(true);
   }
 
-  async signup(signupData: ReferralSignUp): Promise<void> {
+  async signup(signupData: ReferralSignUp): Promise<Nullable<void>> {
     const { data, error } = await this.authAPI.signup(signupData);
 
     if (!data) {
@@ -60,7 +60,7 @@ export class Account {
       } else {
         accountError.set({ signup: 'Error signing up' });
       }
-      return;
+      return null;
     }
 
     // Store user data in localStorage with timestamp

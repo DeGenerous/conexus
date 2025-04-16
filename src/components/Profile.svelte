@@ -137,6 +137,8 @@
       },
       referral_code: referralCode,
       newsletter: newsletterSignup,
+    }).then((res) => {
+      if (res !== null) location.reload();
     });
   };
 

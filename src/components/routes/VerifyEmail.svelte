@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
 
   import { Account } from '@lib/account';
+  import { USER_CACHE_KEY, ClearCache } from '@constants/cache';
 
   export let token: string;
 
@@ -10,6 +11,7 @@
   onMount(() => {
     acct.confirmEmail(token).then((res) => {
       if (res === true) {
+        ClearCache(USER_CACHE_KEY);
         window.location.href = '/';
       }
     });

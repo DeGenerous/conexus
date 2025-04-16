@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { mediaURL } from '@constants/media';
   import { web3LoggedIn } from '@stores/account';
 
   export let section: Section;
@@ -12,7 +13,7 @@
   // sectionImage is the name of the section but remove the spaces
   const imageName: string = section.name.replace(/\s/g, '');
 
-  const sectionImage: string = `https://media.degenerousdao.com/conexus-sections/${imageName.toLocaleLowerCase()}.avif`;
+  const sectionImage: string = `${mediaURL}/conexus-sections/${imageName.toLocaleLowerCase()}.avif`;
 
   const blankPicture: string = '/blank.avif'; // temp
 </script>

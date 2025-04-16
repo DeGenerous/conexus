@@ -2,6 +2,8 @@ import { BrowserProvider } from 'ethers';
 import detectProvider from '@metamask/detect-provider';
 import { createCoinbaseWalletSDK } from '@coinbase/wallet-sdk';
 
+import { assetsURL } from '@constants/media';
+
 export class Web3Provider {
   #provider: BrowserProvider;
 
@@ -20,7 +22,7 @@ export class Web3Provider {
     // Initialize Coinbase Wallet SDK
     const coinbaseWallet = createCoinbaseWalletSDK({
       appName: 'Degenerous DAO',
-      appLogoUrl: 'https://media.degenerousdao.com/assets/logo.png',
+      appLogoUrl: `${assetsURL}/logo.png`,
       // appChainIds: [8453],
       preference: {
         options: 'smartWalletOnly',

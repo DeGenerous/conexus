@@ -284,6 +284,12 @@ export class Account {
       return null;
     }
 
+    // Store user data in localStorage with timestamp
+    SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
+
+    authenticated.set({ user: data.user, loggedIn: true });
+    web3LoggedIn.set(true);
+
     return data.user;
   }
 

@@ -1,20 +1,9 @@
-import {
-  GetCache,
-  SetCache,
-  TOPICS_CACHE_KEY,
-  TOPICS_CACHE_TTL,
-} from '@constants/cache';
 import { api_error } from '@errors/index';
+import { Account } from '@lib/account';
 import { GameAPI } from '@service/routes';
 import { loading, story } from '@stores/conexus';
 import { toastStore } from '@stores/toast';
-import {
-  showModal,
-  secondButton,
-  secondButtonClass,
-  handleSecondButton,
-  modalContent,
-} from '@stores/modal';
+import { showModal, modalContent } from '@stores/modal';
 
 export let storyTitle: string;
 
@@ -126,6 +115,9 @@ export class CoNexusGame extends GameAPI {
       loading.set(false);
       return;
     }
+
+    // refresh user
+    await Account.getUser();
 
     storyTitle = story_name;
 

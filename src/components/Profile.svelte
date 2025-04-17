@@ -341,23 +341,11 @@
         <hr />
 
         {#if user.available}
-          <div class="stories-count">
-            <h3>
-              You have used
-              <strong
-                >{user.available.used} / {user.available.available} weekly</strong
-              >
-              stories
-            </h3>
-
-            {#if user.available.bonus > 0}
-              <h3>
-                You have
-                <strong>{user.available.bonus} bonus</strong>
-                stories
-              </h3>
-            {/if}
-          </div>
+          <h3 class="stories-count">
+            You have
+            <strong>{user.available.bonus} stories</strong>
+            left this month
+          </h3>
         {:else}
           <div class="error-message">
             <p><strong>Error:</strong>Unavailable</p>
@@ -1125,16 +1113,7 @@
     gap: 1vw;
   }
 
-  /* Story games number */
-
   .stories-count {
-    display: flex;
-    flex-flow: column nowrap;
-    align-items: center;
-    gap: 1.5vw;
-  }
-
-  .stories-count h3 {
     color: rgba(51, 226, 230, 0.65);
   }
 

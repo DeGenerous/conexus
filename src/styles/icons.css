@@ -39,7 +39,8 @@ svg * {
 .calendar-svg,
 .death-svg,
 .checkmark-svg,
-.edit-svg {
+.edit-svg,
+.play-pause-svg {
   cursor: pointer;
   transition: all 0.3s ease-in-out;
 }
@@ -57,7 +58,8 @@ svg * {
 .warning-svg:hover,
 .chain-svg:hover,
 .checkmark-svg:hover,
-.edit-svg:hover {
+.edit-svg:hover,
+.play-pause-svg:hover {
   fill: rgb(51, 226, 230);
   transform: scale(1.05);
 }
@@ -68,7 +70,8 @@ svg * {
 .replay-svg:hover,
 .refresh-svg:hover,
 .chain-svg:hover,
-.edit-svg:hover {
+.edit-svg:hover,
+.play-pause-svg:hover {
   stroke: rgb(51, 226, 230);
 }
 

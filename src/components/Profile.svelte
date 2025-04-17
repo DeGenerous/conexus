@@ -343,7 +343,17 @@
         {#if user.available}
           <h3 class="stories-count">
             You have
-            <strong>{user.available.bonus} stories</strong>
+            {#if user.available.bonus > 0}
+              <strong>
+                {user.available.bonus}
+                {user.available.bonus == 1
+                  ? "story"
+                  : "stories"
+                }
+              </strong>
+            {:else}
+              no stories
+            {/if}
             left this month
           </h3>
         {:else}

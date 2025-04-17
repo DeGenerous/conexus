@@ -2,7 +2,7 @@ export const COOKIE_CONSENT_KEY = 'cookie_consent';
 export const COOKIE_CONSENT_TTL = 1000 * 60 * 60 * 24 * 30; // 1 month
 
 export const USER_CACHE_KEY = 'user';
-export const USER_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
+export const USER_CACHE_TTL = 1000 * 60 * 60 * 1; // 1 hour
 
 export const SUBSCRIPTIONSTATUS_CACHE_KEY = 'subscription_status';
 export const SUBSCRIPTIONSTATUS_CACHE_TTL = 1000 * 60 * 30; // 30 minutes

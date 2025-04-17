@@ -430,8 +430,8 @@
 
 <style>
   :global(html) {
-    background-image: none;
-    background-color: black;
+    background-image: none !important;
+    background-color: black !important;
   }
 
   .pc-background {

@@ -4,62 +4,62 @@ import react from '@astrojs/react';
 import node from '@astrojs/node';
 
 // https://astro.build/config
-export default defineConfig({
-  integrations: [svelte(), react()],
-  output: 'server',
-  adapter: node({
-    mode: 'standalone',
-  }),
-
-  vite: {
-    server: {
-      ...(import.meta.env.NODE_ENV === 'development' && {
-        proxy: {
-          '/api': {
-            target: import.meta.env.VITE_API_URL,
-            changeOrigin: true,
-            secure: false,
-            rewrite: (path) => path.replace(/^\/api/, ''),
-          },
-        },
-        hmr: {
-          host: '.degenerousdao.com',
-          port: 443,
-          protocol: 'wss',
-        },
-      }),
-      allowedHosts: [
-        'conexus.degenerousdao.com',
-        'conexus-test.degenerousdao.com',
-      ],
-    },
-  },
-
-  devToolbar: {
-    enabled: false,
-  },
-});
 // export default defineConfig({
 //   integrations: [svelte(), react()],
 //   output: 'server',
 //   adapter: node({
 //     mode: 'standalone',
 //   }),
+
 //   vite: {
 //     server: {
-//       proxy: {
-//         // remove in production
-//         '/api': {
-//           target: import.meta.env.VITE_API_URL,
-//           changeOrigin: true,
-//           secure: false,
-//           rewrite: (path) => path.replace(/^\/api/, ''),
+//       ...(import.meta.env.NODE_ENV === 'development' && {
+//         proxy: {
+//           '/api': {
+//             target: import.meta.env.VITE_API_URL,
+//             changeOrigin: true,
+//             secure: false,
+//             rewrite: (path) => path.replace(/^\/api/, ''),
+//           },
 //         },
-//       },
-//       allowedHosts: ['conexus.degenerousdao.com', 'conexus-test.degenerousdao.com'],
+//         hmr: {
+//           host: '.degenerousdao.com',
+//           port: 443,
+//           protocol: 'wss',
+//         },
+//       }),
+//       allowedHosts: [
+//         'conexus.degenerousdao.com',
+//         'conexus-test.degenerousdao.com',
+//       ],
 //     },
 //   },
+
 //   devToolbar: {
 //     enabled: false,
 //   },
 // });
+export default defineConfig({
+  integrations: [svelte(), react()],
+  output: 'server',
+  adapter: node({
+    mode: 'standalone',
+  }),
+  vite: {
+    server: {
+      proxy: {
+        // remove in production
+        '/api': {
+          target: import.meta.env.VITE_API_URL,
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/api/, ''),
+        },
+      },
+      allowedHosts: ['conexus.degenerousdao.com', 'conexus-test.degenerousdao.com'],
+    },
+  },
+  devToolbar: {
+    enabled: false,
+  },
+});

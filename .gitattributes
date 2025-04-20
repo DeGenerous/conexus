@@ -1,2 +1,3 @@
 .github/workflows/deployment.yml merge=ours
 scripts/pod.sh merge=ours
+astro.config.mjs merge=ours

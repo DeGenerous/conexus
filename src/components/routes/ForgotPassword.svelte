@@ -33,3 +33,11 @@
     </button>
   </div>
 </div>
+
+<style>
+  @media only screen and (max-width: 600px) {
+    .container-wrapper {
+      margin-top: 2em;
+    }
+  }
+</style>

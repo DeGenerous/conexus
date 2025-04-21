@@ -132,6 +132,10 @@
   }
 
   @media only screen and (max-width: 600px) {
+    .container-wrapper {
+      margin-top: 2em;
+    }
+
     .agreement {
       gap: 1em;
     }

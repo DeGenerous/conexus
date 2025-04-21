@@ -620,10 +620,12 @@
             </h2>
           {:else}
             <button
-              on:click={() =>
-                account
-                  .generateReferralCode()
-                  .then(() => window.location.reload())}
+              on:click={() => {
+                if (!user?.referred) {
+                  window.open("/referral", "_self");
+                } else account.generateReferralCode()
+                  .then(() => window.location.reload());
+              }}
             >
               Get referral codes
             </button>

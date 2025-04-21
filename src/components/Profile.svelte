@@ -366,7 +366,7 @@
                 disabled
               />
             </div>
-            {#if !user.email_confirmed}
+            {#if !user.email_confirmed && !user.is_oauth}
               <p class="validation">
                 Please check your inbox and confirm email.
               </p>

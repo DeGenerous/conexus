@@ -38,7 +38,7 @@
     volume.set({
       muted: false,
       volume: inputValue,
-      restart: false
+      restart: false,
     });
     localStorage.setItem(`${type}-volume`, JSON.stringify($volume));
   };

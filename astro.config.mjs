@@ -19,7 +19,10 @@ export default defineConfig({
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
       },
-      allowedHosts: ['conexus.degenerousdao.com', 'conexus-test.degenerousdao.com'],
+      allowedHosts: [
+        'conexus.degenerousdao.com',
+        'conexus-test.degenerousdao.com',
+      ],
     },
   },
   devToolbar: {

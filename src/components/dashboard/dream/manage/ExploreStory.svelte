@@ -69,7 +69,7 @@
 
     const storedTopics: Nullable<string> = GetCache(ALL_TOPICS_KEY);
     if (storedTopics) {
-      categoryTopics = storedTopics.split("][");
+      categoryTopics = storedTopics.split('][');
       activeStoryIndex = categoryTopics?.indexOf(topic.name);
     }
   });

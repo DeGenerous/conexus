@@ -23,7 +23,7 @@
     regexpLowercaseLetterCheck,
     regexpNumberCheck,
     regexpSpecialCharCheck,
-    regexpRestrictedCharsCheck
+    regexpRestrictedCharsCheck,
   } from '@constants/regexp';
 
   let dialog: HTMLDialogElement;
@@ -114,10 +114,7 @@
   let termsAccepted: boolean = false;
   let newsletterSignup: boolean = false;
 
-  $: isFormValid =
-    mandatoryFields &&
-    termsAccepted &&
-    referralCodeValid;
+  $: isFormValid = mandatoryFields && termsAccepted && referralCodeValid;
 
   $: if (referralCode.length === 16) validateReferralCode();
   $: if (referralCode.length < 16) referralCodeValid = false;
@@ -133,20 +130,22 @@
 
   const referralSignup = async (event: Event) => {
     event.preventDefault();
-    await account.signup({
-      user: {
-        first_name: first_name.trim(),
-        last_name: last_name.trim(),
-        email: email.trim(),
-        password,
-        referred: referralCodeValid,
-        role: 'user',
-      },
-      referral_code: referralCode,
-      newsletter: newsletterSignup,
-    }).then((res) => {
-      if (res !== null) location.reload();
-    });
+    await account
+      .signup({
+        user: {
+          first_name: first_name.trim(),
+          last_name: last_name.trim(),
+          email: email.trim(),
+          password,
+          referred: referralCodeValid,
+          role: 'user',
+        },
+        referral_code: referralCode,
+        newsletter: newsletterSignup,
+      })
+      .then((res) => {
+        if (res !== null) location.reload();
+      });
   };
 
   // Utility functions
@@ -418,7 +417,9 @@
                 <div class="password-input-container">
                   <input
                     class="user-input highlighted-border"
-                    class:red-border={!regexpPasswordValidation.test(editPassword)}
+                    class:red-border={!regexpPasswordValidation.test(
+                      editPassword,
+                    )}
                     type={$passwordVisible.edit ? 'text' : 'password'}
                     placeholder="Provide new password"
                     bind:value={editPassword}
@@ -428,7 +429,9 @@
               </div>
               <input
                 class="user-input highlighted-border"
-                class:red-border={!regexpPasswordValidation.test(editPassword) || editPassword !== editPasswordConfirm}
+                class:red-border={!regexpPasswordValidation.test(
+                  editPassword,
+                ) || editPassword !== editPasswordConfirm}
                 type={$passwordVisible.edit ? 'text' : 'password'}
                 placeholder="Confirm new password"
                 bind:value={editPasswordConfirm}
@@ -452,9 +455,7 @@
                 {/if}
 
                 {#if !regexpCapitalLetterCheck.test(editPassword)}
-                  <p class="validation">
-                    Provide at least one capital letter
-                  </p>
+                  <p class="validation">Provide at least one capital letter</p>
                 {/if}
 
                 {#if !regexpLowercaseLetterCheck.test(editPassword)}
@@ -464,9 +465,7 @@
                 {/if}
 
                 {#if !regexpNumberCheck.test(editPassword)}
-                  <p class="validation">
-                    Provide at least one number
-                  </p>
+                  <p class="validation">Provide at least one number</p>
                 {/if}
 
                 {#if !editPasswordConfirm}
@@ -491,11 +490,9 @@
                   </button>
                   <button
                     on:click={saveChangedPassword}
-                    disabled={
-                      !editPassword ||
+                    disabled={!editPassword ||
                       !regexpPasswordValidation.test(editPassword) ||
-                      editPassword !== editPasswordConfirm
-                    }
+                      editPassword !== editPasswordConfirm}
                   >
                     Save
                   </button>
@@ -663,9 +660,11 @@
             <button
               on:click={() => {
                 if (!user?.referred) {
-                  window.open("/referral", "_self");
-                } else account.generateReferralCode()
-                  .then(() => window.location.reload());
+                  window.open('/referral', '_self');
+                } else
+                  account
+                    .generateReferralCode()
+                    .then(() => window.location.reload());
               }}
             >
               Get referral codes
@@ -874,7 +873,8 @@
             </div>
             <input
               class="user-input"
-              class:red-border={!regexpPasswordValidation.test(password) || password !== confirmPassword}
+              class:red-border={!regexpPasswordValidation.test(password) ||
+                password !== confirmPassword}
               id="confirm-new-user-password"
               placeholder="Confirm password"
               bind:value={confirmPassword}
@@ -900,21 +900,15 @@
               {/if}
 
               {#if !regexpCapitalLetterCheck.test(password)}
-                <p class="validation">
-                  Provide at least one capital letter
-                </p>
+                <p class="validation">Provide at least one capital letter</p>
               {/if}
 
               {#if !regexpLowercaseLetterCheck.test(password)}
-                <p class="validation">
-                  Provide at least one lowercase letter
-                </p>
+                <p class="validation">Provide at least one lowercase letter</p>
               {/if}
 
               {#if !regexpNumberCheck.test(password)}
-                <p class="validation">
-                  Provide at least one number
-                </p>
+                <p class="validation">Provide at least one number</p>
               {/if}
 
               {#if !confirmPassword}

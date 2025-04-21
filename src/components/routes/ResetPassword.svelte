@@ -10,7 +10,7 @@
     regexpLowercaseLetterCheck,
     regexpNumberCheck,
     regexpSpecialCharCheck,
-    regexpRestrictedCharsCheck
+    regexpRestrictedCharsCheck,
   } from '@constants/regexp';
 
   export let token: string;
@@ -22,7 +22,10 @@
   let confirmPassword: string = '';
 
   $: validation =
-    email && regexpPasswordValidation.test(password) && password === confirmPassword && emailValidation;
+    email &&
+    regexpPasswordValidation.test(password) &&
+    password === confirmPassword &&
+    emailValidation;
 
   $: emailValidation = regexpEmail.test(email);
 </script>
@@ -58,7 +61,8 @@
 
     <input
       class="user-input"
-      class:red-border={!regexpPasswordValidation.test(password) || password !== confirmPassword}
+      class:red-border={!regexpPasswordValidation.test(password) ||
+        password !== confirmPassword}
       type={$passwordVisible.reset ? 'text' : 'password'}
       bind:value={confirmPassword}
       placeholder="Confirm new password"
@@ -67,13 +71,9 @@
 
     {#if password}
       {#if !regexpRestrictedCharsCheck.test(password)}
-        <p class="validation">
-          Password contains a restricted character!
-        </p>
+        <p class="validation">Password contains a restricted character!</p>
       {:else if !regexpLengthCheck.test(password)}
-        <p class="validation">
-          Password should contain 8 - 24 characters
-        </p>
+        <p class="validation">Password should contain 8 - 24 characters</p>
       {/if}
 
       {#if !regexpSpecialCharCheck.test(password)}
@@ -83,21 +83,15 @@
       {/if}
 
       {#if !regexpCapitalLetterCheck.test(password)}
-        <p class="validation">
-          Provide at least one capital letter
-        </p>
+        <p class="validation">Provide at least one capital letter</p>
       {/if}
 
       {#if !regexpLowercaseLetterCheck.test(password)}
-        <p class="validation">
-          Provide at least one lowercase letter
-        </p>
+        <p class="validation">Provide at least one lowercase letter</p>
       {/if}
 
       {#if !regexpNumberCheck.test(password)}
-        <p class="validation">
-          Provide at least one number
-        </p>
+        <p class="validation">Provide at least one number</p>
       {/if}
 
       {#if !confirmPassword}

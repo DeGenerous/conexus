@@ -14,7 +14,8 @@
     audio.play();
   });
 
-  const setVolume = () => (audio.volume = $background_volume.muted ? 0 : $background_volume.volume);
+  const setVolume = () =>
+    (audio.volume = $background_volume.muted ? 0 : $background_volume.volume);
 </script>
 
 <audio bind:this={audio}></audio>

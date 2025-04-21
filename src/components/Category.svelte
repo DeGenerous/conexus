@@ -108,14 +108,16 @@
     if (categories.length > 0) {
       setTimeout(observeLastCategory, 500);
 
-      const sectionTopics = categories.map((cat) => {
-        return cat.topics.map(({topic_id, topic_name}) => {
-          return {
-            id: topic_id,
-            name: topic_name
-          };
+      const sectionTopics = categories
+        .map((cat) => {
+          return cat.topics.map(({ topic_id, topic_name }) => {
+            return {
+              id: topic_id,
+              name: topic_name,
+            };
+          });
         })
-      }).flat();
+        .flat();
 
       SetCache(
         SECTION_TOPICS_KEY(section),

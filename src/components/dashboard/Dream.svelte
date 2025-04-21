@@ -18,24 +18,25 @@
     if (!input.files || input.files.length > 1) return;
 
     importedFile = input.files[0];
-  }
+  };
 
   const handleImportStory = async () => {
-    const importedStory = await parseJsonFile() as CreatePrompt;
+    const importedStory = (await parseJsonFile()) as CreatePrompt;
     importedStory.category = categoryID;
 
     function parseJsonFile() {
       return new Promise((resolve, reject) => {
-        const fileReader = new FileReader()
-        fileReader.onload = event => resolve(JSON.parse(event.target!.result as any))
-        fileReader.onerror = error => reject(error)
-        fileReader.readAsText(importedFile!)
-      })
+        const fileReader = new FileReader();
+        fileReader.onload = (event) =>
+          resolve(JSON.parse(event.target!.result as any));
+        fileReader.onerror = (error) => reject(error);
+        fileReader.readAsText(importedFile!);
+      });
     }
 
     await admin.createNewStory(importedStory);
     importedFile = null;
-}
+  };
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -52,7 +53,7 @@
     <h3>Upload media, refine, and perfect your vision.</h3>
 
     <hr />
-    
+
     <h3>Import Story Object</h3>
 
     {#if importedFile}
@@ -87,10 +88,7 @@
       <div class="input-container">
         <label for="category">Select Category:</label>
         {#if categories}
-          <select
-            class="selector"
-            bind:value={categoryID}
-          >
+          <select class="selector" bind:value={categoryID}>
             {#each categories as { id, name }}
               <option value={id}>{name}</option>
             {/each}
@@ -99,10 +97,7 @@
       </div>
     {/await}
 
-    <button
-      disabled={!importedFile}
-      on:click={handleImportStory}
-    >
+    <button disabled={!importedFile} on:click={handleImportStory}>
       IMPORT STORY
     </button>
   </div>

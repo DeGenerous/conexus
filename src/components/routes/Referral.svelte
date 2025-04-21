@@ -90,16 +90,17 @@
         * I have read and agree to the <a
           href="https://docs.google.com/document/d/1fEemq6HVM_h8ZTbc_Fl_k3RvlPdjYd70TI1iloT5gXA/edit?usp=sharing"
           target="_blank"
-          style={termsAccepted
-            ? ''
-            : 'color: rgba(255, 50, 50, 0.9);'}
+          style={termsAccepted ? '' : 'color: rgba(255, 50, 50, 0.9);'}
         >
           Terms of Service</a
         >.
       </label>
     </div>
 
-    <button on:click={useReferralCode} disabled={!referralCodeValid || !termsAccepted}>
+    <button
+      on:click={useReferralCode}
+      disabled={!referralCodeValid || !termsAccepted}
+    >
       Use Referral Code
     </button>
   </div>

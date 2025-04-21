@@ -10,18 +10,17 @@
 
   onMount(async () => {
     categories = await admin.fetchCategories();
-  })
+  });
 
   const createNewCategory = async () => {
-    await admin.newCategory(newCategoryName)
-      .then(async () => {
-        // delete categories from localstorage
-        localStorage.removeItem(CATEGORY_CACHE_KEY);
-        // fetch categories again
-        categories = await admin.fetchCategories();
-        newCategoryName = '';
-      });
-  }
+    await admin.newCategory(newCategoryName).then(async () => {
+      // delete categories from localstorage
+      localStorage.removeItem(CATEGORY_CACHE_KEY);
+      // fetch categories again
+      categories = await admin.fetchCategories();
+      newCategoryName = '';
+    });
+  };
 </script>
 
 <div class="dream-box blur categories-list">
@@ -47,9 +46,7 @@
     bind:value={newCategoryName}
     placeholder="Enter Name"
   />
-  <button on:click={createNewCategory}
-    >Add New Category</button
-  >
+  <button on:click={createNewCategory}>Add New Category</button>
 </div>
 
 <style>

@@ -31,6 +31,8 @@
       referralCodeValid = false;
     }
   }
+
+  let termsAccepted: boolean = false;
 </script>
 
 <div class="container-wrapper">
@@ -71,8 +73,72 @@
         rel="noopener noreferrer">here</a
       >!
     </h3>
-    <button on:click={useReferralCode} disabled={!referralCodeValid}>
+
+    <div class="agreement">
+      <input
+        type="checkbox"
+        id="terms"
+        on:change={(event: any) => {
+          termsAccepted = event.target?.checked;
+        }}
+      />
+      <label
+        for="terms"
+        class="terms"
+        style={termsAccepted ? '' : 'color: rgba(255, 50, 50, 0.75);'}
+      >
+        * I have read and agree to the <a
+          href="https://docs.google.com/document/d/1fEemq6HVM_h8ZTbc_Fl_k3RvlPdjYd70TI1iloT5gXA/edit?usp=sharing"
+          target="_blank"
+          style={termsAccepted
+            ? ''
+            : 'color: rgba(255, 50, 50, 0.9);'}
+        >
+          Terms of Service</a
+        >.
+      </label>
+    </div>
+
+    <button on:click={useReferralCode} disabled={!referralCodeValid || !termsAccepted}>
       Use Referral Code
     </button>
   </div>
 </div>
+
+<style>
+  .agreement {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+    padding: 1vw;
+    gap: 1vw;
+  }
+
+  .agreement label {
+    cursor: pointer;
+  }
+
+  #terms {
+    width: 1.5vw;
+    height: 1.5vw;
+    flex: 1;
+    accent-color: rgba(51, 226, 230, 0.75);
+    cursor: pointer;
+  }
+
+  .terms > a {
+    color: rgba(255, 255, 255, 0.65);
+  }
+
+  @media only screen and (max-width: 600px) {
+    .agreement {
+      gap: 1em;
+    }
+
+    #terms {
+      width: 1em;
+      height: 1em;
+    }
+  }
+</style>

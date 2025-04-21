@@ -15,6 +15,16 @@
     modalContent,
   } from '@stores/modal';
   import passwordVisible from '@stores/password-visibility';
+  import {
+    regexpEmail,
+    regexpPasswordValidation,
+    regexpLengthCheck,
+    regexpCapitalLetterCheck,
+    regexpLowercaseLetterCheck,
+    regexpNumberCheck,
+    regexpSpecialCharCheck,
+    regexpRestrictedCharsCheck
+  } from '@constants/regexp';
 
   let dialog: HTMLDialogElement;
 
@@ -74,8 +84,6 @@
   let editOldPassword: string = '';
   let editPassword: string = '';
   let editPasswordConfirm: string = '';
-  $: editPasswordMatch =
-    editPassword.length >= 8 && editPassword === editPasswordConfirm;
 
   const saveChangedPassword = async () => {
     $accountError = null as AccountError;
@@ -96,19 +104,18 @@
   let confirmPassword: string = '';
   let email: string = '';
 
-  $: mandatoryFields = emailValidation && first_name && last_name && password;
-  $: passwordsMatch =
-    password && confirmPassword ? password == confirmPassword : false;
-  $: emailValidation = email.match(
-    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-  );
+  $: mandatoryFields =
+    regexpEmail.test(email) &&
+    first_name.trim() &&
+    last_name.trim() &&
+    regexpPasswordValidation.test(password) &&
+    password == confirmPassword;
+
   let termsAccepted: boolean = false;
   let newsletterSignup: boolean = false;
 
   $: isFormValid =
     mandatoryFields &&
-    password.length >= 8 &&
-    passwordsMatch &&
     termsAccepted &&
     referralCodeValid;
 
@@ -128,9 +135,9 @@
     event.preventDefault();
     await account.signup({
       user: {
-        first_name,
-        last_name,
-        email,
+        first_name: first_name.trim(),
+        last_name: last_name.trim(),
+        email: email.trim(),
         password,
         referred: referralCodeValid,
         role: 'user',
@@ -411,7 +418,7 @@
                 <div class="password-input-container">
                   <input
                     class="user-input highlighted-border"
-                    class:red-border={!editPassword || editPassword.length < 8}
+                    class:red-border={!regexpPasswordValidation.test(editPassword)}
                     type={$passwordVisible.edit ? 'text' : 'password'}
                     placeholder="Provide new password"
                     bind:value={editPassword}
@@ -421,24 +428,54 @@
               </div>
               <input
                 class="user-input highlighted-border"
-                class:red-border={!editPasswordMatch}
+                class:red-border={!regexpPasswordValidation.test(editPassword) || editPassword !== editPasswordConfirm}
                 type={$passwordVisible.edit ? 'text' : 'password'}
                 placeholder="Confirm new password"
                 bind:value={editPasswordConfirm}
               />
 
-              {#if editPassword && editPassword.length < 8}
-                <p class="validation">
-                  Password should contain at least 8 characters!
-                </p>
-              {/if}
+              {#if editPassword}
+                {#if !regexpRestrictedCharsCheck.test(editPassword)}
+                  <p class="validation">
+                    Password contains a restricted character!
+                  </p>
+                {:else if !regexpLengthCheck.test(editPassword)}
+                  <p class="validation">
+                    Password should contain 8 - 24 characters
+                  </p>
+                {/if}
 
-              {#if !editPassword}
+                {#if !regexpSpecialCharCheck.test(editPassword)}
+                  <p class="validation">
+                    Provide at least one special character: @ $ ! % * # ? & , .
+                  </p>
+                {/if}
+
+                {#if !regexpCapitalLetterCheck.test(editPassword)}
+                  <p class="validation">
+                    Provide at least one capital letter
+                  </p>
+                {/if}
+
+                {#if !regexpLowercaseLetterCheck.test(editPassword)}
+                  <p class="validation">
+                    Provide at least one lowercase letter
+                  </p>
+                {/if}
+
+                {#if !regexpNumberCheck.test(editPassword)}
+                  <p class="validation">
+                    Provide at least one number
+                  </p>
+                {/if}
+
+                {#if !editPasswordConfirm}
+                  <p class="validation">Please confirm new password</p>
+                {:else if editPassword !== editPasswordConfirm}
+                  <p class="validation">Passwords do not match!</p>
+                {/if}
+              {:else}
                 <p class="validation">Please enter new password</p>
-              {:else if !editPasswordConfirm}
-                <p class="validation">Please confirm new password</p>
-              {:else if editPasswordConfirm && !editPasswordMatch}
-                <p class="validation">Passwords do not match!</p>
               {/if}
 
               {#if $accountError && $accountError.changePassword}
@@ -454,7 +491,11 @@
                   </button>
                   <button
                     on:click={saveChangedPassword}
-                    disabled={!editPassword || !editPasswordMatch}
+                    disabled={
+                      !editPassword ||
+                      !regexpPasswordValidation.test(editPassword) ||
+                      editPassword !== editPasswordConfirm
+                    }
                   >
                     Save
                   </button>
@@ -802,7 +843,7 @@
               <label for="new-user-mail">Mail</label>
               <input
                 class="user-input"
-                class:red-border={!emailValidation}
+                class:red-border={!regexpEmail.test(email)}
                 type="email"
                 id="new-user-mail"
                 placeholder="Enter email"
@@ -811,12 +852,16 @@
               />
             </div>
 
+            {#if email && !regexpEmail.test(email)}
+              <p class="validation">Please provide a valid email</p>
+            {/if}
+
             <div class="input-container">
               <label for="new-user-password">Password</label>
               <div class="password-input-container">
                 <input
                   class="user-input"
-                  class:red-border={!password || password.length < 8}
+                  class:red-border={!regexpPasswordValidation.test(password)}
                   id="new-user-password"
                   placeholder="Enter password"
                   minlength="8"
@@ -829,7 +874,7 @@
             </div>
             <input
               class="user-input"
-              class:red-border={!passwordsMatch}
+              class:red-border={!regexpPasswordValidation.test(password) || password !== confirmPassword}
               id="confirm-new-user-password"
               placeholder="Confirm password"
               bind:value={confirmPassword}
@@ -837,20 +882,55 @@
               type={$passwordVisible.signup ? 'text' : 'password'}
             />
 
-            <!-- svelte-ignore block_empty -->
-            {#if !password}{:else if password.length < 8}
-              <p class="validation">
-                Password should contain at least 8 characters!
-              </p>
-            {:else if !passwordsMatch}
-              <p class="validation">Passwords do not match!</p>
+            {#if password}
+              {#if !regexpRestrictedCharsCheck.test(password)}
+                <p class="validation">
+                  Password contains a restricted character!
+                </p>
+              {:else if !regexpLengthCheck.test(password)}
+                <p class="validation">
+                  Password should contain 8 - 24 characters
+                </p>
+              {/if}
+
+              {#if !regexpSpecialCharCheck.test(password)}
+                <p class="validation">
+                  Provide at least one special character: @ $ ! % * # ? & , .
+                </p>
+              {/if}
+
+              {#if !regexpCapitalLetterCheck.test(password)}
+                <p class="validation">
+                  Provide at least one capital letter
+                </p>
+              {/if}
+
+              {#if !regexpLowercaseLetterCheck.test(password)}
+                <p class="validation">
+                  Provide at least one lowercase letter
+                </p>
+              {/if}
+
+              {#if !regexpNumberCheck.test(password)}
+                <p class="validation">
+                  Provide at least one number
+                </p>
+              {/if}
+
+              {#if !confirmPassword}
+                <p class="validation">Please confirm new password</p>
+              {:else if password !== confirmPassword}
+                <p class="validation">Passwords do not match!</p>
+              {/if}
+            {:else}
+              <p class="validation">Please enter new password</p>
             {/if}
 
             <div class="input-container">
               <label for="user-first-name">First name</label>
               <input
                 class="user-input"
-                class:red-border={!first_name}
+                class:red-border={!first_name.trim()}
                 type="text"
                 id="user-first-name"
                 placeholder="Enter First name"
@@ -861,7 +941,7 @@
               <label for="user-last-name">Last name</label>
               <input
                 class="user-input"
-                class:red-border={!last_name}
+                class:red-border={!last_name.trim()}
                 type="text"
                 id="user-last-name"
                 placeholder="Enter Last name"
@@ -903,10 +983,6 @@
               <p class="validation">Code should contain 16 characters</p>
             {:else}
               <p class="validation">Enter referral code</p>
-            {/if}
-
-            {#if password && !confirmPassword}
-              <p class="validation">Please confirm your password</p>
             {/if}
 
             {#if $accountError && $accountError.signup}
@@ -954,7 +1030,7 @@
             <button
               class="sign-button"
               on:click={referralSignup}
-              disabled={isFormValid ? false : true}>Create account</button
+              disabled={!isFormValid}>Create account</button
             >
           </form>
         {/if}

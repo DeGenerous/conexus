@@ -2,6 +2,16 @@
   import { Account } from '@lib/account';
   import EyeSVG from '@components/icons/Eye.svelte';
   import passwordVisible from '@stores/password-visibility';
+  import {
+    regexpEmail,
+    regexpPasswordValidation,
+    regexpLengthCheck,
+    regexpCapitalLetterCheck,
+    regexpLowercaseLetterCheck,
+    regexpNumberCheck,
+    regexpSpecialCharCheck,
+    regexpRestrictedCharsCheck
+  } from '@constants/regexp';
 
   export let token: string;
 
@@ -9,15 +19,12 @@
 
   let email: string = '';
   let password: string = '';
-  let passwordConfirm: string = '';
+  let confirmPassword: string = '';
 
-  $: passwordsMatch = password && password === passwordConfirm;
   $: validation =
-    email && password.length >= 8 && passwordsMatch && emailValidation;
+    email && regexpPasswordValidation.test(password) && password === confirmPassword && emailValidation;
 
-  $: emailValidation = email.match(
-    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-  );
+  $: emailValidation = regexpEmail.test(email);
 </script>
 
 <div class="container-wrapper">
@@ -39,7 +46,7 @@
     <div class="password-input-container">
       <input
         class="user-input"
-        class:red-border={!password || password.length < 8}
+        class:red-border={!regexpPasswordValidation.test(password)}
         type={$passwordVisible.reset ? 'text' : 'password'}
         bind:value={password}
         placeholder="New password"
@@ -51,19 +58,55 @@
 
     <input
       class="user-input"
-      class:red-border={!passwordsMatch}
+      class:red-border={!regexpPasswordValidation.test(password) || password !== confirmPassword}
       type={$passwordVisible.reset ? 'text' : 'password'}
-      bind:value={passwordConfirm}
+      bind:value={confirmPassword}
       placeholder="Confirm new password"
       required
     />
 
-    {#if !password}
-      <p class="validation">Provide new password</p>
-    {:else if password.length < 8}
-      <p class="validation">Password should contain at least 8 characters!</p>
-    {:else if !passwordsMatch}
-      <p class="validation">Passwords do not match!</p>
+    {#if password}
+      {#if !regexpRestrictedCharsCheck.test(password)}
+        <p class="validation">
+          Password contains a restricted character!
+        </p>
+      {:else if !regexpLengthCheck.test(password)}
+        <p class="validation">
+          Password should contain 8 - 24 characters
+        </p>
+      {/if}
+
+      {#if !regexpSpecialCharCheck.test(password)}
+        <p class="validation">
+          Provide at least one special character: @ $ ! % * # ? & , .
+        </p>
+      {/if}
+
+      {#if !regexpCapitalLetterCheck.test(password)}
+        <p class="validation">
+          Provide at least one capital letter
+        </p>
+      {/if}
+
+      {#if !regexpLowercaseLetterCheck.test(password)}
+        <p class="validation">
+          Provide at least one lowercase letter
+        </p>
+      {/if}
+
+      {#if !regexpNumberCheck.test(password)}
+        <p class="validation">
+          Provide at least one number
+        </p>
+      {/if}
+
+      {#if !confirmPassword}
+        <p class="validation">Please confirm new password</p>
+      {:else if password !== confirmPassword}
+        <p class="validation">Passwords do not match!</p>
+      {/if}
+    {:else}
+      <p class="validation">Please enter new password</p>
     {/if}
 
     <button

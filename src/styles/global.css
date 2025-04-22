@@ -272,6 +272,10 @@ main {
 
 @media only screen and (max-width: 600px) {
   html {
+    background-image: url('/mobileBG.webp');
+    background-attachment: scroll;
+    background-repeat: repeat;
+    background-position: top;
     padding-bottom: 2em;
   }
 

@@ -41,9 +41,9 @@
   const storeAllTopics = (collections: Collection[]) => {
     const allTopics = collections.map((collection) => collection.topics).flat();
     const topicNames = allTopics.map(({ topic_name }) => topic_name);
-    console.log(topicNames)
-    console.log(topicNames.join("]["))
-    SetCache(ALL_TOPICS_KEY, topicNames.join("]["), ALL_TOPICS_TTL);
+    console.log(topicNames);
+    console.log(topicNames.join(']['));
+    SetCache(ALL_TOPICS_KEY, topicNames.join(']['), ALL_TOPICS_TTL);
   };
 
   const switchAvailable = (available: string) => {

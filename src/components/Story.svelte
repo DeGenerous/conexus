@@ -48,7 +48,6 @@
       );
       activeStoryIndex = categoryTopicNames?.indexOf(story_name);
     }
-
   });
 
   let deletedStories: string[] = []; // temp storage before reload for immediate removal

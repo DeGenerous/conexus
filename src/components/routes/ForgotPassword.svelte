@@ -1,13 +1,12 @@
 <script lang="ts">
   import { Account } from '@lib/account';
+  import { regexpEmail } from '@constants/regexp';
 
   const acct: Account = new Account();
 
   let email: string = '';
 
-  $: emailValidation = email.match(
-    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-  );
+  $: emailValidation = regexpEmail.test(email);
 </script>
 
 <div class="container-wrapper">
@@ -34,3 +33,11 @@
     </button>
   </div>
 </div>
+
+<style>
+  @media only screen and (max-width: 600px) {
+    .container-wrapper {
+      margin-top: 2em;
+    }
+  }
+</style>

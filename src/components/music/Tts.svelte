@@ -26,7 +26,8 @@
     $tts_volume.restart = false;
   }
 
-  const setVolume = () => (audio.volume = $tts_volume.muted ? 0 : $tts_volume.volume);
+  const setVolume = () =>
+    (audio.volume = $tts_volume.muted ? 0 : $tts_volume.volume);
 </script>
 
 <audio bind:this={audio}></audio>

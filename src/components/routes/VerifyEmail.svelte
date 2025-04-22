@@ -26,3 +26,11 @@
     <button on:click={() => window.open('/', '_self')}>Return home</button>
   </div>
 </section>
+
+<style>
+  @media only screen and (max-width: 600px) {
+    .container-wrapper {
+      margin-top: 2em;
+    }
+  }
+</style>

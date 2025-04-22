@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "CoNexus – A dynamic, interactive storytelling platform powered by AI and Web3.",
   "author": "DeGenerous DAO",
-  "license": "MIT",
   "private": true,
   "type": "module",
   "scripts": {

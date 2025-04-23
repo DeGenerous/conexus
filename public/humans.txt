@@ -1,0 +1,16 @@
+/* TEAM */
+
+Your title: John-Franklin.
+Site: anusiemj@gmail.com, https://rhaqim.com.
+GitHub: https://github.com/windickated
+                         
+Your title: Dimon
+GitHub: https://github.com/windickated
+
+                         
+/* SITE */
+
+Contact: support@degenerousdao.com
+Website: https://www.degenerousdao.com
+Standards: HTML5, CSS3.                
+Software: Astro.js, Svelte, Typescript, etc.

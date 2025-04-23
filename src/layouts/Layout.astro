@@ -1,10 +1,13 @@
 ---
 // import { ClientRouter } from 'astro:transitions';
+import { SEO } from 'astro-seo';
 
 import ToastContainer from '@components/utils/ToastContainer.svelte';
 import Modal from '@components/utils/Modal.svelte';
 import Navigation from '@components/utils/Navigation.svelte';
 import CookieBanner from '@components/utils/CookieBanner.svelte';
+
+import { seoConfig } from '../../utils/seoConfig';
 
 import '@styles/reset.css';
 import '@styles/global.css';
@@ -13,6 +16,23 @@ import '@styles/icons.css';
 import '@styles/utils.css';
 import '@styles/tiles.css';
 import '@styles/dream.css';
+import type { StringFieldInput } from 'node_modules/astro/dist/env/schema';
+
+type LayoutProps = {
+  header?: string;
+  subheading?: string;
+  nav?: string;
+  arrow?: boolean;
+  story?: string;
+  title?: string;
+  ogTitle?: string;
+  description?: string;
+  image?: string;
+  imageType?: string;
+  url?: string;
+  type?: string;
+  disableIndexing?: boolean;
+};
 
 const {
   header,
@@ -26,7 +46,10 @@ const {
   imageType,
   url = 'https://conexus-test.degenerousdao.com/',
   type = 'website',
-} = Astro.props;
+
+  ogTitle,
+  disableIndexing = false,
+} = Astro.props as LayoutProps;
 ---
 
 <html lang="en">
@@ -34,26 +57,60 @@ const {
     <title>CoNexus | DeGenerous DAO</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#2441bd" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+    <!-- SEO. -->
+    <SEO
+      title={title}
+      description={seoConfig.description || description}
+      noindex={disableIndexing}
+      nofollow={disableIndexing}
+      openGraph={{
+        basic: {
+          title: ogTitle || title,
+          type: 'website',
+          image: seoConfig.image.url || image,
+        },
+        image: {
+          width: seoConfig.image.width,
+          height: seoConfig.image.height,
+          alt: seoConfig.image.alt || title,
+        },
+        optional: {
+          siteName: seoConfig.siteName,
+          description: seoConfig.description || description,
+        },
+      }}
+      twitter={{
+        card: 'summary_large_image',
+      }}
+    />
+
+    <!-- Service Worker -->
+    <!-- <link rel="manifest" href="/manifest.json" /> -->
+    <script is:inline src="/registerSW.js"></script>
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link type="text/plain" rel="author" href="/humans.txt" />
+
     <!-- <meta
       http-equiv="Content-Security-Policy"
       content="upgrade-insecure-requests"
     /> -->
+
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content={title} />
+    <!-- <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={image} />
     <meta property="og:image:type" content={imageType ?? 'image/png'} />
     <meta property="og:url" content={url} />
-    <meta property="og:type" content={type} />
+    <meta property="og:type" content={type} /> -->
 
     <!-- Twitter Card Meta Tags (optional for better previews) -->
-    <meta name="twitter:card" content="summary_large_image" />
+    <!-- <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={image} />
+    <meta name="twitter:image" content={image} /> -->
     <!-- <ClientRouter /> -->
   </head>
   <body>

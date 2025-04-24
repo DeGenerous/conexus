@@ -9,6 +9,7 @@
   "orientation": "any",
   "scope": "/",
   "lang": "en",
+  "prefer_related_applications": false,
   "categories": ["games", "education", "entertainment"],
   "icons": [
     {

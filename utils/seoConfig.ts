@@ -32,10 +32,12 @@ export const manifest: Partial<ManifestOptions> = {
   description:
     'A storytelling platform powered by AI and Web3, where your choices shape the multiverse.',
   display: 'standalone',
+  start_url: "/",
   background_color: '#010020',
   theme_color: '#2441bd',
   lang: 'en-US',
   orientation: 'any',
+  prefer_related_applications: false,
   categories: ['games', 'entertainment', 'education'],
   icons: [
     {

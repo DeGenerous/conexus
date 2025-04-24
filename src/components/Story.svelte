@@ -165,7 +165,7 @@
         <div class="buttons-wrapper stories-switcher">
           <a
             class="buttons-wrapper switch-arrow"
-            href="/{section}/{categoryTopics[prevStoryIndex]
+            href="/sections/{section}/{categoryTopics[prevStoryIndex]
               .name}?id={categoryTopics[prevStoryIndex].id}"
           >
             <img src="/icons/switch-arrow.svg" alt="Switch" />
@@ -176,7 +176,7 @@
 
           <a
             class="buttons-wrapper switch-arrow"
-            href="/{section}/{categoryTopics[
+            href="/sections/{section}/{categoryTopics[
               (activeStoryIndex + 1) % categoryTopics.length
             ].name}?id={categoryTopics[
               (activeStoryIndex + 1) % categoryTopics.length

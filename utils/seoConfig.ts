@@ -31,10 +31,10 @@ export const manifest: Partial<ManifestOptions> = {
   short_name: 'CoNexus',
   description:
     'A storytelling platform powered by AI and Web3, where your choices shape the multiverse.',
-  display: 'standalone',
+  display: 'fullscreen',
   start_url: "/",
   background_color: '#010020',
-  theme_color: '#2441bd',
+  theme_color: '#010020',
   lang: 'en-US',
   orientation: 'any',
   prefer_related_applications: false,

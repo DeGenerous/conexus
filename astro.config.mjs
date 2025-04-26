@@ -5,7 +5,11 @@ import { VitePWA } from 'vite-plugin-pwa';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import svelte from '@astrojs/svelte';
-import vercel from '@astrojs/vercel';
+import node from '@astrojs/node';
+
+import { manifest, seoConfig } from './utils/seoConfig';
+
+import AstroPWA from '@vite-pwa/astro';
 
 import { manifest, seoConfig } from './utils/seoConfig';
 
@@ -16,7 +20,9 @@ export default defineConfig({
   site: seoConfig.baseURL,
   integrations: [svelte(), react(), sitemap(), compress()],
   output: 'server',
-  adapter: vercel(),
+  adapter: node({
+        mode: 'standalone',
+      }),
   vite: {
     plugins: [
       VitePWA({

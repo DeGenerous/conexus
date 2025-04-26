@@ -9,8 +9,6 @@ import node from '@astrojs/node';
 
 import { manifest, seoConfig } from './utils/seoConfig';
 
-import AstroPWA from '@vite-pwa/astro';
-
 // https://astro.build/config
 export default defineConfig({
   site: seoConfig.baseURL,

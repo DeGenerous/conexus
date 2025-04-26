@@ -39,7 +39,7 @@
   <a
     class="tile"
     class:gated-story={topic.nft_gate && topic.nft_gate.length > 0}
-    href="/{section}/{topic.name}?id={topic.id}"
+    href="/sections/{section}/{topic.name}?id={topic.id}"
   >
     <img
       class="tile-picture"

@@ -1,0 +1,26 @@
+{
+  "name": "CoNexus",
+  "short_name": "CoNexus",
+  "description": "A storytelling platform powered by AI and Web3, where your choices shape the multiverse.",
+  "start_url": "/",
+  "display": "fullscreen",
+  "background_color": "#010020",
+  "theme_color": "#010020",
+  "orientation": "any",
+  "scope": "/",
+  "lang": "en",
+  "prefer_related_applications": false,
+  "categories": ["games", "education", "entertainment"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

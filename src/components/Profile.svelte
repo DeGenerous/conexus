@@ -163,7 +163,7 @@
       $showModal = false;
     };
     $modalContent =
-      '<h2>Are you sure you want to select this address as a main one?</h2>';
+      '<h2>Are you sure you want to select this address as your main one?</h2>';
     $showModal = true;
   };
 

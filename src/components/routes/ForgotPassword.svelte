@@ -11,7 +11,7 @@
 
 <div class="container-wrapper">
   <div class="container blur">
-    <h3>You will receive a confirmation email with link</h3>
+    <h3>You will receive a confirmation email with a link</h3>
     <input
       class="user-input"
       class:red-border={!emailValidation}

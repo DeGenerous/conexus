@@ -2,17 +2,14 @@
   import { afterUpdate, onMount } from 'svelte';
 
   import MediaManager from '@lib/media';
-  import { CoNexusGame } from '@lib/story';
   import { fullscreen, story, loading } from '@stores/conexus';
   import { background_volume, tts_volume } from '@stores/volumes';
 
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
 
-  export let section: string;
   export let story_name: string;
 
-  const game: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
 
   const handleSetMedia = async (topic_id: number) => {
@@ -337,19 +334,6 @@
     {/if}
 
     <div class="options-container blur">
-      {#await game.getTopic(section, story_name)}
-        <p>Loading...</p>
-      {:then topic}
-        <button
-          class="option menu-option"
-          on:click={() => {
-            game.startGame(topic.name, topic.id, handleSetMedia);
-          }}
-        >
-          Start again
-        </button>
-      {/await}
-
       <button
         id="option-0"
         class="option menu-option"

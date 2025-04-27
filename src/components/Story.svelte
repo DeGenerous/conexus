@@ -250,6 +250,13 @@
         </section>
       </div>
 
+      {#if topic?.video_file_id}
+        <video class="blur story-video" controls autoplay loop muted>
+          <source src={serveUrl(topic?.video_file_id)} type="video/mp4" />
+          <track kind="captions" />
+        </video>
+      {/if}
+
       {#if topic.nft_gate && topic.nft_gate.length > 0}
         <div class="gating">
           <span class="gating-icon-wrapper">
@@ -275,13 +282,6 @@
             </span>
           {/each}
         </div>
-      {/if}
-
-      {#if topic?.video_file_id}
-        <video class="blur story-video" controls autoplay loop muted>
-          <source src={serveUrl(topic?.video_file_id)} type="video/mp4" />
-          <track kind="captions" />
-        </video>
       {/if}
     {:catch}
       <header>
@@ -413,7 +413,7 @@
   <BackgroundMusic />
   <Tts />
 
-  <Step {section} {story_name} />
+  <Step {story_name} />
 {/if}
 
 <div

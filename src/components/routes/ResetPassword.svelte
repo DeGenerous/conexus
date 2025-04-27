@@ -94,9 +94,7 @@
         <p class="validation">Provide at least one number</p>
       {/if}
 
-      {#if !confirmPassword}
-        <p class="validation">Please confirm new password</p>
-      {:else if password !== confirmPassword}
+      {#if confirmPassword && password !== confirmPassword}
         <p class="validation">Passwords do not match!</p>
       {/if}
     {:else}

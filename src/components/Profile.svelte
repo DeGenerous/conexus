@@ -74,7 +74,7 @@
     isLogged = value.loggedIn;
   });
 
-  $: if (isLogged && account) {
+  $: if (isLogged && account && user && user.email_confirmed) {
     account.getReferralCodes();
     checkSubscription();
   }
@@ -572,7 +572,7 @@
           </div>
         {/key}
 
-        {#if user?.email && user?.first_name}
+        {#if user?.email && user?.first_name && user?.email_confirmed}
           <hr />
 
           <h2>Your referral codes</h2>

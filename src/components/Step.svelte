@@ -121,10 +121,34 @@
 
   let iosDevice: boolean = false;
 
+  let pictureKeyframe: KeyframeEffect;
+  let pictureAnimation: Animation;
+
+  $: if (step.image && step.image_type !== 'url') pictureAnimation.play();
+
   onMount(() => {
     const storedZoom = localStorage.getItem('step-zoom');
     if (storedZoom) zoom = setZoom(Number(storedZoom));
     iosDevice = detectIOS();
+
+    pictureKeyframe = new KeyframeEffect(
+      imageWrapper,
+      [
+        { transform: "scale(1)" },
+        { transform: "scale(0.95)" },
+        { transform: "scale(1.05)" },
+        { transform: "scale(1)" },
+      ],
+      {
+        duration: 600,
+        easing: "ease-in-out"
+      },
+    );
+
+    pictureAnimation = new Animation(
+      pictureKeyframe,
+      document.timeline
+    )
   });
 
   const handleZoomWheel = (event: WheelEvent) => {
@@ -289,6 +313,7 @@
       bind:image={step.image}
       bind:image_type={step.image_type}
       bind:width
+      bind:fullWidthImage
     />
   </div>
 
@@ -1398,6 +1423,22 @@
 
     .image-wrapper {
       height: 512px;
+      animation: scale 0.6s 1s ease-in-out;
+    }
+
+    @keyframes scale {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(0.95);
+      }
+      75% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
     }
 
     .story-text,

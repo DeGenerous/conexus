@@ -21,6 +21,7 @@
   } from '@stores/modal';
   import { checkUserState } from '@utils/route-guard';
   import { GetCache, SECTION_TOPICS_KEY } from '@constants/cache';
+  import detectIOS from '@utils/ios-device';
 
   export let section: string;
   export let story_name: string;
@@ -35,8 +36,12 @@
   $: prevStoryIndex =
     activeStoryIndex <= 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
 
+  let iosDevice: boolean = false;
+
   onMount(async () => {
     await checkUserState('/story');
+
+    iosDevice = detectIOS();
 
     const storedTopics: Nullable<string> = GetCache(
       SECTION_TOPICS_KEY(section),
@@ -410,7 +415,9 @@
     {/await}
   </section>
 {:else}
-  <BackgroundMusic />
+  {#if !iosDevice}
+    <BackgroundMusic />
+  {/if}
   <Tts />
 
   <Step {story_name} />

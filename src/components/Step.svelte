@@ -4,6 +4,7 @@
   import MediaManager from '@lib/media';
   import { fullscreen, story, loading } from '@stores/conexus';
   import { background_volume, tts_volume } from '@stores/volumes';
+  import detectIOS from '@utils/ios-device';
 
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
@@ -116,13 +117,14 @@
     }
   };
 
-  // Zoom
   let zoom: number = 1;
+
+  let iosDevice: boolean = false;
 
   onMount(() => {
     const storedZoom = localStorage.getItem('step-zoom');
     if (storedZoom) zoom = setZoom(Number(storedZoom));
-    iOSdevice = detectIOS();
+    iosDevice = detectIOS();
   });
 
   const handleZoomWheel = (event: WheelEvent) => {
@@ -213,22 +215,6 @@
         theme = 'dark';
     }
     localStorage.setItem('theme', theme);
-  };
-
-  let iOSdevice: boolean = false;
-  const detectIOS = () => {
-    return (
-      [
-        'iPad Simulator',
-        'iPhone Simulator',
-        'iPod Simulator',
-        'iPad',
-        'iPhone',
-        'iPod',
-      ].includes(navigator.platform) ||
-      // iPad on iOS 13 detection
-      (navigator.userAgent.includes('Mac') && 'ontouchend' in document)
-    );
   };
 </script>
 
@@ -1077,7 +1063,7 @@
             </svg>
           {/if}
         </div>
-        {#if !iOSdevice}
+        {#if !iosDevice}
           <div class="mobile-sliders">
             <Slider type="music" volume={background_volume} />
             <Slider type="voice" volume={tts_volume} restartable />

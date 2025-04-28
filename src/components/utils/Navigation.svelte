@@ -28,13 +28,13 @@
 
   const navigateBackSection = () => {
     if (!sections.includes(activeTab)) return;
-    window.open(`/${sections[prevSectionIndex]}`, '_self');
+    window.open(`/sections/${sections[prevSectionIndex]}`, '_self');
   };
 
   const navigateNextSection = () => {
     if (!sections.includes(activeTab)) return;
     window.open(
-      `/${sections[(activeSectionIndex + 1) % sections.length]}`,
+      `/sections/${sections[(activeSectionIndex + 1) % sections.length]}`,
       '_self',
     );
   };

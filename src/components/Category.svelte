@@ -10,8 +10,11 @@
   import { web3LoggedIn } from '@stores/account';
   import {
     SetCache,
+    GetCache,
     SECTION_TOPICS_KEY,
     SECTION_TOPICS_TTL,
+    SECTION_CATEGORIES_KEY,
+    SECTION_CATEGORIES_TTL
   } from '@constants/cache';
 
   let app: CoNexusApp = new CoNexusApp();
@@ -31,6 +34,14 @@
 
   const fetchCategories = async () => {
     if (!section || loading || allLoaded) return;
+
+    const cachedCategories: Nullable<string> = GetCache(SECTION_CATEGORIES_KEY(section));
+      if (cachedCategories) {
+        categories = JSON.parse(cachedCategories);
+        allLoaded = true;
+        return;
+      }
+
     loading = true;
 
     const response = await app.getSectionCategories(section, page, pageSize);
@@ -44,6 +55,11 @@
       page++; // Move to the next page
     } else {
       allLoaded = true; // Stop fetching more categories
+      SetCache(
+        SECTION_CATEGORIES_KEY(section),
+        JSON.stringify(categories),
+        SECTION_CATEGORIES_TTL
+      )
       loading = false;
     }
   };
@@ -67,7 +83,7 @@
 
       await fetchCategories();
       genres = await app.getGenres();
-
+      
       // If no categories after 2 seconds, show "No categories found"
       setTimeout(() => {
         if (categories.length === 0) {

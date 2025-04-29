@@ -2,6 +2,12 @@
   import { onMount } from 'svelte';
   import StoryTile from '@components/utils/StoryTile.svelte';
   import { CoNexusApp } from '@lib/view';
+  import {
+    SetCache,
+    GetCache,
+    CATEGORY_TOPICS_KEY,
+    CATEGORY_TOPICS_TTL
+  } from '@constants/cache';
 
   const view = new CoNexusApp();
 
@@ -22,6 +28,14 @@
   const fetchTopics = async () => {
     if (!category || loading || isEndReached) return;
 
+    const cachedTopics: Nullable<string> = GetCache(CATEGORY_TOPICS_KEY(category.name));
+    if (cachedTopics) {
+      topics = JSON.parse(cachedTopics);
+      sortedTopics = applySorting(topics);
+      isEndReached = true;
+      return;
+    }
+
     loading = true;
 
     const response = await view.getCategoryTopics(category.id, page, pageSize);
@@ -36,6 +50,11 @@
     // Stop fetching when we've loaded all topics
     if (response.length == 0 || total >= category.topic_count) {
       isEndReached = true;
+      SetCache(
+        CATEGORY_TOPICS_KEY(category.name),
+        JSON.stringify(topics),
+        CATEGORY_TOPICS_TTL
+      )
     }
 
     sortedTopics = applySorting(topics);

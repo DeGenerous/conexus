@@ -2,17 +2,15 @@
   import { afterUpdate, onMount } from 'svelte';
 
   import MediaManager from '@lib/media';
-  import { CoNexusGame } from '@lib/story';
   import { fullscreen, story, loading } from '@stores/conexus';
   import { background_volume, tts_volume } from '@stores/volumes';
+  import detectIOS from '@utils/ios-device';
 
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
 
-  export let section: string;
   export let story_name: string;
 
-  const game: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
 
   const handleSetMedia = async (topic_id: number) => {
@@ -119,13 +117,38 @@
     }
   };
 
-  // Zoom
   let zoom: number = 1;
+
+  let iosDevice: boolean = false;
+
+  let pictureKeyframe: KeyframeEffect;
+  let pictureAnimation: Animation;
+
+  $: if (step.image && step.image_type !== 'url') pictureAnimation.play();
 
   onMount(() => {
     const storedZoom = localStorage.getItem('step-zoom');
     if (storedZoom) zoom = setZoom(Number(storedZoom));
-    iOSdevice = detectIOS();
+    iosDevice = detectIOS();
+
+    pictureKeyframe = new KeyframeEffect(
+      imageWrapper,
+      [
+        { transform: "scale(1)" },
+        { transform: "scale(0.95)" },
+        { transform: "scale(1.05)" },
+        { transform: "scale(1)" },
+      ],
+      {
+        duration: 600,
+        easing: "ease-in-out"
+      },
+    );
+
+    pictureAnimation = new Animation(
+      pictureKeyframe,
+      document.timeline
+    )
   });
 
   const handleZoomWheel = (event: WheelEvent) => {
@@ -217,22 +240,6 @@
     }
     localStorage.setItem('theme', theme);
   };
-
-  let iOSdevice: boolean = false;
-  const detectIOS = () => {
-    return (
-      [
-        'iPad Simulator',
-        'iPhone Simulator',
-        'iPod Simulator',
-        'iPad',
-        'iPhone',
-        'iPod',
-      ].includes(navigator.platform) ||
-      // iPad on iOS 13 detection
-      (navigator.userAgent.includes('Mac') && 'ontouchend' in document)
-    );
-  };
 </script>
 
 <svelte:window
@@ -306,6 +313,7 @@
       bind:image={step.image}
       bind:image_type={step.image_type}
       bind:width
+      bind:fullWidthImage
     />
   </div>
 
@@ -337,19 +345,6 @@
     {/if}
 
     <div class="options-container blur">
-      {#await game.getTopic(section, story_name)}
-        <p>Loading...</p>
-      {:then topic}
-        <button
-          class="option menu-option"
-          on:click={() => {
-            game.startGame(topic.name, topic.id, handleSetMedia);
-          }}
-        >
-          Start again
-        </button>
-      {/await}
-
       <button
         id="option-0"
         class="option menu-option"
@@ -1093,7 +1088,7 @@
             </svg>
           {/if}
         </div>
-        {#if !iOSdevice}
+        {#if !iosDevice}
           <div class="mobile-sliders">
             <Slider type="music" volume={background_volume} />
             <Slider type="voice" volume={tts_volume} restartable />
@@ -1428,6 +1423,22 @@
 
     .image-wrapper {
       height: 512px;
+      animation: scale 0.6s 1s ease-in-out;
+    }
+
+    @keyframes scale {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(0.95);
+      }
+      75% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
     }
 
     .story-text,

@@ -2,6 +2,7 @@
   export let image: string | undefined;
   export let image_type: string = 'url';
   export let width: number;
+  export let fullWidthImage: boolean = false;
 
   let isLoading = true;
   let imageSrc = '';
@@ -35,7 +36,7 @@
 {#if isLoading}
   <img class="image loading-image" src="/icons/loading.png" alt="Loading..." />
   {#if width <= 600}
-    <p class="click-hint">Click to change image size</p>
+    <p class="click-hint" style:display={fullWidthImage ? "none" : "block"}>Click to change image size</p>
   {/if}
 {/if}
 

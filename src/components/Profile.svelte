@@ -74,7 +74,7 @@
     isLogged = value.loggedIn;
   });
 
-  $: if (isLogged && account) {
+  $: if (isLogged && account && user && user.email_confirmed) {
     account.getReferralCodes();
     checkSubscription();
   }
@@ -163,7 +163,7 @@
       $showModal = false;
     };
     $modalContent =
-      '<h2>Are you sure you want to select this address as a main one?</h2>';
+      '<h2>Are you sure you want to select this address as your main one?</h2>';
     $showModal = true;
   };
 
@@ -468,9 +468,7 @@
                   <p class="validation">Provide at least one number</p>
                 {/if}
 
-                {#if !editPasswordConfirm}
-                  <p class="validation">Please confirm new password</p>
-                {:else if editPassword !== editPasswordConfirm}
+                {#if editPasswordConfirm && editPassword !== editPasswordConfirm}
                   <p class="validation">Passwords do not match!</p>
                 {/if}
               {:else}
@@ -574,7 +572,7 @@
           </div>
         {/key}
 
-        {#if user?.email && user?.first_name}
+        {#if user?.email && user?.first_name && user?.email_confirmed}
           <hr />
 
           <h2>Your referral codes</h2>
@@ -911,9 +909,7 @@
                 <p class="validation">Provide at least one number</p>
               {/if}
 
-              {#if !confirmPassword}
-                <p class="validation">Please confirm new password</p>
-              {:else if password !== confirmPassword}
+              {#if confirmPassword && password !== confirmPassword}
                 <p class="validation">Passwords do not match!</p>
               {/if}
             {:else}

@@ -8,7 +8,7 @@ export const seoConfig = {
   baseURL: 'https://conexus.degenerousdao.com', // Change this to your website's base URL.
   title: 'CoNexus - Degenerous DAO', // Change this to your website's title.
   description:
-    'CoNexus is a decentralized platform that connects users with the Degenerous DAO, enabling seamless interactions and transactions.',
+    'CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.',
   type: 'website',
   image: {
     url: 'https://media.degenerousdao.com/logo.png', // Change this to your website's OpenGraph image URL.

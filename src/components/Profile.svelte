@@ -724,6 +724,15 @@
             <p class="validation">{$accountError.subscriptionStatus}</p>
           {/if}
         {/if}
+
+        <hr />
+
+        <h3>Report bugs or ask for help:</h3>
+        <div class="buttons-wrapper">
+          <a href="mailto:support@degenerousdao.com">Support</a>
+          <span style:color="#bebebe">|</span>
+          <a href="https://discord.gg/349FgMSUK8">Discord</a>
+        </div>
       </section>
     {:else}
       <section class="sign-container">

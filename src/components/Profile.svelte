@@ -74,7 +74,7 @@
     isLogged = value.loggedIn;
   });
 
-  $: if (isLogged && account) {
+  $: if (isLogged && account && user && user.email_confirmed) {
     account.getReferralCodes();
     checkSubscription();
   }
@@ -163,7 +163,7 @@
       $showModal = false;
     };
     $modalContent =
-      '<h2>Are you sure you want to select this address as a main one?</h2>';
+      '<h2>Are you sure you want to select this address as your main one?</h2>';
     $showModal = true;
   };
 
@@ -468,9 +468,7 @@
                   <p class="validation">Provide at least one number</p>
                 {/if}
 
-                {#if !editPasswordConfirm}
-                  <p class="validation">Please confirm new password</p>
-                {:else if editPassword !== editPasswordConfirm}
+                {#if editPasswordConfirm && editPassword !== editPasswordConfirm}
                   <p class="validation">Passwords do not match!</p>
                 {/if}
               {:else}
@@ -574,7 +572,7 @@
           </div>
         {/key}
 
-        {#if user?.email && user?.first_name}
+        {#if user?.email && user?.first_name && user?.email_confirmed}
           <hr />
 
           <h2>Your referral codes</h2>
@@ -726,6 +724,15 @@
             <p class="validation">{$accountError.subscriptionStatus}</p>
           {/if}
         {/if}
+
+        <hr />
+
+        <h3>Report bugs or ask for help:</h3>
+        <div class="buttons-wrapper">
+          <a href="mailto:support@degenerousdao.com">Support</a>
+          <span style:color="#bebebe">|</span>
+          <a href="https://discord.gg/349FgMSUK8">Discord</a>
+        </div>
       </section>
     {:else}
       <section class="sign-container">
@@ -911,13 +918,11 @@
                 <p class="validation">Provide at least one number</p>
               {/if}
 
-              {#if !confirmPassword}
-                <p class="validation">Please confirm new password</p>
-              {:else if password !== confirmPassword}
+              {#if confirmPassword && password !== confirmPassword}
                 <p class="validation">Passwords do not match!</p>
               {/if}
             {:else}
-              <p class="validation">Please enter new password</p>
+              <p class="validation">Set a secure password</p>
             {/if}
 
             <div class="input-container">
@@ -957,10 +962,6 @@
               />
             </div>
 
-            {#if !mandatoryFields}
-              <p class="validation">Fill all required fields</p>
-            {/if}
-
             {#if referralCode.length === 16}
               {#await account.validateReferralCode(referralCode)}
                 <p class="validation">Checking referral code...</p>
@@ -976,7 +977,19 @@
             {:else if referralCode}
               <p class="validation">Code should contain 16 characters</p>
             {:else}
-              <p class="validation">Enter referral code</p>
+              <p class="validation">
+                Enter your referral code.
+                Don't have one yet? Find yours
+                <a
+                  href="https://discord.gg/349FgMSUK8"
+                  target="_blank"
+                  rel="noopener noreferrer">here</a
+                >!
+              </p>
+            {/if}
+
+            {#if !mandatoryFields}
+              <p class="validation">Fill all required fields</p>
             {/if}
 
             {#if $accountError && $accountError.signup}

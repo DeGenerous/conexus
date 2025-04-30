@@ -21,6 +21,7 @@
   } from '@stores/modal';
   import { checkUserState } from '@utils/route-guard';
   import { GetCache, SECTION_TOPICS_KEY } from '@constants/cache';
+  import detectIOS from '@utils/ios-device';
 
   export let section: string;
   export let story_name: string;
@@ -35,8 +36,12 @@
   $: prevStoryIndex =
     activeStoryIndex <= 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
 
+  let iosDevice: boolean = false;
+
   onMount(async () => {
     await checkUserState('/story');
+
+    iosDevice = detectIOS();
 
     const storedTopics: Nullable<string> = GetCache(
       SECTION_TOPICS_KEY(section),
@@ -277,6 +282,104 @@
         </div>
       {/if}
 
+      {#await game.storyContinuables(story_name!) then continuables: ContinuableStory[]}
+        {#if continuables.length > 0}
+          {#if !noUnfinishedStoriesLeft}
+            <section class="unfinished-stories fade-in blur">
+              <h3>Continue Shaping:</h3>
+              <div class="continue-shaping-container">
+                {#each continuables as continuable}
+                  {#if !deletedStories.includes(continuable.story_id)}
+                    <div class="unfinished-story">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="-100 -100 200 200"
+                        class="delete-svg continue-shaping-btn"
+                        fill="none"
+                        stroke={$loading ? '#010020' : 'rgb(255, 60, 64)'}
+                        stroke-width="15"
+                        stroke-linecap="round"
+                        on:click|preventDefault={() => {
+                          if (!$loading) openModal(continuable);
+                        }}
+                        on:pointerover={() => {
+                          if (!$loading)
+                            handleDeleteSvg(continuable.story_id, 'focus');
+                        }}
+                        on:pointerout={() => {
+                          if (!$loading)
+                            handleDeleteSvg(continuable.story_id, 'blur');
+                        }}
+                        role="button"
+                        tabindex="0"
+                        style={$loading ? 'cursor: not-allowed' : ''}
+                      >
+                        <path
+                          id="delete-icon-{continuable.story_id}"
+                          d="
+                              M -35 -35
+                              L 35 35
+                              M -35 35
+                              L 35 -35
+                            "
+                        />
+                        <circle
+                          id="delete-circle-{continuable.story_id}"
+                          r="90"
+                        />
+                      </svg>
+                      <h3>
+                        {continuable.story_id.split('-')[0]} - {new Date(
+                          continuable.created ?? '',
+                        ).toLocaleDateString()}
+                      </h3>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="-100 -100 200 200"
+                        class="play-svg continue-shaping-btn"
+                        fill="none"
+                        stroke={$loading ? '#010020' : 'rgb(0, 185, 55)'}
+                        stroke-width="15"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        on:click|preventDefault={() => {
+                          if (!$loading)
+                            game.continueGame(continuable, handleSetMedia);
+                        }}
+                        on:pointerover={() => {
+                          if (!$loading)
+                            handlePlaySvg(continuable.story_id, 'focus');
+                        }}
+                        on:pointerout={() => {
+                          if (!$loading)
+                            handlePlaySvg(continuable.story_id, 'blur');
+                        }}
+                        role="button"
+                        tabindex="0"
+                        style={$loading ? 'cursor: not-allowed' : ''}
+                      >
+                        <polygon
+                          id="play-icon-{continuable.story_id}"
+                          points="
+                            -26 -36 -26 36 36 0
+                          "
+                          fill={$loading ? '#010020' : 'rgb(0, 185, 55)'}
+                        />
+                        <circle id="play-circle-{continuable.story_id}" r="90" />
+                      </svg>
+                    </div>
+                  {/if}
+                {/each}
+              </div>
+            </section>
+          {/if}
+        {/if}
+      {:catch}
+        <section class="unfinished-stories blur">
+          <h3>Failed to fetch unfinished stories...</h3>
+        </section>
+      {/await}
+
       {#if topic?.video_file_id}
         <video class="blur story-video" controls autoplay loop muted>
           <source src={serveUrl(topic?.video_file_id)} type="video/mp4" />
@@ -310,110 +413,14 @@
         </section>
       </div>
     {/await}
-
-    {#await game.storyContinuables(story_name!) then continuables: ContinuableStory[]}
-      {#if continuables.length > 0}
-        {#if !noUnfinishedStoriesLeft}
-          <section class="unfinished-stories fade-in blur">
-            <h3>Continue Shaping:</h3>
-            <div class="continue-shaping-container">
-              {#each continuables as continuable}
-                {#if !deletedStories.includes(continuable.story_id)}
-                  <div class="unfinished-story">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="-100 -100 200 200"
-                      class="delete-svg continue-shaping-btn"
-                      fill="none"
-                      stroke={$loading ? '#010020' : 'rgb(255, 60, 64)'}
-                      stroke-width="15"
-                      stroke-linecap="round"
-                      on:click|preventDefault={() => {
-                        if (!$loading) openModal(continuable);
-                      }}
-                      on:pointerover={() => {
-                        if (!$loading)
-                          handleDeleteSvg(continuable.story_id, 'focus');
-                      }}
-                      on:pointerout={() => {
-                        if (!$loading)
-                          handleDeleteSvg(continuable.story_id, 'blur');
-                      }}
-                      role="button"
-                      tabindex="0"
-                      style={$loading ? 'cursor: not-allowed' : ''}
-                    >
-                      <path
-                        id="delete-icon-{continuable.story_id}"
-                        d="
-                            M -35 -35
-                            L 35 35
-                            M -35 35
-                            L 35 -35
-                          "
-                      />
-                      <circle
-                        id="delete-circle-{continuable.story_id}"
-                        r="90"
-                      />
-                    </svg>
-                    <h3>
-                      {continuable.story_id.split('-')[0]} - {new Date(
-                        continuable.created ?? '',
-                      ).toLocaleDateString()}
-                    </h3>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="-100 -100 200 200"
-                      class="play-svg continue-shaping-btn"
-                      fill="none"
-                      stroke={$loading ? '#010020' : 'rgb(0, 185, 55)'}
-                      stroke-width="15"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      on:click|preventDefault={() => {
-                        if (!$loading)
-                          game.continueGame(continuable, handleSetMedia);
-                      }}
-                      on:pointerover={() => {
-                        if (!$loading)
-                          handlePlaySvg(continuable.story_id, 'focus');
-                      }}
-                      on:pointerout={() => {
-                        if (!$loading)
-                          handlePlaySvg(continuable.story_id, 'blur');
-                      }}
-                      role="button"
-                      tabindex="0"
-                      style={$loading ? 'cursor: not-allowed' : ''}
-                    >
-                      <polygon
-                        id="play-icon-{continuable.story_id}"
-                        points="
-                          -26 -36 -26 36 36 0
-                        "
-                        fill={$loading ? '#010020' : 'rgb(0, 185, 55)'}
-                      />
-                      <circle id="play-circle-{continuable.story_id}" r="90" />
-                    </svg>
-                  </div>
-                {/if}
-              {/each}
-            </div>
-          </section>
-        {/if}
-      {/if}
-    {:catch}
-      <section class="unfinished-stories blur">
-        <h3>Failed to fetch unfinished stories...</h3>
-      </section>
-    {/await}
   </section>
 {:else}
-  <BackgroundMusic />
+  {#if !iosDevice}
+    <BackgroundMusic />
+  {/if}
   <Tts />
 
-  <Step {section} {story_name} />
+  <Step {story_name} />
 {/if}
 
 <div

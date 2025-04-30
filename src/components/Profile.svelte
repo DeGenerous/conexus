@@ -953,10 +953,6 @@
               />
             </div>
 
-            {#if !mandatoryFields}
-              <p class="validation">Fill all required fields</p>
-            {/if}
-
             {#if referralCode.length === 16}
               {#await account.validateReferralCode(referralCode)}
                 <p class="validation">Checking referral code...</p>
@@ -973,6 +969,10 @@
               <p class="validation">Code should contain 16 characters</p>
             {:else}
               <p class="validation">Enter referral code</p>
+            {/if}
+
+            {#if !mandatoryFields}
+              <p class="validation">Fill all required fields</p>
             {/if}
 
             {#if $accountError && $accountError.signup}

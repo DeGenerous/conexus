@@ -205,6 +205,11 @@ h3 a:active {
   font-size: inherit;
   line-height: inherit;
   filter: brightness(125%);
+  text-decoration: underline;
+}
+
+.validation a:hover {
+  text-decoration: none;
 }
 
 .highlighted-border {

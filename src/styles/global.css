@@ -200,6 +200,13 @@ h3 a:active {
   color: rgba(255, 50, 50, 0.9);
 }
 
+.validation a {
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  filter: brightness(125%);
+}
+
 .highlighted-border {
   border: 0.1vw solid rgb(51, 226, 230) !important;
 }

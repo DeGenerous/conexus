@@ -922,7 +922,7 @@
                 <p class="validation">Passwords do not match!</p>
               {/if}
             {:else}
-              <p class="validation">Please enter new password</p>
+              <p class="validation">Set a secure password</p>
             {/if}
 
             <div class="input-container">
@@ -977,7 +977,15 @@
             {:else if referralCode}
               <p class="validation">Code should contain 16 characters</p>
             {:else}
-              <p class="validation">Enter referral code</p>
+              <p class="validation">
+                Enter your referral code.
+                Don't have one yet? Find yours
+                <a
+                  href="https://discord.gg/349FgMSUK8"
+                  target="_blank"
+                  rel="noopener noreferrer">here</a
+                >!
+              </p>
             {/if}
 
             {#if !mandatoryFields}

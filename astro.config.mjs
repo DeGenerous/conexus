@@ -14,7 +14,7 @@ import AstroPWA from '@vite-pwa/astro';
 // https://astro.build/config
 export default defineConfig({
   site: seoConfig.baseURL,
-  integrations: [svelte(), react(), sitemap(), compress()],
+  integrations: [svelte(), react(), sitemap()],
   output: 'server',
   adapter: node({
         mode: 'standalone',

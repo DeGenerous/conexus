@@ -30,7 +30,7 @@ export const manifest: Partial<ManifestOptions> = {
   name: 'CoNexus',
   short_name: 'CoNexus',
   description:
-    'A storytelling platform powered by AI and Web3, where your choices shape the multiverse.',
+    'CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.',
   display: 'fullscreen',
   start_url: "/",
   background_color: '#010020',

@@ -73,9 +73,7 @@
   });
 
   function openModal(story: any) {
-    $secondButton = `Delete story: ${
-      story.category.charAt(0).toUpperCase() + story.category.slice(1)
-    }`;
+    $secondButton = `Delete story: ${story.category}`;
     $secondButtonClass = 'red-button';
     $handleSecondButton = () => DeleteStory(story.story_id);
     $modalContent = `<h2>Are you sure you want to delete this story?</h2>
@@ -162,9 +160,7 @@
     {:then topic: TopicThumbnail}
       <header>
         <BackArrow />
-        <h1 class="fade-in">
-          {(topic.name.charAt(0).toUpperCase() + topic.name.slice(1)).trim()}
-        </h1>
+        <h1 class="fade-in">{topic.name.trim()}</h1>
         <Profile />
       </header>
 

@@ -39,9 +39,7 @@
 
   let stepFont: string = 'Verdana';
   let width: number;
-  const storyTitle: string = (
-    story_name.charAt(0).toUpperCase() + story_name.slice(1)
-  ).trim();
+  const storyTitle: string = story_name.trim();
 
   let activeOptionNumber: number = 0;
   let pointerOverOption: boolean = false;

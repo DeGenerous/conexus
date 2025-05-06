@@ -13,9 +13,6 @@ export const REFERRAL_CODES_CACHE_TTL = 1000 * 60 * 30; // 30 minutes
 export const SECTION_CACHE_KEY = 'sections';
 export const SECTION_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
 
-export const SECTION_CATEGORY_CACHE_KEY = 'section_categories';
-export const SECTION_CATEGORY_CACHE_TTL = 1000 * 60 * 10; // 10 minutes
-
 export const CATEGORY_CACHE_KEY = 'categories';
 export const CATEGORY_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
 
@@ -44,7 +41,6 @@ const authKeys = [
   SUBSCRIPTIONSTATUS_CACHE_KEY,
   REFERRAL_CODES_CACHE_KEY,
   SECTION_CACHE_KEY,
-  SECTION_CATEGORY_CACHE_KEY,
   CATEGORY_CACHE_KEY,
   TOPICS_CACHE_KEY,
   MEDIA_CACHE_KEY,
@@ -53,7 +49,6 @@ const authKeys = [
 
 const viewKeys = [
   SECTION_CACHE_KEY,
-  SECTION_CATEGORY_CACHE_KEY,
   CATEGORY_CACHE_KEY,
   TOPICS_CACHE_KEY,
   MEDIA_CACHE_KEY,
@@ -65,7 +60,6 @@ const viewKeys = [
 ];
 
 const manageKeys = [
-  SECTION_CATEGORY_CACHE_KEY,
   TOPICS_CACHE_KEY,
   MEDIA_CACHE_KEY,
 ];

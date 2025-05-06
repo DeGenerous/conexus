@@ -89,8 +89,7 @@ type Web3Signin = {
 type Section = {
   id: number;
   name: string;
-  tile_image1?: string;
-  tile_image2?: string;
+  tile_image?: string;
 };
 
 type Genre = {

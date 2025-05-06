@@ -81,8 +81,6 @@
       if (cachedCategories) categories = JSON.parse(cachedCategories);
       else await fetchCategories();
 
-      console.log(categories)
-
       genres = await app.getGenres();
       
       // If no categories after 2 seconds, show "No categories found"

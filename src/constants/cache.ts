@@ -118,7 +118,20 @@ export const ClearCache = (
       removeCacheKeys(manageKeys);
       break;
     case 'full':
+      // saving important values
+      const cookieConsent = localStorage.getItem('cookie_consent');
+      const musicVolume = localStorage.getItem('music-volume');
+      const voiceVolume = localStorage.getItem('voice-volume');
+      const ttsSpeed = localStorage.getItem('tts-speed');
+      const stepTheme = localStorage.getItem('theme');
+      // deleting all values
       localStorage.clear();
+      // restoring saved values
+      if (cookieConsent) localStorage.setItem('cookie_consent', cookieConsent);
+      if (musicVolume) localStorage.setItem('music-volume', musicVolume);
+      if (voiceVolume) localStorage.setItem('voice-volume', voiceVolume);
+      if (ttsSpeed) localStorage.setItem('tts-speed', ttsSpeed);
+      if (stepTheme) localStorage.setItem('theme', stepTheme);
       break;
     default:
       localStorage.removeItem(key);

@@ -19,7 +19,6 @@
   let isSorting: boolean = false;
   let sortedTopics: TopicInCategory[] = [];
 
-  let page: number = 1;
   let pageSize: number = 5;
   let total: number = 0;
   let loading: boolean = false;
@@ -32,29 +31,30 @@
     if (cachedTopics) {
       topics = JSON.parse(cachedTopics);
       sortedTopics = applySorting(topics);
-      isEndReached = true;
-      return;
+      if (topics.length === category.topic_count) {
+        isEndReached = true;
+        return;
+      }
     }
 
     loading = true;
 
-    const response = await view.getCategoryTopics(category.id, page, pageSize);
+    const response = await view.getCategoryTopics(category.id, Math.floor(topics.length / 5) + 1, pageSize);
 
     // if topics add the topics to the array
     if (response && response.length > 0) {
       topics = [...topics, ...response];
       total += response.length;
-      page++; // Move to next page
-    }
-
-    // Stop fetching when we've loaded all topics
-    if (response.length == 0 || total >= category.topic_count) {
-      isEndReached = true;
       SetCache(
         CATEGORY_TOPICS_KEY(category.name),
         JSON.stringify(topics),
         CATEGORY_TOPICS_TTL
       )
+    }
+
+    // Stop fetching when we've loaded all topics
+    if (response.length == 0 || total >= category.topic_count) {
+      isEndReached = true;
     }
 
     sortedTopics = applySorting(topics);

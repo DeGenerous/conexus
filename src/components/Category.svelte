@@ -11,8 +11,6 @@
   import {
     SetCache,
     GetCache,
-    SECTION_TOPICS_KEY,
-    SECTION_TOPICS_TTL,
     SECTION_CATEGORIES_KEY,
     SECTION_CATEGORIES_TTL
   } from '@constants/cache';
@@ -26,7 +24,6 @@
   let categories: CategoriesInSection[] = [];
   let genres: Genre[] = [];
 
-  let page: number = 1;
   let pageSize: number = 1;
   let loading: boolean = false;
   let allLoaded: boolean = false; // Prevent further requests when empty response
@@ -34,32 +31,31 @@
 
   const fetchCategories = async () => {
     if (!section || loading || allLoaded) return;
-
-    const cachedCategories: Nullable<string> = GetCache(SECTION_CATEGORIES_KEY(section));
-      if (cachedCategories) {
-        categories = JSON.parse(cachedCategories);
-        allLoaded = true;
-        return;
-      }
-
     loading = true;
 
-    const response = await app.getSectionCategories(section, page, pageSize);
+    const response = await app.getSectionCategories(section, categories.length + 1, pageSize);
 
     if (response && response.length > 0) {
       setTimeout(() => {
         categories = [...categories, ...response];
+        SetCache(
+          SECTION_CATEGORIES_KEY(section),
+          JSON.stringify(categories.map((cat) => {
+            const orderedTopics = cat.topics.sort((a, b) => {
+              if (a.topic_order > b.topic_order) return 1;
+              if (a.topic_order < b.topic_order) return -1;
+              return 0;
+            })
+            cat.topics = orderedTopics;
+            return cat;
+          })),
+          SECTION_CATEGORIES_TTL
+        )
         loading = false;
       }, 600); // Simulate loading delay
       showNoCategoriesMessage = false; // Hide message if categories are found
-      page++; // Move to the next page
     } else {
       allLoaded = true; // Stop fetching more categories
-      SetCache(
-        SECTION_CATEGORIES_KEY(section),
-        JSON.stringify(categories),
-        SECTION_CATEGORIES_TTL
-      )
       loading = false;
     }
   };
@@ -81,7 +77,12 @@
         return;
       }
 
-      await fetchCategories();
+      const cachedCategories: Nullable<string> = GetCache(SECTION_CATEGORIES_KEY(section));
+      if (cachedCategories) categories = JSON.parse(cachedCategories);
+      else await fetchCategories();
+
+      console.log(categories)
+
       genres = await app.getGenres();
       
       // If no categories after 2 seconds, show "No categories found"
@@ -120,28 +121,7 @@
     if (lastCategoryElement) observer.observe(lastCategoryElement);
   };
 
-  $: {
-    if (categories.length > 0) {
-      setTimeout(observeLastCategory, 500);
-
-      const sectionTopics = categories
-        .map((cat) => {
-          return cat.topics.map(({ topic_id, topic_name }) => {
-            return {
-              id: topic_id,
-              name: topic_name,
-            };
-          });
-        })
-        .flat();
-
-      SetCache(
-        SECTION_TOPICS_KEY(section),
-        JSON.stringify(sectionTopics),
-        SECTION_TOPICS_TTL,
-      );
-    }
-  }
+  $: if (categories.length > 0) setTimeout(observeLastCategory, 500);
 
   const getTopics = async (
     text: string,

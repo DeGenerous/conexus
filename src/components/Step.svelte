@@ -1324,7 +1324,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 27.5vw;
+    max-width: 22.5vw;
   }
 
   .control-bar,
@@ -1518,9 +1518,10 @@
     .mobile-sliders {
       width: 100%;
       display: flex;
-      flex-flow: row nowrap;
+      flex-flow: column-reverse nowrap;
       justify-content: space-between;
       align-items: center;
+      gap: 0.5em;
     }
 
     .controls {
@@ -1595,7 +1596,7 @@
     }
 
     .controls-container h3 {
-      max-width: 20rem;
+      max-width: 16rem;
     }
 
     .story-info-container {

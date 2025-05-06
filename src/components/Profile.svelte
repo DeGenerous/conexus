@@ -552,12 +552,14 @@
                       </li>
                     {/each}
                   </ul>
-                  <div class="buttons-container">
-                    <WalletConnect
-                      linking={true}
-                      title={'Add another address'}
-                    />
-                  </div>
+                  {#if user?.email && user?.first_name}
+                    <div class="buttons-container">
+                      <WalletConnect
+                        linking={true}
+                        title={'Add another address'}
+                      />
+                    </div>
+                  {/if}
                 </div>
 
                 {#if $accountError && $accountError.selectMainWallet}

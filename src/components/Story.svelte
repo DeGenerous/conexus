@@ -43,8 +43,11 @@
 
     iosDevice = detectIOS();
 
-    const storedTopics = JSON.parse(GetCache(SECTION_CATEGORIES_KEY(section)) as string)
-      .map((category: CategoryInSection) => category.topics).flat();
+    const storedTopics = JSON.parse(
+      GetCache(SECTION_CATEGORIES_KEY(section)) as string,
+    )
+      .map((category: CategoryInSection) => category.topics)
+      .flat();
     if (storedTopics) {
       categoryTopics = storedTopics;
       const categoryTopicNames: string[] = categoryTopics!.map(
@@ -364,7 +367,10 @@
                           "
                           fill={$loading ? '#010020' : 'rgb(0, 185, 55)'}
                         />
-                        <circle id="play-circle-{continuable.story_id}" r="90" />
+                        <circle
+                          id="play-circle-{continuable.story_id}"
+                          r="90"
+                        />
                       </svg>
                     </div>
                   {/if}

@@ -30,11 +30,11 @@
 
   const setVolume = () =>
     (audio.volume = $tts_volume.muted ? 0 : $tts_volume.volume);
-  
+
   const adjustTtsSpeed = () => {
     audio.playbackRate = $tts_speed;
     localStorage.setItem('tts-speed', $tts_speed.toString());
-  }
+  };
 </script>
 
 <audio bind:this={audio}></audio>

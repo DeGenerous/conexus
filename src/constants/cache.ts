@@ -59,10 +59,7 @@ const viewKeys = [
   SECTION_CATEGORIES_KEY('Dischordian Saga'),
 ];
 
-const manageKeys = [
-  TOPICS_CACHE_KEY,
-  MEDIA_CACHE_KEY,
-];
+const manageKeys = [TOPICS_CACHE_KEY, MEDIA_CACHE_KEY];
 
 export const SetCache = <T>(key: string, value: T, ttl: number) => {
   localStorage.setItem(

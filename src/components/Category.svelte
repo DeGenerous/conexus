@@ -12,7 +12,7 @@
     SetCache,
     GetCache,
     SECTION_CATEGORIES_KEY,
-    SECTION_CATEGORIES_TTL
+    SECTION_CATEGORIES_TTL,
   } from '@constants/cache';
 
   let app: CoNexusApp = new CoNexusApp();
@@ -33,24 +33,30 @@
     if (!section || loading || allLoaded) return;
     loading = true;
 
-    const response = await app.getSectionCategories(section, categories.length + 1, pageSize);
+    const response = await app.getSectionCategories(
+      section,
+      categories.length + 1,
+      pageSize,
+    );
 
     if (response && response.length > 0) {
       setTimeout(() => {
         categories = [...categories, ...response];
         SetCache(
           SECTION_CATEGORIES_KEY(section),
-          JSON.stringify(categories.map((cat) => {
-            const orderedTopics = cat.topics.sort((a, b) => {
-              if (a.topic_order > b.topic_order) return 1;
-              if (a.topic_order < b.topic_order) return -1;
-              return 0;
-            })
-            cat.topics = orderedTopics;
-            return cat;
-          })),
-          SECTION_CATEGORIES_TTL
-        )
+          JSON.stringify(
+            categories.map((cat) => {
+              const orderedTopics = cat.topics.sort((a, b) => {
+                if (a.topic_order > b.topic_order) return 1;
+                if (a.topic_order < b.topic_order) return -1;
+                return 0;
+              });
+              cat.topics = orderedTopics;
+              return cat;
+            }),
+          ),
+          SECTION_CATEGORIES_TTL,
+        );
         loading = false;
       }, 600); // Simulate loading delay
       showNoCategoriesMessage = false; // Hide message if categories are found
@@ -77,12 +83,14 @@
         return;
       }
 
-      const cachedCategories: Nullable<string> = GetCache(SECTION_CATEGORIES_KEY(section));
+      const cachedCategories: Nullable<string> = GetCache(
+        SECTION_CATEGORIES_KEY(section),
+      );
       if (cachedCategories) categories = JSON.parse(cachedCategories);
       else await fetchCategories();
 
       genres = await app.getGenres();
-      
+
       // If no categories after 2 seconds, show "No categories found"
       setTimeout(() => {
         if (categories.length === 0) {

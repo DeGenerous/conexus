@@ -57,10 +57,13 @@
   <section>
     {#if activeTab !== 'Home'}
       <a href="/">Home</a>
-      <a class:active={activeTab === 'Community Picks'} href="/sections/Community Picks"
-        >Community Picks</a
+      <a
+        class:active={activeTab === 'Community Picks'}
+        href="/sections/Community Picks">Community Picks</a
       >
-      <a class:active={activeTab === 'Collabs'} href="/sections/Collabs">Collabs</a>
+      <a class:active={activeTab === 'Collabs'} href="/sections/Collabs"
+        >Collabs</a
+      >
       <a
         class:active={activeTab === 'Dischordian Saga'}
         href="/sections/Dischordian Saga">Dischordian Saga</a

@@ -980,8 +980,7 @@
               <p class="validation">Code should contain 16 characters</p>
             {:else}
               <p class="validation">
-                Enter your referral code.
-                Don't have one yet? Find yours
+                Enter your referral code. Don't have one yet? Find yours
                 <a
                   href="https://discord.gg/349FgMSUK8"
                   target="_blank"

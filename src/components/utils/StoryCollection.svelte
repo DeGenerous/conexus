@@ -6,7 +6,7 @@
     SetCache,
     GetCache,
     CATEGORY_TOPICS_KEY,
-    CATEGORY_TOPICS_TTL
+    CATEGORY_TOPICS_TTL,
   } from '@constants/cache';
 
   const view = new CoNexusApp();
@@ -27,7 +27,9 @@
   const fetchTopics = async () => {
     if (!category || loading || isEndReached) return;
 
-    const cachedTopics: Nullable<string> = GetCache(CATEGORY_TOPICS_KEY(category.name));
+    const cachedTopics: Nullable<string> = GetCache(
+      CATEGORY_TOPICS_KEY(category.name),
+    );
     if (cachedTopics) {
       topics = JSON.parse(cachedTopics);
       sortedTopics = applySorting(topics);
@@ -39,7 +41,11 @@
 
     loading = true;
 
-    const response = await view.getCategoryTopics(category.id, Math.floor(topics.length / 5) + 1, pageSize);
+    const response = await view.getCategoryTopics(
+      category.id,
+      Math.floor(topics.length / 5) + 1,
+      pageSize,
+    );
 
     // if topics add the topics to the array
     if (response && response.length > 0) {
@@ -48,8 +54,8 @@
       SetCache(
         CATEGORY_TOPICS_KEY(category.name),
         JSON.stringify(topics),
-        CATEGORY_TOPICS_TTL
-      )
+        CATEGORY_TOPICS_TTL,
+      );
     }
 
     // Stop fetching when we've loaded all topics

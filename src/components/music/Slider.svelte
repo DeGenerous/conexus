@@ -53,7 +53,7 @@
   const adjustTtsSpeed = () => {
     const speedIndex = speed_values.indexOf($tts_speed);
     $tts_speed = speed_values[(speedIndex + 1) % speed_values.length];
-  }
+  };
 
   // SVG Icons
   let voiceMuted: boolean = false;
@@ -319,12 +319,7 @@
 
   <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
   {#if restartable}
-    <p
-      class="speed"
-      on:click={adjustTtsSpeed}
-      role="button"
-      tabindex="0"
-    >
+    <p class="speed" on:click={adjustTtsSpeed} role="button" tabindex="0">
       x{$tts_speed}
     </p>
     <svg

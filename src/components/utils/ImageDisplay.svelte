@@ -36,7 +36,9 @@
 {#if isLoading}
   <img class="image loading-image" src="/icons/loading.png" alt="Loading..." />
   {#if width <= 600}
-    <p class="click-hint" style:display={fullWidthImage ? "none" : "block"}>Click to change image size</p>
+    <p class="click-hint" style:display={fullWidthImage ? 'none' : 'block'}>
+      Click to change image size
+    </p>
   {/if}
 {/if}
 

@@ -134,21 +134,18 @@
     pictureKeyframe = new KeyframeEffect(
       imageWrapper,
       [
-        { transform: "scale(1)" },
-        { transform: "scale(0.95)" },
-        { transform: "scale(1.05)" },
-        { transform: "scale(1)" },
+        { transform: 'scale(1)' },
+        { transform: 'scale(0.95)' },
+        { transform: 'scale(1.05)' },
+        { transform: 'scale(1)' },
       ],
       {
         duration: 600,
-        easing: "ease-in-out"
+        easing: 'ease-in-out',
       },
     );
 
-    pictureAnimation = new Animation(
-      pictureKeyframe,
-      document.timeline
-    )
+    pictureAnimation = new Animation(pictureKeyframe, document.timeline);
   });
 
   const handleZoomWheel = (event: WheelEvent) => {

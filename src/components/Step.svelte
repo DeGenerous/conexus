@@ -122,7 +122,13 @@
   let pictureKeyframe: KeyframeEffect;
   let pictureAnimation: Animation;
 
-  $: if (step.image && step.image_type !== 'url') pictureAnimation.play();
+  $: if (step.image && step.image_type !== 'url') {
+    pictureAnimation.play();
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
 
   onMount(() => {
     const storedZoom = localStorage.getItem('step-zoom');

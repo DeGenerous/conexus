@@ -1032,60 +1032,102 @@
             </svg>
           </div>
 
-          {#if $fullscreen}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="-100 -100 200 200"
-              class="fullscreen-svg"
-              fill="#dedede"
-              stroke="#dedede"
-              stroke-width="20"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              on:click={() => fullscreen.update((old) => !old)}
-              role="button"
-              tabindex="0"
-            >
-              <g id="windowed-arrow">
-                <line x1="-90" y1="-90" x2="-50" y2="-50" />
-                <polygon
-                  points="
-                    -85 -32 -32 -32 -32 -85
-                  "
-                  stroke-width="12"
-                  transform="translate(10 10)"
-                />
-              </g>
-              <use href="#windowed-arrow" transform="rotate(90)" />
-              <use href="#windowed-arrow" transform="rotate(180)" />
-              <use href="#windowed-arrow" transform="rotate(270)" />
-            </svg>
+          {#if !iosDevice}
+            {#if $fullscreen}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="-100 -100 200 200"
+                class="fullscreen-svg"
+                fill="#dedede"
+                stroke="#dedede"
+                stroke-width="20"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                on:click={() => fullscreen.update((old) => !old)}
+                role="button"
+                tabindex="0"
+              >
+                <g id="windowed-arrow">
+                  <line x1="-90" y1="-90" x2="-50" y2="-50" />
+                  <polygon
+                    points="
+                      -85 -32 -32 -32 -32 -85
+                    "
+                    stroke-width="12"
+                    transform="translate(10 10)"
+                  />
+                </g>
+                <use href="#windowed-arrow" transform="rotate(90)" />
+                <use href="#windowed-arrow" transform="rotate(180)" />
+                <use href="#windowed-arrow" transform="rotate(270)" />
+              </svg>
+            {:else}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="-100 -100 200 200"
+                class="fullscreen-svg"
+                fill="#dedede"
+                stroke="#dedede"
+                stroke-width="20"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                on:click={() => fullscreen.update((old) => !old)}
+                role="button"
+                tabindex="0"
+              >
+                <g id="fullscreen-arrow">
+                  <line x1="0" y1="0" x2="-55" y2="-55" />
+                  <polygon
+                    points="
+                      -85 -32 -85 -85 -32 -85
+                    "
+                    stroke-width="12"
+                  />
+                </g>
+                <use href="#fullscreen-arrow" transform="rotate(90)" />
+                <use href="#fullscreen-arrow" transform="rotate(180)" />
+                <use href="#fullscreen-arrow" transform="rotate(270)" />
+              </svg>
+            {/if}
           {:else}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="-100 -100 200 200"
-              class="fullscreen-svg"
-              fill="#dedede"
-              stroke="#dedede"
-              stroke-width="20"
-              stroke-linecap="round"
+              class="eye-svg filled-out-eye"
+              stroke={themeColor}
+              stroke-width="15"
               stroke-linejoin="round"
-              on:click={() => fullscreen.update((old) => !old)}
+              stroke-linecap="round"
+              opacity="1"
+              on:click={switchTheme}
               role="button"
               tabindex="0"
             >
-              <g id="fullscreen-arrow">
-                <line x1="0" y1="0" x2="-55" y2="-55" />
-                <polygon
-                  points="
-                    -85 -32 -85 -85 -32 -85
+              <mask id="eye-circle">
+                <path
+                  fill="white"
+                  stroke="white"
+                  d="
+                    M -80 0
+                    Q 0 -90 80 0
+                    Q 0 90 -80 0
+                    Z
                   "
-                  stroke-width="12"
+                  mask="url(#eye-circle)"
                 />
-              </g>
-              <use href="#fullscreen-arrow" transform="rotate(90)" />
-              <use href="#fullscreen-arrow" transform="rotate(180)" />
-              <use href="#fullscreen-arrow" transform="rotate(270)" />
+                <circle r="25" fill="black" stroke="black" />
+              </mask>
+              <circle r="15" fill={themeColor} stroke="none" />
+              <path
+                fill={themeColor}
+                d="
+                  M -80 0
+                  Q 0 -90 80 0
+                  Q 0 90 -80 0
+                  Z
+                "
+                mask="url(#eye-circle)"
+              />
             </svg>
           {/if}
         </div>
@@ -1099,29 +1141,43 @@
     {/if}
   </section>
   {#if width <= 600}
-    <div
-      class="theme-switcher blur"
-      on:click={switchTheme}
-      role="button"
-      tabindex="0"
-    >
-      <p style="color: {themeColor}">
-        {theme.charAt(0).toUpperCase() + theme.slice(1)} theme
-      </p>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="-100 -100 200 200"
-        class="eye-svg filled-out-eye"
-        stroke={themeColor}
-        stroke-width="15"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        opacity="1"
+    {#if !iosDevice}
+      <div
+        class="theme-switcher blur"
+        on:click={switchTheme}
+        role="button"
+        tabindex="0"
       >
-        <mask id="eye-circle">
+        <p style="color: {themeColor}">
+          {theme.charAt(0).toUpperCase() + theme.slice(1)} theme
+        </p>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="-100 -100 200 200"
+          class="eye-svg filled-out-eye"
+          stroke={themeColor}
+          stroke-width="15"
+          stroke-linejoin="round"
+          stroke-linecap="round"
+          opacity="1"
+        >
+          <mask id="eye-circle">
+            <path
+              fill="white"
+              stroke="white"
+              d="
+                M -80 0
+                Q 0 -90 80 0
+                Q 0 90 -80 0
+                Z
+              "
+              mask="url(#eye-circle)"
+            />
+            <circle r="25" fill="black" stroke="black" />
+          </mask>
+          <circle r="15" fill={themeColor} stroke="none" />
           <path
-            fill="white"
-            stroke="white"
+            fill={themeColor}
             d="
               M -80 0
               Q 0 -90 80 0
@@ -1130,21 +1186,9 @@
             "
             mask="url(#eye-circle)"
           />
-          <circle r="25" fill="black" stroke="black" />
-        </mask>
-        <circle r="15" fill={themeColor} stroke="none" />
-        <path
-          fill={themeColor}
-          d="
-            M -80 0
-            Q 0 -90 80 0
-            Q 0 90 -80 0
-            Z
-          "
-          mask="url(#eye-circle)"
-        />
-      </svg>
-    </div>
+        </svg>
+      </div>
+    {/if}
     <h3>{storyTitle}</h3>
   {/if}
 </section>

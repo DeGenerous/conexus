@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { default_sections } from '@constants/data';
   import { AdminApp } from '@lib/admin';
   import { CoNexusApp } from '@lib/view';
   import { checkUserState } from '@utils/route-guard';
@@ -13,7 +12,7 @@
   let admin = new AdminApp();
   let view = new CoNexusApp();
 
-  let sections: Section[] = default_sections;
+  let sections: Section[];
   let collections: Collection[] = [];
   let classGates: ClassGate[] = [];
 

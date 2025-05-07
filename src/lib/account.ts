@@ -324,7 +324,7 @@ export class Account {
     }
 
     // clear
-    ClearCache('auth');
+    ClearCache('full');
 
     authenticated.set({ user: null, loggedIn: false });
     web3LoggedIn.set(false);

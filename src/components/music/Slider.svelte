@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { Writable } from 'svelte/store';
+  import { tts_speed, speed_values } from '@stores/volumes';
 
   export let type: 'voice' | 'music';
   export let volume: Writable<VolumeControl>;
@@ -16,6 +17,8 @@
       $volume = volumeValue;
       if (type === 'voice') {
         voiceMuted = $volume.muted;
+        const storedTtsSpeed = localStorage.getItem('tts-speed');
+        if (storedTtsSpeed) $tts_speed = Number(storedTtsSpeed);
       } else if (type === 'music') {
         volumeMuted = $volume.muted;
       }
@@ -45,6 +48,11 @@
 
   const restart = () => {
     volume.update((v) => ({ ...v, restart: true }));
+  };
+
+  const adjustTtsSpeed = () => {
+    const speedIndex = speed_values.indexOf($tts_speed);
+    $tts_speed = speed_values[(speedIndex + 1) % speed_values.length];
   };
 
   // SVG Icons
@@ -309,7 +317,11 @@
     disabled={disabledInput}
   />
 
+  <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
   {#if restartable}
+    <p class="speed" on:click={adjustTtsSpeed} role="button" tabindex="0">
+      x{$tts_speed}
+    </p>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="-100 -100 200 200"
@@ -398,12 +410,24 @@
     cursor: not-allowed;
   }
 
+  .speed {
+    font-weight: 100;
+    transition-timing-function: ease-in-out;
+    transition-duration: 0.3s;
+  }
+
+  .speed:hover,
+  .speed:active {
+    transform: scale(1.05);
+    color: rgb(51, 226, 230);
+  }
+
   @media screen and (max-width: 600px) {
     div {
       height: 2.5em;
-      padding: 0.5em;
+      padding: 0.5em 1em;
       border-radius: 0.5em;
-      gap: 0.5em;
+      gap: 1em;
       box-shadow: inset 0 0 0.5vw #010020;
       background-color: rgba(1, 0, 32, 0.35);
       border: none;
@@ -416,7 +440,7 @@
 
     input {
       height: 1vw;
-      width: 26vw;
+      width: 30vw;
     }
   }
 

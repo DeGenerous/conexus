@@ -6,7 +6,7 @@
     SetCache,
     GetCache,
     CATEGORY_TOPICS_KEY,
-    CATEGORY_TOPICS_TTL
+    CATEGORY_TOPICS_TTL,
   } from '@constants/cache';
 
   const view = new CoNexusApp();
@@ -19,7 +19,6 @@
   let isSorting: boolean = false;
   let sortedTopics: TopicInCategory[] = [];
 
-  let page: number = 1;
   let pageSize: number = 5;
   let total: number = 0;
   let loading: boolean = false;
@@ -28,33 +27,40 @@
   const fetchTopics = async () => {
     if (!category || loading || isEndReached) return;
 
-    const cachedTopics: Nullable<string> = GetCache(CATEGORY_TOPICS_KEY(category.name));
+    const cachedTopics: Nullable<string> = GetCache(
+      CATEGORY_TOPICS_KEY(category.name),
+    );
     if (cachedTopics) {
       topics = JSON.parse(cachedTopics);
       sortedTopics = applySorting(topics);
-      isEndReached = true;
-      return;
+      if (topics.length === category.topic_count) {
+        isEndReached = true;
+        return;
+      }
     }
 
     loading = true;
 
-    const response = await view.getCategoryTopics(category.id, page, pageSize);
+    const response = await view.getCategoryTopics(
+      category.id,
+      Math.floor(topics.length / 5) + 1,
+      pageSize,
+    );
 
     // if topics add the topics to the array
     if (response && response.length > 0) {
       topics = [...topics, ...response];
       total += response.length;
-      page++; // Move to next page
+      SetCache(
+        CATEGORY_TOPICS_KEY(category.name),
+        JSON.stringify(topics),
+        CATEGORY_TOPICS_TTL,
+      );
     }
 
     // Stop fetching when we've loaded all topics
     if (response.length == 0 || total >= category.topic_count) {
       isEndReached = true;
-      SetCache(
-        CATEGORY_TOPICS_KEY(category.name),
-        JSON.stringify(topics),
-        CATEGORY_TOPICS_TTL
-      )
     }
 
     sortedTopics = applySorting(topics);
@@ -87,12 +93,8 @@
 
   function sortByName(data: TopicInCategory[]) {
     return data.sort((a: TopicInCategory, b: TopicInCategory) => {
-      const firstTopic = (
-        a.name.charAt(0).toUpperCase() + a.name.slice(1)
-      ).trim();
-      const secondTopic = (
-        b.name.charAt(0).toUpperCase() + b.name.slice(1)
-      ).trim();
+      const firstTopic = a.name.toLowerCase().trim();
+      const secondTopic = b.name.toLowerCase().trim();
       // Sorting all topics in the category alphabetically
       if (firstTopic < secondTopic) return -1;
       if (firstTopic > secondTopic) return 1;

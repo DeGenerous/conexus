@@ -17,8 +17,8 @@ export default defineConfig({
   integrations: [svelte(), react(), sitemap()],
   output: 'server',
   adapter: node({
-        mode: 'standalone',
-      }),
+    mode: 'standalone',
+  }),
   vite: {
     plugins: [
       VitePWA({

@@ -13,18 +13,11 @@ export const REFERRAL_CODES_CACHE_TTL = 1000 * 60 * 30; // 30 minutes
 export const SECTION_CACHE_KEY = 'sections';
 export const SECTION_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
 
-export const SECTION_CATEGORY_CACHE_KEY = 'section_categories';
-export const SECTION_CATEGORY_CACHE_TTL = 1000 * 60 * 10; // 10 minutes
-
 export const CATEGORY_CACHE_KEY = 'categories';
 export const CATEGORY_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
 
 export const GENRE_CACHE_KEY = 'genres';
 export const GENRE_CACHE_TTL = 1000 * 60 * 60 * 24 * 30; // 30 days
-
-export const SECTION_TOPICS_KEY = (section: string): string =>
-  `${section} topics`;
-export const SECTION_TOPICS_TTL = 1000 * 60 * 60 * 12; // 12 hours
 
 export const SECTION_CATEGORIES_KEY = (section: string): string =>
   `section-categories-[${section}]`;
@@ -48,7 +41,6 @@ const authKeys = [
   SUBSCRIPTIONSTATUS_CACHE_KEY,
   REFERRAL_CODES_CACHE_KEY,
   SECTION_CACHE_KEY,
-  SECTION_CATEGORY_CACHE_KEY,
   CATEGORY_CACHE_KEY,
   TOPICS_CACHE_KEY,
   MEDIA_CACHE_KEY,
@@ -57,25 +49,17 @@ const authKeys = [
 
 const viewKeys = [
   SECTION_CACHE_KEY,
-  SECTION_CATEGORY_CACHE_KEY,
   CATEGORY_CACHE_KEY,
   TOPICS_CACHE_KEY,
   MEDIA_CACHE_KEY,
   GENRE_CACHE_KEY,
   ALL_TOPICS_KEY,
-  SECTION_TOPICS_KEY('Community Picks'),
-  SECTION_TOPICS_KEY('Collabs'),
-  SECTION_TOPICS_KEY('Dischordian Saga'),
   SECTION_CATEGORIES_KEY('Community Picks'),
   SECTION_CATEGORIES_KEY('Collabs'),
   SECTION_CATEGORIES_KEY('Dischordian Saga'),
 ];
 
-const manageKeys = [
-  SECTION_CATEGORY_CACHE_KEY,
-  TOPICS_CACHE_KEY,
-  MEDIA_CACHE_KEY,
-];
+const manageKeys = [TOPICS_CACHE_KEY, MEDIA_CACHE_KEY];
 
 export const SetCache = <T>(key: string, value: T, ttl: number) => {
   localStorage.setItem(
@@ -118,7 +102,20 @@ export const ClearCache = (
       removeCacheKeys(manageKeys);
       break;
     case 'full':
+      // saving important values
+      const cookieConsent = localStorage.getItem('cookie_consent');
+      const musicVolume = localStorage.getItem('music-volume');
+      const voiceVolume = localStorage.getItem('voice-volume');
+      const ttsSpeed = localStorage.getItem('tts-speed');
+      const stepTheme = localStorage.getItem('theme');
+      // deleting all values
       localStorage.clear();
+      // restoring saved values
+      if (cookieConsent) localStorage.setItem('cookie_consent', cookieConsent);
+      if (musicVolume) localStorage.setItem('music-volume', musicVolume);
+      if (voiceVolume) localStorage.setItem('voice-volume', voiceVolume);
+      if (ttsSpeed) localStorage.setItem('tts-speed', ttsSpeed);
+      if (stepTheme) localStorage.setItem('theme', stepTheme);
       break;
     default:
       localStorage.removeItem(key);

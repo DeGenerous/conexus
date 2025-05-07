@@ -6,9 +6,7 @@
   export let topic: Nullable<TopicInCategory>;
   export let loading: boolean;
 
-  const storyName: string = topic
-    ? (topic.name.charAt(0).toUpperCase() + topic.name.slice(1)).trim()
-    : '';
+  const storyName: string = topic ? topic.name.trim() : '';
 
   const listTopicGates = (topic: TopicInCategory) => {
     const gates = topic.nft_gate

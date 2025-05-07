@@ -20,7 +20,7 @@
     modalContent,
   } from '@stores/modal';
   import { checkUserState } from '@utils/route-guard';
-  import { GetCache, SECTION_TOPICS_KEY } from '@constants/cache';
+  import { GetCache, SECTION_CATEGORIES_KEY } from '@constants/cache';
   import detectIOS from '@utils/ios-device';
 
   export let section: string;
@@ -31,7 +31,7 @@
   const game: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
 
-  let categoryTopics: { name: string; id: number }[] = [];
+  let categoryTopics: TopicsInSection[] = [];
   let activeStoryIndex: number = 0;
   $: prevStoryIndex =
     activeStoryIndex <= 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
@@ -43,13 +43,15 @@
 
     iosDevice = detectIOS();
 
-    const storedTopics: Nullable<string> = GetCache(
-      SECTION_TOPICS_KEY(section),
-    );
+    const storedTopics = JSON.parse(
+      GetCache(SECTION_CATEGORIES_KEY(section)) as string,
+    )
+      .map((category: CategoryInSection) => category.topics)
+      .flat();
     if (storedTopics) {
-      categoryTopics = JSON.parse(storedTopics);
+      categoryTopics = storedTopics;
       const categoryTopicNames: string[] = categoryTopics!.map(
-        (story) => story.name,
+        (story) => story.topic_name,
       );
       activeStoryIndex = categoryTopicNames?.indexOf(story_name);
     }
@@ -71,9 +73,7 @@
   });
 
   function openModal(story: any) {
-    $secondButton = `Delete story: ${
-      story.category.charAt(0).toUpperCase() + story.category.slice(1)
-    }`;
+    $secondButton = `Delete story: ${story.category}`;
     $secondButtonClass = 'red-button';
     $handleSecondButton = () => DeleteStory(story.story_id);
     $modalContent = `<h2>Are you sure you want to delete this story?</h2>
@@ -160,9 +160,7 @@
     {:then topic: TopicThumbnail}
       <header>
         <BackArrow />
-        <h1 class="fade-in">
-          {(topic.name.charAt(0).toUpperCase() + topic.name.slice(1)).trim()}
-        </h1>
+        <h1 class="fade-in">{topic.name.trim()}</h1>
         <Profile />
       </header>
 
@@ -171,11 +169,11 @@
           <a
             class="buttons-wrapper switch-arrow"
             href="/sections/{section}/{categoryTopics[prevStoryIndex]
-              .name}?id={categoryTopics[prevStoryIndex].id}"
+              .topic_name}?id={categoryTopics[prevStoryIndex].topic_id}"
           >
             <img src="/icons/switch-arrow.svg" alt="Switch" />
             <h3 style:text-align="left">
-              {categoryTopics[prevStoryIndex].name}
+              {categoryTopics[prevStoryIndex].topic_name}
             </h3>
           </a>
 
@@ -183,13 +181,13 @@
             class="buttons-wrapper switch-arrow"
             href="/sections/{section}/{categoryTopics[
               (activeStoryIndex + 1) % categoryTopics.length
-            ].name}?id={categoryTopics[
+            ].topic_name}?id={categoryTopics[
               (activeStoryIndex + 1) % categoryTopics.length
-            ].id}"
+            ].topic_id}"
           >
             <h3 style:text-align="right">
               {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
-                .name}
+                .topic_name}
             </h3>
             <img
               src="/icons/switch-arrow.svg"
@@ -365,7 +363,10 @@
                           "
                           fill={$loading ? '#010020' : 'rgb(0, 185, 55)'}
                         />
-                        <circle id="play-circle-{continuable.story_id}" r="90" />
+                        <circle
+                          id="play-circle-{continuable.story_id}"
+                          r="90"
+                        />
                       </svg>
                     </div>
                   {/if}

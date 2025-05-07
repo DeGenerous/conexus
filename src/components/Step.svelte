@@ -39,9 +39,7 @@
 
   let stepFont: string = 'Verdana';
   let width: number;
-  const storyTitle: string = (
-    story_name.charAt(0).toUpperCase() + story_name.slice(1)
-  ).trim();
+  const storyTitle: string = story_name.trim();
 
   let activeOptionNumber: number = 0;
   let pointerOverOption: boolean = false;
@@ -124,7 +122,13 @@
   let pictureKeyframe: KeyframeEffect;
   let pictureAnimation: Animation;
 
-  $: if (step.image && step.image_type !== 'url') pictureAnimation.play();
+  $: if (step.image && step.image_type !== 'url') {
+    pictureAnimation.play();
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
 
   onMount(() => {
     const storedZoom = localStorage.getItem('step-zoom');
@@ -134,21 +138,18 @@
     pictureKeyframe = new KeyframeEffect(
       imageWrapper,
       [
-        { transform: "scale(1)" },
-        { transform: "scale(0.95)" },
-        { transform: "scale(1.05)" },
-        { transform: "scale(1)" },
+        { transform: 'scale(1)' },
+        { transform: 'scale(0.95)' },
+        { transform: 'scale(1.05)' },
+        { transform: 'scale(1)' },
       ],
       {
         duration: 600,
-        easing: "ease-in-out"
+        easing: 'ease-in-out',
       },
     );
 
-    pictureAnimation = new Animation(
-      pictureKeyframe,
-      document.timeline
-    )
+    pictureAnimation = new Animation(pictureKeyframe, document.timeline);
   });
 
   const handleZoomWheel = (event: WheelEvent) => {
@@ -1324,7 +1325,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 27.5vw;
+    max-width: 22.5vw;
   }
 
   .control-bar,
@@ -1518,9 +1519,10 @@
     .mobile-sliders {
       width: 100%;
       display: flex;
-      flex-flow: row nowrap;
+      flex-flow: column-reverse nowrap;
       justify-content: space-between;
       align-items: center;
+      gap: 0.5em;
     }
 
     .controls {
@@ -1595,7 +1597,7 @@
     }
 
     .controls-container h3 {
-      max-width: 20rem;
+      max-width: 16rem;
     }
 
     .story-info-container {

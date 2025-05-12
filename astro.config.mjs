@@ -86,15 +86,26 @@ export default defineConfig({
       }),
     ],
     server: {
-      proxy: {
-        // remove in production
-        '/api': {
-          target: import.meta.env.VITE_API_URL,
-          changeOrigin: true,
-          secure: false,
-          rewrite: (path) => path.replace(/^\/api/, ''),
-        },
-      },
+      // proxy: {
+      //   // remove in production
+      //   '/api': {
+      //     target: import.meta.env.VITE_API_URL,
+      //     changeOrigin: true,
+      //     secure: false,
+      //     rewrite: (path) => path.replace(/^\/api/, ''),
+      //   },
+      // },
+      proxy:
+        import.meta.env.NODE_ENV !== 'production'
+          ? {
+              '/api': {
+                target: import.meta.env.VITE_API_URL,
+                changeOrigin: true,
+                secure: false,
+                rewrite: (path) => path.replace(/^\/api/, ''),
+              },
+            }
+          : undefined,
       allowedHosts: [
         'conexus.degenerousdao.com',
         'conexus-test.degenerousdao.com',

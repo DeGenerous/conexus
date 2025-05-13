@@ -95,6 +95,7 @@ export default defineConfig({
       //     rewrite: (path) => path.replace(/^\/api/, ''),
       //   },
       // },
+      hmr: process.env.NODE_ENV !== 'production',
       proxy:
         import.meta.env.NODE_ENV !== 'production'
           ? {

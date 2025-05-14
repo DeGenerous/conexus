@@ -22,5 +22,8 @@ COPY . .
 # Build the Next.js application
 RUN npm run build
 
+ENV HOST=0.0.0.0
+
 # Start the Next.js application
-CMD ["npm", "start"]
+# CMD ["npm", "start"]
+CMD ["node", "./dist/server/entry.mjs"]

@@ -1,5 +1,4 @@
 import { defineConfig } from 'astro/config';
-import compress from 'astro-compress';
 import { VitePWA } from 'vite-plugin-pwa';
 
 import react from '@astrojs/react';
@@ -8,8 +7,6 @@ import svelte from '@astrojs/svelte';
 import node from '@astrojs/node';
 
 import { manifest, seoConfig } from './utils/seoConfig';
-
-import AstroPWA from '@vite-pwa/astro';
 
 // https://astro.build/config
 export default defineConfig({
@@ -87,17 +84,17 @@ export default defineConfig({
     ],
     server: {
       hmr: process.env.NODE_ENV !== 'production',
-      // proxy:
-      //   import.meta.env.NODE_ENV !== 'production'
-      //     ? {
-      //         '/api': {
-      //           target: import.meta.env.VITE_API_URL,
-      //           changeOrigin: true,
-      //           secure: false,
-      //           rewrite: (path) => path.replace(/^\/api/, ''),
-      //         },
-      //       }
-      //     : undefined,
+      proxy:
+        process.env.NODE_ENV !== 'production'
+          ? {
+              '/api': {
+                target: import.meta.env.VITE_API_URL,
+                changeOrigin: true,
+                secure: false,
+                rewrite: (path) => path.replace(/^\/api/, ''),
+              },
+            }
+          : undefined,
       allowedHosts: [
         'conexus.degenerousdao.com',
         'conexus-test.degenerousdao.com',

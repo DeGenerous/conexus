@@ -1047,7 +1047,7 @@
   </div>
 </dialog>
 
-<style>
+<!-- <style>
   dialog {
     width: 65vw;
     height: 90%;
@@ -1474,4 +1474,4 @@
       opacity: 1;
     }
   }
-</style>
+</style> -->

@@ -150,7 +150,7 @@
 </nav>
 
 <style>
-  nav {
+  /* nav {
     width: 100vw;
     display: flex;
     flex-flow: row nowrap;
@@ -262,5 +262,5 @@
       opacity: 1;
       background-color: rgba(51, 226, 230, 0.1);
     }
-  }
+  } */
 </style>

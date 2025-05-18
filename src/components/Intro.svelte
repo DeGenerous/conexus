@@ -49,7 +49,7 @@
 </section>
 
 <style>
-  section {
+  /* section {
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
@@ -83,5 +83,5 @@
       border-radius: 1em;
       gap: 1em;
     }
-  }
+  } */
 </style>

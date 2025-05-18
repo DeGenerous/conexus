@@ -1,0 +1,18 @@
+$font-scale: (
+  "body": clamp(1rem, 1.5vw, 1.125rem),     // 16–18px
+  "small": clamp(0.875rem, 1.2vw, 1rem),    // 14–16px
+  "caption": clamp(0.75rem, 1vw, 0.875rem), // 12–14px
+  "h1": clamp(2rem, 5vw, 3.5rem),           // 32–56px
+  "h2": clamp(1.75rem, 4vw, 3rem),          // 28–48px
+  "h3": clamp(1.5rem, 3vw, 2.5rem),         // 24–40px
+  "h4": clamp(1.25rem, 2.5vw, 2rem),        // 20–32px
+);
+
+@mixin font($size-key: "body") {
+  @if map-has-key($font-scale, $size-key) {
+    font-size: map-get($font-scale, $size-key);
+    line-height: 1.5;
+  } @else {
+    @warn "Font size `#{$size-key}` not found in $font-scale map.";
+  }
+}

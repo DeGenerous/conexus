@@ -45,7 +45,7 @@
 {/if}
 
 <style>
-  video {
+  /* video {
     width: 75vw;
     background-color: rgba(1, 0, 32, 0.75);
     border-radius: 1.5vw;
@@ -85,5 +85,5 @@
     .loading-icon {
       height: 32vw;
     }
-  }
+  } */
 </style>

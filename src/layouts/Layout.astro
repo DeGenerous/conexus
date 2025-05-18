@@ -9,13 +9,15 @@ import CookieBanner from '@components/utils/CookieBanner.svelte';
 
 import { seoConfig } from '../../utils/seoConfig';
 
-import '@styles/reset.css';
-import '@styles/global.css';
-import '@styles/rainbow-kit.css';
-import '@styles/icons.css';
-import '@styles/utils.css';
-import '@styles/tiles.css';
-import '@styles/dream.css';
+// import '@styles/reset.css';
+// import '@styles/global.css';
+// import '@styles/rainbow-kit.css';
+// import '@styles/icons.css';
+// import '@styles/utils.css';
+// import '@styles/tiles.css';
+// import '@styles/dream.css';
+
+import '@styles/index.scss';
 
 type LayoutProps = {
   header?: string;
@@ -159,7 +161,7 @@ const {
 
     <CookieBanner client:load />
     <style>
-      header {
+      /* header {
         padding-inline: 1vw;
       }
 
@@ -218,7 +220,7 @@ const {
             0 0 0.5vw #010020;
           border-radius: 1em;
         }
-      }
+      } */
     </style>
   </body>
 </html>

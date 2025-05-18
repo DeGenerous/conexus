@@ -1,0 +1,60 @@
+@mixin text-shadow($style: "bottom", $color: rgba(0, 0, 0, 0.75)) {
+  @if $style == "bottom" {
+    text-shadow: 0 0.1rem 0.2rem $color;
+  }
+  @else if $style == "glow" {
+    text-shadow: 0 0 0.2rem $color;
+  }
+  @else {
+    text-shadow: $style; // Custom raw value
+  }
+}
+
+@mixin text-glow($color: "cyan", $opacity: 1, $intensity: 0.1rem) {
+  @if $color == "cyan" {
+    text-shadow:
+      0 0 $intensity rgba(51, 226, 230, $opacity),
+      0 0 calc($intensity * 2) rgba(51, 226, 230, calc($opacity / 2));
+  }
+  @else if $color == "green" {
+    text-shadow:
+      0 0 $intensity rgba(0, 185, 55, $opacity),
+      0 0 calc($intensity * 2) rgba(0, 185, 55, calc($opacity / 2));
+  }
+  @else if $color == "red" {
+    text-shadow:
+      0 0 $intensity rgba(255, 60, 64, $opacity),
+      0 0 calc($intensity * 2) rgba(255, 60, 64, calc($opacity / 2));
+  }
+  @else {
+    text-shadow: $style; // Custom raw value
+  }
+}
+
+@mixin box-shadow($depth: "soft", $type: "outset", $color: rgba(0, 0, 0, 0.75)) {
+  $shadow: null;
+
+  @if $depth == "soft" {
+    $shadow: 0 0.25rem 0.5rem $color;
+  } @else if $depth == "deep" {
+    $shadow: 0 0.5rem 1rem $color;
+  } @else {
+    $shadow: $depth; // Custom raw value
+  }
+
+  @if $type == "inset" {
+    box-shadow: inset $shadow;
+  } @else {
+    box-shadow: $shadow;
+  }
+}
+
+@mixin box-glow($type: "outset", $opacity: 1) {
+  $shadow: 0 0 0.2rem rgba(51, 226, 230, $opacity);
+
+  @if $type == "inset" {
+    box-shadow: inset $shadow;
+  } @else {
+    box-shadow: $shadow;
+  }
+}

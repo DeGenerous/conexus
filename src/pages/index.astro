@@ -16,14 +16,14 @@ const footerText = [
 ];
 ---
 
-<main>
-  <Layout {...meta}>
+<Layout {...meta}>
+  <main>
     <Menu client:load />
     <footer>
       {footerText.map((text: any) => <p class="footer-text">{text}</p>)}
     </footer>
-  </Layout>
-</main>
+  </main>
+</Layout>
 
 <style>
   /* footer {

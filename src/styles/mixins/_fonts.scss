@@ -1,3 +1,5 @@
+@use "sass:map";
+
 $font-scale: (
   "body": clamp(1rem, 1.5vw, 1.125rem),     // 16–18px
   "small": clamp(0.875rem, 1.2vw, 1rem),    // 14–16px
@@ -5,14 +7,35 @@ $font-scale: (
   "h1": clamp(2rem, 5vw, 3.5rem),           // 32–56px
   "h2": clamp(1.75rem, 4vw, 3rem),          // 28–48px
   "h3": clamp(1.5rem, 3vw, 2.5rem),         // 24–40px
-  "h4": clamp(1.25rem, 2.5vw, 2rem),        // 20–32px
+  "h4": clamp(1.25rem, 2.5vw, 1.5rem),      // 20–24px
+  "h5": clamp(1.125rem, 1.5vw, 1.25rem),    // 18-20px
 );
 
 @mixin font($size-key: "body") {
-  @if map-has-key($font-scale, $size-key) {
-    font-size: map-get($font-scale, $size-key);
+  @if map.has-key($font-scale, $size-key) {
+    font-size: map.get($font-scale, $size-key);
     line-height: 1.5;
   } @else {
     @warn "Font size `#{$size-key}` not found in $font-scale map.";
   }
+}
+
+:global(:where(h1)) {
+  @include font(h1);
+}
+
+:global(:where(h2)) {
+  @include font(h2);
+}
+
+:global(:where(h3)) {
+  @include font(h3);
+}
+
+:global(:where(h4)) {
+  @include font(h4);
+}
+
+:global(:where(h5)) {
+  @include font(h5);
 }

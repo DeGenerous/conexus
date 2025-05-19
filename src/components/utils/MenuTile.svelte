@@ -27,5 +27,5 @@
     height="1024"
     draggable="false"
   />
-  <p class="menu-tile-title">{section.name}</p>
+  <h4 class="menu-tile-title">{section.name}</h4>
 </a>

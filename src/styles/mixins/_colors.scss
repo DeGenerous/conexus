@@ -1,3 +1,9 @@
+// COLOR MIXINS: cyan, light-blue, blue, navy, dark-blue, green, red, gray, orange, indigo, rose
+
+// BG: cyan (soft), navy, dark-blue
+
+// TEXT: white (soft), gray
+
 @mixin cyan ($opacity: 1, $type: "bg") {
   @if $type == "bg" {
     background-color: rgba(51, 226, 230, $opacity);
@@ -135,4 +141,54 @@
       color: rgba(230, 175, 175, $opacity);
     }
   }
+}
+
+// Background colors
+
+:global(.cyan-soft-bg) {
+  @include cyan(0.75);
+}
+
+:global(.cyan-bg) {
+  @include cyan;
+}
+
+:global(.navy-bg) {
+  @include navy;
+}
+
+:global(.dark-blue-bg) {
+  @include dark-blue;
+}
+
+:global(.dark-transparent-bg) {
+  @include dark-blue(0.5);
+}
+
+// Text colors
+
+:global(.white-txt) {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+:global(.white-soft-txt) {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+:global(.gray-txt) {
+  @include gray(1, text);
+}
+
+// General definitions
+
+:global(:where(h1)) {
+  @include cyan(1, text);
+}
+
+:global(:where(h2)) {
+  @include cyan(0.75, text);
+}
+
+:global(:where(h4, h5)) {
+  color: rgba(255, 255, 255, 0.75);
 }

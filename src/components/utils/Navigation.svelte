@@ -82,7 +82,7 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <nav class="mobile-navigation blur">
   <!-- PREVIOUS SECTION -->
-  <span
+  <!-- <span
     class:inactive={!sections.includes(activeTab)}
     on:click={navigateBackSection}
     role="button"
@@ -92,10 +92,10 @@
     {#if sections.includes(activeTab)}
       <p>{sections[prevSectionIndex]}</p>
     {/if}
-  </span>
+  </span> -->
 
   <!-- Dashboard -->
-  {#if admin}
+  <!-- {#if admin}
     <span
       class:active={activeTab === 'Dashboard'}
       on:click={navigateDashboard}
@@ -105,10 +105,10 @@
       <img src="/icons/dashboard.svg" alt="Switch" />
       <p>Dashboard</p>
     </span>
-  {/if}
+  {/if} -->
 
   <!-- HOME -->
-  <span
+  <!-- <span
     class:active={activeTab === 'Home'}
     on:click={navigateHome}
     role="button"
@@ -116,10 +116,10 @@
   >
     <img class="home" src="/icons/home.svg" alt="Home" />
     <p>Home</p>
-  </span>
+  </span> -->
 
   <!-- DREAM -->
-  {#if admin}
+  <!-- {#if admin}
     <span
       class:active={activeTab === 'Dream'}
       on:click={navigateDream}
@@ -129,10 +129,10 @@
       <img src="/icons/dream.svg" alt="Dream" />
       <p>Dream</p>
     </span>
-  {/if}
+  {/if} -->
 
   <!-- NEXT SECTION -->
-  <span
+  <!-- <span
     class:inactive={!sections.includes(activeTab)}
     on:click={navigateNextSection}
     role="button"
@@ -146,11 +146,11 @@
     {#if sections.includes(activeTab)}
       <p>{sections[(activeSectionIndex + 1) % sections.length]}</p>
     {/if}
-  </span>
+  </span> -->
 </nav>
 
-<style>
-  /* nav {
+<!-- <style>
+  nav {
     width: 100vw;
     display: flex;
     flex-flow: row nowrap;
@@ -262,5 +262,5 @@
       opacity: 1;
       background-color: rgba(51, 226, 230, 0.1);
     }
-  } */
-</style>
+  }
+</style> -->

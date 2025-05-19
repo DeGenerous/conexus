@@ -18,11 +18,11 @@
   ];
 </script>
 
-<section class="blur">
-  <h3>{menuText[0]}</h3>
+<section class="flex blur pad round dark-transparent-bg shad-inset-glow">
+  <h5>{menuText[0]}</h5>
 
   {#await app.getSections()}
-    <div class="conexus-menu-tiles loading-conexus-menu-tiles">
+    <div class="flex loading-conexus-menu-tiles">
       {#each Array(3) as _}
         <div class="menu-tile loading-menu-tile">
           <div
@@ -35,7 +35,7 @@
       {/each}
     </div>
   {:then sections}
-    <div class="conexus-menu-tiles">
+    <div class="flex">
       {#each sections as section (section.id)}
         <MenuTile {section} />
       {/each}
@@ -45,10 +45,26 @@
     <p class="validation">Error: {error.message}</p>
   {/await}
 
-  <h3>{menuText[1]}</h3>
+  <h5>{menuText[1]}</h5>
 </section>
 
-<style>
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
+
+  section {
+    width: 95%;
+  }
+
+  @include respond-up(tablet) {
+    section {
+      width: auto;
+
+      div {
+        flex-direction: row;
+      }
+    }
+  }
+
   /* section {
     display: flex;
     flex-flow: column nowrap;

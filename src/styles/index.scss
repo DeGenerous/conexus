@@ -1,4 +1,5 @@
 @use "mixins" as *;
+@use "components";
 
 *,
 *::before,
@@ -9,21 +10,91 @@
   font-family: PT Serif Caption, serif-sans;
 }
 
-html {
-  @include font();
-  background-color: gray;
-  @include dark-blue(1);
-  @include cyan(0.85, "text");
-  @include text-shadow();
-  @include text-glow();
-  background-color: white;
+a,
+button,
+[role='button'] {
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
 }
 
-p {
-  margin: 1rem;
-  padding: 1rem;
-  border-radius: 1rem;
-  background-color: rgba(0, 0, 0, 0.25);
-  @include box-glow(inset);
-  @include box-shadow();
+a *,
+button *,
+[role='button'] * {
+  cursor: inherit;
+  transition: all 0.3s ease-in-out;
+}
+
+button:disabled,
+input:disabled {
+  cursor: not-allowed;
+}
+
+a {
+  color: rgba(51, 226, 230, 0.9);
+  text-decoration: none;
+
+  &:hover,
+  &:active {
+    color: rgb(51, 226, 230);
+    text-decoration: underline;
+  }
+}
+
+html {
+  @include font;
+  @include dark-blue;
+  @include cyan(0.75, "text");
+
+  background-image: url('/mobileBG.webp');
+  background-attachment: scroll;
+  background-repeat: repeat;
+  background-position: top;
+
+  text-align: center;
+
+  @include respond-up("small-desktop") {
+    background-image: url('/conexusBG.avif'), linear-gradient(#000000, #010020);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+  }
+
+  &::-webkit-scrollbar {
+    width: 0px;
+  }
+
+  main,
+  .flex {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .blur {
+    -webkit-backdrop-filter: blur(1rem);
+    backdrop-filter: blur(1rem);
+  }
+
+  .pad {
+    padding: 1rem;
+  }
+
+  .round {
+    border-radius: 1rem;
+  }
+
+  :where(img) {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: initial;
+  }
+
+  hr {
+    width: 95%;
+    border: 0.1rem solid rgba(51, 226, 230, 0.5);
+  }
 }

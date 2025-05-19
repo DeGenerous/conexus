@@ -1,3 +1,5 @@
+// SHADOWS: shad (deep, inset), glow (inset), text-shad, text-glow
+
 @mixin text-shadow($style: "bottom", $color: rgba(0, 0, 0, 0.75)) {
   @if $style == "bottom" {
     text-shadow: 0 0.1rem 0.2rem $color;
@@ -49,12 +51,52 @@
   }
 }
 
-@mixin box-glow($type: "outset", $opacity: 1) {
-  $shadow: 0 0 0.2rem rgba(51, 226, 230, $opacity);
+@mixin box-glow($type: "outset", $opacity: 0.75, $intense: 0.5rem) {
+  $shadow: 0 0 $intense rgba(51, 226, 230, $opacity);
 
   @if $type == "inset" {
     box-shadow: inset $shadow;
   } @else {
     box-shadow: $shadow;
   }
+}
+
+$light-shadow-plus-inset-glow:
+  inset 0 0 0.5rem rgba(51, 226, 230, 0.25),
+  0 0.15rem 0.5rem rgba(0, 0, 0, 0.5);
+
+$shadow-plus-inset-glow:
+  inset 0 0 0.5rem rgba(51, 226, 230, 0.25),
+  0 0.25rem 0.5rem rgba(0, 0, 0, 0.75);
+
+:global(.shad) {
+  @include box-shadow;
+}
+
+:global(.shad-deep) {
+  @include box-shadow(deep);
+}
+
+:global(.shad-inset) {
+  @include box-shadow(soft, inset);
+}
+
+:global(.shad-inset-glow) {
+  box-shadow: $shadow-plus-inset-glow
+}
+
+:global(.text-shad) {
+  @include text-shadow;
+}
+
+:global(.glow) {
+  @include box-glow;
+}
+
+:global(.glow-inset) {
+  @include box-glow(inset, 0.5);
+}
+
+:global(.text-glow) {
+  @include text-glow;
 }

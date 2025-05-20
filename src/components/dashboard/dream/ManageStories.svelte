@@ -123,7 +123,7 @@
   {#if nav === 'collection'}
     {#key availabilityKey}
       {#await admin.fetchCollections()}
-        <img class="loading-icon" src="/icons/loading.png" alt="Loading" />
+        <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
       {:then collections}
         {storeAllTopics(collections)}
         {#each collections as { category_id, category_name, category_order, section_id, topics }}

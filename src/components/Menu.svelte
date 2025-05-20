@@ -17,17 +17,17 @@
 <!-- Logged In -->
 
 {#if $userCheck}
-  <img class="loading-icon" src="/icons/loading.png" alt="Loading" />
+  <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {:else if isLogged}
   <Intro />
 {:else}
-  <video class="blur pc-video" controls autoplay loop muted>
+  <video class="pc-video blur round fade-in" controls autoplay loop muted>
     <source src={`${trailerURL}/CoNexusTrailer.webm`} type="video/webm" />
     <source src={`${trailerURL}/CoNexusTrailer.mp4`} type="video/mp4" />
     <track kind="captions" />
   </video>
 
-  <video class="blur mobile-video" controls autoplay loop muted>
+  <video class="mobile-video blur round fade-in" controls autoplay loop muted>
     <source src={`${trailerURL}/CoNexusTrailerMobile.webm`} type="video/webm" />
     <source src={`${trailerURL}/CoNexusTrailerMobile.mp4`} type="video/mp4" />
     <track kind="captions" />
@@ -44,46 +44,37 @@
   </button>
 {/if}
 
-<style>
-  /* video {
-    width: 75vw;
-    background-color: rgba(1, 0, 32, 0.75);
-    border-radius: 1.5vw;
-    padding: 0.25vw;
-    box-shadow:
-      inset 0 0 0.5vw rgba(51, 226, 230, 0.5),
-      0 0 0.5vw #010020;
-  }
+<style lang="scss">
+  @use "/src/styles/mixins" as *;
 
-  .pc-video {
-    display: block;
+  video {
+    display: none;
+    width: clamp(250px, 95%, 70rem);
+    @include box-shadow;
+
+    /* Fade-in */
+    transition: all 0.6s ease-in-out;
+    @starting-style {
+      opacity: 0;
+      filter: grayscale(100%);
+    }
   }
 
   .mobile-video {
+    display: block;
+  }
+
+  .pc-video {
     display: none;
   }
 
-  .loading-icon {
-    height: 13.1vw;
-  }
-
-  @media only screen and (max-width: 600px) {
-    video {
-      width: 90%;
-      padding: 0;
-      border-radius: 1em;
-    }
-
-    .pc-video {
+  @include respond-up(tablet) {
+    .mobile-video {
       display: none;
     }
 
-    .mobile-video {
+    .pc-video {
       display: block;
     }
-
-    .loading-icon {
-      height: 32vw;
-    }
-  } */
+  }
 </style>

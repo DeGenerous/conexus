@@ -179,6 +179,10 @@
   @include gray(1, text);
 }
 
+:global(.green-txt) {
+  @include green(1, text);
+}
+
 // General definitions
 
 :global(:where(h1)) {
@@ -190,5 +194,9 @@
 }
 
 :global(:where(h4, h5)) {
-  color: rgba(255, 255, 255, 0.75);
+  @extend :global(.white-soft-txt);
+}
+
+:global(:where(.validation)) {
+  @include red(1, text);
 }

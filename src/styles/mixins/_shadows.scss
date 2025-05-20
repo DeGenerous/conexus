@@ -51,8 +51,8 @@
   }
 }
 
-@mixin box-glow($type: "outset", $opacity: 0.75, $intense: 0.5rem) {
-  $shadow: 0 0 $intense rgba(51, 226, 230, $opacity);
+@mixin box-glow($type: "outset", $opacity: 0.75, $intensity: 0.5rem) {
+  $shadow: 0 0 $intensity rgba(51, 226, 230, $opacity);
 
   @if $type == "inset" {
     box-shadow: inset $shadow;

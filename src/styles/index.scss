@@ -44,6 +44,7 @@ html {
   @include font;
   @include dark-blue;
   @include cyan(0.75, "text");
+  @include text-shadow;
 
   background-image: url('/mobileBG.webp');
   background-attachment: scroll;
@@ -51,6 +52,7 @@ html {
   background-position: top;
 
   text-align: center;
+  padding-bottom: 2rem;
 
   @include respond-up("small-desktop") {
     background-image: url('/conexusBG.avif'), linear-gradient(#000000, #010020);
@@ -65,7 +67,7 @@ html {
   }
 
   main,
-  .flex {
+  :where(.flex) {
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
@@ -78,12 +80,43 @@ html {
     backdrop-filter: blur(1rem);
   }
 
+  .pad-8 {
+    padding: 0.5rem;
+  }
+
   .pad {
     padding: 1rem;
   }
 
+  .round-8 {
+    border-radius: 0.5rem;
+  }
+
   .round {
     border-radius: 1rem;
+  }
+
+  .round-24 {
+    border-radius: 1.5rem;
+  }
+
+  .round-32 {
+    border-radius: 2rem;
+  }
+
+  .validation {
+    a {
+      color: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      filter: brightness(125%);
+      text-decoration: underline;
+
+      &:hover,
+      &:active {
+        text-decoration: none;
+      }
+    }
   }
 
   :where(img) {
@@ -93,7 +126,7 @@ html {
     aspect-ratio: initial;
   }
 
-  hr {
+  :where(hr) {
     width: 95%;
     border: 0.1rem solid rgba(51, 226, 230, 0.5);
   }

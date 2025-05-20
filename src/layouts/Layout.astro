@@ -117,7 +117,7 @@ const {
           <picture class="flex">
             <source srcset="title.avif" type="image/avif" />
             <img
-              class="blur pad round cyan-soft-bg glow-inset"
+              class="blur pad round cyan-soft-bg shad-inset-glow"
               src="title.png"
               alt="CoNexus"
               draggable="false"
@@ -127,7 +127,7 @@ const {
           header && <h1>{header}</h1>
         )
       }
-      {subheading && <p class="subheading" set:html={subheading} />}
+      {subheading && <p set:html={subheading} />}
     </header>
 
     <slot />
@@ -141,15 +141,12 @@ const {
       }
 
       header > picture > img {
-        width: clamp(250px, 90%, 450px);
+        width: clamp(250px, 90%, 25rem);
+        padding-inline: 1.5rem;
       }
 
       header > p {
-        min-width: 250px;
-        width: 95%;
-      }
-
-      p {
+        width: clamp(250px, 90%, 70rem);
         margin-bottom: 1rem;
       }
     </style>

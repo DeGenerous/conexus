@@ -2,41 +2,56 @@
 
 .menu-tile {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  padding: 0.5rem;
-  border-radius: 2rem;
   box-shadow: $light-shadow-plus-inset-glow;
   @include navy(0.75);
   @include cyan(0.75, text);
+  @include text-shadow(none);
 
   @include respond-up(tablet) {
     width: 28vw;
     max-width: 400px;
   }
 
-  &:hover,
-  &:active {
+  &:hover:not(.loading-menu-tile),
+  &:active:not(.loading-menu-tile),
+  &:focus:not(.loading-menu-tile) {
     text-decoration: none;
     box-shadow: $shadow-plus-inset-glow;
-    transform: scale(1.025) translateY(-0.5vw);
-    filter: brightness(125%);
+    outline: none;
     @include dark-blue(1, text);
     @include cyan(0.5);
+    @include bright;
+    @include scale-up;
   }
 
   img {
-    height: 80%;
-    border-radius: 1.5rem;
-    background-color: rgba(51, 226, 230, 0.1);
     aspect-ratio: 1 / 1;
+    @include cyan(0.1);
     @include box-glow(outset, 0.25);
   }
 
   h4 {
     color: inherit;
+  }
+}
+
+.loading-menu-tile {
+  @extend .menu-tile;
+  cursor: progress;
+
+  div {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    cursor: inherit;
+    @include cyan(0.1);
+  }
+
+  span {
+    width: 80%;
+    height: clamp(1.25rem * 1.5, 2.5vw * 1.5, 1.5rem * 1.5);
+    cursor: inherit;
+    @include cyan(0.1);
   }
 }

@@ -39,3 +39,7 @@ $font-scale: (
 :global(:where(h5)) {
   @include font(h5);
 }
+
+:global(:where(.validation)) {
+  @include font(small);
+}

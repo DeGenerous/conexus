@@ -153,7 +153,7 @@
 <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
 <section class="container-wrapper">
   {#if !topic}
-    <img class="loading-icon" src="/icons/loading.png" alt="Loading" />
+    <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
   {:else}
     {#if categoryTopics.length > 0}
       <div class="buttons-wrapper stories-switcher">

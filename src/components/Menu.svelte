@@ -40,7 +40,7 @@
     on:pointerout={() => (signInSvgFocus = false)}
   >
     <DoorSVG state="inside" {signInSvgFocus} />
-    PLAY NOW
+    play now
   </button>
 {/if}
 
@@ -51,13 +51,6 @@
     display: none;
     width: clamp(250px, 95%, 70rem);
     @include box-shadow;
-
-    /* Fade-in */
-    transition: all 0.6s ease-in-out;
-    @starting-style {
-      opacity: 0;
-      filter: grayscale(100%);
-    }
   }
 
   .mobile-video {

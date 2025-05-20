@@ -24,9 +24,9 @@
   {#await app.getSections()}
     <div class="flex">
       {#each Array(3) as _}
-        <div class="loading-menu-tile flex pad-8 round-32">
+        <div class="loading-menu-tile">
           <div
-            class="loading-animation round-24"
+            class="loading-animation"
           ></div>
           <span
             class="loading-animation"

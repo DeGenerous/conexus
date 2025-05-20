@@ -40,21 +40,21 @@
   };
 </script>
 
-<nav>
+<nav class="top-navigation flex pad">
   {#if arrow}
     <BackArrow href={arrow} />
   {:else}
     <a
-      class="circle-icon"
+      class="flex"
       href="https://degenerousdao.com/"
       target="_blank"
       aria-label="DeGenerous"
     >
-      <img class="logo" src="/logo.avif" alt="Logo" />
+      <img src="/logo.avif" alt="Logo" />
     </a>
   {/if}
 
-  <section>
+  <section class="flex">
     {#if activeTab !== 'Home'}
       <a href="/">Home</a>
       <a
@@ -80,9 +80,9 @@
 </nav>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<nav class="mobile-navigation blur">
+<nav class="bottom-navigation flex blur dark-semi-transparent-bg shad-behind">
   <!-- PREVIOUS SECTION -->
-  <!-- <span
+  <span
     class:inactive={!sections.includes(activeTab)}
     on:click={navigateBackSection}
     role="button"
@@ -92,10 +92,10 @@
     {#if sections.includes(activeTab)}
       <p>{sections[prevSectionIndex]}</p>
     {/if}
-  </span> -->
+  </span>
 
   <!-- Dashboard -->
-  <!-- {#if admin}
+  {#if admin}
     <span
       class:active={activeTab === 'Dashboard'}
       on:click={navigateDashboard}
@@ -105,10 +105,10 @@
       <img src="/icons/dashboard.svg" alt="Switch" />
       <p>Dashboard</p>
     </span>
-  {/if} -->
+  {/if}
 
   <!-- HOME -->
-  <!-- <span
+  <span
     class:active={activeTab === 'Home'}
     on:click={navigateHome}
     role="button"
@@ -116,10 +116,10 @@
   >
     <img class="home" src="/icons/home.svg" alt="Home" />
     <p>Home</p>
-  </span> -->
+  </span>
 
   <!-- DREAM -->
-  <!-- {#if admin}
+  {#if admin}
     <span
       class:active={activeTab === 'Dream'}
       on:click={navigateDream}
@@ -129,10 +129,10 @@
       <img src="/icons/dream.svg" alt="Dream" />
       <p>Dream</p>
     </span>
-  {/if} -->
+  {/if}
 
   <!-- NEXT SECTION -->
-  <!-- <span
+  <span
     class:inactive={!sections.includes(activeTab)}
     on:click={navigateNextSection}
     role="button"
@@ -146,88 +146,63 @@
     {#if sections.includes(activeTab)}
       <p>{sections[(activeSectionIndex + 1) % sections.length]}</p>
     {/if}
-  </span> -->
+  </span>
 </nav>
 
-<!-- <style>
-  nav {
-    width: 100vw;
-    display: flex;
-    flex-flow: row nowrap;
+<style lang="scss">
+  @use "/src/styles/mixins" as *;
+
+  .top-navigation {
+    flex-direction: row;
     justify-content: space-between;
-    align-items: center;
-    padding: 1vw;
-    padding-bottom: 0 !important;
-  }
+    padding-bottom: 0;
 
-  section {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 2vw;
-  }
+    & > a {
+      width: 4rem;
 
-  a {
-    color: rgba(51, 226, 230, 0.5);
-  }
-
-  a:hover,
-  a:active {
-    color: rgb(51, 226, 230);
-  }
-
-  .active {
-    color: rgb(51, 226, 230);
-    text-shadow: 0 0 0.1vw rgb(51, 226, 230);
-  }
-
-  .logo {
-    cursor: inherit;
-    border-radius: inherit;
-    opacity: 0.7;
-    transition: all 0.3s ease-in-out;
-  }
-
-  .logo:hover,
-  .logo:active {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-
-  .mobile-navigation {
-    display: none;
-  }
-
-  @media only screen and (max-width: 600px) {
-    :global(html) {
-      padding-bottom: calc(20vw + 1em) !important;
-    }
-
-    nav {
-      padding: 1em;
+      &:hover,
+      &:active,
+      &:focus {
+        @include scale;
+        @include bright;
+      }
     }
 
     section {
       display: none;
+      flex-direction: row;
+
+      @include respond-up(small-desktop) {
+        display: flex;
+      }
+
+      a:not(a:hover, a:active, a:focus) {
+        @include cyan(0.5, text);
+      }
+    }
+  }
+
+  .bottom-navigation {
+    position: fixed;
+    bottom: 0;
+    width: 100vw;
+    flex-direction: row;
+    justify-content: space-between;
+    z-index: 100;
+
+    @media (orientation: landscape) {
+      display: none;
+
+      @include respond-up(tablet) {
+        display: flex;
+      }
+
+      @include respond-up(small-desktop) {
+        display: none;
+      }
     }
 
-    .mobile-navigation {
-      position: fixed;
-      bottom: 0;
-      height: 15vw;
-      width: 100vw;
-      padding: 0;
-      display: flex;
-      flex-flow: row nowrap;
-      justify-content: space-between;
-      background-color: rgba(1, 0, 32, 0.75);
-      box-shadow: 0 -0.25vw 0.5vw #010020;
-      z-index: 2;
-    }
-
-    .mobile-navigation span {
-      min-width: 15vw;
+    span {
       width: 100%;
       height: 100%;
       display: flex;
@@ -235,32 +210,24 @@
       justify-content: center;
       align-items: center;
       opacity: 0.5;
-    }
 
-    .mobile-navigation p {
-      font-size: 0.65em;
-      line-height: 1em;
-      color: white;
-      text-align: center;
-    }
+      &.active {
+        opacity: 1;
+      }
 
-    .mobile-navigation img {
-      height: 60%;
-      width: auto;
-    }
+      &.inactive {
+        opacity: 0.15;
+      }
 
-    .active {
-      opacity: 1 !important;
-    }
+      img {
+        height: 2.75rem;
+        width: auto;
+      }
 
-    .inactive {
-      opacity: 0.15 !important;
-    }
-
-    .mobile-navigation span:hover,
-    .mobile-navigation span:active {
-      opacity: 1;
-      background-color: rgba(51, 226, 230, 0.1);
+      p {
+        @include font(caption);
+        @include white-txt;
+      }
     }
   }
-</style> -->
+</style>

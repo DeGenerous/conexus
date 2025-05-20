@@ -18,9 +18,8 @@
   const blankPicture: string = '/blank.avif'; // temp
 </script>
 
-<a class="menu-tile flex pad-8 round-32" id={section.name} href="/sections/{section.name}">
+<a class="menu-tile" id={section.name} href="/sections/{section.name}">
   <img
-    class="round-24"
     src={sectionImage ?? blankPicture}
     alt={section.name}
     width="1024"

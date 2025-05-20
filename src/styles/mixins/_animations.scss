@@ -1,9 +1,15 @@
+// ANIMATIONS: fade-in, loading-animation, shimmer, loading-logo
+
 @mixin bright($intensity: 125%) {
   filter: brightness($intensity);
 }
 
 @mixin grayscale($intensity: 100%) {
   filter: grayscale($intensity);
+}
+
+@mixin scale {
+  transform: scale(1.05);
 }
 
 @mixin scale-up {
@@ -82,8 +88,8 @@
   
   @starting-style {
     opacity: 0;
-    transform: scale(0.975) skew(1deg, 1deg);
-    filter: grayscale(100%);
+    transform: scale(0.975) skew(1deg, -1deg);
+    filter: brightness(125%) contrast(125%);
   }
 
   // Fallback if no support

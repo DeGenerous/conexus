@@ -12,14 +12,17 @@
 
 a,
 button,
-[role='button'] {
+[role='button'],
+svg {
   cursor: pointer;
   transition: all 0.3s ease-in-out;
+  outline: none;
 }
 
 a *,
 button *,
-[role='button'] * {
+[role='button'] *,
+svg * {
   cursor: inherit;
   transition: all 0.3s ease-in-out;
 }
@@ -34,7 +37,8 @@ a {
   text-decoration: none;
 
   &:hover,
-  &:active {
+  &:active,
+  &:focus {
     color: rgb(51, 226, 230);
     text-decoration: underline;
   }
@@ -44,7 +48,6 @@ html {
   @include font;
   @include dark-blue;
   @include cyan(0.75, "text");
-  @include text-shadow;
 
   background-image: url('/mobileBG.webp');
   background-attachment: scroll;
@@ -53,6 +56,7 @@ html {
 
   text-align: center;
   padding-bottom: 2rem;
+  letter-spacing: 0.025rem;
 
   @include respond-up("small-desktop") {
     background-image: url('/conexusBG.avif'), linear-gradient(#000000, #010020);

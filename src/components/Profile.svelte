@@ -199,7 +199,7 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
-<span class="profile-icon-container">
+<span class="profile-icon-container flex" role="button" tabindex="0">
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"
@@ -1046,6 +1046,21 @@
     {/if}
   </div>
 </dialog>
+
+<style lang="scss">
+  @use "/src/styles/mixins" as *;
+
+  .profile-icon-container {
+    width: 4rem;
+
+    &:hover,
+    &:active,
+    &:focus {
+      @include scale;
+      @include bright;
+    }
+  }
+</style>
 
 <!-- <style>
   dialog {

@@ -81,6 +81,10 @@ $shadow-plus-inset-glow:
   @include box-shadow(soft, inset);
 }
 
+:global(.shad-behind) {
+  @include box-shadow(0 0 0.5rem black);
+}
+
 :global(.shad-inset-glow) {
   box-shadow: $shadow-plus-inset-glow
 }

@@ -1,8 +1,20 @@
 // COLOR MIXINS: cyan, light-blue, blue, navy, dark-blue, green, red, gray, orange, indigo, rose
 
-// BG: cyan (soft), navy, dark-blue
+// BG: cyan (soft), dark-blue ((semi)transparent)
 
 // TEXT: white (soft), gray
+
+@mixin white-txt($opacity: "normal") {
+  @if $opacity == "normal" {
+    color: rgba(255, 255, 255, 0.9);
+  }
+  @else if $opacity == "soft" {
+    color: rgba(255, 255, 255, 0.75);
+  }
+  @else {
+    color: rgba(255, 255, 255, $opacity); // Custom opacity
+  }
+}
 
 @mixin cyan ($opacity: 1, $type: "bg") {
   @if $type == "bg" {
@@ -153,12 +165,12 @@
   @include cyan;
 }
 
-:global(.navy-bg) {
-  @include navy;
-}
-
 :global(.dark-blue-bg) {
   @include dark-blue;
+}
+
+:global(.dark-semi-transparent-bg) {
+  @include dark-blue(0.75);
 }
 
 :global(.dark-transparent-bg) {
@@ -168,19 +180,19 @@
 // Text colors
 
 :global(.white-txt) {
-  color: rgba(255, 255, 255, 0.9);
+  @include white-txt;
 }
 
 :global(.white-soft-txt) {
-  color: rgba(255, 255, 255, 0.75);
-}
-
-:global(.gray-txt) {
-  @include gray(1, text);
+  @include white-txt(soft);
 }
 
 :global(.green-txt) {
   @include green(1, text);
+}
+
+:global(.red-txt) {
+  @include red(1, text);
 }
 
 // General definitions
@@ -194,7 +206,7 @@
 }
 
 :global(:where(h4, h5)) {
-  @extend :global(.white-soft-txt);
+  @include white-txt(soft);
 }
 
 :global(:where(.validation)) {

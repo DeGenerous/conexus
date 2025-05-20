@@ -2,12 +2,16 @@
 
 .menu-tile {
   width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
   justify-content: space-between;
+  align-items: center;
   gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 2rem;
   box-shadow: $light-shadow-plus-inset-glow;
   @include navy(0.75);
   @include cyan(0.75, text);
-  @include text-shadow(none);
 
   @include respond-up(tablet) {
     width: 28vw;
@@ -27,6 +31,7 @@
   }
 
   img {
+    border-radius: 1.5rem;
     aspect-ratio: 1 / 1;
     @include cyan(0.1);
     @include box-glow(outset, 0.25);
@@ -43,6 +48,7 @@
 
   div {
     width: 100%;
+    border-radius: 1.5rem;
     aspect-ratio: 1 / 1;
     cursor: inherit;
     @include cyan(0.1);

@@ -272,7 +272,7 @@
                     {#if class_name}
                       ({class_name})
                     {/if}
-                    {#if amount}
+                    {#if amount && amount > 0}
                       ({amount})
                     {/if}
                   </a>

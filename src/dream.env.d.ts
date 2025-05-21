@@ -83,7 +83,7 @@ type TopicNFTGate = {
   contract_name: SupportedContracts;
   class_id?: number;
   token_ids?: number[];
-  amount: number;
+  amount?: number;
   created_at?: Date;
 };
 

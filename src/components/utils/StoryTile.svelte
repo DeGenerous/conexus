@@ -18,7 +18,7 @@
         const convertedName = contractGetter(name).name;
 
         // return className ? `${convertedName} (${className})` : convertedName;
-        if (amount > 1) {
+        if (amount && amount > 0) {
           return `${convertedName} (${amount})`;
         } else if (className) {
           return `${convertedName} (${className})`;

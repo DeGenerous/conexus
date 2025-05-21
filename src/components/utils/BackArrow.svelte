@@ -5,7 +5,7 @@
 </script>
 
 <a
-  class="icon arrow"
+  class="flex fade-in"
   href={href === 'back' ? 'javascript:window.history.back()' : href}
   aria-label="Back arrow"
 >
@@ -49,15 +49,23 @@
   </svg>
 </a>
 
-<style>
-  a {
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+<style lang="scss">
+  @use "/src/styles/mixins" as *;
 
-  a svg {
-    cursor: inherit;
+  a {
+    width: 4rem;
+    border-radius: 50%;
+
+    &:hover,
+    &:active,
+    &:focus {
+      @include scale;
+      @include bright;
+    }
+
+    svg {
+      width: inherit;
+      border-radius: inherit;
+    }
   }
 </style>

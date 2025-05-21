@@ -1,0 +1,32 @@
+// CLASSES
+
+@use "/src/styles/mixins" as *;
+
+input {
+  text-align: center;
+  width: clamp(250px, 50vw, 20rem);
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  @include cyan(0.1);
+  @include cyan(0.75, text);
+  @include font(h5);
+  @include box-shadow(0 0 0.5rem black);
+  @include cyan-border(0.5);
+
+  @include respond-up(tablet) {
+    max-width: 25rem;
+    padding: 0.5rem 1rem;
+  }
+
+  @include respond-up(small-desktop) {
+    max-width: 30rem;
+  }
+
+  @include respond-up(large-desktop) {
+    max-width: 35rem;
+  }
+}
+
+:where(label) {
+  @include font(body);
+}

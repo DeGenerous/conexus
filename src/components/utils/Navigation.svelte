@@ -45,7 +45,7 @@
     <BackArrow href={arrow} />
   {:else}
     <a
-      class="flex"
+      class="flex fade-in"
       href="https://degenerousdao.com/"
       target="_blank"
       aria-label="DeGenerous"
@@ -178,7 +178,16 @@
 
       a:not(a:hover, a:active, a:focus) {
         @include cyan(0.5, text);
-      }
+
+        @starting-style {
+          opacity: 0;
+          transform: scale(0.9, 0);
+        }
+
+        // Fallback if no support
+        opacity: 1;
+        transform: none;
+        }
     }
   }
 

@@ -1,4 +1,5 @@
-// SHADOWS: shad (deep, inset), glow (inset), text-shad, text-glow
+// SHADOW CLASSES: shad (deep, inset, behind), glow (inset), text-shad, text-glow
+// SHADOW VARIABLES: (light / deep) shadow-plus-inset-glow
 
 @mixin text-shadow($style: "bottom", $color: rgba(0, 0, 0, 0.75)) {
   @if $style == "bottom" {
@@ -61,13 +62,17 @@
   }
 }
 
-$light-shadow-plus-inset-glow:
+$soft-shadow-plus-inset-glow:
   inset 0 0 0.5rem rgba(51, 226, 230, 0.25),
   0 0.15rem 0.5rem rgba(0, 0, 0, 0.5);
 
 $shadow-plus-inset-glow:
   inset 0 0 0.5rem rgba(51, 226, 230, 0.25),
   0 0.25rem 0.5rem rgba(0, 0, 0, 0.75);
+
+$deep-shadow-plus-inset-glow:
+  inset 0 0 0.5rem rgba(51, 226, 230, 0.25),
+  0 0.5rem 0.5rem black;
 
 :global(.shad) {
   @include box-shadow;
@@ -86,7 +91,7 @@ $shadow-plus-inset-glow:
 }
 
 :global(.shad-inset-glow) {
-  box-shadow: $shadow-plus-inset-glow
+  box-shadow: $shadow-plus-inset-glow;
 }
 
 :global(.text-shad) {

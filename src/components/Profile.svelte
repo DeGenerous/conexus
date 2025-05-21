@@ -29,9 +29,11 @@
   let dialog: HTMLDialogElement;
 
   $: if (dialog && $showProfile) {
+    dialog.classList.remove("dialog-fade-out");
     dialog.showModal();
   } else if (dialog) {
-    dialog.close();
+    dialog.classList.add("dialog-fade-out");
+    setTimeout(() => dialog.close(), 300);
     if (!isLogged) {
       signUp = false;
       signInWithEmail = false;
@@ -199,7 +201,7 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
-<span class="profile-icon-container flex" role="button" tabindex="0">
+<span class="profile-icon-container flex fade-in" role="button" tabindex="0">
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"
@@ -1052,12 +1054,18 @@
 
   .profile-icon-container {
     width: 4rem;
+    border-radius: 50%;
 
     &:hover,
     &:active,
     &:focus {
       @include scale;
       @include bright;
+    }
+
+    svg {
+      width: inherit;
+      border-radius: inherit;
     }
   }
 </style>

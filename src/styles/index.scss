@@ -1,3 +1,9 @@
+// UTILITY CLASSES:
+// flex, blur, validation
+// Padding: pad-# 8, 16 (none)
+// Border-radius: round-# 8, 16 (none), 24, 32
+// (# - pixel value)
+
 @use "mixins" as *;
 @use "components";
 
@@ -109,6 +115,8 @@ html {
   }
 
   .validation {
+    @include font(small);
+
     a {
       color: inherit;
       font-size: inherit;

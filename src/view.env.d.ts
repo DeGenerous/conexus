@@ -34,7 +34,7 @@ type CategoriesInSection = {
 type NFTGate = {
   contract_name: SupportedContracts;
   class_name?: string;
-  amount: number;
+  amount?: number;
 };
 
 type TopicView = {

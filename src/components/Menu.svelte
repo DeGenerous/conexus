@@ -21,13 +21,13 @@
 {:else if isLogged}
   <Intro />
 {:else}
-  <video class="pc-video blur round fade-in" controls autoplay loop muted>
+  <video class="pc-video blur round fade-in shad" controls autoplay loop muted>
     <source src={`${trailerURL}/CoNexusTrailer.webm`} type="video/webm" />
     <source src={`${trailerURL}/CoNexusTrailer.mp4`} type="video/mp4" />
     <track kind="captions" />
   </video>
 
-  <video class="mobile-video blur round fade-in" controls autoplay loop muted>
+  <video class="mobile-video blur round fade-in shad" controls autoplay loop muted>
     <source src={`${trailerURL}/CoNexusTrailerMobile.webm`} type="video/webm" />
     <source src={`${trailerURL}/CoNexusTrailerMobile.mp4`} type="video/mp4" />
     <track kind="captions" />
@@ -50,7 +50,6 @@
   video {
     display: none;
     width: clamp(250px, 95%, 70rem);
-    @include box-shadow;
   }
 
   .mobile-video {

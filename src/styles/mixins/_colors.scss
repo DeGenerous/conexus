@@ -1,8 +1,7 @@
-// COLOR MIXINS: cyan, light-blue, blue, navy, dark-blue, green, red, gray, orange, indigo, rose
+// COLOR MIXINS: cyan, light-blue, blue (bright), navy, dark-blue, green, red, gray, orange (bright), indigo (bright), rose (bright)
 
-// BG: cyan (soft), dark-blue ((semi)transparent)
-
-// TEXT: white (soft), gray
+// BG CLASSES: cyan (soft), dark-blue ((semi)transparent)
+// TEXT CLASSES: white (soft), green, red
 
 @mixin white-txt($opacity: "normal") {
   @if $opacity == "normal" {

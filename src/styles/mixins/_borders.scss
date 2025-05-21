@@ -1,0 +1,41 @@
+// CLASSES: cyan (soft), dark, green, red (outline)
+
+@mixin cyan-border($opacity: 1) {
+  border: 0.1rem solid rgba(51, 226, 230, $opacity);
+}
+
+@mixin dark-border($opacity: 1) {
+  border: 0.1rem solid rgba(1, 0, 32, $opacity);
+}
+
+@mixin green-border($opacity: 1) {
+  border: 0.1rem solid rgba(1, 0, 32, $opacity);
+}
+
+@mixin red-border($opacity: 1) {
+  border: 0.1rem solid rgba(255, 50, 50, $opacity);
+}
+
+.cyan-border-soft {
+  @include cyan-border(0.5);
+}
+
+.cyan-border {
+  @include cyan-border;
+}
+
+.dark-border {
+ @include dark-border;
+}
+
+.green-border {
+  @include green-border;
+ }
+
+.red-border {
+  @include red-border;
+}
+
+.red-outline {
+  outline: 0.15rem solid rgba(255, 50, 50, 0.75);
+}

@@ -1,21 +1,5 @@
 @use "/src/styles/mixins" as *;
 
-.cyan-border-soft {
-  border: 0.1rem solid rgba(51, 226, 230, 0.5);
-}
-
-.cyan-border {
-  border: 0.1rem solid rgb(51, 226, 230);
-}
-
-.dark-border {
-  border: 0.1rem solid rgb(1, 0, 32);
-}
-
-.red-border {
-  outline: 0.15rem solid rgba(255, 50, 50, 0.75);
-}
-
 button,
 .button-anchor {
   min-width: 2.75rem;
@@ -32,7 +16,7 @@ button,
   @include font;
   @include white-txt(soft);
   @include light-blue(0.5);
-  @extend .cyan-border-soft;
+  @include cyan-border(0.5);
 
   @include respond-up(small-desktop) {
     min-width: 2.25rem;
@@ -47,13 +31,13 @@ button,
     @include light-blue(1, bg);
     @include box-glow;
     @include scale;
-    @extend .cyan-border;
+    @include cyan-border;
   }
 
   &:disabled {
     @include gray(0.25);
     @include dark-blue(1, text);
-    @extend .dark-border;
+    @include dark-border;
   }
 
   img,

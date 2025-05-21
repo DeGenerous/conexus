@@ -1,3 +1,4 @@
+import { ERROR_REQUIRED_TOKEN } from '@constants/error';
 import { api_error } from '@errors/index';
 import { Account } from '@lib/account';
 import { GameAPI } from '@service/routes';
@@ -97,7 +98,7 @@ export class CoNexusGame extends GameAPI {
 
     if (!data) {
       if (error) {
-        if (error.message.match('you do not have the required Token')) {
+        if (error.message.match(ERROR_REQUIRED_TOKEN)) {
           const errorMessage: string[] = error.message.split('. ');
 
           const errorTitle = errorMessage[0];

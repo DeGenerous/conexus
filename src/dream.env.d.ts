@@ -76,13 +76,14 @@ type ClassGate = {
   created_at: Date;
 };
 
-type SupportedContracts = 'Potential' | 'Ark' | 'Moonsign' | 'Apes' | 'All';
+type SupportedContracts = 'Potential' | 'Ark' | 'Moonsign' | 'Apes' | 'Anyone' | 'All';
 
 type TopicNFTGate = {
   topic_id: number;
   contract_name: SupportedContracts;
   class_id?: number;
   token_ids?: number[];
+  amount: number;
   created_at?: Date;
 };
 

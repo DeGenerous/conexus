@@ -97,7 +97,7 @@ export class CoNexusGame extends GameAPI {
 
     if (!data) {
       if (error) {
-        if (error.message.match('you do not have the required NFT')) {
+        if (error.message.match('you do not have the required Token')) {
           const errorMessage: string[] = error.message.split('. ');
 
           const errorTitle = errorMessage[0];

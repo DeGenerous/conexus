@@ -1,7 +1,28 @@
+// COLOR VARIABLES: cyan, light-blue, blue, navy, dark-blue
 // COLOR MIXINS: cyan, light-blue, blue (bright), navy, dark-blue, green, red, gray, orange (bright), indigo (bright), rose (bright)
 
-// BG CLASSES: cyan (soft), dark-blue ((semi)transparent)
-// TEXT CLASSES: white (soft), green, red
+// BG CLASSES: cyan (soft), blue, dark-blue ((semi)transparent)
+// TEXT CLASSES: white (soft / transparent), green, red
+
+$cyan: rgb(51, 226, 230);
+
+$light-blue: rgb(56, 117, 250);
+$bright-blue: rgb(45, 90, 216);
+$blue: rgb(36, 65, 189);
+$navy: rgb(22, 30, 95);
+$dark-blue: rgb(1, 0, 32);
+
+$green: rgb(0, 185, 55);
+$red: rgb(255, 60, 64);
+
+$orange: rgb(255, 140, 0);
+$bright-orange: rgb(255, 165, 40);
+
+$indigo: rgb(95, 80, 160);
+$bright-indigo: rgb(120, 100, 190);
+
+$rose: rgb(200, 140, 140);
+$bright-rose: rgb(230, 175, 175);
 
 @mixin white-txt($opacity: "normal") {
   @if $opacity == "normal" {
@@ -164,6 +185,10 @@
   @include cyan;
 }
 
+:global(.blue) {
+  @include blue;
+}
+
 :global(.dark-blue-bg) {
   @include dark-blue;
 }
@@ -176,6 +201,14 @@
   @include dark-blue(0.5);
 }
 
+:global(.gray-bg) {
+  @include gray(0.75);
+}
+
+:global(.gray-transparent-bg) {
+  @include gray(0.25);
+}
+
 // Text colors
 
 :global(.white-txt) {
@@ -186,12 +219,24 @@
   @include white-txt(soft);
 }
 
+:global(.white-transparent-txt) {
+  @include white-txt(0.5);
+}
+
+:global(.cyan-txt) {
+  @include cyan(1, text);
+}
+
 :global(.green-txt) {
   @include green(1, text);
 }
 
 :global(.red-txt) {
   @include red(1, text);
+}
+
+:global(.dark-txt) {
+  @include dark-blue(1, text);
 }
 
 // General definitions
@@ -206,6 +251,10 @@
 
 :global(:where(h4, h5)) {
   @include white-txt(soft);
+}
+
+:global(:where(label)) {
+  @include white-txt((0.5));
 }
 
 :global(:where(.validation)) {

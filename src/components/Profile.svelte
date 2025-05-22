@@ -151,12 +151,6 @@
   };
 
   // Utility functions
-  let activeWalletStyling = `
-    color: rgb(51, 226, 230);
-    background-color: rgb(45, 90, 216);
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25), 0 0 0.5vw rgba(51, 226, 230, 0.5);
-  `;
-
   const walletSelectConfirm = (address: string) => {
     $secondButton = 'Select';
     $secondButtonClass = 'green-button';
@@ -201,7 +195,13 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
-<span class="profile-icon-container flex fade-in" role="button" tabindex="0">
+<button
+  class="profile-icon-container void-btn flex fade-in"
+  aria-label="Profile"
+  on:click={() => ($showProfile = true)}
+  on:pointerover={() => (profileSvgFocus = true)}
+  on:pointerout={() => (profileSvgFocus = false)}
+>
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"
@@ -234,18 +234,15 @@
       r="95"
       fill="rgba(51, 226, 230, 0.75)"
       mask="url(#profile-svg-mask)"
-      on:click={() => ($showProfile = true)}
-      on:pointerover={() => (profileSvgFocus = true)}
-      on:pointerout={() => (profileSvgFocus = false)}
-      role="button"
-      tabindex="0"
     />
   </svg>
-</span>
+</button>
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
-<!-- svelte-ignore a11y-no-static-element-interactions a11y_no_noninteractive_element_to_interactive_role -->
-<!-- svelte-ignore a11y_consider_explicit_label -->
+<!-- svelte-ignore
+a11y-click-events-have-key-events
+a11y-no-noninteractive-element-interactions
+a11y-no-static-element-interactions
+a11y_no_noninteractive_element_to_interactive_role-->
 <dialog
   class="blur"
   bind:this={dialog}
@@ -253,10 +250,9 @@
   on:click|self={() => ($showProfile = false)}
 >
   <div on:click|stopPropagation>
-    <header>
+    <header class="flex">
       {#if isLogged}
         <button
-          class="login-button"
           on:click={() => {
             account.signout();
           }}
@@ -267,10 +263,10 @@
         </button>
       {:else}
         <button
-          class="back-arrow"
           on:click|stopPropagation={handleBackArrow}
           on:pointerover={() => (backArrowSvgFocus = true)}
           on:pointerout={() => (backArrowSvgFocus = false)}
+          aria-label="Back"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
             <defs>
@@ -311,10 +307,10 @@
         </button>
       {/if}
       <button
-        class="close-button"
         on:click|stopPropagation={() => ($showProfile = false)}
         on:pointerover={() => (closeSvgFocus = true)}
         on:pointerout={() => (closeSvgFocus = false)}
+        aria-label="Close"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -345,30 +341,28 @@
 
     <!-- USER PROFILE -->
     {#if isLogged && user}
-      <section class="profile-window">
+      <section class="profile-window flex">
         <hr />
 
         {#if user.available}
-          <h3 class="stories-count">
+          <h4>
             Credits remaining this month:
             <strong>
               {user.available.bonus}
             </strong>
-          </h3>
+          </h4>
         {:else}
-          <div class="error-message">
-            <p><strong>Error:</strong>Unavailable</p>
-          </div>
+          <p class="validation">Error fetching credits...</p>
         {/if}
 
         <hr />
 
         {#if user?.email && user?.first_name}
-          <div class="user-profile-info">
+          <div class="flex">
             <div class="input-container">
               <label for="mail">Email</label>
               <input
-                class="user-input"
+                id="mail"
                 type="email"
                 value={user.email}
                 disabled
@@ -382,7 +376,7 @@
             <div class="input-container">
               <label for="first-name">First name</label>
               <input
-                class="user-input"
+                id="first-name"
                 type="text"
                 value={user.first_name}
                 disabled={true}
@@ -391,7 +385,7 @@
             <div class="input-container">
               <label for="last-name">Last name</label>
               <input
-                class="user-input"
+                id="last-name"
                 type="text"
                 value={user.last_name}
                 disabled={true}
@@ -402,7 +396,7 @@
               <div class="input-container">
                 <label for="password">Old password</label>
                 <input
-                  class="user-input highlighted-border"
+                  id="password"
                   class:red-border={!editOldPassword}
                   type={$passwordVisible.edit ? 'text' : 'password'}
                   placeholder="Enter old password"
@@ -415,22 +409,19 @@
               {/if}
 
               <div class="input-container">
-                <label for="password">New password</label>
-                <div class="password-input-container">
-                  <input
-                    class="user-input highlighted-border"
-                    class:red-border={!regexpPasswordValidation.test(
-                      editPassword,
-                    )}
-                    type={$passwordVisible.edit ? 'text' : 'password'}
-                    placeholder="Provide new password"
-                    bind:value={editPassword}
-                  />
-                  <EyeSVG visibility="edit" />
-                </div>
+                <label for="new-password">New password</label>
+                <input
+                  id="new-password"
+                  class:red-border={!regexpPasswordValidation.test(
+                    editPassword,
+                  )}
+                  type={$passwordVisible.edit ? 'text' : 'password'}
+                  placeholder="Provide new password"
+                  bind:value={editPassword}
+                />
+                <EyeSVG visibility="edit" />
               </div>
               <input
-                class="user-input highlighted-border"
                 class:red-border={!regexpPasswordValidation.test(
                   editPassword,
                 ) || editPassword !== editPasswordConfirm}
@@ -483,12 +474,13 @@
             {/if}
 
             {#if !user.is_oauth}
-              <div class="edit-buttons">
+              <div class="flex-row">
                 {#if editingPassword}
-                  <button on:click={() => (editingPassword = false)}>
+                  <button class="red-btn" on:click={() => (editingPassword = false)}>
                     Cancel
                   </button>
                   <button
+                    class="green-btn"
                     on:click={saveChangedPassword}
                     disabled={!editPassword ||
                       !regexpPasswordValidation.test(editPassword) ||
@@ -509,69 +501,52 @@
         {/if}
 
         {#key user}
-          <div class="wallet-connect">
+          <div class="web3-wallets flex">
             {#if user && !user.faux}
               {#if user.wallets && user.wallets.length >= 1}
-                <div class="wallets-container">
-                  <h2>Connected Addresses:</h2>
-                  <ul>
-                    {#each user.wallets.filter((address) => !address.faux) as wallet, index}
-                      <li
-                        class="wallet"
-                        style={wallet.wallet == user.main_wallet
-                          ? activeWalletStyling
-                          : ''}
+                <h4>Connected Addresses</h4>
+                <ul class="flex-row">
+                  {#each user.wallets.filter((address) => !address.faux) as wallet, index}
+                    <button
+                      class="wallet void-btn flex-row pad-8 round-8 blue dark-txt"
+                      class:active-wallet={wallet.wallet == user.main_wallet}
+                      on:click={() => {
+                        if (wallet.wallet != user!.main_wallet)
+                          walletSelectConfirm(wallet.wallet);
+                      }}
+                    >
+                      <h4>{index + 1}</h4>
+                      <p class="pad-8 round-8 white-soft-txt dark-transparent-bg">
+                        {wallet.wallet.slice(0, 6) +
+                          '...' +
+                          wallet.wallet.slice(-4)}
+                      </p>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        class="star-svg"
                       >
-                        <p>{index + 1}</p>
-                        <span
-                          style={wallet.wallet == user.main_wallet
-                            ? 'color: rgb(51, 226, 230);'
-                            : ''}
-                          >{wallet.wallet.slice(0, 6) +
-                            '...' +
-                            wallet.wallet.slice(-4)}</span
+                        <path
+                          d="m12 3 2.23 6.88h7.23l-5.85 4.24L17.85 21 12 16.75 6.15 21l2.24-6.88-5.85-4.24h7.23L12 3z"
                         >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          class="star-svg"
-                          fill="#010020"
-                          style={wallet.wallet === user.main_wallet
-                            ? 'fill: rgb(51, 226, 230)'
-                            : ''}
-                          on:click={() => {
-                            if (wallet.wallet != user!.main_wallet)
-                              walletSelectConfirm(wallet.wallet);
-                          }}
-                          role="button"
-                          tabindex="0"
-                        >
-                          <path
-                            d="m12 3 2.23 6.88h7.23l-5.85 4.24L17.85 21 12 16.75 6.15 21l2.24-6.88-5.85-4.24h7.23L12 3z"
-                          >
-                          </path>
-                        </svg>
-                      </li>
-                    {/each}
-                  </ul>
-                  {#if user?.email && user?.first_name}
-                    <div class="buttons-container">
-                      <WalletConnect
-                        linking={true}
-                        title={'Add another address'}
-                      />
-                    </div>
-                  {/if}
-                </div>
+                        </path>
+                      </svg>
+                    </button>
+                  {/each}
+                </ul>
+                {#if user?.email && user?.first_name}
+                  <WalletConnect
+                    linking={true}
+                    title={'Add another address'}
+                  />
+                {/if}
 
                 {#if $accountError && $accountError.selectMainWallet}
                   <p class="validation">{$accountError.selectMainWallet}</p>
                 {/if}
               {/if}
             {:else}
-              <div class="buttons-container">
-                <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
-              </div>
+              <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
             {/if}
           </div>
         {/key}
@@ -579,35 +554,32 @@
         {#if user?.email && user?.first_name && user?.email_confirmed}
           <hr />
 
-          <h2>Your referral codes</h2>
           {#if $referralCodes != null}
             {#key $referralCodes}
-              <div class="referral-codes">
+              <h4>Your referral codes</h4>
+              <ul class="referral-codes flex-row">
                 {#each $referralCodes as code}
-                  <div class="ref-code-container">
-                    <input
-                      class="ref-code"
-                      id={code.code}
-                      class:active-code={!code.is_used}
-                      value={code.code}
-                      disabled
-                    />
+                  <button
+                    class="ref-code void-btn flex-row pad-8 round-8 dark-txt"
+                    class:used-code={code.is_used}
+                    id={code.code}
+                    on:click={() =>
+                      navigator.clipboard.writeText(code.code)}
+                    aria-label="Copy code {code.code}"
+                  >
+                    <p class="pad-8 round-8 white-soft-txt dark-transparent-bg">
+                      {code.code}
+                    </p>
                     {#if !code.is_used}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="-100 -100 200 200"
                         class="copy-svg"
                         fill="none"
-                        stroke="rgb(51, 226, 230)"
+                        stroke="rgba(255, 255, 255, 0.75)"
                         stroke-width="15"
                         stroke-linejoin="round"
                         stroke-linecap="round"
-                        opacity="0.75"
-                        on:click={() =>
-                          navigator.clipboard.writeText(code.code)}
-                        role="button"
-                        tabindex="0"
-                        aria-label="Copy code"
                       >
                         <defs>
                           <mask id="copy-checkmark">
@@ -650,14 +622,14 @@
                         />
                       </svg>
                     {/if}
-                  </div>
+                  </button>
                 {/each}
-              </div>
+                </ul>
             {/key}
-            <h2>
+            <h4>
               Your referrals: {$referralCodes.filter((code) => code.is_used)
                 .length}
-            </h2>
+            </h4>
           {:else}
             <button
               on:click={() => {
@@ -683,29 +655,28 @@
             <hr />
 
             {#if subStatus.is_active}
-              <h2>Newsletter Subscription</h2>
+              <h4>Newsletter Subscription</h4>
 
               {#if subStatus.subscribed_at}
-                <h3>
+                <h5 class="pad-8 round-8 gray-transparent-bg green-txt shad">
                   Active since: {dateToString(subStatus.subscribed_at.Time)}
-                </h3>
+                </h5>
               {/if}
-              <h3
-                class="unsubscribe-button"
+              <button
+                class="unsubscribe-button void-btn"
                 on:click={() => {
                   account
                     .unsubscribeNewsletter()
                     .then(() => checkSubscription());
                 }}
-                role="button"
-                tabindex="0"
               >
                 Unsubscribe
-              </h3>
+              </button>
             {:else}
               <div class="newsletter-subscription">
-                <h3>Subscribe to Newsletter:</h3>
+                <h4>Subscribe to Newsletter:</h4>
                 <button
+                  class="green-btn"
                   on:click={() => {
                     account
                       .subscribeNewsletter()
@@ -731,8 +702,8 @@
 
         <hr />
 
-        <h3>Report bugs or ask for help:</h3>
-        <div class="buttons-wrapper">
+        <h4>Report bugs or ask for help</h4>
+        <div class="flex-row">
           <a href="mailto:support@degenerousdao.com">Support</a>
           <span style:color="#bebebe">|</span>
           <a href="https://discord.gg/349FgMSUK8">Discord</a>
@@ -1068,81 +1039,102 @@
       border-radius: inherit;
     }
   }
+
+  header {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .profile-window {
+    /* <!-- USER PROFILE --> */
+    .web3-wallets {
+      ul {
+        flex-wrap: wrap;
+      }
+
+      .wallet {
+        min-width: 14rem;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 0.5rem;
+        @include box-shadow;
+
+        h4 {
+          color: inherit;
+        }
+
+        p {
+          @include box-shadow(soft, inset);
+        }
+
+        &:hover,
+        &:active,
+        &:focus {
+          @include scale-up(soft);
+          @include bright;
+        }
+      }
+
+      .active-wallet {
+        fill: $cyan;
+        box-shadow: $shadow-plus-inset-glow;
+        @include cyan(1, text);
+        @include blue(1, bg, bright);
+
+        p {
+          color: $cyan;
+        }
+      }
+    }
+    
+    .referral-codes {
+      flex-wrap: wrap;
+
+      .ref-code {
+        gap: 0.5rem;
+        @include green(0.75);
+        @include box-shadow;
+
+        p {
+          @include box-shadow(soft, inset);
+        }
+
+        &:hover:not(.used-code),
+        &:active:not(.used-code),
+        &:focus:not(.used-code) {
+          @include scale-up(soft);
+          @include bright;
+        }
+      }
+
+      .used-code {
+        cursor: not-allowed;
+        @include gray(0.25);
+
+        p {
+          @include white-txt(0.5);
+        }
+      }
+    }
+
+    .unsubscribe-button {
+      @include red(0.5, text);
+
+      &:hover,
+      &:active,
+      &:focus {
+        text-decoration: underline;
+        @include red(1, text);
+      }
+    }
+
+    /* <!-- SIGN-IN window --> */
+    
+  }
 </style>
 
 <!-- <style>
-  dialog {
-    width: 65vw;
-    height: 90%;
-    background-color: rgba(1, 0, 32, 0.75);
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.5);
-    border-radius: 1.5vw;
-    overflow-x: hidden;
-  }
-
-  dialog::-webkit-scrollbar {
-    width: 0.5vw;
-  }
-
-  dialog::-webkit-scrollbar-track {
-    background-color: rgba(0, 0, 0, 0);
-  }
-
-  dialog::-webkit-scrollbar-thumb {
-    background: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0),
-      rgba(51, 226, 230, 0.5),
-      rgba(0, 0, 0, 0)
-    );
-    border-radius: 0.5vw;
-    cursor: pointer;
-  }
-
-  dialog::-webkit-scrollbar-thumb:hover,
-  dialog::-webkit-scrollbar-thumb:active {
-    background: rgba(51, 226, 230, 0.5);
-  }
-
-  dialog::backdrop {
-    background: rgba(0, 0, 0, 0.75);
-  }
-
-  dialog[open] {
-    animation: zoom 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  dialog[open]::backdrop {
-    animation: fade 0.25s ease-out;
-  }
-
-  dialog > div {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    padding: 1vw;
-  }
-
-  /* Control buttons */
-
-  header {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .back-arrow,
-  .close-button,
-  .login-button {
-    padding: 0.5vw;
-  }
-
-  .back-arrow svg,
-  .close-button svg {
-    height: 3vw;
-    width: 3vw;
-  }
 
   /* SIGN-IN & SIGN-UP */
 
@@ -1205,89 +1197,6 @@
     color: rgba(255, 255, 255, 0.65);
   }
 
-  /* USER PROFILE window */
-
-  .profile-window {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1.5vw;
-    padding-block: 1vw;
-  }
-
-  .edit-buttons {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    gap: 1vw;
-  }
-
-  .stories-count {
-    color: rgba(51, 226, 230, 0.65);
-  }
-
-  .stories-count strong {
-    color: rgba(51, 226, 230, 0.9);
-  }
-
-  /* Web3 wallet section */
-
-  .wallet-connect {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 2vw;
-  }
-
-  .wallets-container {
-    min-width: 65vw;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 2vw;
-  }
-
-  ul {
-    max-width: 55vw;
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: center;
-    gap: 1vw;
-  }
-
-  .wallet {
-    min-width: 22.5vw;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1vw;
-    padding: 0.5vw 1vw;
-    font-size: 2vw;
-    background-color: rgb(36, 65, 189);
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
-    border-radius: 1vw;
-    cursor: default;
-    color: #010020;
-  }
-
-  .wallet span {
-    text-align: center;
-    padding: 1vw 2vw;
-    font-size: 1.5vw;
-    color: rgba(255, 255, 255, 0.6);
-    background-color: rgba(1, 0, 32, 0.5);
-    box-shadow: inset 0 0 0.5vw #010020;
-    border-radius: 1vw;
-  }
-
-  .star-svg {
-    height: 3vw;
-    width: 3vw;
-  }
 
   /* Referral codes container */
 

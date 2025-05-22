@@ -1,17 +1,39 @@
 // CLASSES
+// input-container <div><label><input></div>
 
 @use "/src/styles/mixins" as *;
 
 input {
+  transition: all 0.3s ease-in-out;
   text-align: center;
   width: clamp(250px, 50vw, 20rem);
   padding: 0.375rem 0.75rem;
   border-radius: 0.5rem;
+  outline: none;
   @include cyan(0.1);
-  @include cyan(0.75, text);
-  @include font(h5);
+  @include cyan(1, text);
   @include box-shadow(0 0 0.5rem black);
   @include cyan-border(0.5);
+
+  &:disabled {
+    @include cyan(0.75, text);
+    @include dark-border;
+  }
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled) {
+    @include bright;
+    @include scale(1.01, x);
+  }
+
+  &:focus {
+    @include cyan-border;
+    @include cyan(0.15);
+  }
+
+  &::placeholder {
+    @include white-txt(0.25);
+  }
 
   @include respond-up(tablet) {
     max-width: 25rem;
@@ -27,6 +49,31 @@ input {
   }
 }
 
-:where(label) {
-  @include font(body);
+.input-container {
+  position: relative;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+
+  svg {
+    position: absolute;
+    left: calc(100% + 0.5rem);
+  }
+
+  @include respond-up(tablet) {
+    input {
+    }
+
+    label {
+      position: absolute;
+      right: calc(100% + 0.5rem);
+      white-space: nowrap;
+
+      &::after {
+        content: ":";
+      }
+    }
+  }
 }

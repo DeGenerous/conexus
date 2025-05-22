@@ -1,11 +1,13 @@
 // UTILITY CLASSES:
-// flex, blur, validation
+// flex, flex-row, blur, validation
 // Padding: pad-# 8, 16 (none)
 // Border-radius: round-# 8, 16 (none), 24, 32
 // (# - pixel value)
 
 @use "mixins" as *;
 @use "components";
+
+/* RESET */
 
 *,
 *::before,
@@ -38,6 +40,17 @@ input:disabled {
   cursor: not-allowed;
 }
 
+input:disabled,
+textarea:disabled {
+  opacity: 1 !important; // for iOS
+}
+
+ul {
+  list-style-type: none;
+}
+
+/* GENERAL STYLING */
+
 a {
   color: rgba(51, 226, 230, 0.9);
   text-decoration: none;
@@ -45,7 +58,7 @@ a {
   &:hover,
   &:active,
   &:focus {
-    color: rgb(51, 226, 230);
+    color: $cyan;
     text-decoration: underline;
   }
 }
@@ -65,7 +78,7 @@ html {
   letter-spacing: 0.025rem;
 
   @include respond-up("small-desktop") {
-    background-image: url('/conexusBG.avif'), linear-gradient(#000000, #010020);
+    background-image: url('/conexusBG.avif'), linear-gradient(black, $dark-blue);
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-position: center;
@@ -83,6 +96,11 @@ html {
     justify-content: center;
     align-items: center;
     gap: 1rem;
+  }
+
+  .flex-row {
+    @extend .flex;
+    flex-direction: row;
   }
 
   .blur {
@@ -140,6 +158,6 @@ html {
 
   :where(hr) {
     width: 95%;
-    border: 0.1rem solid rgba(51, 226, 230, 0.5);
+    @include cyan-border(0.25);
   }
 }

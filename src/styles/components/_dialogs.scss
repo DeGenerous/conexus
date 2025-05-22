@@ -12,14 +12,14 @@ dialog {
   @include dark-blue(0.75);
   transition: all 0.3s ease-in-out;
 
+  // Fallback if no support
+  opacity: 1;
+  transform: none;
+
   @starting-style {
     opacity: 0;
     transform: scale(1.5) skew(45deg, -45deg);
   }
-
-  // Fallback if no support
-  opacity: 1;
-  transform: none;
 
   &::-webkit-scrollbar {
     width: 0.5rem;

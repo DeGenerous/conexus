@@ -1,7 +1,7 @@
 @use "sass:map";
 
 $font-scale: (
-  "body": clamp(1rem, 1.5vw, 1.125rem),     // 16–18px
+  "body": clamp(1rem, 1.5vw, 1.05rem),      // 16–18px
   "small": clamp(0.875rem, 1.2vw, 1rem),    // 14–16px
   "caption": clamp(0.75rem, 1vw, 0.875rem), // 12–14px
   "h1": clamp(2rem, 5vw, 3.5rem),           // 32–56px
@@ -36,10 +36,14 @@ $font-scale: (
   @include font(h4);
 }
 
-:global(:where(h5)) {
+:global(:where(h5, input)) {
   @include font(h5);
 }
 
 :global(:where(.validation)) {
   @include font(small);
+}
+
+:global(:where(p, label, button)) {
+  @include font(body);
 }

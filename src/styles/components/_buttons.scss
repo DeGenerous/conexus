@@ -1,6 +1,11 @@
+// UTILITY CLASSES:
+// green, red,
+// button-anchor: apply button styling to <a></a> element
+// void-btn: no button styling
+
 @use "/src/styles/mixins" as *;
 
-button,
+button:not(.void-btn),
 .button-anchor {
   min-width: 2.75rem;
   min-height: 2.75rem;
@@ -9,7 +14,7 @@ button,
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  padding: 1rem;
+  padding: 0.5rem;
   border-radius: 0.5rem;
   outline: none;
   text-transform: uppercase;
@@ -21,12 +26,11 @@ button,
   @include respond-up(small-desktop) {
     min-width: 2.25rem;
     min-height: 2.25rem;
-    padding: 0.5rem;
   }
 
-  &:hover:not(button:disabled),
-  &:active:not(button:disabled),
-  &:focus:not(button:disabled) {
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(&:disabled) {
     @include cyan(1, text);
     @include light-blue(1, bg);
     @include box-glow;
@@ -66,4 +70,43 @@ button,
     min-width: 2.25rem;
     min-height: 2.25rem;
   }
+}
+
+.green-btn:not(.void-btn) {
+  @include green(0.75);
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(&:disabled) {
+    @include green;
+    box-shadow: 0 0 0.5rem green;
+  }
+}
+
+.red-btn:not(.void-btn) {
+  @include red(0.75);
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(&:disabled) {
+    @include red;
+    box-shadow: 0 0 0.5rem red;
+  }
+}
+
+.green-btn:not(.void-btn),
+.red-btn:not(.void-btn) {
+  border-color: transparent !important;
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(&:disabled) {
+    @include dark-blue(1, text);
+  }
+}
+
+:where(.void-btn) {
+  background-color: transparent;
+  border: none;
+  color: inherit;
 }

@@ -1,41 +1,45 @@
 // CLASSES: cyan (soft), dark, green, red (outline)
 
 @mixin cyan-border($opacity: 1) {
-  border: 0.1rem solid rgba(51, 226, 230, $opacity);
+  border: 1px solid rgba(51, 226, 230, $opacity);
 }
 
 @mixin dark-border($opacity: 1) {
-  border: 0.1rem solid rgba(1, 0, 32, $opacity);
+  border: 1px solid rgba(1, 0, 32, $opacity);
 }
 
 @mixin green-border($opacity: 1) {
-  border: 0.1rem solid rgba(1, 0, 32, $opacity);
+  border: 1px solid rgba(1, 0, 32, $opacity) !important;
 }
 
 @mixin red-border($opacity: 1) {
-  border: 0.1rem solid rgba(255, 50, 50, $opacity);
+  border: 1px solid rgba(255, 50, 50, $opacity) !important;
 }
 
-.cyan-border-soft {
+:global(.cyan-border-transparent) {
+  @include cyan-border(0.25);
+}
+
+:global(.cyan-border-soft) {
   @include cyan-border(0.5);
 }
 
-.cyan-border {
+:global(.cyan-border) {
   @include cyan-border;
 }
 
-.dark-border {
+:global(.dark-border) {
  @include dark-border;
 }
 
-.green-border {
+:global(.green-border) {
   @include green-border;
- }
+}
 
-.red-border {
+:global(.red-border) {
   @include red-border;
 }
 
-.red-outline {
-  outline: 0.15rem solid rgba(255, 50, 50, 0.75);
+:global(.red-outline) {
+  outline: 1.5px solid rgba(255, 50, 50, 0.75);
 }

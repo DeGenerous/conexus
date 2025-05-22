@@ -258,7 +258,7 @@
           <span class="gating-icon-wrapper">
             <img class="gating-icon" src="/icons/lock.svg" alt="Restricted" />
           </span>
-          <h3>This story is only available to NFT holders:</h3>
+          <h3>This story is only available to holders of:</h3>
           {#each topic.nft_gate as { contract_name, class_name, amount }}
             <span>
               {#if contractGetter(contract_name)}
@@ -268,12 +268,12 @@
                     class:inactive-link={!contract.link}
                     target="_blank"
                   >
-                    {contract.name}
-                    {#if class_name}
-                      ({class_name})
-                    {/if}
                     {#if amount && amount > 0}
-                      ({amount})
+                      ${contract.name} ({amount})
+                    {:else if class_name}
+                      {contract.name} ({class_name})
+                    {:else}
+                      {contract.name}
                     {/if}
                   </a>
                 {/await}

@@ -13,8 +13,18 @@
       ?.map((gate) => {
         const name = gate.contract_name;
         const className = gate.class_name;
+        const amount = gate.amount;
+
         const convertedName = contractGetter(name).name;
-        return className ? `${convertedName} (${className})` : convertedName;
+
+        // return className ? `${convertedName} (${className})` : convertedName;
+        if (amount && amount > 0) {
+          return `$${convertedName.toUpperCase()} (${amount})`;
+        } else if (className) {
+          return `${convertedName} (${className})`;
+        } else {
+          return convertedName;
+        }
       })
       .join(', ');
     return gates;

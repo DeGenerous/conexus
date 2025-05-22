@@ -19,7 +19,7 @@
 
         // return className ? `${convertedName} (${className})` : convertedName;
         if (amount && amount > 0) {
-          return `$${convertedName} (${amount})`;
+          return `$${convertedName.toUpperCase()} (${amount})`;
         } else if (className) {
           return `${convertedName} (${className})`;
         } else {

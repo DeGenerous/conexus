@@ -269,7 +269,7 @@
                     target="_blank"
                   >
                     {#if amount && amount > 0}
-                      ${contract.name} ({amount})
+                      ${contract.name.toUpperCase()} ({amount})
                     {:else if class_name}
                       {contract.name} ({class_name})
                     {:else}

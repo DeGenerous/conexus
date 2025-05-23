@@ -18,12 +18,11 @@
     stroke-linecap="round"
     style="
         transform: {closeSvgFocus ? 'scale(1.2);' : 'none'}
-        stroke: {closeSvgFocus
-      ? 'rgb(255, 60, 64)'
-      : 'rgba(255, 60, 64, 0.85)'}
+        stroke: {closeSvgFocus ? 'rgb(255, 60, 64)' : 'rgba(255, 60, 64, 0.85)'}
       "
   >
-    <path d="
+    <path
+      d="
           M -65 -65
           L 65 65
           M -65 65

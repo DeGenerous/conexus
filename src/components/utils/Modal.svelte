@@ -10,14 +10,14 @@
   let dialog: HTMLDialogElement;
 
   $: if (dialog && $showModal) {
-    dialog.classList.remove("dialog-fade-out");
+    dialog.classList.remove('dialog-fade-out');
     dialog.showModal();
   } else if (dialog) {
     closeDialog();
   }
 
   const closeDialog = () => {
-    dialog.classList.add("dialog-fade-out");
+    dialog.classList.add('dialog-fade-out');
     $showModal = false;
     $secondButton = '';
     $secondButtonClass = '';
@@ -37,7 +37,9 @@
   <div class="flex" on:click|stopPropagation>
     {@html $modalContent}
     <span class="flex-row">
-      <button class="red-btn" on:click={() => ($showModal = false)}> Close </button>
+      <button class="red-btn" on:click={() => ($showModal = false)}>
+        Close
+      </button>
       {#if $secondButton}
         <button class={$secondButtonClass} on:click={$handleSecondButton}>
           {$secondButton}
@@ -46,16 +48,6 @@
     </span>
   </div>
 </dialog>
-
-<style>
-  dialog {
-    width: clamp(250px, 75%, 40rem);
-  }
-
-  dialog > div {
-   padding-top: 2rem;
-  }
-</style>
 
 <!-- <style>
   dialog {
@@ -132,3 +124,13 @@
     }
   }
 </style> -->
+
+<style>
+  dialog {
+    width: clamp(250px, 75%, 40rem);
+  }
+
+  dialog > div {
+    padding-top: 2rem;
+  }
+</style>

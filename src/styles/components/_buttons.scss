@@ -3,7 +3,7 @@
 // button-anchor: apply button styling to <a></a> element
 // void-btn: no button styling
 
-@use "/src/styles/mixins" as *;
+@use '/src/styles/mixins' as *;
 
 button:not(.void-btn),
 .button-anchor {

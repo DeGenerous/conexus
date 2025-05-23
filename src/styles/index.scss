@@ -4,8 +4,8 @@
 // Border-radius: round-# 8, 16 (none), 24, 32
 // (# - pixel value)
 
-@use "mixins" as *;
-@use "components";
+@use 'mixins' as *;
+@use 'components';
 
 /* RESET */
 
@@ -15,7 +15,9 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: PT Serif Caption, serif-sans;
+  font-family:
+    PT Serif Caption,
+    serif-sans;
 }
 
 a,
@@ -66,7 +68,7 @@ a {
 html {
   @include font;
   @include dark-blue;
-  @include cyan(0.75, "text");
+  @include cyan(0.75, 'text');
 
   background-image: url('/mobileBG.webp');
   background-attachment: scroll;
@@ -74,11 +76,12 @@ html {
   background-position: top;
 
   text-align: center;
-  padding-block: 1rem;
+  padding-block: 1rem 5rem;
   letter-spacing: 0.025rem;
 
-  @include respond-up("tablet") {
-    background-image: url('/conexusBG.avif'), linear-gradient(black, $dark-blue);
+  @include respond-up('tablet') {
+    background-image:
+      url('/conexusBG.avif'), linear-gradient(black, $dark-blue);
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-position: center;

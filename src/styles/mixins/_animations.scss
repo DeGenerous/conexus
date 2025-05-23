@@ -8,23 +8,20 @@
   filter: grayscale($intensity);
 }
 
-@mixin scale($intensity: 1.05, $direction: "both") {
-  @if $direction == "x" {
+@mixin scale($intensity: 1.05, $direction: 'both') {
+  @if $direction == 'x' {
     transform: scaleX($intensity);
-  }
-  @else if $direction == "y" {
+  } @else if $direction == 'y' {
     transform: scaleY($intensity);
-  }
-  @else {
+  } @else {
     transform: scale($intensity);
   }
 }
 
-@mixin scale-up($intensity: "deep") {
-  @if $intensity == "soft" {
+@mixin scale-up($intensity: 'deep') {
+  @if $intensity == 'soft' {
     transform: scale(1.025) translateY(-0.25rem);
-  }
-  @else {
+  } @else {
     transform: scale(1.025) translateY(-0.5rem);
   }
 }
@@ -146,7 +143,7 @@
 
 :global(.fade-in) {
   transition: all 0.3s ease-in-out;
-  
+
   // Fallback if no support
   opacity: 1;
   transform: none;

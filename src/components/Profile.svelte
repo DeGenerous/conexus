@@ -3,6 +3,7 @@
 
   import DoorSVG from '@components/icons/Door.svelte';
   import EyeSVG from '@components/icons/Eye.svelte';
+  import CloseSVG from '@components/icons/Close.svelte';
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import { Account } from '@lib/account';
   import { authenticated, referralCodes, accountError } from '@stores/account';
@@ -159,7 +160,7 @@
       $showModal = false;
     };
     $modalContent =
-      '<h2>Are you sure you want to select this address as your main one?</h2>';
+      '<h4>Are you sure you want to select this address as your main one?</h4>';
     $showModal = true;
   };
 
@@ -170,12 +171,19 @@
     location.reload();
   };
 
+  const copyRefCode = (refCode: string) => {
+    let codeBtn = document.getElementById(refCode) as HTMLButtonElement;
+    navigator.clipboard.writeText(refCode);
+    codeBtn.classList.add("copied");
+    setTimeout(() => (codeBtn.classList.remove("copied")), 300);
+  }
+
   // SVG Icons
   let profileSvgFocus: boolean = false;
   let backArrowSvgFocus: boolean = false;
-  let closeSvgFocus: boolean = false;
   let signInSvgFocus: boolean = false;
   let signOutSvgFocus: boolean = false;
+  let copySvgFocus: Nullable<string> = null;
 
   // Newsletter
   const checkSubscription = async () => {
@@ -290,37 +298,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
           </svg>
         </button>
       {/if}
-      <button
-        on:click|stopPropagation={() => ($showProfile = false)}
-        on:pointerover={() => (closeSvgFocus = true)}
-        on:pointerout={() => (closeSvgFocus = false)}
-        aria-label="Close"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="-100 -100 200 200"
-          class="close-svg"
-          stroke="rgba(255, 60, 64, 0.85)"
-          stroke-width="30"
-          stroke-linecap="round"
-          style="
-              transform: {closeSvgFocus ? 'scale(1.2);' : 'none'}
-              stroke: {closeSvgFocus
-            ? 'rgb(255, 60, 64)'
-            : 'rgba(255, 60, 64, 0.85)'}
-            "
-        >
-          <path
-            d="
-                M -65 -65
-                L 65 65
-                M -65 65
-                L 65 -65
-              "
-            fill="none"
-          />
-        </svg>
-      </button>
+      <CloseSVG close={() => ($showProfile = false)} />
     </header>
 
     <!-- USER PROFILE -->
@@ -500,16 +478,12 @@ a11y_no_noninteractive_element_to_interactive_role-->
                       }}
                     >
                       <h4>{index + 1}</h4>
-                      <p class="pad-8 round-8 white-soft-txt dark-transparent-bg">
+                      <p class="pad-8 round-8 dark-transparent-bg white-soft-txt">
                         {wallet.wallet.slice(0, 6) +
                           '...' +
                           wallet.wallet.slice(-4)}
                       </p>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        class="star-svg"
-                      >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path
                           d="m12 3 2.23 6.88h7.23l-5.85 4.24L17.85 21 12 16.75 6.15 21l2.24-6.88-5.85-4.24h7.23L12 3z"
                         >
@@ -547,8 +521,11 @@ a11y_no_noninteractive_element_to_interactive_role-->
                     class="ref-code void-btn flex-row pad-8 round-8 dark-txt"
                     class:used-code={code.is_used}
                     id={code.code}
-                    on:click={() =>
-                      navigator.clipboard.writeText(code.code)}
+                    on:click={() => copyRefCode(code.code)}
+                    on:pointerover={() => (copySvgFocus = code.code)}
+                    on:focus={() => (copySvgFocus = code.code)}
+                    on:pointerout={() => (copySvgFocus = null)}
+                    on:blur={() => (copySvgFocus = null)}
                     aria-label="Copy code {code.code}"
                   >
                     <p class="pad-8 round-8 white-soft-txt dark-transparent-bg">
@@ -556,10 +533,10 @@ a11y_no_noninteractive_element_to_interactive_role-->
                     </p>
                     {#if !code.is_used}
                       <svg
+                        class:copy-hover={copySvgFocus === code.code}
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="-100 -100 200 200"
-                        class="copy-svg"
-                        fill="none"
+                        fill="rgba(255, 255, 255, 0)"
                         stroke="rgba(255, 255, 255, 0.75)"
                         stroke-width="15"
                         stroke-linejoin="round"
@@ -586,7 +563,6 @@ a11y_no_noninteractive_element_to_interactive_role-->
                             />
                           </mask>
                         </defs>
-
                         <path
                           d="
                               M 40 -67
@@ -730,7 +706,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
               {/if}
 
               <button
-                type="submit"
+                type="button"
                 on:click|preventDefault={() =>
                   account.signin({
                     email: loginMail,
@@ -761,6 +737,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
             <!-- SIGN-IN general window -->
             <div class="sign-options flex">
               <button
+                class="sign-button"
                 on:click={() => {
                   account.googleSignin();
                 }}
@@ -774,34 +751,35 @@ a11y_no_noninteractive_element_to_interactive_role-->
               {/if}
 
               <button
+                class="sign-button"
                 on:click={() => {
                   signInWithEmail = true;
                 }}
               >
-                <img class="sign-icon" src="/icons/email.png" alt="Google" />
-                <p class="sign-lable">with email</p>
+                <img src="/icons/email.png" alt="Google" />
+                <p>with email</p>
               </button>
               <WalletConnect title={'with Web3 wallet'} />
             </div>
             <hr />
             <h4>Don't have an account yet?</h4>
             <button
+              class="sign-button"
               on:click={() => {
                 signUp = true;
               }}
             >
-              <img class="sign-icon" src="/icons/email.png" alt="Google" />
-              <p class="sign-lable">Sign up with email</p>
+              <img src="/icons/email.png" alt="Google" />
+              <p>Sign up with email</p>
             </button>
           {/if}
         {:else}
           <!-- SIGN-UP window -->
 
-          <form class="signup-form">
+          <form class="signup-form flex">
             <div class="input-container">
               <label for="new-user-mail">Mail</label>
               <input
-                class="user-input"
                 class:red-border={!regexpEmail.test(email)}
                 type="email"
                 id="new-user-mail"
@@ -817,22 +795,18 @@ a11y_no_noninteractive_element_to_interactive_role-->
 
             <div class="input-container">
               <label for="new-user-password">Password</label>
-              <div class="password-input-container">
-                <input
-                  class="user-input"
-                  class:red-border={!regexpPasswordValidation.test(password)}
-                  id="new-user-password"
-                  placeholder="Enter password"
-                  minlength="8"
-                  type={$passwordVisible.signup ? 'text' : 'password'}
-                  bind:value={password}
-                  required
-                />
-                <EyeSVG visibility="signup" />
-              </div>
+              <input
+                class:red-border={!regexpPasswordValidation.test(password)}
+                id="new-user-password"
+                placeholder="Enter password"
+                minlength="8"
+                type={$passwordVisible.signup ? 'text' : 'password'}
+                bind:value={password}
+                required
+              />
+              <EyeSVG visibility="signup" />
             </div>
             <input
-              class="user-input"
               class:red-border={!regexpPasswordValidation.test(password) ||
                 password !== confirmPassword}
               id="confirm-new-user-password"
@@ -881,7 +855,6 @@ a11y_no_noninteractive_element_to_interactive_role-->
             <div class="input-container">
               <label for="user-first-name">First name</label>
               <input
-                class="user-input"
                 class:red-border={!first_name.trim()}
                 type="text"
                 id="user-first-name"
@@ -892,7 +865,6 @@ a11y_no_noninteractive_element_to_interactive_role-->
             <div class="input-container">
               <label for="user-last-name">Last name</label>
               <input
-                class="user-input"
                 class:red-border={!last_name.trim()}
                 type="text"
                 id="user-last-name"
@@ -903,8 +875,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
             <div class="input-container">
               <label for="user-ref-code">Referral code</label>
               <input
-                class="user-input"
-                class:red-border={!referralCodeValid}
+                class={referralCodeValid ? "green-border" : "red-border"}
                 type="text"
                 id="user-ref-code"
                 placeholder="A11A7528D9C82915"
@@ -916,17 +887,11 @@ a11y_no_noninteractive_element_to_interactive_role-->
             </div>
 
             {#if referralCode.length === 16}
-              {#await account.validateReferralCode(referralCode)}
-                <p class="validation">Checking referral code...</p>
-              {:then referralObject}
-                {#if referralObject}
-                  <p class="validation green">Referral code is valid</p>
-                {:else}
-                  <p class="validation">Referral code is invalid</p>
-                {/if}
-              {:catch}
-                <p class="validation">Some error occured...</p>
-              {/await}
+              {#if referralCodeValid}
+                <p class="validation green-txt">Referral code is valid</p>
+              {:else}
+                <p class="validation">Referral code is invalid</p>
+              {/if}
             {:else if referralCode}
               <p class="validation">Code should contain 16 characters</p>
             {:else}
@@ -948,8 +913,8 @@ a11y_no_noninteractive_element_to_interactive_role-->
               <p class="validation">{$accountError.signup}</p>
             {/if}
 
-            <div class="agreements-container">
-              <div class="agreement">
+            <div class="agreements-container flex">
+              <span class="flex-row" class:mandatory={!termsAccepted}>
                 <input
                   type="checkbox"
                   id="terms"
@@ -957,23 +922,16 @@ a11y_no_noninteractive_element_to_interactive_role-->
                     termsAccepted = event.target?.checked;
                   }}
                 />
-                <label
-                  for="terms"
-                  class="terms"
-                  style={termsAccepted ? '' : 'color: rgba(255, 50, 50, 0.75);'}
-                >
+                <label for="terms">
                   * I have read and agree to the <a
                     href="https://docs.google.com/document/d/1fEemq6HVM_h8ZTbc_Fl_k3RvlPdjYd70TI1iloT5gXA/edit?usp=sharing"
                     target="_blank"
-                    style={termsAccepted
-                      ? ''
-                      : 'color: rgba(255, 50, 50, 0.9);'}
                   >
                     Terms of Service</a
                   >.
                 </label>
-              </div>
-              <div class="agreement">
+              </span>
+              <span class="flex-row">
                 <input
                   type="checkbox"
                   id="newsletter"
@@ -981,13 +939,12 @@ a11y_no_noninteractive_element_to_interactive_role-->
                     newsletterSignup = event.target?.checked;
                   }}
                 />
-                <label for="newsletter" class="newsletter">
+                <label for="newsletter">
                   I'd like to receive news twice a month.
                 </label>
-              </div>
+              </span>
             </div>
             <button
-              class="sign-button"
               on:click={referralSignup}
               disabled={!isFormValid}>Create account</button
             >
@@ -1044,22 +1001,23 @@ a11y_no_noninteractive_element_to_interactive_role-->
           @include box-shadow(soft, inset);
         }
 
-        &:hover,
-        &:active,
-        &:focus {
+        &:hover:not(&.active-wallet),
+        &:active:not(&.active-wallet),
+        &:focus:not(&.active-wallet) {
           @include scale-up(soft);
           @include bright;
         }
-      }
 
-      .active-wallet {
-        fill: $cyan;
-        box-shadow: $shadow-plus-inset-glow;
-        @include cyan(1, text);
-        @include blue(1, bg, bright);
+        &.active-wallet {
+          cursor: not-allowed;
+          fill: $cyan;
+          box-shadow: $shadow-plus-inset-glow;
+          @include cyan(1, text);
+          @include blue(1, bg, bright);
 
-        p {
-          color: $cyan;
+          p {
+            color: $cyan;
+          }
         }
       }
     }
@@ -1072,24 +1030,34 @@ a11y_no_noninteractive_element_to_interactive_role-->
         background-color: $dark-green;
         @include box-shadow;
 
-        p {
-          @include box-shadow(soft, inset);
-        }
-
         &:hover:not(.used-code),
         &:active:not(.used-code),
         &:focus:not(.used-code) {
           @include scale-up(soft);
           @include bright;
         }
-      }
-
-      .used-code {
-        cursor: not-allowed;
-        @include gray(0.25);
 
         p {
-          @include white-txt(0.5);
+          @include box-shadow(soft, inset);
+        }
+
+        svg {
+          width: 1.25rem;
+
+          &.copy-hover {
+            fill: $dark-green;
+            stroke: $dark-green;
+            @include bright(50%);
+          }
+        }
+
+        &.used-code {
+          cursor: not-allowed;
+          @include gray(0.25);
+
+          p {
+            @include white-txt(0.5);
+          }
         }
       }
     }
@@ -1110,14 +1078,49 @@ a11y_no_noninteractive_element_to_interactive_role-->
     }
   }
 
+  :global(.copied) {
+    p {
+      @include green(1, text);
+    }
+
+    svg {
+      fill: $green !important;
+      stroke: $green !important;
+      filter: none !important;
+    }
+  }
+
   /* <!-- SIGN-IN window --> */
   .sign-container {
-    button:not(button[type="submit"]) {
-      width: 30rem;
-    }
+    width: 100%;
 
     form {
       margin-top: 1rem;
+    }
+  }
+
+  /* SIGN-UP window */
+  .signup-form {
+    .agreements-container {
+      span {
+        gap: 0.5rem;
+
+        a {
+          @include white-txt;
+        }
+
+        label {
+          color: inherit;
+        }
+
+        &.mandatory {
+          @include red(1, text);
+
+          a {
+            @include cyan(1, text);
+          }
+        }
+      }
     }
   }
 </style>

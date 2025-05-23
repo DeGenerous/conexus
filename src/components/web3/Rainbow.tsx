@@ -190,11 +190,10 @@ const RainbowConnect = (linking: boolean, title: string) => {
                       type="button"
                     >
                       <img
-                        className="sign-icon"
                         src="/icons/wallet.png"
                         alt="Google"
                       />
-                      <p className="sign-lable">{title}</p>
+                      <p>{title}</p>
                     </button>
                   );
                 }

@@ -13,7 +13,6 @@
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"
-    class="door-svg"
     class:big-icon={bigIcon}
     fill="none"
     stroke="#dedede"
@@ -69,7 +68,6 @@
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"
-    class="door-svg"
     fill="none"
     stroke="#dedede"
     stroke-width="12"

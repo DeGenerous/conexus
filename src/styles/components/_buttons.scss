@@ -112,5 +112,14 @@ button:not(.void-btn),
 }
 
 .sign-button {
-  width: 30rem;
+  width: 15rem;
+  justify-content: space-between !important;
+
+  p {
+    width: 100%;
+  }
+
+  @include respond-up(tablet) {
+    width: 25rem;
+  }
 }

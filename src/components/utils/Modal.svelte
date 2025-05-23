@@ -10,17 +10,19 @@
   let dialog: HTMLDialogElement;
 
   $: if (dialog && $showModal) {
+    dialog.classList.remove("dialog-fade-out");
     dialog.showModal();
-  } else if (!$showModal) {
+  } else if (dialog) {
     closeDialog();
   }
 
   const closeDialog = () => {
+    dialog.classList.add("dialog-fade-out");
     $showModal = false;
     $secondButton = '';
     $secondButtonClass = '';
     $handleSecondButton = () => {};
-    dialog?.close();
+    setTimeout(() => dialog?.close(), 300);
   };
 </script>
 
@@ -32,20 +34,30 @@
   on:click|self={closeDialog}
 >
   <!-- svelte-ignore a11y-no-static-element-interactions -->
-  <div on:click|stopPropagation>
+  <div class="flex" on:click|stopPropagation>
     {@html $modalContent}
-    <section>
-      <button on:click={() => ($showModal = false)}> Close </button>
+    <span class="flex-row">
+      <button class="red-btn" on:click={() => ($showModal = false)}> Close </button>
       {#if $secondButton}
         <button class={$secondButtonClass} on:click={$handleSecondButton}>
           {$secondButton}
         </button>
       {/if}
-    </section>
+    </span>
   </div>
 </dialog>
 
 <style>
+  dialog {
+    width: clamp(250px, 75%, 40rem);
+  }
+
+  dialog > div {
+   padding-top: 2rem;
+  }
+</style>
+
+<!-- <style>
   dialog {
     overflow-x: hidden;
     max-width: 80vw;
@@ -119,4 +131,4 @@
       opacity: 1;
     }
   }
-</style>
+</style> -->

@@ -6,7 +6,6 @@
 
 $cyan: rgb(51, 226, 230);
 $dark-cyan: rgb(80, 160, 165);
-$teal: rgb(20, 180, 170);
 
 $light-blue: rgb(56, 117, 250);
 $bright-blue: rgb(45, 90, 216);
@@ -27,8 +26,6 @@ $bright-purple:	rgb(160, 120, 255);
 $acid-pink:	rgb(255, 105, 180);
 $rose: rgb(200, 140, 140);
 $bright-rose: rgb(230, 175, 175);
-
-$neon-mint:	rgb(0, 255, 200);
 
 @mixin white-txt($opacity: "normal") {
   @if $opacity == "normal" {

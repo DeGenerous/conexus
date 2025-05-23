@@ -56,18 +56,24 @@ input {
   justify-content: center;
   align-items: center;
   gap: 0.25rem;
+  margin-top: 1.75rem;
 
-  svg {
+  label {
+    position: absolute;
+    top: -1.75rem;
+  }
+
+  button {
     position: absolute;
     left: calc(100% + 0.5rem);
   }
 
   @include respond-up(tablet) {
-    input {
-    }
+    margin-top: 0;
 
     label {
       position: absolute;
+      top: unset;
       right: calc(100% + 0.5rem);
       white-space: nowrap;
 
@@ -76,4 +82,8 @@ input {
       }
     }
   }
+}
+
+input[type="checkbox"] {
+  width: auto;
 }

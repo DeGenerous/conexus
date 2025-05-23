@@ -190,6 +190,8 @@
 <style lang="scss">
   @use "/src/styles/mixins" as *;
 
+  /* MOBILE Styling */
+
   nav {
     position: fixed;
     bottom: 0;
@@ -245,6 +247,8 @@
         @include font(caption);
       }
     }
+
+    /* PC Styling */
 
     @include respond-up(tablet) {
       display: flex;
@@ -336,10 +340,6 @@
 
     @include respond-up(small-desktop) { 
       max-width: 80rem;
-    }
-
-    &.hidden {
-      transform: translateY(100%) scaleX(0);
     }
   }
 </style>

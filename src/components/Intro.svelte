@@ -18,19 +18,17 @@
   ];
 </script>
 
-<section class="flex blur pad round dark-transparent-bg shad-inset-glow fade-in dark-glow">
+<section
+  class="flex blur pad round dark-transparent-bg shad-inset-glow fade-in dark-glow"
+>
   <h5>{menuText[0]}</h5>
 
   {#await app.getSections()}
     <div class="flex">
       {#each Array(3) as _}
         <div class="loading-menu-tile">
-          <div
-            class="loading-animation"
-          ></div>
-          <span
-            class="loading-animation"
-          ></span>
+          <div class="loading-animation"></div>
+          <span class="loading-animation"></span>
         </div>
       {/each}
     </div>

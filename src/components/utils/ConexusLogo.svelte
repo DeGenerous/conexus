@@ -3,11 +3,7 @@
 <div class="flex fade-in">
   <picture class="flex">
     <source srcset="title.avif" type="image/avif" />
-    <img
-      src="title.png"
-      alt="CoNexus"
-      draggable="false"
-    />
+    <img src="title.png" alt="CoNexus" draggable="false" />
   </picture>
 
   <svg
@@ -16,7 +12,8 @@
     xmlns="http://www.w3.org/2000/svg"
     fill="rgb(51,226,230)"
   >
-    <path d="
+    <path
+      d="
         M 0,25
         Q 50,0 100,25
         T 200,25
@@ -39,7 +36,8 @@
         A 25 45 0 0 1 10,25
 
         Z
-    ">
+    "
+    >
       <animate
         attributeName="fill"
         values="
@@ -59,7 +57,8 @@
     xmlns="http://www.w3.org/2000/svg"
     fill="rgb(56,117,250)"
   >
-    <path d="
+    <path
+      d="
         M 0,25
         Q 50,50 100,25
         T 200,25
@@ -82,7 +81,8 @@
         A 25 50 0 0 1 0,25
 
         Z
-    ">
+    "
+    >
       <animate
         attributeName="fill"
         values="
@@ -104,7 +104,8 @@
     xmlns="http://www.w3.org/2000/svg"
     fill="rgb(120,100,190)"
   >
-    <path d="
+    <path
+      d="
       M 0,25
       Q 25,0 50,25
       T 100,25
@@ -143,7 +144,8 @@
       A 25 80 0 0 1 0,25
 
       Z
-    ">
+    "
+    >
       <animate
         attributeName="fill"
         values="
@@ -160,7 +162,7 @@
 </div>
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   div {
     position: relative;

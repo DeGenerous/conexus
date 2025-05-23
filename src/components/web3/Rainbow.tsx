@@ -185,14 +185,13 @@ const RainbowConnect = (linking: boolean, title: string) => {
                 if (!connected) {
                   return (
                     <button
-                      className={title == 'with Web3 wallet' ? 'sign-button' : ''}
+                      className={
+                        title == 'with Web3 wallet' ? 'sign-button' : ''
+                      }
                       onClick={openConnectModal}
                       type="button"
                     >
-                      <img
-                        src="/icons/wallet.png"
-                        alt="Google"
-                      />
+                      <img src="/icons/wallet.png" alt="Google" />
                       <p>{title}</p>
                     </button>
                   );

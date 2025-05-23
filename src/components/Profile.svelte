@@ -30,10 +30,10 @@
   let dialog: HTMLDialogElement;
 
   $: if (dialog && $showProfile) {
-    dialog.classList.remove("dialog-fade-out");
+    dialog.classList.remove('dialog-fade-out');
     dialog.showModal();
   } else if (dialog) {
-    dialog.classList.add("dialog-fade-out");
+    dialog.classList.add('dialog-fade-out');
     setTimeout(() => dialog.close(), 300);
     if (!isLogged) {
       signUp = false;
@@ -174,9 +174,9 @@
   const copyRefCode = (refCode: string) => {
     let codeBtn = document.getElementById(refCode) as HTMLButtonElement;
     navigator.clipboard.writeText(refCode);
-    codeBtn.classList.add("copied");
-    setTimeout(() => (codeBtn.classList.remove("copied")), 300);
-  }
+    codeBtn.classList.add('copied');
+    setTimeout(() => codeBtn.classList.remove('copied'), 300);
+  };
 
   // SVG Icons
   let profileSvgFocus: boolean = false;
@@ -216,17 +216,19 @@
         <circle r="95" fill="white" />
         <g fill="black" transform={profileSvgFocus ? 'scale(1.1)' : ''}>
           <circle cy="-25" r="30" />
-          <path d="
+          <path
+            d="
             M -55 55
             Q -60 20 -25 15
             L 25 15
             Q 60 20 55 55
             Z
-          " />
+          "
+          />
         </g>
       </mask>
     </defs>
-    <circle r="95" mask="url(#profile-svg-mask)"/>
+    <circle r="95" mask="url(#profile-svg-mask)" />
   </svg>
 </button>
 
@@ -307,12 +309,12 @@ a11y_no_noninteractive_element_to_interactive_role-->
         <hr />
 
         {#if user.available}
-          <h4>
+          <p>
             Credits remaining this month:
             <strong>
               {user.available.bonus}
             </strong>
-          </h4>
+          </p>
         {:else}
           <p class="validation">Error fetching credits...</p>
         {/if}
@@ -323,12 +325,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
           <div class="flex">
             <div class="input-container">
               <label for="mail">Email</label>
-              <input
-                id="mail"
-                type="email"
-                value={user.email}
-                disabled
-              />
+              <input id="mail" type="email" value={user.email} disabled />
             </div>
             {#if !user.email_confirmed && !user.is_oauth}
               <p class="validation">
@@ -438,7 +435,10 @@ a11y_no_noninteractive_element_to_interactive_role-->
             {#if !user.is_oauth}
               <div class="flex-row">
                 {#if editingPassword}
-                  <button class="red-btn" on:click={() => (editingPassword = false)}>
+                  <button
+                    class="red-btn"
+                    on:click={() => (editingPassword = false)}
+                  >
                     Cancel
                   </button>
                   <button
@@ -478,12 +478,17 @@ a11y_no_noninteractive_element_to_interactive_role-->
                       }}
                     >
                       <h4>{index + 1}</h4>
-                      <p class="pad-8 round-8 dark-transparent-bg white-soft-txt">
+                      <p
+                        class="pad-8 round-8 dark-transparent-bg white-soft-txt"
+                      >
                         {wallet.wallet.slice(0, 6) +
                           '...' +
                           wallet.wallet.slice(-4)}
                       </p>
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                      >
                         <path
                           d="m12 3 2.23 6.88h7.23l-5.85 4.24L17.85 21 12 16.75 6.15 21l2.24-6.88-5.85-4.24h7.23L12 3z"
                         >
@@ -493,10 +498,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
                   {/each}
                 </ul>
                 {#if user?.email && user?.first_name}
-                  <WalletConnect
-                    linking={true}
-                    title={'Add another address'}
-                  />
+                  <WalletConnect linking={true} title={'Add another address'} />
                 {/if}
 
                 {#if $accountError && $accountError.selectMainWallet}
@@ -584,7 +586,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
                     {/if}
                   </button>
                 {/each}
-                </ul>
+              </ul>
             {/key}
             <h4>
               Your referrals: {$referralCodes.filter((code) => code.is_used)
@@ -875,7 +877,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
             <div class="input-container">
               <label for="user-ref-code">Referral code</label>
               <input
-                class={referralCodeValid ? "green-border" : "red-border"}
+                class={referralCodeValid ? 'green-border' : 'red-border'}
                 type="text"
                 id="user-ref-code"
                 placeholder="A11A7528D9C82915"
@@ -944,9 +946,8 @@ a11y_no_noninteractive_element_to_interactive_role-->
                 </label>
               </span>
             </div>
-            <button
-              on:click={referralSignup}
-              disabled={!isFormValid}>Create account</button
+            <button on:click={referralSignup} disabled={!isFormValid}
+              >Create account</button
             >
           </form>
         {/if}
@@ -954,176 +955,6 @@ a11y_no_noninteractive_element_to_interactive_role-->
     {/if}
   </div>
 </dialog>
-
-<style lang="scss">
-  @use "/src/styles/mixins" as *;
-
-  .profile-icon-container {
-    fill: $light-blue;
-
-    &:hover,
-    &:active,
-    &:focus {
-      fill: $cyan;
-    }
-
-    svg {
-      width: inherit;
-      border-radius: inherit;
-    }
-  }
-
-  header {
-    flex-direction: row;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-  }
-
-  /* <!-- USER PROFILE --> */
-  .profile-window {
-    .web3-wallets {
-      ul {
-        flex-wrap: wrap;
-      }
-
-      .wallet {
-        min-width: 14rem;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        gap: 0.5rem;
-        @include box-shadow;
-
-        h4 {
-          color: inherit;
-        }
-
-        p {
-          @include box-shadow(soft, inset);
-        }
-
-        &:hover:not(&.active-wallet),
-        &:active:not(&.active-wallet),
-        &:focus:not(&.active-wallet) {
-          @include scale-up(soft);
-          @include bright;
-        }
-
-        &.active-wallet {
-          cursor: not-allowed;
-          fill: $cyan;
-          box-shadow: $shadow-plus-inset-glow;
-          @include cyan(1, text);
-          @include blue(1, bg, bright);
-
-          p {
-            color: $cyan;
-          }
-        }
-      }
-    }
-    
-    .referral-codes {
-      flex-wrap: wrap;
-
-      .ref-code {
-        gap: 0.5rem;
-        background-color: $dark-green;
-        @include box-shadow;
-
-        &:hover:not(.used-code),
-        &:active:not(.used-code),
-        &:focus:not(.used-code) {
-          @include scale-up(soft);
-          @include bright;
-        }
-
-        p {
-          @include box-shadow(soft, inset);
-        }
-
-        svg {
-          width: 1.25rem;
-
-          &.copy-hover {
-            fill: $dark-green;
-            stroke: $dark-green;
-            @include bright(50%);
-          }
-        }
-
-        &.used-code {
-          cursor: not-allowed;
-          @include gray(0.25);
-
-          p {
-            @include white-txt(0.5);
-          }
-        }
-      }
-    }
-
-    h5 {
-      background-color: $dark-green;
-    }
-
-    .unsubscribe-button {
-      @include red(0.5, text);
-
-      &:hover,
-      &:active,
-      &:focus {
-        text-decoration: underline;
-        @include red(1, text);
-      }
-    }
-  }
-
-  :global(.copied) {
-    p {
-      @include green(1, text);
-    }
-
-    svg {
-      fill: $green !important;
-      stroke: $green !important;
-      filter: none !important;
-    }
-  }
-
-  /* <!-- SIGN-IN window --> */
-  .sign-container {
-    width: 100%;
-
-    form {
-      margin-top: 1rem;
-    }
-  }
-
-  /* SIGN-UP window */
-  .signup-form {
-    .agreements-container {
-      span {
-        gap: 0.5rem;
-
-        a {
-          @include white-txt;
-        }
-
-        label {
-          color: inherit;
-        }
-
-        &.mandatory {
-          @include red(1, text);
-
-          a {
-            @include cyan(1, text);
-          }
-        }
-      }
-    }
-  }
-</style>
 
 <!-- <style>
 
@@ -1398,3 +1229,173 @@ a11y_no_noninteractive_element_to_interactive_role-->
     }
   }
 </style> -->
+
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
+
+  .profile-icon-container {
+    fill: $light-blue;
+
+    &:hover,
+    &:active,
+    &:focus {
+      fill: $cyan;
+    }
+
+    svg {
+      width: inherit;
+      border-radius: inherit;
+    }
+  }
+
+  header {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  /* <!-- USER PROFILE --> */
+  .profile-window {
+    .web3-wallets {
+      ul {
+        flex-wrap: wrap;
+      }
+
+      .wallet {
+        min-width: 14rem;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 0.5rem;
+        @include box-shadow;
+
+        h4 {
+          color: inherit;
+        }
+
+        p {
+          @include box-shadow(soft, inset);
+        }
+
+        &:hover:not(&.active-wallet),
+        &:active:not(&.active-wallet),
+        &:focus:not(&.active-wallet) {
+          @include scale-up(soft);
+          @include bright;
+        }
+
+        &.active-wallet {
+          cursor: not-allowed;
+          fill: $cyan;
+          box-shadow: $shadow-plus-inset-glow;
+          @include cyan(1, text);
+          @include blue(1, bg, bright);
+
+          p {
+            color: $cyan;
+          }
+        }
+      }
+    }
+
+    .referral-codes {
+      flex-wrap: wrap;
+
+      .ref-code {
+        gap: 0.5rem;
+        background-color: $dark-green;
+        @include box-shadow;
+
+        &:hover:not(.used-code),
+        &:active:not(.used-code),
+        &:focus:not(.used-code) {
+          @include scale-up(soft);
+          @include bright;
+        }
+
+        p {
+          @include box-shadow(soft, inset);
+        }
+
+        svg {
+          width: 1.25rem;
+
+          &.copy-hover {
+            fill: $dark-green;
+            stroke: $dark-green;
+            @include bright(50%);
+          }
+        }
+
+        &.used-code {
+          cursor: not-allowed;
+          @include gray(0.25);
+
+          p {
+            @include white-txt(0.5);
+          }
+        }
+      }
+    }
+
+    h5 {
+      background-color: $dark-green;
+    }
+
+    .unsubscribe-button {
+      @include red(0.5, text);
+
+      &:hover,
+      &:active,
+      &:focus {
+        text-decoration: underline;
+        @include red(1, text);
+      }
+    }
+  }
+
+  :global(.copied) {
+    p {
+      @include green(1, text);
+    }
+
+    svg {
+      fill: $green !important;
+      stroke: $green !important;
+      filter: none !important;
+    }
+  }
+
+  /* <!-- SIGN-IN window --> */
+  .sign-container {
+    width: 100%;
+
+    form {
+      margin-top: 1rem;
+    }
+  }
+
+  /* SIGN-UP window */
+  .signup-form {
+    .agreements-container {
+      span {
+        gap: 0.5rem;
+
+        a {
+          @include white-txt;
+        }
+
+        label {
+          color: inherit;
+        }
+
+        &.mandatory {
+          @include red(1, text);
+
+          a {
+            @include cyan(1, text);
+          }
+        }
+      }
+    }
+  }
+</style>

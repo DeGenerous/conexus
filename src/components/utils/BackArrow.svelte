@@ -13,7 +13,8 @@
     <defs>
       <mask id="back-arrow-svg-mask">
         <circle r="95" fill="white" />
-        <path d="
+        <path
+          d="
             M -14 -30
             L -14 -64
             L -76 -9
@@ -31,7 +32,9 @@
         />
       </mask>
     </defs>
-    <circle r="95" mask="url(#back-arrow-svg-mask)"
+    <circle
+      r="95"
+      mask="url(#back-arrow-svg-mask)"
       on:pointerover={() => (backArrowSvgFocus = true)}
       on:pointerout={() => (backArrowSvgFocus = false)}
     />
@@ -39,7 +42,7 @@
 </a>
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   a {
     fill: $light-blue;

@@ -13,7 +13,7 @@ $blue: rgb(36, 65, 189);
 $navy: rgb(22, 30, 95);
 $dark-blue: rgb(1, 0, 32);
 
-$dark-green:	rgb(75, 112, 50);
+$dark-green: rgb(75, 112, 50);
 $green: rgb(0, 185, 55);
 $red: rgb(255, 60, 64);
 
@@ -21,158 +21,137 @@ $orange: rgb(255, 140, 0);
 $bright-orange: rgb(255, 165, 40);
 
 $purple: rgb(95, 80, 160);
-$bright-purple:	rgb(160, 120, 255);
+$bright-purple: rgb(160, 120, 255);
 
-$acid-pink:	rgb(255, 105, 180);
+$acid-pink: rgb(255, 105, 180);
 $rose: rgb(200, 140, 140);
 $bright-rose: rgb(230, 175, 175);
 
-@mixin white-txt($opacity: "normal") {
-  @if $opacity == "normal" {
+@mixin white-txt($opacity: 'normal') {
+  @if $opacity == 'normal' {
     color: rgba(255, 255, 255, 0.9);
-  }
-  @else if $opacity == "soft" {
+  } @else if $opacity == 'soft' {
     color: rgba(255, 255, 255, 0.75);
-  }
-  @else {
+  } @else {
     color: rgba(255, 255, 255, $opacity); // Custom opacity
   }
 }
 
-@mixin cyan ($opacity: 1, $type: "bg") {
-  @if $type == "bg" {
+@mixin cyan($opacity: 1, $type: 'bg') {
+  @if $type == 'bg' {
     background-color: rgba(51, 226, 230, $opacity);
-  }
-  @else if $type == "text" {
+  } @else if $type == 'text' {
     color: rgba(51, 226, 230, $opacity);
   }
 }
 
-@mixin light-blue ($opacity: 1, $type: "bg") {
-  @if $type == "bg" {
+@mixin light-blue($opacity: 1, $type: 'bg') {
+  @if $type == 'bg' {
     background-color: rgba(56, 117, 250, $opacity);
-  }
-  @else if $type == "text" {
+  } @else if $type == 'text' {
     color: rgba(56, 117, 250, $opacity);
   }
 }
 
-@mixin blue ($opacity: 1, $type: "bg", $state: "normal") {
-  @if $type == "bg" {
-    @if $state == "normal" {
+@mixin blue($opacity: 1, $type: 'bg', $state: 'normal') {
+  @if $type == 'bg' {
+    @if $state == 'normal' {
       background-color: rgba(36, 65, 189, $opacity);
-    }
-    @else {
+    } @else {
       background-color: rgba(45, 90, 216, $opacity);
     }
-  }
-  @else if $type == "text" {
-    @if $state == "normal" {
+  } @else if $type == 'text' {
+    @if $state == 'normal' {
       color: rgba(36, 65, 189, $opacity);
-    }
-    @else {
+    } @else {
       color: rgba(45, 90, 216, $opacity);
     }
   }
 }
 
-@mixin navy ($opacity: 1, $type: "bg") {
-  @if $type == "bg" {
+@mixin navy($opacity: 1, $type: 'bg') {
+  @if $type == 'bg' {
     background-color: rgba(22, 30, 95, $opacity);
-  }
-  @else if $type == "text" {
+  } @else if $type == 'text' {
     color: rgba(22, 30, 95, $opacity);
   }
 }
 
-@mixin dark-blue ($opacity: 1, $type: "bg") {
-  @if $type == "bg" {
+@mixin dark-blue($opacity: 1, $type: 'bg') {
+  @if $type == 'bg' {
     background-color: rgba(1, 0, 32, $opacity);
-  }
-  @else if $type == "text" {
+  } @else if $type == 'text' {
     color: rgba(1, 0, 32, $opacity);
   }
 }
 
-@mixin green ($opacity: 1, $type: "bg") {
-  @if $type == "bg" {
+@mixin green($opacity: 1, $type: 'bg') {
+  @if $type == 'bg' {
     background-color: rgba(0, 185, 55, $opacity);
-  }
-  @else if $type == "text" {
+  } @else if $type == 'text' {
     color: rgba(0, 185, 55, $opacity);
   }
 }
 
-@mixin red ($opacity: 1, $type: "bg") {
-  @if $type == "bg" {
+@mixin red($opacity: 1, $type: 'bg') {
+  @if $type == 'bg' {
     background-color: rgba(255, 60, 64, $opacity);
-  }
-  @else if $type == "text" {
+  } @else if $type == 'text' {
     color: rgba(255, 60, 64, $opacity);
   }
 }
 
-@mixin gray ($opacity: 1, $type: "bg") {
-  @if $type == "bg" {
+@mixin gray($opacity: 1, $type: 'bg') {
+  @if $type == 'bg' {
     background-color: rgba(150, 150, 150, $opacity);
-  }
-  @else if $type == "text" {
+  } @else if $type == 'text' {
     color: rgba(150, 150, 150, $opacity);
   }
 }
 
-@mixin orange ($opacity: 1, $type: "bg", $state: "normal") {
-  @if $type == "bg" {
-    @if $state == "normal" {
+@mixin orange($opacity: 1, $type: 'bg', $state: 'normal') {
+  @if $type == 'bg' {
+    @if $state == 'normal' {
       background-color: rgba(255, 140, 0, $opacity);
-    }
-    @else {
+    } @else {
       background-color: rgba(255, 165, 40, $opacity);
     }
-  }
-  @else if $type == "text" {
-    @if $state == "normal" {
+  } @else if $type == 'text' {
+    @if $state == 'normal' {
       color: rgba(255, 140, 0, $opacity);
-    }
-    @else if $state == "bright" {
+    } @else if $state == 'bright' {
       color: rgba(255, 165, 40, $opacity);
     }
   }
 }
 
-@mixin purple ($opacity: 1, $type: "bg", $state: "normal") {
-  @if $type == "bg" {
-    @if $state == "normal" {
+@mixin purple($opacity: 1, $type: 'bg', $state: 'normal') {
+  @if $type == 'bg' {
+    @if $state == 'normal' {
       background-color: rgba(95, 80, 160, $opacity);
-    }
-    @else {
+    } @else {
       background-color: rgba(120, 100, 190, $opacity);
     }
-  }
-  @else if $type == "text" {
-    @if $state == "normal" {
+  } @else if $type == 'text' {
+    @if $state == 'normal' {
       color: rgba(95, 80, 160, $opacity);
-    }
-    @else {
+    } @else {
       color: rgba(120, 100, 190, $opacity);
     }
   }
 }
 
-@mixin rose ($opacity: 1, $type: "bg", $state: "normal") {
-  @if $type == "bg" {
-    @if $state == "normal" {
+@mixin rose($opacity: 1, $type: 'bg', $state: 'normal') {
+  @if $type == 'bg' {
+    @if $state == 'normal' {
       background-color: rgba(200, 140, 140, $opacity);
-    }
-    @else {
+    } @else {
       background-color: rgba(230, 175, 175, $opacity);
     }
-  }
-  @else if $type == "text" {
-    @if $state == "normal" {
+  } @else if $type == 'text' {
+    @if $state == 'normal' {
       color: rgba(200, 140, 140, $opacity);
-    }
-    @else {
+    } @else {
       color: rgba(230, 175, 175, $opacity);
     }
   }

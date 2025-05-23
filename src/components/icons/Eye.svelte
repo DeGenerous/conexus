@@ -41,7 +41,8 @@
   class:visible
   type="button"
   on:click={updateVisibility}
-  aria-label="Show password">
+  aria-label="Show password"
+>
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"
@@ -119,7 +120,7 @@
 </button>
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   button {
     svg {

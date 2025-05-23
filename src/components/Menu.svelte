@@ -26,7 +26,7 @@
     on:click={() => ($showProfile = true)}
     on:pointerover={() => (signInSvgFocus = true)}
     on:pointerout={() => (signInSvgFocus = false)}
-    >
+  >
     <DoorSVG state="inside" {signInSvgFocus} />
     play now
   </button>
@@ -37,7 +37,13 @@
     <track kind="captions" />
   </video>
 
-  <video class="mobile-video blur round fade-in shad" controls autoplay loop muted>
+  <video
+    class="mobile-video blur round fade-in shad"
+    controls
+    autoplay
+    loop
+    muted
+  >
     <source src={`${trailerURL}/CoNexusTrailerMobile.webm`} type="video/webm" />
     <source src={`${trailerURL}/CoNexusTrailerMobile.mp4`} type="video/mp4" />
     <track kind="captions" />
@@ -45,7 +51,7 @@
 {/if}
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   video {
     display: none;

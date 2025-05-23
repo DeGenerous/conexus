@@ -1,7 +1,7 @@
 // CLASSES
 // input-container <div><label><input></div>
 
-@use "/src/styles/mixins" as *;
+@use '/src/styles/mixins' as *;
 
 input {
   transition: all 0.3s ease-in-out;
@@ -78,12 +78,12 @@ input {
       white-space: nowrap;
 
       &::after {
-        content: ":";
+        content: ':';
       }
     }
   }
 }
 
-input[type="checkbox"] {
+input[type='checkbox'] {
   width: auto;
 }

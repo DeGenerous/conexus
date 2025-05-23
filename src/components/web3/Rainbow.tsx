@@ -175,9 +175,6 @@ const RainbowConnect = (linking: boolean, title: string) => {
             account &&
             chain &&
             (!authenticationStatus || authenticationStatus === 'authenticated');
-          // changing button width
-          let autoWidth: any = undefined;
-          if (title !== 'with Web3 wallet') autoWidth = { width: 'auto' };
           return (
             <div
               {...(!ready && {
@@ -188,8 +185,7 @@ const RainbowConnect = (linking: boolean, title: string) => {
                 if (!connected) {
                   return (
                     <button
-                      className="sign-button"
-                      style={autoWidth}
+                      className={title == 'with Web3 wallet' ? 'sign-button' : ''}
                       onClick={openConnectModal}
                       type="button"
                     >

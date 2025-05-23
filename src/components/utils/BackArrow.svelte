@@ -5,22 +5,15 @@
 </script>
 
 <a
-  class="flex fade-in"
+  class="top-left-icon flex fade-in"
   href={href === 'back' ? 'javascript:window.history.back()' : href}
   aria-label="Back arrow"
 >
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="-100 -100 200 200"
-    class="circle-icon"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
     <defs>
       <mask id="back-arrow-svg-mask">
         <circle r="95" fill="white" />
-        <path
-          class="back-arrow-svg-mask"
-          transform={backArrowSvgFocus ? 'scale(1.1)' : ''}
-          d="
+        <path d="
             M -14 -30
             L -14 -64
             L -76 -9
@@ -30,6 +23,7 @@
             Q 60 -26 -12 -30
             Z
           "
+          transform={backArrowSvgFocus ? 'scale(1.1)' : ''}
           fill="black"
           stroke="black"
           stroke-width="4"
@@ -37,12 +31,7 @@
         />
       </mask>
     </defs>
-
-    <circle
-      class="back-arrow-svg"
-      r="95"
-      fill="rgba(51, 226, 230, 0.75)"
-      mask="url(#back-arrow-svg-mask)"
+    <circle r="95" mask="url(#back-arrow-svg-mask)"
       on:pointerover={() => (backArrowSvgFocus = true)}
       on:pointerout={() => (backArrowSvgFocus = false)}
     />
@@ -53,14 +42,12 @@
   @use "/src/styles/mixins" as *;
 
   a {
-    width: 4rem;
-    border-radius: 50%;
+    fill: $light-blue;
 
     &:hover,
     &:active,
     &:focus {
-      @include scale;
-      @include bright;
+      fill: $cyan;
     }
 
     svg {

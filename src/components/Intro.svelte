@@ -18,7 +18,7 @@
   ];
 </script>
 
-<section class="flex blur pad round dark-transparent-bg shad-inset-glow fade-in">
+<section class="flex blur pad round dark-transparent-bg shad-inset-glow fade-in dark-glow">
   <h5>{menuText[0]}</h5>
 
   {#await app.getSections()}

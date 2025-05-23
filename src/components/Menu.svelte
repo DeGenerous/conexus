@@ -21,6 +21,16 @@
 {:else if isLogged}
   <Intro />
 {:else}
+  <button
+    class="blur button-glow"
+    on:click={() => ($showProfile = true)}
+    on:pointerover={() => (signInSvgFocus = true)}
+    on:pointerout={() => (signInSvgFocus = false)}
+    >
+    <DoorSVG state="inside" {signInSvgFocus} />
+    play now
+  </button>
+
   <video class="pc-video blur round fade-in shad" controls autoplay loop muted>
     <source src={`${trailerURL}/CoNexusTrailer.webm`} type="video/webm" />
     <source src={`${trailerURL}/CoNexusTrailer.mp4`} type="video/mp4" />
@@ -32,16 +42,6 @@
     <source src={`${trailerURL}/CoNexusTrailerMobile.mp4`} type="video/mp4" />
     <track kind="captions" />
   </video>
-
-  <button
-    class="blur"
-    on:click={() => ($showProfile = true)}
-    on:pointerover={() => (signInSvgFocus = true)}
-    on:pointerout={() => (signInSvgFocus = false)}
-  >
-    <DoorSVG state="inside" {signInSvgFocus} />
-    play now
-  </button>
 {/if}
 
 <style lang="scss">
@@ -50,6 +50,10 @@
   video {
     display: none;
     width: clamp(250px, 95%, 70rem);
+
+    &:hover {
+      @include box-glow(outset, 1, 1rem);
+    }
   }
 
   .mobile-video {

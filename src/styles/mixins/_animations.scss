@@ -67,6 +67,54 @@
   }
 }
 
+@keyframes waving {
+  0% {
+    transform: scale(1) skewY(1deg);
+  }
+  25% {
+    transform: scaleX(1.02) skewX(-4deg);
+  }
+  50% {
+    transform: scale(0.98);
+  }
+  75% {
+    transform: scaleY(1.03) skewX(3deg);
+  }
+  100% {
+    transform: scale(1) skewY(1deg);
+  }
+}
+
+@keyframes button-glow {
+  0% {
+    background-color: rgba(51, 226, 230, 0.5);
+  }
+  33% {
+    background-color: rgba(160, 120, 255, 0.5);
+  }
+  66% {
+    background-color: rgba(56, 117, 250, 0.5);
+  }
+  100% {
+    background-color: rgba(51, 226, 230, 0.5);
+  }
+}
+
+@keyframes dark-glow {
+  0% {
+    background-color: rgba(1, 0, 32, 0.5);
+  }
+  33% {
+    background-color: rgba(32, 1, 0, 0.5);
+  }
+  66% {
+    background-color: rgba(0, 16, 16, 0.5);
+  }
+  100% {
+    background-color: rgba(1, 0, 32, 0.5);
+  }
+}
+
 // General definitions
 
 :global(.loading-animation) {
@@ -109,4 +157,16 @@
     transform: scale(0.975) skew(1deg, -1deg);
     filter: brightness(125%) contrast(125%);
   }
+}
+
+:global(.waving) {
+  animation: waving 5s ease-in-out infinite;
+}
+
+:global(.button-glow) {
+  animation: button-glow 10s ease-in-out infinite;
+}
+
+:global(.dark-glow) {
+  animation: dark-glow 10s ease-in-out infinite;
 }

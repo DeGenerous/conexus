@@ -5,6 +5,8 @@
 // TEXT CLASSES: white (soft / transparent), green, red
 
 $cyan: rgb(51, 226, 230);
+$dark-cyan: rgb(80, 160, 165);
+$teal: rgb(20, 180, 170);
 
 $light-blue: rgb(56, 117, 250);
 $bright-blue: rgb(45, 90, 216);
@@ -12,17 +14,21 @@ $blue: rgb(36, 65, 189);
 $navy: rgb(22, 30, 95);
 $dark-blue: rgb(1, 0, 32);
 
+$dark-green:	rgb(75, 112, 50);
 $green: rgb(0, 185, 55);
 $red: rgb(255, 60, 64);
 
 $orange: rgb(255, 140, 0);
 $bright-orange: rgb(255, 165, 40);
 
-$indigo: rgb(95, 80, 160);
-$bright-indigo: rgb(120, 100, 190);
+$purple: rgb(95, 80, 160);
+$bright-purple:	rgb(160, 120, 255);
 
+$acid-pink:	rgb(255, 105, 180);
 $rose: rgb(200, 140, 140);
 $bright-rose: rgb(230, 175, 175);
+
+$neon-mint:	rgb(0, 255, 200);
 
 @mixin white-txt($opacity: "normal") {
   @if $opacity == "normal" {
@@ -137,7 +143,7 @@ $bright-rose: rgb(230, 175, 175);
   }
 }
 
-@mixin indigo ($opacity: 1, $type: "bg", $state: "normal") {
+@mixin purple ($opacity: 1, $type: "bg", $state: "normal") {
   @if $type == "bg" {
     @if $state == "normal" {
       background-color: rgba(95, 80, 160, $opacity);

@@ -196,45 +196,29 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
 <button
-  class="profile-icon-container void-btn flex fade-in"
+  class="profile-icon-container top-right-icon void-btn flex fade-in"
   aria-label="Profile"
   on:click={() => ($showProfile = true)}
   on:pointerover={() => (profileSvgFocus = true)}
   on:pointerout={() => (profileSvgFocus = false)}
 >
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="-100 -100 200 200"
-    class="circle-icon"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
     <defs>
       <mask id="profile-svg-mask">
         <circle r="95" fill="white" />
-        <g
-          class="profile-svg-mask"
-          fill="black"
-          transform={profileSvgFocus ? 'scale(1.1)' : ''}
-        >
+        <g fill="black" transform={profileSvgFocus ? 'scale(1.1)' : ''}>
           <circle cy="-25" r="30" />
-          <path
-            d="
-                M -55 55
-                Q -60 20 -25 15
-                L 25 15
-                Q 60 20 55 55
-                Z
-              "
-          />
+          <path d="
+            M -55 55
+            Q -60 20 -25 15
+            L 25 15
+            Q 60 20 55 55
+            Z
+          " />
         </g>
       </mask>
     </defs>
-
-    <circle
-      class="profile-svg"
-      r="95"
-      fill="rgba(51, 226, 230, 0.75)"
-      mask="url(#profile-svg-mask)"
-    />
+    <circle r="95" mask="url(#profile-svg-mask)"/>
   </svg>
 </button>
 
@@ -658,7 +642,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
               <h4>Newsletter Subscription</h4>
 
               {#if subStatus.subscribed_at}
-                <h5 class="pad-8 round-8 gray-transparent-bg green-txt shad">
+                <h5 class="pad-8 round-8 gray-transparent-bg dark-txt shad">
                   Active since: {dateToString(subStatus.subscribed_at.Time)}
                 </h5>
               {/if}
@@ -710,19 +694,18 @@ a11y_no_noninteractive_element_to_interactive_role-->
         </div>
       </section>
     {:else}
-      <section class="sign-container">
-        <h1>{signUp ? 'Sign up' : 'Sign in'}</h1>
+      <section class="sign-container flex">
+        <h2>{signUp ? 'Sign up' : 'Sign in'}</h2>
         <hr />
 
         {#if !signUp}
           <!-- SIGN-IN window -->
           {#if signInWithEmail}
-            <form class="login-form">
+            <form class="flex">
               <div class="input-container">
                 <label for="user-mail">Email</label>
                 <input
                   bind:value={loginMail}
-                  class="user-input"
                   type="email"
                   id="user-mail"
                   placeholder="Enter your email"
@@ -731,18 +714,15 @@ a11y_no_noninteractive_element_to_interactive_role-->
               </div>
               <div class="input-container">
                 <label for="user-password">Password</label>
-                <div class="password-input-container">
-                  <input
-                    bind:value={loginPassword}
-                    class="user-input"
-                    type={$passwordVisible.login ? 'text' : 'password'}
-                    id="user-password"
-                    placeholder="Enter your password"
-                    minlength="8"
-                    required
-                  />
-                  <EyeSVG visibility="login" />
-                </div>
+                <input
+                  bind:value={loginPassword}
+                  type={$passwordVisible.login ? 'text' : 'password'}
+                  id="user-password"
+                  placeholder="Enter your password"
+                  minlength="8"
+                  required
+                />
+                <EyeSVG visibility="login" />
               </div>
 
               {#if $accountError && $accountError.signin}
@@ -750,7 +730,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
               {/if}
 
               <button
-                class="sign-in-button"
+                type="submit"
                 on:click|preventDefault={() =>
                   account.signin({
                     email: loginMail,
@@ -779,7 +759,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
             </form>
           {:else}
             <!-- SIGN-IN general window -->
-            <div class="buttons-container">
+            <div class="sign-options flex">
               <button
                 on:click={() => {
                   account.googleSignin();
@@ -804,17 +784,15 @@ a11y_no_noninteractive_element_to_interactive_role-->
               <WalletConnect title={'with Web3 wallet'} />
             </div>
             <hr />
-            <h3>Don't have an account yet?</h3>
-            <div class="buttons-container">
-              <button
-                on:click={() => {
-                  signUp = true;
-                }}
-              >
-                <img class="sign-icon" src="/icons/email.png" alt="Google" />
-                <p class="sign-lable">Sign up with email</p>
-              </button>
-            </div>
+            <h4>Don't have an account yet?</h4>
+            <button
+              on:click={() => {
+                signUp = true;
+              }}
+            >
+              <img class="sign-icon" src="/icons/email.png" alt="Google" />
+              <p class="sign-lable">Sign up with email</p>
+            </button>
           {/if}
         {:else}
           <!-- SIGN-UP window -->
@@ -1024,14 +1002,12 @@ a11y_no_noninteractive_element_to_interactive_role-->
   @use "/src/styles/mixins" as *;
 
   .profile-icon-container {
-    width: 4rem;
-    border-radius: 50%;
+    fill: $light-blue;
 
     &:hover,
     &:active,
     &:focus {
-      @include scale;
-      @include bright;
+      fill: $cyan;
     }
 
     svg {
@@ -1046,8 +1022,8 @@ a11y_no_noninteractive_element_to_interactive_role-->
     margin-bottom: 1rem;
   }
 
+  /* <!-- USER PROFILE --> */
   .profile-window {
-    /* <!-- USER PROFILE --> */
     .web3-wallets {
       ul {
         flex-wrap: wrap;
@@ -1093,7 +1069,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
 
       .ref-code {
         gap: 0.5rem;
-        @include green(0.75);
+        background-color: $dark-green;
         @include box-shadow;
 
         p {
@@ -1118,6 +1094,10 @@ a11y_no_noninteractive_element_to_interactive_role-->
       }
     }
 
+    h5 {
+      background-color: $dark-green;
+    }
+
     .unsubscribe-button {
       @include red(0.5, text);
 
@@ -1128,9 +1108,17 @@ a11y_no_noninteractive_element_to_interactive_role-->
         @include red(1, text);
       }
     }
+  }
 
-    /* <!-- SIGN-IN window --> */
-    
+  /* <!-- SIGN-IN window --> */
+  .sign-container {
+    button:not(button[type="submit"]) {
+      width: 30rem;
+    }
+
+    form {
+      margin-top: 1rem;
+    }
   }
 </style>
 

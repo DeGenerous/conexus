@@ -20,7 +20,11 @@ const footerText = [
   <main>
     <Menu client:load />
     <footer class="flex">
-      {footerText.map((text: any) => <p class="text-shad">{text}</p>)}
+      {
+        footerText.map((text: any) => (
+          <p class="pad-inline text-shad">{text}</p>
+        ))
+      }
     </footer>
   </main>
 </Layout>

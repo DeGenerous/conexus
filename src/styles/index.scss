@@ -1,6 +1,6 @@
 // UTILITY CLASSES:
-// flex, flex-row, blur, validation
-// Padding: pad-# 8, 16 (none)
+// flex, flex-row, blur, validation, transition
+// Padding: pad-# 8, 16 (none); Padding-Inline: pad-inline
 // Border-radius: round-# 8, 16 (none), 24, 32
 // (# - pixel value)
 
@@ -74,15 +74,16 @@ html {
   background-position: top;
 
   text-align: center;
-  padding-bottom: 2rem;
+  padding-block: 1rem;
   letter-spacing: 0.025rem;
 
-  @include respond-up("small-desktop") {
+  @include respond-up("tablet") {
     background-image: url('/conexusBG.avif'), linear-gradient(black, $dark-blue);
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
+    padding-block: 4rem 2rem;
   }
 
   &::-webkit-scrollbar {
@@ -116,6 +117,10 @@ html {
     padding: 1rem;
   }
 
+  .pad-inline {
+    padding-inline: 1rem;
+  }
+
   .round-8 {
     border-radius: 0.5rem;
   }
@@ -147,6 +152,37 @@ html {
         text-decoration: none;
       }
     }
+  }
+
+  .transition {
+    transition: all 0.3s ease-in-out;
+  }
+
+  .top-left-icon,
+  .top-right-icon {
+    position: absolute;
+    top: 1rem;
+    width: 4rem;
+    border-radius: 50%;
+    z-index: 100;
+
+    &:hover,
+    &:active,
+    &:focus {
+      @include scale;
+    }
+
+    @include respond-up(tablet) {
+      position: fixed;
+    }
+  }
+
+  .top-left-icon {
+    left: 1rem;
+  }
+
+  .top-right-icon {
+    right: 1rem;
   }
 
   :where(img) {

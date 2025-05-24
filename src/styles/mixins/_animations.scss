@@ -112,7 +112,7 @@
   }
 }
 
-@keyframes dark-glow {
+@keyframes dark-glowing {
   0% {
     background-color: rgba(1, 0, 32, 0.5);
   }
@@ -124,6 +124,21 @@
   }
   100% {
     background-color: rgba(1, 0, 32, 0.5);
+  }
+}
+
+@keyframes transparent-glowing {
+  0% {
+    background-color: rgba(51, 226, 230, 0.1);
+  }
+  33% {
+    background-color: rgba(160, 120, 255, 0.1);
+  }
+  66% {
+    background-color: rgba(56, 117, 250, 0.1);
+  }
+  100% {
+    background-color: rgba(51, 226, 230, 0.1);
   }
 }
 
@@ -183,6 +198,10 @@
   animation: text-glowing 10s ease-in-out infinite;
 }
 
-:global(.dark-glow) {
-  animation: dark-glow 10s ease-in-out infinite;
+:global(.dark-glowing) {
+  animation: dark-glowing 10s ease-in-out infinite;
+}
+
+:global(.transparent-glowing) {
+  animation: transparent-glowing 10s ease-in-out infinite;
 }

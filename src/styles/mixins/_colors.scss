@@ -1,5 +1,5 @@
-// COLOR VARIABLES: cyan, light-blue, blue, navy, dark-blue
-// COLOR MIXINS: cyan, light-blue, blue (bright), navy, dark-blue, green, red, gray, orange (bright), indigo (bright), rose (bright)
+// COLOR VARIABLES: (dark) cyan, (light / bright / dark) blue, navy, (deep) green, (dark) red, (bright) orange, (bright) purple, (acid / bright) rose
+// COLOR MIXINS: cyan, light-blue, blue (bright), navy, dark-blue, green, red, dark-red, gray, orange (bright), indigo (bright), rose (bright)
 
 // BG CLASSES: cyan (soft), blue, dark-blue ((semi)transparent)
 // TEXT CLASSES: white (soft / transparent), green, red
@@ -13,9 +13,10 @@ $blue: rgb(36, 65, 189);
 $navy: rgb(22, 30, 95);
 $dark-blue: rgb(1, 0, 32);
 
-$dark-green: rgb(75, 112, 50);
+$deep-green: rgb(75, 112, 50);
 $green: rgb(0, 185, 55);
 $red: rgb(255, 60, 64);
+$dark-red: rgb(32, 0, 1);
 
 $orange: rgb(255, 140, 0);
 $bright-orange: rgb(255, 165, 40);
@@ -82,6 +83,14 @@ $bright-rose: rgb(230, 175, 175);
     background-color: rgba(1, 0, 32, $opacity);
   } @else if $type == 'text' {
     color: rgba(1, 0, 32, $opacity);
+  }
+}
+
+@mixin dark-red($opacity: 1, $type: 'bg') {
+  @if $type == 'bg' {
+    background-color: rgba(32, 0, 1, $opacity);
+  } @else if $type == 'text' {
+    color: rgba(32, 0, 1, $opacity);
   }
 }
 

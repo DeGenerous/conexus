@@ -1,0 +1,32 @@
+<script lang="ts">
+  export let isSorting: boolean = false;
+</script>
+
+<svg
+  class:sorting={isSorting}
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="-100 -100 200 200"
+  stroke-linejoin="round"
+  style="transform: {isSorting ? 'scale(1.1)' : ''}"
+  fill="white"
+  stroke="white"
+>
+  <path
+    style="transform: {isSorting ? 'scale(0.9) translateY(10%)' : ''}"
+    d="
+        M -80 -95
+        L -80 34
+        L -96 34
+        L -72 72
+        L -48 34
+        L -64 34
+        L -64 -95
+        Z
+      "
+    stroke-width="6"
+  />
+  <rect x="-30" y="-98" width="130" height="20" rx="4" />
+  <rect x="-30" y="-48" width="105" height="20" rx="4" />
+  <rect x="-30" y="2" width="80" height="20" rx="4" />
+  <rect x="-30" y="52" width="55" height="20" rx="4" />
+</svg>

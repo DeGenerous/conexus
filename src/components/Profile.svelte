@@ -557,7 +557,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
               <h4>Newsletter Subscription</h4>
 
               {#if subStatus.subscribed_at}
-                <h5 class="pad-8 round-8 gray-transparent-bg dark-txt shad">
+                <h5 class="subscription pad-8 round-8 gray-transparent-bg dark-txt shad">
                   Active since: {dateToString(subStatus.subscribed_at.Time)}
                 </h5>
               {/if}
@@ -965,7 +965,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
 
       .ref-code {
         gap: 0.5rem;
-        background-color: $dark-green;
+        background-color: $deep-green;
         @include box-shadow;
 
         &:hover:not(.used-code),
@@ -990,8 +990,9 @@ a11y_no_noninteractive_element_to_interactive_role-->
       }
     }
 
-    h5 {
-      background-color: $dark-green;
+    .subscription {
+      background-color: $deep-green;
+      @include white-txt;
     }
 
     .unsubscribe-button {

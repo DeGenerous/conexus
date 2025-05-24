@@ -58,7 +58,7 @@
     width: clamp(250px, 95%, 70rem);
 
     &:hover {
-      @include box-glow(outset, 1, 1rem);
+      @include box-glow(outset, 0.5, 1rem);
     }
   }
 

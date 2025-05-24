@@ -54,8 +54,8 @@
     width: 1.25rem;
 
     &.copy-hover {
-      fill: $dark-green;
-      stroke: $dark-green;
+      fill: $deep-green;
+      stroke: $deep-green;
       @include bright(50%);
     }
   }

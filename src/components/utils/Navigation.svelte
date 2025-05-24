@@ -43,7 +43,7 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $authenticated.user}
   <nav
-    class="flex blur transition dark-semi-transparent-bg shad-behind dark-glow"
+    class="flex blur transition dark-semi-transparent-bg shad-behind dark-glowing"
   >
     <!-- PREVIOUS SECTION -->
     <a

@@ -19,7 +19,7 @@
 </script>
 
 <section
-  class="flex blur pad round dark-transparent-bg shad-inset-glow fade-in dark-glow"
+  class="flex blur pad round dark-transparent-bg shad-inset-glow fade-in dark-glowing"
 >
   <h5>{menuText[0]}</h5>
 

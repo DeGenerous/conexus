@@ -1,4 +1,5 @@
 @use 'sass:map';
+@use './breakpoints' as *;
 
 $font-scale: (
   'body': clamp(1rem, 1.5vw, 1.05rem),
@@ -22,6 +23,28 @@ $font-scale: (
   @if map.has-key($font-scale, $size-key) {
     font-size: map.get($font-scale, $size-key);
     line-height: 1.5;
+
+    // Static value for wide screens
+    @include respond-up(ultra-wide) {
+      @if $size-key == 'body' {
+        font-size: 0.93vw; // ≈ 18px @ 1920px
+      } @else if $size-key == 'small' {
+        font-size: 0.85vw;
+      } @else if $size-key == 'caption' {
+        font-size: 0.75vw;
+      } @else if $size-key == 'h1' {
+        font-size: 2.9vw; // ≈ 56px @ 1920px
+      } @else if $size-key == 'h2' {
+        font-size: 2.5vw;
+      } @else if $size-key == 'h3' {
+        font-size: 2vw;
+      } @else if $size-key == 'h4' {
+        font-size: 1.6vw;
+      } @else if $size-key == 'h5' {
+        font-size: 1.2vw;
+      }
+    }
+
   } @else {
     @warn "Font size `#{$size-key}` not found in $font-scale map.";
   }

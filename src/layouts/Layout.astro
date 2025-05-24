@@ -115,6 +115,7 @@ const {
     {!story && <Navigation activeTab={nav} {arrow} client:load />}
 
     {header === 'CoNexus' ? <ConexusLogo /> : ''}
+    <h1 class={header === 'CoNexus' ? 'sr-only' : ''}>{header}</h1>
 
     {subheading && <p class="subheading text-shad" set:html={subheading} />}
 

@@ -1,9 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import DoorSVG from '@components/icons/Door.svelte';
-  import EyeSVG from '@components/icons/Eye.svelte';
-  import CloseSVG from '@components/icons/Close.svelte';
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import { Account } from '@lib/account';
   import { authenticated, referralCodes, accountError } from '@stores/account';
@@ -26,6 +23,12 @@
     regexpSpecialCharCheck,
     regexpRestrictedCharsCheck,
   } from '@constants/regexp';
+
+  import DoorSVG from '@components/icons/Door.svelte';
+  import EyeSVG from '@components/icons/Eye.svelte';
+  import QuitSVG from '@components/icons/Quit.svelte';
+  import CloseSVG from '@components/icons/Close.svelte';
+  import CopySVG from '@components/icons/Copy.svelte';
 
   let dialog: HTMLDialogElement;
 
@@ -180,7 +183,8 @@
 
   // SVG Icons
   let profileSvgFocus: boolean = false;
-  let backArrowSvgFocus: boolean = false;
+  let quitSvgFocus: boolean = false;
+  let closeSvgFocus: boolean = false;
   let signInSvgFocus: boolean = false;
   let signOutSvgFocus: boolean = false;
   let copySvgFocus: Nullable<string> = null;
@@ -258,49 +262,21 @@ a11y_no_noninteractive_element_to_interactive_role-->
       {:else}
         <button
           on:click|stopPropagation={handleBackArrow}
-          on:pointerover={() => (backArrowSvgFocus = true)}
-          on:pointerout={() => (backArrowSvgFocus = false)}
+          on:pointerover={() => (quitSvgFocus = true)}
+          on:pointerout={() => (quitSvgFocus = false)}
           aria-label="Back"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
-            <defs>
-              <mask id="quit-svg-mask">
-                <circle r="95" fill="white" />
-                <path
-                  class="quit-svg-mask"
-                  d="
-                      M 50 0
-                      L -50 0
-                      L 0 -50
-                      M -50 0
-                      L 0 50
-                    "
-                  fill="none"
-                  stroke="black"
-                  stroke-width="25"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  transform={backArrowSvgFocus ? 'scale(1.2)' : ''}
-                />
-              </mask>
-            </defs>
-
-            <circle
-              style="
-                  transition: all 0.3s ease-in-out;
-                  transform: {backArrowSvgFocus ? 'scale(1.05);' : 'none'}
-                  fill: {backArrowSvgFocus
-                ? 'rgb(51, 226, 230)'
-                : 'rgba(51, 226, 230, 0.75)'}
-                "
-              fill="rgba(51, 226, 230, 0.75)"
-              r="95"
-              mask="url(#quit-svg-mask)"
-            />
-          </svg>
+          <QuitSVG {quitSvgFocus} />
         </button>
       {/if}
-      <CloseSVG close={() => ($showProfile = false)} />
+      <button
+        on:click|stopPropagation={() => ($showProfile = false)}
+        on:pointerover={() => (closeSvgFocus = true)}
+        on:pointerout={() => (closeSvgFocus = false)}
+        aria-label="Close"
+      >
+        <CloseSVG {closeSvgFocus} />
+      </button>
     </header>
 
     <!-- USER PROFILE -->
@@ -471,11 +447,11 @@ a11y_no_noninteractive_element_to_interactive_role-->
                   {#each user.wallets.filter((address) => !address.faux) as wallet, index}
                     <button
                       class="wallet void-btn flex-row pad-8 round-8 blue dark-txt"
-                      class:active-wallet={wallet.wallet == user.main_wallet}
                       on:click={() => {
                         if (wallet.wallet != user!.main_wallet)
                           walletSelectConfirm(wallet.wallet);
                       }}
+                      disabled={wallet.wallet == user.main_wallet}
                     >
                       <h4>{index + 1}</h4>
                       <p
@@ -515,83 +491,44 @@ a11y_no_noninteractive_element_to_interactive_role-->
           <hr />
 
           {#if $referralCodes != null}
-            {#key $referralCodes}
-              <h4>Your referral codes</h4>
-              <ul class="referral-codes flex-row">
-                {#each $referralCodes as code}
-                  <button
-                    class="ref-code void-btn flex-row pad-8 round-8 dark-txt"
-                    class:used-code={code.is_used}
-                    id={code.code}
-                    on:click={() => copyRefCode(code.code)}
-                    on:pointerover={() => (copySvgFocus = code.code)}
-                    on:focus={() => (copySvgFocus = code.code)}
-                    on:pointerout={() => (copySvgFocus = null)}
-                    on:blur={() => (copySvgFocus = null)}
-                    aria-label="Copy code {code.code}"
-                  >
-                    <p class="pad-8 round-8 white-soft-txt dark-transparent-bg">
-                      {code.code}
-                    </p>
-                    {#if !code.is_used}
-                      <svg
-                        class:copy-hover={copySvgFocus === code.code}
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="-100 -100 200 200"
-                        fill="rgba(255, 255, 255, 0)"
-                        stroke="rgba(255, 255, 255, 0.75)"
-                        stroke-width="15"
-                        stroke-linejoin="round"
-                        stroke-linecap="round"
+            {#if $referralCodes.filter((code) => code.is_used).length == 10}
+              <h4 class="text-glowing">You've unlocked all 10 referrals!</h4>
+              <p class="text-glowing">
+                Your early support won't go unnoticed. Stay tuned for updates.
+              </p>
+            {:else}
+              {#key $referralCodes}
+                <h4>Your referral codes</h4>
+                <ul class="referral-codes flex-row">
+                  {#each $referralCodes as code}
+                    <button
+                      class="ref-code void-btn flex-row pad-8 round-8 dark-txt"
+                      class:used-code={code.is_used}
+                      id={code.code}
+                      on:click={() => copyRefCode(code.code)}
+                      on:pointerover={() => (copySvgFocus = code.code)}
+                      on:focus={() => (copySvgFocus = code.code)}
+                      on:pointerout={() => (copySvgFocus = null)}
+                      on:blur={() => (copySvgFocus = null)}
+                      aria-label="Copy code {code.code}"
+                    >
+                      <p
+                        class="pad-8 round-8 white-soft-txt dark-transparent-bg"
                       >
-                        <defs>
-                          <mask id="copy-checkmark">
-                            <rect
-                              x="-45"
-                              y="-60"
-                              width="130"
-                              height="150"
-                              fill="white"
-                              stroke="white"
-                            />
-                            <path
-                              d="
-                                  M -10 10
-                                  L 10 40
-                                  L 50 -20
-                                "
-                              fill="none"
-                              stroke="black"
-                            />
-                          </mask>
-                        </defs>
-                        <path
-                          d="
-                              M 40 -67
-                              L 40 -90
-                              L -90 -90
-                              L -90 60
-                              L -52 60
-                            "
-                          fill="none"
-                        />
-                        <rect
-                          x="-45"
-                          y="-60"
-                          width="130"
-                          height="150"
-                          mask="url(#copy-checkmark)"
-                        />
-                      </svg>
-                    {/if}
-                  </button>
-                {/each}
-              </ul>
-            {/key}
-            <h4>
-              Your referrals: {$referralCodes.filter((code) => code.is_used)
-                .length}
-            </h4>
+                        {code.code}
+                      </p>
+                      {#if !code.is_used}
+                        <CopySVG {copySvgFocus} data={code.code} />
+                      {/if}
+                    </button>
+                  {/each}
+                </ul>
+                <h4>
+                  Your referrals: {$referralCodes.filter((code) => code.is_used)
+                    .length}
+                </h4>
+              {/key}
+            {/if}
           {:else}
             <button
               on:click={() => {
@@ -956,280 +893,6 @@ a11y_no_noninteractive_element_to_interactive_role-->
   </div>
 </dialog>
 
-<!-- <style>
-
-  /* SIGN-IN & SIGN-UP */
-
-  .sign-container,
-  .login-form,
-  .signup-form,
-  .user-profile-info {
-    display: flex;
-    flex-flow: column nowrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5vw;
-  }
-
-  .user-profile-info {
-    gap: 1vw;
-  }
-
-  .login-form a {
-    color: rgba(51, 226, 230, 0.65);
-  }
-
-  .login-form a:hover,
-  .login-form a:active {
-    color: rgb(51, 226, 230);
-  }
-
-  .agreements-container {
-    display: flex;
-    flex-flow: column nowrap;
-    align-items: flex-start;
-    width: 100%;
-  }
-
-  .agreement {
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-    justify-content: center;
-    padding: 1vw;
-    gap: 1vw;
-  }
-
-  .agreement label {
-    cursor: pointer;
-  }
-
-  #terms,
-  #newsletter {
-    /* -webkit-transform: scale(2);
-    transform: scale(2); */
-    width: 1.5vw;
-    height: 1.5vw;
-    flex: 1;
-    accent-color: rgba(51, 226, 230, 0.75);
-    cursor: pointer;
-  }
-
-  .terms > a {
-    color: rgba(255, 255, 255, 0.65);
-  }
-
-
-  /* Referral codes container */
-
-  .referral-codes {
-    width: 90%;
-    padding: 1vw 2vw;
-    margin-inline: auto;
-    display: grid;
-    grid-template-columns: 50% 50%;
-    justify-content: center;
-    gap: 1vw;
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
-    border-radius: 1vw;
-    background-color: rgba(51, 226, 230, 0.1);
-  }
-
-  .ref-code-container {
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-    justify-content: space-between;
-    background-color: rgba(0, 0, 0, 0.1);
-    box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.25);
-    border-radius: 1vw;
-    padding: 1vw;
-  }
-
-  .ref-code {
-    font-size: 1.5vw;
-    line-height: 1.5vw;
-    border: none;
-    outline: none;
-    background-color: rgba(0, 0, 0, 0);
-  }
-
-  .copy-svg {
-    width: 2vw;
-    height: 2vw;
-  }
-
-  .active-code {
-    color: rgba(255, 255, 255, 0.75);
-    text-shadow: 0 0 0.1vw rgb(51, 226, 230);
-    cursor: text;
-  }
-
-  /* Newsletter */
-
-  .newsletter-subscription {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vw;
-  }
-
-  .newsletter-subscription button {
-    background-color: rgba(0, 185, 55, 0.75);
-  }
-
-  .newsletter-subscription button:hover,
-  .newsletter-subscription button:active {
-    color: #010020;
-    background-color: rgb(0, 185, 55);
-  }
-
-  .unsubscribe-button {
-    color: rgba(255, 60, 64, 0.75);
-    cursor: pointer;
-  }
-
-  .unsubscribe-button:hover,
-  .unsubscribe-button:active {
-    color: rgb(255, 60, 64);
-    text-decoration: underline;
-  }
-
-  /* Profile icon */
-
-  .profile-icon-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  @media only screen and (max-width: 600px) {
-    dialog {
-      width: 100vw;
-      height: 100%;
-      border-radius: 1em;
-      overflow-y: scroll;
-    }
-
-    dialog > div {
-      padding: 1em;
-    }
-
-    .back-arrow,
-    .close-button,
-    .login-button {
-      padding: 0.35em;
-    }
-
-    .back-arrow svg,
-    .close-button svg {
-      height: 1.5em;
-      width: 1.5em;
-    }
-
-    .sign-container,
-    .login-form,
-    .signup-form,
-    .user-profile-info,
-    .agreement,
-    .wallets-container,
-    .edit-buttons,
-    ul {
-      gap: 1em;
-    }
-
-    .edit-buttons,
-    .wallet-connect {
-      flex-direction: column;
-    }
-
-    ul {
-      flex-flow: column nowrap;
-      max-width: none;
-    }
-
-    .wallet {
-      min-width: 75vw;
-      gap: 0.5em;
-      padding: 0.25em 0.5em;
-      font-size: 1.2em;
-      width: auto;
-      border-radius: 0.5em;
-    }
-
-    .wallet span {
-      width: 100%;
-      padding: 0.25em 1em;
-      font-size: 1em;
-      border-radius: 0.5em;
-    }
-
-    .star-svg {
-      height: 1.75em;
-      width: 1.75em;
-    }
-
-    #terms,
-    #newsletter {
-      /* -webkit-transform: scale(1.5);
-      transform: scale(1.5); */
-      width: 1em;
-      height: 1em;
-    }
-
-    .profile-window {
-      gap: 0.5em;
-      padding-block: 0.5em;
-    }
-
-    .referral-codes {
-      grid-template-columns: 100%;
-      gap: 0.5em;
-      padding: 1em;
-      width: 100%;
-    }
-
-    .ref-code-container {
-      padding: 0.5em 1em;
-      border-radius: 0.5em;
-    }
-
-    .ref-code {
-      font-size: 1em;
-      line-height: 1.5em;
-      padding: 0.25em 0.5em;
-    }
-
-    .copy-svg {
-      width: 1em;
-      height: 1em;
-    }
-
-    .newsletter-subscription {
-      gap: 0.5em;
-    }
-  }
-
-  @keyframes zoom {
-    from {
-      transform: scale(1.5);
-    }
-    to {
-      transform: scale(1);
-    }
-  }
-
-  @keyframes fade {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-</style> -->
-
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
@@ -1276,14 +939,14 @@ a11y_no_noninteractive_element_to_interactive_role-->
           @include box-shadow(soft, inset);
         }
 
-        &:hover:not(&.active-wallet),
-        &:active:not(&.active-wallet),
-        &:focus:not(&.active-wallet) {
+        &:hover:not(&:disabled),
+        &:active:not(&:disabled),
+        &:focus:not(&:disabled) {
           @include scale-up(soft);
           @include bright;
         }
 
-        &.active-wallet {
+        &:disabled {
           cursor: not-allowed;
           fill: $cyan;
           box-shadow: $shadow-plus-inset-glow;
@@ -1316,16 +979,6 @@ a11y_no_noninteractive_element_to_interactive_role-->
           @include box-shadow(soft, inset);
         }
 
-        svg {
-          width: 1.25rem;
-
-          &.copy-hover {
-            fill: $dark-green;
-            stroke: $dark-green;
-            @include bright(50%);
-          }
-        }
-
         &.used-code {
           cursor: not-allowed;
           @include gray(0.25);
@@ -1350,18 +1003,6 @@ a11y_no_noninteractive_element_to_interactive_role-->
         text-decoration: underline;
         @include red(1, text);
       }
-    }
-  }
-
-  :global(.copied) {
-    p {
-      @include green(1, text);
-    }
-
-    svg {
-      fill: $green !important;
-      stroke: $green !important;
-      filter: none !important;
     }
   }
 

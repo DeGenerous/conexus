@@ -82,7 +82,7 @@
   }
 }
 
-@keyframes button-glow {
+@keyframes button-glowing {
   0% {
     background-color: rgba(51, 226, 230, 0.5);
   }
@@ -94,6 +94,21 @@
   }
   100% {
     background-color: rgba(51, 226, 230, 0.5);
+  }
+}
+
+@keyframes text-glowing {
+  0% {
+    color: rgba(51, 226, 230);
+  }
+  33% {
+    color: rgba(160, 120, 255);
+  }
+  66% {
+    color: rgba(56, 117, 250);
+  }
+  100% {
+    color: rgba(51, 226, 230);
   }
 }
 
@@ -160,8 +175,12 @@
   animation: waving 5s ease-in-out infinite;
 }
 
-:global(.button-glow) {
-  animation: button-glow 10s ease-in-out infinite;
+:global(.button-glowing) {
+  animation: button-glowing 10s ease-in-out infinite;
+}
+
+:global(.text-glowing) {
+  animation: text-glowing 10s ease-in-out infinite;
 }
 
 :global(.dark-glow) {

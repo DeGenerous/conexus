@@ -1,3 +1,17 @@
+@use '/src/styles/mixins' as *;
+
 :where(svg) {
   width: 2rem;
+}
+
+.copied {
+  p {
+    @include green(1, text);
+  }
+
+  svg {
+    fill: $green !important;
+    stroke: $green !important;
+    filter: none !important;
+  }
 }

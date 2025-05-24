@@ -22,7 +22,7 @@
   <Intro />
 {:else}
   <button
-    class="blur button-glow"
+    class="blur button-glowing"
     on:click={() => ($showProfile = true)}
     on:pointerover={() => (signInSvgFocus = true)}
     on:pointerout={() => (signInSvgFocus = false)}

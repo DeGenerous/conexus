@@ -1,13 +1,18 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
 
-  export let message = '';
-  export let type = 'info';
-  export let duration = 10000;
-  export let onClose;
+  export let message: string = '';
+  export let type: "info" | "error" = 'info';
+  export let duration: number = 10000;
+  export let onClose = () => {};
+
+  let fading: number;
 
   const closeToast = () => {
-    if (onClose) onClose();
+    fading = Math.random();
+    setTimeout(() => {
+      if (onClose) onClose();
+    }, 600);
   };
 
   onMount(() => {
@@ -21,95 +26,61 @@
   });
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<div
-  class="toast blur"
+<button
+  class="void-btn flex-row pad round blur"
   class:info={type === 'info'}
   class:error={type !== 'info'}
+  class:fading-left={fading < 0.5}
+  class:fading-right={fading >= 0.5}
+  on:click={closeToast}
 >
   <p>{@html message}</p>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="-100 -100 200 200"
-    class="close-svg"
-    stroke="#dedede"
-    stroke-width="30"
-    stroke-linecap="round"
-    on:click={closeToast}
-    role="button"
-    tabindex="0"
-  >
-    <path d="M -65 -65 L 65 65 M -65 65 L 65 -65" fill="none" />
-  </svg>
-</div>
+</button>
 
-<style>
-  div {
-    font-size: 1vw;
-    line-height: 1.5;
-  }
+<style lang="scss">
+  @use "/src/styles/mixins" as *;
 
-  .toast {
-    padding: 1vw;
-    border-radius: 1vw;
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1vw;
-    max-width: 65vw;
+  button {
+    transition: all 0.6s ease-in-out;
     opacity: 1;
-    animation: fade-out 5s 5s ease-in-out;
-  }
+    @include white-txt(1);
+    @include box-shadow;
 
-  .toast.info {
-    background-color: rgba(0, 150, 40, 0.9);
-  }
-
-  .toast.error {
-    background-color: rgba(200, 30, 30, 0.9);
-  }
-
-  .close-svg {
-    width: 1.5vw;
-    height: 1.5vw;
-  }
-
-  .close-svg:hover,
-  .close-svg:active {
-    stroke: #010020;
-  }
-
-  @keyframes fade-out {
-    0% {
-      opacity: 1;
+    &.info {
+      @include green(0.75);
     }
-    50% {
-      opacity: 1;
+
+    &.error {
+      @include red(0.75);
     }
-    100% {
+
+    &.fading-left {
       opacity: 0;
-    }
-  }
-
-  @media only screen and (max-width: 600px) {
-    div {
-      font-size: 1em;
+      transform: translateX(-200%) scaleY(0.5);
     }
 
-    .toast {
-      top: 2em;
-      padding: 1em;
-      gap: 1em;
-      border-radius: 1em;
-      width: 90vw;
-      max-width: 90vw;
+    &.fading-right {
+      opacity: 0;
+      transform: translateX(200%) scaleY(0.5);
     }
 
-    .close-svg {
-      width: 1em;
-      height: 1em;
+    @starting-style {
+      opacity: 0;
+      transform: translateY(-300%) scale(0.75);
+    }
+
+    &:hover,
+    &:active,
+    &:focus {
+      @include box-shadow(deep);
+
+      &.info {
+        @include green;
+      }
+
+      &.error {
+        @include red;
+      }
     }
   }
 </style>

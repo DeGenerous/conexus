@@ -34,10 +34,7 @@
       </mask>
     </defs>
 
-    <circle
-      r="95"
-      mask="url(#quit-svg-mask)"
-    />
+    <circle r="95" mask="url(#quit-svg-mask)" />
   </svg>
 </button>
 

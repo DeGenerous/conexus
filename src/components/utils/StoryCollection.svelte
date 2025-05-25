@@ -118,22 +118,22 @@
   {:else}
     <h3>{category.name}</h3>
   {/if}
-  <SortingSVG sorting={isSorting} disabled={!category || !section} onClick={() => {
-    isSorting = !isSorting;
-    handleSorting();
-  }} />
+  <SortingSVG
+    sorting={isSorting}
+    disabled={!category || !section}
+    onClick={() => {
+      isSorting = !isSorting;
+      handleSorting();
+    }}
+  />
 </div>
-  
+
 <div class="tiles-collection" on:scroll={handleScroll}>
   {#if !category || !section}
     {#each Array(5) as _}
       <div class="loading-tile">
-        <div
-          class="loading-animation"
-        ></div>
-        <span
-          class="loading-animation"
-        ></span>
+        <div class="loading-animation"></div>
+        <span class="loading-animation"></span>
       </div>
     {/each}
   {:else}

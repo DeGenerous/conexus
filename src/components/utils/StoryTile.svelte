@@ -35,12 +35,8 @@
 <!-- if loading show loader -->
 {#if loading}
   <div class="loading-tile">
-    <div
-      class="loading-animation"
-    ></div>
-    <span
-      class="loading-animation"
-    ></span>
+    <div class="loading-animation"></div>
+    <span class="loading-animation"></span>
   </div>
 {:else if topic}
   <a

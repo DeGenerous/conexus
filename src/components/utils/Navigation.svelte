@@ -4,8 +4,8 @@
   import Profile from '@components/Profile.svelte';
   import ConexusLogo from '@components/utils/ConexusLogo.svelte';
 
-  export let header: string = "CoNexus";
-  export let subheading: string = "";
+  export let header: string = 'CoNexus';
+  export let subheading: string = '';
   export let activeTab: string = 'Home';
   export let arrow: Nullable<string> = null;
 
@@ -28,7 +28,9 @@
   };
 </script>
 
-<header class="flex-row pad-inline blur transition dark-semi-transparent-bg shad-behind dark-glowing">
+<header
+  class="flex-row pad-inline blur transition dark-semi-transparent-bg shad-behind dark-glowing"
+>
   {#if arrow}
     <BackArrow href={arrow} />
   {:else}

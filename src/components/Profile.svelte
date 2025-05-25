@@ -219,11 +219,15 @@ a11y_no_noninteractive_element_to_interactive_role-->
   <div on:click|stopPropagation>
     <header class="flex">
       {#if isLogged}
-        <DoorSVG state="outside" text="Sign out" onClick={() => (account.signout())} />
+        <DoorSVG
+          state="outside"
+          text="Sign out"
+          onClick={() => account.signout()}
+        />
       {:else}
         <QuitSVG onClick={handleBackArrow} />
       {/if}
-        <CloseSVG onClick={() => ($showProfile = false)} />
+      <CloseSVG onClick={() => ($showProfile = false)} />
     </header>
 
     <!-- USER PROFILE -->
@@ -496,7 +500,9 @@ a11y_no_noninteractive_element_to_interactive_role-->
               <h4>Newsletter Subscription</h4>
 
               {#if subStatus.subscribed_at}
-                <h5 class="subscription pad-8 round-8 gray-transparent-bg dark-txt shad">
+                <h5
+                  class="subscription pad-8 round-8 gray-transparent-bg dark-txt shad"
+                >
                   Active since: {dateToString(subStatus.subscribed_at.Time)}
                 </h5>
               {/if}
@@ -583,12 +589,15 @@ a11y_no_noninteractive_element_to_interactive_role-->
                 <p class="validation">{$accountError.signin}</p>
               {/if}
 
-              <DoorSVG state="inside" text="Sign in" disabled={!(loginMail && loginPassword)} onClick={() =>
-                account.signin({
-                  email: loginMail,
-                  password: loginPassword,
-                })}
-              
+              <DoorSVG
+                state="inside"
+                text="Sign in"
+                disabled={!(loginMail && loginPassword)}
+                onClick={() =>
+                  account.signin({
+                    email: loginMail,
+                    password: loginPassword,
+                  })}
               />
               <a href="/reset-password">Forgot password?</a>
               <a
@@ -935,7 +944,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
         gap: 0.5rem;
 
         a {
-           @include cyan(1, text);
+          @include cyan(1, text);
         }
 
         label {

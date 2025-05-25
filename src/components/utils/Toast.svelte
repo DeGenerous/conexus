@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
 
   export let message: string = '';
-  export let type: "info" | "error" = 'info';
+  export let type: 'info' | 'error' = 'info';
   export let duration: number = 10000;
   export let onClose = () => {};
 
@@ -38,7 +38,7 @@
 </button>
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   button {
     transition: all 0.6s ease-in-out;

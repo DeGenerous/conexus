@@ -2,7 +2,7 @@
   export let onClick = () => {};
   export let state: 'inside' | 'outside';
   export let disabled: boolean = false;
-  export let text: string = "";
+  export let text: string = '';
   export let glow: boolean = false;
 
   let signOutSvgFocus: boolean = false;

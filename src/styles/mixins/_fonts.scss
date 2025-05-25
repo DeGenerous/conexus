@@ -27,7 +27,7 @@ $font-scale: (
 
     @if $size-key == 'h1' {
       @include respond-up(tablet) {
-        font-size: clamp(2rem, 5vw, 3.5rem),
+        font-size: clamp(2rem, 5vw, 3.5rem);
       }
     }
 
@@ -51,7 +51,6 @@ $font-scale: (
         font-size: 1.2vw;
       }
     }
-
   } @else {
     @warn "Font size `#{$size-key}` not found in $font-scale map.";
   }

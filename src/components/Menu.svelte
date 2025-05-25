@@ -21,8 +21,12 @@
 {:else if isLogged}
   <Intro />
 {:else}
-
-  <DoorSVG state="inside" text="play now" onClick={() => ($showProfile = true)} glow={true} />
+  <DoorSVG
+    state="inside"
+    text="play now"
+    onClick={() => ($showProfile = true)}
+    glow={true}
+  />
 
   <video class="pc-video blur round fade-in shad" controls autoplay loop muted>
     <source src={`${trailerURL}/CoNexusTrailer.webm`} type="video/webm" />

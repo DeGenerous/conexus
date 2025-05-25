@@ -36,7 +36,7 @@
 </div>
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   div {
     width: 100vw;

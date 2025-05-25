@@ -3,7 +3,7 @@
   import SearchSection from '@components/utils/SearchSection.svelte';
   import StoryTile from '@components/utils/StoryTile.svelte';
   import { toastStore } from '@stores/toast';
-  import SortingSVG from '@components/icons/Sorting.svelte'
+  import SortingSVG from '@components/icons/Sorting.svelte';
 
   export let categories: CategoriesInSection[] = [];
   export let section: string;
@@ -170,7 +170,12 @@
 </script>
 
 <section class="filters flex">
-  <GenreSelect {genres} bind:activeGenre {resetGenres} disabled={!categories || categories.length == 0} />
+  <GenreSelect
+    {genres}
+    bind:activeGenre
+    {resetGenres}
+    disabled={!categories || categories.length == 0}
+  />
   <SearchSection
     handleSearch={handleSearchDebounced}
     bind:searchField
@@ -182,10 +187,13 @@
 {#if filteredTopics.length > 0}
   <div class="collection-header">
     <h3>Filtered Stories</h3>
-    <SortingSVG sorting={isSorting} onClick={() => {
-      isSorting = !isSorting;
-      handleSorting();
-    }} />
+    <SortingSVG
+      sorting={isSorting}
+      onClick={() => {
+        isSorting = !isSorting;
+        handleSorting();
+      }}
+    />
   </div>
   <div class="tiles-collection filtered-tiles" on:scroll={handleScroll}>
     {#key sortedTopics}
@@ -200,7 +208,7 @@
 {/if}
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   .filters {
     width: 100vw;

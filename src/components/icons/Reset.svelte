@@ -2,11 +2,7 @@
   export let onClick = () => {};
 </script>
 
-<button
-  class="flex void-btn"
-  on:click={onClick}
-  aria-label="Reset"
->
+<button class="flex void-btn" on:click={onClick} aria-label="Reset">
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"
@@ -30,7 +26,7 @@
 </button>
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   button {
     width: 1.5rem;

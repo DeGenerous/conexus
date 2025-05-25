@@ -58,7 +58,7 @@
 </div>
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   div {
     gap: 0.5rem;

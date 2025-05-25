@@ -47,7 +47,6 @@
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"
     fill="none"
-    stroke="rgb(51, 226, 230)"
     stroke-width="15"
     stroke-linejoin="round"
     stroke-linecap="round"
@@ -123,21 +122,18 @@
   @use '/src/styles/mixins' as *;
 
   button {
-    svg {
-      stroke: $light-blue;
-    }
-
-    &.visible {
-      svg {
-        stroke: $cyan;
-      }
-    }
+    fill: none;
+    stroke: $light-blue;
 
     &:hover,
     &:active,
     &:focus {
       @include scale;
       @include bright;
+    }
+
+    &.visible {
+      stroke: $cyan;
     }
   }
 </style>

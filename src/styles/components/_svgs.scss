@@ -1,7 +1,17 @@
 @use '/src/styles/mixins' as *;
 
-:where(svg) {
+svg {
+  min-width: 1.5rem;
   width: 2rem;
+  fill: $soft-white;
+  stroke: $soft-white;
+}
+
+a svg,
+button svg {
+  width: inherit;
+  fill: inherit;
+  stroke: inherit;
 }
 
 .copied {

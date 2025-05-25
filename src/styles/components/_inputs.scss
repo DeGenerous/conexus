@@ -90,5 +90,15 @@ input {
 }
 
 input[type='checkbox'] {
-  width: auto;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: none;
+  cursor: pointer;
+
+  @include respond-up(tablet) {
+    width: 1rem;
+    height: 1rem;
+  }
 }

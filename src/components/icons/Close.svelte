@@ -1,32 +1,41 @@
 <script lang="ts">
-  export let closeSvgFocus: boolean = false;
+  export let onClick = () => {};
+
+  let closeSvgFocus: boolean = false;
 </script>
 
-<svg
+<button
+  on:click|stopPropagation={onClick}
+  on:pointerover={() => (closeSvgFocus = true)}
+  on:pointerout={() => (closeSvgFocus = false)}
   class:focused={closeSvgFocus}
-  xmlns="http://www.w3.org/2000/svg"
-  viewBox="-100 -100 200 200"
-  stroke-width="30"
-  stroke-linecap="round"
+  aria-label="Close"
 >
-  <path
-    d="
-        M -65 -65
-        L 65 65
-        M -65 65
-        L 65 -65
-      "
-    fill="none"
-  />
-</svg>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="-100 -100 200 200"
+    stroke-width="30"
+    stroke-linecap="round"
+  >
+    <path
+      d="
+          M -65 -65
+          L 65 65
+          M -65 65
+          L 65 -65
+        "
+      fill="none"
+    />
+  </svg>
+</button>
 
 <style lang="scss">
   @use "/src/styles/mixins" as *;
 
-  svg {
+  button {
     stroke: $red;
 
-    &.focused {
+    &.focused svg {
       @include scale(1.2);
       @include bright;
     }

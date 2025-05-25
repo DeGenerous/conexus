@@ -20,20 +20,6 @@
     margin-bottom: -0.5rem;
   }
 
-  .filter {
-    &:hover:not(&.sorting),
-    &:active:not(&.sorting),
-    &:focus:not(&.sorting),
-    &:disabled {
-      @include white-txt;
-    }
-
-    &.sorting {
-      background-color: $deep-green !important;
-      @include cyan(1, text);
-    }
-  }
-
   h3 {
     @include white-txt;
   }
@@ -239,7 +225,7 @@
     @include box-shadow(soft, inset);
 
     svg {
-      fill: rgba(255, 255, 255, 0.75);
+      fill: $soft-white;
     }
   }
 }

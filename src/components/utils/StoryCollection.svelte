@@ -118,18 +118,10 @@
   {:else}
     <h3>{category.name}</h3>
   {/if}
-  <button
-    class="filter blur"
-    class:sorting={isSorting}
-    on:click={() => {
-      isSorting = !isSorting;
-      handleSorting();
-    }}
-    disabled={!category || !section}
-  >
-    <SortingSVG {isSorting} />
-    A-Z
-  </button>
+  <SortingSVG sorting={isSorting} disabled={!category || !section} onClick={() => {
+    isSorting = !isSorting;
+    handleSorting();
+  }} />
 </div>
   
 <div class="tiles-collection" on:scroll={handleScroll}>

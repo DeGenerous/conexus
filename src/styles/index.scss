@@ -44,6 +44,10 @@ select:disabled {
   cursor: not-allowed;
 }
 
+label {
+  cursor: pointer;
+}
+
 input:disabled,
 textarea:disabled {
   opacity: 1 !important; // for iOS
@@ -168,6 +172,10 @@ html {
     width: 2.75rem;
     border-radius: 50%;
     z-index: 100;
+
+    svg {
+      border-radius: inherit;
+    }
 
     &:hover,
     &:active,

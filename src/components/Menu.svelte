@@ -21,15 +21,8 @@
 {:else if isLogged}
   <Intro />
 {:else}
-  <button
-    class="blur button-glowing"
-    on:click={() => ($showProfile = true)}
-    on:pointerover={() => (signInSvgFocus = true)}
-    on:pointerout={() => (signInSvgFocus = false)}
-  >
-    <DoorSVG state="inside" {signInSvgFocus} />
-    play now
-  </button>
+
+  <DoorSVG state="inside" text="play now" onClick={() => ($showProfile = true)} glow={true} />
 
   <video class="pc-video blur round fade-in shad" controls autoplay loop muted>
     <source src={`${trailerURL}/CoNexusTrailer.webm`} type="video/webm" />

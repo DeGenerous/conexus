@@ -24,11 +24,13 @@
     regexpRestrictedCharsCheck,
   } from '@constants/regexp';
 
+  import ProfileSVG from '@components/icons/Profile.svelte';
   import DoorSVG from '@components/icons/Door.svelte';
   import EyeSVG from '@components/icons/Eye.svelte';
   import QuitSVG from '@components/icons/Quit.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
   import CopySVG from '@components/icons/Copy.svelte';
+  import StarSVG from '@components/icons/Star.svelte';
 
   let dialog: HTMLDialogElement;
 
@@ -182,11 +184,6 @@
   };
 
   // SVG Icons
-  let profileSvgFocus: boolean = false;
-  let quitSvgFocus: boolean = false;
-  let closeSvgFocus: boolean = false;
-  let signInSvgFocus: boolean = false;
-  let signOutSvgFocus: boolean = false;
   let copySvgFocus: Nullable<string> = null;
 
   // Newsletter
@@ -206,35 +203,7 @@
   };
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
-<button
-  class="profile-icon-container top-right-icon void-btn flex fade-in"
-  aria-label="Profile"
-  on:click={() => ($showProfile = true)}
-  on:pointerover={() => (profileSvgFocus = true)}
-  on:pointerout={() => (profileSvgFocus = false)}
->
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
-    <defs>
-      <mask id="profile-svg-mask">
-        <circle r="95" fill="white" />
-        <g fill="black" transform={profileSvgFocus ? 'scale(1.1)' : ''}>
-          <circle cy="-25" r="30" />
-          <path
-            d="
-            M -55 55
-            Q -60 20 -25 15
-            L 25 15
-            Q 60 20 55 55
-            Z
-          "
-          />
-        </g>
-      </mask>
-    </defs>
-    <circle r="95" mask="url(#profile-svg-mask)" />
-  </svg>
-</button>
+<ProfileSVG onClick={() => ($showProfile = true)} />
 
 <!-- svelte-ignore
 a11y-click-events-have-key-events
@@ -250,33 +219,11 @@ a11y_no_noninteractive_element_to_interactive_role-->
   <div on:click|stopPropagation>
     <header class="flex">
       {#if isLogged}
-        <button
-          on:click={() => {
-            account.signout();
-          }}
-          on:pointerover={() => (signOutSvgFocus = true)}
-          on:pointerout={() => (signOutSvgFocus = false)}
-        >
-          <DoorSVG state="outside" {signOutSvgFocus} bigIcon={true} />
-        </button>
+        <DoorSVG state="outside" text="Sign out" onClick={() => (account.signout())} />
       {:else}
-        <button
-          on:click|stopPropagation={handleBackArrow}
-          on:pointerover={() => (quitSvgFocus = true)}
-          on:pointerout={() => (quitSvgFocus = false)}
-          aria-label="Back"
-        >
-          <QuitSVG {quitSvgFocus} />
-        </button>
+        <QuitSVG onClick={handleBackArrow} />
       {/if}
-      <button
-        on:click|stopPropagation={() => ($showProfile = false)}
-        on:pointerover={() => (closeSvgFocus = true)}
-        on:pointerout={() => (closeSvgFocus = false)}
-        aria-label="Close"
-      >
-        <CloseSVG {closeSvgFocus} />
-      </button>
+        <CloseSVG onClick={() => ($showProfile = false)} />
     </header>
 
     <!-- USER PROFILE -->
@@ -461,15 +408,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
                           '...' +
                           wallet.wallet.slice(-4)}
                       </p>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          d="m12 3 2.23 6.88h7.23l-5.85 4.24L17.85 21 12 16.75 6.15 21l2.24-6.88-5.85-4.24h7.23L12 3z"
-                        >
-                        </path>
-                      </svg>
+                      <StarSVG focused={wallet.wallet == user!.main_wallet} />
                     </button>
                   {/each}
                 </ul>
@@ -644,26 +583,14 @@ a11y_no_noninteractive_element_to_interactive_role-->
                 <p class="validation">{$accountError.signin}</p>
               {/if}
 
-              <button
-                type="button"
-                on:click|preventDefault={() =>
-                  account.signin({
-                    email: loginMail,
-                    password: loginPassword,
-                  })}
-                on:pointerover={() => {
-                  if (loginMail && loginPassword) signInSvgFocus = true;
-                }}
-                on:pointerout={() => {
-                  if (loginMail && loginPassword) signInSvgFocus = false;
-                }}
-                disabled={!(loginMail && loginPassword)}
-              >
-                <DoorSVG state="inside" {signInSvgFocus} />
-                Sign in
-              </button>
+              <DoorSVG state="inside" text="Sign in" disabled={!(loginMail && loginPassword)} onClick={() =>
+                account.signin({
+                  email: loginMail,
+                  password: loginPassword,
+                })}
+              
+              />
               <a href="/reset-password">Forgot password?</a>
-              <!-- svelte-ignore a11y_missing_attribute -->
               <a
                 href="/"
                 on:click={(event) => {
@@ -896,21 +823,6 @@ a11y_no_noninteractive_element_to_interactive_role-->
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .profile-icon-container {
-    fill: $light-blue;
-
-    &:hover,
-    &:active,
-    &:focus {
-      fill: $cyan;
-    }
-
-    svg {
-      width: inherit;
-      border-radius: inherit;
-    }
-  }
-
   header {
     flex-direction: row;
     justify-content: space-between;
@@ -1023,7 +935,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
         gap: 0.5rem;
 
         a {
-          @include white-txt;
+           @include cyan(1, text);
         }
 
         label {
@@ -1031,10 +943,10 @@ a11y_no_noninteractive_element_to_interactive_role-->
         }
 
         &.mandatory {
-          @include red(1, text);
+          @include red(0.75, text);
 
           a {
-            @include cyan(1, text);
+            @include red(1, text);
           }
         }
       }

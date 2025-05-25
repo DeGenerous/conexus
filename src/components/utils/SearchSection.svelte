@@ -1,4 +1,6 @@
 <script lang="ts">
+  import SearchSVG from '@components/icons/Search.svelte';
+
   export let searchField: string;
   export let handleSearch: () => void;
   export let isSearching: boolean = false;
@@ -41,24 +43,7 @@
       />
     </svg>
   {:else}
-    <button
-      class="flex void-btn"
-      on:click={handleSearchFocus}
-      aria-label="Search"
-    >
-      <svg
-        class="search-svg"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="-100 -100 200 200"
-        stroke="#dedede"
-        stroke-linecap="round"
-        fill="none"
-        style="transform: {searchSvgFocus ? 'scale(1.05) rotate(90deg)' : 'none'}"
-      >
-        <circle cx="-20" cy="-20" r="70" stroke-width="15" />
-        <line x1="34" y1="34" x2="85" y2="80" stroke-width="25" />
-      </svg>
-    </button>
+    <SearchSVG onClick={handleSearchFocus} {searchSvgFocus} />
   {/if}
   <input
     bind:this={searchInput}
@@ -79,19 +64,6 @@
     gap: 0.5rem;
     width: 100%;
     @include light-blue(0.5);
-
-    button {
-      width: 1.5rem;
-
-      svg {
-        width: 100%;
-        max-width: 1.5rem;
-      }
-
-      &:hover svg {
-        stroke: $cyan;
-      }
-    }
 
     input {
       text-align: left;

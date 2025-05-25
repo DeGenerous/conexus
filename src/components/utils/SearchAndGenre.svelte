@@ -182,17 +182,10 @@
 {#if filteredTopics.length > 0}
   <div class="collection-header">
     <h3>Filtered Stories</h3>
-    <button
-      class="blur"
-      class:sorting={isSorting}
-      on:click={() => {
-        isSorting = !isSorting;
-        handleSorting();
-      }}
-    >
-      <SortingSVG {isSorting} />
-      A-Z
-    </button>
+    <SortingSVG sorting={isSorting} onClick={() => {
+      isSorting = !isSorting;
+      handleSorting();
+    }} />
   </div>
   <div class="tiles-collection filtered-tiles" on:scroll={handleScroll}>
     {#key sortedTopics}

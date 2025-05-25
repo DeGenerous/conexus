@@ -1,10 +1,15 @@
-// COLOR VARIABLES: (dark) cyan, (light / bright / dark) blue, navy, (deep) green, (dark) red, (bright) orange, (bright) purple, (acid / bright) rose
+// COLOR VARIABLES: (soft / transparent) white, (soft / dark) cyan, (light / bright / dark) blue, navy, (deep) green, (dark) red, (bright) orange, (bright) purple, (acid / bright) rose
 // COLOR MIXINS: cyan, light-blue, blue (bright), navy, dark-blue, green, red, dark-red, gray, orange (bright), indigo (bright), rose (bright)
 
 // BG CLASSES: cyan (soft), blue, dark-blue ((semi)transparent)
 // TEXT CLASSES: white (soft / transparent), green, red
 
+$white: rgb(255, 255, 255);
+$soft-white: rgba(255, 255, 255, 0.9);
+$transparent-white: rgba(255, 255, 255, 0.5);
+
 $cyan: rgb(51, 226, 230);
+$soft-cyan: rgba(51, 226, 230, 0.75);
 $dark-cyan: rgb(80, 160, 165);
 
 $light-blue: rgb(56, 117, 250);

@@ -1,6 +1,6 @@
 <script></script>
 
-<div class="flex fade-in">
+<div class="flex">
   <picture class="flex">
     <source srcset="title.avif" type="image/avif" />
     <img src="title.png" alt="CoNexus" draggable="false" />
@@ -178,6 +178,8 @@
 
     svg {
       position: absolute;
+      stroke: none;
+      fill: $cyan;
     }
 
     .sin-wave {

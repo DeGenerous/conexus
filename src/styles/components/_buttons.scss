@@ -108,6 +108,13 @@ button:not(.void-btn),
   background-color: transparent;
   border: none;
   color: inherit;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+
+  @include respond-up(small-desktop) {
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+  }
 }
 
 .sign-button {

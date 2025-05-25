@@ -8,6 +8,8 @@
   class="top-left-icon flex fade-in"
   href={href === 'back' ? 'javascript:window.history.back()' : href}
   aria-label="Back arrow"
+  on:pointerover={() => (backArrowSvgFocus = true)}
+  on:pointerout={() => (backArrowSvgFocus = false)}
 >
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
     <defs>
@@ -35,8 +37,6 @@
     <circle
       r="95"
       mask="url(#back-arrow-svg-mask)"
-      on:pointerover={() => (backArrowSvgFocus = true)}
-      on:pointerout={() => (backArrowSvgFocus = false)}
     />
   </svg>
 </a>
@@ -51,11 +51,6 @@
     &:active,
     &:focus {
       fill: $cyan;
-    }
-
-    svg {
-      width: inherit;
-      border-radius: inherit;
     }
   }
 </style>

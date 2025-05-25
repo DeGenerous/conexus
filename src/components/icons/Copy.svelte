@@ -7,8 +7,6 @@
   class:copy-hover={copySvgFocus === data}
   xmlns="http://www.w3.org/2000/svg"
   viewBox="-100 -100 200 200"
-  fill="rgba(255, 255, 255, 0)"
-  stroke="rgba(255, 255, 255, 0.75)"
   stroke-width="15"
   stroke-linejoin="round"
   stroke-linecap="round"
@@ -51,6 +49,8 @@
   @use '/src/styles/mixins' as *;
 
   svg {
+    fill: none;
+    stroke: $soft-white;
     width: 1.25rem;
 
     &.copy-hover {

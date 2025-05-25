@@ -1,6 +1,6 @@
 <script lang="ts">
   import { authenticated } from '@stores/account';
-  import BackArrow from '@components/utils/BackArrow.svelte';
+  import BackArrow from '@components/icons/BackArrow.svelte';
   import Profile from '@components/Profile.svelte';
   import ConexusLogo from '@components/utils/ConexusLogo.svelte';
 
@@ -276,9 +276,15 @@
       flex-flow: column nowrap;
       justify-content: center;
       align-items: center;
-      opacity: 0.75;
       text-decoration: none;
+      opacity: 0.75;
+      fill: $white;
+      stroke: $white;
       @include white-txt;
+
+      svg {
+        width: 2.5rem;
+      }
 
       &.active {
         opacity: 1;

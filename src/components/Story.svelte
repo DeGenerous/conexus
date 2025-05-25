@@ -5,7 +5,7 @@
   import Tts from '@components/music/Tts.svelte';
   import Profile from '@components/Profile.svelte';
   import Step from '@components/Step.svelte';
-  import BackArrow from '@components/utils/BackArrow.svelte';
+  import BackArrow from '@components/icons/BackArrow.svelte';
   import Share from '@components/utils/Share.svelte';
   import { blankImage, serveUrl } from '@constants/media';
   import { contractGetter } from '@constants/contracts';

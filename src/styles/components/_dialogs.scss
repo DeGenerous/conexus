@@ -9,12 +9,13 @@ dialog {
   border-radius: 1rem;
   overflow-x: hidden;
   box-shadow: $deep-shadow-plus-inset-glow;
-  @include dark-blue(0.75);
   transition: all 0.3s ease-in-out;
 
   // Fallback if no support
   opacity: 1;
   transform: none;
+
+  @include dark-blue(0.75);
 
   @starting-style {
     opacity: 0;

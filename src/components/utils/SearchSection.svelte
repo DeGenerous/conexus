@@ -2,6 +2,7 @@
   export let searchField: string;
   export let handleSearch: () => void;
   export let isSearching: boolean = false;
+  export let disabled: boolean = false;
 
   let searchInput: HTMLInputElement | null;
   let searchFocus = false;
@@ -22,17 +23,12 @@
   let searchSvgFocus: boolean = false;
 </script>
 
-<div
-  class="filter filter-wrapper blur"
-  style={searchField
-    ? 'background-color: rgba(56, 117, 250, 0.9); box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.5);'
-    : ''}
->
+<div class="flex-row blur pad-8 round-8 shad" class:active={searchField}>
   {#if isSearching}
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 100 100"
-      class="loading-svg filter-image"
+      class="loading-svg"
       stroke="transparent"
       stroke-width="7.5"
       stroke-dasharray="288.5"
@@ -45,22 +41,24 @@
       />
     </svg>
   {:else}
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="-100 -100 200 200"
-      class="search-svg filter-image"
-      stroke="#dedede"
-      stroke-linecap="round"
-      fill="none"
+    <button
+      class="flex void-btn"
       on:click={handleSearchFocus}
-      on:keydown={(e) => e.key === 'Enter' && handleSearchFocus()}
-      role="button"
-      tabindex="0"
-      style="transform: {searchSvgFocus ? 'scale(1.05) rotate(90deg)' : 'none'}"
+      aria-label="Search"
     >
-      <circle cx="-20" cy="-20" r="70" stroke-width="15" />
-      <line x1="34" y1="34" x2="85" y2="80" stroke-width="25" />
-    </svg>
+      <svg
+        class="search-svg"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="-100 -100 200 200"
+        stroke="#dedede"
+        stroke-linecap="round"
+        fill="none"
+        style="transform: {searchSvgFocus ? 'scale(1.05) rotate(90deg)' : 'none'}"
+      >
+        <circle cx="-20" cy="-20" r="70" stroke-width="15" />
+        <line x1="34" y1="34" x2="85" y2="80" stroke-width="25" />
+      </svg>
+    </button>
   {/if}
   <input
     bind:this={searchInput}
@@ -70,37 +68,45 @@
     on:blur={() => (searchSvgFocus = false)}
     class="search-field"
     placeholder="Search story..."
+    {disabled}
   />
 </div>
 
-<style>
-  .search-field {
-    font-size: 1.5vw;
-    line-height: 3vw;
-    padding-inline: 0.5vw;
-    color: rgba(51, 226, 230, 0.9);
-    background-color: rgba(22, 30, 95, 0.9);
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 0.5vw;
-    outline: none;
-    width: 19vw;
-  }
+<style lang="scss">
+  @use "/src/styles/mixins" as *;
 
-  .search-field::placeholder {
-    color: rgba(51, 226, 230, 0.5);
-  }
+  div {
+    gap: 0.5rem;
+    width: 100%;
+    @include light-blue(0.5);
 
-  .search-field:focus {
-    width: 27.5vw;
-  }
+    button {
+      width: 1.5rem;
 
-  @media only screen and (max-width: 600px) {
-    .search-field {
-      font-size: inherit;
-      line-height: inherit;
-      border-radius: 0.25em;
-      padding: 0.25em 0.5em;
-      width: 100% !important;
+      svg {
+        width: 100%;
+        max-width: 1.5rem;
+      }
+
+      &:hover svg {
+        stroke: $cyan;
+      }
+    }
+
+    input {
+      text-align: left;
+      width: 100%;
+      @include dark-blue(0.75);
+    }
+
+    @include respond-up(tablet) {
+      & {
+        width: auto;
+      }
+
+      input:focus {
+        width: 30rem;
+      }
     }
   }
 </style>

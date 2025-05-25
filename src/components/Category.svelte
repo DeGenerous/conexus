@@ -159,26 +159,26 @@
 
 <SearchAndGenre {section} {genres} {getTopics} {categories} />
 
-<section class="categories-container" on:scroll={handleScroll}>
+<section class="flex" on:scroll={handleScroll}>
   {#if categories.length > 0}
     {#each categories as category (category.name)}
-      <div class="category">
+      <div class="category flex">
         <StoryCollection {section} {category} />
       </div>
     {/each}
 
     {#if loading}
-      <h3>Loading more categories...</h3>
+      <h5>Loading more categories...</h5>
     {/if}
   {:else if showNoCategoriesMessage}
-    <h3>No categories found for this section.</h3>
+    <h5>No categories found for this section.</h5>
   {:else}
     <StoryCollection {section} category={null} />
   {/if}
 </section>
 
 {#if categories.length === 0 && !loading && !showNoCategoriesMessage}
-  <h3>Loading categories...</h3>
+  <h5>Loading categories...</h5>
 {/if}
 
 {#if section === 'Dischordian Saga'}
@@ -186,24 +186,3 @@
 {/if}
 
 <Links {section} />
-
-<style>
-  .categories-container {
-    width: 100vw;
-    display: flex;
-    flex-flow: column nowrap;
-    gap: 2vw;
-    scroll-behavior: smooth;
-  }
-
-  h3 {
-    color: rgba(51, 226, 230, 0.75);
-    text-shadow: 0 0.25vw 0.25vw #010020;
-  }
-
-  @media only screen and (max-width: 600px) {
-    .categories-container {
-      gap: 1em;
-    }
-  }
-</style>

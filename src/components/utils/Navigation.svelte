@@ -2,7 +2,10 @@
   import { authenticated } from '@stores/account';
   import BackArrow from '@components/utils/BackArrow.svelte';
   import Profile from '@components/Profile.svelte';
+  import ConexusLogo from '@components/utils/ConexusLogo.svelte';
 
+  export let header: string = "CoNexus";
+  export let subheading: string = "";
   export let activeTab: string = 'Home';
   export let arrow: Nullable<string> = null;
 
@@ -25,25 +28,33 @@
   };
 </script>
 
-{#if arrow}
-  <BackArrow href={arrow} />
-{:else}
-  <a
-    class="top-left-icon flex fade-in"
-    href="https://degenerousdao.com/"
-    target="_blank"
-    aria-label="DeGenerous"
-  >
-    <img src="/logo.avif" alt="Logo" />
-  </a>
-{/if}
+<header class="flex-row pad-inline blur transition dark-semi-transparent-bg shad-behind dark-glowing">
+  {#if arrow}
+    <BackArrow href={arrow} />
+  {:else}
+    <a
+      class="top-left-icon flex fade-in"
+      href="https://degenerousdao.com/"
+      target="_blank"
+      aria-label="DeGenerous"
+    >
+      <img src="/logo.avif" alt="Logo" />
+    </a>
+  {/if}
 
-<Profile />
+  {#if header === 'CoNexus'}<ConexusLogo />{/if}
+
+  <h1 class:sr-only={header === 'CoNexus'}>{header}</h1>
+
+  <Profile />
+</header>
+
+<p class="subheading pad-inline text-shad">{@html subheading}</p>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $authenticated.user}
   <nav
-    class="flex blur transition dark-semi-transparent-bg shad-behind dark-glowing"
+    class="flex-row blur transition dark-semi-transparent-bg shad-behind dark-glowing"
   >
     <!-- PREVIOUS SECTION -->
     <a
@@ -211,11 +222,40 @@
 
   /* MOBILE Styling */
 
+  header {
+    min-height: 5rem;
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    justify-content: space-between;
+    gap: 1rem;
+    z-index: 100;
+
+    @include respond-up(tablet) {
+      position: static;
+      width: auto;
+      justify-content: center;
+      min-height: none;
+      background-color: transparent !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none;
+      box-shadow: none;
+    }
+  }
+
+  .subheading {
+    margin: 2rem auto;
+
+    @include respond-up(tablet) {
+      width: clamp(20rem, 95%, 80rem);
+      margin-block: 1rem 2rem;
+    }
+  }
+
   nav {
     position: fixed;
     bottom: 0;
     width: 100vw;
-    flex-direction: row;
     justify-content: space-between;
     gap: 0;
     z-index: 100;
@@ -237,15 +277,11 @@
       justify-content: center;
       align-items: center;
       opacity: 0.75;
+      text-decoration: none;
       @include white-txt;
 
       &.active {
         opacity: 1;
-        background-image: radial-gradient(
-          ellipse at center bottom,
-          rgba(51, 226, 230, 0.25),
-          rgba(51, 226, 230, 0.1)
-        );
         @include cyan(1, text);
 
         svg {
@@ -314,7 +350,6 @@
           @include cyan(0.1);
           @include cyan(1, text);
           @include bright;
-          @include scale;
 
           svg {
             fill: $cyan;
@@ -326,6 +361,7 @@
           background-image: radial-gradient(
             ellipse at center top,
             rgba(51, 226, 230, 0.2),
+            rgba(51, 226, 230, 0),
             rgba(51, 226, 230, 0)
           );
         }

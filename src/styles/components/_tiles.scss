@@ -8,18 +8,41 @@
 // STORY TILES CONTAINER
 
 .collection-header {
+  width: 100vw;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
   padding-inline: 1.5rem;
+
+  @include respond-up(tablet) {
+    margin-bottom: -0.5rem;
+  }
+
+  .filter {
+    &:hover:not(&.sorting),
+    &:active:not(&.sorting),
+    &:focus:not(&.sorting),
+    &:disabled {
+      @include white-txt;
+    }
+
+    &.sorting {
+      background-color: $deep-green !important;
+      @include cyan(1, text);
+    }
+  }
+
+  h3 {
+    @include white-txt;
+  }
 }
 
 .tiles-collection {
   -webkit-backdrop-filter: blur(1rem);
   backdrop-filter: blur(1rem);
-  width: 100%;
+  width: 100vw;
   height: auto;
   min-height: 22rem;
   display: flex;
@@ -31,6 +54,10 @@
   padding: 1rem;
   box-shadow: $shadow-plus-inset-glow;
   animation: transparent-glowing 10s ease-in-out infinite;
+
+  &.filtered-tiles {
+    background-color: rgba(75, 112, 50, 0.5) !important;
+  }
 
   &::-webkit-scrollbar {
     height: 0.5rem;
@@ -243,6 +270,6 @@
 
   @starting-style {
     opacity: 0;
-    transform: scale(0);
+    transform: scale(0.9);
   }
 }

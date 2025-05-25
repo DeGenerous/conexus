@@ -18,7 +18,6 @@ button:not(.void-btn),
   border-radius: 0.5rem;
   outline: none;
   text-transform: uppercase;
-  @include font;
   @include white-txt(soft);
   @include light-blue(0.5);
   @include cyan-border(0.5);

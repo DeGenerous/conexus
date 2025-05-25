@@ -167,10 +167,9 @@
   div {
     position: relative;
     width: clamp(10rem, 40%, 25rem);
-    margin: 1.5rem auto 3rem auto;
 
     @include respond-up(tablet) {
-      margin-block: 4rem;
+      margin: 3rem auto;
     }
 
     picture {

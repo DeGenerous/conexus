@@ -23,7 +23,8 @@
 a,
 button,
 [role='button'],
-svg {
+svg,
+select {
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   outline: none;
@@ -38,7 +39,8 @@ svg * {
 }
 
 button:disabled,
-input:disabled {
+input:disabled,
+select:disabled {
   cursor: not-allowed;
 }
 
@@ -66,18 +68,18 @@ a {
 }
 
 html {
-  @include font;
-  @include dark-blue;
-  @include cyan(0.75, 'text');
-
   background-image: url('/mobileBG.webp');
   background-attachment: scroll;
   background-repeat: repeat;
   background-position: top;
 
   text-align: center;
-  padding-block: 1rem 5rem;
+  padding-block: 5rem;
   letter-spacing: 0.025rem;
+
+  @include dark-blue(1);
+  @include cyan(0.75, 'text');
+  @include font;
 
   @include respond-up('tablet') {
     background-image:
@@ -163,9 +165,7 @@ html {
 
   .top-left-icon,
   .top-right-icon {
-    position: absolute;
-    top: 1rem;
-    width: 4rem;
+    width: 2.75rem;
     border-radius: 50%;
     z-index: 100;
 
@@ -177,6 +177,8 @@ html {
 
     @include respond-up(tablet) {
       position: fixed;
+      top: 1rem;
+      width: 4rem;
     }
   }
 

@@ -112,81 +112,43 @@
   }
 </script>
 
-<section>
-  <div class="collection-header">
-    <h3>
-      {#if !category || !section}
-        Loading stories...
-      {:else}
-        {category.name}
-      {/if}
-    </h3>
-    <button
-      class="filter blur"
-      class:sorting={isSorting}
-      on:click={() => {
-        isSorting = !isSorting;
-        handleSorting();
-      }}
-    >
-      <SortingSVG {isSorting} />
-      A-Z
-    </button>
-  </div>
+<div class="collection-header">
+  {#if !category || !section}
+    <h3>Loading stories...</h3>
+  {:else}
+    <h3>{category.name}</h3>
+  {/if}
+  <button
+    class="filter blur"
+    class:sorting={isSorting}
+    on:click={() => {
+      isSorting = !isSorting;
+      handleSorting();
+    }}
+    disabled={!category || !section}
+  >
+    <SortingSVG {isSorting} />
+    A-Z
+  </button>
+</div>
   
-  <div class="tiles-collection" on:scroll={handleScroll}>
-    {#if !category || !section}
-      {#each Array(5) as _}
-        <div class="loading-tile">
-          <div
-            class="loading-animation"
-          ></div>
-          <span
-            class="loading-animation"
-          ></span>
-        </div>
+<div class="tiles-collection" on:scroll={handleScroll}>
+  {#if !category || !section}
+    {#each Array(5) as _}
+      <div class="loading-tile">
+        <div
+          class="loading-animation"
+        ></div>
+        <span
+          class="loading-animation"
+        ></span>
+      </div>
+    {/each}
+  {:else}
+    {#key sortedTopics}
+      {#each sortedTopics as topic}
+        <StoryTile {section} bind:topic bind:loading />
       {/each}
-    {:else}
-      {#key sortedTopics}
-        {#each sortedTopics as topic}
-          <StoryTile {section} bind:topic bind:loading />
-        {/each}
-      {/key}
-    {/if}
-  </div>
-</section>
-
-<style lang="scss">
-  @use "/src/styles/mixins" as *;
-
-  section {
-    width: 100%;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    gap: 1vw;
-
-    h3 {
-      @include white-txt;
-    }
-
-    .filter {
-      &:hover:not(&:disabled, &.sorting),
-      &:active:not(&:disabled, &.sorting),
-      &:focus:not(&:disabled, &.sorting) {
-        @include white-txt;
-      }
-
-      &.sorting {
-        background-color: $deep-green !important;
-        @include cyan(1, text);
-      }
-    }
-  }
-
-  @media only screen and (max-width: 600px) {
-    section {
-      gap: 0.5em;
-    }
-  }
-</style>
+    {/key}
+  {/if}
+</div>

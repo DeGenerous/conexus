@@ -8,7 +8,8 @@ $font-scale: (
   // 14–16px
   'caption': clamp(0.75rem, 1vw, 0.875rem),
   // 12–14px
-  'h1': clamp(2rem, 5vw, 3.5rem),
+  // 'h1': clamp(2rem, 5vw, 3.5rem),
+  'h1': clamp(1.5rem, 3vw, 2.5rem),
   // 32–56px
   'h2': clamp(1.75rem, 4vw, 3rem),
   // 28–48px
@@ -23,6 +24,12 @@ $font-scale: (
   @if map.has-key($font-scale, $size-key) {
     font-size: map.get($font-scale, $size-key);
     line-height: 1.5;
+
+    @if $size-key == 'h1' {
+      @include respond-up(tablet) {
+        font-size: clamp(2rem, 5vw, 3.5rem),
+      }
+    }
 
     // Static value for wide screens
     @include respond-up(ultra-wide) {
@@ -66,7 +73,7 @@ $font-scale: (
   @include font(h4);
 }
 
-:global(:where(h5, input)) {
+:global(:where(h5, input, select)) {
   @include font(h5);
 }
 

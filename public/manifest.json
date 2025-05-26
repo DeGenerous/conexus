@@ -4,7 +4,7 @@
   "description": "CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.",
   "start_url": "/",
   "display": "fullscreen",
-  "background_color": "#010020",
+  "background_color": "#000000",
   "theme_color": "#010020",
   "orientation": "any",
   "scope": "/",
@@ -79,7 +79,7 @@
       "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "monochrome maskable"
+      "purpose": "maskable"
     }
   ]
 }

@@ -33,7 +33,7 @@ export const manifest: Partial<ManifestOptions> = {
     'CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.',
   display: 'fullscreen',
   start_url: '/',
-  background_color: '#010020',
+  background_color: '#000000',
   theme_color: '#010020',
   lang: 'en-US',
   orientation: 'any',

@@ -2,7 +2,7 @@
 // flex, flex-row, blur, validation, transition
 // Padding: pad-# 8, 16 (none); Padding-Inline: pad-inline
 // Border-radius: round-# 8, 16 (none), 24, 32
-// Margin: marg, marg-inline (16)
+// Margin: mar, mar-inline (16)
 // (# - pixel value)
 
 @use 'mixins' as *;
@@ -84,26 +84,15 @@ a {
 }
 
 html {
-  background-image: url('/mobileBG.webp');
-  background-attachment: scroll;
-  background-repeat: repeat;
-  background-position: top;
-
   text-align: center;
   padding-block: 5rem;
   letter-spacing: 0.025rem;
+  background-color: black;
 
-  @include dark-blue(1);
   @include cyan(0.75, 'text');
   @include font;
 
   @include respond-up('tablet') {
-    background-image:
-      url('/conexusBG.avif'), linear-gradient(black, $dark-blue);
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
     padding-block: 4rem 2rem;
   }
 
@@ -158,11 +147,11 @@ html {
     border-radius: 2rem;
   }
 
-  .marg {
+  .mar {
     margin: 1rem;
   }
 
-  .marg-inline {
+  .mar-inline {
     margin-inline: 1rem;
   }
 

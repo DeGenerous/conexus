@@ -4,6 +4,8 @@
   import { Account } from '@lib/account';
   import { USER_CACHE_KEY, ClearCache } from '@constants/cache';
 
+  import LoadingSVG from '@components/icons/Loading.svelte';
+
   export let token: string;
 
   const acct: Account = new Account();
@@ -18,19 +20,12 @@
   });
 </script>
 
-<section class="container-wrapper">
-  <div class="container blur">
-    <h1>Verifying email...</h1>
-    <h3>Please wait while we verify your email address.</h3>
-    <h3>If you are not redirected, please click the button below.</h3>
-    <button on:click={() => window.open('/', '_self')}>Return home</button>
-  </div>
+<section class="container">
+  <span class="flex-row">
+    <LoadingSVG />
+    <h4 class="text-glowing">Verifying email...</h4>
+  </span>
+  <h5>Please wait while we verify your email address.</h5>
+  <h5>If you are not redirected, please click the button below.</h5>
+  <button on:click={() => window.open('/', '_self')}>Return home</button>
 </section>
-
-<style>
-  @media only screen and (max-width: 600px) {
-    .container-wrapper {
-      margin-top: 2em;
-    }
-  }
-</style>

@@ -56,6 +56,10 @@
       text-align: left;
       width: 100%;
       @include dark-blue(0.75);
+
+      &:focus {
+        @include box-glow;
+      }
     }
 
     @include respond-up(tablet) {

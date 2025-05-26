@@ -1,5 +1,5 @@
 // UTILITY CLASSES:
-// flex, flex-row, blur, validation, transition
+// flex, flex-row, blur, validation, transition, gap-8
 // Padding: pad-# 8, 16 (none); Padding-Inline: pad-inline
 // Border-radius: round-# 8, 16 (none), 24, 32
 // Margin: mar, mar-inline (16)
@@ -114,6 +114,10 @@ html {
     flex-direction: row;
   }
 
+  .gap-8 {
+    gap: 0.5rem;
+  }
+
   .blur {
     -webkit-backdrop-filter: blur(1rem);
     backdrop-filter: blur(1rem);
@@ -174,6 +178,17 @@ html {
 
   .transition {
     transition: all 0.3s ease-in-out;
+  }
+
+  .container {
+    @extend .flex;
+    @extend .blur;
+    @extend .pad;
+    @extend .round;
+    width: clamp(250px, 90%, 50rem);
+    box-shadow: $shadow-plus-inset-glow;
+    animation: dark-glowing 10s ease-in-out infinite;
+    margin-inline: auto;
   }
 
   .top-left-icon,

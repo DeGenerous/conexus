@@ -18,7 +18,7 @@
   onMount(() => {
     const timer = setTimeout(() => {
       closeToast();
-    }, duration);
+    }, duration - 600);
 
     return () => {
       clearTimeout(timer);

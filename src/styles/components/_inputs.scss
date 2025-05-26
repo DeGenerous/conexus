@@ -31,7 +31,6 @@ input {
   &:focus {
     @include cyan-border;
     @include cyan(0.15);
-    @include box-glow;
   }
 
   &::placeholder {

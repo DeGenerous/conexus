@@ -4,7 +4,7 @@
   import Profile from '@components/Profile.svelte';
   import ConexusLogo from '@components/utils/ConexusLogo.svelte';
 
-  export let header: string = 'CoNexus';
+  export let header: string = '';
   export let subheading: string = '';
   export let activeTab: string = 'Home';
   export let arrow: Nullable<string> = null;
@@ -242,6 +242,10 @@
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none;
       box-shadow: none;
+    }
+
+    h1 {
+      text-transform: capitalize;
     }
   }
 

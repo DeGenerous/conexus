@@ -31,6 +31,7 @@
   import CloseSVG from '@components/icons/Close.svelte';
   import CopySVG from '@components/icons/Copy.svelte';
   import StarSVG from '@components/icons/Star.svelte';
+  import DiscordBtn from '@components/icons/Discord.svelte';
 
   let dialog: HTMLDialogElement;
 
@@ -468,7 +469,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
                 </ul>
                 <h4>
                   Your referrals: {$referralCodes.filter((code) => code.is_used)
-                    .length}
+                    .length} / 10
                 </h4>
               {/key}
             {/if}
@@ -770,14 +771,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
             {:else if referralCode}
               <p class="validation">Code should contain 16 characters</p>
             {:else}
-              <p class="validation">
-                Enter your referral code. Don't have one yet? Find yours
-                <a
-                  href="https://discord.gg/349FgMSUK8"
-                  target="_blank"
-                  rel="noopener noreferrer">here</a
-                >!
-              </p>
+              <p class="validation">Enter your referral code.</p>
             {/if}
 
             {#if !mandatoryFields}
@@ -823,6 +817,11 @@ a11y_no_noninteractive_element_to_interactive_role-->
               >Create account</button
             >
           </form>
+
+          <hr />
+
+          <h5>Don't have a ref code?</h5>
+          <DiscordBtn text="Find yours on Discord" />
         {/if}
       </section>
     {/if}

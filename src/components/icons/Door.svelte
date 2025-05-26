@@ -10,12 +10,13 @@
 </script>
 
 <button
+  class="blur"
+  class:button-glowing={glow}
+  class:focused={signOutSvgFocus}
   type="button"
   on:click|preventDefault={onClick}
   on:pointerover={() => (signOutSvgFocus = true)}
   on:pointerout={() => (signOutSvgFocus = false)}
-  class:button-glowing={glow}
-  class:focused={signOutSvgFocus}
   {disabled}
 >
   {#if state === 'outside'}

@@ -1,5 +1,5 @@
 // UTILITY CLASSES:
-// green, red,
+// green, red, purple
 // button-anchor: apply button styling to <a></a> element
 // void-btn: no button styling
 
@@ -101,6 +101,17 @@ button:not(.void-btn),
   &:active:not(&:disabled),
   &:focus:not(&:disabled) {
     @include dark-blue(1, text);
+  }
+}
+
+.purple-btn:not(.void-btn) {
+  @include purple;
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(&:disabled) {
+    @include purple(1, bg, bright);
+    box-shadow: 0 0 0.5rem indigo;
   }
 }
 

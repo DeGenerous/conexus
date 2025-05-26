@@ -90,9 +90,8 @@
     max-width: 400px;
   }
 
-  @include respond-up(ultra-wide) {
-    width: 20vw;
-    max-width: 20vw;
+  @include respond-up(largest) {
+    max-width: 16vw;
   }
 
   &:hover:not(.loading-menu-tile),
@@ -166,8 +165,8 @@
     @include box-shadow(deep);
   }
 
-  @include respond-up(ultra-wide) {
-    width: 13.25vw;
+  @include respond-up(laargest) {
+    width: 10vw;
   }
 
   img {

@@ -2,6 +2,7 @@
 // flex, flex-row, blur, validation, transition
 // Padding: pad-# 8, 16 (none); Padding-Inline: pad-inline
 // Border-radius: round-# 8, 16 (none), 24, 32
+// Margin: marg, marg-inline (16)
 // (# - pixel value)
 
 @use 'mixins' as *;
@@ -55,6 +56,17 @@ textarea:disabled {
 
 ul {
   list-style-type: none;
+}
+
+:where(
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  p
+) {
+  cursor: default;
 }
 
 /* GENERAL STYLING */
@@ -144,6 +156,14 @@ html {
 
   .round-32 {
     border-radius: 2rem;
+  }
+
+  .marg {
+    margin: 1rem;
+  }
+
+  .marg-inline {
+    margin-inline: 1rem;
   }
 
   .validation {

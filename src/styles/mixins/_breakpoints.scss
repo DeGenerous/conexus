@@ -6,6 +6,7 @@ $breakpoints: (
   'small-desktop': 1024px,
   'large-desktop': 1440px,
   'ultra-wide': 1920px,
+  'largest': 2560px
 );
 
 @mixin respond-up($breakpoint) {

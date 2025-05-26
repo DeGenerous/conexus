@@ -32,23 +32,23 @@ $font-scale: (
     }
 
     // Static value for wide screens
-    @include respond-up(ultra-wide) {
+    @include respond-up(largest) {
       @if $size-key == 'body' {
-        font-size: 0.93vw; // ≈ 18px @ 1920px
+        font-size: 0.65vw;
       } @else if $size-key == 'small' {
-        font-size: 0.85vw;
+        font-size: 0.6vw;
       } @else if $size-key == 'caption' {
-        font-size: 0.75vw;
+        font-size: 0.53vw;
       } @else if $size-key == 'h1' {
-        font-size: 2.9vw; // ≈ 56px @ 1920px
+        font-size: 1.88vw;
       } @else if $size-key == 'h2' {
-        font-size: 2.5vw;
+        font-size: 1.56vw;
       } @else if $size-key == 'h3' {
-        font-size: 2vw;
+        font-size: 1.25vw;
       } @else if $size-key == 'h4' {
-        font-size: 1.6vw;
+        font-size: 0.94vw;
       } @else if $size-key == 'h5' {
-        font-size: 1.2vw;
+        font-size: 0.78vw;
       }
     }
   } @else {

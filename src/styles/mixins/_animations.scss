@@ -142,6 +142,18 @@
   }
 }
 
+@keyframes rotate-animation {
+  0% {
+    transform: none;
+  }
+  50% {
+    @include bright;
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 // General definitions
 
 :global(.loading-animation) {
@@ -204,4 +216,8 @@
 
 :global(.transparent-glowing) {
   animation: transparent-glowing 10s ease-in-out infinite;
+}
+
+:global(.rotate-animation) {
+  animation: rotate-animation 2s linear infinite;
 }

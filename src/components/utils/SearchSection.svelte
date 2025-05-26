@@ -1,5 +1,6 @@
 <script lang="ts">
   import SearchSVG from '@components/icons/Search.svelte';
+  import LoadingSVG from '@components/icons/Loading.svelte';
 
   export let searchField: string;
   export let handleSearch: () => void;
@@ -27,21 +28,7 @@
 
 <div class="flex-row blur pad-8 round-8 shad" class:active={searchField}>
   {#if isSearching}
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 100 100"
-      class="loading-svg"
-      stroke="transparent"
-      stroke-width="7.5"
-      stroke-dasharray="288.5"
-      stroke-linecap="round"
-      fill="none"
-    >
-      <path
-        d="M 50 96 a 46 46 0 0 1 0 -92 46 46 0 0 1 0 92"
-        transform-origin="50 50"
-      />
-    </svg>
+    <LoadingSVG />
   {:else}
     <SearchSVG onClick={handleSearchFocus} {searchSvgFocus} />
   {/if}

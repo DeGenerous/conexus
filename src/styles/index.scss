@@ -191,6 +191,11 @@ html {
     margin-inline: auto;
   }
 
+  .transparent-container {
+    @extend .container;
+    animation: transparent-glowing 10s ease-in-out infinite;
+  }
+
   .top-left-icon,
   .top-right-icon {
     width: 2.75rem;

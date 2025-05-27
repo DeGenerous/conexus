@@ -1,10 +1,22 @@
 <script lang="ts">
+  import { bgPicture } from '@stores/background.ts';
+  import { onMount } from 'svelte';
+
+  let width: number;
   let scroll: number;
+
+  onMount(() => {
+    if (width > 768) $bgPicture = "url('/conexusBG.avif')";
+  })
 </script>
 
-<svelte:window bind:scrollY={scroll} />
+<svelte:window bind:innerWidth={width} bind:scrollY={scroll} />
 
-<div id="background" style:top={-scroll / 5 + "px"}></div>
+<div
+  id="background"
+  style:top={-scroll / 5 + "px"}
+  style:background-image={$bgPicture}
+></div>
 
 <style lang="scss">
   @use "/src/styles/mixins" as *;

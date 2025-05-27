@@ -24,7 +24,7 @@
   <h5>{menuText[0]}</h5>
 
   {#await app.getSections()}
-    <div class="flex">
+    <div class="flex-row">
       {#each Array(3) as _}
         <div class="loading-menu-tile">
           <div class="loading-animation"></div>
@@ -33,7 +33,7 @@
       {/each}
     </div>
   {:then sections}
-    <div class="flex">
+    <div class="flex-row">
       {#each sections as section (section.id)}
         <MenuTile {section} />
       {/each}
@@ -54,16 +54,13 @@
 
     & > div {
       width: 100%;
+      flex-wrap: wrap;
     }
   }
 
   @include respond-up(tablet) {
     section {
       width: auto;
-
-      & > div {
-        flex-direction: row;
-      }
     }
   }
 </style>

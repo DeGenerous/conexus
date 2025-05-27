@@ -3,11 +3,15 @@
   import BackArrow from '@components/icons/BackArrow.svelte';
   import Profile from '@components/Profile.svelte';
   import ConexusLogo from '@components/utils/ConexusLogo.svelte';
+  import Background from '@components/utils/Background.svelte';
 
   export let header: string = '';
+  export let story: string;
   export let subheading: string = '';
   export let activeTab: string = 'Home';
   export let arrow: Nullable<string> = null;
+
+  if (story) console.log(story);
 
   $: admin = $authenticated.user?.role === 'admin';
 
@@ -29,7 +33,7 @@
 </script>
 
 <header
-  class="flex-row pad-inline blur transition dark-semi-transparent-bg shad-behind dark-glowing"
+  class="flex-row pad-inline blur transition dark-semi-transparent-bg shad-behind dark-glowing-opaque"
 >
   {#if arrow}
     <BackArrow href={arrow} />
@@ -56,7 +60,7 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $authenticated.user}
   <nav
-    class="flex-row blur transition dark-semi-transparent-bg shad-behind dark-glowing"
+    class="flex-row blur transition dark-semi-transparent-bg shad-behind dark-glowing-opaque"
   >
     <!-- PREVIOUS SECTION -->
     <a
@@ -219,13 +223,15 @@
   </nav>
 {/if}
 
+<Background />
+
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
   /* MOBILE Styling */
 
   header {
-    min-height: 5rem;
+    min-height: 4rem;
     position: fixed;
     top: 0;
     width: 100vw;
@@ -277,7 +283,6 @@
 
     a {
       width: 100%;
-      height: 100%;
       display: flex;
       flex-flow: column nowrap;
       justify-content: center;
@@ -289,7 +294,7 @@
       @include white-txt;
 
       svg {
-        width: 2.5rem;
+        width: 2rem;
       }
 
       &.active {
@@ -391,7 +396,6 @@
 
         p {
           color: inherit;
-          transition: all 0.6s ease-in-out;
           max-width: unset;
           @include font(small);
 

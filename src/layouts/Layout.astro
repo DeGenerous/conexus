@@ -5,7 +5,6 @@ import ToastContainer from '@components/utils/ToastContainer.svelte';
 import Modal from '@components/utils/Modal.svelte';
 import Navigation from '@components/Navigation.svelte';
 import CookieBanner from '@components/utils/CookieBanner.svelte';
-import Background from '@components/utils/Background.svelte';
 
 import { seoConfig } from '../../utils/seoConfig';
 
@@ -104,19 +103,20 @@ const {
   <body>
     <ToastContainer client:load />
 
-    {
-      !story && (
-        <Navigation {header} {subheading} activeTab={nav} {arrow} client:load />
-      )
-    }
+    <Navigation
+      {header}
+      {subheading}
+      activeTab={nav}
+      {arrow}
+      {story}
+      client:load
+    />
 
     <slot />
 
     <Modal client:load />
 
     <CookieBanner client:load />
-
-    <Background client:load />
   </body>
 </html>
 

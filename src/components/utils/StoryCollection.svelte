@@ -130,7 +130,7 @@
 
 <div class="tiles-collection" on:scroll={handleScroll}>
   {#if !category || !section}
-    {#each Array(5) as _}
+    {#each Array(Math.floor(Math.random() * 3) + 3) as _}
       <div class="loading-tile">
         <div class="loading-animation"></div>
         <span class="loading-animation"></span>

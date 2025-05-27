@@ -63,15 +63,16 @@
 </script>
 
 {#if showBanner}
-  <div class="container">
-    <h5>
-      We use cookies to provide you with a better service. By continuing to use
+  <div class="non-transparent-container">
+    <h5 class="white-txt">We use cookies to provide you with a better service.</h5>
+    <p class="white-soft-txt">
+      By continuing to use
       this website, you consent to the use of cookies as described in our
       <a
         href="https://docs.google.com/document/d/1kkIY-86y2LtoM4IXzp80E5H7Op1YSezw8nPBG1AQ2uo/edit?usp=sharing"
         target="_blank">Privacy Policy</a
       >.
-    </h5>
+    </p>
     <div class="flex-row">
       <button class="green-btn" on:click={() => acceptCookies(true)}>Accept all</button>
       <button on:click={() => acceptCookies(false)}>Essential only</button>
@@ -79,12 +80,19 @@
   </div>
 {/if}
 
-<style>
-  .container {
+<style lang="scss">
+  @use "/src/styles/mixins" as *;
+
+  .non-transparent-container {
+    width: 90%;
     position: fixed;
-    bottom: 1rem;
-    width: 75rem;
+    bottom: 5rem;
     left: 50%;
     transform: translateX(-50%);
+
+    @include respond-up(tablet) {
+      bottom: 1rem;
+      max-width: 75rem;
+    }
   }
 </style>

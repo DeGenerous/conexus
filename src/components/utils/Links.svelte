@@ -8,12 +8,12 @@
   <section class="flex pad mar-inline round blur shad-inset-glow transparent-glowing">
     {#if section == 'Community Picks'}
       <div class="flex-row">
-        <h4>Join the community:</h4>
+        <h5>Join the community:</h5>
         <DiscordBtn />
       </div>
     {:else}
       <div class="flex-row">
-        <h4>Explore more:</h4>
+        <h5>Explore more:</h5>
         <button
           on:click={() =>
             window.open('https://loredex.degenerousdao.com/', '_blank')}
@@ -22,14 +22,20 @@
         </button>
       </div>
       <div class="flex-row">
-        <h4>Influence the storyline:</h4>
+        <h5>Influence the storyline:</h5>
         <button
           on:click={() =>
             window.open('https://governance.degenerousdao.com/', '_blank')}
         >
-          Galactic Governance Hub
+          Governance Hub
         </button>
       </div>
     {/if}
   </section>
 {/if}
+
+<style>
+  h5 {
+    text-align: right;
+  }
+</style>

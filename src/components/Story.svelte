@@ -128,14 +128,9 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $story === null}
-  <section class="container-wrapper">
+  <section class="flex">
     {#await game.getTopic(section, story_name)}
-      <header>
-        <BackArrow />
-        <Profile />
-      </header>
-
-      <div class="story-container blur">
+      <div class="container">
         <div class="picture default-picture loading-animation"></div>
 
         <section class="story-info">
@@ -158,12 +153,6 @@
         </section>
       </div>
     {:then topic: TopicThumbnail}
-      <header>
-        <BackArrow />
-        <h1 class="fade-in">{topic.name.trim()}</h1>
-        <Profile />
-      </header>
-
       {#if categoryTopics.length > 0}
         <div class="buttons-wrapper stories-switcher">
           <a

@@ -127,6 +127,21 @@
   }
 }
 
+@keyframes dark-glowing-opaque {
+  0% {
+    background-color: rgba(1, 0, 32, 0.75);
+  }
+  33% {
+    background-color: rgba(32, 1, 0, 0.75);
+  }
+  66% {
+    background-color: rgba(0, 16, 16, 0.75);
+  }
+  100% {
+    background-color: rgba(1, 0, 32, 0.75);
+  }
+}
+
 @keyframes transparent-glowing {
   0% {
     background-color: rgba(51, 226, 230, 0.1);
@@ -199,23 +214,27 @@
 }
 
 :global(.waving) {
-  animation: waving 5s ease-in-out infinite;
+  animation: waving 6s ease-in-out infinite;
 }
 
 :global(.button-glowing) {
-  animation: button-glowing 10s ease-in-out infinite;
+  animation: button-glowing 12s ease-in-out infinite;
 }
 
 :global(.text-glowing) {
-  animation: text-glowing 10s ease-in-out infinite;
+  animation: text-glowing 12s ease-in-out infinite;
 }
 
 :global(.dark-glowing) {
-  animation: dark-glowing 10s ease-in-out infinite;
+  animation: dark-glowing 12s ease-in-out infinite;
+}
+
+:global(.dark-glowing-opaque) {
+  animation: dark-glowing-opaque 12s ease-in-out infinite;
 }
 
 :global(.transparent-glowing) {
-  animation: transparent-glowing 10s ease-in-out infinite;
+  animation: transparent-glowing 12s ease-in-out infinite;
 }
 
 :global(.rotate-animation) {

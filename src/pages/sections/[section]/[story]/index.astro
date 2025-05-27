@@ -6,7 +6,7 @@ import Layout from '@layouts/Layout.astro';
 const { section, story } = Astro.params;
 
 if (!story) {
-  Astro.redirect('/');
+  Astro.redirect('/404');
 }
 
 const storyName = story?.replace(/%20/g, ' ');
@@ -19,6 +19,7 @@ const meta = {
     '/favicon.ico',
   url: `https://conexus-test.degenerousdao.com/${section}/${story}`,
   nav: storyName,
+  header: storyName,
 };
 ---
 

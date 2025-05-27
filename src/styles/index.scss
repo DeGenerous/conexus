@@ -196,6 +196,11 @@ html {
     animation: transparent-glowing 10s ease-in-out infinite;
   }
 
+  .non-transparent-container {
+    @extend .container;
+    animation: dark-glowing-opaque 10s ease-in-out infinite;
+  }
+
   .top-left-icon,
   .top-right-icon {
     width: 2.75rem;

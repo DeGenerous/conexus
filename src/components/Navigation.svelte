@@ -4,14 +4,13 @@
   import Profile from '@components/Profile.svelte';
   import ConexusLogo from '@components/utils/ConexusLogo.svelte';
   import Background from '@components/utils/Background.svelte';
+  import { prevStoryLink, prevStoryName, nextStoryLink, nextStoryName } from '@stores/navigation';
 
   export let header: string = '';
   export let story: string;
   export let subheading: string = '';
   export let activeTab: string = 'Home';
   export let arrow: Nullable<string> = null;
-
-  if (story) console.log(story);
 
   $: admin = $authenticated.user?.role === 'admin';
 
@@ -21,7 +20,7 @@
   $: prevSectionIndex =
     activeSectionIndex == 0 ? sections.length - 1 : activeSectionIndex - 1;
 
-  const backSectionLink = (): Nullable<string> => {
+  const prevSectionLink = (): Nullable<string> => {
     if (!sections.includes(activeTab)) return null;
     return `/sections/${sections[prevSectionIndex]}`;
   };
@@ -30,6 +29,8 @@
     if (!sections.includes(activeTab)) return null;
     return `/sections/${sections[(activeSectionIndex + 1) % sections.length]}`;
   };
+
+  console.log(story)
 </script>
 
 <header
@@ -65,8 +66,8 @@
     <!-- PREVIOUS SECTION -->
     <a
       class="fade-in"
-      class:inactive={!sections.includes(activeTab)}
-      href={backSectionLink()}
+      class:inactive={!sections.includes(activeTab) && !story || story && !$prevStoryLink}
+      href={story ? $prevStoryLink : prevSectionLink()}
       target="_self"
     >
       <svg
@@ -84,9 +85,13 @@
         />
         <rect x="-30" y="-25" width="100" height="50" rx="5" />
       </svg>
-      {#if sections.includes(activeTab)}
-        <p>{sections[prevSectionIndex]}</p>
-      {/if}
+      <p>
+        {#if sections.includes(activeTab) && !story}
+          {sections[prevSectionIndex]}
+        {:else if story}
+          {$prevStoryName}
+        {/if}
+      </p>
     </a>
 
     <!-- Dashboard -->
@@ -196,8 +201,8 @@
     <!-- NEXT SECTION -->
     <a
       class="fade-in"
-      class:inactive={!sections.includes(activeTab)}
-      href={nextSectionLink()}
+      class:inactive={!sections.includes(activeTab) && !story || story && !$nextStoryLink}
+      href={story ? $nextStoryLink : nextSectionLink()}
       target="_self"
     >
       <svg
@@ -216,14 +221,18 @@
         />
         <rect x="-30" y="-25" width="100" height="50" rx="5" />
       </svg>
-      {#if sections.includes(activeTab)}
-        <p>{sections[(activeSectionIndex + 1) % sections.length]}</p>
-      {/if}
+      <p>
+        {#if sections.includes(activeTab) && !story}
+          {sections[(activeSectionIndex + 1) % sections.length]}
+        {:else if story}
+          {$nextStoryName}
+        {/if}
+      </p>
     </a>
   </nav>
 {/if}
 
-<Background />
+<Background {story} />
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
@@ -243,7 +252,7 @@
       position: static;
       width: auto;
       justify-content: center;
-      min-height: none;
+      min-height: unset;
       background-color: transparent !important;
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none;
@@ -396,7 +405,7 @@
 
         p {
           color: inherit;
-          max-width: unset;
+          max-width: 7rem;
           @include font(small);
 
           // Fallback if no support

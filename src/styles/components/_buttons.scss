@@ -78,7 +78,7 @@ button:not(.void-btn),
   &:active:not(&:disabled),
   &:focus:not(&:disabled) {
     @include green;
-    box-shadow: 0 0 0.5rem green;
+    box-shadow: 0 0 0.5rem $green;
   }
 }
 
@@ -89,7 +89,7 @@ button:not(.void-btn),
   &:active:not(&:disabled),
   &:focus:not(&:disabled) {
     @include red;
-    box-shadow: 0 0 0.5rem red;
+    box-shadow: 0 0 0.5rem $red;
   }
 }
 
@@ -111,7 +111,18 @@ button:not(.void-btn),
   &:active:not(&:disabled),
   &:focus:not(&:disabled) {
     @include purple(1, bg, bright);
-    box-shadow: 0 0 0.5rem indigo;
+    box-shadow: 0 0 0.5rem $purple;
+  }
+}
+
+.orange-btn:not(.void-btn) {
+  @include orange;
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(&:disabled) {
+    @include orange(1, bg, bright);
+    box-shadow: 0 0 0.5rem $orange;
   }
 }
 
@@ -125,6 +136,18 @@ button:not(.void-btn),
   @include respond-up(small-desktop) {
     min-width: 2.25rem;
     min-height: 2.25rem;
+  }
+}
+
+.min-size-btn {
+  min-width: unset !important;
+  min-height: unset !important;
+  width: 2.75rem;
+  height: 2.75rem;
+
+  @include respond-up(small-desktop) {
+    width: 2.25rem;
+    height: 2.25rem;
   }
 }
 

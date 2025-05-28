@@ -1,8 +1,4 @@
-<script lang="ts">
-  export let className: string = '';
-</script>
-
-<svg class={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
   <path
     fill-rule="evenodd"
     clip-rule="evenodd"
@@ -10,11 +6,12 @@
   />
 </svg>
 
-<style lang="scss">
-  @use '/src/styles/mixins' as *;
-
+<style>
   svg {
     width: 1rem;
     flex: none;
+    fill: inherit;
+    stroke: none;
+    cursor: default;
   }
 </style>

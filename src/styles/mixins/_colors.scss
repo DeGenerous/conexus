@@ -182,7 +182,7 @@ $bright-rose: rgb(230, 175, 175);
   @include cyan;
 }
 
-:global(.blue) {
+:global(.blue-bg) {
   @include blue;
 }
 

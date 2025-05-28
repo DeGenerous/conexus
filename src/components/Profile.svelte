@@ -398,7 +398,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
                 <ul class="flex-row">
                   {#each user.wallets.filter((address) => !address.faux) as wallet, index}
                     <button
-                      class="wallet void-btn flex-row pad-8 round-8 blue dark-txt"
+                      class="wallet void-btn flex-row pad-8 round-8 blue-bg dark-txt"
                       on:click={() => {
                         if (wallet.wallet != user!.main_wallet)
                           walletSelectConfirm(wallet.wallet);
@@ -508,7 +508,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
                 </h5>
               {/if}
               <button
-                class="unsubscribe-button void-btn"
+                class="unsubscribe-button void-btn min-size-btn"
                 on:click={() => {
                   account
                     .unsubscribeNewsletter()
@@ -916,6 +916,8 @@ a11y_no_noninteractive_element_to_interactive_role-->
     }
 
     .unsubscribe-button {
+      width: auto;
+      height: auto;
       @include red(0.5, text);
 
       &:hover,

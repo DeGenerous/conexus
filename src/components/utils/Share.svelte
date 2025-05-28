@@ -1,20 +1,19 @@
-<script>
-  export let url = '';
-  export let onClick = () => {};
+<script lang="ts">
+  import CopySVG from '@components/icons/Copy.svelte';
 
-  let showOptions = false;
+  export let disabled: boolean = false;
 
-  const handleShareClick = () => {
-    showOptions = !showOptions;
-  };
+  let copySvgFocus: Nullable<string | boolean> = null;
+  let copyBtn: HTMLButtonElement;
 
-  const handleOptionClick = async (option) => {
-    showOptions = false;
-    onClick();
+  const copyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    copyBtn.classList.add('copied');
+    setTimeout(() => copyBtn.classList.remove('copied'), 300);
+  }
 
-    url = url || window.location.href;
-
-    const message = `Check out the AI story I'm playing on CoNexus! \n ${url}`;
+  const handleOptionClick = async (option: string) => {
+    const message = `Check out the AI story I'm playing on CoNexus!\n${window.location.href}`;
 
     switch (option) {
       case 'copy':
@@ -34,127 +33,85 @@
   };
 </script>
 
-<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
-<section>
-  <button
-    class="share-button"
-    style={showOptions ? 'justify-content: space-between;' : ''}
-    on:click={handleShareClick}
+<div class="share flex-row gap-8">
+  <p class="white-transparent-txt">SHARE:</p>
+
+  <span
+    class="flex-row pad-inline round-8 shad loading-animation"
+    class:transparent-glowing={!disabled}
   >
-    {#if showOptions}
-      <span>SHARE:</span>
-      <img
-        src="/icons/discord.png"
-        alt="Share"
-        on:click={() => handleOptionClick('discord')}
-        role="button"
-        tabindex="0"
-      />
-      <img
-        src="/icons/twitter.png"
-        alt="Share"
-        on:click={() => handleOptionClick('twitter')}
-        role="button"
-        tabindex="0"
-      />
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="-100 -100 200 200"
-        fill="none"
-        stroke="rgb(51, 226, 230)"
-        stroke-width="15"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        opacity="0.75"
-        on:click={() => handleOptionClick('copy')}
-        role="button"
-        tabindex="0"
-        aria-label="Copy"
-      >
-        <defs>
-          <mask id="copy-checkmark">
-            <rect
-              x="-45"
-              y="-60"
-              width="130"
-              height="150"
-              fill="white"
-              stroke="white"
-            />
-            <path
-              d="
-                M -10 10
-                L 10 40
-                L 50 -20
-              "
-              fill="none"
-              stroke="black"
-            />
-          </mask>
-        </defs>
+    <button
+      class="min-size-btn void-btn flex"
+      on:click={() => handleOptionClick('discord')}
+      aria-label="Share on Discord"
+      {disabled}
+    >
+      <img src="/icons/discord.png" alt="Discord"/>
+    </button>
+    <button
+      class="min-size-btn void-btn flex"
+      on:click={() => handleOptionClick('twitter')}
+      aria-label="Share on X"
+      {disabled}
+    >
+      <img src="/icons/twitter.png" alt="X"/>
+    </button>
+    <button
+      class="min-size-btn void-btn flex"
+      on:click={copyLink}
+      on:pointerover={() => {
+        if (!disabled) copySvgFocus = true;
+      }}
+      on:focus={() => (copySvgFocus = true)}
+      on:pointerout={() => {
+        if (!disabled) copySvgFocus = null;
+      }}
+      on:blur={() => (copySvgFocus = null)}
+      bind:this={copyBtn}
+      aria-label="Copy link"
+      {disabled}
+    >
+      <CopySVG {copySvgFocus} />
+    </button>
+  </span>
+</div>
 
-        <path
-          d="
-            M 40 -67
-            L 40 -90
-            L -90 -90
-            L -90 60
-            L -52 60
-          "
-          fill="none"
-        />
-        <rect
-          x="-45"
-          y="-60"
-          width="130"
-          height="150"
-          mask="url(#copy-checkmark)"
-        />
-      </svg>
-    {:else}
-      SHARE
-    {/if}
-  </button>
-</section>
+<style lang="scss">
+  @use "/src/styles/mixins" as *;
 
-<style>
-  section {
-    position: relative;
-    display: flex;
-  }
+  .share {
+    p {
+      display: none;
+      @include font(caption);
 
-  img,
-  svg {
-    height: 1.5vw;
-    filter: drop-shadow(0 0 0.1vw #010020);
-    margin-inline: 0.5vw;
-    border-radius: 20%;
-  }
-
-  img:hover,
-  img:active,
-  svg:hover,
-  svg:active {
-    transform: scale(1.025) translateY(-0.25vw);
-    filter: drop-shadow(0 0.25vw 0.25vw #010020);
-  }
-
-  span {
-    cursor: pointer;
-    margin-right: 1vw;
-  }
-
-  @media only screen and (max-width: 600px) {
-    button {
-      width: 80vw;
-      font-size: 1.5em;
-      line-height: 1.5em;
-      padding: 0.25em 0.5em;
+      @include respond-up(tablet) {
+        display: block;
+      }
     }
 
-    img,
-    svg {
-      height: 1.25em;
+    span {
+      min-height: 2.5rem;
+      @include cyan(0.1);
+
+      button {
+        border-radius: 20%;
+        width: 1.5rem;
+
+        img {
+          border-radius: inherit;
+        }
+
+        &:hover:not(&:disabled),
+        &:active:not(&:disabled),
+        &:focus:not(&:disabled) {
+          @include scale(0.9);
+          @include bright;
+        }
+
+        &:disabled {
+          opacity: 0.25;
+        }
+      }
     }
   }
 </style>

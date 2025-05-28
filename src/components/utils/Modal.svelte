@@ -55,4 +55,8 @@
   dialog > div {
     padding-top: 2rem;
   }
+
+  dialog > div > span {
+    flex-wrap: wrap;
+  }
 </style>

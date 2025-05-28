@@ -54,14 +54,18 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background-image: linear-gradient(
-      to right,
-      rgba(56, 117, 250, 0.25),
-      rgba(56, 117, 250, 0.5),
-      rgba(56, 117, 250, 0.25)
-    );
     border-radius: 1rem;
     cursor: pointer;
+    @include light-blue(0.1);
+
+    @include respond-up(tablet) {
+      background-image: linear-gradient(
+        to right,
+        rgba(56, 117, 250, 0.25),
+        rgba(56, 117, 250, 0.5),
+        rgba(56, 117, 250, 0.25)
+      );
+    }
   }
 
   &::-webkit-scrollbar-thumb:hover,
@@ -166,7 +170,7 @@
     @include box-shadow(deep);
   }
 
-  @include respond-up(laargest) {
+  @include respond-up(largest) {
     width: 10vw;
   }
 
@@ -206,6 +210,7 @@
         @include orange(1, text, bright);
 
         svg {
+          cursor: inherit;
           fill: $bright-orange;
         }
       }

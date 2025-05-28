@@ -1,6 +1,6 @@
 <script lang="ts">
-  export let copySvgFocus: Nullable<string> = null;
-  export let data: string = '';
+  export let copySvgFocus: Nullable<string | boolean> = null;
+  export let data: string | boolean = true;
 </script>
 
 <svg

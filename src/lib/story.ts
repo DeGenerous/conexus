@@ -105,8 +105,8 @@ export class CoNexusGame extends GameAPI {
           const nftLinks = errorMessage[1];
 
           modalContent.set(`
-            <h2>${errorTitle}</h2>
-            <h3>${nftLinks}</h3>
+            <h4>${errorTitle}</h4>
+            <p>${nftLinks}</p>
           `);
           showModal.set(true);
         } else if (error.message.match('you have run out of credits to play')) {
@@ -116,8 +116,8 @@ export class CoNexusGame extends GameAPI {
           const outOfCredits = errorMessage[1];
 
           modalContent.set(`
-            <h2>${errorTitle}</h2>
-            <h3>${outOfCredits.charAt(0).toUpperCase() + outOfCredits.slice(1)}</h3>
+            <h4>${errorTitle}</h4>
+            <p>${outOfCredits.charAt(0).toUpperCase() + outOfCredits.slice(1)}</p>
           `);
           showModal.set(true);
         } else api_error(error);

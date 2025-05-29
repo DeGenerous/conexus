@@ -64,24 +64,28 @@
 
 {#if showBanner}
   <div class="non-transparent-container">
-    <h5 class="white-txt">We use cookies to provide you with a better service.</h5>
+    <h5 class="white-txt">
+      We use cookies to provide you with a better service.
+    </h5>
     <p class="white-soft-txt">
-      By continuing to use
-      this website, you consent to the use of cookies as described in our
+      By continuing to use this website, you consent to the use of cookies as
+      described in our
       <a
         href="https://docs.google.com/document/d/1kkIY-86y2LtoM4IXzp80E5H7Op1YSezw8nPBG1AQ2uo/edit?usp=sharing"
         target="_blank">Privacy Policy</a
       >.
     </p>
     <div class="flex-row">
-      <button class="green-btn" on:click={() => acceptCookies(true)}>Accept all</button>
+      <button class="green-btn" on:click={() => acceptCookies(true)}
+        >Accept all</button
+      >
       <button on:click={() => acceptCookies(false)}>Essential only</button>
     </div>
   </div>
 {/if}
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   .non-transparent-container {
     width: 90%;

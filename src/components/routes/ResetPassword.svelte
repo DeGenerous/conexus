@@ -99,7 +99,8 @@
 
   <button
     type="submit"
-    on:click|preventDefault={() => acct.resetPassword({ email, password, token })}
+    on:click|preventDefault={() =>
+      acct.resetPassword({ email, password, token })}
     disabled={!validation}
   >
     Reset Password

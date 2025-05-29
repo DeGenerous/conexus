@@ -10,13 +10,12 @@
 
   onMount(() => {
     if (width > 768) $bgPicture = "url('/conexusBG.avif')";
-  })
+  });
 
   // Back to default picture if null
   $: if ($bgPicture === null)
-    $bgPicture = width < 768
-      ? "url('/mobileBG.webp')"
-      : "url('/conexusBG.avif')";
+    $bgPicture =
+      width < 768 ? "url('/mobileBG.webp')" : "url('/conexusBG.avif')";
 
   // Default story picture if entered story page
   $: if (story && bg) $bgPicture = "url('/defaultBG.avif')";
@@ -29,12 +28,12 @@
 <div
   id="background"
   style:top={`max(-${scroll / 50}vh, -100vh)`}
-  style:opacity={story ? "0.25" : "1"}
+  style:opacity={story ? '0.25' : '1'}
   bind:this={bg}
 ></div>
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   #background {
     position: fixed;

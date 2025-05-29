@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let text: string = "Discord";
+  export let text: string = 'Discord';
 </script>
 
 <a
@@ -23,7 +23,6 @@
     &:hover,
     &:active,
     &:focus {
-
       img {
         @include scale-up(soft);
         @include box-shadow;

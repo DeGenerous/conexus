@@ -10,7 +10,7 @@
     navigator.clipboard.writeText(window.location.href);
     copyBtn.classList.add('copied');
     setTimeout(() => copyBtn.classList.remove('copied'), 300);
-  }
+  };
 
   const handleOptionClick = async (option: string) => {
     const message = `Check out the AI story I'm playing on CoNexus!\n${window.location.href}`;
@@ -46,7 +46,7 @@
       aria-label="Share on Discord"
       {disabled}
     >
-      <img src="/icons/discord.png" alt="Discord"/>
+      <img src="/icons/discord.png" alt="Discord" />
     </button>
     <button
       class="min-size-btn void-btn flex"
@@ -54,7 +54,7 @@
       aria-label="Share on X"
       {disabled}
     >
-      <img src="/icons/twitter.png" alt="X"/>
+      <img src="/icons/twitter.png" alt="X" />
     </button>
     <button
       class="min-size-btn void-btn flex"
@@ -77,7 +77,7 @@
 </div>
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   .share {
     p {

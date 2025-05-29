@@ -25,14 +25,17 @@
     stroke-width="15"
     stroke-linecap="round"
     stroke-linejoin="round"
-    >
-    <polygon points="-26 -36 -26 36 36 0" transform={playSvgFocus ? 'scale(1.5)' : ''}/>
-    <circle r={playSvgFocus ? '0' : '90'} opacity={playSvgFocus ? '0' : '1'}/>
+  >
+    <polygon
+      points="-26 -36 -26 36 36 0"
+      transform={playSvgFocus ? 'scale(1.5)' : ''}
+    />
+    <circle r={playSvgFocus ? '0' : '90'} opacity={playSvgFocus ? '0' : '1'} />
   </svg>
 </button>
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   button {
     fill: none;

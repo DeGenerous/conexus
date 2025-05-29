@@ -1,7 +1,7 @@
 <script lang="ts">
   export let disabled: boolean = false;
   export let onClick = () => {};
-  
+
   let deleteSvgFocus: boolean = false;
 </script>
 
@@ -24,13 +24,19 @@
     stroke-width="15"
     stroke-linecap="round"
   >
-    <path d="M -35 -35 L 35 35 M -35 35 L 35 -35" transform={deleteSvgFocus ? 'scale(1.5)' : ''}/>
-    <circle r={deleteSvgFocus ? '0' : '90'} opacity={deleteSvgFocus ? '0' : '1'}/>
+    <path
+      d="M -35 -35 L 35 35 M -35 35 L 35 -35"
+      transform={deleteSvgFocus ? 'scale(1.5)' : ''}
+    />
+    <circle
+      r={deleteSvgFocus ? '0' : '90'}
+      opacity={deleteSvgFocus ? '0' : '1'}
+    />
   </svg>
 </button>
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   button {
     fill: none;

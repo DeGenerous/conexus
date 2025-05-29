@@ -21,7 +21,12 @@
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
-  import { prevStoryLink, prevStoryName, nextStoryLink, nextStoryName } from '@stores/navigation';
+  import {
+    prevStoryLink,
+    prevStoryName,
+    nextStoryLink,
+    nextStoryName,
+  } from '@stores/navigation';
   import { checkUserState } from '@utils/route-guard';
   import { GetCache, SECTION_CATEGORIES_KEY } from '@constants/cache';
   import detectIOS from '@utils/ios-device';
@@ -100,7 +105,7 @@
   const convertDate = (date) => {
     if (!date) return 'CORRUPTED';
     date = new Date(date);
-    console.log(date)
+    console.log(date);
 
     let minutes = date.getMinutes();
     let hours = date.getHours();
@@ -109,13 +114,13 @@
     let month = date.getMonth() + 1;
     let year = date.getFullYear();
 
-    if (minutes < 10) minutes = "0" + minutes;
-    if (hours < 10) hours = "0" + hours;
-    if (day < 10) day = "0" + day;
-    if (month < 10) month = "0" + month;
+    if (minutes < 10) minutes = '0' + minutes;
+    if (hours < 10) hours = '0' + hours;
+    if (day < 10) day = '0' + day;
+    if (month < 10) month = '0' + month;
 
-    return `${day}.${month}.${String(year).slice(2)} ${hours}:${minutes}`
-  }
+    return `${day}.${month}.${String(year).slice(2)} ${hours}:${minutes}`;
+  };
 </script>
 
 <svelte:window bind:scrollY={scroll} />
@@ -128,7 +133,9 @@
         <span class="fake-img loading-animation round-8"></span>
 
         <div class="flex">
-          <span class="loading-animation default-genres genres round-8 pad-8 pad-inline shad"></span>
+          <span
+            class="loading-animation default-genres genres round-8 pad-8 pad-inline shad"
+          ></span>
 
           <span class="buttons flex-row">
             <Share disabled={true} />
@@ -137,24 +144,32 @@
         </div>
       </section>
     </div>
-
   {:then topic: TopicThumbnail}
     {@html (() => {
       if (!categoryTopics.length) return;
-      $prevStoryLink =
-      `/sections/${section}/${categoryTopics[prevStoryIndex].topic_name}?id=${categoryTopics[
-          prevStoryIndex].topic_id}`;
+      $prevStoryLink = `/sections/${section}/${categoryTopics[prevStoryIndex].topic_name}?id=${
+        categoryTopics[prevStoryIndex].topic_id
+      }`;
       $prevStoryName = categoryTopics[prevStoryIndex].topic_name;
-      $nextStoryLink =
-        `/sections/${section}/${categoryTopics[(activeStoryIndex + 1) % categoryTopics.length
-        ].topic_name}?id=${categoryTopics[(activeStoryIndex + 1) % categoryTopics.length].topic_id}`;
-      $nextStoryName = categoryTopics[(activeStoryIndex + 1) % categoryTopics.length].topic_name;
+      $nextStoryLink = `/sections/${section}/${
+        categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
+          .topic_name
+      }?id=${categoryTopics[(activeStoryIndex + 1) % categoryTopics.length].topic_id}`;
+      $nextStoryName =
+        categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
+          .topic_name;
     })()}
 
-    <div class="story-wrapper flex" style:cursor={$loading ? "progress" : ""}>
+    <div class="story-wrapper flex" style:cursor={$loading ? 'progress' : ''}>
       <section class="story container">
         {#if topic?.video_file_id}
-          <video class="round-8 transparent-glowing" controls autoplay loop muted>
+          <video
+            class="round-8 transparent-glowing"
+            controls
+            autoplay
+            loop
+            muted
+          >
             <source src={serveUrl(topic?.video_file_id)} type="video/mp4" />
             <track kind="captions" />
           </video>
@@ -173,7 +188,7 @@
               <p class="text-glowing">{topic.genres.toUpperCase()}</p>
             </span>
           {/if}
-    
+
           <span class="buttons flex-row">
             {#if $loading}
               <LoadingSVG />
@@ -193,19 +208,28 @@
 
       {#await game.storyContinuables(story_name!) then continuables: ContinuableStory[]}
         {#if continuables.length > 0 && !noUnfinishedStoriesLeft}
-          <section class="unfinished-stories transparent-container vert-scrollbar">
+          <section
+            class="unfinished-stories transparent-container vert-scrollbar"
+          >
             <h5 class="text-glowing">
               Continue Shaping: {continuables.length - deletedStories.length}
             </h5>
             {#each continuables as continuable}
               {#if !deletedStories.includes(continuable.story_id)}
                 <div class="flex-row pad-8 round" role="button" tabindex="0">
-                  <DeleteSVG disabled={$loading} onClick={() => (openModal(continuable))} />
+                  <DeleteSVG
+                    disabled={$loading}
+                    onClick={() => openModal(continuable)}
+                  />
                   <span class="flex">
                     <p>{convertDate(continuable.created)}</p>
-                    <p class="story-id">{continuable.story_id.split("-")[0]}</p>
+                    <p class="story-id">{continuable.story_id.split('-')[0]}</p>
                   </span>
-                  <PlaySVG disabled={$loading} onClick={() => (game.continueGame(continuable, handleSetMedia))} />
+                  <PlaySVG
+                    disabled={$loading}
+                    onClick={() =>
+                      game.continueGame(continuable, handleSetMedia)}
+                  />
                 </div>
               {/if}
             {/each}
@@ -267,7 +291,7 @@
 {/if}
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   .story-wrapper {
     .story {
@@ -327,7 +351,7 @@
 
           .buttons {
             justify-content: flex-end;
-            
+
             * {
               flex: none;
             }
@@ -419,7 +443,7 @@
     h4 {
       @include dark-red(1, text);
     }
-    
+
     span {
       flex-wrap: wrap;
       @include dark-red(0.5);

@@ -5,7 +5,9 @@
 </script>
 
 {#if section == 'Community Picks' || section == 'Dischordian Saga'}
-  <section class="flex pad mar-inline round blur shad-inset-glow transparent-glowing">
+  <section
+    class="flex pad mar-inline round blur shad-inset-glow transparent-glowing"
+  >
     {#if section == 'Community Picks'}
       <div class="flex-row">
         <h5>Join the community:</h5>

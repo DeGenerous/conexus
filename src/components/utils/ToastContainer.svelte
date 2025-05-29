@@ -5,7 +5,7 @@
 
 <div class="flex pad-inline">
   {#each $toastStore as { id, message, type, duration }}
-    <Toast {message} {type} {duration} onClose={() => (toastStore.close(id))} />
+    <Toast {message} {type} {duration} onClose={() => toastStore.close(id)} />
   {/each}
 </div>
 

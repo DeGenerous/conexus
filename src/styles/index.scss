@@ -191,7 +191,7 @@ html {
     animation: dark-glowing 10s ease-in-out infinite;
     margin-inline: auto;
   }
-
+  
   .transparent-container {
     @extend .container;
     animation: transparent-glowing 10s ease-in-out infinite;
@@ -200,6 +200,10 @@ html {
   .non-transparent-container {
     @extend .container;
     animation: dark-glowing-opaque 10s ease-in-out infinite;
+  }
+
+  .wide-container {
+    width: clamp(250px, 95%, 70rem);
   }
 
   .top-left-icon,

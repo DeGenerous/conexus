@@ -8,6 +8,7 @@
 
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
+  import SelectorSVG from '@components/icons/Selector.svelte';
 
   export let story_name: string;
 
@@ -27,9 +28,9 @@
         fullscreen.set(!!document.fullscreenElement);
     };
 
-    if (width <= 600)
-      imageWrapper.style.height = fullWidthImage ? 'auto' : '512px';
-    else imageWrapper.style.height = 'auto';
+    // if (width <= 600)
+    //   imageWrapper.style.height = fullWidthImage ? 'auto' : '512px';
+    // else imageWrapper.style.height = 'auto';
   });
 
   $: if ($fullscreen) document.documentElement.requestFullscreen();
@@ -42,7 +43,14 @@
   const storyTitle: string = story_name.trim();
 
   let activeOptionNumber: number = 0;
-  let pointerOverOption: boolean = false;
+  let focusedOption: Nullable<number> = null;
+
+  const blurActiveBtn = () => {
+    if (document.activeElement!.tagName == 'BUTTON') {
+      const activeOption = document.activeElement as HTMLButtonElement;
+      activeOption.blur();
+    }
+  }
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.repeat) return;
@@ -55,7 +63,7 @@
         if ($loading) return;
         if (step.step !== 1) {
           $story?.loadGameStep(step.step - 1);
-          handleSelectorSvg(activeOptionNumber, 'blur');
+          blurActiveBtn();
           activeOptionNumber = 0;
         } else return;
         break;
@@ -64,54 +72,48 @@
         if ($loading) return;
         if (step.step !== $story?.maxStep) {
           $story?.loadGameStep(step.step + 1);
-          handleSelectorSvg(activeOptionNumber, 'blur');
+          blurActiveBtn();
           activeOptionNumber = 0;
         } else return;
         break;
       }
       case 'ArrowUp': {
+        if (step.step !== $story?.maxStep || $loading) return;
         event.preventDefault();
-        if (step.step !== $story?.maxStep || $loading || pointerOverOption)
-          return;
-        handleSelectorSvg(activeOptionNumber, 'blur');
         if ($story?.step_data?.end) activeOptionNumber = 0;
         else if (activeOptionNumber !== 0) activeOptionNumber--;
         const activeOption = document.getElementById(
           `option-${activeOptionNumber}`,
         );
-        handleSelectorSvg(activeOptionNumber, 'focus');
         activeOption?.focus();
         break;
       }
       case 'ArrowDown': {
+        if (step.step !== $story?.maxStep || $loading) return;
         event.preventDefault();
-        if (step.step !== $story?.maxStep || $loading || pointerOverOption)
-          return;
-        handleSelectorSvg(activeOptionNumber, 'blur');
         if ($story?.step_data?.end) activeOptionNumber = 0;
         else if (activeOptionNumber !== step.options.length - 1)
           activeOptionNumber++;
         const activeOption = document.getElementById(
           `option-${activeOptionNumber}`,
         );
-        handleSelectorSvg(activeOptionNumber, 'focus');
         activeOption?.focus();
         break;
       }
-      case '-': {
-        event.preventDefault();
-        if (width < 1280) return;
-        let stepZoom = zoom - 0.05;
-        zoom = setZoom(stepZoom);
-        break;
-      }
-      case '=': {
-        event.preventDefault();
-        if (width < 1280) return;
-        let stepZoom = zoom + 0.05;
-        zoom = setZoom(stepZoom);
-        break;
-      }
+      // case '-': {
+      //   event.preventDefault();
+      //   if (width < 1280) return;
+      //   let stepZoom = zoom - 0.05;
+      //   zoom = setZoom(stepZoom);
+      //   break;
+      // }
+      // case '=': {
+      //   event.preventDefault();
+      //   if (width < 1280) return;
+      //   let stepZoom = zoom + 0.05;
+      //   zoom = setZoom(stepZoom);
+      //   break;
+      // }
     }
   };
 
@@ -120,51 +122,51 @@
   let pictureKeyframe: KeyframeEffect;
   let pictureAnimation: Animation;
 
-  $: if (step.image && step.image_type !== 'url') {
-    pictureAnimation.play();
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  }
+  // $: if (step.image && step.image_type !== 'url') {
+  //   pictureAnimation.play();
+  //   window.scrollTo({
+  //     top: 0,
+  //     behavior: 'smooth',
+  //   });
+  // }
 
   onMount(() => {
-    const storedZoom = localStorage.getItem('step-zoom');
-    if (storedZoom) zoom = setZoom(Number(storedZoom));
+    // const storedZoom = localStorage.getItem('step-zoom');
+    // if (storedZoom) zoom = setZoom(Number(storedZoom));
 
-    pictureKeyframe = new KeyframeEffect(
-      imageWrapper,
-      [
-        { transform: 'scale(1)' },
-        { transform: 'scale(0.95)' },
-        { transform: 'scale(1.05)' },
-        { transform: 'scale(1)' },
-      ],
-      {
-        duration: 600,
-        easing: 'ease-in-out',
-      },
-    );
+    // pictureKeyframe = new KeyframeEffect(
+    //   imageWrapper,
+    //   [
+    //     { transform: 'scale(1)' },
+    //     { transform: 'scale(0.95)' },
+    //     { transform: 'scale(1.05)' },
+    //     { transform: 'scale(1)' },
+    //   ],
+    //   {
+    //     duration: 600,
+    //     easing: 'ease-in-out',
+    //   },
+    // );
 
-    pictureAnimation = new Animation(pictureKeyframe, document.timeline);
+    // pictureAnimation = new Animation(pictureKeyframe, document.timeline);
   });
 
   const handleZoomWheel = (event: WheelEvent) => {
     if (width < 1280) return;
     const { deltaY, ctrlKey, metaKey } = event;
     if (!(ctrlKey || metaKey)) return;
-    event.preventDefault();
-    let stepZoom: number;
-    stepZoom = deltaY > 0 ? zoom - 0.05 : zoom + 0.05;
-    zoom = setZoom(stepZoom);
+    // event.preventDefault();
+    // let stepZoom: number;
+    // stepZoom = deltaY > 0 ? zoom - 0.05 : zoom + 0.05;
+    // zoom = setZoom(stepZoom);
   };
 
-  function setZoom(zoom: number): number {
-    const finalZoom =
-      zoom < 0.3 ? 0.3 : zoom > width / 1280 ? width / 1280 : zoom;
-    localStorage.setItem('step-zoom', finalZoom.toString());
-    return finalZoom;
-  }
+  // function setZoom(zoom: number): number {
+  //   const finalZoom =
+  //     zoom < 0.3 ? 0.3 : zoom > width / 1280 ? width / 1280 : zoom;
+  //   localStorage.setItem('step-zoom', finalZoom.toString());
+  //   return finalZoom;
+  // }
 
   // SVG Icons
   let quitSvgWindowFocus: boolean = false;
@@ -179,15 +181,15 @@
   let fullscreenSvgFullscreenFocus: boolean = false;
 
   const handleSelectorSvg = (id: number, state: 'focus' | 'blur') => {
-    if ($story?.step_data?.end) return;
-    const selectorSvg = document.getElementById(`selector-${id}`);
-    if (state == 'focus') {
-      selectorSvg!.style.transform = 'scaleX(1.5)';
-      selectorSvg!.style.opacity = '1';
-    } else if (state == 'blur') {
-      selectorSvg!.style.transform = 'none';
-      selectorSvg!.style.opacity = '0.75';
-    }
+    // if ($story?.step_data?.end) return;
+    // const selectorSvg = document.getElementById(`selector-${id}`);
+    // if (state == 'focus') {
+    //   selectorSvg!.style.transform = 'scaleX(1.5)';
+    //   selectorSvg!.style.opacity = '1';
+    // } else if (state == 'blur') {
+    //   selectorSvg!.style.transform = 'none';
+    //   selectorSvg!.style.opacity = '0.75';
+    // }
   };
 
   // Light Theme
@@ -247,7 +249,7 @@
 />
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<div class="zoom-slider">
+<!-- <div class="zoom-slider">
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"
@@ -298,136 +300,83 @@
     <line x1="-55" y1="-20" x2="15" y2="-20" />
     <line x1="-20" y1="-55" x2="-20" y2="15" />
   </svg>
-</div>
+</div> -->
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions a11y-no-static-element-interactions -->
-<section class="step-wrapper" style:font-family={stepFont} style:zoom>
-  <div
-    class="image-wrapper"
-    bind:this={imageWrapper}
-    on:click={() => (fullWidthImage = !fullWidthImage)}
-  >
-    <ImageDisplay
-      bind:image={step.image}
-      bind:image_type={step.image_type}
-      bind:width
-      bind:fullWidthImage
-    />
-  </div>
+<section class="step-wrapper flex" style:font-family={stepFont}>
+  <ImageDisplay
+    bind:image={step.image}
+    bind:image_type={step.image_type}
+    bind:fullWidthImage
+  />
 
   {#if step.title}
-    <h3 class="step-title">{step.title}</h3>
+    <h4>{step.title}</h4>
   {/if}
 
-  <article class="story-text" style={textWrapperStyling}>
-    {#each step.story.split('\n') as paragraph}
-      <p>{paragraph}</p>
-    {/each}
-  </article>
+  <article style={textWrapperStyling}>{step.story}</article>
 
   {#if $story?.step_data?.end}
     <hr />
 
-    <h2>Story Summary</h2>
+    <h4>Story Summary</h4>
 
-    <article class="summary-text" style={textWrapperStyling}>
-      {step.summary}
-    </article>
+    <article style={textWrapperStyling}>{step.summary}</article>
 
-    <h2>CoNexus identified your trait as: <strong>{step.trait}</strong></h2>
+    <h4>CoNexus identified your trait as:
+      <strong class="text-glowing">{step.trait}</strong>
+    </h4>
 
     {#if step.trait_description}
-      <article class="summary-text" style={textWrapperStyling}>
-        {step.trait_description}
-      </article>
+      <article style={textWrapperStyling}>{step.trait_description}</article>
     {/if}
 
-    <div class="options-container blur">
+    <div class="options transparent-container">
       <button
         id="option-0"
-        class="option menu-option"
+        class="void-btn menu-option"
         on:click={() => window.open('/', '_self')}>Return to main menu</button
       >
     </div>
   {:else}
-    <div class="options-container blur">
+    <div class="options transparent-container wide-container">
       {#each step.options as option, i}
         <button
           id="option-{i}"
-          class="option {step.choice
-            ? step.choice - 1 === i
-              ? 'active-option'
-              : ''
-            : ''}"
-          style="font-family: {stepFont}"
+          class="void-btn flex-row gap-8"
+          class:active-option={step.choice && step.choice - 1 === i}
+          style:font-family={stepFont}
           disabled={$loading || step.step !== $story?.maxStep}
           on:click={() => {
             $story?.nextStep(i + 1);
-            if (width < 600) return;
-            handleSelectorSvg(i, 'blur');
             if (activeOptionNumber !== 0) activeOptionNumber = 0;
           }}
           on:pointerover={() => {
-            if (width < 600) return;
             if (!$loading && step.step == $story?.maxStep) {
-              handleSelectorSvg(i, 'focus');
-              pointerOverOption = true;
+              focusedOption = i;
             }
-            if (document.activeElement!.tagName == 'BUTTON') {
-              const activeOption = document.activeElement as HTMLButtonElement;
-              activeOption.blur();
-              handleSelectorSvg(activeOptionNumber, 'blur');
-            }
+            blurActiveBtn();
           }}
           on:pointerout={() => {
-            if (width < 600) return;
             if (!$loading && step.step == $story?.maxStep) {
-              handleSelectorSvg(i, 'blur');
-              pointerOverOption = false;
+              focusedOption = null;
             }
           }}
+          on:focus={() => (focusedOption = i)}
+          on:blur={() => (focusedOption = null)}
         >
-          {#if width > 600}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="-100 -100 200 200"
-              class="option-selector-svg"
-              fill="rgb(51, 226, 2305)"
-              stroke="rgb(51, 226, 230)"
-              stroke-width="20"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <polygon
-                id="selector-{i}"
-                style="
-                  transform: {$loading
-                  ? 'none'
-                  : step.choice && step.choice - 1 === i
-                    ? 'scaleX(1.5)'
-                    : 'none'} !important;
-                  opacity: {$loading
-                  ? '0.75'
-                  : step.choice && step.choice - 1 === i
-                    ? '1'
-                    : '0.75'} !important;
-                "
-                points="
-                  -40 -90 -40 90 50 0
-                "
-                opacity="0.75"
-              />
-            </svg>
-          {/if}
+          <SelectorSVG
+            focused={step.choice && step.choice - 1 === i || focusedOption === i}
+          />
           {option}
         </button>
       {/each}
     </div>
   {/if}
 
-  <section class="controls-container">
+  <!-- <section class="controls-container">
     {#if width > 600}
-      <!-- PC NORMAL VIEW -->
+
 
       {#if !$fullscreen}
         <div class="control-bar blur">
@@ -698,7 +647,7 @@
           </button>
         </div>
 
-        <!-- PC FULLSCREEN VIEW -->
+
       {:else}
         <div class="control-bar-fullscreen">
           <div class="story-info-container">
@@ -904,7 +853,7 @@
         </div>
       {/if}
 
-      <!-- MOBILE VIEW -->
+
     {:else}
       <div class="control-bar blur">
         <div class="mobile-controls">
@@ -1187,22 +1136,62 @@
       </div>
     {/if}
     <h3>{storyTitle}</h3>
-  {/if}
+  {/if} -->
 </section>
 
-<style>
-  .step-wrapper {
-    font-family: sans-serif;
-    font-weight: bold;
-    word-spacing: 0.4em;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 2vw;
-    padding: 2vw;
-  }
+<style lang="scss">
+  @use "/src/styles/mixins" as *;
 
+  .step-wrapper {
+    margin-top: -2rem;
+
+    * {
+      font-family: inherit;
+      font-weight: bold;
+      word-spacing: 0.3em;
+    }
+
+    h4 {
+      @include white-txt;
+    }
+
+    article {
+      width: clamp(250px, 95%, 70rem);
+      padding-inline: 1rem;
+      text-align: left;
+      white-space: pre-wrap;
+      @include white-txt(soft);
+      @include text-shadow;
+    }
+
+    .options {
+      align-items: flex-start;
+      
+      button {
+        justify-content: flex-start;
+        fill: $soft-cyan;
+        @include cyan(0.75, text);
+
+        &:hover,
+        &:active,
+        &:focus {
+          fill: $cyan;
+          @include cyan(1, text);
+
+          svg {
+            transform: scaleX(1.5) !important;
+          }
+        }
+
+        &.active-option {
+          @extend :global(.text-glowing);
+        }
+      }
+    }
+  }
+</style>
+
+<!-- <style>
   .zoom-slider {
     position: fixed;
     top: 45vh;
@@ -1238,73 +1227,6 @@
   .zoom-slider:hover *,
   .zoom-slider:active * {
     opacity: 1 !important;
-  }
-
-  .image-wrapper {
-    position: relative;
-    width: 100%;
-    border-radius: 1em;
-    box-shadow: 0 0 0.5vw #010020;
-    -webkit-backdrop-filter: blur(1em);
-    backdrop-filter: blur(1em);
-    background-color: rgba(51, 226, 230, 0.05);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .step-title {
-    color: rgba(51, 226, 230, 0.75);
-  }
-
-  .story-text,
-  .summary-text {
-    width: 100%;
-    padding-inline: 1vw;
-    font-size: 1.25vw;
-    line-height: 2.5vw;
-    text-shadow: 0 0.25vw 0.25vw #010020;
-    display: flex;
-    flex-flow: column nowrap;
-    gap: 1vw;
-  }
-
-  h2 {
-    color: rgba(51, 226, 230, 0.75);
-  }
-
-  strong {
-    color: rgb(51, 226, 230);
-    text-shadow: 0 0 0.1vw rgb(51, 226, 230);
-  }
-
-  .options-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 1vw;
-    border-radius: 1em;
-    background-color: rgba(51, 226, 230, 0.05);
-    box-shadow:
-      inset 0 0 0.5vw rgba(51, 226, 230, 0.25),
-      0 0 0.5vw #010020;
-  }
-
-  .option {
-    width: 100%;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 0.75em;
-    text-align: start;
-    font-weight: bold;
-    font-size: 1.5vw;
-    line-height: 3vw;
-    color: rgba(51, 226, 230, 0.75);
-    background-color: rgba(0, 0, 0, 0);
-    border: none;
   }
 
   .active-option {
@@ -1721,4 +1643,4 @@
       zoom: 1 !important;
     }
   }
-</style>
+</style> -->

@@ -277,13 +277,13 @@
       </section>
     {/if}
 
-    <p class="description pad mar-auto white-soft-txt text-shad">
+    <p class="description pad mar-auto soft-white-txt text-shad">
       {topic.description}
     </p>
   {:catch}
     <div class="container">
       <h4 class="red-txt">Failed to fetch story...</h4>
-      <p class="white-soft-txt">Please try again or contact support.</p>
+      <p class="soft-white-txt">Please try again or contact support.</p>
     </div>
   {/await}
 {:else}

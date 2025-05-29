@@ -34,7 +34,7 @@
 </script>
 
 <div class="share flex-row gap-8">
-  <p class="white-transparent-txt">SHARE:</p>
+  <p class="transparent-white-txt">SHARE:</p>
 
   <span
     class="flex-row pad-inline round-8 shad loading-animation"

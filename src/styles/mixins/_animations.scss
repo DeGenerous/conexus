@@ -169,6 +169,21 @@
   }
 }
 
+@keyframes pulse-animation {
+  0% {
+    opacity: 0.1;
+    filter: brightness(50%);
+  }
+  50% {
+    opacity: 0.9;
+    filter: brightness(100%);
+  }
+  100% {
+    opacity: 0.1;
+    filter: brightness(50%);
+  }
+}
+
 // General definitions
 
 :global(.loading-animation) {
@@ -218,25 +233,29 @@
 }
 
 :global(.button-glowing) {
-  animation: button-glowing 12s ease-in-out infinite;
+  animation: button-glowing 12s infinite;
 }
 
 :global(.text-glowing) {
-  animation: text-glowing 12s ease-in-out infinite;
+  animation: text-glowing 12s infinite;
 }
 
 :global(.dark-glowing) {
-  animation: dark-glowing 12s ease-in-out infinite;
+  animation: dark-glowing 12s infinite;
 }
 
 :global(.dark-glowing-opaque) {
-  animation: dark-glowing-opaque 12s ease-in-out infinite;
+  animation: dark-glowing-opaque 12s infinite;
 }
 
 :global(.transparent-glowing) {
-  animation: transparent-glowing 12s ease-in-out infinite;
+  animation: transparent-glowing 12s infinite;
 }
 
 :global(.rotate-animation) {
-  animation: rotate-animation 2s linear infinite;
+  animation: rotate-animation 2s infinite;
+}
+
+:global(.pulse-animation) {
+  animation: pulse-animation 6s infinite;
 }

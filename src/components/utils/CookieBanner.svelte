@@ -67,7 +67,7 @@
     <h5 class="white-txt">
       We use cookies to provide you with a better service.
     </h5>
-    <p class="white-soft-txt">
+    <p class="soft-white-txt">
       By continuing to use this website, you consent to the use of cookies as
       described in our
       <a

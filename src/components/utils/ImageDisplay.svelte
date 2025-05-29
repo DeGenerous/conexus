@@ -1,7 +1,6 @@
 <script lang="ts">
   export let image: string | undefined;
   export let image_type: string = 'url';
-  export let width: number;
   export let fullWidthImage: boolean = false;
 
   let isLoading = true;
@@ -33,55 +32,61 @@
   }
 </script>
 
-{#if isLoading}
-  <img class="image loading-image" src="/icons/loading.png" alt="Loading..." />
-  {#if width <= 600}
-    <p class="click-hint" style:display={fullWidthImage ? 'none' : 'block'}>
-      Click to change image size
-    </p>
+<button
+  class="void-btn transparent-container wide-container"
+  on:click={() => (fullWidthImage = !fullWidthImage)}
+  class:slim={!fullWidthImage}
+>
+  {#if isLoading}
+    <span class="pulse-animation">
+      <img src="/icons/loading.png" alt="Loading..." />
+      <p>Click to change image size</p>
+    </span>
+  {:else}
+    <img
+      src={imageSrc}
+      alt=""
+      on:load={handleImageLoad}
+      on:error={handleImageError}
+    />
   {/if}
-{/if}
+</button>
 
-<img
-  class="image"
-  src={imageSrc}
-  alt=""
-  on:load={handleImageLoad}
-  on:error={handleImageError}
-  style={isLoading ? 'display: none;' : 'display: block;'}
-/>
+<style lang="scss">
+  @use "/src/styles/mixins" as *;
 
-<style>
-  .image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 1em;
-  }
+  button {
+    padding: 0 !important;
 
-  .loading-image {
-    object-fit: contain;
-    animation: pulse 5s linear infinite;
-  }
+    span {
+      position: relative;
+      width: 100%;
+      height: 100%;
 
-  @keyframes pulse {
-    0% {
-      opacity: 0.2;
+      p {
+        position: absolute;
+        width: 100%;
+        bottom: 1rem;
+      }
     }
-    50% {
-      opacity: 0.8;
+
+    img {
+      height: 100%;
+      border-radius: inherit;
     }
-    100% {
-      opacity: 0.2;
+
+    &.slim {
+      height: 32rem;
+    }
+
+    @include respond-up(tablet) {
+      height: auto !important;
+      cursor: default;
+
+      p {
+        display: none;
+      }
     }
   }
 
-  .click-hint {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    bottom: 1em;
-    color: rgb(51, 226, 230);
-    animation: pulse 5s linear infinite;
-  }
 </style>

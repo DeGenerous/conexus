@@ -2,7 +2,7 @@
   import { bgPicture } from '@stores/background.ts';
   import { onMount } from 'svelte';
 
-  export let story: Nullable<string> = null;
+  export let storyName: Nullable<string> = null;
 
   let width: number;
   let scroll: number;
@@ -18,7 +18,7 @@
       width < 768 ? "url('/mobileBG.webp')" : "url('/conexusBG.avif')";
 
   // Default story picture if entered story page
-  $: if (story && bg) $bgPicture = "url('/defaultBG.avif')";
+  $: if (storyName && bg) $bgPicture = "url('/defaultBG.avif')";
 
   $: if ($bgPicture && bg) bg.style.backgroundImage = $bgPicture;
 </script>
@@ -28,7 +28,7 @@
 <div
   id="background"
   style:top={`max(-${scroll / 50}vh, -100vh)`}
-  style:opacity={story ? '0.25' : '1'}
+  style:opacity={storyName ? '0.25' : '1'}
   bind:this={bg}
 ></div>
 

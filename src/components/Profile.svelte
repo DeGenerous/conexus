@@ -407,7 +407,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
                     >
                       <h4>{index + 1}</h4>
                       <p
-                        class="pad-8 round-8 dark-transparent-bg white-soft-txt"
+                        class="pad-8 round-8 transparent-dark-bg soft-white-txt"
                       >
                         {wallet.wallet.slice(0, 6) +
                           '...' +
@@ -457,7 +457,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
                       aria-label="Copy code {code.code}"
                     >
                       <p
-                        class="pad-8 round-8 white-soft-txt dark-transparent-bg"
+                        class="pad-8 round-8 soft-white-txt transparent-dark-bg"
                       >
                         {code.code}
                       </p>
@@ -502,7 +502,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
 
               {#if subStatus.subscribed_at}
                 <h5
-                  class="subscription pad-8 round-8 gray-transparent-bg dark-txt shad"
+                  class="subscription pad-8 round-8 transparent-gray-bg dark-txt shad"
                 >
                   Active since: {dateToString(subStatus.subscribed_at.Time)}
                 </h5>

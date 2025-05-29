@@ -225,7 +225,7 @@ html {
       @include scale;
     }
 
-    @include respond-up(tablet) {
+    @include respond-up(small-desktop) {
       position: fixed;
       top: 1rem;
       width: 4rem;

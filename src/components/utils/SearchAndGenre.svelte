@@ -212,7 +212,6 @@
 
   .filters {
     width: 100vw;
-    // justify-content: space-between;
     padding-inline: 1.5rem;
 
     @include respond-up(tablet) {

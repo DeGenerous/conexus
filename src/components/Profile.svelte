@@ -837,7 +837,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
     margin-bottom: 1rem;
   }
 
-  /* <!-- USER PROFILE --> */
+  /* USER PROFILE */
   .profile-window {
     .web3-wallets {
       ul {
@@ -846,7 +846,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
 
       .wallet {
         min-width: 14rem;
-        flex-wrap: wrap;
+        width: 100%;
         justify-content: space-between;
         gap: 0.5rem;
         @include box-shadow;
@@ -856,6 +856,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
         }
 
         p {
+          width: 100%;
           @include box-shadow(soft, inset);
         }
 
@@ -877,6 +878,10 @@ a11y_no_noninteractive_element_to_interactive_role-->
             color: $cyan;
           }
         }
+
+        @include respond-up(tablet) {
+          width: auto;
+        }
       }
     }
 
@@ -884,6 +889,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
       flex-wrap: wrap;
 
       .ref-code {
+        width: 100%;
         gap: 0.5rem;
         background-color: $deep-green;
         @include box-shadow;
@@ -896,6 +902,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
         }
 
         p {
+          width: 100%;
           @include box-shadow(soft, inset);
         }
 
@@ -906,6 +913,10 @@ a11y_no_noninteractive_element_to_interactive_role-->
           p {
             @include white-txt(0.5);
           }
+        }
+
+        @include respond-up(tablet) {
+          width: auto;
         }
       }
     }
@@ -929,7 +940,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
     }
   }
 
-  /* <!-- SIGN-IN window --> */
+  /* SIGN-IN window */
   .sign-container {
     width: 100%;
 

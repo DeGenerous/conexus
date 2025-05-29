@@ -19,7 +19,7 @@
     left: 0;
     z-index: 50;
 
-    @include respond-up(tablet) {
+    @include respond-up(small-desktop) {
       top: 3rem;
       width: calc(100vw - 10rem);
       left: 5rem;

@@ -122,6 +122,7 @@
   @use '/src/styles/mixins' as *;
 
   button {
+    width: 2rem;
     fill: none;
     stroke: $light-blue;
 

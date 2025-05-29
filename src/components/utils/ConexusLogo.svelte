@@ -166,10 +166,13 @@
 
   div {
     position: relative;
-    width: clamp(10rem, 40%, 25rem);
+    width: 40%;
+    max-width: 10rem;
 
-    @include respond-up(tablet) {
+    @include respond-up(small-desktop) {
       margin: 3rem auto;
+      width: clamp(10rem, 40%, 25rem);
+      max-width: unset;
     }
 
     picture {

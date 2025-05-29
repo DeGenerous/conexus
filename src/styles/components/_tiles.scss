@@ -95,7 +95,7 @@
     max-width: 400px;
   }
 
-  @include respond-up(largest) {
+  @include respond-up(quad-hd) {
     max-width: 16vw;
   }
 
@@ -170,7 +170,7 @@
     @include box-shadow(deep);
   }
 
-  @include respond-up(largest) {
+  @include respond-up(quad-hd) {
     width: 10vw;
   }
 

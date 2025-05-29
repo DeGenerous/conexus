@@ -59,7 +59,7 @@
 <p class="subheading pad-inline text-shad">{@html subheading}</p>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-{#if $authenticated.user}
+<!-- {#if $authenticated.user} -->
   <nav
     class="flex-row blur transition dark-semi-transparent-bg shad-behind dark-glowing-opaque"
   >
@@ -230,7 +230,7 @@
       </p>
     </a>
   </nav>
-{/if}
+<!-- {/if} -->
 
 <Background {story} />
 
@@ -248,7 +248,7 @@
     gap: 1rem;
     z-index: 100;
 
-    @include respond-up(tablet) {
+    @include respond-up(small-desktop) {
       position: static;
       width: auto;
       justify-content: center;
@@ -267,7 +267,7 @@
   .subheading {
     margin: 2rem auto;
 
-    @include respond-up(tablet) {
+    @include respond-up(small-desktop) {
       width: clamp(20rem, 95%, 80rem);
       margin-block: 1rem 2rem;
     }
@@ -326,12 +326,16 @@
         text-overflow: ellipsis;
         overflow-x: hidden;
         @include font(caption);
+
+        @include respond-up(tablet) {
+          max-width: 7rem;
+        }
       }
     }
 
     /* PC Styling */
 
-    @include respond-up(tablet) {
+    @include respond-up(small-desktop) {
       display: flex;
       position: fixed;
       top: 0;
@@ -341,7 +345,7 @@
       transform: translateX(-50%);
       justify-content: space-around;
       gap: 0;
-      width: clamp(30rem, 80%, 60rem);
+      width: clamp(30rem, 80%, 80rem);
       margin-inline: auto;
       border-bottom-left-radius: 10rem 5rem;
       border-bottom-right-radius: 10rem 5rem;
@@ -405,7 +409,6 @@
 
         p {
           color: inherit;
-          max-width: 7rem;
           @include font(small);
 
           // Fallback if no support
@@ -416,10 +419,6 @@
           }
         }
       }
-    }
-
-    @include respond-up(small-desktop) {
-      max-width: 80rem;
     }
   }
 </style>

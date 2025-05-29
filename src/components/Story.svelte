@@ -199,7 +199,7 @@
             </h5>
             {#each continuables as continuable}
               {#if !deletedStories.includes(continuable.story_id)}
-                <div class="flex-row pad-8 gap-8 round" role="button" tabindex="0">
+                <div class="flex-row pad-8 round" role="button" tabindex="0">
                   <DeleteSVG disabled={$loading} onClick={() => (openModal(continuable))} />
                   <span class="flex">
                     <p>{convertDate(continuable.created)}</p>
@@ -282,8 +282,11 @@
       video {
         max-width: 100%;
         max-height: 25rem;
-        min-height: 20rem;
         @include box-shadow;
+
+        @include respond-up(tablet) {
+          min-height: 20rem;
+        }
       }
 
       div {
@@ -341,6 +344,8 @@
       }
 
       div {
+        width: 100%;
+        justify-content: space-between;
         flex: none;
         @include white-txt(soft);
         @include cyan(0.2);
@@ -368,6 +373,14 @@
         flex-flow: row wrap;
         width: 90%;
         max-width: 50rem;
+
+        div {
+          width: auto;
+        }
+      }
+
+      @include respond-up(small-desktop) {
+        max-width: 68rem;
       }
     }
 
@@ -382,15 +395,16 @@
         margin-inline: unset;
         align-items: flex-start;
         width: 18rem;
-        max-height: 30.75rem;
-        max-width: 75rem;
+        max-height: 30.5rem;
         overflow: auto;
-      }
-    }
 
-    @include respond-up(ultra-wide) {
-      .unfinished-stories {
-        width: 36rem;
+        @include respond-up(full-hd) {
+          width: 36rem;
+        }
+
+        @include respond-up(quad-hd) {
+          width: 52rem;
+        }
       }
     }
   }

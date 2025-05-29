@@ -69,7 +69,11 @@ input {
 
   button {
     position: absolute;
-    left: calc(100% + 0.5rem);
+    left: 100%;
+
+    @include respond-up(tablet) {
+      left: calc(100% + 0.5rem);
+    }
   }
 
   @include respond-up(tablet) {

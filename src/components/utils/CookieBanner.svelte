@@ -90,7 +90,7 @@
     left: 50%;
     transform: translateX(-50%);
 
-    @include respond-up(tablet) {
+    @include respond-up(small-desktop) {
       bottom: 1rem;
       max-width: 75rem;
     }

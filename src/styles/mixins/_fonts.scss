@@ -32,7 +32,7 @@ $font-scale: (
     }
 
     // Static value for wide screens
-    @include respond-up(largest) {
+    @include respond-up(quad-hd) {
       @if $size-key == 'body' {
         font-size: 0.65vw;
       } @else if $size-key == 'small' {

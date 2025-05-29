@@ -5,8 +5,8 @@ $breakpoints: (
   'tablet': 768px,
   'small-desktop': 1024px,
   'large-desktop': 1440px,
-  'ultra-wide': 1920px,
-  'largest': 2560px
+  'full-hd': 1920px,
+  'quad-hd': 2560px
 );
 
 @mixin respond-up($breakpoint) {

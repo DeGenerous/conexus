@@ -4,7 +4,7 @@
   import MediaManager from '@lib/media';
   import { fullscreen, story, loading } from '@stores/conexus';
   import { background_volume, tts_volume } from '@stores/volumes';
-  import detectIOS from '@utils/ios-device';
+  import { iosDevice } from '@stores/ios';
 
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
@@ -117,8 +117,6 @@
 
   let zoom: number = 1;
 
-  let iosDevice: boolean = false;
-
   let pictureKeyframe: KeyframeEffect;
   let pictureAnimation: Animation;
 
@@ -133,7 +131,6 @@
   onMount(() => {
     const storedZoom = localStorage.getItem('step-zoom');
     if (storedZoom) zoom = setZoom(Number(storedZoom));
-    iosDevice = detectIOS();
 
     pictureKeyframe = new KeyframeEffect(
       imageWrapper,
@@ -1032,7 +1029,7 @@
             </svg>
           </div>
 
-          {#if !iosDevice}
+          {#if !$iosDevice}
             {#if $fullscreen}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -1131,7 +1128,7 @@
             </svg>
           {/if}
         </div>
-        {#if !iosDevice}
+        {#if !$iosDevice}
           <div class="mobile-sliders">
             <Slider type="music" volume={background_volume} />
             <Slider type="voice" volume={tts_volume} restartable />
@@ -1141,7 +1138,7 @@
     {/if}
   </section>
   {#if width <= 600}
-    {#if !iosDevice}
+    {#if !$iosDevice}
       <div
         class="theme-switcher blur"
         on:click={switchTheme}

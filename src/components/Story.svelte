@@ -30,6 +30,7 @@
   import { checkUserState } from '@utils/route-guard';
   import { GetCache, SECTION_CATEGORIES_KEY } from '@constants/cache';
   import detectIOS from '@utils/ios-device';
+  import { iosDevice } from '@stores/ios';
 
   export let section: string;
   export let story_name: string;
@@ -44,12 +45,10 @@
   $: prevStoryIndex =
     activeStoryIndex <= 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
 
-  let iosDevice: boolean = false;
-
   onMount(async () => {
     await checkUserState('/story');
 
-    iosDevice = detectIOS();
+    detectIOS();
 
     const storedTopics = JSON.parse(
       GetCache(SECTION_CATEGORIES_KEY(section)) as string,
@@ -288,7 +287,7 @@
     </div>
   {/await}
 {:else}
-  {#if !iosDevice}
+  {#if !$iosDevice}
     <BackgroundMusic />
   {/if}
   <Tts />

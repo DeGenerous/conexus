@@ -85,7 +85,7 @@ html {
   @include cyan(0.75, 'text');
   @include font;
 
-  @include respond-up('tablet') {
+  @include respond-up('small-desktop') {
     padding-block: 4rem 2rem;
   }
 

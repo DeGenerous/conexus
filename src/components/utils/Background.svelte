@@ -27,8 +27,8 @@
 
 <div
   id="background"
-  style:top={`max(-${scroll / 50}vh, -100vh)`}
-  style:opacity={storyName ? '0.25' : '1'}
+  style:top={`max(-${scroll / 100}vh, -100vh)`}
+  style:opacity={storyName ? '0.5' : '1'}
   bind:this={bg}
 ></div>
 

@@ -93,8 +93,8 @@ input {
 }
 
 input[type='checkbox'] {
-  min-width: 0 !important;
-  min-height: 0 !important;
+  min-width: unset !important;
+  min-height: unset !important;
   width: 1.5rem;
   height: 1.5rem;
   flex: none;
@@ -103,5 +103,26 @@ input[type='checkbox'] {
   @include respond-up(tablet) {
     width: 1rem;
     height: 1rem;
+  }
+}
+
+
+input[type='range'] {
+  min-width: unset !important;
+  min-height: unset !important;
+  max-width: unset !important;
+  width: auto;
+  height: 1.5rem;
+  padding: 0 !important;
+  border-radius: 0;
+  cursor: pointer;
+  background-color: transparent;
+  box-shadow: none;
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(&:disabled) {
+    transform: none;
+    @include bright;
   }
 }

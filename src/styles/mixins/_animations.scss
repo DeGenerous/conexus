@@ -99,16 +99,16 @@
 
 @keyframes text-glowing {
   0% {
-    color: rgba(51, 226, 230);
+    color: rgb(51, 226, 230);
   }
   33% {
-    color: rgba(160, 120, 255);
+    color: rgb(160, 120, 255);
   }
   66% {
-    color: rgba(56, 117, 250);
+    color: rgb(56, 117, 250);
   }
   100% {
-    color: rgba(51, 226, 230);
+    color: rgb(51, 226, 230);
   }
 }
 
@@ -171,16 +171,16 @@
 
 @keyframes pulse-animation {
   0% {
-    opacity: 0.1;
-    filter: brightness(50%);
+    opacity: 0.2;
+    filter: brightness(100%);
   }
   50% {
     opacity: 0.9;
-    filter: brightness(100%);
+    filter: brightness;
   }
   100% {
-    opacity: 0.1;
-    filter: brightness(50%);
+    opacity: 0.2;
+    filter: brightness(100%);
   }
 }
 
@@ -233,29 +233,29 @@
 }
 
 :global(.button-glowing) {
-  animation: button-glowing 12s infinite;
+  animation: button-glowing 12s linear infinite;
 }
 
 :global(.text-glowing) {
-  animation: text-glowing 12s infinite;
+  animation: text-glowing 12s linear infinite;
 }
 
 :global(.dark-glowing) {
-  animation: dark-glowing 12s infinite;
+  animation: dark-glowing 12s linear infinite;
 }
 
 :global(.dark-glowing-opaque) {
-  animation: dark-glowing-opaque 12s infinite;
+  animation: dark-glowing-opaque 12s linear infinite;
 }
 
 :global(.transparent-glowing) {
-  animation: transparent-glowing 12s infinite;
+  animation: transparent-glowing 12s linear infinite;
 }
 
 :global(.rotate-animation) {
-  animation: rotate-animation 2s infinite;
+  animation: rotate-animation 2s linear infinite;
 }
 
 :global(.pulse-animation) {
-  animation: pulse-animation 6s infinite;
+  animation: pulse-animation 6s ease-in-out infinite;
 }

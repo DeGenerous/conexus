@@ -1,5 +1,6 @@
 <script lang="ts">
   export let onClick = () => {};
+  export let voidBtn: boolean = false;
 
   let quitSvgFocus: boolean = false;
 </script>
@@ -9,6 +10,7 @@
   on:pointerover={() => (quitSvgFocus = true)}
   on:pointerout={() => (quitSvgFocus = false)}
   class:focused={quitSvgFocus}
+  class:void-btn={voidBtn}
   aria-label="Back"
 >
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
@@ -43,6 +45,10 @@
 
   button {
     fill: $soft-cyan;
+    
+    &.void-btn {
+      fill: $light-blue;
+    }
 
     &.focused {
       fill: $cyan;

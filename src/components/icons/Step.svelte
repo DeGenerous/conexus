@@ -1,0 +1,61 @@
+<script lang="ts">
+  export let onClick = () => {};
+  export let text: string = "";
+  export let active: boolean = false;
+</script>
+
+<button
+  on:click|stopPropagation={onClick}
+  class="void-btn flex"
+  class:active
+  aria-label="Back"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
+    <circle r="95" />
+  </svg>
+  <h5 class="flex">{text}</h5>
+</button>
+
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
+
+  button {
+    fill: $light-blue;
+    position: relative;
+    font-family: inherit;
+
+    h5 {
+      height: 100%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: inherit;
+      z-index: 2;
+      @include dark-blue(1, text);
+    }
+
+    svg {
+      z-index: 1;
+    }
+    
+    &.void-btn {
+      fill: $light-blue;
+    }
+
+    &.active {
+      fill: $cyan !important;
+    }
+
+    &:hover,
+    &:focus,
+    &:active {
+      fill: $cyan;
+      @include scale;
+
+      h5 {
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+    }
+  }
+</style>

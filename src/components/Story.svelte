@@ -190,7 +190,10 @@
 
           <span class="buttons flex-row">
             {#if $loading}
-              <LoadingSVG />
+              <span class="flex-row gap-8">
+                <LoadingSVG />
+                <h5 class="transparent-white-txt">Loading...</h5>
+              </span>
             {:else}
               <Share />
               <button
@@ -245,7 +248,7 @@
       <section class="flex gating blur pad-8 gap-8 mar-auto round-12 shad">
         <div class="flex-row">
           <LockSVG />
-          <h4>Only available to holders of:</h4>
+          <h5>Only available to holders of:</h5>
         </div>
         <span class="flex-row pad-8 pad-inline round-8">
           {#each topic.nft_gate as { contract_name, class_name, amount }}
@@ -445,7 +448,7 @@
     stroke: $dark-red;
     @include orange(0.85);
 
-    h4 {
+    h5 {
       @include dark-red(1, text);
     }
 
@@ -470,8 +473,7 @@
           &:hover,
           &:active,
           &:focus {
-            text-decoration: underline dotted;
-            @include cyan(1, text);
+            @include red(1, text);
           }
         }
       }

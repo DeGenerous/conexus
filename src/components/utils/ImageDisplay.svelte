@@ -33,7 +33,7 @@
 </script>
 
 <button
-  class="void-btn transparent-container wide-container"
+  class="void-btn transparent-container"
   on:click={() => (fullWidthImage = !fullWidthImage)}
   class:slim={!fullWidthImage}
 >

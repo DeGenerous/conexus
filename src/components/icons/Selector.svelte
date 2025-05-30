@@ -20,16 +20,16 @@
     <animate
       attributeName="fill"
       values="rgb(51,226,230);rgb(160,120,255);rgb(56,117,250);rgb(51,226,230)"
-      dur="12s"
+      dur="15s"
       repeatCount="indefinite"
-      begin="-1.8s"
+      begin="-1.5s"
     />
     <animate
       attributeName="stroke"
       values="rgb(51,226,230);rgb(160,120,255);rgb(56,117,250);rgb(51,226,230)"
-      dur="12s"
+      dur="15s"
       repeatCount="indefinite"
-      begin="-1.8s"
+      begin="-1.5s"
     />
   {/if}
 </svg>

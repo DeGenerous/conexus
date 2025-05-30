@@ -37,7 +37,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <button
-  class="void-btn"
+  class="void-btn flex"
   class:visible
   type="button"
   on:click={updateVisibility}

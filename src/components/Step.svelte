@@ -12,6 +12,7 @@
   import QuitSVG from '@components/icons/Quit.svelte';
   import StepSVG from '@components/icons/Step.svelte';
   import SwitchSVG from '@components/icons/Switch.svelte';
+  import SoundSVG from '@components/icons/Sound.svelte';
 
   export let story_name: string;
 
@@ -26,25 +27,20 @@
   let width: number;
 
   let fullWidthImage: boolean = false;
-
-  let stepController: HTMLElement;
-
   let activeControlPanel: Nullable<string> = null;
 
   let activeOptionNumber: number = 0;
   let focusedOption: Nullable<number> = null;
 
-  afterUpdate(() => {
-    document.onfullscreenchange = () => {
-      if ($fullscreen !== !!document.fullscreenElement)
-        fullscreen.set(!!document.fullscreenElement);
-    };
-  });
-
-  $: if ($fullscreen) document.documentElement.requestFullscreen();
-  else if (document.fullscreenElement) document.exitFullscreen();
-
   $: step = $story?.step_data as StepData;
+
+  const switchController = (controller: string) => {
+    if (activeControlPanel == controller) {
+      activeControlPanel = null;
+      return;
+    }
+    activeControlPanel = controller;
+  }
 
   const blurActiveBtn = () => {
     if (document.activeElement!.tagName == 'BUTTON') {
@@ -119,6 +115,16 @@
       // }
     }
   };
+
+  // afterUpdate(() => {
+  //   document.onfullscreenchange = () => {
+  //     if ($fullscreen !== !!document.fullscreenElement)
+  //       fullscreen.set(!!document.fullscreenElement);
+  //   };
+  // });
+
+  // $: if ($fullscreen) document.documentElement.requestFullscreen();
+  // else if (document.fullscreenElement) document.exitFullscreen();
 
   let zoom: number = 1;
 
@@ -365,25 +371,24 @@
 
   <!-- CONTROL PANEL -->
   <nav class="flex-row blur transition shad-behind pad-8">
-    <QuitSVG onClick={() => (window.location.reload())} voidBtn={true} />
-    <StepSVG
-      text={`${step.step < 10 ? '0' : ''}${step.step}`}
-      onClick={() => {
-        if (activeControlPanel == "step") {
-          activeControlPanel = null;
-          return;
-        }
-        activeControlPanel = "step";
-      }}
-      active={activeControlPanel == "step"}
-    />
+    <span class="flex-row">
+      <QuitSVG onClick={() => (window.location.reload())} voidBtn={true} />
+      <h5>{story_name.trim()}</h5>
+    </span>
+    <div class="flex-row">
+      <SoundSVG onClick={() => (switchController("sound"))}/>
+      <StepSVG
+        text={`${step.step < 10 ? '0' : ''}${step.step}`}
+        onClick={() => (switchController("step"))}
+        active={activeControlPanel == "step"}
+      />
+    </div>
   </nav>
 
   <!-- STEP CONTROLLER -->
   <section
-    class="step-controller flex transition shad-behind pad-8 gap-8"
+    class="step-controller flex shad-behind"
     class:visible={activeControlPanel == "step"}
-    bind:this={stepController}
   >
     <div class="container flex-row">
       <SwitchSVG
@@ -409,11 +414,21 @@
       {/each}
     </ul>
   </section>
+
+  <!-- SOUND CONTROLLER -->
+  <section
+    class="sound-controller flex-row shad-behind"
+    class:visible={activeControlPanel == "sound"}
+  >
+    <Slider type="music" volume={background_volume} />
+    <Slider type="voice" volume={tts_volume} restartable />
+  </section>
 </section>
 
 <style lang="scss">
   @use "/src/styles/mixins" as *;
 
+  // GENERAL STEP STYLING
   .step-wrapper {
     margin-top: -2rem;
 
@@ -470,6 +485,7 @@
       }
     }
 
+    // CONTROL PANEL STYLING
     nav {
       position: fixed;
       bottom: 0;
@@ -482,14 +498,31 @@
       @include respond-up(small-desktop) {
         padding: 1rem;
       }
+
+      span {
+        flex: none;
+
+        h5 {
+          @include light-blue(1, text);
+        }
+      }
+
+      div {
+        width: 100%;
+        justify-content: flex-end;
+      }
     }
 
+    // ADDITIONAL CONTROLLERS STYLING
     section {
       position: fixed;
       bottom: 4rem;
       width: 100vw;
       z-index: 90;
+      padding: 0.5rem;
+      gap: 0.5rem;
       transform: translateY(100%);
+      transition: all 0.6s ease-in-out;
       @include navy;
 
       &.visible {

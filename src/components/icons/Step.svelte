@@ -11,7 +11,7 @@
   aria-label="Back"
 >
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
-    <circle r="95" />
+    <circle r="100" />
   </svg>
   <h5 class="flex">{text}</h5>
 </button>
@@ -37,10 +37,6 @@
 
     svg {
       z-index: 1;
-    }
-    
-    &.void-btn {
-      fill: $light-blue;
     }
 
     &.active {

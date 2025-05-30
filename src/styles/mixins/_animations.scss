@@ -172,15 +172,15 @@
 @keyframes pulse-animation {
   0% {
     opacity: 0.2;
-    filter: brightness(100%);
+    @include bright(100%);
   }
   50% {
     opacity: 0.9;
-    filter: brightness;
+    @include bright;
   }
   100% {
     opacity: 0.2;
-    filter: brightness(100%);
+    @include bright(100%);
   }
 }
 
@@ -233,23 +233,23 @@
 }
 
 :global(.button-glowing) {
-  animation: button-glowing 12s linear infinite;
+  animation: button-glowing 15s linear infinite;
 }
 
 :global(.text-glowing) {
-  animation: text-glowing 12s linear infinite;
+  animation: text-glowing 15s linear infinite;
 }
 
 :global(.dark-glowing) {
-  animation: dark-glowing 12s linear infinite;
+  animation: dark-glowing 15s linear infinite;
 }
 
 :global(.dark-glowing-opaque) {
-  animation: dark-glowing-opaque 12s linear infinite;
+  animation: dark-glowing-opaque 15s linear infinite;
 }
 
 :global(.transparent-glowing) {
-  animation: transparent-glowing 12s linear infinite;
+  animation: transparent-glowing 15s linear infinite;
 }
 
 :global(.rotate-animation) {

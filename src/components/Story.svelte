@@ -104,7 +104,6 @@
   const convertDate = (date) => {
     if (!date) return 'CORRUPTED';
     date = new Date(date);
-    console.log(date);
 
     let minutes = date.getMinutes();
     let hours = date.getHours();
@@ -303,6 +302,10 @@
 
   .story-wrapper {
     .story {
+      width: 90%;
+      max-width: 50rem;
+      min-width: 250px;
+
       img,
       .fake-img {
         width: 100%;
@@ -351,11 +354,16 @@
 
       @include respond-up(tablet) {
         div {
-          width: 100%;
+          width: auto;
           flex-direction: row;
           justify-content: space-between;
           gap: 1rem;
           flex: none;
+
+          span {
+            max-width: 100%;
+            width: auto;
+          }
 
           .buttons {
             justify-content: flex-end;
@@ -365,6 +373,11 @@
             }
           }
         }
+      }
+
+      @include respond-up(small-desktop) {
+        max-width: 68rem;
+        width: auto;
       }
     }
 
@@ -459,11 +472,13 @@
       @include box-shadow(soft, inset);
 
       a {
+        text-decoration: underline dashed $transparent-white;
         @include white-txt;
 
         &:hover:not(&.inactive-link),
         &:active:not(&.inactive-link),
         &:focus:not(&.inactive-link) {
+          text-decoration: underline $orange;
           @include orange(1, text, bright);
         }
 
@@ -473,6 +488,7 @@
           &:hover,
           &:active,
           &:focus {
+            text-decoration: underline $red;
             @include red(1, text);
           }
         }

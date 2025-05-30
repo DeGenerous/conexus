@@ -14,7 +14,7 @@
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
     <defs>
       <mask id="profile-svg-mask">
-        <circle r="95" fill="white" />
+        <circle r="100" fill="white" />
         <g fill="black" transform={profileSvgFocus ? 'scale(1.1)' : ''}>
           <circle cy="-25" r="30" />
           <path
@@ -29,7 +29,7 @@
         </g>
       </mask>
     </defs>
-    <circle r="95" mask="url(#profile-svg-mask)" />
+    <circle r="100" mask="url(#profile-svg-mask)" />
   </svg>
 </button>
 

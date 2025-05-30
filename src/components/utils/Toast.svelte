@@ -41,7 +41,7 @@
   @use '/src/styles/mixins' as *;
 
   button {
-    transition: all 0.6s ease-in-out;
+    transition: all 0.6s ease-out;
     opacity: 1;
     @include white-txt(1);
     @include box-shadow;
@@ -56,12 +56,12 @@
 
     &.fading-left {
       opacity: 0;
-      transform: translateX(-200%) scaleY(0.5);
+      transform: translate(-200%, 50%) scaleY(0.5) skew(15deg, -15deg);
     }
 
     &.fading-right {
       opacity: 0;
-      transform: translateX(200%) scaleY(0.5);
+      transform: translate(200%, 50%) scaleY(0.5) skew(-15deg, 15deg);
     }
 
     @starting-style {

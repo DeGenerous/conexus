@@ -14,7 +14,7 @@
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
     <defs>
       <mask id="back-arrow-svg-mask">
-        <circle r="95" fill="white" />
+        <circle r="100" fill="white" />
         <path
           d="
             M -14 -30
@@ -34,7 +34,7 @@
         />
       </mask>
     </defs>
-    <circle r="95" mask="url(#back-arrow-svg-mask)" />
+    <circle r="100" mask="url(#back-arrow-svg-mask)" />
   </svg>
 </a>
 

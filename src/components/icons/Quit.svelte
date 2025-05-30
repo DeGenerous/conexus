@@ -6,17 +6,18 @@
 </script>
 
 <button
+  class="flex"
+  class:focused={quitSvgFocus}
+  class:void-btn={voidBtn}
   on:click|stopPropagation={onClick}
   on:pointerover={() => (quitSvgFocus = true)}
   on:pointerout={() => (quitSvgFocus = false)}
-  class:focused={quitSvgFocus}
-  class:void-btn={voidBtn}
   aria-label="Back"
 >
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
     <defs>
       <mask id="quit-svg-mask">
-        <circle r="95" fill="white" />
+        <circle r="100" fill="white" />
         <path
           class="quit-svg-mask"
           d="
@@ -36,7 +37,7 @@
       </mask>
     </defs>
 
-    <circle r="95" mask="url(#quit-svg-mask)" />
+    <circle r="100" mask="url(#quit-svg-mask)" />
   </svg>
 </button>
 
@@ -53,7 +54,7 @@
     &.focused {
       fill: $cyan;
 
-      svg circle {
+      svg {
         transform: scale(1.05);
       }
     }

@@ -19,7 +19,7 @@
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
     <defs>
       <mask id="back-step-arrow-svg-mask{right ? '-right' : ''}">
-        <circle r="95" fill="white" />
+        <circle r="100" fill="white" />
         <g fill="black" stroke="black" transform={right ? 'rotate(180)' : ''}>
           <polygon
             points="-50 0 -5 -45 -5 45"
@@ -32,7 +32,7 @@
       </mask>
     </defs>
 
-    <circle r="95" mask="url(#back-step-arrow-svg-mask{right ? '-right' : ''})"/>
+    <circle r="100" mask="url(#back-step-arrow-svg-mask{right ? '-right' : ''})"/>
   </svg>
 </button>
 

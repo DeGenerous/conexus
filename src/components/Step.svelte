@@ -13,6 +13,7 @@
   import StepSVG from '@components/icons/Step.svelte';
   import SwitchSVG from '@components/icons/Switch.svelte';
   import SoundSVG from '@components/icons/Sound.svelte';
+  import FullscreenSVG from '@components/icons/Fullscreen.svelte';
 
   export let story_name: string;
 
@@ -115,16 +116,6 @@
       // }
     }
   };
-
-  // afterUpdate(() => {
-  //   document.onfullscreenchange = () => {
-  //     if ($fullscreen !== !!document.fullscreenElement)
-  //       fullscreen.set(!!document.fullscreenElement);
-  //   };
-  // });
-
-  // $: if ($fullscreen) document.documentElement.requestFullscreen();
-  // else if (document.fullscreenElement) document.exitFullscreen();
 
   let zoom: number = 1;
 
@@ -373,15 +364,19 @@
   <nav class="flex-row blur transition shad-behind pad-8">
     <span class="flex-row">
       <QuitSVG onClick={() => (window.location.reload())} voidBtn={true} />
-      <h5>{story_name.trim()}</h5>
+      <h5 class="title">{story_name.trim()}</h5>
     </span>
     <div class="flex-row">
-      <SoundSVG onClick={() => (switchController("sound"))}/>
+      <SoundSVG
+        onClick={() => (switchController("sound"))}
+        active={activeControlPanel == "sound"}
+      />
       <StepSVG
         text={`${step.step < 10 ? '0' : ''}${step.step}`}
         onClick={() => (switchController("step"))}
         active={activeControlPanel == "step"}
       />
+      <FullscreenSVG />
     </div>
   </nav>
 
@@ -420,8 +415,10 @@
     class="sound-controller flex-row shad-behind"
     class:visible={activeControlPanel == "sound"}
   >
-    <Slider type="music" volume={background_volume} />
-    <Slider type="voice" volume={tts_volume} restartable />
+    <div class="transparent-container">
+      <Slider type="voice" volume={tts_volume} restartable />
+      <Slider type="music" volume={background_volume} />
+    </div>
   </section>
 </section>
 
@@ -502,8 +499,13 @@
       span {
         flex: none;
 
-        h5 {
+        .title {
+          display: none;
           @include light-blue(1, text);
+
+          @include respond-up(tablet) {
+            display: block;
+          }
         }
       }
 
@@ -558,6 +560,16 @@
 
           hr {
             display: none;
+          }
+        }
+      }
+
+      &.sound-controller {
+        div {
+          width: 100%;
+
+          @include respond-up(tablet) {
+            flex-direction: row;
           }
         }
       }

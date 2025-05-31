@@ -191,7 +191,7 @@
             {#if $loading}
               <span class="flex-row gap-8">
                 <LoadingSVG />
-                <h5 class="transparent-white-txt">Loading...</h5>
+                <button disabled>LOADING</button>
               </span>
             {:else}
               <Share />
@@ -354,7 +354,6 @@
 
       @include respond-up(tablet) {
         div {
-          width: auto;
           flex-direction: row;
           justify-content: space-between;
           gap: 1rem;

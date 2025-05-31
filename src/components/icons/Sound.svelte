@@ -2,9 +2,7 @@
   export let onClick = () => {};
   export let active: boolean = false;
   export let lowSound: boolean = false;
-  export let noSound: boolean = false;
-
-  let soundSvgFocus: boolean = false;
+  export let noSound: boolean = true;
 </script>
 
 <button
@@ -20,30 +18,23 @@
     stroke-linecap="round"
     stroke-linejoin="round"
   >
-    <defs>
-      <mask id="sound-svg-mask">
-        <circle r="12" cx="12" cy="12" fill="white" />
-        {#if noSound}
-          <path d="M16,14.5l5-5m-5,0,5,5M7,9H4a1,1,0,0,0-1,1v4a1,1,0,0,0,1,1H7l4,4V5Z" stroke="black"/>
-        {:else}
-          {#if !lowSound}
-            <path
-              d="M18.36,19.36a1,1,0,0,1-.7-.29,1,1,0,0,1,0-1.41,8,8,0,0,0,0-11.32,1,1,0,0,1,1.41-1.41,10,10,0,0,1,0,14.14A1,1,0,0,1,18.36,19.36Z"
-              fill="black"
-            />
-          {/if}
-          <path
-            d="M15.54,16.54a1,1,0,0,1-.71-.3,1,1,0,0,1,0-1.41,4,4,0,0,0,0-5.66,1,1,0,0,1,1.41-1.41,6,6,0,0,1,0,8.48A1,1,0,0,1,15.54,16.54Z"
-            fill="black"
-          />
-        {/if}
+    {#if noSound}
+      <path d="M16,14.5l5-5m-5,0,5,5M7,9H4a1,1,0,0,0-1,1v4a1,1,0,0,0,1,1H7l4,4V5Z"/>
+    {:else}
+      {#if !lowSound}
         <path
-          d="M11.38,4.08a1,1,0,0,0-1.09.21L6.59,8H4a2,2,0,0,0-2,2v4a2,2,0,0,0,2,2H6.59l3.7,3.71A1,1,0,0,0,11,20a.84.84,0,0,0,.38-.08A1,1,0,0,0,12,19V5A1,1,0,0,0,11.38,4.08Z"
-          fill="black"
+          d="M18.36,19.36a1,1,0,0,1-.7-.29,1,1,0,0,1,0-1.41,8,8,0,0,0,0-11.32,1,1,0,0,1,1.41-1.41,10,10,0,0,1,0,14.14A1,1,0,0,1,18.36,19.36Z"
+          stroke="none"
         />
-      </mask>
-    </defs>
-    <circle r="12" cx="12" cy="12" mask="url(#sound-svg-mask)" />
+      {/if}
+      <path
+        d="M15.54,16.54a1,1,0,0,1-.71-.3,1,1,0,0,1,0-1.41,4,4,0,0,0,0-5.66,1,1,0,0,1,1.41-1.41,6,6,0,0,1,0,8.48A1,1,0,0,1,15.54,16.54Z"
+        stroke="none"
+      />
+    {/if}
+    <path
+      d="M11.38,4.08a1,1,0,0,0-1.09.21L6.59,8H4a2,2,0,0,0-2,2v4a2,2,0,0,0,2,2H6.59l3.7,3.71A1,1,0,0,0,11,20a.84.84,0,0,0,.38-.08A1,1,0,0,0,12,19V5A1,1,0,0,0,11.38,4.08Z"
+    />
   </svg>
 </button>
 
@@ -52,15 +43,18 @@
 
   button {
     fill: $light-blue;
+    stroke: $light-blue;
 
     &.active {
       fill: $cyan !important;
+      stroke: $cyan !important;
     }
 
     &:hover,
     &:focus,
     &:active {
       fill: $cyan;
+      stroke: $cyan;
       @include scale;
     }
   }

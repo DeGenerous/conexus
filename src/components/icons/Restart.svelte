@@ -66,7 +66,6 @@
       fill: $cyan;
       stroke: $cyan;
       @include scale;
-      @include bright;
     }
 
     &.muted {

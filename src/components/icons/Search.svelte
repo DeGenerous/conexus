@@ -36,7 +36,6 @@
     &:active,
     &:focus {
       stroke: $cyan;
-      @include bright;
     }
 
     &.focused {

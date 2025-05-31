@@ -130,7 +130,6 @@
     &:active,
     &:focus {
       @include scale;
-      @include bright;
     }
 
     &.visible {

@@ -30,7 +30,6 @@
       fill: $cyan;
       stroke: $cyan;
       transform: rotate(300deg);
-      @include bright;
     }
   }
 </style>

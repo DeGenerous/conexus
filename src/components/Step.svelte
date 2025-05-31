@@ -14,6 +14,8 @@
   import SwitchSVG from '@components/icons/Switch.svelte';
   import SoundSVG from '@components/icons/Sound.svelte';
   import FullscreenSVG from '@components/icons/Fullscreen.svelte';
+  import FilledEyeSVG from '@components/icons/FilledEye.svelte';
+  import ZoomInSVG from '@components/icons/ZoomIn.svelte';
 
   export let story_name: string;
 
@@ -364,6 +366,8 @@
       <h5 class="title">{story_name.trim()}</h5>
     </span>
     <div class="flex-row">
+      <ZoomInSVG />
+      <FilledEyeSVG />
       <SoundSVG
         onClick={() => switchController('sound')}
         active={activeControlPanel == 'sound'}

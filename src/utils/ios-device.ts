@@ -1,7 +1,7 @@
-import { iosDevice } from "@stores/ios";
+import { iosDevice } from '@stores/ios';
 
 const detectIOS = () => {
-  const ios = (
+  const ios =
     [
       'iPad Simulator',
       'iPhone Simulator',
@@ -11,8 +11,7 @@ const detectIOS = () => {
       'iPod',
     ].includes(navigator.platform) ||
     // iPad on iOS 13 detection
-    (navigator.userAgent.includes('Mac') && 'ontouchend' in document)
-  )
+    (navigator.userAgent.includes('Mac') && 'ontouchend' in document);
   iosDevice.set(ios);
   return ios;
 };

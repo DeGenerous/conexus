@@ -41,14 +41,14 @@
       return;
     }
     activeControlPanel = controller;
-  }
+  };
 
   const blurActiveBtn = () => {
     if (document.activeElement!.tagName == 'BUTTON') {
       const activeOption = document.activeElement as HTMLButtonElement;
       activeOption.blur();
     }
-  }
+  };
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.repeat) return;
@@ -58,7 +58,7 @@
         break;
       }
       case 'ArrowLeft': {
-        console.log($story)
+        console.log($story);
         if ($loading) return;
         if (step.step !== 1) {
           $story?.loadGameStep(step.step - 1);
@@ -68,7 +68,7 @@
         break;
       }
       case 'ArrowRight': {
-        console.log($story)
+        console.log($story);
         if ($loading) return;
         if (step.step !== $story?.maxStep) {
           $story?.loadGameStep(step.step + 1);
@@ -133,7 +133,6 @@
   onMount(() => {
     // const storedZoom = localStorage.getItem('step-zoom');
     // if (storedZoom) zoom = setZoom(Number(storedZoom));
-
     // pictureKeyframe = new KeyframeEffect(
     //   imageWrapper,
     //   [
@@ -147,7 +146,6 @@
     //     easing: 'ease-in-out',
     //   },
     // );
-
     // pictureAnimation = new Animation(pictureKeyframe, document.timeline);
   });
 
@@ -279,10 +277,7 @@
 </div> -->
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions a11y-no-static-element-interactions -->
-<section
-  class="step-wrapper flex"
-  style:font-family={stepFont}
->
+<section class="step-wrapper flex" style:font-family={stepFont}>
   <ImageDisplay
     bind:image={step.image}
     bind:image_type={step.image_type}
@@ -304,7 +299,8 @@
 
     <article style={textWrapperStyling}>{step.summary}</article>
 
-    <h4>CoNexus identified your trait as:
+    <h4>
+      CoNexus identified your trait as:
       <strong class="text-glowing">{step.trait}</strong>
     </h4>
 
@@ -348,7 +344,8 @@
             on:blur={() => (focusedOption = null)}
           >
             <SelectorSVG
-              focused={step.choice && step.choice - 1 === i || focusedOption === i}
+              focused={(step.choice && step.choice - 1 === i) ||
+                focusedOption === i}
               disabled={$loading || step.step !== $story?.maxStep}
               hideForMobiles={true}
               glowing={true}
@@ -363,18 +360,18 @@
   <!-- CONTROL PANEL -->
   <nav class="flex-row blur transition shad-behind pad-8">
     <span class="flex-row">
-      <QuitSVG onClick={() => (window.location.reload())} voidBtn={true} />
+      <QuitSVG onClick={() => window.location.reload()} voidBtn={true} />
       <h5 class="title">{story_name.trim()}</h5>
     </span>
     <div class="flex-row">
       <SoundSVG
-        onClick={() => (switchController("sound"))}
-        active={activeControlPanel == "sound"}
+        onClick={() => switchController('sound')}
+        active={activeControlPanel == 'sound'}
       />
       <StepSVG
         text={`${step.step < 10 ? '0' : ''}${step.step}`}
-        onClick={() => (switchController("step"))}
-        active={activeControlPanel == "step"}
+        onClick={() => switchController('step')}
+        active={activeControlPanel == 'step'}
       />
       <FullscreenSVG />
     </div>
@@ -383,11 +380,11 @@
   <!-- STEP CONTROLLER -->
   <section
     class="step-controller flex shad-behind"
-    class:visible={activeControlPanel == "step"}
+    class:visible={activeControlPanel == 'step'}
   >
     <div class="container flex-row">
       <SwitchSVG
-        onClick={() => ($story?.loadGameStep(step.step - 1))}
+        onClick={() => $story?.loadGameStep(step.step - 1)}
         disabled={step.step === 1}
       />
       <span class="flex gap-8">
@@ -396,16 +393,18 @@
         <h5>Step {step.step}</h5>
       </span>
       <SwitchSVG
-        onClick={() => ($story?.loadGameStep(step.step + 1))}
+        onClick={() => $story?.loadGameStep(step.step + 1)}
         disabled={step.step === $story?.maxStep}
-        right={true} />
+        right={true}
+      />
     </div>
     <ul class="transparent-container vert-scrollbar pad-inline">
       {#each Array($story!.maxStep) as _, index}
         <StepSVG
           text={String(index + 1)}
-          onClick={() => ($story?.loadGameStep(index + 1))}
-          active={step.step == (index + 1)} />
+          onClick={() => $story?.loadGameStep(index + 1)}
+          active={step.step == index + 1}
+        />
       {/each}
     </ul>
   </section>
@@ -413,7 +412,7 @@
   <!-- SOUND CONTROLLER -->
   <section
     class="sound-controller flex-row shad-behind"
-    class:visible={activeControlPanel == "sound"}
+    class:visible={activeControlPanel == 'sound'}
   >
     <div class="transparent-container">
       <Slider type="voice" volume={tts_volume} restartable />
@@ -422,162 +421,7 @@
   </section>
 </section>
 
-<style lang="scss">
-  @use "/src/styles/mixins" as *;
-
-  // GENERAL STEP STYLING
-  .step-wrapper {
-    margin-top: -2rem;
-
-    @include respond-up(small-desktop) {
-      margin-bottom: 4rem;
-    }
-
-    * {
-      font-family: inherit;
-      font-weight: bold;
-      word-spacing: 0.3em;
-    }
-
-    h4 {
-      @include white-txt;
-    }
-
-    article {
-      width: clamp(250px, 95%, 70rem);
-      padding-inline: 1rem;
-      text-align: left;
-      white-space: pre-wrap;
-      @include white-txt(soft);
-      @include text-shadow;
-    }
-
-    .options {
-      align-items: flex-start;
-      
-      button {
-        @extend :global(.text-glowing);
-        width: 100%;
-        justify-content: flex-start;
-        text-align: left;
-        fill: $cyan;
-        stroke: $cyan;
-        color: $cyan;
-        @include font(h5);
-
-        &:hover:not(&:disabled),
-        &:active:not(&:disabled),
-        &:focus:not(&:disabled) {
-          @include bright;
-        }
-
-        &:disabled:not(&.active-option) {
-          opacity: 0.5;
-          color: $cyan !important;
-        }
-
-        &.menu-option {
-          text-align: center;
-        }
-      }
-    }
-
-    // CONTROL PANEL STYLING
-    nav {
-      position: fixed;
-      bottom: 0;
-      width: 100vw;
-      height: 4rem;
-      z-index: 100;
-      justify-content: space-between;
-      @include dark-blue;
-
-      @include respond-up(small-desktop) {
-        padding: 1rem;
-      }
-
-      span {
-        flex: none;
-
-        .title {
-          display: none;
-          @include light-blue(1, text);
-
-          @include respond-up(tablet) {
-            display: block;
-          }
-        }
-      }
-
-      div {
-        width: 100%;
-        justify-content: flex-end;
-      }
-    }
-
-    // ADDITIONAL CONTROLLERS STYLING
-    section {
-      position: fixed;
-      bottom: 4rem;
-      width: 100vw;
-      z-index: 90;
-      padding: 0.5rem;
-      gap: 0.5rem;
-      transform: translateY(100%);
-      transition: all 0.6s ease-in-out;
-      @include navy;
-
-      &.visible {
-        transform: none;
-      }
-
-      &.step-controller {
-        div {
-          width: 100%;
-          justify-content: space-between;
-        } 
-        
-        ul {
-          width: 100%;
-          flex-flow: row wrap;
-          max-height: 15rem;
-          overflow-y: auto;
-
-          @include respond-up(small-desktop) {
-            max-height: unset;
-          }
-        }
-
-        @include respond-up(tablet) {
-          span {
-            flex-flow: row wrap;
-            gap: 1rem;
-
-            .title::after {
-              content: ":";
-            }
-          }
-
-          hr {
-            display: none;
-          }
-        }
-      }
-
-      &.sound-controller {
-        div {
-          width: 100%;
-
-          @include respond-up(tablet) {
-            flex-direction: row;
-          }
-        }
-      }
-    }
-  }
-</style>
-
-  <!-- <section class="controls-container">
+<!-- <section class="controls-container">
     {#if width > 600}
 
 
@@ -979,3 +823,158 @@
     {/if}
     <h3>{storyTitle}</h3>
   {/if} -->
+
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
+
+  // GENERAL STEP STYLING
+  .step-wrapper {
+    margin-top: -2rem;
+
+    @include respond-up(small-desktop) {
+      margin-bottom: 4rem;
+    }
+
+    * {
+      font-family: inherit;
+      font-weight: bold;
+      word-spacing: 0.3em;
+    }
+
+    h4 {
+      @include white-txt;
+    }
+
+    article {
+      width: clamp(250px, 95%, 70rem);
+      padding-inline: 1rem;
+      text-align: left;
+      white-space: pre-wrap;
+      @include white-txt(soft);
+      @include text-shadow;
+    }
+
+    .options {
+      align-items: flex-start;
+
+      button {
+        @extend :global(.text-glowing);
+        width: 100%;
+        justify-content: flex-start;
+        text-align: left;
+        fill: $cyan;
+        stroke: $cyan;
+        color: $cyan;
+        @include font(h5);
+
+        &:hover:not(&:disabled),
+        &:active:not(&:disabled),
+        &:focus:not(&:disabled) {
+          @include bright;
+        }
+
+        &:disabled:not(&.active-option) {
+          opacity: 0.5;
+          color: $cyan !important;
+        }
+
+        &.menu-option {
+          text-align: center;
+        }
+      }
+    }
+
+    // CONTROL PANEL STYLING
+    nav {
+      position: fixed;
+      bottom: 0;
+      width: 100vw;
+      height: 4rem;
+      z-index: 100;
+      justify-content: space-between;
+      @include dark-blue;
+
+      @include respond-up(small-desktop) {
+        padding: 1rem;
+      }
+
+      span {
+        flex: none;
+
+        .title {
+          display: none;
+          @include light-blue(1, text);
+
+          @include respond-up(tablet) {
+            display: block;
+          }
+        }
+      }
+
+      div {
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+
+    // ADDITIONAL CONTROLLERS STYLING
+    section {
+      position: fixed;
+      bottom: 4rem;
+      width: 100vw;
+      z-index: 90;
+      padding: 0.5rem;
+      gap: 0.5rem;
+      transform: translateY(100%);
+      transition: all 0.6s ease-in-out;
+      @include navy;
+
+      &.visible {
+        transform: none;
+      }
+
+      &.step-controller {
+        div {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        ul {
+          width: 100%;
+          flex-flow: row wrap;
+          max-height: 15rem;
+          overflow-y: auto;
+
+          @include respond-up(small-desktop) {
+            max-height: unset;
+          }
+        }
+
+        @include respond-up(tablet) {
+          span {
+            flex-flow: row wrap;
+            gap: 1rem;
+
+            .title::after {
+              content: ':';
+            }
+          }
+
+          hr {
+            display: none;
+          }
+        }
+      }
+
+      &.sound-controller {
+        div {
+          width: 100%;
+
+          @include respond-up(tablet) {
+            flex-direction: row;
+          }
+        }
+      }
+    }
+  }
+</style>

@@ -254,14 +254,18 @@
             {#if contractGetter(contract_name)}
               {#await Promise.resolve(contractGetter(contract_name)) then contract}
                 <a
-                  href={contract.link || 'https://degenerousdao.gitbook.io/wiki'}
+                  href={contract.link ||
+                    'https://degenerousdao.gitbook.io/wiki'}
                   class:inactive-link={!contract.link}
                   target="_blank"
                   on:click={(event) => {
                     if (contract.link) return;
-                    if (!confirm(
-                      "This collection is no longer available. Would you like to explore the wiki for more details?"
-                    )) event.preventDefault();
+                    if (
+                      !confirm(
+                        'This collection is no longer available. Would you like to explore the wiki for more details?',
+                      )
+                    )
+                      event.preventDefault();
                   }}
                 >
                   {#if amount && amount > 0}

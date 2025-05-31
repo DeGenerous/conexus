@@ -22,7 +22,6 @@
     viewBox="-100 -100 200 200"
     stroke-width="15"
     stroke-linecap="round"
-
   >
     <defs>
       <mask id="voice-svg-top-mask">
@@ -56,16 +55,17 @@
             ry="40"
             stroke="none"
           />
-          <path
-            d=" M -55 -10 C -60 74 60 74 55 -10"
-            fill="none"
-          />
-          <path
-            d="M 0 55 L 0 85 M 25 85 L -25 85"
-            fill="none"
-          />
+          <path d=" M -55 -10 C -60 74 60 74 55 -10" fill="none" />
+          <path d="M 0 55 L 0 85 M 25 85 L -25 85" fill="none" />
         </g>
-        <line x1="75" y1="-95" x2="-95" y2="75" stroke="black" stroke-width="15" />
+        <line
+          x1="75"
+          y1="-95"
+          x2="-95"
+          y2="75"
+          stroke="black"
+          stroke-width="15"
+        />
       </mask>
     </defs>
 
@@ -84,10 +84,7 @@
         fill="none"
         style="transform: {voiceSvgFocus ? 'scaleX(-1)' : 'none'}"
       />
-      <path
-        d="M 0 55 L 0 85 M 25 85 L -25 85"
-        fill="none"
-      />
+      <path d="M 0 55 L 0 85 M 25 85 L -25 85" fill="none" />
     </g>
 
     <g mask="url(#voice-svg-bottom-mask)">
@@ -101,14 +98,8 @@
           ry="40"
           stroke="none"
         />
-        <path
-          d="M -55 -10 C -60 74 60 74 55 -10"
-          fill="none"
-        />
-        <path
-          d="M 0 55 L 0 85 M 25 85 L -25 85"
-          fill="none"
-        />
+        <path d="M -55 -10 C -60 74 60 74 55 -10" fill="none" />
+        <path d="M 0 55 L 0 85 M 25 85 L -25 85" fill="none" />
       </g>
       <line x1="85" y1="-85" x2="-85" y2="85" stroke-width="15" />
     </g>

@@ -29,13 +29,8 @@
         ? 'rotate(-15deg)'
         : 'none'}"
     >
-      <path
-        d="M -70 -40 A 80 80 0 1 1 -50 50"
-        fill="none"
-      />
-      <polygon
-        points="-70 -40 -70 -80 -30 -50"
-      />
+      <path d="M -70 -40 A 80 80 0 1 1 -50 50" fill="none" />
+      <polygon points="-70 -40 -70 -80 -30 -50" />
     </g>
     <line
       x1="0"

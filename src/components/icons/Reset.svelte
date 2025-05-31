@@ -10,18 +10,8 @@
     stroke-linecap="round"
     stroke-linejoin="round"
   >
-    <path
-      d="
-          M 70 -50
-          A 85 85 0 1 0 85 0
-        "
-      fill="none"
-    />
-    <polygon
-      points="
-          70 -50 60 -90 30 -55
-        "
-    />
+    <path d="M 70 -50 A 85 85 0 1 0 85 0" fill="none" />
+    <polygon points="70 -50 60 -90 30 -55" />
   </svg>
 </button>
 

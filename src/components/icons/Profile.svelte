@@ -1,21 +1,17 @@
 <script lang="ts">
   export let onClick = () => {};
-
-  let profileSvgFocus: boolean = false;
 </script>
 
 <button
   class="top-right-icon void-btn flex fade-in"
   aria-label="Profile"
   on:click={onClick}
-  on:pointerover={() => (profileSvgFocus = true)}
-  on:pointerout={() => (profileSvgFocus = false)}
 >
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
     <defs>
       <mask id="profile-svg-mask">
         <circle r="100" fill="white" />
-        <g fill="black" transform={profileSvgFocus ? 'scale(1.1)' : ''}>
+        <g fill="black">
           <circle cy="-25" r="30" />
           <path
             d="
@@ -43,6 +39,10 @@
     &:active,
     &:focus {
       fill: $cyan;
+
+      #profile-svg-mask g {
+        transform: scale(1.1);
+      }
     }
   }
 </style>

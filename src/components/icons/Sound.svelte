@@ -2,7 +2,7 @@
   export let onClick = () => {};
   export let active: boolean = false;
   export let lowSound: boolean = false;
-  export let noSound: boolean = true;
+  export let noSound: boolean = false;
 </script>
 
 <button
@@ -19,7 +19,9 @@
     stroke-linejoin="round"
   >
     {#if noSound}
-      <path d="M16,14.5l5-5m-5,0,5,5M7,9H4a1,1,0,0,0-1,1v4a1,1,0,0,0,1,1H7l4,4V5Z"/>
+      <path
+        d="M16,14.5l5-5m-5,0,5,5M7,9H4a1,1,0,0,0-1,1v4a1,1,0,0,0,1,1H7l4,4V5Z"
+      />
     {:else}
       {#if !lowSound}
         <path

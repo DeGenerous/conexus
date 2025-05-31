@@ -191,7 +191,7 @@ html {
     animation: dark-glowing 10s ease-in-out infinite;
     margin-inline: auto;
   }
-  
+
   .transparent-container {
     @extend .container;
     animation: transparent-glowing 10s ease-in-out infinite;

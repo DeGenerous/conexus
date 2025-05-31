@@ -14,8 +14,8 @@
   stroke-width="20"
   stroke-linecap="round"
   stroke-linejoin="round"
-  >
-  <polygon points="-40 -90 -40 90 50 0"/>
+>
+  <polygon points="-40 -90 -40 90 50 0" />
   {#if glowing}
     <animate
       attributeName="fill"
@@ -35,7 +35,7 @@
 </svg>
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   svg {
     width: 1.5rem;

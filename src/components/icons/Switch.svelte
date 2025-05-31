@@ -2,17 +2,12 @@
   export let onClick = () => {};
   export let disabled: boolean = false;
   export let right: boolean = false;
-
-  let switchSvgFocus: boolean = false;
 </script>
 
 <button
   class="void-btn flex"
-  class:focused={switchSvgFocus}
   class:right
   on:click|stopPropagation={onClick}
-  on:pointerover={() => (switchSvgFocus = true)}
-  on:pointerout={() => (switchSvgFocus = false)}
   aria-label="Switch"
   {disabled}
 >
@@ -32,7 +27,10 @@
       </mask>
     </defs>
 
-    <circle r="100" mask="url(#back-step-arrow-svg-mask{right ? '-right' : ''})"/>
+    <circle
+      r="100"
+      mask="url(#back-step-arrow-svg-mask{right ? '-right' : ''})"
+    />
   </svg>
 </button>
 
@@ -42,26 +40,23 @@
   button {
     fill: $light-blue;
 
-    &.focused:not(&:disabled) {
+    &:hover:not(&:disabled),
+    &:active:not(&:disabled),
+    &:focus:not(&:disabled) {
       fill: $cyan;
+      @include scale;
 
-      svg {
-        circle {
-          transform: scale(1.05);
-        }
-
-        g {
-          transform: scale(1.2);
-        }
+      svg g {
+        transform: scale(1.2);
       }
     }
 
     &.right:not(&:disabled) {
-      &.focused {
-        svg {
-          g {
-            transform: scale(1.2) rotate(180deg) !important;
-          }
+      &:hover,
+      &:active,
+      &:focus {
+        svg g {
+          transform: scale(1.2) rotate(180deg) !important;
         }
       }
     }

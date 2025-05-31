@@ -1,6 +1,6 @@
 <script lang="ts">
   export let onClick = () => {};
-  export let text: string = "";
+  export let text: string = '';
   export let active: boolean = false;
 </script>
 

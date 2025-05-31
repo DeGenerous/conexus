@@ -4,19 +4,13 @@
   export let disabled: boolean = false;
   export let text: string = '';
   export let glow: boolean = false;
-
-  let signOutSvgFocus: boolean = false;
-  let signInSvgFocus: boolean = false;
 </script>
 
 <button
   class="blur"
   class:button-glowing={glow}
-  class:focused={signOutSvgFocus}
   type="button"
   on:click|preventDefault={onClick}
-  on:pointerover={() => (signOutSvgFocus = true)}
-  on:pointerout={() => (signOutSvgFocus = false)}
   {disabled}
 >
   {#if state === 'outside'}
@@ -134,7 +128,9 @@
   button {
     stroke: $soft-white;
 
-    &.focused {
+    &:hover,
+    &:active,
+    &:focus {
       stroke: $cyan;
 
       .outside-door path {

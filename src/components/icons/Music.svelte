@@ -4,11 +4,12 @@
 </script>
 
 <button
-  class="void-btn flex"
+  class="void-btn flex-row"
   class:muted={volumeMuted}
   on:click|stopPropagation={onClick}
   aria-label="Adjust music"
 >
+  <p>MUSIC</p>
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"
@@ -82,12 +83,15 @@
   button {
     fill: $light-blue;
     stroke: $light-blue;
+    color: $light-blue;
+    gap: 0.5rem;
 
     &:hover:not(&.muted),
     &:active:not(&.muted),
     &:focus:not(&.muted) {
       fill: $cyan;
       stroke: $cyan;
+      color: $cyan;
       @include scale;
     }
 
@@ -95,10 +99,18 @@
       opacity: 0.5;
     }
 
-    @include respond-up(small-desktop) {
-      width: 1.5rem;
+    p {
+      display: none;
+
+      @include respond-up(tablet) {
+        display: block;
+      }
+    }
+
+    @include respond-up(tablet) {
       fill: $white;
       stroke: $white;
+      color: $white;
     }
   }
 </style>

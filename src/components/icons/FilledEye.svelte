@@ -2,7 +2,7 @@
   export let onClick = () => {};
 </script>
 
-<button class="void-btn flex" on:click={onClick} aria-label="Customization">
+<button id="filled-eye" class="void-btn flex" on:click={onClick} aria-label="Customization">
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"

@@ -278,7 +278,6 @@
   </svg>
 </div> -->
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions a11y-no-static-element-interactions -->
 <section class="step-wrapper flex" style:font-family={stepFont}>
   <ImageDisplay
     bind:image={step.image}
@@ -365,28 +364,41 @@
       <QuitSVG onClick={() => window.location.reload()} voidBtn={true} />
       <h5 class="title">{story_name.trim()}</h5>
     </span>
-    <div class="flex-row">
-      <ZoomInSVG />
-      <FilledEyeSVG />
-      <SoundSVG
-        onClick={() => switchController('sound')}
-        active={activeControlPanel == 'sound'}
-      />
-      <StepSVG
-        text={`${step.step < 10 ? '0' : ''}${step.step}`}
-        onClick={() => switchController('step')}
-        active={activeControlPanel == 'step'}
-      />
-      <FullscreenSVG />
+    <div class="controls flex-row">
+      <div>
+        <label for="zoom-in-control">Scale</label>
+        <ZoomInSVG control={true} />
+      </div>
+      <div>
+        <label for="filled-eye">Styling</label>
+        <FilledEyeSVG />
+      </div>
+      <div>
+        <label for="sound">Sound</label>
+        <SoundSVG
+          onClick={() => switchController('sound')}
+          active={activeControlPanel == 'sound'}
+        />
+      </div>
+      <div>
+        <label for="step-control">Step</label>
+        <StepSVG
+          text={`${step.step < 10 ? '0' : ''}${step.step}`}
+          onClick={() => switchController('step')}
+          active={activeControlPanel == 'step'}
+          control={true}
+        />
+      </div>
     </div>
+    <FullscreenSVG />
   </nav>
 
   <!-- STEP CONTROLLER -->
   <section
-    class="step-controller flex shad-behind"
+    class="step-controller"
     class:visible={activeControlPanel == 'step'}
   >
-    <div class="container flex-row">
+    <div class="transparent-container flex-row">
       <SwitchSVG
         onClick={() => $story?.loadGameStep(step.step - 1)}
         disabled={step.step === 1}
@@ -415,13 +427,11 @@
 
   <!-- SOUND CONTROLLER -->
   <section
-    class="sound-controller flex-row shad-behind"
+    class="sound-controller"
     class:visible={activeControlPanel == 'sound'}
   >
-    <div class="transparent-container">
-      <Slider type="voice" volume={tts_volume} restartable />
-      <Slider type="music" volume={background_volume} />
-    </div>
+    <Slider type="music" volume={background_volume} />
+    <Slider type="voice" volume={tts_volume} restartable />
   </section>
 </section>
 
@@ -896,7 +906,7 @@
       height: 4rem;
       z-index: 100;
       justify-content: space-between;
-      @include dark-blue;
+      @include navy;
 
       @include respond-up(small-desktop) {
         padding: 1rem;
@@ -907,40 +917,92 @@
 
         .title {
           display: none;
-          @include light-blue(1, text);
 
-          @include respond-up(tablet) {
+          @include respond-up(small-desktop) {
             display: block;
           }
         }
       }
 
-      div {
-        width: 100%;
+      .controls {
+        gap: 0.25rem;
         justify-content: flex-end;
+
+        @include respond-up(tablet) {
+          gap: 1rem;
+        }
+
+        div {
+          display: flex;
+          flex-flow: row nowrap;
+          justify-content: center;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.25rem;
+          border-radius: 0.5rem;
+          @include dark-blue(0.5);
+          @include box-shadow(soft, inset);
+
+          @include respond-up(tablet) {
+            padding-inline: 0.5rem;
+          }
+
+          @include respond-up(small-desktop) {
+            padding-block: 0.5rem;
+          }
+
+          label {
+            display: none;
+
+            @include respond-up(tablet) {
+              display: block;
+              transition: color 0.3s ease-in-out;
+
+              &::after {
+                content: ":";
+              }
+
+              &:hover,
+              &:active {
+                @include white-txt;
+              }
+            }
+          }
+        }
       }
     }
 
     // ADDITIONAL CONTROLLERS STYLING
     section {
+      @extend :global(.shad-behind);
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: center;
+      align-items: center;
       position: fixed;
-      bottom: 4rem;
+      bottom: 0;
       width: 100vw;
       z-index: 90;
       padding: 0.5rem;
       gap: 0.5rem;
       transform: translateY(100%);
       transition: all 0.6s ease-in-out;
-      @include navy;
+      @include dark-blue;
 
       &.visible {
+        bottom: 4rem;
         transform: none;
       }
 
+      // STEPS
       &.step-controller {
         div {
           width: 100%;
           justify-content: space-between;
+
+          @include respond-up(tablet) {
+            width: auto;
+          }
         }
 
         ul {
@@ -959,8 +1021,12 @@
             flex-flow: row wrap;
             gap: 1rem;
 
-            .title::after {
-              content: ':';
+            .title {
+              @include white-txt(0.5);
+
+              &::after {
+                content: ':';
+              }
             }
           }
 
@@ -970,13 +1036,10 @@
         }
       }
 
+      // VOICE & MUSIC
       &.sound-controller {
-        div {
-          width: 100%;
-
-          @include respond-up(tablet) {
-            flex-direction: row;
-          }
+        @include respond-up(tablet) {
+          flex-direction: row;
         }
       }
     }

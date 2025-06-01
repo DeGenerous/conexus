@@ -2,9 +2,11 @@
   export let onClick = () => {};
   export let text: string = '';
   export let active: boolean = false;
+  export let control: boolean = true;
 </script>
 
 <button
+  id={control ? "step-control" : ""}
   on:click|stopPropagation={onClick}
   class="void-btn flex"
   class:active

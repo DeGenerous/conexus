@@ -58,7 +58,7 @@
   button {
     fill: $light-blue;
     stroke: $light-blue;
-    width: 1.75rem;
+    width: 2rem;
 
     &:hover,
     &:focus,

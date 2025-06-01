@@ -386,8 +386,7 @@
         &.active {
           background-image: radial-gradient(
             ellipse at center top,
-            rgba(51, 226, 230, 0.2),
-            rgba(51, 226, 230, 0),
+            rgba(51, 226, 230, 0.1),
             rgba(51, 226, 230, 0)
           );
         }

@@ -74,29 +74,37 @@
         : true;
 </script>
 
-<div class="flex-row pad-8 round-8 dark-glowing shad-inset">
+<div class="transparent-container">
   {#if type === 'voice'}
     <VoiceSVG {voiceMuted} onClick={mute} />
   {:else if type === 'music'}
     <MusicSVG {volumeMuted} onClick={mute} />
   {/if}
 
-  <input
-    type="range"
-    min="0"
-    max="1"
-    step="0.01"
-    bind:value={inputValue}
-    on:change={update}
-    disabled={disabledInput}
-  />
+  <span class="flex pad-8 round-8 dark-glowing shad-inset">
+    <input
+      type="range"
+      min="0"
+      max="1"
+      step="0.01"
+      bind:value={inputValue}
+      on:change={update}
+      disabled={disabledInput}
+    />
+  </span>
 
   <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
   {#if restartable}
     <RestartSVG {voiceMuted} onClick={restart} />
-    <button class="void-btn min-size-btn" on:click={adjustTtsSpeed}>
-      x{$tts_speed}
-    </button>
+
+    <hr />
+
+    <span class="voice-speed flex-row gap-8">
+      <button id="voice-speed" class="void-btn min-size-btn flex-row pad-8 round-8 dark-glowing shad-inset" on:click={adjustTtsSpeed}>
+        <p>SPEED</p>
+        x{$tts_speed.toFixed(2)}
+      </button>
+    </span>
   {/if}
 </div>
 
@@ -104,28 +112,48 @@
   @use '/src/styles/mixins' as *;
 
   div {
-    width: 100%;
+    flex-flow: row wrap;
+    width: unset !important;
+    margin-inline: unset !important;
 
-    button {
-      width: auto !important;
-      @include light-blue(1, text);
-      @include font(h4);
-
-      &:hover,
-      &:active,
-      &:focus {
-        @include cyan(1, text);
-        @include scale;
-      }
-
-      @include respond-up(small-desktop) {
+    .voice-speed {
+      button {
+        width: auto !important;
         @include white-txt;
-        @include font(h5);
+        @include font(h4);
+
+        &:hover,
+        &:active,
+        &:focus {
+          @include cyan(1, text);
+        }
+
+        @include respond-up(tablet) {
+          @include white-txt;
+          @include font(h5);
+        }
       }
     }
 
     input {
-      width: 100%;
+      width: 11rem;
+
+      @include respond-up(large-desktop) {
+        width: 16rem;
+      }
+
+      @include respond-up(full-hd) {
+        width: 24rem;
+      }
+    }
+
+    @include respond-up(tablet) {
+      padding: 0.5rem 1.5rem !important;
+      gap: 0.5rem 1.5rem;
+
+      hr {
+        display: none;
+      }
     }
   }
 </style>

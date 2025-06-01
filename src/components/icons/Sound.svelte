@@ -6,9 +6,10 @@
 </script>
 
 <button
-  on:click|stopPropagation={onClick}
+  id="sound"
   class="void-btn flex"
   class:active
+  on:click|stopPropagation={onClick}
   aria-label="Back"
 >
   <svg

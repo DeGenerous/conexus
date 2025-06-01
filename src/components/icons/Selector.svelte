@@ -3,6 +3,7 @@
   export let disabled: boolean = false;
   export let hideForMobiles: boolean = false;
   export let glowing: boolean = false;
+  export let color: string = "#33e2e6";
 </script>
 
 <svg
@@ -14,6 +15,8 @@
   stroke-width="20"
   stroke-linecap="round"
   stroke-linejoin="round"
+  style:fill={color}
+  style:stroke={color}
 >
   <polygon points="-40 -90 -40 90 50 0" />
   {#if glowing}
@@ -44,19 +47,6 @@
     &.focused {
       polygon {
         transform: scaleX(1.5);
-      }
-    }
-
-    &.disabled {
-      fill: $cyan !important;
-      stroke: $cyan !important;
-    }
-
-    &.pc-only {
-      display: none;
-
-      @include respond-up(tablet) {
-        display: block;
       }
     }
   }

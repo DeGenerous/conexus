@@ -1,8 +1,15 @@
 <script lang="ts">
   export let onClick = () => {};
+  export let active: boolean = false;
 </script>
 
-<button id="filled-eye" class="void-btn flex" on:click={onClick} aria-label="Customization">
+<button
+  id="filled-eye"
+  class="void-btn flex"
+  class:active
+  on:click={onClick}
+  aria-label="Customization"
+>
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"
@@ -29,6 +36,11 @@
   button {
     fill: $light-blue;
     stroke: $light-blue;
+
+    &.active {
+      fill: $cyan !important;
+      stroke: $cyan !important;
+    }
 
     &:hover,
     &:active,

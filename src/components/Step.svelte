@@ -26,14 +26,23 @@
     await media.playBackgroundMusic(topic_id);
   };
 
-  let stepFont: string = 'Verdana';
-  let width: number;
-
   let fullWidthImage: boolean = false;
   let activeControlPanel: Nullable<string> = null;
 
   let activeOptionNumber: number = 0;
   let focusedOption: Nullable<number> = null;
+
+  // Font for all elements inside step-wrapper
+  let stepFont: string = 'Verdana';
+
+  let baseSize: string = 'body';
+  let accentSize: string = 'h5';
+  let boldFont: boolean = true;
+  let italicFont: boolean = false;
+
+  let baseColor: string = "#dedede";
+  let accentColor: string = "#33e2e6";
+  let backgroundColor: string = "#000000";
 
   $: step = $story?.step_data as StepData;
 
@@ -102,27 +111,11 @@
         activeOption?.focus();
         break;
       }
-      // case '-': {
-      //   event.preventDefault();
-      //   if (width < 1280) return;
-      //   let stepZoom = zoom - 0.05;
-      //   zoom = setZoom(stepZoom);
-      //   break;
-      // }
-      // case '=': {
-      //   event.preventDefault();
-      //   if (width < 1280) return;
-      //   let stepZoom = zoom + 0.05;
-      //   zoom = setZoom(stepZoom);
-      //   break;
-      // }
     }
   };
 
-  let zoom: number = 1;
-
-  let pictureKeyframe: KeyframeEffect;
-  let pictureAnimation: Animation;
+  // let pictureKeyframe: KeyframeEffect;
+  // let pictureAnimation: Animation;
 
   // $: if (step.image && step.image_type !== 'url') {
   //   pictureAnimation.play();
@@ -150,23 +143,6 @@
     // );
     // pictureAnimation = new Animation(pictureKeyframe, document.timeline);
   });
-
-  const handleZoomWheel = (event: WheelEvent) => {
-    if (width < 1280) return;
-    const { deltaY, ctrlKey, metaKey } = event;
-    if (!(ctrlKey || metaKey)) return;
-    // event.preventDefault();
-    // let stepZoom: number;
-    // stepZoom = deltaY > 0 ? zoom - 0.05 : zoom + 0.05;
-    // zoom = setZoom(stepZoom);
-  };
-
-  // function setZoom(zoom: number): number {
-  //   const finalZoom =
-  //     zoom < 0.3 ? 0.3 : zoom > width / 1280 ? width / 1280 : zoom;
-  //   localStorage.setItem('step-zoom', finalZoom.toString());
-  //   return finalZoom;
-  // }
 
   // Light Theme
   let local_theme: string | null = localStorage.getItem('theme')
@@ -196,10 +172,10 @@
       0 0 0.5rem #010020;
     ${mobileTextWrapperStyling}
   `;
-  $: if (width < 600)
-    mobileTextWrapperStyling = `
-    padding: 1em;
-  `;
+  // $: if (width < 600)
+  //   mobileTextWrapperStyling = `
+  //   padding: 1em;
+  // `;
 
   const switchTheme = () => {
     switch (theme) {
@@ -218,67 +194,15 @@
   };
 </script>
 
-<svelte:window
-  bind:innerWidth={width}
-  on:keydown={handleKeyDown}
-  on:wheel={handleZoomWheel}
-/>
+<svelte:window on:keydown={handleKeyDown} />
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- <div class="zoom-slider">
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="-100 -100 200 200"
-    class="search-svg filter-image"
-    stroke="#dedede"
-    stroke-width="15"
-    stroke-linecap="round"
-    fill="none"
-    on:click={() => {
-      let stepZoom = zoom - 0.05;
-      zoom = setZoom(stepZoom);
-    }}
-    role="button"
-    tabindex="0"
-    aria-label="Zoom out"
-  >
-    <circle cx="-20" cy="-20" r="70" />
-    <line x1="34" y1="34" x2="85" y2="80" stroke-width="25" />
-    <line x1="-55" y1="-20" x2="15" y2="-20" />
-  </svg>
-  <input
-    type="range"
-    min="0.3"
-    max={width / 1280}
-    step="0.005"
-    autocomplete="off"
-    bind:value={zoom}
-    on:change={() => localStorage.setItem('step-zoom', zoom.toString())}
-  />
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="-100 -100 200 200"
-    class="search-svg filter-image"
-    stroke="#dedede"
-    stroke-width="15"
-    stroke-linecap="round"
-    fill="none"
-    on:click={() => {
-      let stepZoom = zoom + 0.05;
-      zoom = setZoom(stepZoom);
-    }}
-    role="button"
-    tabindex="0"
-    aria-label="Zoom in"
-  >
-    <circle cx="-20" cy="-20" r="70" />
-    <line x1="34" y1="34" x2="85" y2="80" stroke-width="25" />
-    <line x1="-55" y1="-20" x2="15" y2="-20" />
-    <line x1="-20" y1="-55" x2="-20" y2="15" />
-  </svg>
-</div> -->
-
-<section class="step-wrapper flex" style:font-family={stepFont}>
+<section
+  class="step-wrapper flex {baseSize}-font"
+  style:font-family={stepFont}
+  style:font-weight={boldFont ? 'bold' : 'normal'}
+  style:font-style={italicFont ? 'italic' : ''}
+  style:color={baseColor}
+>
   <ImageDisplay
     bind:image={step.image}
     bind:image_type={step.image_type}
@@ -287,7 +211,13 @@
 
   {#if step.title}
     {#key step.options}
-      <h4 class="text-glowing">{step.title}</h4>
+      <h4
+        class="{accentSize}-font"
+        style:font-style={italicFont ? 'italic' : ''}
+        style:color={accentColor}
+      >
+        {step.title}
+      </h4>
     {/key}
   {/if}
 
@@ -296,11 +226,21 @@
   {#if $story?.step_data?.end}
     <hr />
 
-    <h4>Story Summary</h4>
+    <h4 
+      class="{accentSize}-font"
+      style:font-style={italicFont ? 'italic' : ''}
+      style:color={accentColor}
+    >
+      Story Summary
+    </h4>
 
     <article style={textWrapperStyling}>{step.summary}</article>
 
-    <h4>
+    <h4
+      class="{accentSize}-font"
+      style:font-style={italicFont ? 'italic' : ''}
+      style:color={accentColor}
+    >
       CoNexus identified your trait as:
       <strong class="text-glowing">{step.trait}</strong>
     </h4>
@@ -309,7 +249,11 @@
       <article style={textWrapperStyling}>{step.trait_description}</article>
     {/if}
 
-    <div class="options transparent-container">
+    <div
+      class="options transparent-container {accentSize}-font"
+      style:font-style={italicFont ? 'italic' : ''}
+      style:color={accentColor}
+    >
       <button
         id="option-0"
         class="void-btn menu-option"
@@ -317,7 +261,10 @@
       >
     </div>
   {:else}
-    <div class="options transparent-container wide-container">
+    <div
+      class="options transparent-container wide-container {accentSize}-font"
+      style:color={accentColor}
+    >
       {#key step.options}
         {#each step.options as option, i}
           <button
@@ -349,7 +296,7 @@
                 focusedOption === i}
               disabled={$loading || step.step !== $story?.maxStep}
               hideForMobiles={true}
-              glowing={true}
+              color={accentColor}
             />
             {option}
           </button>
@@ -366,22 +313,29 @@
     </span>
     <div class="controls flex-row">
       <div>
-        <label for="zoom-in-control">Scale</label>
-        <ZoomInSVG control={true} />
+        <label class="pc-only" for="zoom-in-control">Scale</label>
+        <ZoomInSVG
+          onClick={() => switchController('scale')}
+          active={activeControlPanel == 'scale'}
+          control={true}
+        />
       </div>
       <div>
-        <label for="filled-eye">Styling</label>
-        <FilledEyeSVG />
+        <label class="pc-only" for="filled-eye">Styling</label>
+        <FilledEyeSVG
+          onClick={() => switchController('styling')}
+          active={activeControlPanel == 'styling'}
+        />
       </div>
       <div>
-        <label for="sound">Sound</label>
+        <label class="pc-only" for="sound">Sound</label>
         <SoundSVG
           onClick={() => switchController('sound')}
           active={activeControlPanel == 'sound'}
         />
       </div>
       <div>
-        <label for="step-control">Step</label>
+        <label class="pc-only" for="step-control">Step</label>
         <StepSVG
           text={`${step.step < 10 ? '0' : ''}${step.step}`}
           onClick={() => switchController('step')}
@@ -433,410 +387,99 @@
     <Slider type="music" volume={background_volume} />
     <Slider type="voice" volume={tts_volume} restartable />
   </section>
-</section>
 
-<!-- <section class="controls-container">
-    {#if width > 600}
+  <!-- STYLING CONTROLLER -->
+  <section
+    class="styling-controller"
+    class:visible={activeControlPanel == 'styling'}
+  >
+    <div class="font-family transparent-container">
+      <span class="flex-row">
+        <label for="text-size">Font</label>
+        <select id="text-size" bind:value={stepFont}>
+          <option value="PT Serif Caption">Default (serif)</option>
+          <option value="Lora">Lora</option>
+          <option value="Roboto">Roboto</option>
+          <option value="Verdana">Verdana</option>
+          <option value="Courier Prime">Courier prime</option>
+          <option value="Fira Code">Fira Code</option>
+          <option value="Monospace">Monospace</option>
+        </select>
+      </span>
 
-
-      {#if !$fullscreen}
-        <div class="control-bar blur">
-          <div class="story-info-container">
-            <button
-              class="quit"
-              on:click={() => window.location.reload()}
-              on:pointerover={() => (quitSvgWindowFocus = true)}
-              on:pointerout={() => (quitSvgWindowFocus = false)}
-              aria-label="quit"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="-100 -100 200 200"
-              >
-                <defs>
-                  <mask id="quit-svg-mask">
-                    <circle r="95" fill="white" />
-                    <path
-                      class="quit-svg-mask"
-                      d="
-                        M 50 0
-                        L -50 0
-                        L 0 -50
-                        M -50 0
-                        L 0 50
-                      "
-                      fill="none"
-                      stroke="black"
-                      stroke-width="25"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      style="transform: {quitSvgWindowFocus
-                        ? 'scale(1.2)'
-                        : 'none'}"
-                    />
-                  </mask>
-                </defs>
-
-                <circle
-                  r="95"
-                  fill="rgb(22, 30, 95)"
-                  mask="url(#quit-svg-mask)"
-                  style="
-                    transform: {quitSvgWindowFocus ? 'scale(1.05)' : 'none'};
-                    fill: {quitSvgWindowFocus
-                    ? 'rgb(1, 0, 32)'
-                    : 'rgb(22, 30, 95)'}
-                  "
-                />
-              </svg>
-            </button>
-
-            <h3>{storyTitle}</h3>
-          </div>
-
-          <div class="controls">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="-100 -100 200 200"
-              class="eye-svg filled-out-eye"
-              stroke={themeColor}
-              stroke-width="15"
-              stroke-linejoin="round"
-              stroke-linecap="round"
-              opacity="0.75"
-              on:click={switchTheme}
-              role="button"
-              tabindex="0"
-            >
-              <mask id="eye-circle">
-                <path
-                  fill="white"
-                  stroke="white"
-                  d="
-                    M -80 0
-                    Q 0 -90 80 0
-                    Q 0 90 -80 0
-                    Z
-                  "
-                  mask="url(#eye-circle)"
-                />
-                <circle r="25" fill="black" stroke="black" />
-              </mask>
-              <circle r="15" fill={themeColor} stroke="none" />
-              <path
-                fill={themeColor}
-                d="
-                  M -80 0
-                  Q 0 -90 80 0
-                  Q 0 90 -80 0
-                  Z
-                "
-                mask="url(#eye-circle)"
-              />
-            </svg>
-            <Slider type="music" volume={background_volume} />
-            <Slider type="voice" volume={tts_volume} restartable />
-            <button
-              class="fullscreen"
-              on:click={() => ($fullscreen = true)}
-              on:pointerover={() => (fullscreenSvgWindowFocus = true)}
-              on:pointerout={() => (fullscreenSvgWindowFocus = false)}
-              aria-label="Enter fullscreen mode"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="-100 -100 200 200"
-                class="fullscreen-svg"
-                fill="rgb(22, 30, 95)"
-                stroke="rgb(22, 30, 95)"
-                stroke-width="25"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                style="
-                  transform: {fullscreenSvgWindowFocus ? 'scale(1.05)' : ''};
-                  fill: {fullscreenSvgWindowFocus
-                  ? 'rgb(1, 0, 32)'
-                  : 'rgb(22, 30, 95)'};
-                  stroke: {fullscreenSvgWindowFocus
-                  ? 'rgb(1, 0, 32)'
-                  : 'rgb(22, 30, 95)'};
-                "
-              >
-                <g
-                  id="fullscreen-arrow"
-                  style="transform: {fullscreenSvgWindowFocus
-                    ? 'translate(-2.5%, -2.5%)'
-                    : ''}"
-                >
-                  <line x1="0" y1="0" x2="-55" y2="-55" />
-                  <polygon
-                    points="
-                      -85 -32 -85 -85 -32 -85
-                    "
-                    stroke-width="15"
-                  />
-                </g>
-                <use href="#fullscreen-arrow" transform="rotate(90)" />
-                <use href="#fullscreen-arrow" transform="rotate(180)" />
-                <use href="#fullscreen-arrow" transform="rotate(270)" />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-
-
-      {:else}
-        <div class="control-bar-fullscreen">
-          <div class="story-info-container">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="-100 -100 200 200"
-              class="quit-svg-element"
-              on:click={() => window.location.reload()}
-              role="button"
-              tabindex="0"
-            >
-              <defs>
-                <mask id="quit-svg-mask">
-                  <circle r="95" fill="white" />
-                  <path
-                    class="quit-svg-mask"
-                    d="
-                      M 50 0
-                      L -50 0
-                      L 0 -50
-                      M -50 0
-                      L 0 50
-                    "
-                    fill="none"
-                    stroke="black"
-                    stroke-width="25"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    style="transform: {quitSvgFullscreenFocus
-                      ? 'scale(1.2)'
-                      : 'none'}"
-                  />
-                </mask>
-              </defs>
-
-              <circle
-                class="quit-svg"
-                r="95"
-                fill="rgba(51, 226, 230, 0.5)"
-                mask="url(#quit-svg-mask)"
-                on:pointerover={() => (quitSvgFullscreenFocus = true)}
-                on:pointerout={() => (quitSvgFullscreenFocus = false)}
-              />
-            </svg>
-            <h3 style="color: rgba(51, 226, 230, 0.5); max-width: none;">
-              {storyTitle}
-            </h3>
-          </div>
-
-
-
-    {:else}
-      <div class="control-bar blur">
-        <div class="mobile-controls">
-          <svg
-            class="quit-button-svg"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="-100 -100 200 200"
-            on:click={() => window.location.reload()}
-            role="button"
-            tabindex="0"
-          >
-            <defs>
-              <mask id="quit-svg-mask">
-                <circle r="95" fill="white" />
-                <path
-                  d="
-                    M 50 0
-                    L -50 0
-                    L 0 -50
-                    M -50 0
-                    L 0 50
-                  "
-                  fill="none"
-                  stroke="black"
-                  stroke-width="25"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </mask>
-            </defs>
-
-            <circle
-              class="quit-svg"
-              r="95"
-              fill="#dedede"
-              mask="url(#quit-svg-mask)"
-            />
-          </svg>
-
-    
-
-          {#if !$iosDevice}
-            {#if $fullscreen}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="-100 -100 200 200"
-                class="fullscreen-svg"
-                fill="#dedede"
-                stroke="#dedede"
-                stroke-width="20"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                on:click={() => fullscreen.update((old) => !old)}
-                role="button"
-                tabindex="0"
-              >
-                <g id="windowed-arrow">
-                  <line x1="-90" y1="-90" x2="-50" y2="-50" />
-                  <polygon
-                    points="
-                      -85 -32 -32 -32 -32 -85
-                    "
-                    stroke-width="12"
-                    transform="translate(10 10)"
-                  />
-                </g>
-                <use href="#windowed-arrow" transform="rotate(90)" />
-                <use href="#windowed-arrow" transform="rotate(180)" />
-                <use href="#windowed-arrow" transform="rotate(270)" />
-              </svg>
-            {:else}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="-100 -100 200 200"
-                class="fullscreen-svg"
-                fill="#dedede"
-                stroke="#dedede"
-                stroke-width="20"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                on:click={() => fullscreen.update((old) => !old)}
-                role="button"
-                tabindex="0"
-              >
-                <g id="fullscreen-arrow">
-                  <line x1="0" y1="0" x2="-55" y2="-55" />
-                  <polygon
-                    points="
-                      -85 -32 -85 -85 -32 -85
-                    "
-                    stroke-width="12"
-                  />
-                </g>
-                <use href="#fullscreen-arrow" transform="rotate(90)" />
-                <use href="#fullscreen-arrow" transform="rotate(180)" />
-                <use href="#fullscreen-arrow" transform="rotate(270)" />
-              </svg>
-            {/if}
-          {:else}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="-100 -100 200 200"
-              class="eye-svg filled-out-eye"
-              stroke={themeColor}
-              stroke-width="15"
-              stroke-linejoin="round"
-              stroke-linecap="round"
-              opacity="1"
-              on:click={switchTheme}
-              role="button"
-              tabindex="0"
-            >
-              <mask id="eye-circle">
-                <path
-                  fill="white"
-                  stroke="white"
-                  d="
-                    M -80 0
-                    Q 0 -90 80 0
-                    Q 0 90 -80 0
-                    Z
-                  "
-                  mask="url(#eye-circle)"
-                />
-                <circle r="25" fill="black" stroke="black" />
-              </mask>
-              <circle r="15" fill={themeColor} stroke="none" />
-              <path
-                fill={themeColor}
-                d="
-                  M -80 0
-                  Q 0 -90 80 0
-                  Q 0 90 -80 0
-                  Z
-                "
-                mask="url(#eye-circle)"
-              />
-            </svg>
-          {/if}
-        </div>
-        {#if !$iosDevice}
-          <div class="mobile-sliders">
-            <Slider type="music" volume={background_volume} />
-            <Slider type="voice" volume={tts_volume} restartable />
-          </div>
-        {/if}
-      </div>
-    {/if}
-  </section>
-  {#if width <= 600}
-    {#if !$iosDevice}
-      <div
-        class="theme-switcher blur"
-        on:click={switchTheme}
-        role="button"
-        tabindex="0"
-      >
-        <p style="color: {themeColor}">
-          {theme.charAt(0).toUpperCase() + theme.slice(1)} theme
-        </p>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="-100 -100 200 200"
-          class="eye-svg filled-out-eye"
-          stroke={themeColor}
-          stroke-width="15"
-          stroke-linejoin="round"
-          stroke-linecap="round"
-          opacity="1"
-        >
-          <mask id="eye-circle">
-            <path
-              fill="white"
-              stroke="white"
-              d="
-                M -80 0
-                Q 0 -90 80 0
-                Q 0 90 -80 0
-                Z
-              "
-              mask="url(#eye-circle)"
-            />
-            <circle r="25" fill="black" stroke="black" />
-          </mask>
-          <circle r="15" fill={themeColor} stroke="none" />
-          <path
-            fill={themeColor}
-            d="
-              M -80 0
-              Q 0 -90 80 0
-              Q 0 90 -80 0
-              Z
-            "
-            mask="url(#eye-circle)"
+      {#if stepFont !== "PT Serif Caption"}
+        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+          <label class:active={boldFont} for="bold-font">Bold</label>
+          <input
+            id="bold-font"
+            type="checkbox"
+            bind:checked={boldFont}
           />
-        </svg>
-      </div>
-    {/if}
-    <h3>{storyTitle}</h3>
-  {/if} -->
+        </span>
+      {/if}
+
+      <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+        <label class:active={italicFont} for="italic-font">Italic</label>
+        <input
+          id="italic-font"
+          type="checkbox"
+          bind:checked={italicFont}
+        />
+      </span>
+
+      <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+        <label for="text-color">Base color</label>
+        <input
+          id="text-color"
+          type="color"
+          bind:value={baseColor}
+        />
+      </span>
+
+      <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+        <label for="title-color">Accent color</label>
+        <input
+          id="title-color"
+          type="color"
+          bind:value={accentColor}
+        />
+      </span>
+    </div>
+
+    <!-- <div class="transparent-container">
+    </div> -->
+  </section>
+
+  <!-- SCALE CONTROLLER -->
+  <section
+    class="scale-controller"
+    class:visible={activeControlPanel == 'scale'}
+  >
+    <div class="font-size transparent-container">
+      <span class="flex-row">
+        <label for="text-size">Base font</label>
+        <select id="text-size" bind:value={baseSize}>
+          <option value="caption">Tiny</option>
+          <option value="small">Small</option>
+          <option value="body">Default</option>
+          <option value="h5">Big</option>
+          <option value="h4">Huge</option>
+        </select>
+      </span>
+
+      <span class="flex-row">
+        <label for="title-size">Accent font</label>
+        <select id="title-size" bind:value={accentSize}>
+          <option value="caption">Tiny</option>
+          <option value="small">Small</option>
+          <option value="body">Default</option>
+          <option value="h5">Big</option>
+          <option value="h4">Huge</option>
+        </select>
+      </span>
+    </div>
+  </section>
+</section>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
@@ -851,8 +494,7 @@
 
     * {
       font-family: inherit;
-      font-weight: bold;
-      word-spacing: 0.3em;
+      font-weight: inherit;
     }
 
     h4 {
@@ -864,7 +506,7 @@
       padding-inline: 1rem;
       text-align: left;
       white-space: pre-wrap;
-      @include white-txt(soft);
+      color: inherit;
       @include text-shadow;
     }
 
@@ -872,14 +514,16 @@
       align-items: flex-start;
 
       button {
-        @extend :global(.text-glowing);
         width: 100%;
         justify-content: flex-start;
         text-align: left;
         fill: $cyan;
         stroke: $cyan;
         color: $cyan;
-        @include font(h5);
+        font-size: inherit;
+        line-height: inherit;
+        color: inherit;
+        font-style: inherit;
 
         &:hover:not(&:disabled),
         &:active:not(&:disabled),
@@ -888,8 +532,7 @@
         }
 
         &:disabled:not(&.active-option) {
-          opacity: 0.5;
-          color: $cyan !important;
+          opacity: 0.25;
         }
 
         &.menu-option {
@@ -950,25 +593,32 @@
           @include respond-up(small-desktop) {
             padding-block: 0.5rem;
           }
-
-          label {
-            display: none;
-
-            @include respond-up(tablet) {
-              display: block;
-              transition: color 0.3s ease-in-out;
-
-              &::after {
-                content: ":";
-              }
-
-              &:hover,
-              &:active {
-                @include white-txt;
-              }
-            }
-          }
         }
+      }
+    }
+
+    label {
+      transition: color 0.3s ease-in-out;
+
+      &::after {
+        content: ":";
+      }
+
+      &:hover,
+      &:active {
+        @include white-txt;
+      }
+
+      &.active {
+        color: $cyan;
+      }
+    }
+
+    select {
+      width: 12rem;
+
+      @include respond-up(tablet) {
+        width: 15rem;
       }
     }
 
@@ -989,6 +639,14 @@
       transition: all 0.6s ease-in-out;
       @include dark-blue;
 
+      div {
+        width: 100%;
+
+        @include respond-up(tablet) {
+          width: auto;
+        }
+      }
+
       &.visible {
         bottom: 4rem;
         transform: none;
@@ -997,12 +655,7 @@
       // STEPS
       &.step-controller {
         div {
-          width: 100%;
           justify-content: space-between;
-
-          @include respond-up(tablet) {
-            width: auto;
-          }
         }
 
         ul {
@@ -1040,6 +693,26 @@
       &.sound-controller {
         @include respond-up(tablet) {
           flex-direction: row;
+        }
+      }
+
+      // STYLING
+      &.styling-controller {
+        .font-family {
+          flex-flow: row wrap;
+          gap: 0.5rem 1.5rem;
+        }
+      }
+
+      // SCALE
+      &.scale-controller {
+        .font-size {
+          align-items: flex-end;
+
+          @include respond-up(tablet) {
+            flex-direction: row;
+            gap: 1.5rem;
+          }
         }
       }
     }

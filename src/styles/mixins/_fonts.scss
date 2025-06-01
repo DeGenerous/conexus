@@ -83,3 +83,37 @@ $font-scale: (
 :global(:where(p, label, button)) {
   @include font(body);
 }
+
+// FONT SIZES
+
+:global(.caption-font) {
+  @include font(caption);
+}
+
+:global(.small-font) {
+  @include font(small);
+}
+
+:global(.body-font) {
+  @include font(body);
+}
+
+:global(.h5-font) {
+  @include font(h5);
+}
+
+:global(.h4-font) {
+  @include font(h4);
+}
+
+:global(.h3-font) {
+  @include font(h3);
+}
+
+:global(.h2-font) {
+  @include font(h2);
+}
+
+:global(.h1-font) {
+  @include font(h1);
+}

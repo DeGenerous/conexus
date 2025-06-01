@@ -1,9 +1,16 @@
 <script lang="ts">
   export let onClick = () => {};
+  export let active: boolean = false;
   export let control: boolean = false;
 </script>
 
-<button id={control ? "zoom-in-control" : ""} class="void-btn flex" on:click={onClick} aria-label="Zoom in">
+<button
+  id={control ? "zoom-in-control" : ""}
+  class="void-btn flex"
+  class:active
+  on:click={onClick}
+  aria-label="Zoom in"
+>
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"
@@ -23,6 +30,10 @@
   button {
     stroke: $light-blue;
     width: 1.75rem;
+
+    &.active {
+      stroke: $cyan !important;
+    }
 
     &:hover,
     &:active,

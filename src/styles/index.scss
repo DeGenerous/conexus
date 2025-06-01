@@ -80,6 +80,7 @@ html {
   text-align: center;
   padding-block: 4rem 6rem;
   letter-spacing: 0.025rem;
+  word-spacing: 0.2em;
   background-color: black;
 
   @include cyan(0.75, 'text');
@@ -273,6 +274,14 @@ html {
   :where(hr) {
     width: 95%;
     @include cyan-border(0.25);
+  }
+}
+
+.pc-only {
+  display: none;
+
+  @include respond-up(tablet) {
+    display: block;
   }
 }
 

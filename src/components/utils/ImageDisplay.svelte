@@ -1,7 +1,10 @@
 <script lang="ts">
+  export let width: number;
   export let image: string | undefined;
   export let image_type: string = 'url';
   export let fullWidthImage: boolean = false;
+  export let imageWidth: number = 800;
+  export let imageHeight: number = 512;
   export let boxShadow: boolean = true;
 
   let isLoading = true;
@@ -38,6 +41,8 @@
   on:click={() => (fullWidthImage = !fullWidthImage)}
   class:slim={!fullWidthImage}
   style:box-shadow={boxShadow ? "" : "none"}
+  style:max-width="{imageWidth}px"
+  style={width < 768 ? "" : `height: ${imageHeight}px`}
 >
   {#if isLoading}
     <span class="pulse-animation">
@@ -57,7 +62,7 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  button {
+  .transparent-container {
     padding: 0 !important;
 
     span {
@@ -73,20 +78,33 @@
     }
 
     img {
+      max-height: inherit;
       height: 100%;
       border-radius: inherit;
     }
 
     &.slim {
-      height: 32rem;
+      height: 512px;
     }
 
     @include respond-up(tablet) {
-      height: auto !important;
       cursor: default;
 
       p {
         display: none;
+      }
+
+      &.slim {
+        height: auto;
+      }
+    }
+
+    @include respond-up(large-desktop) {
+      width: 100%;
+      height: unset;
+
+      img {
+        height: inherit;
       }
     }
   }

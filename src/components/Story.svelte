@@ -482,7 +482,7 @@
         &:active:not(&.inactive-link),
         &:focus:not(&.inactive-link) {
           text-decoration: underline $orange;
-          @include orange(1, text, bright);
+          color: $bright-orange;
         }
 
         &.inactive-link {
@@ -491,8 +491,8 @@
           &:hover,
           &:active,
           &:focus {
-            text-decoration: underline $red;
-            @include red(1, text);
+            text-decoration: underline $deep-orange;
+            color: $deep-orange;
           }
         }
       }

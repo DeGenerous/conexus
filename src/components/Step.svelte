@@ -20,6 +20,9 @@
 
   export let story_name: string;
 
+  let width: number;
+  let height: number;
+
   const media: MediaManager = new MediaManager();
 
   const handleSetMedia = async (topic_id: number) => {
@@ -49,7 +52,12 @@
   let optionsContainer: boolean = true;
   let optionSelector: boolean = true;
 
+  let paragraphWidth: number = 80;
+  let optionsWidth: number = 80;
+
   let fullWidthImage: boolean = false;
+  let imageWidth: number = 800;
+  let imageHeight: number = 512;
   let activeControlPanel: Nullable<string> = null;
 
   let activeOptionNumber: number = 0;
@@ -205,7 +213,11 @@
   };
 </script>
 
-<svelte:window on:keydown={handleKeyDown} />
+<svelte:window
+  on:keydown={handleKeyDown}
+  bind:innerWidth={width}
+  bind:innerHeight={height}
+/>
 
 <section
   class="step-wrapper flex {baseSize}-font"
@@ -216,9 +228,12 @@
   style:color={baseColor}
 >
   <ImageDisplay
+    bind:width
     bind:image={step.image}
     bind:image_type={step.image_type}
     bind:fullWidthImage
+    bind:imageWidth
+    bind:imageHeight
     bind:boxShadow
   />
 
@@ -235,7 +250,7 @@
     {/key}
   {/if}
 
-  <article style={textWrapperStyling}>{step.story}</article>
+  <article style:max-width="{paragraphWidth}%">{step.story}</article>
 
   {#if $story?.step_data?.end}
     <hr />
@@ -249,7 +264,7 @@
       Story Summary
     </h4>
 
-    <article style={textWrapperStyling}>{step.summary}</article>
+    <article style:max-width="{paragraphWidth}%">{step.summary}</article>
 
     <h4
       class="{accentSize}-font"
@@ -262,7 +277,7 @@
     </h4>
 
     {#if step.trait_description}
-      <article style={textWrapperStyling}>{step.trait_description}</article>
+      <article style:max-width="{paragraphWidth}%">{step.trait_description}</article>
     {/if}
 
     <div
@@ -272,6 +287,7 @@
       style:font-style={italicFont ? 'italic' : ''}
       style:color={accentColor}
       style:box-shadow={boxShadow ? "" : "none"}
+      style:max-width="{optionsWidth}%"
     >
       <button
         id="option-0"
@@ -286,6 +302,7 @@
       class:transparent-container={optionsContainer}
       style:color={accentColor}
       style:box-shadow={boxShadow ? "" : "none"}
+      style:max-width="{optionsWidth}%"
     >
       {#key step.options}
         {#each step.options as option, i}
@@ -417,7 +434,7 @@
     class="styling-controller"
     class:visible={activeControlPanel == 'styling'}
   >
-    <div class="font-family transparent-container">
+    <div class="font-family transparent-container flex-row">
       <span class="flex-row">
         <label for="text-size">Font</label>
         <select id="text-size" bind:value={stepFont}>
@@ -512,6 +529,70 @@
     class="scale-controller"
     class:visible={activeControlPanel == 'scale'}
   >
+    <div class="image-scale transparent-container">
+      <span class="flex-row">
+        <label for="image-width">Picture width</label>
+        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+          <input
+            id="image-width"
+            type="range"
+            min="800"
+            max={width}
+            step="16"
+            bind:value={imageWidth}
+          />
+          <p>{imageWidth}px</p>
+        </span>
+      </span>
+
+      <span class="flex-row">
+        <label for="image-height">Picture height</label>
+        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+          <input
+            id="image-height"
+            type="range"
+            min="512"
+            max={height}
+            step="16"
+            bind:value={imageHeight}
+          />
+          <p>{imageHeight}px</p>
+        </span>
+      </span>
+    </div>
+
+    <div class="text-scale transparent-container">
+      <span class="flex-row">
+        <label for="paragraph-width">Paragraph width</label>
+        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+          <input
+            id="paragraph-width"
+            type="range"
+            min="50"
+            max="100"
+            step="1"
+            bind:value={paragraphWidth}
+          />
+          <p>{paragraphWidth}%</p>
+        </span>
+      </span>
+
+      <span class="flex-row">
+        <label for="options-width">Options width</label>
+        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+          <input
+            id="options-width"
+            type="range"
+            min="50"
+            max="100"
+            step="1"
+            bind:value={optionsWidth}
+          />
+          <p>{optionsWidth}%</p>
+        </span>
+      </span>
+    </div>
+
     <div class="font-size transparent-container">
       <span class="flex-row">
         <label for="text-size">Base font</label>
@@ -565,10 +646,18 @@
       white-space: pre-wrap;
       color: inherit;
       text-shadow: inherit;
+
+      @include respond-up(large-desktop) {
+        width: 100%;
+      }
     }
 
     .options {
       align-items: flex-start;
+
+      @include respond-up(large-desktop) {
+        width: 100%;
+      }
 
       button {
         width: 100%;
@@ -701,6 +790,7 @@
 
         @include respond-up(tablet) {
           width: auto;
+          flex-flow: row wrap;
         }
       }
 
@@ -746,17 +836,9 @@
         }
       }
 
-      // VOICE & MUSIC
-      &.sound-controller {
-        @include respond-up(tablet) {
-          flex-direction: row;
-        }
-      }
-
       // STYLING
       &.styling-controller {
         .font-family {
-          flex-flow: row wrap;
           gap: 1rem 1.5rem;
         }
       }
@@ -767,8 +849,16 @@
           align-items: flex-end;
 
           @include respond-up(tablet) {
-            flex-direction: row;
             gap: 1.5rem;
+          }
+        }
+
+        .image-scale,
+        .text-scale {
+          display: none;
+
+          @include respond-up(large-desktop) {
+            display: flex;
           }
         }
       }

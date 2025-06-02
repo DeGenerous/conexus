@@ -34,7 +34,7 @@ export const manifest: Partial<ManifestOptions> = {
   display: 'fullscreen',
   start_url: '/',
   background_color: '#000000',
-  theme_color: '#010020',
+  theme_color: '#161e5f',
   lang: 'en-US',
   orientation: 'any',
   prefer_related_applications: false,

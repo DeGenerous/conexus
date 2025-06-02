@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { afterUpdate, onMount } from 'svelte';
+  import { onMount } from 'svelte';
 
   import MediaManager from '@lib/media';
   import { fullscreen, story, loading } from '@stores/conexus';
@@ -63,6 +63,8 @@
   let activeOptionNumber: number = 0;
   let focusedOption: Nullable<number> = null;
 
+  // Control bar
+  
   const switchController = (controller: string) => {
     if (activeControlPanel == controller) {
       activeControlPanel = null;
@@ -162,55 +164,6 @@
     // );
     // pictureAnimation = new Animation(pictureKeyframe, document.timeline);
   });
-
-  // Light Theme
-  let local_theme: string | null = localStorage.getItem('theme')
-    ? localStorage.getItem('theme')
-    : 'dark';
-  let theme: 'dark' | 'white' | 'beige' =
-    local_theme == 'dark' ? 'dark' : local_theme == 'white' ? 'white' : 'beige';
-  $: themeColor =
-    theme == 'white'
-      ? 'rgba(255, 255, 255, 0.9)'
-      : theme == 'beige'
-        ? 'rgba(250, 238, 209, 0.9)'
-        : 'rgba(1, 0, 32, 0.9)';
-
-  let mobileTextWrapperStyling = '';
-  $: textWrapperStyling =
-    theme == 'dark'
-      ? ''
-      : `
-    background-color:${themeColor};
-    color: black;
-    border-radius: 1em;
-    padding-block: 1%;
-    text-shadow: none;
-    box-shadow:
-      inset 0 0 0.5rem #010020,
-      0 0 0.5rem #010020;
-    ${mobileTextWrapperStyling}
-  `;
-  // $: if (width < 600)
-  //   mobileTextWrapperStyling = `
-  //   padding: 1em;
-  // `;
-
-  const switchTheme = () => {
-    switch (theme) {
-      case 'dark': {
-        theme = 'white';
-        break;
-      }
-      case 'white': {
-        theme = 'beige';
-        break;
-      }
-      default:
-        theme = 'dark';
-    }
-    localStorage.setItem('theme', theme);
-  };
 </script>
 
 <svelte:window

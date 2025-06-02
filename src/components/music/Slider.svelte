@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { Writable } from 'svelte/store';
-  import { tts_speed, speed_values } from '@stores/volumes';
+  import { tts_speed, speed_values, muted } from '@stores/volumes';
   import VoiceSVG from '@components/icons/Voice.svelte';
   import MusicSVG from '@components/icons/Music.svelte';
   import RestartSVG from '@components/icons/Restart.svelte';
@@ -18,6 +18,7 @@
         localStorage.getItem(`${type}-volume`) as string,
       );
       $volume = volumeValue;
+      $muted[type] = volumeValue.muted;
       if (type === 'voice') {
         voiceMuted = $volume.muted;
         const storedTtsSpeed = localStorage.getItem('tts-speed');
@@ -32,8 +33,10 @@
     volume.update((v) => {
       if (type === 'voice') {
         voiceMuted = !v.muted;
+        $muted.voice = !v.muted;
       } else if (type === 'music') {
         volumeMuted = !v.muted;
+        $muted.music = !v.muted;
       }
       return { ...v, muted: !v.muted };
     });

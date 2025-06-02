@@ -30,7 +30,6 @@
   import { checkUserState } from '@utils/route-guard';
   import { GetCache, SECTION_CATEGORIES_KEY } from '@constants/cache';
   import detectIOS from '@utils/ios-device';
-  import { iosDevice } from '@stores/ios';
 
   export let section: string;
   export let story_name: string;
@@ -293,7 +292,7 @@
     </div>
   {/await}
 {:else}
-  {#if !$iosDevice}
+  {#if !detectIOS()}
     <BackgroundMusic />
   {/if}
   <Tts />

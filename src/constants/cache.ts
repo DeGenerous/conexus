@@ -36,6 +36,11 @@ export const TOPICS_CACHE_TTL = 1000 * 60 * 10; // 10 minutes
 export const MEDIA_CACHE_KEY = 'media';
 export const MEDIA_CACHE_TTL = 1000 * 60 * 10; // 10 minutes
 
+// CUSTOMIZATION KEYS
+export const ONE_YEAR_TTL = 1000 * 60 * 60 * 24 * 365; // 365 days
+
+export const IOS_KEY = 'iosDevice';
+
 const authKeys = [
   USER_CACHE_KEY,
   SUBSCRIPTIONSTATUS_CACHE_KEY,

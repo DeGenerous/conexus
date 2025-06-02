@@ -5,7 +5,6 @@
   import { fullscreen, story, loading } from '@stores/conexus';
   import { background_volume, tts_volume } from '@stores/volumes';
   import { bgPictureOpacity, bgColor } from '@stores/background';
-  import { iosDevice } from '@stores/ios';
 
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
@@ -17,6 +16,7 @@
   import FullscreenSVG from '@components/icons/Fullscreen.svelte';
   import FilledEyeSVG from '@components/icons/FilledEye.svelte';
   import ZoomInSVG from '@components/icons/ZoomIn.svelte';
+  import detectIOS from '@utils/ios-device';
 
   export let story_name: string;
 
@@ -323,13 +323,15 @@
           active={activeControlPanel == 'styling'}
         />
       </div>
-      <div>
-        <label class="pc-only" for="sound">Sound</label>
-        <SoundSVG
-          onClick={() => switchController('sound')}
-          active={activeControlPanel == 'sound'}
-        />
-      </div>
+      {#if detectIOS()}
+        <div>
+          <label class="pc-only" for="sound">Sound</label>
+          <SoundSVG
+            onClick={() => switchController('sound')}
+            active={activeControlPanel == 'sound'}
+          />
+        </div>
+      {/if}
       <div>
         <label class="pc-only" for="step-control">Step</label>
         <StepSVG

@@ -11,7 +11,7 @@ $transparent-white: rgba(255, 255, 255, 0.5);
 $cyan: rgb(51, 226, 230);
 $soft-cyan: rgba(51, 226, 230, 0.75);
 $transparent-cyan: rgba(51, 226, 230, 0.5);
-$dark-cyan: rgb(80, 160, 165);
+$dark-cyan: rgb(60, 180, 185);
 
 $light-blue: rgb(56, 117, 250);
 $bright-blue: rgb(45, 90, 216);
@@ -19,20 +19,26 @@ $blue: rgb(36, 65, 189);
 $navy: rgb(22, 30, 95);
 $dark-blue: rgb(1, 0, 32);
 
-$deep-green: rgb(75, 112, 50);
 $green: rgb(0, 185, 55);
+$deep-green: rgb(75, 112, 50);
+$dark-green: rgb(0, 25, 6);
+
 $red: rgb(255, 60, 64);
 $dark-red: rgb(32, 0, 1);
 
-$orange: rgb(255, 140, 0);
 $bright-orange: rgb(255, 165, 40);
+$orange: rgb(255, 140, 0);
+$deep-orange: rgb(255, 100, 0);
 
 $purple: rgb(95, 80, 160);
 $bright-purple: rgb(160, 120, 255);
 
-$acid-pink: rgb(255, 105, 180);
+$acid-pink: rgb(255, 70, 150);
 $rose: rgb(200, 140, 140);
 $bright-rose: rgb(230, 175, 175);
+
+$gray: rgb(150, 150, 150);
+$dark-gray: rgb(16, 16, 16);
 
 @mixin white-txt($opacity: 'normal') {
   @if $opacity == 'normal' {

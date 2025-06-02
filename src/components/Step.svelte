@@ -692,7 +692,7 @@
       gap: 0.5rem;
       transform: translateY(100%);
       transition: all 0.6s ease-in-out;
-      @include dark-blue;
+      background-color: $dark-gray;
 
       div {
         width: 100%;

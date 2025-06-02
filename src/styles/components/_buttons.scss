@@ -126,6 +126,11 @@ button:not(.void-btn),
   }
 }
 
+.active-btn:not(.void-btn) {
+  background-color: $deep-green !important;
+  color: $cyan !important;
+}
+
 :where(.void-btn) {
   background-color: transparent;
   border: none;

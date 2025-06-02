@@ -81,7 +81,7 @@
     <MusicSVG {volumeMuted} onClick={mute} />
   {/if}
 
-  <span class="flex pad-8 round-8 dark-glowing shad-inset">
+  <span class="flex-row pad-8 round-8 gap-8 dark-glowing shad-inset">
     <input
       type="range"
       min="0"
@@ -91,13 +91,12 @@
       on:change={update}
       disabled={disabledInput}
     />
+    <p>{inputValue * 100}%</p>
   </span>
 
   <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
   {#if restartable}
     <RestartSVG {voiceMuted} onClick={restart} />
-
-    <hr />
 
     <span class="voice-speed flex-row gap-8">
       <button id="voice-speed" class="void-btn min-size-btn flex-row pad-8 round-8 dark-glowing shad-inset" on:click={adjustTtsSpeed}>
@@ -135,25 +134,9 @@
       }
     }
 
-    input {
-      width: 11rem;
-
-      @include respond-up(large-desktop) {
-        width: 16rem;
-      }
-
-      @include respond-up(full-hd) {
-        width: 24rem;
-      }
-    }
-
     @include respond-up(tablet) {
       padding: 0.5rem 1.5rem !important;
       gap: 0.5rem 1.5rem;
-
-      hr {
-        display: none;
-      }
     }
   }
 </style>

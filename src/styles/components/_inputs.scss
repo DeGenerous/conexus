@@ -92,13 +92,21 @@ input {
   }
 }
 
-input[type='checkbox'] {
+input[type='checkbox'],
+input[type='range'],
+input[type='color'],
+input[type='number'] {
   min-width: unset !important;
   min-height: unset !important;
-  width: 1.5rem;
-  height: 1.5rem;
+  max-width: unset !important;
+  width: auto;
   flex: none;
   cursor: pointer;
+}
+
+input[type='checkbox'] {
+  width: 1.5rem;
+  height: 1.5rem;
 
   @include respond-up(tablet) {
     width: 1rem;
@@ -108,14 +116,9 @@ input[type='checkbox'] {
 
 input[type='range'],
 input[type='color'] {
-  min-width: unset !important;
-  min-height: unset !important;
-  max-width: unset !important;
-  width: auto;
-  height: 1.5rem;
   padding: 0 !important;
+  height: 1.5rem;
   border-radius: 0;
-  cursor: pointer;
   background-color: transparent;
   box-shadow: none;
 
@@ -127,7 +130,37 @@ input[type='color'] {
   }
 }
 
+input[type='range'] {
+  width: 10rem;
+
+  @include respond-up(large-desktop) {
+    width: 16rem;
+  }
+
+  @include respond-up(full-hd) {
+    width: 24rem;
+  }
+}
+
 input[type='color'] {
   width: 3rem;
   border: none;
+}
+
+input[type='number'] {
+  cursor: text;
+  appearance: textfield;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.void-input {
+  border: none !important;
+  border-radius: 0;
+  background-color: transparent !important;
+  box-shadow: none;
 }

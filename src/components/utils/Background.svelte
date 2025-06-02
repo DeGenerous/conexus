@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { bgPicture } from '@stores/background.ts';
+  import { bgPicture, bgPictureOpacity, bgColor } from '@stores/background.ts';
+  import { story } from '@stores/conexus';
   import { onMount } from 'svelte';
 
   export let storyName: Nullable<string> = null;
@@ -26,16 +27,23 @@
 <svelte:window bind:innerWidth={width} bind:scrollY={scroll} />
 
 <div
-  id="background"
+  id="background-image"
   style:top={`max(-${scroll / 100}vh, -100vh)`}
-  style:opacity={storyName ? '0.5' : '1'}
+  style:opacity={storyName ? String($bgPictureOpacity / 100) : '1'}
   bind:this={bg}
 ></div>
+
+{#if $story}
+  <div
+    id="background-color"
+    style:background-color={$bgColor}
+  ></div>
+{/if}
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  #background {
+  #background-image {
     position: fixed;
     top: 0;
     left: 0;
@@ -65,5 +73,15 @@
       opacity: 0;
       filter: brightness(125%) contrast(150%);
     }
+  }
+
+  #background-color {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -200;
+    transition: background-color 0.15s linear;
   }
 </style>

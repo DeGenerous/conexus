@@ -4,6 +4,7 @@
   import MediaManager from '@lib/media';
   import { fullscreen, story, loading } from '@stores/conexus';
   import { background_volume, tts_volume } from '@stores/volumes';
+  import { bgPictureOpacity, bgColor } from '@stores/background';
   import { iosDevice } from '@stores/ios';
 
   import Slider from '@components/music/Slider.svelte';
@@ -26,25 +27,33 @@
     await media.playBackgroundMusic(topic_id);
   };
 
+  $: step = $story?.step_data as StepData;
+
+  // Font for all elements inside step-wrapper
+
+  let stepFont: string = 'Verdana';
+
+  let baseSize: string = 'body';
+  let accentSize: string = 'h5';
+
+  let boldFont: boolean = true;
+  let italicFont: boolean = false;
+  let textShadow: boolean = true;
+
+  let baseColor: string = "#dedede";
+  let accentColor: string = "#33e2e6";
+
+  // Styling customization
+
+  let boxShadow: boolean = true;
+  let optionsContainer: boolean = true;
+  let optionSelector: boolean = true;
+
   let fullWidthImage: boolean = false;
   let activeControlPanel: Nullable<string> = null;
 
   let activeOptionNumber: number = 0;
   let focusedOption: Nullable<number> = null;
-
-  // Font for all elements inside step-wrapper
-  let stepFont: string = 'Verdana';
-
-  let baseSize: string = 'body';
-  let accentSize: string = 'h5';
-  let boldFont: boolean = true;
-  let italicFont: boolean = false;
-
-  let baseColor: string = "#dedede";
-  let accentColor: string = "#33e2e6";
-  let backgroundColor: string = "#000000";
-
-  $: step = $story?.step_data as StepData;
 
   const switchController = (controller: string) => {
     if (activeControlPanel == controller) {
@@ -53,6 +62,8 @@
     }
     activeControlPanel = controller;
   };
+
+  // Keyboard controls
 
   const blurActiveBtn = () => {
     if (document.activeElement!.tagName == 'BUTTON') {
@@ -198,6 +209,7 @@
 
 <section
   class="step-wrapper flex {baseSize}-font"
+  class:text-shad={textShadow}
   style:font-family={stepFont}
   style:font-weight={boldFont ? 'bold' : 'normal'}
   style:font-style={italicFont ? 'italic' : ''}
@@ -207,12 +219,14 @@
     bind:image={step.image}
     bind:image_type={step.image_type}
     bind:fullWidthImage
+    bind:boxShadow
   />
 
   {#if step.title}
     {#key step.options}
       <h4
         class="{accentSize}-font"
+        class:text-shad={textShadow}
         style:font-style={italicFont ? 'italic' : ''}
         style:color={accentColor}
       >
@@ -228,6 +242,7 @@
 
     <h4 
       class="{accentSize}-font"
+      class:text-shad={textShadow}
       style:font-style={italicFont ? 'italic' : ''}
       style:color={accentColor}
     >
@@ -238,6 +253,7 @@
 
     <h4
       class="{accentSize}-font"
+      class:text-shad={textShadow}
       style:font-style={italicFont ? 'italic' : ''}
       style:color={accentColor}
     >
@@ -250,9 +266,12 @@
     {/if}
 
     <div
-      class="options transparent-container {accentSize}-font"
+      class="options {accentSize}-font"
+      class:text-shad={textShadow}
+      class:transparent-container={optionsContainer}
       style:font-style={italicFont ? 'italic' : ''}
       style:color={accentColor}
+      style:box-shadow={boxShadow ? "" : "none"}
     >
       <button
         id="option-0"
@@ -262,8 +281,11 @@
     </div>
   {:else}
     <div
-      class="options transparent-container wide-container {accentSize}-font"
+      class="flex options wide-container {accentSize}-font"
+      class:text-shad={textShadow}
+      class:transparent-container={optionsContainer}
       style:color={accentColor}
+      style:box-shadow={boxShadow ? "" : "none"}
     >
       {#key step.options}
         {#each step.options as option, i}
@@ -291,13 +313,15 @@
             on:focus={() => (focusedOption = i)}
             on:blur={() => (focusedOption = null)}
           >
-            <SelectorSVG
-              focused={(step.choice && step.choice - 1 === i) ||
-                focusedOption === i}
-              disabled={$loading || step.step !== $story?.maxStep}
-              hideForMobiles={true}
-              color={accentColor}
-            />
+            {#if optionSelector}
+              <SelectorSVG
+                focused={(step.choice && step.choice - 1 === i) ||
+                  focusedOption === i}
+                disabled={$loading || step.step !== $story?.maxStep}
+                hideForMobiles={true}
+                color={accentColor}
+              />
+            {/if}
             {option}
           </button>
         {/each}
@@ -398,33 +422,31 @@
         <label for="text-size">Font</label>
         <select id="text-size" bind:value={stepFont}>
           <option value="PT Serif Caption">Default (serif)</option>
+          <option value="Merriweather">Merriweather</option>
           <option value="Lora">Lora</option>
           <option value="Roboto">Roboto</option>
           <option value="Verdana">Verdana</option>
-          <option value="Courier Prime">Courier prime</option>
-          <option value="Fira Code">Fira Code</option>
           <option value="Monospace">Monospace</option>
+          <option value="Courier Prime">Courier prime</option>
+          <option value="Comic Neue">Comic Neue</option>
+          <option value="Caveat">Caveat</option>
         </select>
       </span>
 
-      {#if stepFont !== "PT Serif Caption"}
-        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-          <label class:active={boldFont} for="bold-font">Bold</label>
-          <input
-            id="bold-font"
-            type="checkbox"
-            bind:checked={boldFont}
-          />
-        </span>
-      {/if}
+      <span class="flex-row gap-8">
+        {#if stepFont !== "PT Serif Caption"}
+          <button class:active-btn={boldFont} on:click={() => (boldFont = !boldFont)}>
+            bold
+          </button>
+        {/if}
 
-      <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-        <label class:active={italicFont} for="italic-font">Italic</label>
-        <input
-          id="italic-font"
-          type="checkbox"
-          bind:checked={italicFont}
-        />
+        <button class:active-btn={italicFont} on:click={() => (italicFont = !italicFont)}>
+          italic
+        </button>
+
+        <button class:active-btn={textShadow} on:click={() => (textShadow = !textShadow)}>
+          shadow
+        </button>
       </span>
 
       <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
@@ -446,8 +468,43 @@
       </span>
     </div>
 
-    <!-- <div class="transparent-container">
-    </div> -->
+    <div class="transparent-container flex-row">
+      <label for="bg-opacity">BG image opacity</label>
+      <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+        <input
+          id="bg-opacity"
+          type="range"
+          min="0"
+          max="100"
+          step="5"
+          bind:value={$bgPictureOpacity}
+        />
+        <p>{$bgPictureOpacity}%</p>
+      </span>
+
+      <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+        <label for="bg-color">BG color</label>
+        <input
+          id="bg-color"
+          type="color"
+          bind:value={$bgColor}
+        />
+      </span>
+    </div>
+
+    <div class="transparent-container flex-row">
+      <button class:active-btn={boxShadow} on:click={() => (boxShadow = !boxShadow)}>
+        box shadow
+      </button>
+
+      <button class:active-btn={optionsContainer} on:click={() => (optionsContainer = !optionsContainer)}>
+        options box
+      </button>
+
+      <button class:active-btn={optionSelector} on:click={() => (optionSelector = !optionSelector)}>
+        option selector
+      </button>
+    </div>
   </section>
 
   <!-- SCALE CONTROLLER -->
@@ -507,7 +564,7 @@
       text-align: left;
       white-space: pre-wrap;
       color: inherit;
-      @include text-shadow;
+      text-shadow: inherit;
     }
 
     .options {
@@ -520,15 +577,17 @@
         fill: $cyan;
         stroke: $cyan;
         color: $cyan;
+
         font-size: inherit;
         line-height: inherit;
         color: inherit;
         font-style: inherit;
+        text-shadow: inherit;
 
         &:hover:not(&:disabled),
         &:active:not(&:disabled),
         &:focus:not(&:disabled) {
-          @include bright;
+          filter: brightness(125%) hue-rotate(45deg);
         }
 
         &:disabled:not(&.active-option) {
@@ -608,10 +667,6 @@
       &:active {
         @include white-txt;
       }
-
-      &.active {
-        color: $cyan;
-      }
     }
 
     select {
@@ -626,7 +681,7 @@
     section {
       @extend :global(.shad-behind);
       display: flex;
-      flex-flow: column nowrap;
+      flex-flow: row wrap;
       justify-content: center;
       align-items: center;
       position: fixed;
@@ -641,6 +696,8 @@
 
       div {
         width: 100%;
+        flex-wrap: wrap;
+        margin-inline: unset;
 
         @include respond-up(tablet) {
           width: auto;
@@ -700,7 +757,7 @@
       &.styling-controller {
         .font-family {
           flex-flow: row wrap;
-          gap: 0.5rem 1.5rem;
+          gap: 1rem 1.5rem;
         }
       }
 

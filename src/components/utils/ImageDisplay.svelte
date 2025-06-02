@@ -2,6 +2,7 @@
   export let image: string | undefined;
   export let image_type: string = 'url';
   export let fullWidthImage: boolean = false;
+  export let boxShadow: boolean = true;
 
   let isLoading = true;
   let imageSrc = '';
@@ -36,6 +37,7 @@
   class="void-btn transparent-container"
   on:click={() => (fullWidthImage = !fullWidthImage)}
   class:slim={!fullWidthImage}
+  style:box-shadow={boxShadow ? "" : "none"}
 >
   {#if isLoading}
     <span class="pulse-animation">

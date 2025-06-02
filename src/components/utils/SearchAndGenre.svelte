@@ -218,4 +218,10 @@
       flex-direction: row;
     }
   }
+
+  .collection-header {
+    h3 {
+      @include green(1, text);
+    }
+  }
 </style>

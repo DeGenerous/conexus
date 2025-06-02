@@ -7,6 +7,7 @@
 <button
   class="filter blur"
   class:sorting
+  class:active-btn={sorting}
   on:click={onClick}
   {disabled}
   aria-label="Sort from A to z"
@@ -46,8 +47,6 @@
     color: $soft-white !important;
 
     &.sorting {
-      background-color: $deep-green !important;
-      color: $cyan !important;
       fill: $cyan;
       stroke: $cyan;
 

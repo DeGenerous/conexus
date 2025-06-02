@@ -6,7 +6,7 @@
 </script>
 
 <button
-  id={control ? "step-control" : ""}
+  id={control ? 'step-control' : ''}
   on:click|stopPropagation={onClick}
   class="void-btn flex"
   class:active

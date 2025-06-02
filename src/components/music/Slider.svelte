@@ -99,7 +99,11 @@
     <RestartSVG {voiceMuted} onClick={restart} />
 
     <span class="voice-speed flex-row gap-8">
-      <button id="voice-speed" class="void-btn min-size-btn flex-row pad-8 round-8 dark-glowing shad-inset" on:click={adjustTtsSpeed}>
+      <button
+        id="voice-speed"
+        class="void-btn min-size-btn flex-row pad-8 round-8 dark-glowing shad-inset"
+        on:click={adjustTtsSpeed}
+      >
         <p>SPEED</p>
         x{$tts_speed.toFixed(2)}
       </button>

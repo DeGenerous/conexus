@@ -43,8 +43,8 @@
   let italicFont: boolean = false;
   let textShadow: boolean = true;
 
-  let baseColor: string = "#dedede";
-  let accentColor: string = "#33e2e6";
+  let baseColor: string = '#dedede';
+  let accentColor: string = '#33e2e6';
 
   // Styling customization
 
@@ -255,7 +255,7 @@
   {#if $story?.step_data?.end}
     <hr />
 
-    <h4 
+    <h4
       class="{accentSize}-font"
       class:text-shad={textShadow}
       style:font-style={italicFont ? 'italic' : ''}
@@ -277,7 +277,9 @@
     </h4>
 
     {#if step.trait_description}
-      <article style:max-width="{paragraphWidth}%">{step.trait_description}</article>
+      <article style:max-width="{paragraphWidth}%">
+        {step.trait_description}
+      </article>
     {/if}
 
     <div
@@ -286,7 +288,7 @@
       class:transparent-container={optionsContainer}
       style:font-style={italicFont ? 'italic' : ''}
       style:color={accentColor}
-      style:box-shadow={boxShadow ? "" : "none"}
+      style:box-shadow={boxShadow ? '' : 'none'}
       style:max-width="{optionsWidth}%"
     >
       <button
@@ -301,7 +303,7 @@
       class:text-shad={textShadow}
       class:transparent-container={optionsContainer}
       style:color={accentColor}
-      style:box-shadow={boxShadow ? "" : "none"}
+      style:box-shadow={boxShadow ? '' : 'none'}
       style:max-width="{optionsWidth}%"
     >
       {#key step.options}
@@ -389,10 +391,7 @@
   </nav>
 
   <!-- STEP CONTROLLER -->
-  <section
-    class="step-controller"
-    class:visible={activeControlPanel == 'step'}
-  >
+  <section class="step-controller" class:visible={activeControlPanel == 'step'}>
     <div class="transparent-container flex-row">
       <SwitchSVG
         onClick={() => $story?.loadGameStep(step.step - 1)}
@@ -451,37 +450,38 @@
       </span>
 
       <span class="flex-row gap-8">
-        {#if stepFont !== "PT Serif Caption"}
-          <button class:active-btn={boldFont} on:click={() => (boldFont = !boldFont)}>
+        {#if stepFont !== 'PT Serif Caption'}
+          <button
+            class:active-btn={boldFont}
+            on:click={() => (boldFont = !boldFont)}
+          >
             bold
           </button>
         {/if}
 
-        <button class:active-btn={italicFont} on:click={() => (italicFont = !italicFont)}>
+        <button
+          class:active-btn={italicFont}
+          on:click={() => (italicFont = !italicFont)}
+        >
           italic
         </button>
 
-        <button class:active-btn={textShadow} on:click={() => (textShadow = !textShadow)}>
+        <button
+          class:active-btn={textShadow}
+          on:click={() => (textShadow = !textShadow)}
+        >
           shadow
         </button>
       </span>
 
       <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
         <label for="text-color">Base color</label>
-        <input
-          id="text-color"
-          type="color"
-          bind:value={baseColor}
-        />
+        <input id="text-color" type="color" bind:value={baseColor} />
       </span>
 
       <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
         <label for="title-color">Accent color</label>
-        <input
-          id="title-color"
-          type="color"
-          bind:value={accentColor}
-        />
+        <input id="title-color" type="color" bind:value={accentColor} />
       </span>
     </div>
 
@@ -501,24 +501,29 @@
 
       <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
         <label for="bg-color">BG color</label>
-        <input
-          id="bg-color"
-          type="color"
-          bind:value={$bgColor}
-        />
+        <input id="bg-color" type="color" bind:value={$bgColor} />
       </span>
     </div>
 
     <div class="transparent-container flex-row">
-      <button class:active-btn={boxShadow} on:click={() => (boxShadow = !boxShadow)}>
+      <button
+        class:active-btn={boxShadow}
+        on:click={() => (boxShadow = !boxShadow)}
+      >
         box shadow
       </button>
 
-      <button class:active-btn={optionsContainer} on:click={() => (optionsContainer = !optionsContainer)}>
+      <button
+        class:active-btn={optionsContainer}
+        on:click={() => (optionsContainer = !optionsContainer)}
+      >
         options box
       </button>
 
-      <button class:active-btn={optionSelector} on:click={() => (optionSelector = !optionSelector)}>
+      <button
+        class:active-btn={optionSelector}
+        on:click={() => (optionSelector = !optionSelector)}
+      >
         option selector
       </button>
     </div>
@@ -749,7 +754,7 @@
       transition: color 0.3s ease-in-out;
 
       &::after {
-        content: ":";
+        content: ':';
       }
 
       &:hover,

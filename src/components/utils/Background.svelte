@@ -34,10 +34,7 @@
 ></div>
 
 {#if $story}
-  <div
-    id="background-color"
-    style:background-color={$bgColor}
-  ></div>
+  <div id="background-color" style:background-color={$bgColor}></div>
 {/if}
 
 <style lang="scss">

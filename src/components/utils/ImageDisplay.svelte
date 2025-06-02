@@ -40,9 +40,9 @@
   class="void-btn transparent-container"
   on:click={() => (fullWidthImage = !fullWidthImage)}
   class:slim={!fullWidthImage}
-  style:box-shadow={boxShadow ? "" : "none"}
+  style:box-shadow={boxShadow ? '' : 'none'}
   style:max-width="{imageWidth}px"
-  style={width < 768 ? "" : `height: ${imageHeight}px`}
+  style={width < 768 ? '' : `height: ${imageHeight}px`}
 >
   {#if isLoading}
     <span class="pulse-animation">

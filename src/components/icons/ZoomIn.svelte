@@ -5,7 +5,7 @@
 </script>
 
 <button
-  id={control ? "zoom-in-control" : ""}
+  id={control ? 'zoom-in-control' : ''}
   class="void-btn flex"
   class:active
   on:click={onClick}

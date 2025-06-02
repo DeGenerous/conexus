@@ -3,7 +3,7 @@
   export let disabled: boolean = false;
   export let hideForMobiles: boolean = false;
   export let glowing: boolean = false;
-  export let color: string = "#33e2e6";
+  export let color: string = '#33e2e6';
 </script>
 
 <svg

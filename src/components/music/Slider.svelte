@@ -94,7 +94,7 @@
       on:change={update}
       disabled={disabledInput}
     />
-    <p>{inputValue * 100}%</p>
+    <p>{(inputValue * 100).toFixed()}%</p>
   </span>
 
   <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->

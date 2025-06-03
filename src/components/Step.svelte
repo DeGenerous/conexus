@@ -5,9 +5,19 @@
   import { fullscreen, story, loading } from '@stores/conexus';
   import { background_volume, tts_volume } from '@stores/volumes';
   import { bgPictureOpacity, bgColor } from '@stores/background';
+  import {
+    GetCache,
+    SetCache,
+    ONE_YEAR_TTL,
+    FONT_KEY,
+    STYLING_KEY,
+    SCALE_KEY
+  } from '@constants/cache';
+  import detectIOS from '@utils/ios-device';
 
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
+
   import SelectorSVG from '@components/icons/Selector.svelte';
   import QuitSVG from '@components/icons/Quit.svelte';
   import StepSVG from '@components/icons/Step.svelte';
@@ -16,7 +26,6 @@
   import FullscreenSVG from '@components/icons/Fullscreen.svelte';
   import FilledEyeSVG from '@components/icons/FilledEye.svelte';
   import ZoomInSVG from '@components/icons/ZoomIn.svelte';
-  import detectIOS from '@utils/ios-device';
 
   export let story_name: string;
 
@@ -32,40 +41,89 @@
 
   $: step = $story?.step_data as StepData;
 
-  // Font for all elements inside step-wrapper
+  // FONT FOR ALL ELEMENTS INSIDE step-wrapper
 
-  let stepFont: string = 'Verdana';
+  let customFont: CustomFont = null;
 
-  let baseSize: string = 'body';
-  let accentSize: string = 'h5';
+  const updateFont = (reset: Nullable<"reset"> = null) => {
+    if (reset) {
+      customFont = {
+        family: 'Verdana',
+        baseSize: 'body',
+        accentSize: 'h5',
+        baseColor: '#dedede',
+        accentColor: '#33e2e6',
+        bold: true,
+        italic: false,
+        shadow: true
+      }
+    }
+    SetCache(
+      FONT_KEY,
+      JSON.stringify(customFont),
+      ONE_YEAR_TTL
+    );
+  }
 
-  let boldFont: boolean = true;
-  let italicFont: boolean = false;
-  let textShadow: boolean = true;
+  // update FONT in localStorage after every change
+  $: customFont && updateFont();
 
-  let baseColor: string = '#dedede';
-  let accentColor: string = '#33e2e6';
+  // STYLING CUSTOMIZATION
 
-  // Styling customization
+  let customStyling: CustomStyling = null;
 
-  let boxShadow: boolean = true;
-  let optionsContainer: boolean = true;
-  let optionSelector: boolean = true;
+  const updateStyling = (reset: Nullable<'reset'> = null) => {
+    if (reset) {
+      customStyling = {
+        boxShadow: true,
+        optionsContainer: true,
+        optionSelector: true,
+        bgPictureOpacity: 25,
+        bgColor: '#000000'
+      }
+    }
+    SetCache(
+      STYLING_KEY,
+      JSON.stringify(customStyling),
+      ONE_YEAR_TTL
+    );
+  }
 
-  let paragraphWidth: number = 80;
-  let optionsWidth: number = 80;
+  // update STYLING in localStorage after every change
+  $: customStyling && updateStyling(); 
 
-  let fullWidthImage: boolean = false;
-  let imageWidth: number = 800;
-  let imageHeight: number = 512;
-  let activeControlPanel: Nullable<string> = null;
+  // reactive updatement of BG storages
+  $: $bgPictureOpacity = customStyling ? customStyling.bgPictureOpacity : 50;
+  $: $bgColor = customStyling ? customStyling.bgColor : '#000000';
 
-  let activeOptionNumber: number = 0;
-  let focusedOption: Nullable<number> = null;
+  // SCALE CUSTOMIZATION
 
-  // Control bar
+  let customScale: CustomScale = null;
+
+  const updateScale = (reset: Nullable<'reset'> = null) => {
+    if (reset) {
+      customScale = {
+        paragraphWidth: 80,
+        optionsWidth: 80,
+        imageWidth: 800,
+        imageHeight: 512
+      }
+    }
+    SetCache(
+      SCALE_KEY,
+      JSON.stringify(customScale),
+      ONE_YEAR_TTL
+    );
+  }
+
+  // update SCALE in localStorage after every change
+  $: customScale && updateScale(); 
+
+  // CONTROL BAR
   
-  const switchController = (controller: string) => {
+  let activeControlPanel: Nullable<StepController> = null;
+
+  const switchController = (controller: StepController) => {
     if (activeControlPanel == controller) {
       activeControlPanel = null;
       return;
@@ -73,7 +131,10 @@
     activeControlPanel = controller;
   };
 
-  // Keyboard controls
+  // KEYBOARD CONTROLS
+
+  let activeOptionNumber: number = 0;
+  let focusedOption: Nullable<number> = null;
 
   const blurActiveBtn = () => {
     if (document.activeElement!.tagName == 'BUTTON') {
@@ -90,9 +151,9 @@
         break;
       }
       case 'ArrowLeft': {
-        console.log($story);
         if ($loading) return;
         if (step.step !== 1) {
+          // load PREV step and blur focused button if it is
           $story?.loadGameStep(step.step - 1);
           blurActiveBtn();
           activeOptionNumber = 0;
@@ -100,9 +161,9 @@
         break;
       }
       case 'ArrowRight': {
-        console.log($story);
         if ($loading) return;
         if (step.step !== $story?.maxStep) {
+          // load NEXT step and blur focused button if it is
           $story?.loadGameStep(step.step + 1);
           blurActiveBtn();
           activeOptionNumber = 0;
@@ -111,8 +172,9 @@
       }
       case 'ArrowUp': {
         if (step.step !== $story?.maxStep || $loading) return;
-        event.preventDefault();
-        if ($story?.step_data?.end) activeOptionNumber = 0;
+        event.preventDefault(); // prevent scroll
+        // get PREV (TOP) option ID if step is not last
+        if ($story?.step_data?.end) activeOptionNumber = 0; 
         else if (activeOptionNumber !== 0) activeOptionNumber--;
         const activeOption = document.getElementById(
           `option-${activeOptionNumber}`,
@@ -122,7 +184,8 @@
       }
       case 'ArrowDown': {
         if (step.step !== $story?.maxStep || $loading) return;
-        event.preventDefault();
+        event.preventDefault(); // prevent scroll
+        // get NEXT (BOTTOM) option ID if step is not last
         if ($story?.step_data?.end) activeOptionNumber = 0;
         else if (activeOptionNumber !== step.options.length - 1)
           activeOptionNumber++;
@@ -135,34 +198,49 @@
     }
   };
 
-  // let pictureKeyframe: KeyframeEffect;
-  // let pictureAnimation: Animation;
+  // SCROLL ANIMATION ON IMAGE LOAD
 
-  // $: if (step.image && step.image_type !== 'url') {
-  //   pictureAnimation.play();
-  //   window.scrollTo({
-  //     top: 0,
-  //     behavior: 'smooth',
-  //   });
-  // }
+  let pictureKeyframe: KeyframeEffect;
+  let pictureAnimation: Animation;
+
+  $: if (step.image && step.image_type !== 'url') {
+    pictureAnimation.play();
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }
 
   onMount(() => {
-    // const storedZoom = localStorage.getItem('step-zoom');
-    // if (storedZoom) zoom = setZoom(Number(storedZoom));
-    // pictureKeyframe = new KeyframeEffect(
-    //   imageWrapper,
-    //   [
-    //     { transform: 'scale(1)' },
-    //     { transform: 'scale(0.95)' },
-    //     { transform: 'scale(1.05)' },
-    //     { transform: 'scale(1)' },
-    //   ],
-    //   {
-    //     duration: 600,
-    //     easing: 'ease-in-out',
-    //   },
-    // );
-    // pictureAnimation = new Animation(pictureKeyframe, document.timeline);
+    const stepImage = document.getElementById('step-image') as HTMLImageElement;
+    pictureKeyframe = new KeyframeEffect(
+      stepImage,
+      [
+        { transform: 'scale(1)' },
+        { transform: 'scale(0.975)' },
+        { transform: 'scale(1.025)' },
+        { transform: 'scale(1)' },
+      ],
+      {
+        duration: 600,
+        easing: 'ease-in-out',
+      },
+    );
+    pictureAnimation = new Animation(pictureKeyframe, document.timeline);
+
+    // GET CUSTOMIZATION FROM THE localStorage
+
+    const storedFont = JSON.parse(GetCache(FONT_KEY) as string);
+    if (storedFont) customFont = storedFont;
+    else updateFont('reset');
+
+    const storedStyling = JSON.parse(GetCache(STYLING_KEY) as string);
+    if (storedStyling) customStyling = storedStyling;
+    else updateStyling('reset');
+
+    const storedScale = JSON.parse(GetCache(SCALE_KEY) as string);
+    if (storedScale) customScale = storedScale;
+    else updateScale('reset');
   });
 </script>
 
@@ -172,100 +250,97 @@
   bind:innerHeight={height}
 />
 
-<section
-  class="step-wrapper flex {baseSize}-font"
-  class:text-shad={textShadow}
-  style:font-family={stepFont}
-  style:font-weight={boldFont ? 'bold' : 'normal'}
-  style:font-style={italicFont ? 'italic' : ''}
-  style:color={baseColor}
->
-  <ImageDisplay
-    bind:width
-    bind:image={step.image}
-    bind:image_type={step.image_type}
-    bind:fullWidthImage
-    bind:imageWidth
-    bind:imageHeight
-    bind:boxShadow
-  />
+{#if customFont && customStyling && customScale}
+  <section
+    class="step-wrapper flex {customFont.baseSize}-font"
+    class:text-shad={customFont.shadow}
+    style:font-family={customFont.family}
+    style:font-weight={customFont.bold ? 'bold' : 'normal'}
+    style:font-style={customFont.italic ? 'italic' : ''}
+    style:color={customFont.baseColor}
+  >
+    <ImageDisplay
+      {width}
+      image={step.image}
+      image_type={step.image_type}
+      imageWidth={customScale.imageWidth}
+      imageHeight={customScale.imageHeight}
+      boxShadow={customStyling.boxShadow}
+    />
 
-  {#if step.title}
-    {#key step.options}
+    {#if step.title}
       <h4
-        class="{accentSize}-font"
-        class:text-shad={textShadow}
-        style:font-style={italicFont ? 'italic' : ''}
-        style:color={accentColor}
+        class="{customFont.accentSize}-font"
+        class:text-shad={customFont.shadow}
+        style:font-style={customFont.italic ? 'italic' : ''}
+        style:color={customFont.accentColor}
       >
         {step.title}
       </h4>
-    {/key}
-  {/if}
-
-  <article style:max-width="{paragraphWidth}%">{step.story}</article>
-
-  {#if $story?.step_data?.end}
-    <hr />
-
-    <h4
-      class="{accentSize}-font"
-      class:text-shad={textShadow}
-      style:font-style={italicFont ? 'italic' : ''}
-      style:color={accentColor}
-    >
-      Story Summary
-    </h4>
-
-    <article style:max-width="{paragraphWidth}%">{step.summary}</article>
-
-    <h4
-      class="{accentSize}-font"
-      class:text-shad={textShadow}
-      style:font-style={italicFont ? 'italic' : ''}
-      style:color={accentColor}
-    >
-      CoNexus identified your trait as:
-      <strong class="text-glowing">{step.trait}</strong>
-    </h4>
-
-    {#if step.trait_description}
-      <article style:max-width="{paragraphWidth}%">
-        {step.trait_description}
-      </article>
     {/if}
 
-    <div
-      class="options {accentSize}-font"
-      class:text-shad={textShadow}
-      class:transparent-container={optionsContainer}
-      style:font-style={italicFont ? 'italic' : ''}
-      style:color={accentColor}
-      style:box-shadow={boxShadow ? '' : 'none'}
-      style:max-width="{optionsWidth}%"
-    >
-      <button
-        id="option-0"
-        class="void-btn menu-option"
-        on:click={() => window.open('/', '_self')}>Return to main menu</button
+    <article style:max-width="{customScale.paragraphWidth}%">{step.story}</article>
+
+    {#if $story?.step_data?.end}
+      <hr />
+
+      <h4
+        class="{customFont.accentSize}-font"
+        class:text-shad={customFont.shadow}
+        style:font-style={customFont.italic ? 'italic' : ''}
+        style:color={customFont.accentColor}
       >
-    </div>
-  {:else}
-    <div
-      class="flex options wide-container {accentSize}-font"
-      class:text-shad={textShadow}
-      class:transparent-container={optionsContainer}
-      style:color={accentColor}
-      style:box-shadow={boxShadow ? '' : 'none'}
-      style:max-width="{optionsWidth}%"
-    >
-      {#key step.options}
+        Story Summary
+      </h4>
+
+      <article style:max-width="{customScale.paragraphWidth}%">{step.summary}</article>
+
+      <h4
+        class="{customFont.accentSize}-font"
+        class:text-shad={customFont.shadow}
+        style:font-style={customFont.italic ? 'italic' : ''}
+        style:color={customFont.accentColor}
+      >
+        CoNexus identified your trait as:
+        <strong class="text-glowing">{step.trait}</strong>
+      </h4>
+
+      {#if step.trait_description}
+        <article style:max-width="{customScale.paragraphWidth}%">
+          {step.trait_description}
+        </article>
+      {/if}
+
+      <div
+        class="options {customFont.accentSize}-font"
+        class:text-shad={customFont.shadow}
+        class:transparent-container={customStyling.optionsContainer}
+        style:font-style={customFont.italic ? 'italic' : ''}
+        style:color={customFont.accentColor}
+        style:box-shadow={customStyling.boxShadow ? '' : 'none'}
+        style:max-width="{customScale.optionsWidth}%"
+      >
+        <button
+          id="option-0"
+          class="void-btn menu-option"
+          on:click={() => window.open('/', '_self')}>Return to main menu</button
+        >
+      </div>
+    {:else}
+      <div
+        class="flex options wide-container {customFont.accentSize}-font"
+        class:text-shad={customFont.shadow}
+        class:transparent-container={customStyling.optionsContainer}
+        style:color={customFont.accentColor}
+        style:box-shadow={customStyling.boxShadow ? '' : 'none'}
+        style:max-width="{customScale.optionsWidth}%"
+      >
         {#each step.options as option, i}
           <button
             id="option-{i}"
             class="void-btn flex-row gap-8"
             class:active-option={step.choice && step.choice - 1 === i}
-            style:font-family={stepFont}
+            style:font-family={customFont.family}
             disabled={$loading || step.step !== $story?.maxStep}
             on:click={() => {
               $story?.nextStep(i + 1);
@@ -285,299 +360,304 @@
             on:focus={() => (focusedOption = i)}
             on:blur={() => (focusedOption = null)}
           >
-            {#if optionSelector}
+            {#if customStyling.optionSelector}
               <SelectorSVG
                 focused={(step.choice && step.choice - 1 === i) ||
                   focusedOption === i}
                 disabled={$loading || step.step !== $story?.maxStep}
                 hideForMobiles={true}
-                color={accentColor}
+                color={customFont.accentColor}
               />
             {/if}
             {option}
           </button>
         {/each}
-      {/key}
-    </div>
-  {/if}
+      </div>
+    {/if}
 
-  <!-- CONTROL PANEL -->
-  <nav class="flex-row blur transition shad-behind pad-8">
-    <span class="flex-row">
-      <QuitSVG onClick={() => window.location.reload()} voidBtn={true} />
-      <h5 class="title">{story_name.trim()}</h5>
-    </span>
-    <div class="controls flex-row">
-      <div>
-        <label class="pc-only" for="zoom-in-control">Scale</label>
-        <ZoomInSVG
-          onClick={() => switchController('scale')}
-          active={activeControlPanel == 'scale'}
-          control={true}
-        />
-      </div>
-      <div>
-        <label class="pc-only" for="filled-eye">Styling</label>
-        <FilledEyeSVG
-          onClick={() => switchController('styling')}
-          active={activeControlPanel == 'styling'}
-        />
-      </div>
-      {#if detectIOS()}
-        <div>
-          <label class="pc-only" for="sound">Sound</label>
-          <SoundSVG
-            onClick={() => switchController('sound')}
-            active={activeControlPanel == 'sound'}
+    <!-- CONTROL PANEL -->
+    <nav class="flex-row blur transition shad-behind pad-8">
+      <span class="flex-row">
+        <QuitSVG onClick={() => window.location.reload()} voidBtn={true} />
+        <h5 class="title">{story_name.trim()}</h5>
+      </span>
+      <div class="controls flex-row">
+        <div class="scale-icon">
+          <label class="pc-only" for="zoom-in-control">Scale</label>
+          <ZoomInSVG
+            onClick={() => switchController('scale')}
+            active={activeControlPanel == 'scale'}
+            control={true}
           />
         </div>
-      {/if}
-      <div>
-        <label class="pc-only" for="step-control">Step</label>
-        <StepSVG
-          text={`${step.step < 10 ? '0' : ''}${step.step}`}
-          onClick={() => switchController('step')}
-          active={activeControlPanel == 'step'}
-          control={true}
+        <div>
+          <label class="pc-only" for="filled-eye">Styling</label>
+          <FilledEyeSVG
+            onClick={() => switchController('styling')}
+            active={activeControlPanel == 'styling'}
+          />
+        </div>
+        {#if !detectIOS()}
+          <div>
+            <label class="pc-only" for="sound">Sound</label>
+            <SoundSVG
+              onClick={() => switchController('sound')}
+              active={activeControlPanel == 'sound'}
+            />
+          </div>
+        {/if}
+        <div>
+          <label class="pc-only" for="step-control">Step</label>
+          <StepSVG
+            text={`${step.step < 10 ? '0' : ''}${step.step}`}
+            onClick={() => switchController('step')}
+            active={activeControlPanel == 'step'}
+            control={true}
+          />
+        </div>
+      </div>
+      <FullscreenSVG />
+    </nav>
+
+    <!-- STEP CONTROLLER -->
+    <section class="step-controller" class:visible={activeControlPanel == 'step'}>
+      <div class="transparent-container flex-row">
+        <SwitchSVG
+          onClick={() => $story?.loadGameStep(step.step - 1)}
+          disabled={step.step === 1}
+        />
+        <span class="flex gap-8">
+          <h5 class="title">{story_name.trim()}</h5>
+          <hr />
+          <h5>Step {step.step}</h5>
+        </span>
+        <SwitchSVG
+          onClick={() => $story?.loadGameStep(step.step + 1)}
+          disabled={step.step === $story?.maxStep}
+          right={true}
         />
       </div>
-    </div>
-    <FullscreenSVG />
-  </nav>
+      <ul class="transparent-container vert-scrollbar pad-inline">
+        {#each Array($story!.maxStep) as _, index}
+          <StepSVG
+            text={String(index + 1)}
+            onClick={() => $story?.loadGameStep(index + 1)}
+            active={step.step == index + 1}
+          />
+        {/each}
+      </ul>
+    </section>
 
-  <!-- STEP CONTROLLER -->
-  <section class="step-controller" class:visible={activeControlPanel == 'step'}>
-    <div class="transparent-container flex-row">
-      <SwitchSVG
-        onClick={() => $story?.loadGameStep(step.step - 1)}
-        disabled={step.step === 1}
-      />
-      <span class="flex gap-8">
-        <h5 class="title">{story_name.trim()}</h5>
-        <hr />
-        <h5>Step {step.step}</h5>
-      </span>
-      <SwitchSVG
-        onClick={() => $story?.loadGameStep(step.step + 1)}
-        disabled={step.step === $story?.maxStep}
-        right={true}
-      />
-    </div>
-    <ul class="transparent-container vert-scrollbar pad-inline">
-      {#each Array($story!.maxStep) as _, index}
-        <StepSVG
-          text={String(index + 1)}
-          onClick={() => $story?.loadGameStep(index + 1)}
-          active={step.step == index + 1}
-        />
-      {/each}
-    </ul>
-  </section>
+    <!-- SOUND CONTROLLER -->
+    <section
+      class="sound-controller"
+      class:visible={activeControlPanel == 'sound'}
+    >
+      <Slider type="music" volume={background_volume} />
+      <Slider type="voice" volume={tts_volume} restartable />
+    </section>
 
-  <!-- SOUND CONTROLLER -->
-  <section
-    class="sound-controller"
-    class:visible={activeControlPanel == 'sound'}
-  >
-    <Slider type="music" volume={background_volume} />
-    <Slider type="voice" volume={tts_volume} restartable />
-  </section>
+    <!-- STYLING CONTROLLER -->
+    <section
+      class="styling-controller"
+      class:visible={activeControlPanel == 'styling'}
+    >
+      <div class="font-family transparent-container flex-row">
+        <span class="flex-row">
+          <label for="text-size">Font</label>
+          <select id="text-size" bind:value={customFont.family}>
+            <option value="PT Serif Caption">Default (serif)</option>
+            <option value="Merriweather">Merriweather</option>
+            <option value="Lora">Lora</option>
+            <option value="Roboto">Roboto</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Monospace">Monospace</option>
+            <option value="Courier Prime">Courier prime</option>
+            <option value="Comic Neue">Comic Neue</option>
+            <option value="Caveat">Caveat</option>
+          </select>
+        </span>
 
-  <!-- STYLING CONTROLLER -->
-  <section
-    class="styling-controller"
-    class:visible={activeControlPanel == 'styling'}
-  >
-    <div class="font-family transparent-container flex-row">
-      <span class="flex-row">
-        <label for="text-size">Font</label>
-        <select id="text-size" bind:value={stepFont}>
-          <option value="PT Serif Caption">Default (serif)</option>
-          <option value="Merriweather">Merriweather</option>
-          <option value="Lora">Lora</option>
-          <option value="Roboto">Roboto</option>
-          <option value="Verdana">Verdana</option>
-          <option value="Monospace">Monospace</option>
-          <option value="Courier Prime">Courier prime</option>
-          <option value="Comic Neue">Comic Neue</option>
-          <option value="Caveat">Caveat</option>
-        </select>
-      </span>
+        <span class="flex-row gap-8">
+          {#if customFont.family !== 'PT Serif Caption'}
+            <button
+              class:active-btn={customFont.bold}
+              on:click={() => (customFont!.bold = !customFont!.bold)}
+            >
+              bold
+            </button>
+          {/if}
 
-      <span class="flex-row gap-8">
-        {#if stepFont !== 'PT Serif Caption'}
           <button
-            class:active-btn={boldFont}
-            on:click={() => (boldFont = !boldFont)}
+            class:active-btn={customFont.italic}
+            on:click={() => (customFont!.italic = !customFont!.italic)}
           >
-            bold
+            italic
           </button>
-        {/if}
 
+          <button
+            class:active-btn={customFont.shadow}
+            on:click={() => (customFont!.shadow = !customFont!.shadow)}
+          >
+            shadow
+          </button>
+        </span>
+
+        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+          <label for="text-color">Base color</label>
+          <input id="text-color" type="color" bind:value={customFont.baseColor} />
+        </span>
+
+        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+          <label for="title-color">Accent color</label>
+          <input id="title-color" type="color" bind:value={customFont.accentColor} />
+        </span>
+      </div>
+
+      <div class="font-size transparent-container">
+        <span class="flex-row">
+          <label for="text-size">Base size</label>
+          <select id="text-size" bind:value={customFont.baseSize}>
+            <option value="caption">Tiny</option>
+            <option value="small">Small</option>
+            <option value="body">Normal</option>
+            <option value="h5">Big</option>
+            <option value="h4">Huge</option>
+          </select>
+        </span>
+
+        <span class="flex-row">
+          <label for="title-size">Accent size</label>
+          <select id="title-size" bind:value={customFont.accentSize}>
+            <option value="caption">Tiny</option>
+            <option value="small">Small</option>
+            <option value="body">Normal</option>
+            <option value="h5">Big</option>
+            <option value="h4">Huge</option>
+          </select>
+        </span>
+      </div>
+
+      <div class="transparent-container flex-row">
+        <label for="bg-opacity">BG image opacity</label>
+        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+          <input
+            id="bg-opacity"
+            type="range"
+            min="0"
+            max="100"
+            step="5"
+            bind:value={customStyling.bgPictureOpacity}
+          />
+          <p>{customStyling.bgPictureOpacity}%</p>
+        </span>
+
+        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+          <label for="bg-color">BG color</label>
+          <input id="bg-color" type="color" bind:value={customStyling.bgColor} />
+        </span>
+      </div>
+
+      <div class="transparent-container flex-row">
         <button
-          class:active-btn={italicFont}
-          on:click={() => (italicFont = !italicFont)}
+          class:active-btn={customStyling.boxShadow}
+          on:click={() => (customStyling!.boxShadow = !customStyling!.boxShadow)}
         >
-          italic
+          box shadow
         </button>
 
         <button
-          class:active-btn={textShadow}
-          on:click={() => (textShadow = !textShadow)}
+          class:active-btn={customStyling.optionsContainer}
+          on:click={() => (customStyling!.optionsContainer = !customStyling!.optionsContainer)}
         >
-          shadow
+          options box
         </button>
-      </span>
 
-      <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-        <label for="text-color">Base color</label>
-        <input id="text-color" type="color" bind:value={baseColor} />
-      </span>
+        <button
+          class:active-btn={customStyling.optionSelector}
+          on:click={() => (customStyling!.optionSelector = !customStyling!.optionSelector)}
+        >
+          option selector
+        </button>
+      </div>
+    </section>
 
-      <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-        <label for="title-color">Accent color</label>
-        <input id="title-color" type="color" bind:value={accentColor} />
-      </span>
-    </div>
+    <!-- SCALE CONTROLLER -->
+    <section
+      class="scale-controller"
+      class:visible={activeControlPanel == 'scale'}
+    >
+      <div class="image-scale transparent-container">
+        <span class="flex-row">
+          <label for="image-width">Picture width</label>
+          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+            <input
+              id="image-width"
+              type="range"
+              min="800"
+              max={width}
+              step="16"
+              bind:value={customScale.imageWidth}
+            />
+            <p>{customScale.imageWidth}px</p>
+          </span>
+        </span>
 
-    <div class="transparent-container flex-row">
-      <label for="bg-opacity">BG image opacity</label>
-      <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-        <input
-          id="bg-opacity"
-          type="range"
-          min="0"
-          max="100"
-          step="5"
-          bind:value={$bgPictureOpacity}
-        />
-        <p>{$bgPictureOpacity}%</p>
-      </span>
+        <span class="flex-row">
+          <label for="image-height">Picture height</label>
+          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+            <input
+              id="image-height"
+              type="range"
+              min="512"
+              max={height}
+              step="16"
+              bind:value={customScale.imageHeight}
+            />
+            <p>{customScale.imageHeight}px</p>
+          </span>
+        </span>
+      </div>
 
-      <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-        <label for="bg-color">BG color</label>
-        <input id="bg-color" type="color" bind:value={$bgColor} />
-      </span>
-    </div>
+      <div class="text-scale transparent-container">
+        <span class="flex-row">
+          <label for="paragraph-width">Paragraph width</label>
+          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+            <input
+              id="paragraph-width"
+              type="range"
+              min="50"
+              max="100"
+              step="1"
+              bind:value={customScale.paragraphWidth}
+            />
+            <p>{customScale.paragraphWidth}%</p>
+          </span>
+        </span>
 
-    <div class="transparent-container flex-row">
-      <button
-        class:active-btn={boxShadow}
-        on:click={() => (boxShadow = !boxShadow)}
-      >
-        box shadow
-      </button>
-
-      <button
-        class:active-btn={optionsContainer}
-        on:click={() => (optionsContainer = !optionsContainer)}
-      >
-        options box
-      </button>
-
-      <button
-        class:active-btn={optionSelector}
-        on:click={() => (optionSelector = !optionSelector)}
-      >
-        option selector
-      </button>
-    </div>
+        <span class="flex-row">
+          <label for="options-width">Options width</label>
+          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+            <input
+              id="options-width"
+              type="range"
+              min="50"
+              max="100"
+              step="1"
+              bind:value={customScale.optionsWidth}
+            />
+            <p>{customScale.optionsWidth}%</p>
+          </span>
+        </span>
+      </div>
+    </section>
   </section>
-
-  <!-- SCALE CONTROLLER -->
-  <section
-    class="scale-controller"
-    class:visible={activeControlPanel == 'scale'}
-  >
-    <div class="image-scale transparent-container">
-      <span class="flex-row">
-        <label for="image-width">Picture width</label>
-        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-          <input
-            id="image-width"
-            type="range"
-            min="800"
-            max={width}
-            step="16"
-            bind:value={imageWidth}
-          />
-          <p>{imageWidth}px</p>
-        </span>
-      </span>
-
-      <span class="flex-row">
-        <label for="image-height">Picture height</label>
-        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-          <input
-            id="image-height"
-            type="range"
-            min="512"
-            max={height}
-            step="16"
-            bind:value={imageHeight}
-          />
-          <p>{imageHeight}px</p>
-        </span>
-      </span>
-    </div>
-
-    <div class="text-scale transparent-container">
-      <span class="flex-row">
-        <label for="paragraph-width">Paragraph width</label>
-        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-          <input
-            id="paragraph-width"
-            type="range"
-            min="50"
-            max="100"
-            step="1"
-            bind:value={paragraphWidth}
-          />
-          <p>{paragraphWidth}%</p>
-        </span>
-      </span>
-
-      <span class="flex-row">
-        <label for="options-width">Options width</label>
-        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-          <input
-            id="options-width"
-            type="range"
-            min="50"
-            max="100"
-            step="1"
-            bind:value={optionsWidth}
-          />
-          <p>{optionsWidth}%</p>
-        </span>
-      </span>
-    </div>
-
-    <div class="font-size transparent-container">
-      <span class="flex-row">
-        <label for="text-size">Base font</label>
-        <select id="text-size" bind:value={baseSize}>
-          <option value="caption">Tiny</option>
-          <option value="small">Small</option>
-          <option value="body">Default</option>
-          <option value="h5">Big</option>
-          <option value="h4">Huge</option>
-        </select>
-      </span>
-
-      <span class="flex-row">
-        <label for="title-size">Accent font</label>
-        <select id="title-size" bind:value={accentSize}>
-          <option value="caption">Tiny</option>
-          <option value="small">Small</option>
-          <option value="body">Default</option>
-          <option value="h5">Big</option>
-          <option value="h4">Huge</option>
-        </select>
-      </span>
-    </div>
-  </section>
-</section>
+{:else}
+  <div class="non-transparent-container">
+    <h4 class="red-txt">Some error is occured...</h4>
+    <p class="soft-white-txt">Please try again or contact support.</p>
+  </div>
+{/if}
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
@@ -676,7 +756,7 @@
       }
 
       .controls {
-        gap: 0.25rem;
+        gap: 0.5rem;
         justify-content: flex-end;
 
         @include respond-up(tablet) {
@@ -700,6 +780,14 @@
 
           @include respond-up(small-desktop) {
             padding-block: 0.5rem;
+          }
+
+          &.scale-icon {
+            display: none;
+
+            @include respond-up(large-desktop) {
+              display: flex;
+            }
           }
         }
       }
@@ -729,6 +817,8 @@
     // ADDITIONAL CONTROLLERS STYLING
     section {
       @extend :global(.shad-behind);
+      max-height: 80vh;
+      overflow-y: auto;
       display: flex;
       flex-flow: row wrap;
       justify-content: center;
@@ -742,6 +832,7 @@
       transform: translateY(100%);
       transition: all 0.6s ease-in-out;
       background-color: $dark-gray;
+      @include white-txt(soft);
 
       div {
         width: 100%;
@@ -801,24 +892,12 @@
         .font-family {
           gap: 1rem 1.5rem;
         }
-      }
 
-      // SCALE
-      &.scale-controller {
         .font-size {
           align-items: flex-end;
 
           @include respond-up(tablet) {
             gap: 1.5rem;
-          }
-        }
-
-        .image-scale,
-        .text-scale {
-          display: none;
-
-          @include respond-up(large-desktop) {
-            display: flex;
           }
         }
       }

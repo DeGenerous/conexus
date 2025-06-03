@@ -2,13 +2,14 @@
   export let width: number;
   export let image: string | undefined;
   export let image_type: string = 'url';
-  export let fullWidthImage: boolean = false;
   export let imageWidth: number = 800;
   export let imageHeight: number = 512;
   export let boxShadow: boolean = true;
 
-  let isLoading = true;
-  let imageSrc = '';
+  let fullWidthImage: boolean = false;
+
+  let isLoading: boolean = true;
+  let imageSrc: string = '';
 
   // Watch for changes in image props
   $: {
@@ -37,6 +38,7 @@
 </script>
 
 <button
+  id="step-image"
   class="void-btn transparent-container"
   on:click={() => (fullWidthImage = !fullWidthImage)}
   class:slim={!fullWidthImage}

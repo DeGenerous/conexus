@@ -36,10 +36,14 @@ export const TOPICS_CACHE_TTL = 1000 * 60 * 10; // 10 minutes
 export const MEDIA_CACHE_KEY = 'media';
 export const MEDIA_CACHE_TTL = 1000 * 60 * 10; // 10 minutes
 
-// CUSTOMIZATION KEYS
+// STORY CUSTOMIZATION
 export const ONE_YEAR_TTL = 1000 * 60 * 60 * 24 * 365; // 365 days
 
 export const IOS_KEY = 'iosDevice';
+
+export const FONT_KEY = 'font';
+export const STYLING_KEY = 'styling';
+export const SCALE_KEY = 'scale';
 
 const authKeys = [
   USER_CACHE_KEY,
@@ -108,19 +112,23 @@ export const ClearCache = (
       break;
     case 'full':
       // saving important values
-      const cookieConsent = localStorage.getItem('cookie_consent');
+      const cookieConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
       const musicVolume = localStorage.getItem('music-volume');
       const voiceVolume = localStorage.getItem('voice-volume');
       const ttsSpeed = localStorage.getItem('tts-speed');
-      const stepTheme = localStorage.getItem('theme');
+      const customFont = localStorage.getItem(FONT_KEY);
+      const customStyling = localStorage.getItem(STYLING_KEY);
+      const customScale = localStorage.getItem(SCALE_KEY);
       // deleting all values
       localStorage.clear();
       // restoring saved values
-      if (cookieConsent) localStorage.setItem('cookie_consent', cookieConsent);
+      if (cookieConsent) localStorage.setItem(COOKIE_CONSENT_KEY, cookieConsent);
       if (musicVolume) localStorage.setItem('music-volume', musicVolume);
       if (voiceVolume) localStorage.setItem('voice-volume', voiceVolume);
       if (ttsSpeed) localStorage.setItem('tts-speed', ttsSpeed);
-      if (stepTheme) localStorage.setItem('theme', stepTheme);
+      if (customFont) localStorage.setItem(FONT_KEY, customFont);
+      if (customStyling) localStorage.setItem(STYLING_KEY, customStyling);
+      if (customScale) localStorage.setItem(SCALE_KEY, customScale);
       break;
     default:
       localStorage.removeItem(key);

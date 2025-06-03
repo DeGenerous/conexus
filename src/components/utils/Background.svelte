@@ -1,6 +1,6 @@
 <script lang="ts">
   import { bgPicture, bgPictureOpacity, bgColor } from '@stores/background.ts';
-  import { story } from '@stores/conexus';
+  import { story, background_image } from '@stores/conexus';
   import { onMount } from 'svelte';
 
   export let storyName: Nullable<string> = null;
@@ -20,6 +20,8 @@
 
   // Default story picture if entered story page
   $: if (storyName && bg) $bgPicture = "url('/defaultBG.avif')";
+
+  $: if ($background_image) $bgPicture = `url(${$background_image})`;
 
   $: if ($bgPicture && bg) bg.style.backgroundImage = $bgPicture;
 </script>

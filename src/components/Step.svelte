@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-
-  import MediaManager from '@lib/media';
+  
   import { fullscreen, story, loading } from '@stores/conexus';
   import { background_volume, tts_volume } from '@stores/volumes';
   import { bgPictureOpacity, bgColor } from '@stores/background';
@@ -31,13 +30,6 @@
 
   let width: number;
   let height: number;
-
-  const media: MediaManager = new MediaManager();
-
-  const handleSetMedia = async (topic_id: number) => {
-    await media.setBackgroundImage(topic_id);
-    await media.playBackgroundMusic(topic_id);
-  };
 
   $: step = $story?.step_data as StepData;
 

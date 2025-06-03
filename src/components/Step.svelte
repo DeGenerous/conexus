@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  
+
   import { fullscreen, story, loading } from '@stores/conexus';
   import { background_volume, tts_volume } from '@stores/volumes';
   import { bgPictureOpacity, bgColor } from '@stores/background';
@@ -59,6 +59,18 @@
 
   // update FONT in localStorage after every change
   $: customFont && updateFont();
+
+  // calculate option selector size based on font size
+  let selectorSize: number = 1.5; // rem
+  $: if (customFont) selectorSize = customFont.accentSize === 'h4'
+    ? 1.75
+    : customFont.accentSize === 'h5'
+      ? 1.5
+      : customFont.accentSize === 'body'
+        ? 1.25
+        : customFont.accentSize === 'small'
+         ? 1
+         : 0.75;
 
   // STYLING CUSTOMIZATION
 
@@ -359,6 +371,7 @@
                 disabled={$loading || step.step !== $story?.maxStep}
                 hideForMobiles={true}
                 color={customFont.accentColor}
+                {selectorSize}
               />
             {/if}
             {option}
@@ -708,7 +721,7 @@
         &:hover:not(&:disabled),
         &:active:not(&:disabled),
         &:focus:not(&:disabled) {
-          filter: brightness(125%) hue-rotate(45deg);
+          filter: hue-rotate(30deg) saturate(200%);
         }
 
         &:disabled:not(&.active-option) {

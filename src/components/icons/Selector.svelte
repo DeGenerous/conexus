@@ -4,6 +4,7 @@
   export let hideForMobiles: boolean = false;
   export let glowing: boolean = false;
   export let color: string = '#33e2e6';
+  export let selectorSize: number = 1.5;
 </script>
 
 <svg
@@ -17,6 +18,8 @@
   stroke-linejoin="round"
   style:fill={color}
   style:stroke={color}
+  style:width="{selectorSize}rem"
+  style:height="{selectorSize}rem"
 >
   <polygon points="-40 -90 -40 90 50 0" />
   {#if glowing}
@@ -41,7 +44,6 @@
   @use '/src/styles/mixins' as *;
 
   svg {
-    width: 1.5rem;
     flex: none;
 
     &.focused {

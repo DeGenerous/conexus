@@ -49,7 +49,9 @@
 
   // CONTROL BAR
 
+  let hiddenControls: boolean = false;
   let activeControlPanel: Nullable<StepController> = null;
+  $: if (hiddenControls) activeControlPanel = null; // reset active control panel too
 
   const switchController = (controller: StepController) => {
     if (activeControlPanel == controller) {
@@ -57,6 +59,26 @@
       return;
     }
     activeControlPanel = controller;
+  };
+  
+  let hiddenControlsTimeout: ReturnType<typeof setTimeout> = setTimeout(() => {});
+
+  const hideControlsAfterDelay = () => {
+    if (width < 1024) return;
+    clearTimeout(hiddenControlsTimeout);
+    hiddenControlsTimeout = setTimeout(() => {
+      hiddenControls = true;
+    }, 2000);
+  };
+
+  const showControls = () => {
+    clearTimeout(hiddenControlsTimeout);
+    hiddenControls = false;
+    hideControlsAfterDelay();
+  };
+
+  const cancelHide = () => {
+    clearTimeout(hiddenControlsTimeout);
   };
 
   // FONT FOR ALL ELEMENTS INSIDE step-wrapper
@@ -244,6 +266,9 @@
     const storedScale = JSON.parse(GetCache(SCALE_KEY) as string);
     if (storedScale) customScale = storedScale;
     else updateScale('reset');
+
+    // Hide control panel after 2s delay
+    hideControlsAfterDelay();
   });
 </script>
 
@@ -253,6 +278,10 @@
   bind:innerHeight={height}
 />
 
+<!-- svelte-ignore
+a11y_click_events_have_key_events
+a11y_no_static_element_interactions
+a11y_no_noninteractive_element_interactions -->
 {#if customFont && customStyling && customScale}
   <section
     class="step-wrapper flex {customFont.baseSize}-font"
@@ -261,6 +290,7 @@
     style:font-weight={customFont.bold ? 'bold' : 'normal'}
     style:font-style={customFont.italic ? 'italic' : ''}
     style:color={customFont.baseColor}
+    on:click={() => {if (activeControlPanel) activeControlPanel = null}}
   >
     <ImageDisplay
       {width}
@@ -380,7 +410,13 @@
     {/if}
 
     <!-- CONTROL PANEL -->
-    <nav class="flex-row blur transition shad-behind pad-8">
+    <nav
+      class="flex-row blur transition shad-behind pad-8"
+      class:hidden={hiddenControls}
+      on:pointerenter={cancelHide}
+      on:pointerleave={hideControlsAfterDelay}
+      on:click|stopPropagation
+    >
       <span class="flex-row">
         <QuitSVG onClick={() => window.location.reload()} voidBtn={true} />
         <h5 class="title">{story_name.trim()}</h5>
@@ -423,8 +459,20 @@
       <FullscreenSVG />
     </nav>
 
+    <div
+      id="controls-placeholder"
+      on:pointerenter={showControls}
+      on:pointerleave={hideControlsAfterDelay}
+    ></div>
+
     <!-- STEP CONTROLLER -->
-    <section class="step-controller" class:visible={activeControlPanel == 'step'}>
+    <section
+      class="step-controller"
+      class:visible={activeControlPanel == 'step'}
+      on:pointerenter={cancelHide}
+      on:pointerleave={hideControlsAfterDelay}
+      on:click|stopPropagation
+    >
       <div class="transparent-container flex-row">
         <SwitchSVG
           onClick={() => $story?.loadGameStep(step.step - 1)}
@@ -456,6 +504,9 @@
     <section
       class="sound-controller"
       class:visible={activeControlPanel == 'sound'}
+      on:pointerenter={cancelHide}
+      on:pointerleave={hideControlsAfterDelay}
+      on:click|stopPropagation
     >
       <Slider type="music" volume={background_volume} />
       <Slider type="voice" volume={tts_volume} restartable />
@@ -465,6 +516,9 @@
     <section
       class="styling-controller"
       class:visible={activeControlPanel == 'styling'}
+      on:pointerenter={cancelHide}
+      on:pointerleave={hideControlsAfterDelay}
+      on:click|stopPropagation
     >
       <div class="font-family transparent-container flex-row">
         <span class="flex-row">
@@ -600,6 +654,9 @@
     <section
       class="scale-controller"
       class:visible={activeControlPanel == 'scale'}
+      on:pointerenter={cancelHide}
+      on:pointerleave={hideControlsAfterDelay}
+      on:click|stopPropagation
     >
       <div class="image-scale transparent-container">
         <span class="flex-row">
@@ -808,6 +865,19 @@
           }
         }
       }
+
+      &.hidden {
+        transform: translateY(100%);
+      }
+    }
+
+    #controls-placeholder {
+      position: fixed;
+      bottom: 0;
+      width: 100vw;
+      height: 4rem;
+      z-index: 10;
+      background-color: rgba(255, 255, 255, 0.5);
     }
 
     label {

@@ -39,72 +39,42 @@
     dialog.classList.remove('dialog-fade-out');
     dialog.showModal();
   } else if (dialog) {
-    dialog.classList.add('dialog-fade-out');
+    dialog.classList.add('dialog-fade-out'); // animation before close
     setTimeout(() => dialog.close(), 300);
     if (!isLogged) {
+      // Back to the LOGIN OPTIONS
       signUp = false;
       signInWithEmail = false;
     } else {
+      // Ensure that CHANGE PASSWORD is closed
       editingPassword = false;
     }
   }
 
   const handleBackArrow = () => {
     if (signUp) {
+      // Back from SIGN UP window
       signUp = false;
       return;
     }
     if (signInWithEmail) {
+      // Back from SIGN IN WITH EMAIL window
       signInWithEmail = false;
       return;
     }
+    // Close dialog if already on LOGIN OPTIONS window
     $showProfile = false;
   };
 
-  // Sign-in
-  let user: Nullable<User>;
-  let isLogged: boolean;
+  // NON-SIGNED WINDOWS
 
-  let signUp: boolean;
-  let signInWithEmail: boolean;
+  let signUp: boolean; // go to SIGN UP window if TRUE
+  let signInWithEmail: boolean; // go to SIGN IN WITH EMAIL window if TRUE
   let loginMail: string = '';
   let loginPassword: string = '';
 
-  let subStatus: SubscriptionStatus | null = null;
+  // SIGN UP FORM WINDOW
 
-  let account: Account = new Account();
-
-  onMount(async () => {
-    await account.me();
-  });
-
-  authenticated.subscribe((value) => {
-    user = value.user;
-    isLogged = value.loggedIn;
-  });
-
-  $: if (isLogged && account && user && user.email_confirmed) {
-    account.getReferralCodes();
-    checkSubscription();
-  }
-
-  // Change password
-  let editingPassword: boolean = false;
-  let editOldPassword: string = '';
-  let editPassword: string = '';
-  let editPasswordConfirm: string = '';
-
-  const saveChangedPassword = async () => {
-    $accountError = null as AccountError;
-    await account.changePassword({
-      old_password: editOldPassword,
-      new_password: editPassword,
-    });
-    if (!$accountError || !$accountError.changePassword)
-      editingPassword = false;
-  };
-
-  // Sign-up form
   let referralCode: string = '';
   let referralCodeValid: boolean = false;
   let first_name: string = '';
@@ -125,8 +95,10 @@
 
   $: isFormValid = mandatoryFields && termsAccepted && referralCodeValid;
 
+  // Validate referral code when length is 16 characters
   $: if (referralCode.length === 16) validateReferralCode();
   $: if (referralCode.length < 16) referralCodeValid = false;
+
   async function validateReferralCode() {
     const referralObject: ReferralCode | null =
       await account.validateReferralCode(referralCode);
@@ -137,8 +109,9 @@
     }
   }
 
+  // Sign up user with Email and Referral Code
   const referralSignup = async (event: Event) => {
-    event.preventDefault();
+    event.preventDefault(); // prevent page reload by form
     await account
       .signup({
         user: {
@@ -153,14 +126,54 @@
         newsletter: newsletterSignup,
       })
       .then((res) => {
+        // Reload page after Sign Up to make user Signed In
         if (res !== null) location.reload();
       });
   };
 
-  // Utility functions
+  // SIGNED IN USER PROFILE
+
+  let account: Account = new Account();
+
+  let user: Nullable<User>;
+  let isLogged: boolean;
+
+  let subStatus: SubscriptionStatus | null = null;
+
+  authenticated.subscribe((value) => {
+    user = value.user;
+    isLogged = value.loggedIn;
+  });
+
+  onMount(async () => {
+    await account.me();
+  });
+
+  $: if (isLogged && account && user && user.email_confirmed) {
+    account.getReferralCodes();
+    checkSubscription();
+  }
+
+  // Change password
+  let editingPassword: boolean = false;
+  let editOldPassword: string = '';
+  let editPassword: string = '';
+  let editPasswordConfirm: string = '';
+
+  const saveChangedPassword = async () => {
+    $accountError = null as AccountError; // reset storage from any old errors
+    await account.changePassword({
+      old_password: editOldPassword,
+      new_password: editPassword,
+    });
+    if (!$accountError || !$accountError.changePassword)
+      editingPassword = false;
+  };
+
+  // Call Modal dialog
   const walletSelectConfirm = (address: string) => {
     $secondButton = 'Select';
-    $secondButtonClass = 'green-button';
+    $secondButtonClass = 'green-btn';
     $handleSecondButton = () => {
       handleWalletSelect(address);
       $showModal = false;
@@ -173,19 +186,18 @@
   const handleWalletSelect = async (address: string) => {
     await account.selectMainWallet(address);
     if ($accountError && $accountError.selectMainWallet) return;
-    // reload the page to update the user object
+    // Reload the page to update the user object
     location.reload();
   };
 
+  let copySvgFocus: Nullable<string> = null;
+    
   const copyRefCode = (refCode: string) => {
     let codeBtn = document.getElementById(refCode) as HTMLButtonElement;
     navigator.clipboard.writeText(refCode);
-    codeBtn.classList.add('copied');
+    codeBtn.classList.add('copied'); // animation
     setTimeout(() => codeBtn.classList.remove('copied'), 300);
   };
-
-  // SVG Icons
-  let copySvgFocus: Nullable<string> = null;
 
   // Newsletter
   const checkSubscription = async () => {

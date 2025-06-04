@@ -431,7 +431,7 @@ a11y_no_noninteractive_element_interactions -->
           />
         </div>
         <div>
-          <label class="pc-only" for="filled-eye">Styling</label>
+          <label class:pc-only={!detectIOS()} for="filled-eye">Styling</label>
           <FilledEyeSVG
             onClick={() => switchController('styling')}
             active={activeControlPanel == 'styling'}
@@ -447,7 +447,7 @@ a11y_no_noninteractive_element_interactions -->
           </div>
         {/if}
         <div>
-          <label class="pc-only" for="step-control">Step</label>
+          <label class:pc-only={!detectIOS()} for="step-control">Step</label>
           <StepSVG
             text={`${step.step < 10 ? '0' : ''}${step.step}`}
             onClick={() => switchController('step')}
@@ -456,7 +456,9 @@ a11y_no_noninteractive_element_interactions -->
           />
         </div>
       </div>
-      <FullscreenSVG />
+      {#if !detectIOS()}
+        <FullscreenSVG />
+      {/if}
     </nav>
 
     <div
@@ -877,7 +879,6 @@ a11y_no_noninteractive_element_interactions -->
       width: 100vw;
       height: 4rem;
       z-index: 10;
-      background-color: rgba(255, 255, 255, 0.5);
     }
 
     label {

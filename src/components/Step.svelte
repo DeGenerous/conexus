@@ -13,6 +13,12 @@
     SCALE_KEY
   } from '@constants/cache';
   import detectIOS from '@utils/ios-device';
+  import {
+    showModal,
+    secondButton,
+    handleSecondButton,
+    modalContent,
+  } from '@stores/modal';
 
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
@@ -25,6 +31,8 @@
   import FullscreenSVG from '@components/icons/Fullscreen.svelte';
   import FilledEyeSVG from '@components/icons/FilledEye.svelte';
   import ZoomInSVG from '@components/icons/ZoomIn.svelte';
+  import ResetSVG from '@components/icons/Reset.svelte';
+  import type { CustomFunction } from 'sass-embedded';
 
   export let story_name: string;
 
@@ -32,6 +40,18 @@
   let height: number;
 
   $: step = $story?.step_data as StepData;
+
+  // CONTROL BAR
+
+  let activeControlPanel: Nullable<StepController> = null;
+
+  const switchController = (controller: StepController) => {
+    if (activeControlPanel == controller) {
+      activeControlPanel = null;
+      return;
+    }
+    activeControlPanel = controller;
+  };
 
   // FONT FOR ALL ELEMENTS INSIDE step-wrapper
 
@@ -123,17 +143,16 @@
   // update SCALE in localStorage after every change
   $: customScale && updateScale(); 
 
-  // CONTROL BAR
-  
-  let activeControlPanel: Nullable<StepController> = null;
-
-  const switchController = (controller: StepController) => {
-    if (activeControlPanel == controller) {
-      activeControlPanel = null;
-      return;
+  // Show confirmation dialog on reset
+  const openModal = (resetFunc: any) => {
+    $secondButton = `Reset`;
+    $handleSecondButton = () => {
+      resetFunc();
+      $showModal = false;
     }
-    activeControlPanel = controller;
-  };
+    $modalContent = `<h4>Are you sure you want to reset ${activeControlPanel} settings?</h4>`;
+    $showModal = true;
+  }
 
   // KEYBOARD CONTROLS
 
@@ -469,8 +488,8 @@
     >
       <div class="font-family transparent-container flex-row">
         <span class="flex-row">
-          <label for="text-size">Font</label>
-          <select id="text-size" bind:value={customFont.family}>
+          <label for="custom-font">Font</label>
+          <select id="custom-font" bind:value={customFont.family}>
             <option value="PT Serif Caption">Default (serif)</option>
             <option value="Merriweather">Merriweather</option>
             <option value="Lora">Lora</option>
@@ -585,6 +604,7 @@
           option selector
         </button>
       </div>
+      <ResetSVG text="Reset to default" onClick={() => openModal(() => updateStyling('reset'))} />
     </section>
 
     <!-- SCALE CONTROLLER -->
@@ -655,6 +675,7 @@
           </span>
         </span>
       </div>
+      <ResetSVG text="Reset to default" onClick={() => openModal(() => updateScale('reset'))} />
     </section>
   </section>
 {:else}

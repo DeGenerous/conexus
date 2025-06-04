@@ -1,8 +1,16 @@
-<script>
+<script lang="ts">
   export let onClick = () => {};
+  export let text: string = "";
+  export let disabled: boolean = false;
 </script>
 
-<button class="flex void-btn" on:click={onClick} aria-label="Reset">
+<button
+  class="flex-row void-btn"
+  class:text
+  on:click={onClick}
+  aria-label="Reset"
+  {disabled}
+>
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"
@@ -13,23 +21,43 @@
     <path d="M 70 -50 A 85 85 0 1 0 85 0" fill="none" />
     <polygon points="70 -50 60 -90 30 -55" />
   </svg>
+  {text}
 </button>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
   button {
-    width: 1.5rem;
-    padding: 0;
     fill: $soft-white;
     stroke: $soft-white;
+    color: $soft-white;
+
+    svg {
+      width: 1.5rem;
+    }
 
     &:hover,
     &:active,
     &:focus {
       fill: $cyan;
       stroke: $cyan;
-      transform: rotate(300deg);
+      color: $cyan;
+      opacity: 1 !important;
+
+      svg {
+        transform: rotate(300deg);
+      }
+    }
+
+    &.text {
+      width: 100%;
+      gap: 0.5rem;
+      opacity: 0.5;
+      text-transform: uppercase;
+
+      svg {
+        height: 1rem;
+      }
     }
   }
 </style>

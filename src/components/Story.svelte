@@ -13,11 +13,10 @@
   import { contractGetter } from '@constants/contracts';
   import MediaManager from '@lib/media';
   import { CoNexusGame } from '@lib/story';
-  import { loading, story, background_image } from '@stores/conexus';
+  import { loading, story } from '@stores/conexus';
   import {
     showModal,
     secondButton,
-    secondButtonClass,
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
@@ -39,6 +38,12 @@
   const game: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
 
+  const handleSetMedia = async (topic_id: number) => {
+    await media.setBackgroundImage(topic_id);
+    await media.playBackgroundMusic(topic_id);
+  };
+
+  // Switching between NEIGHBOUR stories
   let categoryTopics: TopicsInSection[] = [];
   let activeStoryIndex: number = 0;
   $: prevStoryIndex =
@@ -47,8 +52,7 @@
   onMount(async () => {
     await checkUserState('/story');
 
-    detectIOS();
-
+    // Get all topics in SECTION from the localStorage
     const storedTopics = JSON.parse(
       GetCache(SECTION_CATEGORIES_KEY(section)) as string,
     )
@@ -56,31 +60,22 @@
       .flat();
     if (storedTopics) {
       categoryTopics = storedTopics;
+      // Get array of STORY NAMES to display on button
       const categoryTopicNames: string[] = categoryTopics!.map(
         (story) => story.topic_name,
       );
+      // Find index of selected story to get PREV & NEXT story index
       activeStoryIndex = categoryTopicNames?.indexOf(story_name);
     }
   });
 
+  // CONTINUE SHAPING section
+
   let deletedStories: string[] = []; // temp storage before reload for immediate removal
   let noUnfinishedStoriesLeft: boolean = false;
-  let backgroundImageUrl: string = '/defaultBG.avif';
 
-  const handleSetMedia = async (topic_id: number) => {
-    await media.setBackgroundImage(topic_id);
-    await media.playBackgroundMusic(topic_id);
-  };
-
-  background_image.subscribe((value) => {
-    if (value) {
-      backgroundImageUrl = value;
-    }
-  });
-
-  function openModal(story: any) {
+  const openModal = (story: ContinuableStory) => {
     $secondButton = `Delete story: ${story.category}`;
-    $secondButtonClass = 'red-button';
     $handleSecondButton = () => DeleteStory(story.story_id);
     $modalContent = `<h4>Are you sure you want to delete this story?</h4>
         <p>This action is irreversible. You will lose all progress on this story.</p>`;
@@ -90,9 +85,10 @@
   async function DeleteStory(story_id: any) {
     try {
       await game.delete(story_id);
-      deletedStories[deletedStories.length] = story_id;
+      deletedStories[deletedStories.length] = story_id; // hide deleted story from user
       $showModal = false;
       await game.storyContinuables(story_name!).then((continuables) => {
+        // Hide CINTINUE SHAPING section if no unfinished stories left
         if (continuables.length == 0) noUnfinishedStoriesLeft = true;
       });
     } catch (error) {
@@ -100,23 +96,24 @@
     }
   }
 
-  const convertDate = (date) => {
+  // Calculate story creation date to show on CONTINUE button
+  const convertDate = (date: string | Date) => {
     if (!date) return 'CORRUPTED';
     date = new Date(date);
 
-    let minutes = date.getMinutes();
-    let hours = date.getHours();
+    let minutes = String(date.getMinutes());
+    let hours = String(date.getHours());
 
-    let day = date.getDate();
-    let month = date.getMonth() + 1;
-    let year = date.getFullYear();
+    let day = String(date.getDate());
+    let month = String(date.getMonth() + 1);
+    let year = String(date.getFullYear());
 
-    if (minutes < 10) minutes = '0' + minutes;
-    if (hours < 10) hours = '0' + hours;
-    if (day < 10) day = '0' + day;
-    if (month < 10) month = '0' + month;
+    if (Number(minutes) < 10) minutes = '0' + minutes;
+    if (Number(hours) < 10) hours = '0' + hours;
+    if (Number(day) < 10) day = '0' + day;
+    if (Number(month) < 10) month = '0' + month;
 
-    return `${day}.${month}.${String(year).slice(2)} ${hours}:${minutes}`;
+    return `${day}.${month}.${year.slice(2)} ${hours}:${minutes}`;
   };
 </script>
 
@@ -222,7 +219,7 @@
                     onClick={() => openModal(continuable)}
                   />
                   <span class="flex">
-                    <p>{convertDate(continuable.created)}</p>
+                    <p>{convertDate(continuable.created!)}</p>
                     <p class="story-id">{continuable.story_id.split('-')[0]}</p>
                   </span>
                   <PlaySVG
@@ -384,6 +381,8 @@
     }
 
     .unfinished-stories {
+      overflow-x: hidden !important;
+
       h5 {
         width: 100%;
         text-transform: uppercase;

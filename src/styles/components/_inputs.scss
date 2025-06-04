@@ -145,6 +145,12 @@ input[type='range'] {
 input[type='color'] {
   width: 3rem;
   border: none;
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled) {
+    filter: none;
+    @include scale;
+  }
 }
 
 input[type='number'] {

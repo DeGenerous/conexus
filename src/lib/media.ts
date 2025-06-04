@@ -108,9 +108,7 @@ class MediaManager {
   }
 
   async setBackgroundImage(topic_id: number): Promise<void> {
-    console.log('fetching bg image...')
     const images = await this.fetchMedia(topic_id, 'background');
-    console.log(images)
     if (images.length > 0) {
       let randomImage = images[Math.floor(Math.random() * images.length)];
       background_image.set(serveUrl(randomImage));

@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import { bgPicture, bgPictureOpacity, bgColor } from '@stores/background.ts';
   import { story, background_image } from '@stores/conexus';
-  import { onMount } from 'svelte';
+  import { pcBG, mobileBG, defaultBG } from '@constants/media';
 
   export let storyName: Nullable<string> = null;
 
@@ -9,20 +11,22 @@
   let scroll: number;
   let bg: HTMLDivElement;
 
+  const cssURL = (imageLink: string): Nullable<string> => imageLink ? `url('${imageLink}')` : null;
+
   onMount(() => {
-    if (width > 768) $bgPicture = "url('/conexusBG.avif')";
+    if (width > 768) $bgPicture = cssURL(pcBG);
   });
 
   // Back to default picture if null
-  $: if ($bgPicture === null)
-    $bgPicture =
-      width < 768 ? "url('/mobileBG.webp')" : "url('/conexusBG.avif')";
+  $: if ($bgPicture === null) $bgPicture = width < 768 ? cssURL(mobileBG) : cssURL(pcBG);
 
-  // Default story picture if entered story page
-  $: if (storyName && bg) $bgPicture = "url('/defaultBG.avif')";
+  // Default story picture when entered story page
+  $: if (storyName && bg) $bgPicture = cssURL(defaultBG);
 
-  $: if ($background_image) $bgPicture = `url(${$background_image})`;
+  // Set to uploaded story background if it is
+  $: if ($background_image) $bgPicture = cssURL($background_image);
 
+  // Reactive update of background-image on $bgPicture change
   $: if ($bgPicture && bg) bg.style.backgroundImage = $bgPicture;
 </script>
 

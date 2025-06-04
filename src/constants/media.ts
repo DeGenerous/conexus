@@ -1,5 +1,9 @@
 export const blankImage = '/blank.avif';
 
+export const pcBG = '/conexusBG.avif';
+export const mobileBG = '/mobileBG.webp';
+export const defaultBG = '/defaultBG.avif';
+
 export const serveUrl = (path?: string) => {
   if (!path) return blankImage;
   return `/api/media/serve/${path}`;

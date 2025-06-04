@@ -14,7 +14,6 @@ import { AccountAPI, AuthAPI } from '@service/routes';
 import {
   authenticated,
   referralCodes,
-  web3LoggedIn,
   userCheck,
   accountError,
 } from '@stores/account';
@@ -48,7 +47,6 @@ export class Account {
     SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
     authenticated.set({ user: data.user, loggedIn: true });
-    web3LoggedIn.set(true);
   }
 
   async signup(signupData: ReferralSignUp): Promise<Nullable<void>> {
@@ -67,7 +65,6 @@ export class Account {
     SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
     authenticated.set({ user: data.user, loggedIn: true });
-    web3LoggedIn.set(true);
   }
 
   async validateReferralCode(code: string): Promise<ReferralCode | null> {
@@ -246,7 +243,6 @@ export class Account {
     const cachedUser = GetCache<User>(USER_CACHE_KEY);
     if (cachedUser) {
       authenticated.set({ user: cachedUser, loggedIn: true });
-      web3LoggedIn.set(true);
       userCheck.set(false);
       return;
     }
@@ -269,7 +265,6 @@ export class Account {
     SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
     authenticated.set({ user: data.user, loggedIn: true });
-    web3LoggedIn.set(true);
   }
 
   static async getUser(): Promise<User | null> {
@@ -288,7 +283,6 @@ export class Account {
     SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
     authenticated.set({ user: data.user, loggedIn: true });
-    web3LoggedIn.set(true);
 
     return data.user;
   }
@@ -327,7 +321,6 @@ export class Account {
     ClearCache('full');
 
     authenticated.set({ user: null, loggedIn: false });
-    web3LoggedIn.set(false);
     window.open('/', '_self');
   }
 
@@ -347,7 +340,6 @@ export class Account {
     SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
     authenticated.set({ user: data.user, loggedIn: true });
-    web3LoggedIn.set(true);
   }
 
   async generateReferralCode(): Promise<void> {

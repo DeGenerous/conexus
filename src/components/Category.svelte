@@ -6,8 +6,7 @@
   import SearchAndGenre from '@components/utils/SearchAndGenre.svelte';
   import StoryCollection from '@components/utils/StoryCollection.svelte';
   import { CoNexusApp } from '@lib/view';
-  import { checkUserState, checkWeb3LoginState } from '@utils/route-guard';
-  import { web3LoggedIn } from '@stores/account';
+  import { checkUserState } from '@utils/route-guard';
   import {
     SetCache,
     GetCache,
@@ -15,11 +14,9 @@
     SECTION_CATEGORIES_TTL,
   } from '@constants/cache';
 
-  let app: CoNexusApp = new CoNexusApp();
-
   export let section: string;
 
-  let isWeb3LoggedIn: boolean = false;
+  let app: CoNexusApp = new CoNexusApp();
 
   let categories: CategoriesInSection[] = [];
   let genres: Genre[] = [];
@@ -72,11 +69,6 @@
     try {
       await checkUserState(`/${section}`);
 
-      const unsubscribe = web3LoggedIn.subscribe((value) => {
-        isWeb3LoggedIn = value;
-        checkWeb3LoginState(isWeb3LoggedIn, section);
-      });
-
       const sections = await app.getSections();
       if (!sections.some(({ name }) => name === section)) {
         window.location.href = '/404';
@@ -97,8 +89,6 @@
           showNoCategoriesMessage = true;
         }
       }, 2000);
-
-      unsubscribe();
     } catch (error) {
       console.error('Error in onMount:', error);
     }

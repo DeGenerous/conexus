@@ -17,7 +17,7 @@ import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains';
 
 import { SetCache, USER_CACHE_KEY, USER_CACHE_TTL } from '@constants/cache';
 import { assetsURL } from '@constants/media';
-import { web3LoggedIn, authenticated } from '@stores/account';
+import { authenticated } from '@stores/account';
 import { AccountAPI, AuthAPI } from '@service/routes';
 
 import '@rainbow-me/rainbowkit/styles.css';
@@ -104,7 +104,6 @@ const Web3Provider = ({ linking, children }) => {
 
       SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
-      web3LoggedIn.set(true);
       authenticated.set({ user: data.user, loggedIn: true });
 
       AUTHENTICATION_STATUS = 'authenticated';
@@ -120,7 +119,6 @@ const Web3Provider = ({ linking, children }) => {
         return;
       }
 
-      web3LoggedIn.set(false);
       authenticated.set({ user: null, loggedIn: false });
 
       AUTHENTICATION_STATUS = 'unauthenticated';

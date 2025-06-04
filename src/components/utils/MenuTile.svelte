@@ -1,14 +1,7 @@
 <script lang="ts">
   import { mediaURL } from '@constants/media';
-  import { web3LoggedIn } from '@stores/account';
 
   export let section: Section;
-
-  let isWeb3LoggedIn: boolean = false;
-
-  web3LoggedIn.subscribe((value) => {
-    isWeb3LoggedIn = value;
-  });
 
   // sectionImage is the name of the section but remove the spaces
   const imageName: string = section.name.replace(/\s/g, '');

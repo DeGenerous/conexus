@@ -1,16 +1,9 @@
 <script lang="ts">
   import { CoNexusApp } from '@lib/view';
-  import { web3LoggedIn } from '@stores/account';
 
   import MenuTile from './utils/MenuTile.svelte';
 
-  let isWeb3LoggedIn: boolean = false;
-
   let app: CoNexusApp = new CoNexusApp();
-
-  web3LoggedIn.subscribe((value) => {
-    isWeb3LoggedIn = value;
-  });
 
   const menuText: string[] = [
     'A new world with no limits awaits you.',

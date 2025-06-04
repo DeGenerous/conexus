@@ -19,6 +19,13 @@
     handleSecondButton,
     modalContent,
   } from '@stores/modal';
+  import {
+    defaultFont,
+    defaultStyling,
+    defaultScale,
+    lightThemeFont,
+    lightThemeStyling
+  } from '@constants/customization';
 
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
@@ -32,7 +39,6 @@
   import FilledEyeSVG from '@components/icons/FilledEye.svelte';
   import ZoomInSVG from '@components/icons/ZoomIn.svelte';
   import ResetSVG from '@components/icons/Reset.svelte';
-  import type { CustomFunction } from 'sass-embedded';
 
   export let story_name: string;
 
@@ -58,18 +64,7 @@
   let customFont: CustomFont = null;
 
   const updateFont = (reset: Nullable<"reset"> = null) => {
-    if (reset) {
-      customFont = {
-        family: 'Verdana',
-        baseSize: 'body',
-        accentSize: 'h5',
-        baseColor: '#dedede',
-        accentColor: '#33e2e6',
-        bold: true,
-        italic: false,
-        shadow: true
-      }
-    }
+    if (reset) customFont = defaultFont;
     SetCache(
       FONT_KEY,
       JSON.stringify(customFont),
@@ -97,15 +92,7 @@
   let customStyling: CustomStyling = null;
 
   const updateStyling = (reset: Nullable<'reset'> = null) => {
-    if (reset) {
-      customStyling = {
-        boxShadow: true,
-        optionsContainer: true,
-        optionSelector: true,
-        bgPictureOpacity: 25,
-        bgColor: '#000000'
-      }
-    }
+    if (reset) customStyling = defaultStyling;
     SetCache(
       STYLING_KEY,
       JSON.stringify(customStyling),
@@ -125,14 +112,7 @@
   let customScale: CustomScale = null;
 
   const updateScale = (reset: Nullable<'reset'> = null) => {
-    if (reset) {
-      customScale = {
-        paragraphWidth: 80,
-        optionsWidth: 80,
-        imageWidth: 800,
-        imageHeight: 512
-      }
-    }
+    if (reset) customScale = defaultScale;
     SetCache(
       SCALE_KEY,
       JSON.stringify(customScale),
@@ -604,7 +584,16 @@
           option selector
         </button>
       </div>
-      <ResetSVG text="Reset to default" onClick={() => openModal(() => updateStyling('reset'))} />
+      <span class="reset-wrapper flex-row">
+        <ResetSVG text="Reset to light theme" onClick={() => openModal(() => {
+          customFont = lightThemeFont;
+          customStyling = lightThemeStyling;
+        })} />
+        <ResetSVG text="Reset to dark theme" onClick={() => openModal(() => {
+          updateFont('reset');
+          updateStyling('reset');
+        })} />
+      </span>
     </section>
 
     <!-- SCALE CONTROLLER -->
@@ -675,7 +664,9 @@
           </span>
         </span>
       </div>
-      <ResetSVG text="Reset to default" onClick={() => openModal(() => updateScale('reset'))} />
+      <span class="reset-wrapper flex-row">
+        <ResetSVG text="Reset to default" onClick={() => openModal(() => updateScale('reset'))} />
+      </span>
     </section>
   </section>
 {:else}
@@ -874,6 +865,12 @@
       &.visible {
         bottom: 4rem;
         transform: none;
+      }
+
+      .reset-wrapper {
+        flex-wrap: wrap;
+        justify-content: space-around;
+        width: 100%;
       }
 
       // STEPS

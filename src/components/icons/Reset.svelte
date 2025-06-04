@@ -50,7 +50,6 @@
     }
 
     &.text {
-      width: 100%;
       gap: 0.5rem;
       opacity: 0.5;
       text-transform: uppercase;

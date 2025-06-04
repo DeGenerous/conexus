@@ -14,7 +14,7 @@ export const tts_volume = writable<VolumeControl>({
 export const tts_speed = writable<number>(1);
 export const speed_values = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
-export const muted = writable<{voice: boolean, music: boolean}>({
+export const muted = writable<{ voice: boolean; music: boolean }>({
   voice: false,
-  music: true
-})
+  music: true,
+});

@@ -80,7 +80,7 @@
     $modalContent = `<h4>Are you sure you want to delete this story?</h4>
         <p>This action is irreversible. You will lose all progress on this story.</p>`;
     $showModal = true;
-  }
+  };
 
   async function DeleteStory(story_id: any) {
     try {

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import StoryTile from '@components/utils/StoryTile.svelte';
+
   import { CoNexusApp } from '@lib/view';
   import {
     SetCache,
@@ -8,12 +8,14 @@
     CATEGORY_TOPICS_KEY,
     CATEGORY_TOPICS_TTL,
   } from '@constants/cache';
-  import SortingSVG from '@components/icons/Sorting.svelte';
 
-  const view = new CoNexusApp();
+  import StoryTile from '@components/utils/StoryTile.svelte';
+  import SortingSVG from '@components/icons/Sorting.svelte';
 
   export let category: CategoriesInSection | null = null;
   export let section: string = '';
+
+  const view = new CoNexusApp();
 
   let topics: TopicInCategory[] = [];
 
@@ -44,7 +46,7 @@
 
     const response = await view.getCategoryTopics(
       category.id,
-      Math.floor(topics.length / 10) + 1,
+      Math.floor(topics.length / pageSize) + 1,
       pageSize,
     );
 
@@ -69,19 +71,11 @@
     loading = false;
   };
 
-  // Detect when user scrolls to the end of the StoryTile container
-  const handleScroll = (event: Event) => {
-    if (!category || !section || loading || isEndReached) return;
-
-    const target = event.target as HTMLElement;
-    if (target.scrollLeft + target.clientWidth >= target.scrollWidth - 20) {
-      fetchTopics(); // Load next set of topics with debounce
-    }
-  };
-
   onMount(() => {
     fetchTopics();
   });
+
+  // SORTING
 
   function applySorting(data: TopicInCategory[]) {
     return isSorting ? sortByName(data) : sortByOrder(data);
@@ -110,6 +104,18 @@
       return 0;
     });
   }
+
+  // A.K.A. INTERSECTION OBSERVER
+
+  const handleScroll = (event: Event) => {
+    if (!category || !section || loading || isEndReached) return;
+
+    const target = event.target as HTMLElement;
+    // Load next page if user scrolls to the end of collection
+    if (target.scrollLeft + target.clientWidth >= target.scrollWidth - 20) {
+      fetchTopics();
+    }
+  };
 </script>
 
 <div class="collection-header">

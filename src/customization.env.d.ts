@@ -14,7 +14,7 @@ type CustomFont = Nullable<{
   bold: boolean;
   italic: boolean;
   shadow: boolean;
-}>
+}>;
 
 type CustomStyling = Nullable<{
   boxShadow: boolean;
@@ -22,11 +22,11 @@ type CustomStyling = Nullable<{
   optionSelector: boolean;
   bgPictureOpacity: number;
   bgColor: string;
-}>
+}>;
 
 type CustomScale = Nullable<{
   paragraphWidth: number; // %
   optionsWidth: number; // %
   imageWidth: number; // px
   imageHeight: number; // px
-}>
+}>;

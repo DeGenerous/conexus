@@ -191,7 +191,7 @@
   };
 
   let copySvgFocus: Nullable<string> = null;
-    
+
   const copyRefCode = (refCode: string) => {
     let codeBtn = document.getElementById(refCode) as HTMLButtonElement;
     navigator.clipboard.writeText(refCode);

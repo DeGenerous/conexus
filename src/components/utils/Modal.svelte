@@ -18,7 +18,7 @@
   }
 
   const closeDialog = () => {
-    dialog.classList.add('dialog-fade-out');
+    dialog.classList.add('dialog-fade-out'); // animation before close
     $showModal = false;
     $secondButton = '';
     $secondButtonClass = '';

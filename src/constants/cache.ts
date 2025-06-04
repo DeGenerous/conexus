@@ -122,7 +122,8 @@ export const ClearCache = (
       // deleting all values
       localStorage.clear();
       // restoring saved values
-      if (cookieConsent) localStorage.setItem(COOKIE_CONSENT_KEY, cookieConsent);
+      if (cookieConsent)
+        localStorage.setItem(COOKIE_CONSENT_KEY, cookieConsent);
       if (musicVolume) localStorage.setItem('music-volume', musicVolume);
       if (voiceVolume) localStorage.setItem('voice-volume', voiceVolume);
       if (ttsSpeed) localStorage.setItem('tts-speed', ttsSpeed);

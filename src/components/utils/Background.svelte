@@ -11,14 +11,16 @@
   let scroll: number;
   let bg: HTMLDivElement;
 
-  const cssURL = (imageLink: string): Nullable<string> => imageLink ? `url('${imageLink}')` : null;
+  const cssURL = (imageLink: string): Nullable<string> =>
+    imageLink ? `url('${imageLink}')` : null;
 
   onMount(() => {
     if (width > 768) $bgPicture = cssURL(pcBG);
   });
 
   // Back to default picture if null
-  $: if ($bgPicture === null) $bgPicture = width < 768 ? cssURL(mobileBG) : cssURL(pcBG);
+  $: if ($bgPicture === null)
+    $bgPicture = width < 768 ? cssURL(mobileBG) : cssURL(pcBG);
 
   // Default story picture when entered story page
   $: if (storyName && bg) $bgPicture = cssURL(defaultBG);

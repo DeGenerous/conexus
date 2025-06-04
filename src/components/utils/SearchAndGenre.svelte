@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { toastStore } from '@stores/toast';
+
+  import StoryTile from '@components/utils/StoryTile.svelte';
   import GenreSelect from '@components/utils/GenreSelect.svelte';
   import SearchSection from '@components/utils/SearchSection.svelte';
-  import StoryTile from '@components/utils/StoryTile.svelte';
-  import { toastStore } from '@stores/toast';
+
   import SortingSVG from '@components/icons/Sorting.svelte';
 
   export let categories: CategoriesInSection[] = [];
@@ -19,15 +21,15 @@
   let filteredTopics: TopicInCategory[] = [];
   let sortedTopics: TopicInCategory[] = [];
 
-  let searchField: string = '';
-  let activeGenre: string;
+  let searchField: string = ''; // search INPUT value
+  let activeGenre: string; // genres SELECT value
 
   let page: number = 1;
-  let pageSize: number = 5;
+  let pageSize: number = 10;
 
   let isSearching = false;
   let isSorting = false;
-  let isEndReached = false;
+  let isEndReached = false; // no more topics to load if TRUE
 
   let activeMode: 'genre' | 'search' | null = null;
 
@@ -88,7 +90,8 @@
     sortedTopics = applySorting(filteredTopics);
   }
 
-  // Genres
+  // GENRES
+
   const resetGenres = () => {
     activeGenre = '';
     filteredTopics = [];
@@ -99,7 +102,13 @@
     isSorting = false;
   };
 
-  // Search
+  $: if (activeGenre) {
+    searchField = '';
+    resetAndFetch({ text: activeGenre, mode: 'genre' });
+  }
+
+  // SEARCH
+
   function handleSearchDebounced() {
     if (debounceTimeout) clearTimeout(debounceTimeout);
     isSearching = true;
@@ -118,35 +127,18 @@
 
       resetAndFetch({ text: searchField, mode: 'search' });
       isSearching = false;
-    }, 600);
+    }, 1000); // 1s delay before search
   }
 
-  $: if (activeGenre) {
-    searchField = '';
-    resetAndFetch({ text: activeGenre, mode: 'genre' });
-  }
+  // SORTING
 
-  function handleScroll(event: Event) {
-    if (isSearching || isEndReached || !activeMode) return;
-
-    const target = event.target as HTMLElement;
-    if (target.scrollLeft + target.clientWidth >= target.scrollWidth - 20) {
-      page++;
-      fetchTopics({
-        text: activeMode === 'genre' ? activeGenre : searchField,
-        mode: activeMode,
-      });
-    }
-  }
-
-  // Sorting
   function applySorting(data: TopicInCategory[]) {
     return isSorting ? sortByName(data) : sortByOrder(data);
   }
 
   const handleSorting = () => {
-    if (isSorting) sortedTopics = sortByName(filteredTopics);
-    else sortedTopics = sortByOrder(filteredTopics);
+    if (isSorting) sortedTopics = sortByName([...filteredTopics]);
+    else sortedTopics = sortByOrder([...filteredTopics]);
   };
 
   function sortByName(data: TopicInCategory[]) {
@@ -166,6 +158,22 @@
       if (a.order > b.order) return 1;
       return 0;
     });
+  }
+
+  // A.K.A. INTERSECTION OBSERVER
+
+  function handleScroll(event: Event) {
+    if (isSearching || isEndReached || !activeMode) return;
+
+    const target = event.target as HTMLElement;
+    // Load next page if user scrolls to the end of collection
+    if (target.scrollLeft + target.clientWidth >= target.scrollWidth - 20) {
+      page++;
+      fetchTopics({
+        text: activeMode === 'genre' ? activeGenre : searchField,
+        mode: activeMode,
+      });
+    }
   }
 </script>
 
@@ -197,7 +205,7 @@
   </div>
   <div class="tiles-collection filtered-tiles" on:scroll={handleScroll}>
     {#key sortedTopics}
-      {#each filteredTopics as topic}
+      {#each sortedTopics as topic}
         <StoryTile {section} bind:topic bind:loading={isSearching} />
       {/each}
       {#if !isEndReached && isSearching}

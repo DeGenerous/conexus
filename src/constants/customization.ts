@@ -6,23 +6,23 @@ export const defaultFont: CustomFont = {
   accentColor: '#33e2e6',
   bold: true,
   italic: false,
-  shadow: true
-}
+  shadow: true,
+};
 
 export const defaultStyling: CustomStyling = {
   boxShadow: true,
   optionsContainer: true,
   optionSelector: true,
   bgPictureOpacity: 25,
-  bgColor: '#000000'
-}
+  bgColor: '#000000',
+};
 
 export const defaultScale: CustomScale = {
   paragraphWidth: 80,
   optionsWidth: 80,
   imageWidth: 800,
-  imageHeight: 512
-}
+  imageHeight: 512,
+};
 
 // LIGHT THEME
 
@@ -34,13 +34,13 @@ export const lightThemeFont: CustomFont = {
   accentColor: '#161e5f', // navy
   bold: false,
   italic: false,
-  shadow: false
-}
+  shadow: false,
+};
 
 export const lightThemeStyling: CustomStyling = {
   boxShadow: true,
   optionsContainer: true,
   optionSelector: true,
   bgPictureOpacity: 10,
-  bgColor: '#faeed1' // beidge
-}
+  bgColor: '#faeed1', // beidge
+};

@@ -1,5 +1,3 @@
-<script></script>
-
 <div class="flex">
   <picture class="flex">
     <source srcset="title.avif" type="image/avif" />

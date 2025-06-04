@@ -8,22 +8,12 @@
   export let disabled: boolean = false;
 
   let searchInput: HTMLInputElement | null;
-  let searchFocus = false;
+  let searchSvgFocus: boolean = false;
 
   const handleSearchFocus = () => {
     if (!searchInput) return;
-    if (!searchFocus) {
-      searchInput.focus();
-      searchFocus = false;
-    }
-    if (searchFocus) {
-      searchInput.blur();
-      searchFocus = true;
-    }
+    searchInput.focus();
   };
-
-  // SVG Icons
-  let searchSvgFocus: boolean = false;
 </script>
 
 <div class="flex-row blur pad-8 round-8 shad" class:active={searchField}>

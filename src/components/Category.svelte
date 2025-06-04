@@ -63,8 +63,6 @@
     }
   };
 
-  let observer: IntersectionObserver;
-
   onMount(async () => {
     try {
       await checkUserState(`/${section}`);
@@ -94,6 +92,37 @@
     }
   });
 
+  const getTopics = async (
+    text: string,
+    which: 'search' | 'genre',
+    page: number = 1,
+    pageSize: number = 10,
+    sort_order: TopicSortOrder = 'category',
+  ) => {
+    switch (which) {
+      case 'search':
+        return await app.searchSectionCategories(
+          section,
+          text.replace(/[^a-zA-Z ]/g, ''),
+          page,
+          pageSize,
+          sort_order,
+        );
+      case 'genre':
+        return await app.getGenreTopics(
+          section,
+          text,
+          page,
+          pageSize,
+          sort_order,
+        );
+    }
+  };
+
+  // INTERSECTION OBSERVER
+
+  let observer: IntersectionObserver;
+
   const handleScroll = (event: Event) => {
     if (loading || allLoaded) return;
 
@@ -117,34 +146,8 @@
     if (lastCategoryElement) observer.observe(lastCategoryElement);
   };
 
+  // When 1 or more categories visible - observe the last one
   $: if (categories.length > 0) setTimeout(observeLastCategory, 500);
-
-  const getTopics = async (
-    text: string,
-    which: 'search' | 'genre',
-    page: number = 1,
-    pageSize: number = 5,
-    sort_order: TopicSortOrder = 'category',
-  ) => {
-    switch (which) {
-      case 'search':
-        return await app.searchSectionCategories(
-          section,
-          text.replace(/[^a-zA-Z ]/g, ''),
-          page,
-          pageSize,
-          sort_order,
-        );
-      case 'genre':
-        return await app.getGenreTopics(
-          section,
-          text,
-          page,
-          pageSize,
-          sort_order,
-        );
-    }
-  };
 </script>
 
 <SearchAndGenre {section} {genres} {getTopics} {categories} />

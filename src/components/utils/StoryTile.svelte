@@ -1,6 +1,7 @@
 <script lang="ts">
   import { blankImage, serveUrl } from '@constants/media';
   import { contractGetter } from '@constants/contracts';
+
   import LockSVG from '@components/icons/Lock.svelte';
 
   export let section: string;
@@ -16,9 +17,9 @@
         const className = gate.class_name;
         const amount = gate.amount;
 
+        // Check for the right name from the contract Map
         const convertedName = contractGetter(name).name;
 
-        // return className ? `${convertedName} (${className})` : convertedName;
         if (amount && amount > 0) {
           return `$${convertedName.toUpperCase()} (${amount})`;
         } else if (className) {

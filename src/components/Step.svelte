@@ -10,7 +10,7 @@
     ONE_YEAR_TTL,
     FONT_KEY,
     STYLING_KEY,
-    SCALE_KEY
+    SCALE_KEY,
   } from '@constants/cache';
   import detectIOS from '@utils/ios-device';
   import {
@@ -24,7 +24,7 @@
     defaultStyling,
     defaultScale,
     lightThemeFont,
-    lightThemeStyling
+    lightThemeStyling,
   } from '@constants/customization';
 
   import Slider from '@components/music/Slider.svelte';
@@ -60,8 +60,10 @@
     }
     activeControlPanel = controller;
   };
-  
-  let hiddenControlsTimeout: ReturnType<typeof setTimeout> = setTimeout(() => {});
+
+  let hiddenControlsTimeout: ReturnType<typeof setTimeout> = setTimeout(
+    () => {},
+  );
 
   const hideControlsAfterDelay = () => {
     if (width < 1024) return;
@@ -85,29 +87,27 @@
 
   let customFont: CustomFont = null;
 
-  const updateFont = (reset: Nullable<"reset"> = null) => {
+  const updateFont = (reset: Nullable<'reset'> = null) => {
     if (reset) customFont = defaultFont;
-    SetCache(
-      FONT_KEY,
-      JSON.stringify(customFont),
-      ONE_YEAR_TTL
-    );
-  }
+    SetCache(FONT_KEY, JSON.stringify(customFont), ONE_YEAR_TTL);
+  };
 
   // update FONT in localStorage after every change
   $: customFont && updateFont();
 
   // calculate option selector size based on font size
   let selectorSize: number = 1.5; // rem
-  $: if (customFont) selectorSize = customFont.accentSize === 'h4'
-    ? 1.75
-    : customFont.accentSize === 'h5'
-      ? 1.5
-      : customFont.accentSize === 'body'
-        ? 1.25
-        : customFont.accentSize === 'small'
-         ? 1
-         : 0.75;
+  $: if (customFont)
+    selectorSize =
+      customFont.accentSize === 'h4'
+        ? 1.75
+        : customFont.accentSize === 'h5'
+          ? 1.5
+          : customFont.accentSize === 'body'
+            ? 1.25
+            : customFont.accentSize === 'small'
+              ? 1
+              : 0.75;
 
   // STYLING CUSTOMIZATION
 
@@ -115,15 +115,11 @@
 
   const updateStyling = (reset: Nullable<'reset'> = null) => {
     if (reset) customStyling = defaultStyling;
-    SetCache(
-      STYLING_KEY,
-      JSON.stringify(customStyling),
-      ONE_YEAR_TTL
-    );
-  }
+    SetCache(STYLING_KEY, JSON.stringify(customStyling), ONE_YEAR_TTL);
+  };
 
   // update STYLING in localStorage after every change
-  $: customStyling && updateStyling(); 
+  $: customStyling && updateStyling();
 
   // reactive updatement of BG storages
   $: $bgPictureOpacity = customStyling ? customStyling.bgPictureOpacity : 50;
@@ -135,15 +131,11 @@
 
   const updateScale = (reset: Nullable<'reset'> = null) => {
     if (reset) customScale = defaultScale;
-    SetCache(
-      SCALE_KEY,
-      JSON.stringify(customScale),
-      ONE_YEAR_TTL
-    );
-  }
+    SetCache(SCALE_KEY, JSON.stringify(customScale), ONE_YEAR_TTL);
+  };
 
   // update SCALE in localStorage after every change
-  $: customScale && updateScale(); 
+  $: customScale && updateScale();
 
   // Show confirmation dialog on reset
   const openModal = (resetFunc: any) => {
@@ -151,10 +143,10 @@
     $handleSecondButton = () => {
       resetFunc();
       $showModal = false;
-    }
+    };
     $modalContent = `<h4>Are you sure you want to reset ${activeControlPanel} settings?</h4>`;
     $showModal = true;
-  }
+  };
 
   // KEYBOARD CONTROLS
 
@@ -199,7 +191,7 @@
         if (step.step !== $story?.maxStep || $loading) return;
         event.preventDefault(); // prevent scroll
         // get PREV (TOP) option ID if step is not last
-        if ($story?.step_data?.end) activeOptionNumber = 0; 
+        if ($story?.step_data?.end) activeOptionNumber = 0;
         else if (activeOptionNumber !== 0) activeOptionNumber--;
         const activeOption = document.getElementById(
           `option-${activeOptionNumber}`,
@@ -290,7 +282,9 @@ a11y_no_noninteractive_element_interactions -->
     style:font-weight={customFont.bold ? 'bold' : 'normal'}
     style:font-style={customFont.italic ? 'italic' : ''}
     style:color={customFont.baseColor}
-    on:click={() => {if (activeControlPanel) activeControlPanel = null}}
+    on:click={() => {
+      if (activeControlPanel) activeControlPanel = null;
+    }}
   >
     <ImageDisplay
       {width}
@@ -312,7 +306,9 @@ a11y_no_noninteractive_element_interactions -->
       </h4>
     {/if}
 
-    <article style:max-width="{customScale.paragraphWidth}%">{step.story}</article>
+    <article style:max-width="{customScale.paragraphWidth}%">
+      {step.story}
+    </article>
 
     {#if $story?.step_data?.end}
       <hr />
@@ -326,7 +322,9 @@ a11y_no_noninteractive_element_interactions -->
         Story Summary
       </h4>
 
-      <article style:max-width="{customScale.paragraphWidth}%">{step.summary}</article>
+      <article style:max-width="{customScale.paragraphWidth}%">
+        {step.summary}
+      </article>
 
       <h4
         class="{customFont.accentSize}-font"
@@ -565,12 +563,20 @@ a11y_no_noninteractive_element_interactions -->
 
         <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
           <label for="text-color">Base color</label>
-          <input id="text-color" type="color" bind:value={customFont.baseColor} />
+          <input
+            id="text-color"
+            type="color"
+            bind:value={customFont.baseColor}
+          />
         </span>
 
         <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
           <label for="title-color">Accent color</label>
-          <input id="title-color" type="color" bind:value={customFont.accentColor} />
+          <input
+            id="title-color"
+            type="color"
+            bind:value={customFont.accentColor}
+          />
         </span>
       </div>
 
@@ -614,41 +620,57 @@ a11y_no_noninteractive_element_interactions -->
 
         <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
           <label for="bg-color">BG color</label>
-          <input id="bg-color" type="color" bind:value={customStyling.bgColor} />
+          <input
+            id="bg-color"
+            type="color"
+            bind:value={customStyling.bgColor}
+          />
         </span>
       </div>
 
       <div class="transparent-container flex-row">
         <button
           class:active-btn={customStyling.boxShadow}
-          on:click={() => (customStyling!.boxShadow = !customStyling!.boxShadow)}
+          on:click={() =>
+            (customStyling!.boxShadow = !customStyling!.boxShadow)}
         >
           box shadow
         </button>
 
         <button
           class:active-btn={customStyling.optionsContainer}
-          on:click={() => (customStyling!.optionsContainer = !customStyling!.optionsContainer)}
+          on:click={() =>
+            (customStyling!.optionsContainer =
+              !customStyling!.optionsContainer)}
         >
           options box
         </button>
 
         <button
           class:active-btn={customStyling.optionSelector}
-          on:click={() => (customStyling!.optionSelector = !customStyling!.optionSelector)}
+          on:click={() =>
+            (customStyling!.optionSelector = !customStyling!.optionSelector)}
         >
           option selector
         </button>
       </div>
       <span class="reset-wrapper flex-row">
-        <ResetSVG text="Reset to light theme" onClick={() => openModal(() => {
-          customFont = lightThemeFont;
-          customStyling = lightThemeStyling;
-        })} />
-        <ResetSVG text="Reset to dark theme" onClick={() => openModal(() => {
-          updateFont('reset');
-          updateStyling('reset');
-        })} />
+        <ResetSVG
+          text="Reset to light theme"
+          onClick={() =>
+            openModal(() => {
+              customFont = lightThemeFont;
+              customStyling = lightThemeStyling;
+            })}
+        />
+        <ResetSVG
+          text="Reset to dark theme"
+          onClick={() =>
+            openModal(() => {
+              updateFont('reset');
+              updateStyling('reset');
+            })}
+        />
       </span>
     </section>
 
@@ -724,7 +746,10 @@ a11y_no_noninteractive_element_interactions -->
         </span>
       </div>
       <span class="reset-wrapper flex-row">
-        <ResetSVG text="Reset to default" onClick={() => openModal(() => updateScale('reset'))} />
+        <ResetSVG
+          text="Reset to default"
+          onClick={() => openModal(() => updateScale('reset'))}
+        />
       </span>
     </section>
   </section>

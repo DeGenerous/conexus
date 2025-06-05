@@ -20,7 +20,6 @@ type LayoutProps = {
   ogTitle?: string;
   description?: string;
   image?: string;
-  imageType?: string;
   url?: string;
   type?: string;
   disableIndexing?: boolean;
@@ -35,7 +34,6 @@ const {
   title = 'Welcome to CoNexus',
   description = 'CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.',
   image = '/favicon.ico',
-  imageType,
   url = 'https://conexus.degenerousdao.com/',
   type = 'website',
 
@@ -62,17 +60,20 @@ const {
       description={description || seoConfig.description}
       noindex={disableIndexing}
       nofollow={disableIndexing}
+      canonical={`${seoConfig.baseURL}${Astro.url.pathname}`}
       openGraph={{
         basic: {
           title: ogTitle || title,
-          type: 'website',
-          image: seoConfig.image.url || image,
+          type,
+          image: image || seoConfig.image.url,
           url: url || seoConfig.baseURL,
         },
         image: {
           width: seoConfig.image.width,
           height: seoConfig.image.height,
-          alt: seoConfig.image.alt || title,
+          alt: seoConfig.image.alt,
+          url: seoConfig.image.url,
+          type: seoConfig.image.type,
         },
         optional: {
           siteName: seoConfig.siteName,

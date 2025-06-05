@@ -2,7 +2,7 @@
   import { AdminApp } from '@lib/admin';
   import { onMount } from 'svelte';
 
-  let admin = new AdminApp(); 
+  let admin = new AdminApp();
 
   let categories: CategoryView[] = [];
   let newCategoryName: string = '';

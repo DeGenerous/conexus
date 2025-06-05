@@ -4,20 +4,15 @@ const detectIOS = () => {
   const storedValue = GetCache(IOS_KEY);
   if (storedValue) return storedValue;
 
-  const ios =
-    [
-      'iPad Simulator',
-      'iPhone Simulator',
-      'iPod Simulator',
-      'iPad',
-      'iPhone',
-      'iPod',
-    ].includes(navigator.platform) ||
-    // iPad on iOS 13 detection
-    (navigator.userAgent.includes('Mac') && 'ontouchend' in document);
+  const userPlatform =
+    (navigator as any).userAgentData?.platform || navigator.userAgent;
 
-  SetCache(IOS_KEY, ios, ONE_YEAR_TTL);
-  return ios;
+  const isIOS =
+    /iPad|iPhone|iPod/.test(userPlatform) ||
+    (userPlatform.includes('Mac') && 'ontouchend' in document);
+
+  SetCache(IOS_KEY, isIOS, ONE_YEAR_TTL);
+  return isIOS;
 };
 
 export default detectIOS;

@@ -11,10 +11,11 @@ export const seoConfig = {
     'CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.',
   type: 'website',
   image: {
-    url: 'https://media.degenerousdao.com/logo.png', // Change this to your website's OpenGraph image URL.
-    alt: 'CoNexus - Degenerous DAO', // Change this to your website's OpenGraph image alt text.
-    width: 1200,
-    height: 630,
+    url: 'https://media.degenerousdao.com/assets/logo.png', // Change this to your website's OpenGraph image URL.
+    alt: 'Degenerous DAO', // Change this to your website's OpenGraph image alt text.
+    width: 480,
+    height: 480,
+    type: 'image/png',
   },
   siteName: 'CoNexus - Degenerous DAO', // Change this to your website's site name.
   locale: 'en_US', // Change this to your website's locale.

@@ -230,7 +230,7 @@ export class AdminApp extends AdminAPI {
   /**
    * Changes the availability status of a prompt.
    *
-   * @param {number} prompt_id - The ID of the prompt to change availability for.
+   * @param {number} topic_id - The ID of the prompt to change availability for.
    * @param {'available' | 'unavailable'} available - The new availability status to set.
    * @returns {Promise<void>} A promise that resolves when the availability status has been changed.
    *

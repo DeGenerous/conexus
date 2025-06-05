@@ -33,9 +33,10 @@
     activeSectionIndex == 0 ? sections.length - 1 : activeSectionIndex - 1;
 
   onMount(async () => {
-    sections = await app.getSections()
-      .then((data) => data.map(({id, name}) => name));
-  })
+    sections = await app
+      .getSections()
+      .then((data) => data.map(({ id, name }) => name));
+  });
 
   const prevSectionLink = (): Nullable<string> => {
     if (!sections.includes(activeTab)) return null;

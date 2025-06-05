@@ -1,11 +1,11 @@
 <script lang="ts">
   export let onClick = () => {};
-  export let volumeMuted: boolean = false;
+  export let muted: boolean = false;
 </script>
 
 <button
   class="void-btn flex-row"
-  class:muted={volumeMuted}
+  class:muted
   on:click|stopPropagation={onClick}
   aria-label="Adjust music"
 >
@@ -24,7 +24,7 @@
           width="200"
           height="200"
           fill="white"
-          style="transform: {volumeMuted ? 'translateX(-200px)' : 'none'}"
+          style="transform: {muted ? 'translateX(-200px)' : 'none'}"
         />
       </mask>
       <mask id="volume-svg-bottom-mask">
@@ -34,7 +34,7 @@
           width="200"
           height="200"
           fill="white"
-          style="transform: {volumeMuted ? 'translateX(-200px)' : 'none'}"
+          style="transform: {muted ? 'translateX(-200px)' : 'none'}"
         />
       </mask>
       <mask id="volume-svg-crossed-out-mask">

@@ -1,19 +1,19 @@
 <script lang="ts">
   export let onClick = () => {};
-  export let voiceMuted: boolean = false;
+  export let muted: boolean = false;
 
   let voiceSvgFocus: boolean = false;
 </script>
 
 <button
   class="void-btn flex-row"
-  class:muted={voiceMuted}
+  class:muted
   on:click|stopPropagation={onClick}
   on:pointerover={() => {
-    if (!voiceMuted) voiceSvgFocus = true;
+    if (!muted) voiceSvgFocus = true;
   }}
   on:pointerout={() => {
-    if (!voiceMuted) voiceSvgFocus = false;
+    if (!muted) voiceSvgFocus = false;
   }}
   aria-label="Adjust voice"
 >
@@ -32,7 +32,7 @@
           width="200"
           height="200"
           fill="white"
-          style="transform: {voiceMuted ? 'translateX(-200px)' : 'none'}"
+          style="transform: {muted ? 'translateX(-200px)' : 'none'}"
         />
       </mask>
       <mask id="voice-svg-bottom-mask">
@@ -42,7 +42,7 @@
           width="200"
           height="200"
           fill="white"
-          style="transform: {voiceMuted ? 'translateX(-200px)' : 'none'}"
+          style="transform: {muted ? 'translateX(-200px)' : 'none'}"
         />
       </mask>
       <mask id="voice-svg-crossed-out-mask">

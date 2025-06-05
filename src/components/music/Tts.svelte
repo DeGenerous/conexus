@@ -33,7 +33,6 @@
 
   const adjustTtsSpeed = () => {
     audio.playbackRate = $tts_speed;
-    localStorage.setItem('tts-speed', $tts_speed.toString());
   };
 </script>
 

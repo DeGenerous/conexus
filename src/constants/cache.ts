@@ -46,6 +46,8 @@ export const CATEGORY_TOPICS_TTL = 1000 * 60 * 60 * 1; // 1 hour
 export const FONT_KEY = 'font';
 export const STYLING_KEY = 'styling';
 export const SCALE_KEY = 'scale';
+export const VOLUME_KEY = (type: 'voice' | 'music'): string => `${type}-volume`;
+export const TTS_SPEED_KEY = 'tts-speed';
 
 const authKeys = [
   USER_CACHE_KEY,
@@ -103,9 +105,9 @@ export const ClearCache = (
     case 'full':
       // saving important values
       const cookieConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
-      const musicVolume = localStorage.getItem('music-volume');
-      const voiceVolume = localStorage.getItem('voice-volume');
-      const ttsSpeed = localStorage.getItem('tts-speed');
+      const musicVolume = localStorage.getItem(VOLUME_KEY('music'));
+      const voiceVolume = localStorage.getItem(VOLUME_KEY('voice'));
+      const ttsSpeed = localStorage.getItem(TTS_SPEED_KEY);
       const customFont = localStorage.getItem(FONT_KEY);
       const customStyling = localStorage.getItem(STYLING_KEY);
       const customScale = localStorage.getItem(SCALE_KEY);
@@ -114,9 +116,9 @@ export const ClearCache = (
       // restoring saved values
       if (cookieConsent)
         localStorage.setItem(COOKIE_CONSENT_KEY, cookieConsent);
-      if (musicVolume) localStorage.setItem('music-volume', musicVolume);
-      if (voiceVolume) localStorage.setItem('voice-volume', voiceVolume);
-      if (ttsSpeed) localStorage.setItem('tts-speed', ttsSpeed);
+      if (musicVolume) localStorage.setItem(VOLUME_KEY('music'), musicVolume);
+      if (voiceVolume) localStorage.setItem(VOLUME_KEY('voice'), voiceVolume);
+      if (ttsSpeed) localStorage.setItem(TTS_SPEED_KEY, ttsSpeed);
       if (customFont) localStorage.setItem(FONT_KEY, customFont);
       if (customStyling) localStorage.setItem(STYLING_KEY, customStyling);
       if (customScale) localStorage.setItem(SCALE_KEY, customScale);

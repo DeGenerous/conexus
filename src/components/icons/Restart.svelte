@@ -1,18 +1,18 @@
 <script lang="ts">
   export let onClick = () => {};
-  export let voiceMuted: boolean = false;
+  export let disabled: boolean = false;
 
   let replaySvgFocuse: boolean = false;
 </script>
 
 <button
   class="void-btn flex-row"
-  class:muted={voiceMuted}
+  class:muted={disabled}
   on:click|stopPropagation={onClick}
   on:pointerover={() => (replaySvgFocuse = true)}
   on:pointerout={() => (replaySvgFocuse = false)}
   aria-label="Replay"
-  disabled={voiceMuted}
+  {disabled}
 >
   <p>REPLAY</p>
   <svg
@@ -26,7 +26,7 @@
     stroke-linecap="round"
   >
     <g
-      style="transform: {replaySvgFocuse && !voiceMuted
+      style="transform: {replaySvgFocuse && !disabled
         ? 'rotate(-15deg)'
         : 'none'}"
     >
@@ -38,7 +38,7 @@
       y1="-5"
       x2="0"
       y2="-50"
-      style="transform: {replaySvgFocuse && !voiceMuted
+      style="transform: {replaySvgFocuse && !disabled
         ? 'rotate(-360deg)'
         : 'none'}"
     />
@@ -47,7 +47,7 @@
       y1="-2.5"
       x2="20"
       y2="10"
-      style="transform: {replaySvgFocuse && !voiceMuted
+      style="transform: {replaySvgFocuse && !disabled
         ? 'rotate(-30deg)'
         : 'none'}"
     />

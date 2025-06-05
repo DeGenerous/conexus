@@ -70,7 +70,7 @@
     clearTimeout(hiddenControlsTimeout);
     hiddenControlsTimeout = setTimeout(() => {
       hiddenControls = true;
-    }, 2000);
+    }, 3000);
   };
 
   const showControls = () => {
@@ -259,7 +259,7 @@
     if (storedScale) customScale = storedScale;
     else updateScale('reset');
 
-    // Hide control panel after 2s delay
+    // Hide control panel after 3s delay
     hideControlsAfterDelay();
   });
 </script>
@@ -546,12 +546,14 @@ a11y_no_noninteractive_element_interactions -->
             </button>
           {/if}
 
-          <button
-            class:active-btn={customFont.italic}
-            on:click={() => (customFont!.italic = !customFont!.italic)}
-          >
-            italic
-          </button>
+          {#if customFont.family !== 'Caveat'}
+            <button
+              class:active-btn={customFont.italic}
+              on:click={() => (customFont!.italic = !customFont!.italic)}
+            >
+              italic
+            </button>
+          {/if}
 
           <button
             class:active-btn={customFont.shadow}

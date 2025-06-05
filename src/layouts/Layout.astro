@@ -36,7 +36,7 @@ const {
   description = 'CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.',
   image = '/favicon.ico',
   imageType,
-  url = 'https://conexus-test.degenerousdao.com/',
+  url = 'https://conexus.degenerousdao.com/',
   type = 'website',
 
   ogTitle,
@@ -51,31 +51,15 @@ const {
     <meta charset="utf-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#161e5f" />
+
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link type="text/plain" rel="author" href="/humans.txt" />
-
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-    <link
-      rel="preconnect"
-      crossorigin="anonymous"
-      href="https://fonts.googleapis.com"
-    />
-    <link
-      rel="preconnect"
-      crossorigin="anonymous"
-      href="https://fonts.gstatic.com"
-    />
-    <!-- Caveat, Comic Neue, Courier Prime, Lora, Merriweather, Roboto -->
-    <link
-      rel="stylesheet"
-      crossorigin="anonymous"
-      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
-    />
+    <link rel="manifest" href="/manifest.webmanifest" />
 
     <SEO
       title={title}
-      description={seoConfig.description || description}
+      description={description || seoConfig.description}
       noindex={disableIndexing}
       nofollow={disableIndexing}
       openGraph={{
@@ -83,6 +67,7 @@ const {
           title: ogTitle || title,
           type: 'website',
           image: seoConfig.image.url || image,
+          url: url || seoConfig.baseURL,
         },
         image: {
           width: seoConfig.image.width,
@@ -96,10 +81,10 @@ const {
       }}
       twitter={{
         card: 'summary_large_image',
+        site: '@degenerousdao',
+        creator: '@Maxi_maximalist',
       }}
     />
-
-    <link rel="manifest" href="/manifest.webmanifest" />
   </head>
   <body>
     <ToastContainer client:load />

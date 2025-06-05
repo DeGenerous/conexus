@@ -683,6 +683,6 @@ export class AdminApp extends AdminAPI {
   }
 
   private clearCache() {
-    ClearCache('manage');
+    ClearCache('view');
   }
 }

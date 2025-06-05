@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Account } from '@lib/account';
   import { toastStore } from '@stores/toast';
-  import { USER_CACHE_KEY, ClearCache } from '@constants/cache';
+  import { ClearCache } from '@constants/cache';
   import DiscordSVG from '@components/icons/Discord.svelte';
 
   let code: string = '';
@@ -12,7 +12,7 @@
     try {
       await acct.useReferralCode(code);
       toastStore.show('Referral code submitted successfully!');
-      ClearCache(USER_CACHE_KEY);
+      ClearCache('auth');
       window.location.href = '/'; // Redirect to the home page
     } catch (error) {
       console.error('Error using referral code:', error);

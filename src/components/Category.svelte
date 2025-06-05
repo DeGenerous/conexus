@@ -1,181 +1,153 @@
+<!-- PREVIOUS NAME: StoryCollection -->
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import SpotifyIframe from '@components/music/SpotifyIframe.svelte';
-  import Links from '@components/utils/Links.svelte';
-  import SearchAndGenre from '@components/utils/SearchAndGenre.svelte';
-  import StoryCollection from '@components/utils/StoryCollection.svelte';
   import { CoNexusApp } from '@lib/view';
-  import { checkUserState } from '@utils/route-guard';
   import {
     SetCache,
     GetCache,
-    SECTION_CATEGORIES_KEY,
-    SECTION_CATEGORIES_TTL,
+    CATEGORY_TOPICS_KEY,
+    CATEGORY_TOPICS_TTL,
   } from '@constants/cache';
 
-  export let section: string;
+  import StoryTile from '@components/utils/StoryTile.svelte';
+  import SortingSVG from '@components/icons/Sorting.svelte';
 
-  let app: CoNexusApp = new CoNexusApp();
+  export let category: CategoriesInSection | null = null;
+  export let section: string = '';
 
-  let categories: CategoriesInSection[] = [];
-  let genres: Genre[] = [];
+  const view = new CoNexusApp();
 
-  let pageSize: number = 1;
+  let topics: TopicInCategory[] = [];
+
+  let isSorting: boolean = false;
+  let sortedTopics: TopicInCategory[] = [];
+
+  let pageSize: number = 10;
+  let total: number = 0;
   let loading: boolean = false;
-  let allLoaded: boolean = false; // Prevent further requests when empty response
-  let showNoCategoriesMessage: boolean = false;
+  let isEndReached: boolean = false;
 
-  const fetchCategories = async () => {
-    if (!section || loading || allLoaded) return;
+  const fetchTopics = async () => {
+    if (!category || loading || isEndReached) return;
+
+    const cachedTopics: Nullable<string> = GetCache(
+      CATEGORY_TOPICS_KEY(category.name),
+    );
+    if (cachedTopics) {
+      topics = JSON.parse(cachedTopics);
+      sortedTopics = applySorting(topics);
+      if (topics.length === category.topic_count) {
+        isEndReached = true;
+        return;
+      }
+    }
+
     loading = true;
 
-    const response = await app.getSectionCategories(
-      section,
-      categories.length + 1,
+    const response = await view.getCategoryTopics(
+      category.id,
+      Math.floor(topics.length / pageSize) + 1,
       pageSize,
     );
 
+    // if topics add the topics to the array
     if (response && response.length > 0) {
-      setTimeout(() => {
-        categories = [...categories, ...response];
-        SetCache(
-          SECTION_CATEGORIES_KEY(section),
-          JSON.stringify(
-            categories.map((cat) => {
-              const orderedTopics = cat.topics.sort((a, b) => {
-                if (a.topic_order > b.topic_order) return 1;
-                if (a.topic_order < b.topic_order) return -1;
-                return 0;
-              });
-              cat.topics = orderedTopics;
-              return cat;
-            }),
-          ),
-          SECTION_CATEGORIES_TTL,
-        );
-        loading = false;
-      }, 600); // Simulate loading delay
-      showNoCategoriesMessage = false; // Hide message if categories are found
-    } else {
-      allLoaded = true; // Stop fetching more categories
-      loading = false;
+      topics = [...topics, ...response];
+      total += response.length;
+      SetCache(
+        CATEGORY_TOPICS_KEY(category.name),
+        JSON.stringify(topics),
+        CATEGORY_TOPICS_TTL,
+      );
     }
+
+    // Stop fetching when we've loaded all topics
+    if (response.length == 0 || total >= category.topic_count) {
+      isEndReached = true;
+    }
+
+    sortedTopics = applySorting(topics);
+
+    loading = false;
   };
 
-  onMount(async () => {
-    try {
-      await checkUserState(`/${section}`);
-
-      const sections = await app.getSections();
-      if (!sections.some(({ name }) => name === section)) {
-        window.location.href = '/404';
-        return;
-      }
-
-      const cachedCategories: Nullable<string> = GetCache(
-        SECTION_CATEGORIES_KEY(section),
-      );
-      if (cachedCategories) categories = JSON.parse(cachedCategories);
-      else await fetchCategories();
-
-      genres = await app.getGenres();
-
-      // If no categories after 2 seconds, show "No categories found"
-      setTimeout(() => {
-        if (categories.length === 0) {
-          showNoCategoriesMessage = true;
-        }
-      }, 2000);
-    } catch (error) {
-      console.error('Error in onMount:', error);
-    }
+  onMount(() => {
+    fetchTopics();
   });
 
-  const getTopics = async (
-    text: string,
-    which: 'search' | 'genre',
-    page: number = 1,
-    pageSize: number = 10,
-    sort_order: TopicSortOrder = 'category',
-  ) => {
-    switch (which) {
-      case 'search':
-        return await app.searchSectionCategories(
-          section,
-          text.replace(/[^a-zA-Z ]/g, ''),
-          page,
-          pageSize,
-          sort_order,
-        );
-      case 'genre':
-        return await app.getGenreTopics(
-          section,
-          text,
-          page,
-          pageSize,
-          sort_order,
-        );
-    }
+  // SORTING
+
+  function applySorting(data: TopicInCategory[]) {
+    return isSorting ? sortByName(data) : sortByOrder(data);
+  }
+
+  const handleSorting = () => {
+    if (isSorting) sortedTopics = sortByName(topics);
+    else sortedTopics = sortByOrder(topics);
   };
 
-  // INTERSECTION OBSERVER
+  function sortByName(data: TopicInCategory[]) {
+    return data.sort((a: TopicInCategory, b: TopicInCategory) => {
+      const firstTopic = a.name.toLowerCase().trim();
+      const secondTopic = b.name.toLowerCase().trim();
+      // Sorting all topics in the category alphabetically
+      if (firstTopic < secondTopic) return -1;
+      if (firstTopic > secondTopic) return 1;
+      return 0;
+    });
+  }
 
-  let observer: IntersectionObserver;
+  function sortByOrder(data: TopicInCategory[]) {
+    return data.sort((a: TopicInCategory, b: TopicInCategory) => {
+      if (a.order < b.order) return -1;
+      if (a.order > b.order) return 1;
+      return 0;
+    });
+  }
+
+  // A.K.A. INTERSECTION OBSERVER
 
   const handleScroll = (event: Event) => {
-    if (loading || allLoaded) return;
+    if (!category || !section || loading || isEndReached) return;
 
     const target = event.target as HTMLElement;
-    if (target.scrollTop + target.clientHeight >= target.scrollHeight - 50) {
-      fetchCategories(); // Fetch more categories when user scrolls near bottom
+    // Load next page if user scrolls to the end of collection
+    if (target.scrollLeft + target.clientWidth >= target.scrollWidth - 20) {
+      fetchTopics();
     }
   };
-
-  const observeLastCategory = () => {
-    if (observer) observer.disconnect();
-
-    observer = new IntersectionObserver((entries) => {
-      const lastCategory = entries[0];
-      if (lastCategory.isIntersecting && !loading && !allLoaded) {
-        fetchCategories(); // Load more when last category is visible
-      }
-    });
-
-    const lastCategoryElement = document.querySelector('.category:last-child');
-    if (lastCategoryElement) observer.observe(lastCategoryElement);
-  };
-
-  // When 1 or more categories visible - observe the last one
-  $: if (categories.length > 0) setTimeout(observeLastCategory, 500);
 </script>
 
-<SearchAndGenre {section} {genres} {getTopics} {categories} />
+<div class="collection-header">
+  {#if !category || !section}
+    <h3>Loading stories...</h3>
+  {:else}
+    <h3>{category.name}</h3>
+  {/if}
+  <SortingSVG
+    sorting={isSorting}
+    disabled={!category || !section}
+    onClick={() => {
+      isSorting = !isSorting;
+      handleSorting();
+    }}
+  />
+</div>
 
-<section class="flex" on:scroll={handleScroll}>
-  {#if categories.length > 0}
-    {#each categories as category (category.name)}
-      <div class="category flex">
-        <StoryCollection {section} {category} />
+<div class="tiles-collection" on:scroll={handleScroll}>
+  {#if !category || !section}
+    {#each Array(Math.floor(Math.random() * 3) + 3) as _}
+      <div class="loading-tile">
+        <div class="loading-animation"></div>
+        <span class="loading-animation"></span>
       </div>
     {/each}
-
-    {#if loading}
-      <h5>Loading more categories...</h5>
-    {/if}
-  {:else if showNoCategoriesMessage}
-    <h5>No categories found for this section.</h5>
   {:else}
-    <StoryCollection {section} category={null} />
+    {#key sortedTopics}
+      {#each sortedTopics as topic}
+        <StoryTile {section} bind:topic bind:loading />
+      {/each}
+    {/key}
   {/if}
-</section>
-
-{#if categories.length === 0 && !loading && !showNoCategoriesMessage}
-  <h5>Loading categories...</h5>
-{/if}
-
-{#if section === 'Dischordian Saga'}
-  <SpotifyIframe />
-{/if}
-
-<Links {section} />
+</div>

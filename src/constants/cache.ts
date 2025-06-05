@@ -1,23 +1,38 @@
+export const ONE_YEAR_TTL = 1000 * 60 * 60 * 24 * 365; // 1 year
+
+export const IOS_KEY = 'iosDevice'; // to hide some unsupported UI
+
 export const COOKIE_CONSENT_KEY = 'cookie_consent';
 export const COOKIE_CONSENT_TTL = 1000 * 60 * 60 * 24 * 30; // 1 month
+
+export const GENRE_CACHE_KEY = 'genres';
+export const GENRE_CACHE_TTL = 1000 * 60 * 60 * 24 * 30; // 1 month
+
+// Cache all topics for /dashboard/manage to switch between them with arrows
+export const ALL_TOPICS_KEY = 'all_topics';
+export const ALL_TOPICS_TTL = 1000 * 60 * 60 * 24; // 1 day
+
+// Cache all sections
+export const SECTION_CACHE_KEY = 'sections';
+export const SECTION_CACHE_TTL = 1000 * 60 * 60 * 24; // 1 day
+
+// Cache all categories from all sections together
+export const CATEGORY_CACHE_KEY = 'categories';
+export const CATEGORY_CACHE_TTL = 1000 * 60 * 60 * 24; // 1 day
+
+// CACHE ALL DATA TO PLAY 1 HOUR WITHOUT UNNECESSARY REQUESTS:
+// 1) user + subscription status + 10 referral codes
+// 2) all CATEGORIES inside SECTION (separate for every SECTION)
+// 3) all TOPICS inside CATEGORY (separate for every CATEGORY)
 
 export const USER_CACHE_KEY = 'user';
 export const USER_CACHE_TTL = 1000 * 60 * 60 * 1; // 1 hour
 
 export const SUBSCRIPTIONSTATUS_CACHE_KEY = 'subscription_status';
-export const SUBSCRIPTIONSTATUS_CACHE_TTL = 1000 * 60 * 30; // 30 minutes
+export const SUBSCRIPTIONSTATUS_CACHE_TTL = 1000 * 60 * 60 * 1; // 1 hour
 
 export const REFERRAL_CODES_CACHE_KEY = 'referral_codes';
-export const REFERRAL_CODES_CACHE_TTL = 1000 * 60 * 30; // 30 minutes
-
-export const SECTION_CACHE_KEY = 'sections';
-export const SECTION_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
-
-export const CATEGORY_CACHE_KEY = 'categories';
-export const CATEGORY_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
-
-export const GENRE_CACHE_KEY = 'genres';
-export const GENRE_CACHE_TTL = 1000 * 60 * 60 * 24 * 30; // 30 days
+export const REFERRAL_CODES_CACHE_TTL = 1000 * 60 * 60 * 1; // 1 hour
 
 export const SECTION_CATEGORIES_KEY = (section: string): string =>
   `section-categories-[${section}]`;
@@ -27,20 +42,7 @@ export const CATEGORY_TOPICS_KEY = (category: string): string =>
   `category-topics-[${category}]`;
 export const CATEGORY_TOPICS_TTL = 1000 * 60 * 60 * 1; // 1 hour
 
-export const ALL_TOPICS_KEY = 'all_topics';
-export const ALL_TOPICS_TTL = 1000 * 60 * 60 * 24; // 24 hours
-
-export const TOPICS_CACHE_KEY = 'topics';
-export const TOPICS_CACHE_TTL = 1000 * 60 * 10; // 10 minutes
-
-export const MEDIA_CACHE_KEY = 'media';
-export const MEDIA_CACHE_TTL = 1000 * 60 * 10; // 10 minutes
-
-// STORY CUSTOMIZATION
-export const ONE_YEAR_TTL = 1000 * 60 * 60 * 24 * 365; // 365 days
-
-export const IOS_KEY = 'iosDevice';
-
+// Step customization (use 1 year TTL)
 export const FONT_KEY = 'font';
 export const STYLING_KEY = 'styling';
 export const SCALE_KEY = 'scale';
@@ -49,26 +51,17 @@ const authKeys = [
   USER_CACHE_KEY,
   SUBSCRIPTIONSTATUS_CACHE_KEY,
   REFERRAL_CODES_CACHE_KEY,
-  SECTION_CACHE_KEY,
-  CATEGORY_CACHE_KEY,
-  TOPICS_CACHE_KEY,
-  MEDIA_CACHE_KEY,
-  GENRE_CACHE_KEY,
 ];
 
 const viewKeys = [
   SECTION_CACHE_KEY,
   CATEGORY_CACHE_KEY,
-  TOPICS_CACHE_KEY,
-  MEDIA_CACHE_KEY,
   GENRE_CACHE_KEY,
   ALL_TOPICS_KEY,
   SECTION_CATEGORIES_KEY('Community Picks'),
   SECTION_CATEGORIES_KEY('Collabs'),
   SECTION_CATEGORIES_KEY('Dischordian Saga'),
 ];
-
-const manageKeys = [TOPICS_CACHE_KEY, MEDIA_CACHE_KEY];
 
 export const SetCache = <T>(key: string, value: T, ttl: number) => {
   localStorage.setItem(
@@ -107,9 +100,6 @@ export const ClearCache = (
     case 'view':
       removeCacheKeys(viewKeys);
       break;
-    case 'manage':
-      removeCacheKeys(manageKeys);
-      break;
     case 'full':
       // saving important values
       const cookieConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
@@ -135,6 +125,8 @@ export const ClearCache = (
       localStorage.removeItem(key);
   }
 };
+
+// TODO: set up Redis cache management
 
 export const SetCacheR = async <T>(key: string, value: T, ttl: number) => {
   await fetch('http://localhost:5001/cache', {
@@ -163,9 +155,6 @@ export const ClearCacheR = async (
       break;
     case 'view':
       await Promise.all(viewKeys.map((key) => removeCacheKeysR(key)));
-      break;
-    case 'manage':
-      await Promise.all(manageKeys.map((key) => removeCacheKeysR(key)));
       break;
     case 'full':
       await fetch('http://localhost:5001/cache', { method: 'DELETE' });

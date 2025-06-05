@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
 
   import { Account } from '@lib/account';
-  import { USER_CACHE_KEY, ClearCache } from '@constants/cache';
+  import { ClearCache } from '@constants/cache';
 
   import LoadingSVG from '@components/icons/Loading.svelte';
 
@@ -13,7 +13,7 @@
   onMount(() => {
     acct.confirmEmail(token).then((res) => {
       if (res === true) {
-        ClearCache(USER_CACHE_KEY);
+        ClearCache('auth');
         window.location.href = '/';
       }
     });

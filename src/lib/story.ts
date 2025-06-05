@@ -1,4 +1,4 @@
-import { ERROR_REQUIRED_TOKEN } from '@constants/error';
+import { ERROR_REQUIRED_TOKEN, ERROR_OUT_OF_CREDITS } from '@constants/error';
 import { api_error } from '@errors/index';
 import { Account } from '@lib/account';
 import { GameAPI } from '@service/routes';
@@ -35,15 +35,6 @@ export class CoNexusGame extends GameAPI {
 
   // TODO: change to topic_id later
   async getTopic(section: string, topic: string): Promise<TopicThumbnail> {
-    // type TopicCache = {
-    //   [key: string]: ThumbnailTopic;
-    // };
-
-    // const cachedData = GetCache<TopicCache>(TOPICS_CACHE_KEY);
-    // if (cachedData) {
-    //   return cachedData[topic];
-    // }
-
     const { data, error } = await this.topicByName(section, topic);
 
     if (!data) {
@@ -54,8 +45,6 @@ export class CoNexusGame extends GameAPI {
       }
       throw new Error('Error fetching topic');
     }
-
-    // SetCache(TOPICS_CACHE_KEY, { [topic]: data }, TOPICS_CACHE_TTL);
 
     return data;
   }
@@ -109,7 +98,7 @@ export class CoNexusGame extends GameAPI {
             <p>${nftLinks}</p>
           `);
           showModal.set(true);
-        } else if (error.message.match('you have run out of credits to play')) {
+        } else if (error.message.match(ERROR_OUT_OF_CREDITS)) {
           const errorMessage: string[] = error.message.split(', ');
 
           const errorTitle = errorMessage[0];

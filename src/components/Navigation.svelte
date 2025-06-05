@@ -1,9 +1,8 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
+  import { CoNexusApp } from '@lib/view';
   import { authenticated } from '@stores/account';
-  import BackArrow from '@components/icons/BackArrow.svelte';
-  import Profile from '@components/Profile.svelte';
-  import ConexusLogo from '@components/utils/ConexusLogo.svelte';
-  import Background from '@components/utils/Background.svelte';
   import {
     prevStoryLink,
     prevStoryName,
@@ -12,19 +11,31 @@
   } from '@stores/navigation';
   import { story } from '@stores/conexus';
 
+  import BackArrow from '@components/icons/BackArrow.svelte';
+  import Profile from '@components/Profile.svelte';
+  import ConexusLogo from '@components/utils/ConexusLogo.svelte';
+  import Background from '@components/utils/Background.svelte';
+
   export let header: string = '';
   export let storyName: string;
   export let subheading: string = '';
   export let activeTab: string = 'Home';
   export let arrow: Nullable<string> = null;
 
-  $: admin = $authenticated.user?.role === 'admin';
+  let app: CoNexusApp = new CoNexusApp();
 
-  const sections: string[] = ['Community Picks', 'Collabs', 'Dischordian Saga'];
+  let sections: string[] = [];
+
+  $: admin = $authenticated.user?.role === 'admin';
 
   $: activeSectionIndex = sections.indexOf(activeTab);
   $: prevSectionIndex =
     activeSectionIndex == 0 ? sections.length - 1 : activeSectionIndex - 1;
+
+  onMount(async () => {
+    sections = await app.getSections()
+      .then((data) => data.map(({id, name}) => name));
+  })
 
   const prevSectionLink = (): Nullable<string> => {
     if (!sections.includes(activeTab)) return null;

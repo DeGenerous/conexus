@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  // import { onMount } from 'svelte';
 
-  import { CoNexusApp } from '@lib/view';
+  // import { CoNexusApp } from '@lib/view';
   import { authenticated } from '@stores/account';
   import {
     prevStoryLink,
@@ -22,9 +22,9 @@
   export let activeTab: string = 'Home';
   export let arrow: Nullable<string> = null;
 
-  let app: CoNexusApp = new CoNexusApp();
+  // let app: CoNexusApp = new CoNexusApp();
 
-  let sections: string[] = [];
+  let sections: string[] = ['Community Picks', 'Collabs', 'Dischordian Saga'];
 
   $: admin = $authenticated.user?.role === 'admin';
 
@@ -32,11 +32,11 @@
   $: prevSectionIndex =
     activeSectionIndex == 0 ? sections.length - 1 : activeSectionIndex - 1;
 
-  onMount(async () => {
-    sections = await app
-      .getSections()
-      .then((data) => data.map(({ id, name }) => name));
-  });
+  // onMount(async () => {
+  //   sections = await app
+  //     .getSections()
+  //     .then((data) => data.map(({ id, name }) => name));
+  // });
 
   const prevSectionLink = (): Nullable<string> => {
     if (!sections.includes(activeTab)) return null;

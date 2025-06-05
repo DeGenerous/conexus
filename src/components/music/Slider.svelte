@@ -27,19 +27,18 @@
   $: $muted[type] = $volume.muted; // sound icon styling
 
   onMount(() => {
-    const storedValue = JSON.parse(GetCache(VOLUME_KEY(type)) as string);
+    const storedValue = GetCache<VolumeControl>(VOLUME_KEY(type));
     if (storedValue) {
       $volume = storedValue;
 
       const storedTtsSpeed = GetCache(TTS_SPEED_KEY);
-      console.log(storedTtsSpeed);
       if (storedTtsSpeed) $tts_speed = Number(storedTtsSpeed);
     }
   });
 
   const mute = () => {
     $volume.muted = !$volume.muted;
-    SetCache(VOLUME_KEY(type), JSON.stringify($volume), ONE_YEAR_TTL);
+    SetCache(VOLUME_KEY(type), $volume, ONE_YEAR_TTL);
   };
 
   // Toggle mute for both volumes with 'M' key
@@ -48,7 +47,7 @@
     if (event.key !== 'm') return;
     $volume.muted = allMuted ? false : true;
     allMuted = !allMuted;
-    SetCache(VOLUME_KEY(type), JSON.stringify($volume), ONE_YEAR_TTL);
+    SetCache(VOLUME_KEY(type), $volume, ONE_YEAR_TTL);
   };
 
   const update = () => {
@@ -57,7 +56,7 @@
       volume: inputValue,
       restart: false,
     });
-    SetCache(VOLUME_KEY(type), JSON.stringify($volume), ONE_YEAR_TTL);
+    SetCache(VOLUME_KEY(type), $volume, ONE_YEAR_TTL);
   };
 
   const restart = () => {

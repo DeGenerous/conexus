@@ -44,7 +44,7 @@
   };
 
   // Switching between NEIGHBOUR stories
-  let categoryTopics: TopicsInSection[] = [];
+  let categoryTopics: TopicInSection[] = [];
   let activeStoryIndex: number = 0;
   $: prevStoryIndex =
     activeStoryIndex <= 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
@@ -53,10 +53,10 @@
     await checkUserState('/story');
 
     // Get all topics in SECTION from the localStorage
-    const storedTopics = JSON.parse(
-      GetCache(SECTION_CATEGORIES_KEY(section)) as string,
+    const storedTopics = GetCache<CategoryInSection[]>(
+      SECTION_CATEGORIES_KEY(section),
     )
-      .map((category: CategoryInSection) => category.topics)
+      ?.map((category: CategoryInSection) => category.topics)
       .flat();
     if (storedTopics) {
       categoryTopics = storedTopics;

@@ -20,7 +20,7 @@
 
   let app: CoNexusApp = new CoNexusApp();
 
-  let categories: CategoriesInSection[] = [];
+  let categories: CategoryInSection[] = [];
   let genres: Genre[] = [];
 
   let pageSize: number = 1;
@@ -43,17 +43,15 @@
         categories = [...categories, ...response];
         SetCache(
           SECTION_CATEGORIES_KEY(section),
-          JSON.stringify(
-            categories.map((cat) => {
-              const orderedTopics = cat.topics.sort((a, b) => {
-                if (a.topic_order > b.topic_order) return 1;
-                if (a.topic_order < b.topic_order) return -1;
-                return 0;
-              });
-              cat.topics = orderedTopics;
-              return cat;
-            }),
-          ),
+          categories.map((cat) => {
+            const orderedTopics = cat.topics.sort((a, b) => {
+              if (a.topic_order > b.topic_order) return 1;
+              if (a.topic_order < b.topic_order) return -1;
+              return 0;
+            });
+            cat.topics = orderedTopics;
+            return cat;
+          }),
           SECTION_CATEGORIES_TTL,
         );
         loading = false;
@@ -75,10 +73,10 @@
         return;
       }
 
-      const cachedCategories: Nullable<string> = GetCache(
+      const cachedCategories = GetCache<CategoryInSection[]>(
         SECTION_CATEGORIES_KEY(section),
       );
-      if (cachedCategories) categories = JSON.parse(cachedCategories);
+      if (cachedCategories) categories = cachedCategories;
       else await fetchCategories();
 
       genres = await app.getGenres();

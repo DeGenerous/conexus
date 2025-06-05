@@ -89,7 +89,7 @@
 
   const updateFont = (reset: Nullable<'reset'> = null) => {
     if (reset) customFont = defaultFont;
-    SetCache(FONT_KEY, JSON.stringify(customFont), ONE_YEAR_TTL);
+    SetCache(FONT_KEY, customFont, ONE_YEAR_TTL);
   };
 
   // update FONT in localStorage after every change
@@ -115,7 +115,7 @@
 
   const updateStyling = (reset: Nullable<'reset'> = null) => {
     if (reset) customStyling = defaultStyling;
-    SetCache(STYLING_KEY, JSON.stringify(customStyling), ONE_YEAR_TTL);
+    SetCache(STYLING_KEY, customStyling, ONE_YEAR_TTL);
   };
 
   // update STYLING in localStorage after every change
@@ -131,7 +131,7 @@
 
   const updateScale = (reset: Nullable<'reset'> = null) => {
     if (reset) customScale = defaultScale;
-    SetCache(SCALE_KEY, JSON.stringify(customScale), ONE_YEAR_TTL);
+    SetCache(SCALE_KEY, customScale, ONE_YEAR_TTL);
   };
 
   // update SCALE in localStorage after every change
@@ -247,15 +247,15 @@
 
     // GET CUSTOMIZATION FROM THE localStorage
 
-    const storedFont = JSON.parse(GetCache(FONT_KEY) as string);
+    const storedFont = GetCache<CustomFont>(FONT_KEY);
     if (storedFont) customFont = storedFont;
     else updateFont('reset');
 
-    const storedStyling = JSON.parse(GetCache(STYLING_KEY) as string);
+    const storedStyling = GetCache<CustomStyling>(STYLING_KEY);
     if (storedStyling) customStyling = storedStyling;
     else updateStyling('reset');
 
-    const storedScale = JSON.parse(GetCache(SCALE_KEY) as string);
+    const storedScale = GetCache<CustomScale>(SCALE_KEY);
     if (storedScale) customScale = storedScale;
     else updateScale('reset');
 

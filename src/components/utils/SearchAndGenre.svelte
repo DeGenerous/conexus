@@ -7,7 +7,7 @@
 
   import SortingSVG from '@components/icons/Sorting.svelte';
 
-  export let categories: CategoriesInSection[] = [];
+  export let categories: CategoryInSection[] = [];
   export let section: string;
   export let genres: Genre[] = [];
   export let getTopics: (

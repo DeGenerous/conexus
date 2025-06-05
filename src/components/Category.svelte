@@ -13,7 +13,7 @@
   import StoryTile from '@components/utils/StoryTile.svelte';
   import SortingSVG from '@components/icons/Sorting.svelte';
 
-  export let category: CategoriesInSection | null = null;
+  export let category: CategoryInSection | null = null;
   export let section: string = '';
 
   const view = new CoNexusApp();
@@ -31,11 +31,11 @@
   const fetchTopics = async () => {
     if (!category || loading || isEndReached) return;
 
-    const cachedTopics: Nullable<string> = GetCache(
+    const cachedTopics = GetCache<TopicInCategory[]>(
       CATEGORY_TOPICS_KEY(category.name),
     );
     if (cachedTopics) {
-      topics = JSON.parse(cachedTopics);
+      topics = cachedTopics;
       sortedTopics = applySorting(topics);
       if (topics.length === category.topic_count) {
         isEndReached = true;
@@ -55,11 +55,7 @@
     if (response && response.length > 0) {
       topics = [...topics, ...response];
       total += response.length;
-      SetCache(
-        CATEGORY_TOPICS_KEY(category.name),
-        JSON.stringify(topics),
-        CATEGORY_TOPICS_TTL,
-      );
+      SetCache(CATEGORY_TOPICS_KEY(category.name), topics, CATEGORY_TOPICS_TTL);
     }
 
     // Stop fetching when we've loaded all topics

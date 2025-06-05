@@ -80,7 +80,7 @@ export class CoNexusApp extends ViewAPI {
     section: string,
     page: number,
     pageSize: number,
-  ): Promise<CategoriesInSection[]> {
+  ): Promise<CategoryInSection[]> {
     const { data, error } = await this.sectionCategories(
       section,
       page,
@@ -95,7 +95,7 @@ export class CoNexusApp extends ViewAPI {
     }
 
     const orderedCategories = data.sort(
-      (a: CategoriesInSection, b: CategoriesInSection) => {
+      (a: CategoryInSection, b: CategoryInSection) => {
         if (a.order < b.order) return -1;
         if (a.order > b.order) return 1;
         return 0;

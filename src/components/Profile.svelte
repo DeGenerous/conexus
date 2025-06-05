@@ -196,7 +196,7 @@
     let codeBtn = document.getElementById(refCode) as HTMLButtonElement;
     navigator.clipboard.writeText(refCode);
     codeBtn.classList.add('copied'); // animation
-    setTimeout(() => codeBtn.classList.remove('copied'), 300);
+    setTimeout(() => codeBtn.classList.remove('copied'), 600);
   };
 
   // Newsletter

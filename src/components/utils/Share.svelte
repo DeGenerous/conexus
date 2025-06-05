@@ -6,19 +6,14 @@
   let copySvgFocus: Nullable<string | boolean> = null;
   let copyBtn: HTMLButtonElement;
 
-  const copyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    copyBtn.classList.add('copied');
-    setTimeout(() => copyBtn.classList.remove('copied'), 300);
-  };
-
   const handleOptionClick = async (option: string) => {
     const message = `Check out the AI story I'm playing on CoNexus!\n${window.location.href}`;
 
     switch (option) {
       case 'copy':
         await navigator.clipboard.writeText(`${message}`);
-        alert('Copied to clipboard!');
+        copyBtn.classList.add('copied');
+        setTimeout(() => copyBtn.classList.remove('copied'), 600);
         break;
       case 'discord':
         const discordShareUrl = `https://discord.com/channels/@me`;
@@ -58,7 +53,7 @@
     </button>
     <button
       class="min-size-btn void-btn flex"
-      on:click={copyLink}
+      on:click={() => handleOptionClick('copy')}
       on:pointerover={() => {
         if (!disabled) copySvgFocus = true;
       }}
@@ -71,7 +66,7 @@
       aria-label="Copy link"
       {disabled}
     >
-      <CopySVG {copySvgFocus} />
+      <CopySVG {copySvgFocus} data={false} />
     </button>
   </span>
 </div>

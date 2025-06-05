@@ -36,7 +36,7 @@
 >
   <div class="flex" on:click|stopPropagation>
     {@html $modalContent}
-    <span class="flex-row">
+    <span class="flex">
       <button class="red-btn" on:click={$handleCloseModal}> Close </button>
       {#if $secondButton}
         <button class={$secondButtonClass} on:click={$handleSecondButton}>
@@ -47,16 +47,39 @@
   </div>
 </dialog>
 
-<style>
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
+
   dialog {
-    width: clamp(250px, 75%, 40rem);
-  }
+    width: 90%;
 
-  dialog > div {
-    padding-top: 2rem;
-  }
+    div {
+      padding: 1.5rem;
 
-  dialog > div > span {
-    flex-wrap: wrap;
+      span {
+        width: 100%;
+        flex-direction: column-reverse;
+
+        button {
+          width: 100%;
+          min-width: 10rem;
+        }
+      }
+    }
+
+    @include respond-up(tablet) {
+      width: clamp(250px, 75%, 60rem);
+
+      div {
+        span {
+          flex-flow: row wrap;
+          gap: 1.5rem;
+
+          button {
+            width: auto;
+          }
+        }
+      }
+    }
   }
 </style>

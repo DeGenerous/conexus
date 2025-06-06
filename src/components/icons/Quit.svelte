@@ -1,12 +1,17 @@
 <script lang="ts">
-  export let onClick = () => {};
-  export let voidBtn: boolean = false;
+  let {
+    onClick = () => {},
+    voidBtn = false,
+  }: {
+    onClick: () => void;
+    voidBtn?: boolean;
+  } = $props();
 </script>
 
 <button
   class="flex"
   class:void-btn={voidBtn}
-  on:click|stopPropagation={onClick}
+  onclick={onClick}
   aria-label="Back"
 >
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">

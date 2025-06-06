@@ -1,13 +1,20 @@
 <script lang="ts">
-  export let onClick = () => {};
-  export let text: string = '';
-  export let active: boolean = false;
-  export let control: boolean = true;
+  let {
+    onClick = () => {},
+    text = '',
+    active = false,
+    control = true,
+  }: {
+    onClick: () => void;
+    text: string;
+    active: boolean;
+    control?: boolean;
+  } = $props();
 </script>
 
 <button
   id={control ? 'step-control' : ''}
-  on:click|stopPropagation={onClick}
+  onclick={onClick}
   class="void-btn flex"
   class:active
   aria-label="Back"

@@ -1,15 +1,20 @@
 <script lang="ts">
   import { muted } from '@stores/volumes';
 
-  export let onClick = () => {};
-  export let active: boolean = false;
+  let {
+    onClick = () => {},
+    active = false,
+  }: {
+    onClick: () => void;
+    active: boolean;
+  } = $props();
 </script>
 
 <button
   id="sound"
   class="void-btn flex"
   class:active
-  on:click|stopPropagation={onClick}
+  onclick={onClick}
   aria-label="Back"
 >
   <svg

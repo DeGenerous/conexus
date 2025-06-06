@@ -14,12 +14,7 @@
   import MediaManager from '@lib/media';
   import { CoNexusGame } from '@lib/story';
   import { loading, story } from '@stores/conexus';
-  import {
-    prevStoryLink,
-    prevStoryName,
-    nextStoryLink,
-    nextStoryName,
-  } from '@stores/navigation';
+  import { prevStory, nextStory } from '@stores/navigation.svelte';
   import { checkUserState } from '@utils/route-guard';
   import { GetCache, SECTION_CATEGORIES_KEY } from '@constants/cache';
   import detectIOS from '@utils/ios-device';
@@ -127,17 +122,18 @@
   {:then topic: TopicThumbnail}
     {@html (() => {
       if (!categoryTopics.length) return;
-      $prevStoryLink = `/sections/${section}/${categoryTopics[prevStoryIndex].topic_name}?id=${
+      prevStory.link = `/sections/${section}/${categoryTopics[prevStoryIndex].topic_name}?id=${
         categoryTopics[prevStoryIndex].topic_id
       }`;
-      $prevStoryName = categoryTopics[prevStoryIndex].topic_name;
-      $nextStoryLink = `/sections/${section}/${
+      prevStory.name = categoryTopics[prevStoryIndex].topic_name;
+      nextStory.link = `/sections/${section}/${
         categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
           .topic_name
       }?id=${categoryTopics[(activeStoryIndex + 1) % categoryTopics.length].topic_id}`;
-      $nextStoryName =
-        categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
-          .topic_name;
+      nextStory.name =
+        categoryTopics[
+          (activeStoryIndex + 1) % categoryTopics.length
+        ].topic_name;
     })()}
 
     <div class="story-wrapper flex" style:cursor={$loading ? 'progress' : ''}>

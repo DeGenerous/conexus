@@ -1,6 +1,4 @@
-import { writable } from 'svelte/store';
-
-const passwordVisible = writable({
+const passwordVisible = $state({
   login: false,
   signup: false,
   edit: false,

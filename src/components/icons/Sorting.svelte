@@ -1,14 +1,20 @@
 <script lang="ts">
-  export let onClick = () => {};
-  export let sorting: boolean = false;
-  export let disabled: boolean = false;
+  let {
+    onClick = () => {},
+    disabled = false,
+    sorting = false,
+  }: {
+    onClick: () => void;
+    disabled: boolean;
+    sorting: boolean;
+  } = $props();
 </script>
 
 <button
   class="filter blur"
   class:sorting
   class:active-btn={sorting}
-  on:click={onClick}
+  onclick={onClick}
   {disabled}
   aria-label="Sort from A to z"
 >

@@ -8,7 +8,7 @@
   export let disabled: boolean = false;
 
   let searchInput: HTMLInputElement | null;
-  let searchSvgFocus: boolean = false;
+  let svgFocus: boolean = false;
 
   const handleSearchFocus = () => {
     if (!searchInput) return;
@@ -20,14 +20,14 @@
   {#if isSearching}
     <LoadingSVG />
   {:else}
-    <SearchSVG onClick={handleSearchFocus} {searchSvgFocus} />
+    <SearchSVG onClick={handleSearchFocus} {svgFocus} />
   {/if}
   <input
     bind:this={searchInput}
     bind:value={searchField}
     on:input={handleSearch}
-    on:focus={() => (searchSvgFocus = true)}
-    on:blur={() => (searchSvgFocus = false)}
+    on:focus={() => (svgFocus = true)}
+    on:blur={() => (svgFocus = false)}
     class="search-field"
     placeholder="Search story..."
     {disabled}

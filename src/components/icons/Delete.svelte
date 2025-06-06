@@ -1,18 +1,23 @@
 <script lang="ts">
-  export let disabled: boolean = false;
-  export let onClick = () => {};
+  let {
+    onClick = () => {},
+    disabled = false,
+  }: {
+    onClick: () => void;
+    disabled: boolean;
+  } = $props();
 
-  let deleteSvgFocus: boolean = false;
+  let svgFocus = $state<boolean>(false);
 </script>
 
 <button
   class="void-btn flex"
-  on:click|stopPropagation={onClick}
-  on:pointerover={() => {
-    if (!disabled) deleteSvgFocus = true;
+  onclick={onClick}
+  onpointerover={() => {
+    if (!disabled) svgFocus = true;
   }}
-  on:pointerout={() => {
-    if (!disabled) deleteSvgFocus = false;
+  onpointerout={() => {
+    if (!disabled) svgFocus = false;
   }}
   aria-label="Back"
   {disabled}
@@ -26,12 +31,9 @@
   >
     <path
       d="M -35 -35 L 35 35 M -35 35 L 35 -35"
-      transform={deleteSvgFocus ? 'scale(1.5)' : ''}
+      transform={svgFocus ? 'scale(1.5)' : ''}
     />
-    <circle
-      r={deleteSvgFocus ? '0' : '90'}
-      opacity={deleteSvgFocus ? '0' : '1'}
-    />
+    <circle r={svgFocus ? '0' : '90'} opacity={svgFocus ? '0' : '1'} />
   </svg>
 </button>
 

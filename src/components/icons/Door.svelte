@@ -1,16 +1,24 @@
 <script lang="ts">
-  export let onClick = () => {};
-  export let state: 'inside' | 'outside';
-  export let disabled: boolean = false;
-  export let text: string = '';
-  export let glow: boolean = false;
+  let {
+    state,
+    onClick = () => {},
+    disabled = false,
+    text = '',
+    glow = false,
+  }: {
+    state: 'inside' | 'outside';
+    onClick: () => void | Promise<void>;
+    disabled?: boolean;
+    text: string;
+    glow?: boolean;
+  } = $props();
 </script>
 
 <button
   class="blur"
   class:button-glowing={glow}
   type="button"
-  on:click|preventDefault={onClick}
+  onclick={onClick}
   {disabled}
 >
   {#if state === 'outside'}

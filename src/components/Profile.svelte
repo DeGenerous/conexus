@@ -5,7 +5,7 @@
   import { Account } from '@lib/account';
   import { authenticated, referralCodes, accountError } from '@stores/account';
   import { showProfile } from '@stores/modal';
-  import passwordVisible from '@stores/password-visibility';
+  import passwordVisible from '@stores/password-visibility.svelte';
   import {
     regexpEmail,
     regexpPasswordValidation,
@@ -279,7 +279,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
                 <input
                   id="password"
                   class:red-border={!editOldPassword}
-                  type={$passwordVisible.edit ? 'text' : 'password'}
+                  type={passwordVisible.edit ? 'text' : 'password'}
                   placeholder="Enter old password"
                   bind:value={editOldPassword}
                 />
@@ -296,7 +296,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
                   class:red-border={!regexpPasswordValidation.test(
                     editPassword,
                   )}
-                  type={$passwordVisible.edit ? 'text' : 'password'}
+                  type={passwordVisible.edit ? 'text' : 'password'}
                   placeholder="Provide new password"
                   bind:value={editPassword}
                 />
@@ -306,7 +306,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
                 class:red-border={!regexpPasswordValidation.test(
                   editPassword,
                 ) || editPassword !== editPasswordConfirm}
-                type={$passwordVisible.edit ? 'text' : 'password'}
+                type={passwordVisible.edit ? 'text' : 'password'}
                 placeholder="Confirm new password"
                 bind:value={editPasswordConfirm}
               />
@@ -576,7 +576,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
                 <label for="user-password">Password</label>
                 <input
                   bind:value={loginPassword}
-                  type={$passwordVisible.login ? 'text' : 'password'}
+                  type={passwordVisible.login ? 'text' : 'password'}
                   id="user-password"
                   placeholder="Enter your password"
                   minlength="8"
@@ -675,7 +675,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
                 id="new-user-password"
                 placeholder="Enter password"
                 minlength="8"
-                type={$passwordVisible.signup ? 'text' : 'password'}
+                type={passwordVisible.signup ? 'text' : 'password'}
                 bind:value={password}
                 required
               />
@@ -688,7 +688,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
               placeholder="Confirm password"
               bind:value={confirmPassword}
               required
-              type={$passwordVisible.signup ? 'text' : 'password'}
+              type={passwordVisible.signup ? 'text' : 'password'}
             />
 
             {#if password}

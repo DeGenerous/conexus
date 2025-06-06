@@ -1,8 +1,8 @@
 <script lang="ts">
-  export let onClick = () => {};
+  let { onClick = () => {} }: { onClick: () => void } = $props();
 </script>
 
-<button class="void-btn flex" on:click={onClick} aria-label="Zoom in">
+<button class="void-btn flex" onclick={onClick} aria-label="Zoom in">
   <svg
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"

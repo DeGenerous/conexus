@@ -1,6 +1,11 @@
 <script lang="ts">
-  export let copySvgFocus: Nullable<string | boolean> = null;
-  export let data: string | boolean = true;
+  let {
+    copySvgFocus = null,
+    data = true,
+  }: {
+    copySvgFocus: Nullable<string | boolean>;
+    data: string | boolean;
+  } = $props();
 </script>
 
 <svg

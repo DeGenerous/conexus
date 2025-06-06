@@ -1,13 +1,19 @@
 <script lang="ts">
-  export let onClick = () => {};
-  export let disabled: boolean = false;
-  export let right: boolean = false;
+  let {
+    onClick = () => {},
+    disabled = false,
+    right = false,
+  }: {
+    onClick: () => void;
+    disabled: boolean;
+    right?: boolean;
+  } = $props();
 </script>
 
 <button
   class="void-btn flex"
   class:right
-  on:click|stopPropagation={onClick}
+  onclick={onClick}
   aria-label="Switch"
   {disabled}
 >

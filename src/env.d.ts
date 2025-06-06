@@ -97,6 +97,13 @@ type Genre = {
   name: string;
 };
 
+type StoryNavigation = {
+  link: Nullable<string>;
+  name: Nullable<string>;
+};
+
+type Password = 'login' | 'signup' | 'edit' | 'reset';
+
 type FolderContent = {
   id: string;
   name: string;

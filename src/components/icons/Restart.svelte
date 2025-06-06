@@ -1,16 +1,21 @@
 <script lang="ts">
-  export let onClick = () => {};
-  export let disabled: boolean = false;
+  let {
+    onClick = () => {},
+    disabled = false,
+  }: {
+    onClick: () => void;
+    disabled: boolean;
+  } = $props();
 
-  let replaySvgFocuse: boolean = false;
+  let svgFocus = $state<boolean>(false);
 </script>
 
 <button
   class="void-btn flex-row"
   class:muted={disabled}
-  on:click|stopPropagation={onClick}
-  on:pointerover={() => (replaySvgFocuse = true)}
-  on:pointerout={() => (replaySvgFocuse = false)}
+  onclick={onClick}
+  onpointerover={() => (svgFocus = true)}
+  onpointerout={() => (svgFocus = false)}
   aria-label="Replay"
   {disabled}
 >
@@ -25,11 +30,7 @@
     stroke-linejoin="round"
     stroke-linecap="round"
   >
-    <g
-      style="transform: {replaySvgFocuse && !disabled
-        ? 'rotate(-15deg)'
-        : 'none'}"
-    >
+    <g style="transform: {svgFocus && !disabled ? 'rotate(-15deg)' : 'none'}">
       <path d="M -70 -40 A 80 80 0 1 1 -50 50" fill="none" />
       <polygon points="-70 -40 -70 -80 -30 -50" />
     </g>
@@ -38,18 +39,14 @@
       y1="-5"
       x2="0"
       y2="-50"
-      style="transform: {replaySvgFocuse && !disabled
-        ? 'rotate(-360deg)'
-        : 'none'}"
+      style="transform: {svgFocus && !disabled ? 'rotate(-360deg)' : 'none'}"
     />
     <line
       x1="2.5"
       y1="-2.5"
       x2="20"
       y2="10"
-      style="transform: {replaySvgFocuse && !disabled
-        ? 'rotate(-30deg)'
-        : 'none'}"
+      style="transform: {svgFocus && !disabled ? 'rotate(-30deg)' : 'none'}"
     />
   </svg>
 </button>

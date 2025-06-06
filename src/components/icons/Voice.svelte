@@ -1,19 +1,24 @@
 <script lang="ts">
-  export let onClick = () => {};
-  export let muted: boolean = false;
+  let {
+    onClick = () => {},
+    muted = false,
+  }: {
+    onClick: () => void;
+    muted: boolean;
+  } = $props();
 
-  let voiceSvgFocus: boolean = false;
+  let svgFocus: boolean = $state(false);
 </script>
 
 <button
   class="void-btn flex-row"
   class:muted
-  on:click|stopPropagation={onClick}
-  on:pointerover={() => {
-    if (!muted) voiceSvgFocus = true;
+  onclick={onClick}
+  onpointerover={() => {
+    if (!muted) svgFocus = true;
   }}
-  on:pointerout={() => {
-    if (!muted) voiceSvgFocus = false;
+  onpointerout={() => {
+    if (!muted) svgFocus = false;
   }}
   aria-label="Adjust voice"
 >
@@ -83,7 +88,7 @@
       <path
         d="M -55 -10 C -60 74 60 74 55 -10"
         fill="none"
-        style="transform: {voiceSvgFocus ? 'scaleX(-1)' : 'none'}"
+        style="transform: {svgFocus ? 'scaleX(-1)' : 'none'}"
       />
       <path d="M 0 55 L 0 85 M 25 85 L -25 85" fill="none" />
     </g>

@@ -7,7 +7,6 @@
   import Intro from './Intro.svelte';
 
   let isLogged: boolean = false;
-  let signInSvgFocus: boolean = false;
 
   authenticated.subscribe((value) => {
     isLogged = value.loggedIn;
@@ -24,7 +23,9 @@
   <DoorSVG
     state="inside"
     text="play now"
-    onClick={() => ($showProfile = true)}
+    onClick={() => {
+      $showProfile = true;
+    }}
     glow={true}
   />
 

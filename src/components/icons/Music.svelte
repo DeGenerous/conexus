@@ -1,12 +1,17 @@
 <script lang="ts">
-  export let onClick = () => {};
-  export let muted: boolean = false;
+  let {
+    onClick = () => {},
+    muted = false,
+  }: {
+    onClick: () => void;
+    muted: boolean;
+  } = $props();
 </script>
 
 <button
   class="void-btn flex-row"
   class:muted
-  on:click|stopPropagation={onClick}
+  onclick={onClick}
   aria-label="Adjust music"
 >
   <p>MUSIC</p>

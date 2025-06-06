@@ -1,14 +1,20 @@
 <script lang="ts">
-  export let onClick = () => {};
-  export let active: boolean = false;
-  export let control: boolean = false;
+  let {
+    onClick = () => {},
+    active = false,
+    control = false,
+  }: {
+    onClick: () => void;
+    active: boolean;
+    control: boolean;
+  } = $props();
 </script>
 
 <button
   id={control ? 'zoom-in-control' : ''}
   class="void-btn flex"
   class:active
-  on:click={onClick}
+  onclick={onClick}
   aria-label="Zoom in"
 >
   <svg

@@ -1,37 +1,33 @@
 <script lang="ts">
-  import passwordVisible from '@stores/password-visibility';
+  import passwordVisible from '@stores/password-visibility.svelte';
 
-  type Password = 'login' | 'signup' | 'edit' | 'reset';
+  let { visibility }: { visibility: Password } = $props();
 
-  export let visibility: Password;
-  let visible = false;
+  let visible = $state(false);
 
   const updateVisibility = () => {
-    passwordVisible.update((password) => {
-      switch (visibility) {
-        case 'login': {
-          password.login = !password.login;
-          visible = password.login;
-          break;
-        }
-        case 'signup': {
-          password.signup = !password.signup;
-          visible = password.signup;
-          break;
-        }
-        case 'edit': {
-          password.edit = !password.edit;
-          visible = password.edit;
-          break;
-        }
-        case 'reset': {
-          password.reset = !password.reset;
-          visible = password.reset;
-          break;
-        }
+    switch (visibility) {
+      case 'login': {
+        passwordVisible.login = !passwordVisible.login;
+        visible = passwordVisible.login;
+        break;
       }
-      return password;
-    });
+      case 'signup': {
+        passwordVisible.signup = !passwordVisible.signup;
+        visible = passwordVisible.signup;
+        break;
+      }
+      case 'edit': {
+        passwordVisible.edit = !passwordVisible.edit;
+        visible = passwordVisible.edit;
+        break;
+      }
+      case 'reset': {
+        passwordVisible.reset = !passwordVisible.reset;
+        visible = passwordVisible.reset;
+        break;
+      }
+    }
   };
 </script>
 
@@ -40,7 +36,7 @@
   class="void-btn flex"
   class:visible
   type="button"
-  on:click={updateVisibility}
+  onclick={updateVisibility}
   aria-label="Show password"
 >
   <svg

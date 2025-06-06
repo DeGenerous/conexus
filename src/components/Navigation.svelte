@@ -3,12 +3,7 @@
 
   // import { CoNexusApp } from '@lib/view';
   import { authenticated } from '@stores/account';
-  import {
-    prevStoryLink,
-    prevStoryName,
-    nextStoryLink,
-    nextStoryName,
-  } from '@stores/navigation';
+  import { prevStory, nextStory } from '@stores/navigation.svelte';
   import { story } from '@stores/conexus';
 
   import BackArrow from '@components/icons/BackArrow.svelte';
@@ -83,8 +78,8 @@
     <a
       class="fade-in"
       class:inactive={(!sections.includes(activeTab) && !storyName) ||
-        (storyName && !$prevStoryLink)}
-      href={storyName ? $prevStoryLink : prevSectionLink()}
+        (storyName && !prevStory.link)}
+      href={storyName ? prevStory.link : prevSectionLink()}
       target="_self"
     >
       <svg
@@ -106,7 +101,7 @@
         {#if sections.includes(activeTab) && !storyName}
           {sections[prevSectionIndex]}
         {:else if storyName}
-          {$prevStoryName}
+          {prevStory.name}
         {/if}
       </p>
     </a>
@@ -219,8 +214,8 @@
     <a
       class="fade-in"
       class:inactive={(!sections.includes(activeTab) && !storyName) ||
-        (storyName && !$nextStoryLink)}
-      href={storyName ? $nextStoryLink : nextSectionLink()}
+        (storyName && !nextStory.link)}
+      href={storyName ? nextStory.link : nextSectionLink()}
       target="_self"
     >
       <svg
@@ -243,7 +238,7 @@
         {#if sections.includes(activeTab) && !storyName}
           {sections[(activeSectionIndex + 1) % sections.length]}
         {:else if storyName}
-          {$nextStoryName}
+          {nextStory.name}
         {/if}
       </p>
     </a>

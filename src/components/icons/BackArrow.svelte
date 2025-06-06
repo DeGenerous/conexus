@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let href: string = './';
+  let { href = './' }: { href: string } = $props();
 </script>
 
 <a

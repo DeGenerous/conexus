@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Account } from '@lib/account';
   import EyeSVG from '@components/icons/Eye.svelte';
-  import passwordVisible from '@stores/password-visibility';
+  import passwordVisible from '@stores/password-visibility.svelte';
   import {
     regexpEmail,
     regexpPasswordValidation,
@@ -47,7 +47,7 @@
   <div class="input-container">
     <input
       class:red-border={!regexpPasswordValidation.test(password)}
-      type={$passwordVisible.reset ? 'text' : 'password'}
+      type={passwordVisible.reset ? 'text' : 'password'}
       bind:value={password}
       placeholder="New password"
       required
@@ -59,7 +59,7 @@
   <input
     class:red-border={!regexpPasswordValidation.test(password) ||
       password !== confirmPassword}
-    type={$passwordVisible.reset ? 'text' : 'password'}
+    type={passwordVisible.reset ? 'text' : 'password'}
     bind:value={confirmPassword}
     placeholder="Confirm new password"
     required

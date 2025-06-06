@@ -1,13 +1,18 @@
 <script lang="ts">
-  export let onClick = () => {};
-  export let active: boolean = false;
+  let {
+    onClick = () => {},
+    active = false,
+  }: {
+    onClick: () => void;
+    active: boolean;
+  } = $props();
 </script>
 
 <button
   id="filled-eye"
   class="void-btn flex"
   class:active
-  on:click={onClick}
+  onclick={onClick}
   aria-label="Customization"
 >
   <svg

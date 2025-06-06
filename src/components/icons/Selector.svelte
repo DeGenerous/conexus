@@ -1,10 +1,19 @@
 <script lang="ts">
-  export let focused: Nullable<number | boolean> = null;
-  export let disabled: boolean = false;
-  export let hideForMobiles: boolean = false;
-  export let glowing: boolean = false;
-  export let color: string = '#33e2e6';
-  export let selectorSize: number = 1.5;
+  let {
+    focused = null,
+    disabled = false,
+    hideForMobiles = false,
+    glowing = false,
+    color = '#33e2e6',
+    selectorSize = 1.5,
+  }: {
+    focused: Nullable<number | boolean>;
+    disabled: boolean;
+    hideForMobiles: boolean;
+    glowing?: boolean;
+    color: string;
+    selectorSize: number;
+  } = $props();
 </script>
 
 <svg

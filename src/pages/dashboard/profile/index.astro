@@ -1,8 +1,6 @@
 ---
 import Layout from '@layouts/Layout.astro';
 
-import Profile from '@components/dashboard/Profile.svelte';
-
 const meta = {
   nav: 'Profile',
 };
@@ -10,6 +8,6 @@ const meta = {
 
 <Layout {...meta}>
   <main>
-    <Profile client:load />
+    <h1>User Profile</h1>
   </main>
 </Layout>

@@ -1,8 +1,8 @@
 <script lang="ts">
-  export let onClick = () => {};
+  let { onClick = () => {} }: { onClick: () => void } = $props();
 </script>
 
-<button on:click|stopPropagation={onClick} aria-label="Close">
+<button onclick={onClick} aria-label="Close">
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"

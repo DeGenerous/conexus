@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let focused: boolean = false;
+  let { focused = false }: { focused: boolean } = $props();
 </script>
 
 <svg class:focused xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

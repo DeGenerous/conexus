@@ -296,3 +296,26 @@ html {
   padding: 0;
   position: absolute;
 }
+
+// For game instructions
+.keyboard-instructions {
+  @extend .transparent-container;
+  width: auto !important;
+  align-items: flex-start;
+  padding-inline: 10rem !important;
+
+  li {
+    @extend .flex-row;
+
+    .keyboard-btn {
+      font-family: Verdana, sans-serif;
+      font-weight: bold;
+      min-width: 3rem;
+      min-height: 2rem;
+      padding: 0.5rem;
+      border-radius: 0.25rem;
+      @include gray;
+      @include dark-blue(1, text);
+    }
+  }
+}

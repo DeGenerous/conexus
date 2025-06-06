@@ -40,6 +40,8 @@
   padding: 1rem;
   box-shadow: $shadow-plus-inset-glow;
   animation: transparent-glowing 10s ease-in-out infinite;
+  scrollbar-width: thin;
+  scrollbar-color: $transparent-cyan transparent;
 
   &.filtered-tiles {
     background-color: rgba(75, 112, 50, 0.5) !important;

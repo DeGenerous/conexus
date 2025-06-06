@@ -26,7 +26,8 @@
 
   let sections: string[] = ['Community Picks', 'Collabs', 'Dischordian Saga'];
 
-  $: admin = $authenticated.user?.role === 'admin';
+  let admin = false;
+  $: if ($authenticated?.user) admin = $authenticated.user.role === 'admin';
 
   $: activeSectionIndex = sections.indexOf(activeTab);
   $: prevSectionIndex =

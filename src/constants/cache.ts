@@ -1,6 +1,6 @@
 export const ONE_YEAR_TTL = 1000 * 60 * 60 * 24 * 365; // 1 year
 
-export const IOS_KEY = 'iosDevice'; // to hide some unsupported UI
+export const IOS_KEY = 'ios_device'; // to hide some unsupported UI
 
 export const COOKIE_CONSENT_KEY = 'cookie_consent';
 export const COOKIE_CONSENT_TTL = 1000 * 60 * 60 * 24 * 30; // 1 month
@@ -35,19 +35,20 @@ export const REFERRAL_CODES_CACHE_KEY = 'referral_codes';
 export const REFERRAL_CODES_CACHE_TTL = 1000 * 60 * 60 * 1; // 1 hour
 
 export const SECTION_CATEGORIES_KEY = (section: string): string =>
-  `section-categories-[${section}]`;
+  `section_categories[${section}]`;
 export const SECTION_CATEGORIES_TTL = 1000 * 60 * 60 * 1; // 1 hour
 
 export const CATEGORY_TOPICS_KEY = (category: string): string =>
-  `category-topics-[${category}]`;
+  `category_topics[${category}]`;
 export const CATEGORY_TOPICS_TTL = 1000 * 60 * 60 * 1; // 1 hour
 
 // Step customization (use 1 year TTL)
+export const GAME_INSTRUCTIONS_KEY = 'show_instructions';
 export const FONT_KEY = 'font';
 export const STYLING_KEY = 'styling';
 export const SCALE_KEY = 'scale';
-export const VOLUME_KEY = (type: 'voice' | 'music'): string => `${type}-volume`;
-export const TTS_SPEED_KEY = 'tts-speed';
+export const VOLUME_KEY = (type: 'voice' | 'music'): string => `${type}_volume`;
+export const TTS_SPEED_KEY = 'tts_speed';
 
 const authKeys = [
   USER_CACHE_KEY,
@@ -105,6 +106,7 @@ export const ClearCache = (
     case 'full':
       // saving important values
       const cookieConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
+      const gameInstructions = localStorage.getItem(GAME_INSTRUCTIONS_KEY);
       const musicVolume = localStorage.getItem(VOLUME_KEY('music'));
       const voiceVolume = localStorage.getItem(VOLUME_KEY('voice'));
       const ttsSpeed = localStorage.getItem(TTS_SPEED_KEY);
@@ -116,6 +118,8 @@ export const ClearCache = (
       // restoring saved values
       if (cookieConsent)
         localStorage.setItem(COOKIE_CONSENT_KEY, cookieConsent);
+      if (gameInstructions)
+        localStorage.setItem(GAME_INSTRUCTIONS_KEY, gameInstructions);
       if (musicVolume) localStorage.setItem(VOLUME_KEY('music'), musicVolume);
       if (voiceVolume) localStorage.setItem(VOLUME_KEY('voice'), voiceVolume);
       if (ttsSpeed) localStorage.setItem(TTS_SPEED_KEY, ttsSpeed);

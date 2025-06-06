@@ -1,14 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { AdminApp } from '@lib/admin';
-  import {
-    showModal,
-    secondButton,
-    secondButtonClass,
-    handleSecondButton,
-    modalContent,
-  } from '@stores/modal';
   import { GetCache, ALL_TOPICS_KEY } from '@constants/cache';
+  import openModal, { deleteStoryModal } from '@constants/modal';
 
   import GenreTags from './GenreTags.svelte';
   import Media from './Media.svelte';
@@ -85,19 +79,6 @@
     box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
     cursor: text;
   `;
-
-  function openModal() {
-    $secondButton = `Delete story: ${topic_name}`;
-    $secondButtonClass = 'red-button';
-    $handleSecondButton = () => {
-      admin.deleteStory(topic.id);
-      $showModal = false;
-      window.open('/dashboard/dream/manage/', '_self');
-    };
-    $modalContent = `<h4>Are you sure you want to delete this story?</h4>
-        <p>This action is irreversible. You will lose it forever!</p>`;
-    $showModal = true;
-  }
 
   async function handleGenreChange(genre_id: number, method: 'add' | 'remove') {
     switch (method) {
@@ -431,7 +412,16 @@
     <!-- MEDIA FILES -->
     <Media bind:topic_id={topic.id} />
 
-    <button class="red-button blur" on:click={openModal}>Delete Story</button>
+    <button
+      class="red-button blur"
+      on:click={() =>
+        openModal(deleteStoryModal, `Delete story: ${topic_name}`, () => {
+          admin.deleteStory(topic.id);
+          window.open('/dashboard/dream/manage/', '_self');
+        })}
+    >
+      Delete Story
+    </button>
   {/if}
 </section>
 

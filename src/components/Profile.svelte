@@ -4,14 +4,7 @@
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import { Account } from '@lib/account';
   import { authenticated, referralCodes, accountError } from '@stores/account';
-  import {
-    showModal,
-    showProfile,
-    secondButton,
-    secondButtonClass,
-    handleSecondButton,
-    modalContent,
-  } from '@stores/modal';
+  import { showProfile } from '@stores/modal';
   import passwordVisible from '@stores/password-visibility';
   import {
     regexpEmail,
@@ -23,6 +16,7 @@
     regexpSpecialCharCheck,
     regexpRestrictedCharsCheck,
   } from '@constants/regexp';
+  import openModal, { walletSwitchModal } from '@constants/modal';
 
   import ProfileSVG from '@components/icons/Profile.svelte';
   import DoorSVG from '@components/icons/Door.svelte';
@@ -170,19 +164,7 @@
       editingPassword = false;
   };
 
-  // Call Modal dialog
-  const walletSelectConfirm = (address: string) => {
-    $secondButton = 'Select';
-    $secondButtonClass = 'green-btn';
-    $handleSecondButton = () => {
-      handleWalletSelect(address);
-      $showModal = false;
-    };
-    $modalContent =
-      '<h4>Are you sure you want to select this address as your main one?</h4>';
-    $showModal = true;
-  };
-
+  // Select wallet address as the main one
   const handleWalletSelect = async (address: string) => {
     await account.selectMainWallet(address);
     if ($accountError && $accountError.selectMainWallet) return;
@@ -413,7 +395,12 @@ a11y_no_noninteractive_element_to_interactive_role-->
                       class="wallet void-btn flex-row pad-8 round-8 blue-bg dark-txt"
                       on:click={() => {
                         if (wallet.wallet != user!.main_wallet)
-                          walletSelectConfirm(wallet.wallet);
+                          openModal(
+                            walletSwitchModal,
+                            'Select wallet',
+                            () => handleWalletSelect(wallet.wallet),
+                            'green-btn',
+                          );
                       }}
                       disabled={wallet.wallet == user.main_wallet}
                     >

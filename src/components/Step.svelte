@@ -8,17 +8,12 @@
     GetCache,
     SetCache,
     ONE_YEAR_TTL,
+    GAME_INSTRUCTIONS_KEY,
     FONT_KEY,
     STYLING_KEY,
     SCALE_KEY,
   } from '@constants/cache';
   import detectIOS from '@utils/ios-device';
-  import {
-    showModal,
-    secondButton,
-    handleSecondButton,
-    modalContent,
-  } from '@stores/modal';
   import {
     defaultFont,
     defaultStyling,
@@ -26,6 +21,10 @@
     lightThemeFont,
     lightThemeStyling,
   } from '@constants/customization';
+  import openModal, {
+    resetSettingsModal,
+    gameRulesModal,
+  } from '@constants/modal';
 
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
@@ -66,7 +65,7 @@
   );
 
   const hideControlsAfterDelay = () => {
-    if (width < 1024) return;
+    if (width < 1024) return; // min width for PC
     clearTimeout(hiddenControlsTimeout);
     hiddenControlsTimeout = setTimeout(() => {
       hiddenControls = true;
@@ -136,17 +135,6 @@
 
   // update SCALE in localStorage after every change
   $: customScale && updateScale();
-
-  // Show confirmation dialog on reset
-  const openModal = (resetFunc: any) => {
-    $secondButton = `Reset`;
-    $handleSecondButton = () => {
-      resetFunc();
-      $showModal = false;
-    };
-    $modalContent = `<h4>Are you sure you want to reset ${activeControlPanel} settings?</h4>`;
-    $showModal = true;
-  };
 
   // KEYBOARD CONTROLS
 
@@ -259,8 +247,24 @@
     if (storedScale) customScale = storedScale;
     else updateScale('reset');
 
-    // Hide control panel after 3s delay
-    hideControlsAfterDelay();
+    // SHOW HOW TO PLAY INSTRUCTIONS
+
+    // min width for PC
+    if (width > 1024) {
+      const dontShowInstructions = GetCache(GAME_INSTRUCTIONS_KEY);
+      // Show instructions if no stored value
+      if (!dontShowInstructions) {
+        setTimeout(
+          () =>
+            openModal(gameRulesModal, "Don't show again", () => {
+              SetCache(GAME_INSTRUCTIONS_KEY, 'dont_show', ONE_YEAR_TTL);
+              // Hide control panel after 3s delay
+              hideControlsAfterDelay();
+            }),
+          600,
+        );
+      }
+    }
   });
 </script>
 
@@ -660,18 +664,26 @@ a11y_no_noninteractive_element_interactions -->
         <ResetSVG
           text="Reset to light theme"
           onClick={() =>
-            openModal(() => {
-              customFont = lightThemeFont;
-              customStyling = lightThemeStyling;
-            })}
+            openModal(
+              resetSettingsModal(activeControlPanel),
+              'Apply default light theme',
+              () => {
+                customFont = lightThemeFont;
+                customStyling = lightThemeStyling;
+              },
+            )}
         />
         <ResetSVG
           text="Reset to dark theme"
           onClick={() =>
-            openModal(() => {
-              updateFont('reset');
-              updateStyling('reset');
-            })}
+            openModal(
+              resetSettingsModal(activeControlPanel),
+              'Apply default dark theme',
+              () => {
+                updateFont('reset');
+                updateStyling('reset');
+              },
+            )}
         />
       </span>
     </section>
@@ -749,8 +761,13 @@ a11y_no_noninteractive_element_interactions -->
       </div>
       <span class="reset-wrapper flex-row">
         <ResetSVG
-          text="Reset to default"
-          onClick={() => openModal(() => updateScale('reset'))}
+          text="Reset to default scale"
+          onClick={() =>
+            openModal(
+              resetSettingsModal(activeControlPanel),
+              'Reset scale',
+              () => updateScale('reset'),
+            )}
         />
       </span>
     </section>

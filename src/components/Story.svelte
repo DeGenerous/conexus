@@ -15,12 +15,6 @@
   import { CoNexusGame } from '@lib/story';
   import { loading, story } from '@stores/conexus';
   import {
-    showModal,
-    secondButton,
-    handleSecondButton,
-    modalContent,
-  } from '@stores/modal';
-  import {
     prevStoryLink,
     prevStoryName,
     nextStoryLink,
@@ -29,6 +23,7 @@
   import { checkUserState } from '@utils/route-guard';
   import { GetCache, SECTION_CATEGORIES_KEY } from '@constants/cache';
   import detectIOS from '@utils/ios-device';
+  import openModal, { deleteUnfinishedModal } from '@constants/modal';
 
   export let section: string;
   export let story_name: string;
@@ -74,19 +69,10 @@
   let deletedStories: string[] = []; // temp storage before reload for immediate removal
   let noUnfinishedStoriesLeft: boolean = false;
 
-  const openModal = (story: ContinuableStory) => {
-    $secondButton = `Delete story: ${story.category}`;
-    $handleSecondButton = () => DeleteStory(story.story_id);
-    $modalContent = `<h4>Are you sure you want to delete this story?</h4>
-        <p>This action is irreversible. You will lose all progress on this story.</p>`;
-    $showModal = true;
-  };
-
   async function DeleteStory(story_id: any) {
     try {
       await game.delete(story_id);
       deletedStories[deletedStories.length] = story_id; // hide deleted story from user
-      $showModal = false;
       await game.storyContinuables(story_name!).then((continuables) => {
         // Hide CINTINUE SHAPING section if no unfinished stories left
         if (continuables.length == 0) noUnfinishedStoriesLeft = true;
@@ -216,7 +202,12 @@
                 <div class="flex-row pad-8 round" role="button" tabindex="0">
                   <DeleteSVG
                     disabled={$loading}
-                    onClick={() => openModal(continuable)}
+                    onClick={() =>
+                      openModal(
+                        deleteUnfinishedModal,
+                        `Delete story: ${continuable.category}`,
+                        () => DeleteStory(continuable.story_id),
+                      )}
                   />
                   <span class="flex">
                     <p>{convertDate(continuable.created!)}</p>
@@ -240,7 +231,9 @@
     </div>
 
     {#if topic.nft_gate && topic.nft_gate.length > 0}
-      <section class="flex gating blur pad-8 gap-8 mar-auto round-12 shad">
+      <section
+        class="flex gating blur pad-8 gap-8 mar-auto round-12 shad wavy-mask-left-right"
+      >
         <div class="flex-row">
           <LockSVG />
           <h5>Only available to holders of:</h5>
@@ -457,16 +450,20 @@
 
   .gating {
     margin-top: 1rem;
-    width: 90%;
-    max-width: min(90%, 50rem);
+    width: 100%;
+    max-width: 50rem;
     stroke: $dark-red;
     @include orange(0.85);
 
-    h5 {
-      @include dark-red(1, text);
+    div {
+      h5 {
+        text-align: left;
+        @include dark-red(1, text);
+      }
     }
 
     span {
+      width: 100%;
       flex-wrap: wrap;
       @include dark-red(0.5);
       @include white-txt(soft);
@@ -494,12 +491,6 @@
           }
         }
       }
-    }
-
-    @include respond-up(tablet) {
-      flex-flow: row wrap;
-      justify-content: space-between;
-      width: auto;
     }
   }
 

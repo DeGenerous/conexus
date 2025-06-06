@@ -1,4 +1,4 @@
-// CLASSES: cyan (soft), dark, green, red (outline)
+// CLASSES: cyan (soft), dark, green, red (outline), wavy-mask-left-right
 
 @mixin cyan-border($opacity: 1) {
   border: 1px solid rgba(51, 226, 230, $opacity);
@@ -42,4 +42,22 @@
 
 :global(.red-outline) {
   outline: 1.5px solid rgba(255, 50, 50, 0.75);
+}
+
+// WAVY MASK
+
+$wavy-mask-left-right:
+  radial-gradient(111.8px at 150px 50%, #000 99%, #0000 101%) 0
+    calc(50% - 100px) / 51% 200px repeat-y,
+  radial-gradient(111.8px at -100px 50%, #0000 99%, #000 101%) 50px 50% /
+    calc(51% - 50px) 200px repeat-y,
+  radial-gradient(111.8px at calc(100% - 150px) 50%, #000 99%, #0000 101%) 100%
+    calc(50% - 100px) / 51% 200px repeat-y,
+  radial-gradient(111.8px at calc(100% + 100px) 50%, #0000 99%, #000 101%)
+    calc(100% - 50px) 50% / calc(51% - 50px) 200px repeat-y;
+
+:global(.wavy-mask-left-right) {
+  padding-inline: 5rem !important;
+  -webkit-mask: $wavy-mask-left-right;
+  mask: $wavy-mask-left-right;
 }

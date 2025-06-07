@@ -3,7 +3,7 @@
 import { serveUrl } from '@constants/media';
 import { tracks } from '@constants/tracks';
 import { MediaAPI } from '@service/routes';
-import { toastStore } from '@stores/toast';
+import { toastStore } from '@stores/toast.svelte';
 import { game } from '@stores/conexus.svelte';
 
 class MediaManager {
@@ -104,8 +104,8 @@ class MediaManager {
       let randomImage = images[Math.floor(Math.random() * images.length)];
       game.background_image = serveUrl(randomImage);
 
-      console.log('bg image is set')
-      console.log(game.background_image)
+      console.log('bg image is set');
+      console.log(game.background_image);
     }
   }
 

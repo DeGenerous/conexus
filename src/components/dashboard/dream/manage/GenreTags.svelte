@@ -3,7 +3,7 @@
   import { writable } from 'svelte/store';
 
   import { CoNexusApp } from '@lib/view';
-  import { availableGenres } from '@stores/view';
+  import { availableGenres } from '@stores/view.svelte';
 
   let viewApp = new CoNexusApp();
 
@@ -26,7 +26,7 @@
       prevGenres.filter((genre) => genre !== genreToRemove),
     );
 
-    const genre = $availableGenres.find((g: Genre) => g.name === genreToRemove);
+    const genre = availableGenres.find((g: Genre) => g.name === genreToRemove);
     if (genre) await handleGenreChange(genre.id, 'remove');
   }
 
@@ -35,7 +35,7 @@
       if (value && !$genres.includes(value)) {
         genres.update((prev) => [...prev, value]);
 
-        const genre = $availableGenres.find((g) => g.name === value);
+        const genre = availableGenres.find((g) => g.name === value);
         if (genre) handleGenreChange(genre.id, 'add');
       }
       return '';
@@ -46,7 +46,7 @@
     const genres_ = await viewApp.getGenres();
 
     if (genres_) {
-      availableGenres.set(genres_);
+      availableGenres.splice(0, availableGenres.length, ...genres_);
     }
   });
 </script>
@@ -84,7 +84,7 @@
   <div class="buttons-wrapper add-genre-container">
     <select class="selector" bind:value={$newGenre}>
       <option value="" hidden disabled>Select</option>
-      {#each $availableGenres.filter((g) => !$genres.includes(g.name)) as genre}
+      {#each availableGenres.filter((g) => !$genres.includes(g.name)) as genre}
         <option value={genre.name}>{genre.name}</option>
       {/each}
     </select>

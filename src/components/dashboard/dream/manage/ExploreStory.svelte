@@ -2,7 +2,8 @@
   import { onMount } from 'svelte';
   import { AdminApp } from '@lib/admin';
   import { GetCache, ALL_TOPICS_KEY } from '@constants/cache';
-  import openModal, { deleteStoryModal } from '@constants/modal';
+  import openModal from '@stores/modal.svelte';
+  import { deleteStoryModal } from '@constants/modal';
 
   import GenreTags from './GenreTags.svelte';
   import Media from './Media.svelte';

@@ -17,7 +17,7 @@ import {
   userCheck,
   accountError,
 } from '@stores/account';
-import { toastStore } from '@stores/toast';
+import { toastStore } from '@stores/toast.svelte';
 
 export class Account {
   private accountAPI: AccountAPI;

@@ -19,7 +19,8 @@
   import { checkUserState } from '@utils/route-guard';
   import { GetCache, SECTION_CATEGORIES_KEY } from '@constants/cache';
   import detectIOS from '@utils/ios-device';
-  import openModal, { deleteUnfinishedModal } from '@constants/modal';
+  import openModal from '@stores/modal.svelte';
+  import { deleteUnfinishedModal } from '@constants/modal';
 
   export let section: string;
   export let story_name: string;
@@ -180,7 +181,8 @@
               <button
                 class="button-glowing"
                 on:click={() =>
-                  topic && conexusGame.startGame(topic.name, topic.id, handleSetMedia)}
+                  topic &&
+                  conexusGame.startGame(topic.name, topic.id, handleSetMedia)}
               >
                 PLAY NOW
               </button>

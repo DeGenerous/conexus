@@ -105,7 +105,7 @@ type StoryNavigation = {
 type ConexusBG = {
   opacity: number;
   color: string;
-}
+};
 
 type Password = 'login' | 'signup' | 'edit' | 'reset';
 

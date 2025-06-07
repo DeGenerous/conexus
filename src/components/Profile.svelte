@@ -5,7 +5,7 @@
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import { Account } from '@lib/account';
   import { authenticated, referralCodes, accountError } from '@stores/account';
-  import { showProfile } from '@stores/modal';
+  import { showProfile } from '@stores/modal.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';
   import {
     regexpEmail,
@@ -17,7 +17,8 @@
     regexpSpecialCharCheck,
     regexpRestrictedCharsCheck,
   } from '@constants/regexp';
-  import openModal, { walletSwitchModal } from '@constants/modal';
+  import openModal from '@stores/modal.svelte';
+  import { walletSwitchModal } from '@constants/modal';
 
   import ProfileSVG from '@components/icons/Profile.svelte';
   import DoorSVG from '@components/icons/Door.svelte';

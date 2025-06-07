@@ -5,7 +5,7 @@
     sorting = false,
   }: {
     onClick: () => void;
-    disabled: boolean;
+    disabled?: boolean;
     sorting: boolean;
   } = $props();
 </script>

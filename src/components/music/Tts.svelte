@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { story, game }  from '@stores/conexus.svelte';
+  import { story, game } from '@stores/conexus.svelte';
   import sound from '@stores/volumes.svelte';
 
   let audio: HTMLAudioElement;
@@ -16,14 +16,14 @@
       tts = stepTTS;
       last_tts = stepTTS;
     }
-  })
-
-  $effect(() => {
-    if (sound.voice.volume) setVolume()
   });
 
   $effect(() => {
-    if (sound.tts_speed) adjustTtsSpeed()
+    if (sound.voice.volume) setVolume();
+  });
+
+  $effect(() => {
+    if (sound.tts_speed) adjustTtsSpeed();
   });
 
   $effect(() => {
@@ -35,7 +35,7 @@
       }
       sound.voice.restart = false;
     }
-  })
+  });
 
   const setVolume = () =>
     (audio.volume = sound.voice.muted ? 0 : sound.voice.volume);

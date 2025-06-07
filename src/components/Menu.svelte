@@ -2,7 +2,7 @@
   import DoorSVG from '@components/icons/Door.svelte';
   import { trailerURL } from '@constants/media';
   import { authenticated, userCheck } from '@stores/account';
-  import { showProfile } from '@stores/modal';
+  import { showProfile } from '@stores/modal.svelte';
 
   import Intro from './Intro.svelte';
 

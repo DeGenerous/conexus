@@ -1,12 +1,5 @@
 <script lang="ts">
-  import {
-    showModal,
-    secondButton,
-    secondButtonClass,
-    handleSecondButton,
-    handleCloseModal,
-    modalContent,
-  } from '@stores/modal.ts';
+  import { modal, showModal, resetModal } from '@stores/modal.svelte';
 
   let dialog: HTMLDialogElement;
 
@@ -20,9 +13,7 @@
   const closeDialog = () => {
     dialog.classList.add('dialog-fade-out'); // animation before close
     $showModal = false;
-    $secondButton = '';
-    $secondButtonClass = '';
-    $handleSecondButton = () => {};
+    resetModal();
     setTimeout(() => dialog?.close(), 300);
   };
 </script>
@@ -35,12 +26,14 @@
   on:click|self={closeDialog}
 >
   <div class="flex" on:click|stopPropagation>
-    {@html $modalContent}
+    {@html modal.content}
     <span class="flex">
-      <button class="red-btn" on:click={$handleCloseModal}> Close </button>
-      {#if $secondButton}
-        <button class={$secondButtonClass} on:click={$handleSecondButton}>
-          {$secondButton}
+      <button class="red-btn" on:click={() => ($showModal = false)}>
+        Close
+      </button>
+      {#if modal.button}
+        <button class={modal.buttonClass} on:click={modal.buttonFunc}>
+          {modal.button}
         </button>
       {/if}
     </span>

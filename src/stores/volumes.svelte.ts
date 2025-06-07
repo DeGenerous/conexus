@@ -34,7 +34,7 @@ const sound = $state<{
     volume: 1,
     restart: false,
   },
-  tts_speed: 1
-})
+  tts_speed: 1,
+});
 
 export default sound;

@@ -1,6 +1,6 @@
 <script>
   import dreamData from '@constants/dream';
-  import { tablePrompt } from '@stores/dream';
+  import { tablePrompt } from '@stores/dream.svelte';
 
   import Dropdown from './Dropdown.svelte';
   import Slider from './Slider.svelte';

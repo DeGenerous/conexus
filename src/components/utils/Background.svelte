@@ -10,7 +10,7 @@
   let lastBG: string | null = null;
 
   const cssURL = (imageLink: string): string => `url('${imageLink}')`;
-  const renderBG = (image: string) => bg.style.backgroundImage = image;
+  const renderBG = (image: string) => (bg.style.backgroundImage = image);
 
   const setBG = (imageLink: Nullable<string>) => {
     const formatted = imageLink

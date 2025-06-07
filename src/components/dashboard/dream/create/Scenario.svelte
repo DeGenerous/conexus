@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { tablePrompt } from '@stores/dream';
+  import { tablePrompt } from '@stores/dream.svelte';
   import Dropdown from './Dropdown.svelte';
 
   let newWinningScenario: string = '';

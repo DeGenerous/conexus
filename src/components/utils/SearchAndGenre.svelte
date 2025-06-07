@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { toastStore } from '@stores/toast';
+  import { toastStore } from '@stores/toast.svelte';
 
   import StoryTile from '@components/utils/StoryTile.svelte';
   import GenreSelect from '@components/utils/GenreSelect.svelte';

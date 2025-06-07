@@ -8,8 +8,8 @@ import {
 } from '@constants/cache';
 import { api_error } from '@errors/index';
 import { ViewAPI } from '@service/routes';
-import { toastStore } from '@stores/toast';
-import { availableGenres } from '@stores/view';
+import { toastStore } from '@stores/toast.svelte';
+import { availableGenres } from '@stores/view.svelte';
 import contracts from '@constants/contracts';
 
 export class CoNexusApp extends ViewAPI {
@@ -71,7 +71,7 @@ export class CoNexusApp extends ViewAPI {
 
     SetCache(GENRE_CACHE_KEY, data, GENRE_CACHE_TTL);
 
-    availableGenres.set(data); // Update store
+    availableGenres.splice(0, availableGenres.length, ...data); // Update state
 
     return data;
   }

@@ -9,7 +9,7 @@
     openPrompt,
     tablePrompt,
     clearAllData,
-  } from '@stores/dream';
+  } from '@stores/dream.svelte';
   import generatePrompt from '@utils/prompt';
 
   import Slider from './create/Slider.svelte';

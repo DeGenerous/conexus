@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { createRoot } from 'react-dom/client';
 
-  import { showProfile } from '@stores/modal';
+  import { showProfile } from '@stores/modal.svelte';
 
   import RainbowConnect from './Rainbow';
 

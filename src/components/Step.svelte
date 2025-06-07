@@ -21,10 +21,8 @@
     lightThemeFont,
     lightThemeStyling,
   } from '@constants/customization';
-  import openModal, {
-    resetSettingsModal,
-    gameRulesModal,
-  } from '@constants/modal';
+  import openModal from '@stores/modal.svelte';
+  import { resetSettingsModal, gameRulesModal } from '@constants/modal';
 
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
@@ -399,8 +397,7 @@ a11y_no_noninteractive_element_interactions -->
               <SelectorSVG
                 focused={(step.choice && step.choice - 1 === i) ||
                   focusedOption === i}
-                disabled={game.loading ||
-                  step.step !== $story?.maxStep}
+                disabled={game.loading || step.step !== $story?.maxStep}
                 hideForMobiles={true}
                 color={customFont.accentColor}
                 {selectorSize}

@@ -1,32 +1,3 @@
-import {
-  showModal,
-  secondButton,
-  handleSecondButton,
-  modalContent,
-  secondButtonClass,
-} from '@stores/modal';
-
-const openModal = (
-  content: string,
-  secondBtn: string = '',
-  btnFunc = () => {},
-  secondBtnClass: string = '',
-) => {
-  modalContent.set(content);
-
-  if (secondBtn) {
-    secondButton.set(secondBtn);
-    handleSecondButton.set(() => {
-      btnFunc();
-      showModal.set(false);
-    });
-
-    if (secondBtnClass) secondButtonClass.set(secondBtnClass);
-  }
-
-  showModal.set(true);
-};
-
 export const walletSwitchModal =
   '<h4>Are you sure you want to select this address as your main one?</h4>';
 
@@ -61,5 +32,3 @@ export const gameRulesModal = `
 
   <p>Use the control panel below to navigate and customize the experience. Tune the music, voice, and pacing to match your style — everything is adjustable. This journey bends to you.</p>
 `;
-
-export default openModal;

@@ -7,7 +7,7 @@ import {
 } from '@constants/cache';
 import { api_error } from '@errors/index';
 import { AdminAPI } from '@service/routes';
-import { toastStore } from '@stores/toast';
+import { toastStore } from '@stores/toast.svelte';
 
 export class AdminApp extends AdminAPI {
   // Constructor

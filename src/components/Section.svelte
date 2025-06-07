@@ -1,4 +1,4 @@
-<!-- PREVIOUS NAME: Category -->
+<!-- LEGACY SVELTE 4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
 

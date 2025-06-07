@@ -4,9 +4,9 @@
 
   const acct: Account = new Account();
 
-  let email: string = '';
+  let email = $state<string>('');
 
-  $: emailValidation = regexpEmail.test(email);
+  const emailValidation = $derived(regexpEmail.test(email));
 </script>
 
 <section class="container">
@@ -24,7 +24,7 @@
   {/if}
 
   <button
-    on:click={() => acct.forgotPassword(email)}
+    onclick={() => acct.forgotPassword(email)}
     disabled={!email || !emailValidation}
   >
     Send Verification Link

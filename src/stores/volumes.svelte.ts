@@ -18,3 +18,23 @@ export const muted = writable<{ voice: boolean; music: boolean }>({
   voice: false,
   music: true,
 });
+
+const sound = $state<{
+  music: VolumeControl;
+  voice: VolumeControl;
+  tts_speed: number;
+}>({
+  music: {
+    muted: false,
+    volume: 0.1,
+    restart: false,
+  },
+  voice: {
+    muted: false,
+    volume: 1,
+    restart: false,
+  },
+  tts_speed: 1
+})
+
+export default sound;

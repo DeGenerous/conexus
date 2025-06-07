@@ -2,7 +2,7 @@ import { ERROR_REQUIRED_TOKEN, ERROR_OUT_OF_CREDITS } from '@constants/error';
 import { api_error } from '@errors/index';
 import { Account } from '@lib/account';
 import { GameAPI } from '@service/routes';
-import { loading, story } from '@stores/conexus';
+import { story, game }  from '@stores/conexus.svelte';
 import { toastStore } from '@stores/toast';
 import { showModal, modalContent } from '@stores/modal';
 
@@ -81,7 +81,7 @@ export class CoNexusGame extends GameAPI {
     setMedia: (topic_id: number) => Promise<void>,
   ): Promise<void> {
     //TODO: change all story_name to topic_id
-    loading.set(true);
+    game.loading = true;
 
     const { data, error } = await this.start(story_name, topic_id);
 
@@ -113,7 +113,7 @@ export class CoNexusGame extends GameAPI {
       } else {
         toastStore.show('Error starting game', 'error');
       }
-      loading.set(false);
+      game.loading = false;
       return;
     }
 
@@ -132,7 +132,7 @@ export class CoNexusGame extends GameAPI {
     continuable: ContinuableStory,
     setMedia: (topic_id: number) => Promise<void>,
   ): Promise<void> {
-    loading.set(true);
+    game.loading = true;
 
     // Start new game
     const { data, error } = await this.continue(continuable.story_id);
@@ -143,7 +143,7 @@ export class CoNexusGame extends GameAPI {
       } else {
         toastStore.show('Error continuing game', 'error');
       }
-      loading.set(false);
+      game.loading = false;
       return;
     }
 
@@ -159,7 +159,7 @@ export class CoNexusGame extends GameAPI {
   // Respond to the current game step
   async nextStep(choice: number): Promise<void> {
     // set store loading to true
-    loading.set(true);
+    game.loading = true;
 
     // Start new game
     const { data, error } = await this.respond(this.step_data.id, choice);
@@ -190,6 +190,9 @@ export class CoNexusGame extends GameAPI {
       return;
     }
 
+    console.log('step is loaded')
+    console.log(this)
+
     this.step_data = data;
     story.set(this);
 
@@ -214,6 +217,9 @@ export class CoNexusGame extends GameAPI {
     this.step_data.image = data.image;
     this.step_data.image_type = data.type;
 
+    console.log('loaded step image (#loadGameStepImage)')
+    console.log(this)
+
     story.set(this);
   }
 
@@ -232,6 +238,9 @@ export class CoNexusGame extends GameAPI {
 
     this.step_data.image = data.image;
     this.step_data.image_type = data.type;
+
+    console.log('image is ready (#image)')
+    console.log(this)
 
     story.set(this);
   }
@@ -255,6 +264,9 @@ export class CoNexusGame extends GameAPI {
       if ('image' in data) {
         this.step_data.image = data.image;
         this.step_data.image_type = data.type;
+
+        console.log('image is generated (#generateImage)')
+        console.log(this)
 
         story.set(this);
       }
@@ -285,6 +297,9 @@ export class CoNexusGame extends GameAPI {
         this.step_data.image = data.image;
         this.step_data.image_type = data.type;
 
+        console.log('image status is generated (#generateImageStatus)')
+        console.log(this)
+
         story.set(this);
         return;
       }
@@ -307,6 +322,9 @@ export class CoNexusGame extends GameAPI {
       return;
     }
 
+    console.log('tts is ready')
+    console.log(this)
+
     this.step_data.tts = data;
     story.set(this);
   }
@@ -317,8 +335,11 @@ export class CoNexusGame extends GameAPI {
     this.step_data = data;
     this.maxStep = Math.max(this.maxStep, data.step);
 
+    console.log('set step data')
+    console.log(this)
+
     story.set(this);
-    loading.set(false);
+    game.loading = false;
 
     await Promise.all([this.#generateImage(), this.#textToSpeech()]);
   }

@@ -13,21 +13,22 @@
     regexpRestrictedCharsCheck,
   } from '@constants/regexp';
 
-  export let token: string;
+  let { token }: { token: string } = $props();
 
   let acct: Account = new Account();
 
-  let email: string = '';
-  let password: string = '';
-  let confirmPassword: string = '';
+  let email = $state<string>('');
+  let password = $state<string>('');
+  let confirmPassword = $state<string>('');
 
-  $: validation =
+  let emailValidation = $derived(regexpEmail.test(email));
+
+  let validation = $derived(
     email &&
-    regexpPasswordValidation.test(password) &&
-    password === confirmPassword &&
-    emailValidation;
-
-  $: emailValidation = regexpEmail.test(email);
+      regexpPasswordValidation.test(password) &&
+      password === confirmPassword &&
+      emailValidation,
+  );
 </script>
 
 <form class="container">
@@ -99,8 +100,10 @@
 
   <button
     type="submit"
-    on:click|preventDefault={() =>
-      acct.resetPassword({ email, password, token })}
+    onclick={(event: Event) => {
+      event.preventDefault();
+      acct.resetPassword({ email, password, token });
+    }}
     disabled={!validation}
   >
     Reset Password

@@ -1,3 +1,4 @@
+<!-- LEGACY SVELTE 4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
 
@@ -13,7 +14,7 @@
   import { contractGetter } from '@constants/contracts';
   import MediaManager from '@lib/media';
   import { CoNexusGame } from '@lib/story';
-  import { loading, story } from '@stores/conexus';
+  import { story, game } from '@stores/conexus.svelte';
   import { prevStory, nextStory } from '@stores/navigation.svelte';
   import { checkUserState } from '@utils/route-guard';
   import { GetCache, SECTION_CATEGORIES_KEY } from '@constants/cache';
@@ -25,7 +26,7 @@
 
   let scroll: number;
 
-  const game: CoNexusGame = new CoNexusGame();
+  const conexusGame: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
 
   const handleSetMedia = async (topic_id: number) => {
@@ -66,9 +67,9 @@
 
   async function DeleteStory(story_id: any) {
     try {
-      await game.delete(story_id);
+      await conexusGame.delete(story_id);
       deletedStories[deletedStories.length] = story_id; // hide deleted story from user
-      await game.storyContinuables(story_name!).then((continuables) => {
+      await conexusGame.storyContinuables(story_name!).then((continuables) => {
         // Hide CINTINUE SHAPING section if no unfinished stories left
         if (continuables.length == 0) noUnfinishedStoriesLeft = true;
       });
@@ -102,7 +103,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $story === null}
-  {#await game.getTopic(section, story_name)}
+  {#await conexusGame.getTopic(section, story_name)}
     <div class="story-wrapper flex">
       <section class="story container">
         <span class="fake-img loading-animation round-8"></span>
@@ -136,7 +137,10 @@
         ].topic_name;
     })()}
 
-    <div class="story-wrapper flex" style:cursor={$loading ? 'progress' : ''}>
+    <div
+      class="story-wrapper flex"
+      style:cursor={game.loading ? 'progress' : ''}
+    >
       <section class="story container">
         {#if topic?.video_file_id}
           <video
@@ -166,7 +170,7 @@
           {/if}
 
           <span class="buttons flex-row">
-            {#if $loading}
+            {#if game.loading}
               <span class="flex-row gap-8">
                 <LoadingSVG />
                 <button disabled>LOADING</button>
@@ -176,7 +180,7 @@
               <button
                 class="button-glowing"
                 on:click={() =>
-                  topic && game.startGame(topic.name, topic.id, handleSetMedia)}
+                  topic && conexusGame.startGame(topic.name, topic.id, handleSetMedia)}
               >
                 PLAY NOW
               </button>
@@ -185,7 +189,7 @@
         </div>
       </section>
 
-      {#await game.storyContinuables(story_name!) then continuables: ContinuableStory[]}
+      {#await conexusGame.storyContinuables(story_name!) then continuables: ContinuableStory[]}
         {#if continuables.length > 0 && !noUnfinishedStoriesLeft}
           <section
             class="unfinished-stories transparent-container vert-scrollbar"
@@ -197,7 +201,7 @@
               {#if !deletedStories.includes(continuable.story_id)}
                 <div class="flex-row pad-8 round" role="button" tabindex="0">
                   <DeleteSVG
-                    disabled={$loading}
+                    disabled={game.loading}
                     onClick={() =>
                       openModal(
                         deleteUnfinishedModal,
@@ -210,9 +214,9 @@
                     <p class="story-id">{continuable.story_id.split('-')[0]}</p>
                   </span>
                   <PlaySVG
-                    disabled={$loading}
+                    disabled={game.loading}
                     onClick={() =>
-                      game.continueGame(continuable, handleSetMedia)}
+                      conexusGame.continueGame(continuable, handleSetMedia)}
                   />
                 </div>
               {/if}

@@ -1,3 +1,4 @@
+<!-- LEGACY SVELTE 4 SYNTAX -->
 <script>
   import { onMount } from 'svelte';
   import { createRoot } from 'react-dom/client';

@@ -1,8 +1,8 @@
+<!-- LEGACY SVELTE 4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { fullscreen, story, loading } from '@stores/conexus';
-  import { background_volume, tts_volume } from '@stores/volumes';
+  import { story, game } from '@stores/conexus.svelte';
   import { bgPictureOpacity, bgColor } from '@stores/background';
   import {
     GetCache,
@@ -152,11 +152,11 @@
     if (event.repeat) return;
     switch (event.key) {
       case 'f': {
-        $fullscreen = !$fullscreen;
+        game.fullscreen = !game.fullscreen;
         break;
       }
       case 'ArrowLeft': {
-        if ($loading) return;
+        if (game.loading) return;
         if (step.step !== 1) {
           // load PREV step and blur focused button if it is
           $story?.loadGameStep(step.step - 1);
@@ -166,7 +166,7 @@
         break;
       }
       case 'ArrowRight': {
-        if ($loading) return;
+        if (game.loading) return;
         if (step.step !== $story?.maxStep) {
           // load NEXT step and blur focused button if it is
           $story?.loadGameStep(step.step + 1);
@@ -176,7 +176,7 @@
         break;
       }
       case 'ArrowUp': {
-        if (step.step !== $story?.maxStep || $loading) return;
+        if (step.step !== $story?.maxStep || game.loading) return;
         event.preventDefault(); // prevent scroll
         // get PREV (TOP) option ID if step is not last
         if ($story?.step_data?.end) activeOptionNumber = 0;
@@ -188,7 +188,7 @@
         break;
       }
       case 'ArrowDown': {
-        if (step.step !== $story?.maxStep || $loading) return;
+        if (step.step !== $story?.maxStep || game.loading) return;
         event.preventDefault(); // prevent scroll
         // get NEXT (BOTTOM) option ID if step is not last
         if ($story?.step_data?.end) activeOptionNumber = 0;
@@ -376,19 +376,19 @@ a11y_no_noninteractive_element_interactions -->
             class="void-btn flex-row gap-8"
             class:active-option={step.choice && step.choice - 1 === i}
             style:font-family={customFont.family}
-            disabled={$loading || step.step !== $story?.maxStep}
+            disabled={game.loading || step.step !== $story?.maxStep}
             on:click={() => {
               $story?.nextStep(i + 1);
               if (activeOptionNumber !== 0) activeOptionNumber = 0;
             }}
             on:pointerover={() => {
-              if (!$loading && step.step == $story?.maxStep) {
+              if (!game.loading && step.step == $story?.maxStep) {
                 focusedOption = i;
               }
               blurActiveBtn();
             }}
             on:pointerout={() => {
-              if (!$loading && step.step == $story?.maxStep) {
+              if (!game.loading && step.step == $story?.maxStep) {
                 focusedOption = null;
               }
             }}
@@ -399,7 +399,8 @@ a11y_no_noninteractive_element_interactions -->
               <SelectorSVG
                 focused={(step.choice && step.choice - 1 === i) ||
                   focusedOption === i}
-                disabled={$loading || step.step !== $story?.maxStep}
+                disabled={game.loading ||
+                  step.step !== $story?.maxStep}
                 hideForMobiles={true}
                 color={customFont.accentColor}
                 {selectorSize}
@@ -512,8 +513,8 @@ a11y_no_noninteractive_element_interactions -->
       on:pointerleave={hideControlsAfterDelay}
       on:click|stopPropagation
     >
-      <Slider type="music" volume={background_volume} />
-      <Slider type="voice" volume={tts_volume} restartable />
+      <Slider type="music" />
+      <Slider type="voice" />
     </section>
 
     <!-- STYLING CONTROLLER -->

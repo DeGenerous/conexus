@@ -2,11 +2,19 @@
   import { Account } from '@lib/account';
   import { toastStore } from '@stores/toast';
   import { ClearCache } from '@constants/cache';
+
   import DiscordSVG from '@components/icons/Discord.svelte';
 
-  let code: string = '';
-
   let acct: Account = new Account();
+
+  let code = $state<string>('');
+  let referralCodeValid = $state<boolean>(false);
+  let termsAccepted = $state<boolean>(false);
+
+  $effect(() => {
+    if (code.length === 16) validateReferralCode();
+    else if (code.length < 16) referralCodeValid = false;
+  });
 
   const useReferralCode = async () => {
     try {
@@ -20,9 +28,6 @@
     }
   };
 
-  $: if (code.length === 16) validateReferralCode();
-  $: if (code.length < 16) referralCodeValid = false;
-  let referralCodeValid = false;
   async function validateReferralCode() {
     const referralObject: ReferralCode | null =
       await acct.validateReferralCode(code);
@@ -32,8 +37,6 @@
       referralCodeValid = false;
     }
   }
-
-  let termsAccepted: boolean = false;
 </script>
 
 <div class="container">
@@ -69,7 +72,7 @@
     <input
       type="checkbox"
       id="terms"
-      on:change={(event: any) => {
+      onchange={(event: any) => {
         termsAccepted = event.target?.checked;
       }}
     />
@@ -88,7 +91,7 @@
   </div>
 
   <button
-    on:click={useReferralCode}
+    onclick={useReferralCode}
     disabled={!referralCodeValid || !termsAccepted}
   >
     Use Referral Code

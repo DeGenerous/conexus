@@ -1,7 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import type { Writable } from 'svelte/store';
-
   import {
     GetCache,
     SetCache,
@@ -9,64 +6,60 @@
     VOLUME_KEY,
     TTS_SPEED_KEY,
   } from '@constants/cache';
-  import { tts_speed, speed_values, muted } from '@stores/volumes';
+  import sound, { speed_values } from '@stores/volumes.svelte';
 
   import VoiceSVG from '@components/icons/Voice.svelte';
   import MusicSVG from '@components/icons/Music.svelte';
   import RestartSVG from '@components/icons/Restart.svelte';
 
-  export let type: 'voice' | 'music';
-  export let volume: Writable<VolumeControl>;
-  export let restartable: boolean = false;
+  let { type }: { type: 'voice' | 'music' } = $props();
 
   let allMuted: boolean = false; // to handle mute with 'M' key
 
-  $: inputValue = !$volume.muted ? $volume.volume : 0;
-  $: disabledInput = $volume.muted;
+  let inputValue = $derived(!sound[type].muted ? sound[type].volume : 0);
+  let disabledInput = $derived(sound[type].muted);
 
-  $: $muted[type] = $volume.muted; // sound icon styling
-
-  onMount(() => {
+  $effect(() => {
     const storedValue = GetCache<VolumeControl>(VOLUME_KEY(type));
     if (storedValue) {
-      $volume = storedValue;
+      sound[type] = storedValue;
 
       const storedTtsSpeed = GetCache(TTS_SPEED_KEY);
-      if (storedTtsSpeed) $tts_speed = Number(storedTtsSpeed);
+      if (storedTtsSpeed) sound.tts_speed = Number(storedTtsSpeed);
     }
   });
 
   const mute = () => {
-    $volume.muted = !$volume.muted;
-    SetCache(VOLUME_KEY(type), $volume, ONE_YEAR_TTL);
+    sound[type].muted = !sound[type].muted;
+    SetCache(VOLUME_KEY(type), sound[type], ONE_YEAR_TTL);
   };
 
   // Toggle mute for both volumes with 'M' key
   const muteWithKey = (event: KeyboardEvent) => {
     if (event.repeat) return;
     if (event.key !== 'm') return;
-    $volume.muted = allMuted ? false : true;
+    sound[type].muted = allMuted ? false : true;
     allMuted = !allMuted;
-    SetCache(VOLUME_KEY(type), $volume, ONE_YEAR_TTL);
+    SetCache(VOLUME_KEY(type), sound[type], ONE_YEAR_TTL);
   };
 
   const update = () => {
-    volume.set({
+    sound[type] = {
       muted: false,
       volume: inputValue,
       restart: false,
-    });
-    SetCache(VOLUME_KEY(type), $volume, ONE_YEAR_TTL);
+    };
+    SetCache(VOLUME_KEY(type), sound[type], ONE_YEAR_TTL);
   };
 
   const restart = () => {
-    $volume.restart = true;
+    sound[type].restart = true;
   };
 
   const adjustTtsSpeed = () => {
-    const speedIndex = speed_values.indexOf($tts_speed);
-    $tts_speed = speed_values[(speedIndex + 1) % speed_values.length];
-    SetCache(TTS_SPEED_KEY, $tts_speed, ONE_YEAR_TTL);
+    const speedIndex = speed_values.indexOf(sound.tts_speed);
+    sound.tts_speed = speed_values[(speedIndex + 1) % speed_values.length];
+    SetCache(TTS_SPEED_KEY, sound.tts_speed, ONE_YEAR_TTL);
   };
 </script>
 
@@ -86,25 +79,25 @@
       max="1"
       step="0.01"
       bind:value={inputValue}
-      on:change={update}
+      onchange={update}
       disabled={disabledInput}
     />
     <p>{(inputValue * 100).toFixed()}%</p>
   </span>
 
   <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
-  {#if restartable}
+  {#if type === 'voice'}
     <RestartSVG disabled={disabledInput} onClick={restart} />
 
     <span class="voice-speed flex-row gap-8">
       <button
         id="voice-speed"
         class="void-btn min-size-btn flex-row pad-8 round-8 dark-glowing shad-inset"
-        on:click={adjustTtsSpeed}
+        onclick={adjustTtsSpeed}
         disabled={disabledInput}
       >
         <p>SPEED</p>
-        x{$tts_speed.toFixed(2)}
+        x{sound.tts_speed.toFixed(2)}
       </button>
     </span>
   {/if}

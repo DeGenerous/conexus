@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { muted } from '@stores/volumes';
+  import sound from '@stores/volumes.svelte';
 
   let {
     onClick = () => {},
@@ -24,11 +24,11 @@
     stroke-linecap="round"
     stroke-linejoin="round"
   >
-    {#if $muted.voice && $muted.music}
+    {#if sound.voice.muted && sound.music.muted}
       <path
         d="M16,14.5l5-5m-5,0,5,5M7,9H4a1,1,0,0,0-1,1v4a1,1,0,0,0,1,1H7l4,4V5Z"
       />
-    {:else if $muted.voice || $muted.music}
+    {:else if sound.voice.muted || sound.music.muted}
       <path
         d="M15.54,16.54a1,1,0,0,1-.71-.3,1,1,0,0,1,0-1.41,4,4,0,0,0,0-5.66,1,1,0,0,1,1.41-1.41,6,6,0,0,1,0,8.48A1,1,0,0,1,15.54,16.54Z"
         stroke="none"

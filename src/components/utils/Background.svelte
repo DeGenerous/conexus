@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
 
   import { bgPicture, bgPictureOpacity, bgColor } from '@stores/background.ts';
-  import { story, background_image } from '@stores/conexus';
+  import { story, game } from '@stores/conexus.svelte';
   import { pcBG, mobileBG, defaultBG } from '@constants/media';
 
   export let storyName: Nullable<string> = null;
@@ -26,7 +26,8 @@
   $: if (storyName && bg) $bgPicture = cssURL(defaultBG);
 
   // Set to uploaded story background if it is
-  $: if ($background_image) $bgPicture = cssURL($background_image);
+  $: if (game.background_image)
+    $bgPicture = cssURL(game.background_image);
 
   // Reactive update of background-image on $bgPicture change
   $: if ($bgPicture && bg) bg.style.backgroundImage = $bgPicture;

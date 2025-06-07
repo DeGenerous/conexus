@@ -1,14 +1,10 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
   import { checkUserState } from '@utils/route-guard';
-  import GeneralInfo from './dashboard/GeneralInfo.svelte';
-  import StoryMetrics from './dashboard/StoryMetrics.svelte';
 
-  let loading = true;
+  let loading = $state<boolean>(true);
 
-  onMount(async () => {
-    await checkUserState('/dashboard', true);
+  $effect(() => {
+    checkUserState('/dashboard', true);
     loading = false;
   });
 </script>
@@ -16,9 +12,7 @@
 {#if loading}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {:else}
-  <section class="container-wrapper">
-    <GeneralInfo />
-
-    <StoryMetrics />
+  <section class="container">
+    <h4 class="text-glowing">This part of the realm is still unwritten</h4>
   </section>
 {/if}

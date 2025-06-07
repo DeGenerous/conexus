@@ -255,7 +255,7 @@ a11y-no-static-element-interactions-->
             </div>
             {#if !user.email_confirmed && !user.is_oauth}
               <p class="validation">
-                Please check your inbox and confirm email.
+                Please check your inbox and confirm email
               </p>
             {/if}
             <div class="input-container">

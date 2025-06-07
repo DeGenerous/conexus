@@ -1,16 +1,16 @@
 <script lang="ts">
   let {
-    onClick = () => {},
+    onclick = () => {},
     svgFocus = false,
   }: {
-    onClick: () => void;
+    onclick: () => void;
     svgFocus: boolean;
   } = $props();
 </script>
 
 <button
   class="flex void-btn"
-  onclick={onClick}
+  {onclick}
   class:focused={svgFocus}
   aria-label="Search"
 >

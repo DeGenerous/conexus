@@ -2,10 +2,10 @@
   import sound from '@stores/volumes.svelte';
 
   let {
-    onClick = () => {},
+    onclick = () => {},
     active = false,
   }: {
-    onClick: () => void;
+    onclick: () => void;
     active: boolean;
   } = $props();
 </script>
@@ -14,7 +14,7 @@
   id="sound"
   class="void-btn flex"
   class:active
-  onclick={onClick}
+  {onclick}
   aria-label="Back"
 >
   <svg

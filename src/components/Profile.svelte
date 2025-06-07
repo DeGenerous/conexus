@@ -204,7 +204,7 @@
   };
 </script>
 
-<ProfileSVG onClick={() => ($showProfile = true)} />
+<ProfileSVG onclick={() => ($showProfile = true)} />
 
 <!-- svelte-ignore
 a11y-click-events-have-key-events
@@ -221,12 +221,12 @@ a11y-no-static-element-interactions-->
         <DoorSVG
           state="outside"
           text="Sign out"
-          onClick={() => account.signout()}
+          onclick={() => account.signout()}
         />
       {:else}
-        <QuitSVG onClick={handleBackArrow} />
+        <QuitSVG onclick={handleBackArrow} />
       {/if}
-      <CloseSVG onClick={() => ($showProfile = false)} />
+      <CloseSVG onclick={() => ($showProfile = false)} />
     </header>
 
     <!-- USER PROFILE -->
@@ -604,7 +604,7 @@ a11y-no-static-element-interactions-->
                 state="inside"
                 text="Sign in"
                 disabled={!(loginMail && loginPassword)}
-                onClick={() =>
+                onclick={() =>
                   account.signin({
                     email: loginMail,
                     password: loginPassword,

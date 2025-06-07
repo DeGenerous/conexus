@@ -1,9 +1,9 @@
 <script lang="ts">
   let {
-    onClick = () => {},
+    onclick = () => {},
     voidBtn = false,
   }: {
-    onClick: () => void;
+    onclick: () => void;
     voidBtn?: boolean;
   } = $props();
 </script>
@@ -11,7 +11,7 @@
 <button
   class="flex"
   class:void-btn={voidBtn}
-  onclick={onClick}
+  {onclick}
   aria-label="Back"
 >
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">

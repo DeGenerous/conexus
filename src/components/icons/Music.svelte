@@ -1,9 +1,9 @@
 <script lang="ts">
   let {
-    onClick = () => {},
+    onclick = () => {},
     muted = false,
   }: {
-    onClick: () => void;
+    onclick: () => void;
     muted: boolean;
   } = $props();
 </script>
@@ -11,7 +11,7 @@
 <button
   class="void-btn flex-row"
   class:muted
-  onclick={onClick}
+  {onclick}
   aria-label="Adjust music"
 >
   <p>MUSIC</p>

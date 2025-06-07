@@ -23,7 +23,7 @@
   <DoorSVG
     state="inside"
     text="play now"
-    onClick={() => {
+    onclick={() => {
       $showProfile = true;
     }}
     glow={true}

@@ -69,9 +69,9 @@
 
 <div class="transparent-container">
   {#if type === 'voice'}
-    <VoiceSVG muted={disabledInput} onClick={mute} />
+    <VoiceSVG muted={disabledInput} onclick={mute} />
   {:else if type === 'music'}
-    <MusicSVG muted={disabledInput} onClick={mute} />
+    <MusicSVG muted={disabledInput} onclick={mute} />
   {/if}
 
   <span class="flex-row pad-8 round-8 gap-8 dark-glowing shad-inset">
@@ -89,7 +89,7 @@
 
   <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
   {#if type === 'voice'}
-    <RestartSVG disabled={disabledInput} onClick={restart} />
+    <RestartSVG disabled={disabledInput} onclick={restart} />
 
     <span class="voice-speed flex-row gap-8">
       <button

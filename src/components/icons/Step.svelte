@@ -1,11 +1,11 @@
 <script lang="ts">
   let {
-    onClick = () => {},
+    onclick = () => {},
     text = '',
     active = false,
     control = true,
   }: {
-    onClick: () => void;
+    onclick: () => void;
     text: string;
     active: boolean;
     control?: boolean;
@@ -14,7 +14,7 @@
 
 <button
   id={control ? 'step-control' : ''}
-  onclick={onClick}
+  {onclick}
   class="void-btn flex"
   class:active
   aria-label="Back"

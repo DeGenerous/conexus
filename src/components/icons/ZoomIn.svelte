@@ -1,10 +1,10 @@
 <script lang="ts">
   let {
-    onClick = () => {},
+    onclick = () => {},
     active = false,
     control = false,
   }: {
-    onClick: () => void;
+    onclick: () => void;
     active: boolean;
     control: boolean;
   } = $props();
@@ -14,7 +14,7 @@
   id={control ? 'zoom-in-control' : ''}
   class="void-btn flex"
   class:active
-  onclick={onClick}
+  {onclick}
   aria-label="Zoom in"
 >
   <svg

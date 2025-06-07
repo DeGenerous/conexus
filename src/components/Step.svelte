@@ -418,14 +418,14 @@ a11y_no_noninteractive_element_interactions -->
       on:click|stopPropagation
     >
       <span class="flex-row">
-        <QuitSVG onClick={() => window.location.reload()} voidBtn={true} />
+        <QuitSVG onclick={() => window.location.reload()} voidBtn={true} />
         <h5 class="title">{story_name.trim()}</h5>
       </span>
       <div class="controls flex-row">
         <div class="scale-icon">
           <label class="pc-only" for="zoom-in-control">Scale</label>
           <ZoomInSVG
-            onClick={() => switchController('scale')}
+            onclick={() => switchController('scale')}
             active={activeControlPanel == 'scale'}
             control={true}
           />
@@ -433,7 +433,7 @@ a11y_no_noninteractive_element_interactions -->
         <div>
           <label class:pc-only={!detectIOS()} for="filled-eye">Styling</label>
           <FilledEyeSVG
-            onClick={() => switchController('styling')}
+            onclick={() => switchController('styling')}
             active={activeControlPanel == 'styling'}
           />
         </div>
@@ -441,7 +441,7 @@ a11y_no_noninteractive_element_interactions -->
           <div>
             <label class="pc-only" for="sound">Sound</label>
             <SoundSVG
-              onClick={() => switchController('sound')}
+              onclick={() => switchController('sound')}
               active={activeControlPanel == 'sound'}
             />
           </div>
@@ -450,7 +450,7 @@ a11y_no_noninteractive_element_interactions -->
           <label class:pc-only={!detectIOS()} for="step-control">Step</label>
           <StepSVG
             text={`${step.step < 10 ? '0' : ''}${step.step}`}
-            onClick={() => switchController('step')}
+            onclick={() => switchController('step')}
             active={activeControlPanel == 'step'}
             control={true}
           />
@@ -477,7 +477,7 @@ a11y_no_noninteractive_element_interactions -->
     >
       <div class="transparent-container flex-row">
         <SwitchSVG
-          onClick={() => $story?.loadGameStep(step.step - 1)}
+          onclick={() => $story?.loadGameStep(step.step - 1)}
           disabled={step.step === 1}
         />
         <span class="flex gap-8">
@@ -486,7 +486,7 @@ a11y_no_noninteractive_element_interactions -->
           <h5>Step {step.step}</h5>
         </span>
         <SwitchSVG
-          onClick={() => $story?.loadGameStep(step.step + 1)}
+          onclick={() => $story?.loadGameStep(step.step + 1)}
           disabled={step.step === $story?.maxStep}
           right={true}
         />
@@ -495,7 +495,7 @@ a11y_no_noninteractive_element_interactions -->
         {#each Array($story!.maxStep) as _, index}
           <StepSVG
             text={String(index + 1)}
-            onClick={() => $story?.loadGameStep(index + 1)}
+            onclick={() => $story?.loadGameStep(index + 1)}
             active={step.step == index + 1}
           />
         {/each}
@@ -661,7 +661,7 @@ a11y_no_noninteractive_element_interactions -->
       <span class="reset-wrapper flex-row">
         <ResetSVG
           text="Reset to light theme"
-          onClick={() =>
+          onclick={() =>
             openModal(
               resetSettingsModal(activeControlPanel),
               'Apply default light theme',
@@ -673,7 +673,7 @@ a11y_no_noninteractive_element_interactions -->
         />
         <ResetSVG
           text="Reset to dark theme"
-          onClick={() =>
+          onclick={() =>
             openModal(
               resetSettingsModal(activeControlPanel),
               'Apply default dark theme',
@@ -760,7 +760,7 @@ a11y_no_noninteractive_element_interactions -->
       <span class="reset-wrapper flex-row">
         <ResetSVG
           text="Reset to default scale"
-          onClick={() =>
+          onclick={() =>
             openModal(
               resetSettingsModal(activeControlPanel),
               'Reset scale',

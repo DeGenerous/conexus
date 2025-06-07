@@ -1,11 +1,11 @@
 <script lang="ts">
-  let { onClick = () => {} }: { onClick: () => void } = $props();
+  let { onclick = () => {} }: { onclick: () => void } = $props();
 </script>
 
 <button
   class="top-right-icon void-btn flex fade-in"
   aria-label="Profile"
-  onclick={onClick}
+  {onclick}
 >
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
     <defs>

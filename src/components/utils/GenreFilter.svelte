@@ -17,7 +17,7 @@
 
 <div class="flex-row blur pad-8 round-8 shad" class:active={activeGenre}>
   {#if activeGenre}
-    <ResetSVG onClick={resetGenres} />
+    <ResetSVG onclick={resetGenres} />
   {:else}
     <FilterSVG />
   {/if}

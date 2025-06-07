@@ -1,9 +1,9 @@
 <script lang="ts">
   let {
-    onClick = () => {},
+    onclick = () => {},
     disabled = false,
   }: {
-    onClick: () => void;
+    onclick: () => void;
     disabled: boolean;
   } = $props();
 
@@ -13,7 +13,7 @@
 <button
   class="void-btn flex-row"
   class:muted={disabled}
-  onclick={onClick}
+  {onclick}
   onpointerover={() => (svgFocus = true)}
   onpointerout={() => (svgFocus = false)}
   aria-label="Replay"

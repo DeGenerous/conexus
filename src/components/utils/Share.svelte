@@ -6,7 +6,7 @@
   let copySvgFocus = $state<Nullable<string | boolean>>(null);
   let copyBtn: HTMLButtonElement;
 
-  const handleOptionClick = async (option: string) => {
+  const handleOptionclick = async (option: string) => {
     const message = `Check out the AI story I'm playing on CoNexus!\n${window.location.href}`;
 
     switch (option) {
@@ -37,7 +37,7 @@
   >
     <button
       class="min-size-btn void-btn flex"
-      onclick={() => handleOptionClick('discord')}
+      onclick={() => handleOptionclick('discord')}
       aria-label="Share on Discord"
       {disabled}
     >
@@ -45,7 +45,7 @@
     </button>
     <button
       class="min-size-btn void-btn flex"
-      onclick={() => handleOptionClick('twitter')}
+      onclick={() => handleOptionclick('twitter')}
       aria-label="Share on X"
       {disabled}
     >
@@ -53,7 +53,7 @@
     </button>
     <button
       class="min-size-btn void-btn flex"
-      onclick={() => handleOptionClick('copy')}
+      onclick={() => handleOptionclick('copy')}
       onpointerover={() => {
         if (!disabled) copySvgFocus = true;
       }}

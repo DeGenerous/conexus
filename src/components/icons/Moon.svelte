@@ -1,8 +1,8 @@
 <script lang="ts">
-  let { onClick = () => {} }: { onClick: () => void } = $props();
+  let { onclick = () => {} }: { onclick: () => void } = $props();
 </script>
 
-<button class="void-btn flex" onclick={onClick} aria-label="Zoom in">
+<button class="void-btn flex" {onclick} aria-label="Zoom in">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 425.23 425.23">
     <polygon
       points="315.248,67.185 328.104,103.387 338.98,66.544 377.383,65.504 345.703,43.772 356.581,6.93 326.125,30.344 

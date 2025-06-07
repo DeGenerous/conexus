@@ -198,7 +198,7 @@
     <h3>Filtered Stories</h3>
     <SortingSVG
       sorting={isSorting}
-      onClick={() => {
+      onclick={() => {
         isSorting = !isSorting;
         handleSorting();
       }}

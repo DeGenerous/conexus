@@ -1,9 +1,9 @@
 <script lang="ts">
   let {
-    onClick = () => {},
+    onclick = () => {},
     active = false,
   }: {
-    onClick: () => void;
+    onclick: () => void;
     active: boolean;
   } = $props();
 </script>
@@ -12,7 +12,7 @@
   id="filled-eye"
   class="void-btn flex"
   class:active
-  onclick={onClick}
+  {onclick}
   aria-label="Customization"
 >
   <svg

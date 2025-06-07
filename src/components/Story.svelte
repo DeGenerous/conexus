@@ -204,7 +204,7 @@
                 <div class="flex-row pad-8 round" role="button" tabindex="0">
                   <DeleteSVG
                     disabled={game.loading}
-                    onClick={() =>
+                    onclick={() =>
                       openModal(
                         deleteUnfinishedModal,
                         `Delete story: ${continuable.category}`,
@@ -217,7 +217,7 @@
                   </span>
                   <PlaySVG
                     disabled={game.loading}
-                    onClick={() =>
+                    onclick={() =>
                       conexusGame.continueGame(continuable, handleSetMedia)}
                   />
                 </div>

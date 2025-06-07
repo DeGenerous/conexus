@@ -1,9 +1,9 @@
 <script lang="ts">
   let {
-    onClick = () => {},
+    onclick = () => {},
     muted = false,
   }: {
-    onClick: () => void;
+    onclick: () => void;
     muted: boolean;
   } = $props();
 
@@ -13,7 +13,7 @@
 <button
   class="void-btn flex-row"
   class:muted
-  onclick={onClick}
+  {onclick}
   onpointerover={() => {
     if (!muted) svgFocus = true;
   }}

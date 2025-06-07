@@ -1,10 +1,10 @@
 <script lang="ts">
   let {
-    onClick = () => {},
+    onclick = () => {},
     disabled = false,
     right = false,
   }: {
-    onClick: () => void;
+    onclick: () => void;
     disabled: boolean;
     right?: boolean;
   } = $props();
@@ -13,7 +13,7 @@
 <button
   class="void-btn flex"
   class:right
-  onclick={onClick}
+  {onclick}
   aria-label="Switch"
   {disabled}
 >

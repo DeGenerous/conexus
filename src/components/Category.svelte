@@ -124,7 +124,7 @@
   <SortingSVG
     sorting={isSorting}
     disabled={!category || !section}
-    onClick={() => {
+    onclick={() => {
       isSorting = !isSorting;
       handleSorting();
     }}

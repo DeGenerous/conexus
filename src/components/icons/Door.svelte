@@ -1,13 +1,13 @@
 <script lang="ts">
   let {
     state,
-    onClick = () => {},
+    onclick = () => {},
     disabled = false,
     text = '',
     glow = false,
   }: {
     state: 'inside' | 'outside';
-    onClick: () => void | Promise<void>;
+    onclick: () => void | Promise<void>;
     disabled?: boolean;
     text: string;
     glow?: boolean;
@@ -18,7 +18,7 @@
   class="blur"
   class:button-glowing={glow}
   type="button"
-  onclick={onClick}
+  {onclick}
   {disabled}
 >
   {#if state === 'outside'}

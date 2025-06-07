@@ -27,7 +27,7 @@
   {#if isSearching}
     <LoadingSVG />
   {:else}
-    <SearchSVG onClick={handleSearchFocus} {svgFocus} />
+    <SearchSVG onclick={handleSearchFocus} {svgFocus} />
   {/if}
   <input
     bind:this={searchInput}

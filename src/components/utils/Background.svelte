@@ -7,10 +7,9 @@
   let scroll = $state<number>(0);
 
   let bg: HTMLDivElement;
-  let lastBG: string | null = null;
+  let lastBG: string | null = $state(null);
 
   const cssURL = (imageLink: string): string => `url('${imageLink}')`;
-  const renderBG = (image: string) => (bg.style.backgroundImage = image);
 
   const setBG = (imageLink: Nullable<string>) => {
     const formatted = imageLink
@@ -19,11 +18,7 @@
         ? cssURL(mobileBG)
         : cssURL(pcBG);
 
-    // Stop the $effect loop if same as last
-    if (lastBG === formatted) return;
-
     lastBG = formatted;
-    renderBG(formatted);
   };
 
   // Check stored BG value, set default if null
@@ -36,6 +31,7 @@
   id="background-image"
   style:top={`max(-${scroll / 100}vh, -100vh)`}
   style:opacity={$story ? String(conexusBG.opacity / 100) : '1'}
+  style:background-image={lastBG}
   bind:this={bg}
 ></div>
 

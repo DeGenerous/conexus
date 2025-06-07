@@ -208,9 +208,7 @@
 
 <!-- svelte-ignore
 a11y-click-events-have-key-events
-a11y-no-noninteractive-element-interactions
-a11y-no-static-element-interactions
-a11y_no_noninteractive_element_to_interactive_role-->
+a11y-no-static-element-interactions-->
 <dialog
   class="blur"
   bind:this={dialog}
@@ -250,7 +248,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
         <hr />
 
         {#if user?.email && user?.first_name}
-          <div class="flex">
+          <form class="flex">
             <div class="input-container">
               <label for="mail">Email</label>
               <input id="mail" type="email" value={user.email} disabled />
@@ -365,13 +363,15 @@ a11y_no_noninteractive_element_to_interactive_role-->
                 {#if editingPassword}
                   <button
                     class="red-btn"
+                    type="button"
                     on:click={() => (editingPassword = false)}
                   >
                     Cancel
                   </button>
                   <button
                     class="green-btn"
-                    on:click={saveChangedPassword}
+                    type="submit"
+                    on:click|preventDefault={saveChangedPassword}
                     disabled={!editPassword ||
                       !regexpPasswordValidation.test(editPassword) ||
                       editPassword !== editPasswordConfirm}
@@ -379,13 +379,16 @@ a11y_no_noninteractive_element_to_interactive_role-->
                     Save
                   </button>
                 {:else}
-                  <button on:click={() => (editingPassword = true)}>
+                  <button
+                    type="button"
+                    on:click={() => (editingPassword = true)}
+                  >
                     Change password
                   </button>
                 {/if}
               </div>
             {/if}
-          </div>
+          </form>
 
           <hr />
         {/if}
@@ -575,6 +578,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
                   type="email"
                   id="user-mail"
                   placeholder="Enter your email"
+                  autocomplete="email"
                   required
                 />
               </div>
@@ -585,6 +589,7 @@ a11y_no_noninteractive_element_to_interactive_role-->
                   type={passwordVisible.login ? 'text' : 'password'}
                   id="user-password"
                   placeholder="Enter your password"
+                  autocomplete="current-password"
                   minlength="8"
                   required
                 />

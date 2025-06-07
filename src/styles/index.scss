@@ -162,6 +162,7 @@ html {
   }
 
   .validation {
+    text-transform: uppercase;
     @include font(small);
 
     a {

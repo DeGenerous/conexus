@@ -13,7 +13,7 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createSiweMessage } from 'viem/siwe';
 import { WagmiProvider } from 'wagmi';
-import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains';
+import { mainnet, base } from 'wagmi/chains';
 
 import { SetCache, USER_CACHE_KEY, USER_CACHE_TTL } from '@constants/cache';
 import { assetsURL } from '@constants/media';
@@ -33,7 +33,7 @@ const Web3Provider = ({ linking, children }) => {
     appIcon: `${assetsURL}/logo.png`,
     appUrl: 'https://degenerousdao.com',
     projectId: '0b8a3fac6220753a719b9aeceb8f19fb',
-    chains: [mainnet, polygon, optimism, arbitrum, base],
+    chains: [mainnet, base],
     ssr: false, // If your dApp uses server side rendering (SSR)
     pollingInterval: 12000, // How often (in ms) to poll for updates
   });

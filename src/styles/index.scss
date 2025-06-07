@@ -8,6 +8,21 @@
 @use 'mixins' as *;
 @use 'components';
 
+// Tippy.js tooltips - https://atomiks.github.io/tippyjs/
+@import 'tippy.js/dist/tippy.css';
+@import 'tippy.js/animations/scale.css';
+// Use like this:
+// import { tippy } from 'svelte-tippy';
+// use:tippy={{ content: 'Start your story', animation: 'scale' }}
+
+.tippy-box {
+  background-color: $deep-green;
+}
+
+.tippy-arrow {
+  color: $deep-green;
+}
+
 /* RESET */
 
 *,

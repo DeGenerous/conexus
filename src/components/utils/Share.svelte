@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { tippy } from 'svelte-tippy';
   import CopySVG from '@components/icons/Copy.svelte';
 
   let { disabled = false }: { disabled?: boolean } = $props();
@@ -16,7 +17,7 @@
         setTimeout(() => copyBtn.classList.remove('copied'), 600);
         break;
       case 'discord':
-        const discordShareUrl = `https://discord.com/channels/@me`;
+        const discordShareUrl = `https://discord.gg/349FgMSUK8`;
         await navigator.clipboard.writeText(`${message}`);
         window.open(discordShareUrl, '_blank');
         break;
@@ -38,6 +39,7 @@
     <button
       class="min-size-btn void-btn flex"
       onclick={() => handleOptionclick('discord')}
+      use:tippy={{ content: 'Join our community', animation: 'scale' }}
       aria-label="Share on Discord"
       {disabled}
     >
@@ -46,6 +48,7 @@
     <button
       class="min-size-btn void-btn flex"
       onclick={() => handleOptionclick('twitter')}
+      use:tippy={{ content: 'Share on X', animation: 'scale' }}
       aria-label="Share on X"
       {disabled}
     >
@@ -63,6 +66,7 @@
       }}
       onblur={() => (copySvgFocus = null)}
       bind:this={copyBtn}
+      use:tippy={{ content: 'Copy story link', animation: 'scale' }}
       aria-label="Copy link"
       {disabled}
     >

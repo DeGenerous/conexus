@@ -1,6 +1,7 @@
 <!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { tippy } from 'svelte-tippy';
 
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
   import Tts from '@components/music/Tts.svelte';
@@ -258,6 +259,7 @@
                     )
                       event.preventDefault();
                   }}
+                  use:tippy={{ content: 'Check details', animation: 'scale' }}
                 >
                   {#if amount && amount > 0}
                     {amount} ${contract.name.toUpperCase()}

@@ -31,7 +31,7 @@ const {
   nav,
   arrow,
   story,
-  title = 'Welcome to CoNexus',
+  title = 'CoNexus | DeGenerous DAO',
   description = 'CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.',
   image = '/favicon.ico',
   url = 'https://conexus.degenerousdao.com/',
@@ -44,12 +44,14 @@ const {
 
 <html lang="en">
   <head>
-    <title>CoNexus | DeGenerous DAO</title>
-
     <meta charset="utf-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#161e5f" />
+    <meta
+      name="robots"
+      content={disableIndexing ? 'noindex, nofollow' : 'index, follow'}
+    />
 
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link type="text/plain" rel="author" href="/humans.txt" />
@@ -86,6 +88,46 @@ const {
         creator: seoConfig.twitter.creator,
       }}
     />
+
+    <!-- Preconnect to tracking domains -->
+    <link rel="preconnect" href="https://www.clarity.ms" crossorigin />
+    <link rel="preconnect" href="https://static.ads-twitter.com" crossorigin />
+
+    <!-- Clarity by Microsoft, integrated with our Google Analytics -->
+    <script type="text/javascript" is:inline>
+      (function (c, l, a, r, i, t, y) {
+        c[a] =
+          c[a] ||
+          function () {
+            (c[a].q = c[a].q || []).push(arguments);
+          };
+        t = l.createElement(r);
+        t.async = 1;
+        t.src = 'https://www.clarity.ms/tag/' + i;
+        y = l.getElementsByTagName(r)[0];
+        y.parentNode.insertBefore(t, y);
+      })(window, document, 'clarity', 'script', 'rpwb9gsgjt');
+    </script>
+
+    <!-- Twitter conversion tracking base code -->
+    <script is:inline>
+      !(function (e, t, n, s, u, a) {
+        e.twq ||
+          ((s = e.twq =
+            function () {
+              s.exe ? s.exe.apply(s, arguments) : s.queue.push(arguments);
+            }),
+          (s.version = '1.1'),
+          (s.queue = []),
+          (u = t.createElement(n)),
+          (u.async = !0),
+          (u.src = 'https://static.ads-twitter.com/uwt.js'),
+          (a = t.getElementsByTagName(n)[0]),
+          a.parentNode.insertBefore(u, a));
+      })(window, document, 'script');
+
+      twq('config', 'pqifz');
+    </script>
   </head>
   <body>
     <ToastContainer client:load />

@@ -13,7 +13,7 @@ const storyName = story?.replace(/%20/g, ' ');
 const storyImage = storyName?.toLocaleLowerCase().replace(/[^a-z0-9]/g, '');
 
 const meta = {
-  title: `Play ${storyName} on CoNexus`,
+  title: `${storyName} | CoNexus`,
   image:
     `${mediaURL}/conexus-categories/images/${storyImage}/description/description.avif` ||
     '/favicon.ico',

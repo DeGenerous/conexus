@@ -1,36 +1,33 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
-  import { bgPicture, bgPictureOpacity, bgColor } from '@stores/background.ts';
+  import conexusBG from '@stores/background.svelte';
   import { story, game } from '@stores/conexus.svelte';
-  import { pcBG, mobileBG, defaultBG } from '@constants/media';
+  import { pcBG, mobileBG } from '@constants/media';
 
-  export let storyName: Nullable<string> = null;
+  let width = $state<number>(0);
+  let scroll = $state<number>(0);
 
-  let width: number;
-  let scroll: number;
   let bg: HTMLDivElement;
+  let lastBG: string | null = null;
 
-  const cssURL = (imageLink: string): Nullable<string> =>
-    imageLink ? `url('${imageLink}')` : null;
+  const cssURL = (imageLink: string): string => `url('${imageLink}')`;
+  const renderBG = (image: string) => bg.style.backgroundImage = image;
 
-  onMount(() => {
-    if (width > 768) $bgPicture = cssURL(pcBG);
-  });
+  const setBG = (imageLink: Nullable<string>) => {
+    const formatted = imageLink
+      ? cssURL(imageLink)
+      : width < 768
+        ? cssURL(mobileBG)
+        : cssURL(pcBG);
 
-  // Back to default picture if null
-  $: if ($bgPicture === null)
-    $bgPicture = width < 768 ? cssURL(mobileBG) : cssURL(pcBG);
+    // Stop the $effect loop if same as last
+    if (lastBG === formatted) return;
 
-  // Default story picture when entered story page
-  $: if (storyName && bg) $bgPicture = cssURL(defaultBG);
+    lastBG = formatted;
+    renderBG(formatted);
+  };
 
-  // Set to uploaded story background if it is
-  $: if (game.background_image)
-    $bgPicture = cssURL(game.background_image);
-
-  // Reactive update of background-image on $bgPicture change
-  $: if ($bgPicture && bg) bg.style.backgroundImage = $bgPicture;
+  // Check stored BG value, set default if null
+  $effect(() => setBG(game.background_image));
 </script>
 
 <svelte:window bind:innerWidth={width} bind:scrollY={scroll} />
@@ -38,12 +35,12 @@
 <div
   id="background-image"
   style:top={`max(-${scroll / 100}vh, -100vh)`}
-  style:opacity={storyName ? String($bgPictureOpacity / 100) : '1'}
+  style:opacity={$story ? String(conexusBG.opacity / 100) : '1'}
   bind:this={bg}
 ></div>
 
 {#if $story}
-  <div id="background-color" style:background-color={$bgColor}></div>
+  <div id="background-color" style:background-color={conexusBG.color}></div>
 {/if}
 
 <style lang="scss">
@@ -59,6 +56,7 @@
     background-attachment: scroll;
     background-repeat: no-repeat;
     background-position: top;
+    background-size: cover;
     z-index: -100;
     transition:
       opacity 0.6s linear,
@@ -71,7 +69,6 @@
     @include respond-up(small-desktop) {
       background-attachment: fixed;
       background-position: center;
-      background-size: cover;
       background-image: url('/conexusBG.avif');
     }
 

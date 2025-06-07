@@ -246,7 +246,7 @@
   </nav>
 {/if}
 
-<Background {storyName} />
+<Background />
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

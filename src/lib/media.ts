@@ -103,6 +103,9 @@ class MediaManager {
     if (images.length > 0) {
       let randomImage = images[Math.floor(Math.random() * images.length)];
       game.background_image = serveUrl(randomImage);
+
+      console.log('bg image is set')
+      console.log(game.background_image)
     }
   }
 

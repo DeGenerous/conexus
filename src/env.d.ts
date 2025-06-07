@@ -102,6 +102,11 @@ type StoryNavigation = {
   name: Nullable<string>;
 };
 
+type ConexusBG = {
+  opacity: number;
+  color: string;
+}
+
 type Password = 'login' | 'signup' | 'edit' | 'reset';
 
 type FolderContent = {

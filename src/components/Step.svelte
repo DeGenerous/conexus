@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
 
   import { story, game } from '@stores/conexus.svelte';
-  import { bgPictureOpacity, bgColor } from '@stores/background';
+  import conexusBG from '@stores/background.svelte';
   import {
     GetCache,
     SetCache,
@@ -121,8 +121,8 @@
   $: customStyling && updateStyling();
 
   // reactive updatement of BG storages
-  $: $bgPictureOpacity = customStyling ? customStyling.bgPictureOpacity : 50;
-  $: $bgColor = customStyling ? customStyling.bgColor : '#000000';
+  $: conexusBG.opacity = customStyling ? customStyling.bgPictureOpacity : 50;
+  $: conexusBG.color = customStyling ? customStyling.bgColor : '#000000';
 
   // SCALE CUSTOMIZATION
 

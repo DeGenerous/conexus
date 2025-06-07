@@ -1,6 +1,6 @@
 // import { Account } from '@lib/account';
 import { GetCache, USER_CACHE_KEY } from '@constants/cache';
-import { authenticated } from '@stores/account';
+import { authenticated } from '@stores/account.svelte';
 
 function redirectTo(path: string) {
   if (typeof window !== 'undefined') {

@@ -3,9 +3,9 @@
   // import { onMount } from 'svelte';
 
   // import { CoNexusApp } from '@lib/view';
-  import { authenticated } from '@stores/account';
+  import { authenticated } from '@stores/account.svelte';
   import { prevStory, nextStory } from '@stores/navigation.svelte';
-  import { story, game } from '@stores/conexus.svelte';
+  import { story } from '@stores/conexus.svelte';
 
   import BackArrow from '@components/icons/BackArrow.svelte';
   import Profile from '@components/Profile.svelte';

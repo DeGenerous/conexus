@@ -17,7 +17,7 @@ import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains';
 
 import { SetCache, USER_CACHE_KEY, USER_CACHE_TTL } from '@constants/cache';
 import { assetsURL } from '@constants/media';
-import { authenticated } from '@stores/account';
+import { authenticated } from '@stores/account.svelte';
 import { AccountAPI, AuthAPI } from '@service/routes';
 
 import '@rainbow-me/rainbowkit/styles.css';

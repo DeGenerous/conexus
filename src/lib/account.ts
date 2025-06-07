@@ -16,7 +16,7 @@ import {
   referralCodes,
   userCheck,
   accountError,
-} from '@stores/account';
+} from '@stores/account.svelte';
 import { toastStore } from '@stores/toast.svelte';
 
 export class Account {

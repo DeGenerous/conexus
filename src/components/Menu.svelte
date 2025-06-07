@@ -1,7 +1,7 @@
 <script lang="ts">
   import DoorSVG from '@components/icons/Door.svelte';
   import { trailerURL } from '@constants/media';
-  import { authenticated, userCheck } from '@stores/account';
+  import { authenticated, userCheck } from '@stores/account.svelte';
   import { showProfile } from '@stores/modal.svelte';
 
   import Intro from './Intro.svelte';

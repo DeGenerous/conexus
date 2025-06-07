@@ -4,7 +4,11 @@
 
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import { Account } from '@lib/account';
-  import { authenticated, referralCodes, accountError } from '@stores/account';
+  import {
+    authenticated,
+    referralCodes,
+    accountError,
+  } from '@stores/account.svelte';
   import { showProfile } from '@stores/modal.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';
   import {

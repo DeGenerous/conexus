@@ -154,7 +154,6 @@
         break;
       }
       case 'ArrowLeft': {
-        if (game.loading) return;
         if (step.step !== 1) {
           // load PREV step and blur focused button if it is
           $story?.loadGameStep(step.step - 1);
@@ -164,7 +163,6 @@
         break;
       }
       case 'ArrowRight': {
-        if (game.loading) return;
         if (step.step !== $story?.maxStep) {
           // load NEXT step and blur focused button if it is
           $story?.loadGameStep(step.step + 1);

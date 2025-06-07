@@ -89,6 +89,7 @@
         (storyName && !prevStory.link)}
       href={storyName ? prevStory.link : prevSectionLink()}
       target="_self"
+      draggable="false"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -121,6 +122,7 @@
         class:active={activeTab === 'Dashboard'}
         href="/dashboard"
         target="_self"
+        draggable="false"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -146,6 +148,7 @@
       class:active={activeTab === 'Home'}
       href="/"
       target="_self"
+      draggable="false"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -176,6 +179,7 @@
         class:active={activeTab === 'Dream'}
         href="/dashboard/dream"
         target="_self"
+        draggable="false"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -225,6 +229,7 @@
         (storyName && !nextStory.link)}
       href={storyName ? nextStory.link : nextSectionLink()}
       target="_self"
+      draggable="false"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { mediaURL } from '@constants/media';
 
-  export let section: Section;
+  let { section }: { section: Section } = $props();
 
   // sectionImage is the name of the section but remove the spaces
   const imageName: string = section.name.replace(/\s/g, '');

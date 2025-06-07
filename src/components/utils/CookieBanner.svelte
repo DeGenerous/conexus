@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from 'svelte';
   import {
     GetCache,
     SetCache,
@@ -7,10 +6,10 @@
     COOKIE_CONSENT_TTL,
   } from '@constants/cache';
 
-  let showBanner = false;
+  let showBanner = $state(false);
   let analyticsEnabled = false;
 
-  onMount(() => {
+  $effect(() => {
     const cachedConsent = GetCache(COOKIE_CONSENT_KEY);
     if (!cachedConsent) {
       showBanner = true;
@@ -63,7 +62,7 @@
 </script>
 
 {#if showBanner}
-  <div class="non-transparent-container">
+  <div class="non-transparent-container fade-in">
     <h5 class="white-txt">
       We use cookies to provide you with a better service.
     </h5>
@@ -76,10 +75,10 @@
       >.
     </p>
     <div class="flex-row">
-      <button class="green-btn" on:click={() => acceptCookies(true)}
+      <button class="green-btn" onclick={() => acceptCookies(true)}
         >Accept all</button
       >
-      <button on:click={() => acceptCookies(false)}>Essential only</button>
+      <button onclick={() => acceptCookies(false)}>Essential only</button>
     </div>
   </div>
 {/if}

@@ -3,7 +3,7 @@
 
   let { visibility }: { visibility: Password } = $props();
 
-  let visible = $state(false);
+  let visible = $state<boolean>(false);
 
   const updateVisibility = () => {
     switch (visibility) {

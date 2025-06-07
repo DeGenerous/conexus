@@ -1,4 +1,3 @@
-<!-- LEGACY SVELTE 4 SYNTAX -->
 <script lang="ts">
   import { createRoot } from 'react-dom/client';
 

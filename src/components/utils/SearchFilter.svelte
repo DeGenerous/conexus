@@ -2,13 +2,20 @@
   import SearchSVG from '@components/icons/Search.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
 
-  export let searchField: string;
-  export let handleSearch: () => void;
-  export let isSearching: boolean = false;
-  export let disabled: boolean = false;
+  let {
+    handleSearch,
+    searchField = $bindable(),
+    isSearching = $bindable(false),
+    disabled = false,
+  }: {
+    handleSearch: () => void;
+    searchField: string;
+    isSearching: boolean;
+    disabled: boolean;
+  } = $props();
 
   let searchInput: HTMLInputElement | null;
-  let svgFocus: boolean = false;
+  let svgFocus = $state<boolean>(false);
 
   const handleSearchFocus = () => {
     if (!searchInput) return;
@@ -25,9 +32,9 @@
   <input
     bind:this={searchInput}
     bind:value={searchField}
-    on:input={handleSearch}
-    on:focus={() => (svgFocus = true)}
-    on:blur={() => (svgFocus = false)}
+    oninput={handleSearch}
+    onfocus={() => (svgFocus = true)}
+    onblur={() => (svgFocus = false)}
     class="search-field"
     placeholder="Search story..."
     {disabled}

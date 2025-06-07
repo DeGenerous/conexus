@@ -6,7 +6,7 @@
 
   let email = $state<string>('');
 
-  const emailValidation = $derived(regexpEmail.test(email));
+  const emailValidation = $derived<boolean>(regexpEmail.test(email));
 </script>
 
 <section class="container">

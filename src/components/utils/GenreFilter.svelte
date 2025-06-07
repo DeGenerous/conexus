@@ -2,10 +2,17 @@
   import ResetSVG from '@components/icons/Reset.svelte';
   import FilterSVG from '@components/icons/Filter.svelte';
 
-  export let genres: Genre[];
-  export let activeGenre: string;
-  export let resetGenres: () => void;
-  export let disabled: boolean = false;
+  let {
+    genres,
+    activeGenre = $bindable(),
+    resetGenres,
+    disabled = false,
+  }: {
+    genres: Genre[];
+    activeGenre: string;
+    resetGenres: () => void;
+    disabled?: boolean;
+  } = $props();
 </script>
 
 <div class="flex-row blur pad-8 round-8 shad" class:active={activeGenre}>

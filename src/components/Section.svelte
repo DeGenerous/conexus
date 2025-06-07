@@ -1,4 +1,4 @@
-<!-- LEGACY SVELTE 4 SYNTAX -->
+<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
 
@@ -12,7 +12,7 @@
   } from '@constants/cache';
 
   import Category from '@components/Category.svelte';
-  import SearchAndGenre from '@components/utils/SearchAndGenre.svelte';
+  import SearchAndGenre from '@components/Filters.svelte';
   import SpotifyIframe from '@components/music/SpotifyIframe.svelte';
   import Links from '@components/utils/Links.svelte';
 

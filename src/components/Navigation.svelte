@@ -1,7 +1,4 @@
-<!-- LEGACY SVELTE 4 SYNTAX -->
 <script lang="ts">
-  // import { onMount } from 'svelte';
-
   // import { CoNexusApp } from '@lib/view';
   import { authenticated } from '@stores/account.svelte';
   import { prevStory, nextStory } from '@stores/navigation.svelte';
@@ -12,24 +9,34 @@
   import ConexusLogo from '@components/utils/ConexusLogo.svelte';
   import Background from '@components/utils/Background.svelte';
 
-  export let header: string = '';
-  export let storyName: string;
-  export let subheading: string = '';
-  export let activeTab: string = 'Home';
-  export let arrow: Nullable<string> = null;
+  let {
+    header = '',
+    storyName,
+    subheading = '',
+    activeTab = 'Home',
+    arrow = null,
+  }: {
+    header: string;
+    storyName: string;
+    subheading: string;
+    activeTab: string;
+    arrow: Nullable<string>;
+  } = $props();
+
+  const admin = $derived.by<boolean>(() => {
+    if ($authenticated?.user) return $authenticated.user.role === 'admin';
+    else return false;
+  });
 
   // let app: CoNexusApp = new CoNexusApp();
 
   let sections: string[] = ['Community Picks', 'Collabs', 'Dischordian Saga'];
 
-  let admin = false;
-  $: if ($authenticated?.user) admin = $authenticated.user.role === 'admin';
-
-  $: activeSectionIndex = sections.indexOf(activeTab);
-  $: prevSectionIndex =
+  const activeSectionIndex = sections.indexOf(activeTab);
+  const prevSectionIndex =
     activeSectionIndex == 0 ? sections.length - 1 : activeSectionIndex - 1;
 
-  // onMount(async () => {
+  // $effect(async () => {
   //   sections = await app
   //     .getSections()
   //     .then((data) => data.map(({ id, name }) => name));

@@ -7,7 +7,7 @@
     muted: boolean;
   } = $props();
 
-  let svgFocus: boolean = $state(false);
+  let svgFocus = $state<boolean>(false);
 </script>
 
 <button

@@ -16,8 +16,10 @@
 
   let allMuted: boolean = false; // to handle mute with 'M' key
 
-  let inputValue = $derived(!sound[type].muted ? sound[type].volume : 0);
-  let disabledInput = $derived(sound[type].muted);
+  let inputValue = $derived<number>(
+    !sound[type].muted ? sound[type].volume : 0,
+  );
+  let disabledInput = $derived<boolean>(sound[type].muted);
 
   $effect(() => {
     const storedValue = GetCache<VolumeControl>(VOLUME_KEY(type));

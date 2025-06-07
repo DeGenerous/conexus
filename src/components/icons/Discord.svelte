@@ -1,5 +1,5 @@
 <script lang="ts">
-  let { text = 'Discord' }: { text: string } = $props();
+  let { text = 'Discord' }: { text?: string } = $props();
 </script>
 
 <a

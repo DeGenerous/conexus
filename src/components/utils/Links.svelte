@@ -1,7 +1,7 @@
 <script lang="ts">
   import DiscordBtn from '@components/icons/Discord.svelte';
 
-  export let section: string = '';
+  let { section = '' }: { section: string } = $props();
 </script>
 
 {#if section == 'Community Picks' || section == 'Dischordian Saga'}
@@ -17,7 +17,7 @@
       <div class="flex-row">
         <h5>Explore more:</h5>
         <button
-          on:click={() =>
+          onclick={() =>
             window.open('https://loredex.degenerousdao.com/', '_blank')}
         >
           Loredex
@@ -26,7 +26,7 @@
       <div class="flex-row">
         <h5>Influence the storyline:</h5>
         <button
-          on:click={() =>
+          onclick={() =>
             window.open('https://governance.degenerousdao.com/', '_blank')}
         >
           Governance Hub

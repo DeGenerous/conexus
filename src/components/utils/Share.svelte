@@ -1,9 +1,9 @@
 <script lang="ts">
   import CopySVG from '@components/icons/Copy.svelte';
 
-  export let disabled: boolean = false;
+  let { disabled = false }: { disabled?: boolean } = $props();
 
-  let copySvgFocus: Nullable<string | boolean> = null;
+  let copySvgFocus = $state<Nullable<string | boolean>>(null);
   let copyBtn: HTMLButtonElement;
 
   const handleOptionClick = async (option: string) => {
@@ -37,7 +37,7 @@
   >
     <button
       class="min-size-btn void-btn flex"
-      on:click={() => handleOptionClick('discord')}
+      onclick={() => handleOptionClick('discord')}
       aria-label="Share on Discord"
       {disabled}
     >
@@ -45,7 +45,7 @@
     </button>
     <button
       class="min-size-btn void-btn flex"
-      on:click={() => handleOptionClick('twitter')}
+      onclick={() => handleOptionClick('twitter')}
       aria-label="Share on X"
       {disabled}
     >
@@ -53,15 +53,15 @@
     </button>
     <button
       class="min-size-btn void-btn flex"
-      on:click={() => handleOptionClick('copy')}
-      on:pointerover={() => {
+      onclick={() => handleOptionClick('copy')}
+      onpointerover={() => {
         if (!disabled) copySvgFocus = true;
       }}
-      on:focus={() => (copySvgFocus = true)}
-      on:pointerout={() => {
+      onfocus={() => (copySvgFocus = true)}
+      onpointerout={() => {
         if (!disabled) copySvgFocus = null;
       }}
-      on:blur={() => (copySvgFocus = null)}
+      onblur={() => (copySvgFocus = null)}
       bind:this={copyBtn}
       aria-label="Copy link"
       {disabled}

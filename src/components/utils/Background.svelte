@@ -7,7 +7,7 @@
   let scroll = $state<number>(0);
 
   let bg: HTMLDivElement;
-  let lastBG: string | null = $state(null);
+  let lastBG = $state<string | null>(null);
 
   const cssURL = (imageLink: string): string => `url('${imageLink}')`;
 

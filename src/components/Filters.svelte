@@ -1,9 +1,10 @@
+<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { toastStore } from '@stores/toast.svelte';
 
   import StoryTile from '@components/utils/StoryTile.svelte';
-  import GenreSelect from '@components/utils/GenreSelect.svelte';
-  import SearchSection from '@components/utils/SearchSection.svelte';
+  import GenreSelect from '@components/utils/GenreFilter.svelte';
+  import SearchSection from '@components/utils/SearchFilter.svelte';
 
   import SortingSVG from '@components/icons/Sorting.svelte';
 

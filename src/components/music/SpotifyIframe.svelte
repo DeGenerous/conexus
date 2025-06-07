@@ -1,15 +1,4 @@
-<script>
-  import { onMount } from 'svelte';
-
-  let spotify;
-
-  onMount(() => {
-    setTimeout(() => spotify.play(), 2000);
-  });
-</script>
-
 <iframe
-  bind:this={spotify}
   title="Dischordian Logic"
   class="blur flex round dark-border shad"
   src="https://open.spotify.com/embed/album/33LvDG83EjPJR9wof12nWV?utm_source=generator"

@@ -4,9 +4,15 @@
 
   import LockSVG from '@components/icons/Lock.svelte';
 
-  export let section: string;
-  export let topic: Nullable<TopicInCategory>;
-  export let loading: boolean;
+  let {
+    section,
+    topic = $bindable(),
+    loading = $bindable(),
+  }: {
+    section: string;
+    topic: Nullable<TopicInCategory>;
+    loading: boolean;
+  } = $props();
 
   const storyName: string = topic ? topic.name.trim() : '';
 

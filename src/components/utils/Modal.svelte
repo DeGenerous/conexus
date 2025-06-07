@@ -1,3 +1,4 @@
+<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { modal, showModal, resetModal } from '@stores/modal.svelte';
 
@@ -18,7 +19,7 @@
   };
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y-click-events-have-key-events a11y_no_static_element_interactions -->
 <dialog
   class="blur"
   bind:this={dialog}

@@ -21,10 +21,10 @@
   let password = $state<string>('');
   let confirmPassword = $state<string>('');
 
-  let emailValidation = $derived(regexpEmail.test(email));
+  let emailValidation = $derived<boolean>(regexpEmail.test(email));
 
-  let validation = $derived(
-    email &&
+  let validation = $derived<boolean>(
+    Boolean(email) &&
       regexpPasswordValidation.test(password) &&
       password === confirmPassword &&
       emailValidation,

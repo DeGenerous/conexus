@@ -3,6 +3,7 @@
   import { AdminApp } from '@lib/admin';
 
   import CloseSVG from '@components/icons/Close.svelte';
+  import { error } from 'node_modules/astro/dist/core/logger/core';
 
   let admin = new AdminApp();
 
@@ -27,40 +28,64 @@
     importedFile = input.files[0];
   };
 
-  const handleImportStory = async () => {
-    const importedStory = (await parseJsonFile()) as CreatePrompt;
-    importedStory.category = categoryID;
-
-    function parseJsonFile() {
-      return new Promise((resolve, reject) => {
-        const fileReader = new FileReader();
-        fileReader.onload = (event) =>
-          resolve(JSON.parse(event.target!.result as any));
-        fileReader.onerror = (error) => reject(error);
-        fileReader.readAsText(importedFile!);
-      });
+  function isValidStory(story: any) {
+    if (
+      !story ||
+      typeof story !== 'object' ||
+      typeof story.topic !== 'string' ||
+      typeof story.description !== 'string' ||
+      typeof story.image_prompt !== 'string' ||
+      typeof story.category !== 'number' ||
+      typeof story.prompt !== 'string'
+    ) {
+      throw new Error("You imported an invalid Story JSON");
     }
+  }
 
-    await admin.createNewStory(importedStory);
+  const handleImportStory = async () => {
+    try {
+      const importedStory = (await parseJsonFile()) as CreatePrompt;
+      importedStory.category = categoryID;
+
+      function parseJsonFile(): Promise<unknown> {
+        return new Promise((resolve, reject) => {
+          const fileReader = new FileReader();
+          fileReader.onload = (event) => {
+            try {
+              const result = JSON.parse(event.target!.result as string);
+              resolve(result);
+            } catch (err) {
+              reject(new Error("Invalid JSON format"));
+            }
+          };
+          fileReader.onerror = (error) => reject(error);
+          fileReader.readAsText(importedFile!);
+        });
+      }
+      isValidStory(importedStory);
+      await admin.createNewStory(importedStory);
+    } catch (error) {
+      alert("You imported an invalid Story JSON");
+    }
     importedFile = null;
   };
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <section class="container">
-  <h5>Dream It. Create It. Bring It to Life.</h5>
-  <a class="button-anchor" href="/dashboard/dream/create">Create</a>
-  <h5>Start a new story from an infinite well of possibilities.</h5>
+  <p class="text-glowing">Dream It. Create It. Bring It to Life.</p>
+  <a class="button-anchor button-glowing" href="/dashboard/dream/create">Create</a>
+  <p class="text-glowing">Start a new story from an infinite well of possibilities.</p>
 
   <hr />
 
-  <h5>Add the finishing touches to your masterpiece.</h5>
-  <a class="button-anchor" href="/dashboard/dream/manage">Manage</a>
-  <h5>Upload media, refine, and perfect your vision.</h5>
+  <p class="text-glowing">Add the finishing touches to your masterpiece.</p>
+  <a class="button-anchor button-glowing" href="/dashboard/dream/manage">Manage</a>
+  <p class="text-glowing">Upload media, refine, and perfect your vision.</p>
 
   <hr />
 
-  <h5>Import Story Object</h5>
+  <p class="soft-white-txt">Import Story Object (DevTool)</p>
 
   {#if importedFile}
     <div class="flex-row pad-8 round-8 gap-8 transparent-gray-bg shad">
@@ -81,7 +106,7 @@
         id="json-upload"
         type="file"
         max="1"
-        accept="application/json"
+        accept="application/JSON"
         onchange={(e) => handleFileUpload(e)}
       />
     </div>

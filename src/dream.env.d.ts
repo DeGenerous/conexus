@@ -54,7 +54,7 @@ interface TablePrompt {
 interface StoryData {
   name: string;
   description: string;
-  imagePrompts: string[];
+  imagePrompt: string;
   category: Nullable<number>;
 }
 

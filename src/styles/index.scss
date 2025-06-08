@@ -19,8 +19,8 @@
   background-color: $deep-green;
   padding: 0.25rem;
   border-radius: 0.5rem;
-  @include font(caption);
   @include box-shadow(0 0 0.5rem black);
+  @include font(caption);
 }
 
 .tippy-arrow {

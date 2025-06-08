@@ -3,7 +3,7 @@ import { writable } from 'svelte/store';
 export const storyData = writable<StoryData>({
   name: '',
   description: '',
-  imagePrompts: [],
+  imagePrompt: '',
   category: null,
 });
 
@@ -101,7 +101,7 @@ export const clearAllData = () => {
   storyData.set({
     name: '',
     description: '',
-    imagePrompts: [],
+    imagePrompt: '',
     category: null,
   });
   promptSettings.set({

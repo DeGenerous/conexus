@@ -8,12 +8,7 @@
   } = $props();
 </script>
 
-<button
-  class="flex"
-  class:void-btn={voidBtn}
-  {onclick}
-  aria-label="Back"
->
+<button class="flex" class:void-btn={voidBtn} {onclick} aria-label="Back">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
     <defs>
       <mask id="quit-svg-mask">

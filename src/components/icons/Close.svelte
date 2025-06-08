@@ -1,19 +1,14 @@
 <script lang="ts">
   let {
     onclick = () => {},
-    voidBtn = false
+    voidBtn = false,
   }: {
     onclick: () => void;
     voidBtn?: boolean;
   } = $props();
 </script>
 
-<button
-  class="flex"
-  class:void-btn={voidBtn}
-  {onclick}
-  aria-label="Close"
->
+<button class="flex" class:void-btn={voidBtn} {onclick} aria-label="Close">
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="-100 -100 200 200"

@@ -13,7 +13,7 @@ function generatePrompt(
   data: TablePrompt | string,
 ): CreatePrompt {
   let imagePrompt: string = `Use ${settings.imageStyle} style.\n\n`;
-  
+
   imagePrompt += props.imagePrompt;
 
   // ADDING CHARACTERS TO THE IMAGE PROMPT

@@ -18,8 +18,8 @@
   let importedFile: Nullable<File> = $state(null);
   let dragover: boolean = $state(false);
 
-  const ondragleave = () => dragover = false;
-  const ondragover = () => dragover = true;
+  const ondragleave = () => (dragover = false);
+  const ondragover = () => (dragover = true);
 
   const handleFileUpload = (event: Event) => {
     const input = event.target as HTMLInputElement;
@@ -38,7 +38,7 @@
       typeof story.category !== 'number' ||
       typeof story.prompt !== 'string'
     ) {
-      throw new Error("You imported an invalid Story JSON");
+      throw new Error('You imported an invalid Story JSON');
     }
   }
 
@@ -55,7 +55,7 @@
               const result = JSON.parse(event.target!.result as string);
               resolve(result);
             } catch (err) {
-              reject(new Error("Invalid JSON format"));
+              reject(new Error('Invalid JSON format'));
             }
           };
           fileReader.onerror = (error) => reject(error);
@@ -65,7 +65,7 @@
       isValidStory(importedStory);
       await admin.createNewStory(importedStory);
     } catch (error) {
-      alert("You imported an invalid Story JSON");
+      alert('You imported an invalid Story JSON');
     }
     importedFile = null;
   };
@@ -74,13 +74,19 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <section class="container">
   <p class="text-glowing">Dream It. Create It. Bring It to Life.</p>
-  <a class="button-anchor button-glowing" href="/dashboard/dream/create">Create</a>
-  <p class="text-glowing">Start a new story from an infinite well of possibilities.</p>
+  <a class="button-anchor button-glowing" href="/dashboard/dream/create"
+    >Create</a
+  >
+  <p class="text-glowing">
+    Start a new story from an infinite well of possibilities.
+  </p>
 
   <hr />
 
   <p class="text-glowing">Add the finishing touches to your masterpiece.</p>
-  <a class="button-anchor button-glowing" href="/dashboard/dream/manage">Manage</a>
+  <a class="button-anchor button-glowing" href="/dashboard/dream/manage"
+    >Manage</a
+  >
   <p class="text-glowing">Upload media, refine, and perfect your vision.</p>
 
   <hr />

@@ -17,6 +17,10 @@
 
 .tippy-box {
   background-color: $deep-green;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  @include font(caption);
+  @include box-shadow(0 0 0.5rem black);
 }
 
 .tippy-arrow {
@@ -289,7 +293,7 @@ html {
 
   :where(hr) {
     width: 95%;
-    @include cyan-border(0.25);
+    @include white-border(0.1);
   }
 }
 

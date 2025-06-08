@@ -1,7 +1,14 @@
 // CLASSES: cyan (soft), dark, green, red (outline), wavy-mask-left-right
 
-@mixin cyan-border($opacity: 1) {
-  border: 1px solid rgba(51, 226, 230, $opacity);
+@mixin white-border($opacity: 1) {
+  border: 1px solid rgba(255, 255, 255, $opacity);
+}
+
+@mixin cyan-border($opacity: 1, $style: solid) {
+  border: 1px $style rgba(51, 226, 230, $opacity);
+  @if $style == 'dashed' {
+    border-width: 2px;
+  }
 }
 
 @mixin dark-border($opacity: 1) {

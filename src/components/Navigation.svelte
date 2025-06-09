@@ -53,7 +53,7 @@
   };
 </script>
 
-{#if $story === null}
+{#if $story === null && storyName !== 'Maintenance'}
   <header
     class="flex-row pad-inline blur transition semi-transparent-dark-bg shad-behind dark-glowing-opaque"
   >

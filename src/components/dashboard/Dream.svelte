@@ -3,7 +3,6 @@
   import { AdminApp } from '@lib/admin';
 
   import CloseSVG from '@components/icons/Close.svelte';
-  import { error } from 'node_modules/astro/dist/core/logger/core';
 
   let admin = new AdminApp();
 
@@ -74,9 +73,9 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <section class="container">
   <p class="text-glowing">Dream It. Create It. Bring It to Life.</p>
-  <a class="button-anchor button-glowing" href="/dashboard/dream/create"
-    >Create</a
-  >
+  <a class="button-anchor button-glowing" href="/dashboard/dream/create">
+    Create
+  </a>
   <p class="text-glowing">
     Start a new story from an infinite well of possibilities.
   </p>
@@ -84,9 +83,9 @@
   <hr />
 
   <p class="text-glowing">Add the finishing touches to your masterpiece.</p>
-  <a class="button-anchor button-glowing" href="/dashboard/dream/manage"
-    >Manage</a
-  >
+  <a class="button-anchor button-glowing" href="/dashboard/dream/manage">
+    Manage
+  </a>
   <p class="text-glowing">Upload media, refine, and perfect your vision.</p>
 
   <hr />

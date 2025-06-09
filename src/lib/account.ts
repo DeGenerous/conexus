@@ -357,7 +357,6 @@ export class Account {
     }
 
     referralCodes.set(data.codes);
-    // window.location.reload();
   }
 
   async getReferralCodes(): Promise<void> {

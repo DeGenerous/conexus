@@ -112,23 +112,18 @@
   // Sign up user with Email and Referral Code
   const referralSignup = async (event: Event) => {
     event.preventDefault(); // prevent page reload by form
-    await account
-      .signup({
-        user: {
-          first_name: first_name.trim(),
-          last_name: last_name.trim(),
-          email: email.trim(),
-          password,
-          referred: referralCodeValid,
-          role: 'user',
-        },
-        referral_code: referralCode,
-        newsletter: newsletterSignup,
-      })
-      .then((res) => {
-        // Reload page after Sign Up to make user Signed In
-        if (res !== null) location.reload();
-      });
+    await account.signup({
+      user: {
+        first_name: first_name.trim(),
+        last_name: last_name.trim(),
+        email: email.trim(),
+        password,
+        referred: referralCodeValid,
+        role: 'user',
+      },
+      referral_code: referralCode,
+      newsletter: newsletterSignup,
+    });
   };
 
   // SIGNED IN USER PROFILE
@@ -463,6 +458,7 @@ a11y-no-static-element-interactions-->
                       on:pointerout={() => (copySvgFocus = null)}
                       on:blur={() => (copySvgFocus = null)}
                       aria-label="Copy code {code.code}"
+                      tabindex={code.is_used ? -1 : 0}
                     >
                       <p
                         class="pad-8 round-8 soft-white-txt transparent-dark-bg"

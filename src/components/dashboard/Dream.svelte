@@ -87,10 +87,10 @@
     Manage
   </a>
   <p class="text-glowing">Upload media, refine, and perfect your vision.</p>
+</section>
 
-  <hr />
-
-  <p class="soft-white-txt">Import Story Object (DevTool)</p>
+<div class="container">
+  <p class="transparent-white-txt">Import Story Object (DevTool)</p>
 
   {#if importedFile}
     <div class="flex-row pad-8 round-8 gap-8 transparent-gray-bg shad">
@@ -133,4 +133,4 @@
   <button disabled={!importedFile} onclick={handleImportStory}>
     Import story
   </button>
-</section>
+</div>

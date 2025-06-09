@@ -276,7 +276,7 @@
       </section>
     {/if}
 
-    <p class="description pad mar-auto soft-white-txt text-shad">
+    <p class="description transparent-container white-txt text-shad">
       {topic.description}
     </p>
   {:catch}
@@ -499,6 +499,7 @@
   }
 
   .description {
+    margin-top: 1rem;
     width: clamp(250px, 95%, 90rem);
   }
 </style>

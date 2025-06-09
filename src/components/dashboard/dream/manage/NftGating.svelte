@@ -65,10 +65,10 @@
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<div class="dream-box blur contracts-list">
-  <div class="buttons-wrapper">
+<div class="dream-container blur contracts-list">
+  <div class="flex-row">
     <h2>Web3 Gating</h2>
-    <div class="container buttons-wrapper added-gatings">
+    <div class="container flex-row added-gatings">
       {#if topicGatings.length > 0}
         {#each topicGatings as { contract_name, class_id }}
           <div class="gating">
@@ -101,7 +101,7 @@
     </div>
   </div>
 
-  <div class="buttons-wrapper add-gating-container">
+  <div class="flex-row add-gating-container">
     <select class="selector" bind:value={newGating}>
       <option value="" hidden disabled>Select</option>
       {#each availableContracts.filter((contract) => !topicGatings
@@ -123,7 +123,7 @@
     <h3>Select Class Restriction (Optional)</h3>
 
     {#await viewApp.fetchClassGates() then classGating}
-      <div class="buttons-wrapper">
+      <div class="flex-row">
         <div class="container dream-radio-buttons">
           {#if classGating.length > 0}
             {#each classGating as { id, name }}

@@ -227,6 +227,28 @@ html {
     width: clamp(250px, 95%, 70rem);
   }
 
+  .dream-input {
+    border: 0.1vw solid rgba(51, 226, 230, 0.5);
+    background-color: rgba(1, 0, 32, 0.5);
+  }
+
+  .dream-textfield {
+    background-color: rgba(1, 0, 32, 0.75);
+  }
+
+  .dream-container {
+    @extend .container;
+    width: 95%;
+    align-items: flex-end;
+    animation: none;
+    @include blue(0.5);
+
+    div {
+      flex-direction: row;
+      justify-content: space-around;
+    }
+  }
+
   .top-left-icon,
   .top-right-icon {
     width: 2.75rem;

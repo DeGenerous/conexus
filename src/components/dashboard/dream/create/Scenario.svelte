@@ -78,7 +78,7 @@
   {#if $tablePrompt.winningScenarios.length > 0}
     <ul class="container-wrapper winning-scenarios">
       {#each $tablePrompt.winningScenarios as scenario, index}
-        <li class="buttons-wrapper added-prompt">
+        <li class="flex-row added-prompt">
           <h3>{scenario}</h3>
           <button
             class="red-button"
@@ -92,7 +92,7 @@
   {/if}
   <input
     id="winning-scenario"
-    class="story-input"
+    class="dream-input"
     type="text"
     placeholder="How does the story reach a happy or victorious ending? List key moments that lead to success."
     bind:value={newWinningScenario}
@@ -107,7 +107,7 @@
   {#if $tablePrompt.losingScenarios.length > 0}
     <ul class="container-wrapper losing-scenarios">
       {#each $tablePrompt.losingScenarios as scenario, index}
-        <li class="buttons-wrapper added-prompt">
+        <li class="flex-row added-prompt">
           <h3>{scenario}</h3>
           <button
             class="red-button"
@@ -121,7 +121,7 @@
   {/if}
   <input
     id="losing-scenario"
-    class="story-input"
+    class="dream-input"
     type="text"
     placeholder="What leads to failure, loss, or tragedy? List key missteps and dangers that lead to downfall."
     bind:value={newLosingScenario}
@@ -136,7 +136,7 @@
   {#if $tablePrompt.keyEvents.length > 0}
     <ul class="container-wrapper losing-scenarios">
       {#each $tablePrompt.keyEvents as event, index}
-        <li class="buttons-wrapper added-prompt">
+        <li class="flex-row added-prompt">
           <h3>{event}</h3>
           <button class="red-button" on:click={() => removeKeyEvent(index)}>
             Remove
@@ -147,7 +147,7 @@
   {/if}
   <input
     id="key-event"
-    class="story-input"
+    class="dream-input"
     type="text"
     placeholder="What major events shape the story? List key twists, challenges, or turning points."
     bind:value={newKeyEvent}
@@ -167,7 +167,7 @@
     gap: 1vw;
   }
 
-  .story-input {
+  .dream-input {
     width: 85vw;
   }
 
@@ -177,7 +177,7 @@
       gap: 1em;
     }
 
-    .story-input {
+    .dream-input {
       width: 90vw;
     }
   }

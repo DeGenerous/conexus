@@ -9,12 +9,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <section class="blur">
-  <div
-    class="buttons-wrapper"
-    on:click={toggleDropdown}
-    role="button"
-    tabindex="0"
-  >
+  <div class="flex-row" on:click={toggleDropdown} role="button" tabindex="0">
     <h2 style={isOpen ? 'color: rgb(51, 226, 230)' : ''}>{name}</h2>
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -52,13 +47,13 @@
     border-radius: 1.75vw;
   }
 
-  .buttons-wrapper {
+  .flex-row {
     width: 100%;
     padding-block: 1vw;
   }
 
-  .buttons-wrapper:hover,
-  .buttons-wrapper:active {
+  .flex-row:hover,
+  .flex-row:active {
     filter: brightness(125%);
   }
 

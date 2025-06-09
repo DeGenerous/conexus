@@ -208,3 +208,13 @@ input[type='number']::-webkit-inner-spin-button {
     }
   }
 }
+
+textarea {
+  width: 100%;
+  min-height: 6vw;
+  max-height: 80vh;
+  resize: vertical;
+  outline: none;
+  border: none;
+  border-radius: 0.5rem;
+}

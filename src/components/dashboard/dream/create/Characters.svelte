@@ -93,18 +93,18 @@
         {#each $tablePrompt.sideCharacters as character, index}
           <li class="container added-prompt side-character">
             <h2 class="character-name">{character.name}</h2>
-            <div class="buttons-wrapper">
+            <div class="flex-row">
               <h2>Description</h2>
               <h3>{character.description}</h3>
             </div>
             {#if character.physicality}
-              <div class="buttons-wrapper">
+              <div class="flex-row">
                 <h2>Physicality</h2>
                 <h3>{character.physicality}</h3>
               </div>
             {/if}
             {#if character.psychology}
-              <div class="buttons-wrapper">
+              <div class="flex-row">
                 <h2>Psychology</h2>
                 <h3>{character.psychology}</h3>
               </div>
@@ -156,8 +156,8 @@
     </ul>
   {/if}
 
-  <div class="container-wrapper dream-box relationship">
-    <div class="buttons-wrapper">
+  <div class="container-wrapper dream-container relationship">
+    <div class="flex-row">
       <h2>Type</h2>
       <div class="container dream-radio-buttons">
         {#each dreamData.relationship as type}
@@ -173,18 +173,18 @@
       </div>
     </div>
 
-    <div class="buttons-wrapper">
+    <div class="flex-row">
       <h2>Details</h2>
       <input
         id="relationship-details"
-        class="story-input dream-textfield"
+        class="dream-input dream-textfield"
         type="text"
         placeholder={'E.g. ' + relationshipExamples}
         bind:value={newRelationship.details}
       />
     </div>
 
-    <div class="buttons-wrapper">
+    <div class="flex-row">
       <h2>Connection</h2>
       <div class="container relationship-characters">
         <select
@@ -274,7 +274,7 @@
     line-height: 1.5;
   }
 
-  .side-character .buttons-wrapper {
+  .side-character .flex-row {
     justify-content: flex-end;
   }
 
@@ -343,7 +343,7 @@
       gap: 1em;
     }
 
-    .side-character .buttons-wrapper {
+    .side-character .flex-row {
       justify-content: center;
     }
 

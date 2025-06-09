@@ -128,11 +128,11 @@
         {storeAllTopics(collections)}
         {#each collections as { category_id, category_name, category_order, section_id, topics }}
           <section class="container blur">
-            <div class="buttons-wrapper category-header">
-              <form id="category-order" class="buttons-wrapper">
+            <div class="flex-row category-header">
+              <form id="category-order" class="flex-row">
                 <label for="category-order">Order:</label>
                 <input
-                  class="story-input order-input"
+                  class="dream-input order-input"
                   type="number"
                   value={category_order}
                   on:click|preventDefault={selectInput}
@@ -145,7 +145,7 @@
                 <p>{category_name}: {topics.length}</p>
               </div>
 
-              <form id="section" class="buttons-wrapper">
+              <form id="section" class="flex-row">
                 <label for="section">Select section:</label>
                 {#if sections}
                   <select
@@ -172,10 +172,10 @@
               {#each sortTopicsByOrder(topics) as { topic_name, order, available, topic_id }}
                 <a class="tile" href="/dashboard/dream/manage/{topic_name}">
                   <h2>{topic_name}</h2>
-                  <form id="order" class="buttons-wrapper">
+                  <form id="order" class="flex-row">
                     <label for="order" class="order-label">Order:</label>
                     <input
-                      class="story-input order-input"
+                      class="dream-input order-input"
                       type="number"
                       value={order}
                       on:click|preventDefault={selectInput}
@@ -241,7 +241,7 @@
     background-color: rgba(45, 90, 216, 0.5);
   }
 
-  .container:not(.buttons-wrapper) {
+  .container:not(.flex-row) {
     width: 100vw;
     padding-inline: 0;
     border-radius: 0;

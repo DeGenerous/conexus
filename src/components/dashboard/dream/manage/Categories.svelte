@@ -19,10 +19,10 @@
   };
 </script>
 
-<div class="dream-box blur categories-list">
-  <div class="buttons-wrapper">
+<div class="dream-container blur categories-list">
+  <div class="flex-row">
     <h2>Categories</h2>
-    <div class="container buttons-wrapper categories-wrapper">
+    <div class="container flex-row categories-wrapper">
       {#if categories.length > 0}
         {#each categories as { name }}
           <div class="category">
@@ -36,9 +36,9 @@
   </div>
 </div>
 
-<div class="container blur buttons-wrapper new-category">
+<div class="container blur flex-row new-category">
   <input
-    class="story-input"
+    class="dream-input"
     bind:value={newCategoryName}
     placeholder="Enter Name"
   />

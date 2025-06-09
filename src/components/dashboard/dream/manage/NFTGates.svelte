@@ -47,10 +47,10 @@
   }
 </script>
 
-<div class="dream-box blur classes-list">
-  <div class="buttons-wrapper">
+<div class="dream-container blur classes-list">
+  <div class="flex-row">
     <h2>NFT Classes</h2>
-    <div class="container buttons-wrapper added-classes">
+    <div class="container flex-row added-classes">
       {#if classGates.length > 0}
         {#each classGates as { id, name, start_token_id, end_token_id }}
           <div class="nft-class">
@@ -81,20 +81,20 @@
   <hr />
 
   <section class="new-class">
-    <div class="buttons-wrapper">
+    <div class="flex-row">
       <h2>Provide Class Name:</h2>
       <input
-        class="story-input"
+        class="dream-input"
         placeholder="Enter Name"
         bind:value={newClassName}
       />
     </div>
 
-    <div class="buttons-wrapper">
+    <div class="flex-row">
       <h2>Select IDs Range:</h2>
-      <div class="buttons-wrapper class-range">
+      <div class="flex-row class-range">
         <input
-          class="story-input range-input"
+          class="dream-input range-input"
           placeholder="from"
           bind:value={newClassRangeFrom}
           type="number"
@@ -105,7 +105,7 @@
         />
         <h3>-</h3>
         <input
-          class="story-input range-input"
+          class="dream-input range-input"
           placeholder="to"
           bind:value={newClassRangeTo}
           type="number"

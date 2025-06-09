@@ -138,9 +138,9 @@
     <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
   {:else}
     {#if categoryTopics.length > 0}
-      <div class="buttons-wrapper stories-switcher">
+      <div class="flex-row stories-switcher">
         <a
-          class="buttons-wrapper switch-arrow"
+          class="flex-row switch-arrow"
           href="/dashboard/dream/manage/{categoryTopics[prevStoryIndex]}"
         >
           <img src="/icons/switch-arrow.svg" alt="Switch" />
@@ -148,7 +148,7 @@
         </a>
 
         <a
-          class="buttons-wrapper switch-arrow"
+          class="flex-row switch-arrow"
           href="/dashboard/dream/manage/{categoryTopics[
             (activeStoryIndex + 1) % categoryTopics.length
           ]}"
@@ -249,7 +249,7 @@
       </div>
 
       {#key topic}
-        <div class="buttons-wrapper">
+        <div class="flex-row">
           <button
             class:green-button={topic.available === 'available'}
             class:red-button={topic.available === 'unavailable'}
@@ -304,10 +304,10 @@
     <GenreTags {topic} {handleGenreChange} />
 
     <!-- DESCRIPTION -->
-    <div class="dream-box blur open-prompt">
-      <div class="buttons-wrapper box-header">
+    <div class="dream-container blur open-prompt">
+      <div class="flex-row box-header">
         <h2>Description</h2>
-        <div class="buttons-wrapper">
+        <div class="flex-row">
           {#if editingDescription}
             <button
               class="red-button"
@@ -330,7 +330,7 @@
       </div>
       <textarea
         id="description"
-        class="story-input dream-textfield"
+        class="dream-input dream-textfield"
         placeholder="Describe the overall story, its key themes, and what kind of journey the main character will take. Is it an epic adventure, a gripping mystery, or a heartwarming romance? Keep it engaging and set the stage for the reader!"
         rows="5"
         bind:value={storyDescription}
@@ -339,10 +339,10 @@
     </div>
 
     <!-- IMAGE-PROMPT -->
-    <div class="dream-box blur open-prompt">
-      <div class="buttons-wrapper box-header">
+    <div class="dream-container blur open-prompt">
+      <div class="flex-row box-header">
         <h2>Image Generation Instructions</h2>
-        <div class="buttons-wrapper">
+        <div class="flex-row">
           {#if editingImagePrompt}
             <button
               class="red-button"
@@ -365,7 +365,7 @@
       </div>
       <textarea
         id="image-prompt"
-        class="story-input dream-textfield"
+        class="dream-input dream-textfield"
         placeholder="E.g. A breathtaking cosmic landscape filled with swirling galaxies, ancient ruins, and a lone traveler standing at the edge of destiny."
         rows="10"
         bind:value={storyImagePrompt}
@@ -374,10 +374,10 @@
     </div>
 
     <!-- PROMPT -->
-    <div class="dream-box blur open-prompt">
-      <div class="buttons-wrapper box-header">
+    <div class="dream-container blur open-prompt">
+      <div class="flex-row box-header">
         <h2>Prompt</h2>
-        <div class="buttons-wrapper">
+        <div class="flex-row">
           {#if editingPrompt}
             <button class="red-button" on:click={() => (editingPrompt = false)}
               >CANCEL</button
@@ -399,7 +399,7 @@
       </div>
       <textarea
         id="prompt"
-        class="story-input dream-textfield"
+        class="dream-input dream-textfield"
         placeholder="Describe any scenario you want, and the AI will turn it into a story! Whether it's a thrilling mystery, an epic fantasy, or a hilarious adventure, your imagination sets the stage. You can be as detailed or vague as you like—every idea sparks a unique tale. E.g. Make a unique Sherlock Holmes story where during an investigation he ends up taking a new type of drug, deeply affecting him so he’ll lead a fight both versus himself and a serial killer."
         rows="10"
         bind:value={storyPrompt}
@@ -520,7 +520,7 @@
       flex-flow: row wrap !important;
     }
 
-    .box-header .buttons-wrapper {
+    .box-header .flex-row {
       flex-direction: row;
       width: auto;
     }

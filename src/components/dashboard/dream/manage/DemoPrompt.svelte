@@ -59,7 +59,7 @@
         {/if}
       </button>
     {:else if loading}
-      <div class="buttons-wrapper">
+      <div class="flex-row">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 100 100"
@@ -112,7 +112,7 @@
           {/each}
         </div>
       {/if}
-      <div class="buttons-wrapper story-data">
+      <div class="flex-row story-data">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 100 100"

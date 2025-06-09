@@ -8,8 +8,8 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <Dropdown name="Build Writing Style">
-  <div class="dream-box style-options">
-    <div class="buttons-wrapper">
+  <div class="dream-container style-options">
+    <div class="flex-row">
       <h2>Tense</h2>
       <div class="container dream-radio-buttons">
         {#each dreamData.tense as tense}
@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <div class="buttons-wrapper">
+    <div class="flex-row">
       <h2>Story Arcs</h2>
       <div class="container">
         <Slider
@@ -41,7 +41,7 @@
       </div>
     </div>
 
-    <div class="buttons-wrapper">
+    <div class="flex-row">
       <h2>Style</h2>
       <div class="container dream-radio-buttons">
         {#each dreamData.writingStyle as style}
@@ -57,7 +57,7 @@
       </div>
     </div>
 
-    <div class="buttons-wrapper">
+    <div class="flex-row">
       <h2>Voice</h2>
       <div class="container dream-radio-buttons">
         {#each dreamData.voice as voice}
@@ -73,7 +73,7 @@
       </div>
     </div>
 
-    <div class="buttons-wrapper">
+    <div class="flex-row">
       <h2>Pacing</h2>
       <div class="container">
         <Slider
@@ -96,7 +96,7 @@
     <label class="section-title" for="point-of-view">Point of View</label>
     <textarea
       id="point-of-view"
-      class="story-input"
+      class="dream-input"
       placeholder="Specify the perspective of the story—first-person, second-person, or third-person—and whose eyes we experience the journey through. E.g. First-person, from the detective’s skeptical assistant, uncovering their mentor’s hidden dark secret."
       rows="3"
       bind:value={$tablePrompt.POV}
@@ -107,9 +107,9 @@
 
   <h3>Story Tone</h3>
 
-  <div class="dream-box tone-characteristics">
+  <div class="dream-container tone-characteristics">
     {#each $tablePrompt.tone as { name, value }}
-      <div class="buttons-wrapper">
+      <div class="flex-row">
         <h2>{dreamData.capitalize(name)}</h2>
         <div class="container">
           <Slider bind:sliderValue={value} />

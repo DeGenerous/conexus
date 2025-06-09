@@ -52,10 +52,10 @@
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<div class="dream-box blur genres-list">
-  <div class="buttons-wrapper">
+<div class="dream-container blur genres-list">
+  <div class="flex-row">
     <h2>Genres</h2>
-    <div class="container buttons-wrapper genres-wrapper">
+    <div class="container flex-row genres-wrapper">
       {#if $genres.length > 0}
         {#each $genres as genre (genre)}
           <div class="genre">
@@ -81,7 +81,7 @@
     </div>
   </div>
 
-  <div class="buttons-wrapper add-genre-container">
+  <div class="flex-row add-genre-container">
     <select class="selector" bind:value={$newGenre}>
       <option value="" hidden disabled>Select</option>
       {#each availableGenres.filter((g) => !$genres.includes(g.name)) as genre}

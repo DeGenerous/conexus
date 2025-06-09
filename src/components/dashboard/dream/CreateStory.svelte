@@ -42,7 +42,7 @@
     $storyData.category;
 </script>
 
-<div class="buttons-wrapper">
+<div class="flex-row">
   <label for="section">Select Category:</label>
   <select
     class="selector"
@@ -59,12 +59,12 @@
 </div>
 
 <!-- TITLE, DESCRIPTION, IMAGE PROMPTS -->
-<div class="dream-box blur general-parameters">
+<div class="dream-container blur general-parameters">
   <div class="input-container">
     <label for="topic">Story</label>
     <input
       id="topic"
-      class="story-input dream-textfield"
+      class="dream-input dream-textfield"
       class:red-border={!$storyData.name}
       type="text"
       placeholder="Enter Story Name"
@@ -76,7 +76,7 @@
     <label for="description">Description</label>
     <textarea
       id="description"
-      class="story-input dream-textfield"
+      class="dream-input dream-textfield"
       class:red-border={$storyData.description.length < 100}
       placeholder="Describe the overall story, its key themes, and what kind of journey the main character will take. Is it an epic adventure, a gripping mystery, or a heartwarming romance? Keep it engaging and set the stage for the reader!"
       rows="3"
@@ -95,7 +95,7 @@
   <h3>Image Generation Instructions</h3>
   <textarea
     id="image-prompts"
-    class="story-input dream-textfield"
+    class="dream-input dream-textfield"
     placeholder="E.g. A breathtaking cosmic landscape filled with swirling galaxies, ancient ruins, and a lone traveler standing at the edge of destiny."
     rows="2"
     bind:value={$storyData.imagePrompt}
@@ -103,8 +103,8 @@
 </div>
 
 <!-- MAIN SETTINGS -->
-<div class="dream-box blur main-settings">
-  <div class="buttons-wrapper">
+<div class="dream-container blur main-settings">
+  <div class="flex-row">
     <h2>Content</h2>
     <div class="container">
       <div class="input-container">
@@ -131,7 +131,7 @@
     </div>
   </div>
 
-  <div class="buttons-wrapper">
+  <div class="flex-row">
     <h2>Interactivity</h2>
     <div class="container">
       <div class="input-container">
@@ -162,7 +162,7 @@
     </div>
   </div>
 
-  <div class="buttons-wrapper">
+  <div class="flex-row">
     <h2>Length</h2>
     <div class="container">
       <Slider
@@ -173,7 +173,7 @@
     </div>
   </div>
 
-  <div class="buttons-wrapper">
+  <div class="flex-row">
     <h2>Format</h2>
     <div class="container dream-radio-buttons">
       <button
@@ -193,45 +193,45 @@
 </div>
 
 {#if promptFormat === 'Table'}
-  <div class="dream-box blur">
-    <div class="buttons-wrapper">
+  <div class="dream-container blur">
+    <div class="flex-row">
       <h2>Set Premise</h2>
       <textarea
         id="premise"
-        class="story-input dream-textfield"
+        class="dream-input dream-textfield"
         placeholder="Summarize the core of your story—who the main character is, what challenge they face, and what’s at stake in their journey."
         rows="2"
         bind:value={$tablePrompt.premise}
       ></textarea>
     </div>
 
-    <div class="buttons-wrapper">
+    <div class="flex-row">
       <h2>Set Environment</h2>
       <textarea
         id="setting"
-        class="story-input dream-textfield"
+        class="dream-input dream-textfield"
         placeholder="Describe the time and place where your story unfolds, whether it's a futuristic city, a medieval kingdom, a distant galaxy, or somewhere beyond imagination."
         rows="2"
         bind:value={$tablePrompt.environment}
       ></textarea>
     </div>
 
-    <div class="buttons-wrapper">
+    <div class="flex-row">
       <h2>Set Exposition</h2>
       <textarea
         id="exposition"
-        class="story-input dream-textfield"
+        class="dream-input dream-textfield"
         placeholder="Set the stage for your story—introduce the world, key events leading up to the present, and any important background details the reader needs to know."
         rows="2"
         bind:value={$tablePrompt.exposition}
       ></textarea>
     </div>
 
-    <div class="buttons-wrapper">
+    <div class="flex-row">
       <h2>Set First Action</h2>
       <textarea
         id="first-act"
-        class="story-input dream-textfield"
+        class="dream-input dream-textfield"
         placeholder="Describe how the story begins—introduce the main character, their current situation, and the inciting event that sets the plot in motion."
         rows="2"
         bind:value={$tablePrompt.firstAction}
@@ -245,24 +245,24 @@
 
   <WritingStyle />
 
-  <div class="dream-box blur open-prompt">
+  <div class="dream-container blur open-prompt">
     <h2>
       If you have anything else you wish to add to improve the story, you may
       write it here:
     </h2>
     <textarea
-      class="story-input dream-textfield additional-filed"
+      class="dream-input dream-textfield additional-filed"
       placeholder="Add any additional styling, references, details, twists, character ideas, or world-building elements you’d like to include in your story."
       rows="2"
       bind:value={$tablePrompt.additionalData}
     ></textarea>
   </div>
 {:else}
-  <div class="dream-box blur open-prompt">
+  <div class="dream-container blur open-prompt">
     <h2>Write up a scenario of Your Story:</h2>
     <textarea
       id="blank"
-      class="story-input dream-textfield"
+      class="dream-input dream-textfield"
       placeholder="Describe any scenario you want, and the AI will turn it into a story! Whether it's a thrilling mystery, an epic fantasy, or a hilarious adventure, your imagination sets the stage. You can be as detailed or vague as you like—every idea sparks a unique tale. E.g. Make a unique Sherlock Holmes story where during an investigation he ends up taking a new type of drug, deeply affecting him so he’ll lead a fight both versus himself and a serial killer."
       rows="5"
       bind:value={$openPrompt}
@@ -274,7 +274,7 @@
   <p class="validation">Fill all required fields!</p>
 {/if}
 
-<div class="buttons-wrapper">
+<div class="flex-row">
   <button class="red-button blur" on:click={clearAllData}> RESET </button>
   <button
     class="green-button blur"

@@ -62,7 +62,7 @@
 </script>
 
 {#if showBanner}
-  <div class="non-transparent-container fade-in">
+  <div class="opaque-container fade-in">
     <h5 class="white-txt">
       We use cookies to provide you with a better service.
     </h5>
@@ -86,7 +86,7 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .non-transparent-container {
+  .opaque-container {
     width: 90%;
     position: fixed;
     bottom: 5rem;

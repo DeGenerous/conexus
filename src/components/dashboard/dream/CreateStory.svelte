@@ -59,7 +59,7 @@
 </div>
 
 <!-- TITLE, DESCRIPTION, IMAGE PROMPTS -->
-<div class="dream-container blur general-parameters">
+<div class="dream-container">
   <div class="input-container">
     <label for="topic">Story</label>
     <input
@@ -76,7 +76,7 @@
     <label for="description">Description</label>
     <textarea
       id="description"
-      class="dream-input dream-textfield"
+      class="dream-textfield"
       class:red-border={$storyData.description.length < 100}
       placeholder="Describe the overall story, its key themes, and what kind of journey the main character will take. Is it an epic adventure, a gripping mystery, or a heartwarming romance? Keep it engaging and set the stage for the reader!"
       rows="3"

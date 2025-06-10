@@ -78,7 +78,7 @@ $font-scale: (
   @include font(h4);
 }
 
-:global(:where(h5, input, select)) {
+:global(:where(h5, input, select, textarea)) {
   @include font(h5);
 }
 

@@ -218,7 +218,7 @@ html {
     animation: transparent-glowing 10s ease-in-out infinite;
   }
 
-  .non-transparent-container {
+  .opaque-container {
     @extend .container;
     animation: dark-glowing-opaque 10s ease-in-out infinite;
   }
@@ -227,25 +227,41 @@ html {
     width: clamp(250px, 95%, 70rem);
   }
 
-  .dream-input {
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    background-color: rgba(1, 0, 32, 0.5);
-  }
-
+  .dream-input,
   .dream-textfield {
-    background-color: rgba(1, 0, 32, 0.75);
+    animation: dark-glowing 10s ease-in-out infinite;
+    @include white-txt;
   }
 
   .dream-container {
-    @extend .container;
+    @extend .transparent-container;
     width: 95%;
     align-items: flex-end;
-    animation: none;
-    @include blue(0.5);
+
+    &, * {
+      animation-duration: 20s !important;
+    }
 
     div {
+      width: 100%;
       flex-direction: row;
       justify-content: space-around;
+
+      &.opaque-container {
+
+      }
+    }
+
+    .input-container {
+      flex-flow: column nowrap;
+
+      label {
+        position: static;
+
+        &::after {
+          content: "";
+        }
+      }
     }
   }
 

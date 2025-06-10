@@ -769,7 +769,7 @@ a11y_no_noninteractive_element_interactions -->
     </section>
   </section>
 {:else}
-  <div class="non-transparent-container">
+  <div class="opaque-container">
     <h4 class="red-txt">Some error is occured...</h4>
     <p class="soft-white-txt">Please try again or contact support.</p>
   </div>

@@ -8,22 +8,29 @@
   let copyBtn: HTMLButtonElement;
 
   const handleOptionclick = async (option: string) => {
-    const message = `Check out the AI story I'm playing on CoNexus!\n${window.location.href}`;
+    const message = `Check out the AI story I'm playing on CoNexus!`;
+
+    const encodedMessage = encodeURIComponent(message);
+    const encodedURI = encodeURIComponent(window.location.href);
 
     switch (option) {
       case 'copy':
-        await navigator.clipboard.writeText(`${message}`);
+        await navigator.clipboard.writeText(window.location.href);
         copyBtn.classList.add('copied');
         setTimeout(() => copyBtn.classList.remove('copied'), 600);
         break;
       case 'discord':
-        const discordShareUrl = `https://discord.gg/349FgMSUK8`;
-        await navigator.clipboard.writeText(`${message}`);
-        window.open(discordShareUrl, '_blank');
+        const shareUrlDiscord = `https://discord.gg/349FgMSUK8`;
+        await navigator.clipboard.writeText(window.location.href);
+        window.open(shareUrlDiscord, '_blank');
         break;
       case 'twitter':
-        const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
-        window.open(shareUrl, '_blank');
+        const shareUrlTwitter = `https://twitter.com/intent/tweet?text=${encodedMessage}&url=${encodedURI}`;
+        window.open(shareUrlTwitter, '_blank');
+        break;
+      case 'facebook':
+        const shareUrlFacebook = `https://www.facebook.com/sharer/sharer.php?u=${encodedURI}&quote=${encodedMessage}`;
+        window.open(shareUrlFacebook, '_blank');
         break;
     }
   };
@@ -53,6 +60,15 @@
       {disabled}
     >
       <img src="/icons/twitter.png" alt="X" />
+    </button>
+    <button
+      class="min-size-btn void-btn flex"
+      onclick={() => handleOptionclick('facebook')}
+      use:tippy={{ content: 'Share on Facebook', animation: 'scale' }}
+      aria-label="Share on Facebook"
+      {disabled}
+    >
+      <img src="/icons/facebook.png" alt="Facebook" />
     </button>
     <button
       class="min-size-btn void-btn flex"

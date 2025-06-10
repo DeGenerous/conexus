@@ -49,12 +49,14 @@
   let selectedTheme: Nullable<number> = null;
   let newThemeName: string = 'CUSTOM THEME';
 
+  // Set up current customization from the stored THEME-object
   const applyTheme = () => {
     $customFont = structuredClone($customThemes[selectedTheme!].font);
     $customStyling = structuredClone($customThemes[selectedTheme!].styling);
     closeDialog();
   };
 
+  // Add current customization as a THEME-object to the array and cache everything
   const handleAddTheme = () => {
     $customThemes[$customThemes.length] = {
       name: newThemeName,
@@ -65,6 +67,7 @@
     cacheCustomThemes();
   };
 
+  // Check if current customization settings are similar to some THEME-object
   const compareCurrentTheme = (theme: CustomTheme): boolean => {
     return (
       $customFont!.family === theme.font!.family &&
@@ -83,11 +86,13 @@
     );
   };
 
+  // Check if user made any differences in customization, or just some THEME-object is used
   const anyThemeMatched = (): boolean =>
     $customThemes.some((theme) => {
       return compareCurrentTheme(theme);
     });
 
+  // Cache only custom themes, first two THEME-objects we provide by default (dark/light)
   const cacheCustomThemes = () => {
     ClearCache(THEMES_KEY);
     if ($customThemes.length === 2) return;
@@ -104,7 +109,10 @@
   on:click|self={closeDialog}
 >
   <div class="flex" on:click|stopPropagation>
+    <!-- DYNAMIC CONTENT PROVIDED BY openModal() FUNCTION -->
     {@html modal.content}
+
+    <!-- CUSTOM THEMES WINDOW -->
     {#if $themeSettings}
       <h3>Theme Preferences</h3>
       <h5>Use the default look or create your own custom theme.</h5>
@@ -163,14 +171,19 @@
       </ul>
     {/if}
     <span class="flex">
+      <!-- DEFAULT CLOSE BUTTON ON EVERY MODAL -->
       <button class="red-btn" on:click={() => ($showModal = false)}>
         Close
       </button>
+
+      <!-- SECOND OPTIONAL BUTTON IF NEEDED -->
       {#if modal.button}
         <button class={modal.buttonClass} on:click={modal.buttonFunc}>
           {modal.button}
         </button>
       {/if}
+
+      <!-- SPECIAL BUTTON FOR CUSTOM THEMES WINDOW ONLY -->
       {#if $themeSettings}
         <button
           on:click={applyTheme}

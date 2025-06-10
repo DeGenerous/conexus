@@ -18,10 +18,14 @@
     defaultFont,
     defaultStyling,
     defaultScale,
-    lightThemeFont,
-    lightThemeStyling,
   } from '@constants/customization';
-  import openModal from '@stores/modal.svelte';
+  import openModal, {
+    showModal,
+    themeSettings,
+    customThemes,
+    customFont,
+    customStyling,
+  } from '@stores/modal.svelte';
   import { resetSettingsModal, gameRulesModal } from '@constants/modal';
 
   import Slider from '@components/music/Slider.svelte';
@@ -82,45 +86,41 @@
 
   // FONT FOR ALL ELEMENTS INSIDE step-wrapper
 
-  let customFont: CustomFont = null;
-
   const updateFont = (reset: Nullable<'reset'> = null) => {
-    if (reset) customFont = defaultFont;
-    SetCache(FONT_KEY, customFont, ONE_YEAR_TTL);
+    if (reset) $customFont = defaultFont;
+    SetCache(FONT_KEY, $customFont, ONE_YEAR_TTL);
   };
 
   // update FONT in localStorage after every change
-  $: customFont && updateFont();
+  $: $customFont && updateFont();
 
   // calculate option selector size based on font size
   let selectorSize: number = 1.5; // rem
-  $: if (customFont)
+  $: if ($customFont)
     selectorSize =
-      customFont.accentSize === 'h4'
+      $customFont.accentSize === 'h4'
         ? 1.75
-        : customFont.accentSize === 'h5'
+        : $customFont.accentSize === 'h5'
           ? 1.5
-          : customFont.accentSize === 'body'
+          : $customFont.accentSize === 'body'
             ? 1.25
-            : customFont.accentSize === 'small'
+            : $customFont.accentSize === 'small'
               ? 1
               : 0.75;
 
   // STYLING CUSTOMIZATION
 
-  let customStyling: CustomStyling = null;
-
   const updateStyling = (reset: Nullable<'reset'> = null) => {
-    if (reset) customStyling = defaultStyling;
-    SetCache(STYLING_KEY, customStyling, ONE_YEAR_TTL);
+    if (reset) $customStyling = defaultStyling;
+    SetCache(STYLING_KEY, $customStyling, ONE_YEAR_TTL);
   };
 
   // update STYLING in localStorage after every change
-  $: customStyling && updateStyling();
+  $: $customStyling && updateStyling();
 
   // reactive updatement of BG storages
-  $: conexusBG.opacity = customStyling ? customStyling.bgPictureOpacity : 50;
-  $: conexusBG.color = customStyling ? customStyling.bgColor : '#000000';
+  $: conexusBG.opacity = $customStyling ? $customStyling.bgPictureOpacity : 50;
+  $: conexusBG.color = $customStyling ? $customStyling.bgColor : '#000000';
 
   // SCALE CUSTOMIZATION
 
@@ -133,6 +133,13 @@
 
   // update SCALE in localStorage after every change
   $: customScale && updateScale();
+
+  // THEME SETTINGS
+
+  const openThemeSettings = () => {
+    $showModal = true;
+    $themeSettings = true;
+  };
 
   // KEYBOARD CONTROLS
 
@@ -232,11 +239,11 @@
     // GET CUSTOMIZATION FROM THE localStorage
 
     const storedFont = GetCache<CustomFont>(FONT_KEY);
-    if (storedFont) customFont = storedFont;
+    if (storedFont) $customFont = storedFont;
     else updateFont('reset');
 
     const storedStyling = GetCache<CustomStyling>(STYLING_KEY);
-    if (storedStyling) customStyling = storedStyling;
+    if (storedStyling) $customStyling = storedStyling;
     else updateStyling('reset');
 
     const storedScale = GetCache<CustomScale>(SCALE_KEY);
@@ -274,14 +281,14 @@
 a11y_click_events_have_key_events
 a11y_no_static_element_interactions
 a11y_no_noninteractive_element_interactions -->
-{#if customFont && customStyling && customScale}
+{#if $customFont && $customStyling && customScale}
   <section
-    class="step-wrapper flex {customFont.baseSize}-font"
-    class:text-shad={customFont.shadow}
-    style:font-family={customFont.family}
-    style:font-weight={customFont.bold ? 'bold' : 'normal'}
-    style:font-style={customFont.italic ? 'italic' : ''}
-    style:color={customFont.baseColor}
+    class="step-wrapper flex {$customFont.baseSize}-font"
+    class:text-shad={$customFont.shadow}
+    style:font-family={$customFont.family}
+    style:font-weight={$customFont.bold ? 'bold' : 'normal'}
+    style:font-style={$customFont.italic ? 'italic' : ''}
+    style:color={$customFont.baseColor}
     on:click={() => {
       if (activeControlPanel) activeControlPanel = null;
     }}
@@ -292,15 +299,15 @@ a11y_no_noninteractive_element_interactions -->
       image_type={step.image_type}
       imageWidth={customScale.imageWidth}
       imageHeight={customScale.imageHeight}
-      boxShadow={customStyling.boxShadow}
+      boxShadow={$customStyling.boxShadow}
     />
 
     {#if step.title}
       <h4
-        class="{customFont.accentSize}-font"
-        class:text-shad={customFont.shadow}
-        style:font-style={customFont.italic ? 'italic' : ''}
-        style:color={customFont.accentColor}
+        class="{$customFont.accentSize}-font"
+        class:text-shad={$customFont.shadow}
+        style:font-style={$customFont.italic ? 'italic' : ''}
+        style:color={$customFont.accentColor}
       >
         {step.title}
       </h4>
@@ -314,10 +321,10 @@ a11y_no_noninteractive_element_interactions -->
       <hr />
 
       <h4
-        class="{customFont.accentSize}-font"
-        class:text-shad={customFont.shadow}
-        style:font-style={customFont.italic ? 'italic' : ''}
-        style:color={customFont.accentColor}
+        class="{$customFont.accentSize}-font"
+        class:text-shad={$customFont.shadow}
+        style:font-style={$customFont.italic ? 'italic' : ''}
+        style:color={$customFont.accentColor}
       >
         Story Summary
       </h4>
@@ -327,10 +334,10 @@ a11y_no_noninteractive_element_interactions -->
       </article>
 
       <h4
-        class="{customFont.accentSize}-font"
-        class:text-shad={customFont.shadow}
-        style:font-style={customFont.italic ? 'italic' : ''}
-        style:color={customFont.accentColor}
+        class="{$customFont.accentSize}-font"
+        class:text-shad={$customFont.shadow}
+        style:font-style={$customFont.italic ? 'italic' : ''}
+        style:color={$customFont.accentColor}
       >
         CoNexus identified your trait as:
         <strong class="text-glowing">{step.trait}</strong>
@@ -343,12 +350,12 @@ a11y_no_noninteractive_element_interactions -->
       {/if}
 
       <div
-        class="options {customFont.accentSize}-font"
-        class:text-shad={customFont.shadow}
-        class:transparent-container={customStyling.optionsContainer}
-        style:font-style={customFont.italic ? 'italic' : ''}
-        style:color={customFont.accentColor}
-        style:box-shadow={customStyling.boxShadow ? '' : 'none'}
+        class="options {$customFont.accentSize}-font"
+        class:text-shad={$customFont.shadow}
+        class:transparent-container={$customStyling.optionsContainer}
+        style:font-style={$customFont.italic ? 'italic' : ''}
+        style:color={$customFont.accentColor}
+        style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
         style:max-width="{customScale.optionsWidth}%"
       >
         <button
@@ -359,11 +366,11 @@ a11y_no_noninteractive_element_interactions -->
       </div>
     {:else}
       <div
-        class="flex options wide-container {customFont.accentSize}-font"
-        class:text-shad={customFont.shadow}
-        class:transparent-container={customStyling.optionsContainer}
-        style:color={customFont.accentColor}
-        style:box-shadow={customStyling.boxShadow ? '' : 'none'}
+        class="flex options wide-container {$customFont.accentSize}-font"
+        class:text-shad={$customFont.shadow}
+        class:transparent-container={$customStyling.optionsContainer}
+        style:color={$customFont.accentColor}
+        style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
         style:max-width="{customScale.optionsWidth}%"
       >
         {#each step.options as option, i}
@@ -371,7 +378,7 @@ a11y_no_noninteractive_element_interactions -->
             id="option-{i}"
             class="void-btn flex-row gap-8"
             class:active-option={step.choice && step.choice - 1 === i}
-            style:font-family={customFont.family}
+            style:font-family={$customFont.family}
             disabled={game.loading || step.step !== $story?.maxStep}
             on:click={() => {
               $story?.nextStep(i + 1);
@@ -391,13 +398,13 @@ a11y_no_noninteractive_element_interactions -->
             on:focus={() => (focusedOption = i)}
             on:blur={() => (focusedOption = null)}
           >
-            {#if customStyling.optionSelector}
+            {#if $customStyling.optionSelector}
               <SelectorSVG
                 focused={(step.choice && step.choice - 1 === i) ||
                   focusedOption === i}
                 disabled={game.loading || step.step !== $story?.maxStep}
                 hideForMobiles={true}
-                color={customFont.accentColor}
+                color={$customFont.accentColor}
                 {selectorSize}
               />
             {/if}
@@ -523,7 +530,7 @@ a11y_no_noninteractive_element_interactions -->
       <div class="font-family transparent-container flex-row">
         <span class="flex-row">
           <label for="custom-font">Font</label>
-          <select id="custom-font" bind:value={customFont.family}>
+          <select id="custom-font" bind:value={$customFont.family}>
             <option value="PT Serif Caption">Default (serif)</option>
             <option value="Merriweather">Merriweather</option>
             <option value="Lora">Lora</option>
@@ -537,27 +544,27 @@ a11y_no_noninteractive_element_interactions -->
         </span>
 
         <span class="flex-row gap-8">
-          {#if customFont.family !== 'PT Serif Caption'}
+          {#if $customFont.family !== 'PT Serif Caption'}
             <button
-              class:active-btn={customFont.bold}
-              on:click={() => (customFont!.bold = !customFont!.bold)}
+              class:active-btn={$customFont.bold}
+              on:click={() => ($customFont!.bold = !$customFont!.bold)}
             >
               bold
             </button>
           {/if}
 
-          {#if customFont.family !== 'Caveat'}
+          {#if $customFont.family !== 'Caveat'}
             <button
-              class:active-btn={customFont.italic}
-              on:click={() => (customFont!.italic = !customFont!.italic)}
+              class:active-btn={$customFont.italic}
+              on:click={() => ($customFont!.italic = !$customFont!.italic)}
             >
               italic
             </button>
           {/if}
 
           <button
-            class:active-btn={customFont.shadow}
-            on:click={() => (customFont!.shadow = !customFont!.shadow)}
+            class:active-btn={$customFont.shadow}
+            on:click={() => ($customFont!.shadow = !$customFont!.shadow)}
           >
             shadow
           </button>
@@ -568,7 +575,7 @@ a11y_no_noninteractive_element_interactions -->
           <input
             id="text-color"
             type="color"
-            bind:value={customFont.baseColor}
+            bind:value={$customFont.baseColor}
           />
         </span>
 
@@ -577,7 +584,7 @@ a11y_no_noninteractive_element_interactions -->
           <input
             id="title-color"
             type="color"
-            bind:value={customFont.accentColor}
+            bind:value={$customFont.accentColor}
           />
         </span>
       </div>
@@ -585,7 +592,7 @@ a11y_no_noninteractive_element_interactions -->
       <div class="font-size transparent-container">
         <span class="flex-row">
           <label for="text-size">Base size</label>
-          <select id="text-size" bind:value={customFont.baseSize}>
+          <select id="text-size" bind:value={$customFont.baseSize}>
             <option value="caption">Tiny</option>
             <option value="small">Small</option>
             <option value="body">Normal</option>
@@ -596,7 +603,7 @@ a11y_no_noninteractive_element_interactions -->
 
         <span class="flex-row">
           <label for="title-size">Accent size</label>
-          <select id="title-size" bind:value={customFont.accentSize}>
+          <select id="title-size" bind:value={$customFont.accentSize}>
             <option value="caption">Tiny</option>
             <option value="small">Small</option>
             <option value="body">Normal</option>
@@ -615,9 +622,9 @@ a11y_no_noninteractive_element_interactions -->
             min="0"
             max="100"
             step="5"
-            bind:value={customStyling.bgPictureOpacity}
+            bind:value={$customStyling.bgPictureOpacity}
           />
-          <p>{customStyling.bgPictureOpacity}%</p>
+          <p>{$customStyling.bgPictureOpacity}%</p>
         </span>
 
         <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
@@ -625,62 +632,41 @@ a11y_no_noninteractive_element_interactions -->
           <input
             id="bg-color"
             type="color"
-            bind:value={customStyling.bgColor}
+            bind:value={$customStyling.bgColor}
           />
         </span>
       </div>
 
       <div class="transparent-container flex-row">
         <button
-          class:active-btn={customStyling.boxShadow}
+          class:active-btn={$customStyling.boxShadow}
           on:click={() =>
-            (customStyling!.boxShadow = !customStyling!.boxShadow)}
+            ($customStyling!.boxShadow = !$customStyling!.boxShadow)}
         >
           box shadow
         </button>
 
         <button
-          class:active-btn={customStyling.optionsContainer}
+          class:active-btn={$customStyling.optionsContainer}
           on:click={() =>
-            (customStyling!.optionsContainer =
-              !customStyling!.optionsContainer)}
+            ($customStyling!.optionsContainer =
+              !$customStyling!.optionsContainer)}
         >
           options box
         </button>
 
         <button
-          class:active-btn={customStyling.optionSelector}
+          class:active-btn={$customStyling.optionSelector}
           on:click={() =>
-            (customStyling!.optionSelector = !customStyling!.optionSelector)}
+            ($customStyling!.optionSelector = !$customStyling!.optionSelector)}
         >
           option selector
         </button>
       </div>
-      <span class="reset-wrapper flex-row">
-        <ResetSVG
-          text="Reset to light theme"
-          onclick={() =>
-            openModal(
-              resetSettingsModal(activeControlPanel),
-              'Apply default light theme',
-              () => {
-                customFont = lightThemeFont;
-                customStyling = lightThemeStyling;
-              },
-            )}
-        />
-        <ResetSVG
-          text="Reset to dark theme"
-          onclick={() =>
-            openModal(
-              resetSettingsModal(activeControlPanel),
-              'Apply default dark theme',
-              () => {
-                updateFont('reset');
-                updateStyling('reset');
-              },
-            )}
-        />
+      <span class="custom-themes flex-row">
+        <button class="purple-btn" on:click={openThemeSettings}>
+          Manage Themes
+        </button>
       </span>
     </section>
 
@@ -1033,6 +1019,10 @@ a11y_no_noninteractive_element_interactions -->
           @include respond-up(tablet) {
             gap: 1.5rem;
           }
+        }
+
+        .custom-themes {
+          width: 100%;
         }
       }
     }

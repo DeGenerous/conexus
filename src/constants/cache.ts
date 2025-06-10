@@ -44,6 +44,7 @@ export const CATEGORY_TOPICS_TTL = 1000 * 60 * 60 * 1; // 1 hour
 
 // Step customization (use 1 year TTL)
 export const GAME_INSTRUCTIONS_KEY = 'show_instructions';
+export const THEMES_KEY = 'themes';
 export const FONT_KEY = 'font';
 export const STYLING_KEY = 'styling';
 export const SCALE_KEY = 'scale';
@@ -110,6 +111,7 @@ export const ClearCache = (
       const musicVolume = localStorage.getItem(VOLUME_KEY('music'));
       const voiceVolume = localStorage.getItem(VOLUME_KEY('voice'));
       const ttsSpeed = localStorage.getItem(TTS_SPEED_KEY);
+      const customThemes = localStorage.getItem(THEMES_KEY);
       const customFont = localStorage.getItem(FONT_KEY);
       const customStyling = localStorage.getItem(STYLING_KEY);
       const customScale = localStorage.getItem(SCALE_KEY);
@@ -123,6 +125,7 @@ export const ClearCache = (
       if (musicVolume) localStorage.setItem(VOLUME_KEY('music'), musicVolume);
       if (voiceVolume) localStorage.setItem(VOLUME_KEY('voice'), voiceVolume);
       if (ttsSpeed) localStorage.setItem(TTS_SPEED_KEY, ttsSpeed);
+      if (customThemes) localStorage.setItem(THEMES_KEY, customThemes);
       if (customFont) localStorage.setItem(FONT_KEY, customFont);
       if (customStyling) localStorage.setItem(STYLING_KEY, customStyling);
       if (customScale) localStorage.setItem(SCALE_KEY, customScale);

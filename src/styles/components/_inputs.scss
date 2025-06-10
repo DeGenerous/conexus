@@ -14,7 +14,7 @@ input {
   outline: none;
   @include cyan(0.1);
   @include cyan(1, text);
-  @include box-shadow(0 0 0.5rem black);
+  @include box-shadow(0 0 0.5rem rgba(0, 0, 0, 0.75));
   @include cyan-border(0.5);
 
   &:disabled {
@@ -100,7 +100,7 @@ input {
     position: static;
 
     &::after {
-      content: "";
+      content: '';
     }
   }
 }
@@ -233,6 +233,6 @@ textarea {
   padding: 0.375rem 0.75rem;
   @include cyan(0.1);
   @include cyan(1, text);
-  @include box-shadow(0 0 0.5rem black);
+  @include box-shadow(0 0 0.5rem rgba(0, 0, 0, 0.75));
   @include cyan-border(0.5);
 }

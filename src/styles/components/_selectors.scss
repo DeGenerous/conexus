@@ -11,7 +11,7 @@ select {
   @include cyan(0.75, text);
   @include dark-blue(0.75);
   @include cyan-border(0.5);
-  @include box-shadow(0 0 0.5rem black);
+  @include box-shadow(0 0 0.5rem rgba(0, 0, 0, 0.75));
 
   @include respond-up(tablet) {
     max-width: 25rem;

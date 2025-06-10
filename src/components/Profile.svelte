@@ -871,6 +871,7 @@ a11y-no-static-element-interactions-->
         &:focus:not(&:disabled) {
           @include scale-up(soft);
           @include bright;
+          @include box-shadow(deep);
         }
 
         &:disabled {
@@ -905,6 +906,7 @@ a11y-no-static-element-interactions-->
         &:focus:not(.used-code) {
           @include scale-up(soft);
           @include bright;
+          @include box-shadow(deep);
         }
 
         p {

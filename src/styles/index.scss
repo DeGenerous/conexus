@@ -19,7 +19,7 @@
   background-color: $deep-green;
   padding: 0.25rem;
   border-radius: 0.5rem;
-  @include box-shadow(0 0 0.5rem black);
+  @include box-shadow(0 0 0.5rem rgba(0, 0, 0, 0.75));
   @include font(caption);
 }
 
@@ -238,7 +238,8 @@ html {
     width: 95%;
     align-items: flex-end;
 
-    &, * {
+    &,
+    * {
       animation-duration: 20s !important;
     }
 
@@ -248,7 +249,6 @@ html {
       justify-content: space-around;
 
       &.opaque-container {
-
       }
     }
 
@@ -259,7 +259,7 @@ html {
         position: static;
 
         &::after {
-          content: "";
+          content: '';
         }
       }
     }

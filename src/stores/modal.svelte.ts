@@ -1,7 +1,36 @@
 import { writable } from 'svelte/store';
+import {
+  defaultFont,
+  defaultStyling,
+  lightThemeFont,
+  lightThemeStyling,
+} from '@constants/customization';
 
 export const showModal = writable<boolean>(false);
 export const showProfile = writable<boolean>(false);
+
+// THEME CUSTOMIZATION
+
+export const themeSettings = writable<boolean>(false);
+export const customThemes = writable<CustomTheme[]>([
+  {
+    name: 'DARK (Standard)',
+    font: defaultFont,
+    styling: defaultStyling,
+    standard: true,
+  },
+  {
+    name: 'LIGHT (Standard)',
+    font: lightThemeFont,
+    styling: lightThemeStyling,
+    standard: true,
+  },
+]);
+
+export const customFont = writable<CustomFont>(null);
+export const customStyling = writable<CustomStyling>(null);
+
+// MODAL HANDLING
 
 export const modal = $state<ConexusModal>({
   content: '',

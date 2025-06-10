@@ -90,7 +90,7 @@ $deep-shadow-plus-inset-glow:
 }
 
 :global(.shad-behind) {
-  @include box-shadow(0 0 0.5rem black);
+  @include box-shadow(0 0 0.5rem rgba(0, 0, 0, 0.75));
 }
 
 :global(.shad-inset-glow) {

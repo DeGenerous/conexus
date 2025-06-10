@@ -30,3 +30,10 @@ type CustomScale = Nullable<{
   imageWidth: number; // px
   imageHeight: number; // px
 }>;
+
+type CustomTheme = {
+  name: string;
+  font: CustomFont;
+  styling: CustomStyling;
+  standard?: boolean;
+};

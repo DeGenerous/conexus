@@ -1,10 +1,14 @@
 <script lang="ts">
-  export let character: Character = {
-    name: '',
-    description: '',
-    psychology: '',
-    physicality: '',
-  };
+  let {
+    character = $bindable({
+      name: '',
+      description: '',
+      psychology: '',
+      physicality: '',
+    }),
+  }: {
+    character: Character;
+  } = $props();
 </script>
 
 <div class="input-container">
@@ -30,7 +34,7 @@
   <label for="physicality">Physicality</label>
   <textarea
     class="dream-input"
-    placeholder="Describe the character’s appearance, including distinguishing features, clothing, or any unique traits. E.g. Tall and broad-shouldered with piercing emerald eyes, dressed in a weathered leather jacket and carrying an old relic from the past."
+    placeholder="Describe the character’s whole appearance in detail - face, body, hair, eyes, skin tone, vibe… Be specific with color, shape, and style. E.g. A medium-height teenage boy with wavy, messy dark brown hair, blue eyes, and light olive skin, usually wearing a hoodie and ripped jeans, soft facial features with a slightly tired but thoughtful expression."
     rows="3"
     bind:value={character.physicality}
   ></textarea>
@@ -45,21 +49,3 @@
     bind:value={character.psychology}
   ></textarea>
 </div>
-
-<style>
-  textarea {
-    width: 80vw;
-    min-height: 20vh;
-    max-height: 100vh;
-  }
-
-  .character-name {
-    text-align: center;
-  }
-
-  @media only screen and (max-width: 600px) {
-    textarea {
-      width: 90vw;
-    }
-  }
-</style>

@@ -8,7 +8,7 @@ export const storyData = writable<StoryData>({
 });
 
 export const promptSettings = writable<PromptSettings>({
-  imageStyle: 'Realist',
+  imageStyle: 'Realistic',
   language: 'English',
   interactivity: 'standard',
   difficulty: 'standard',
@@ -32,66 +32,66 @@ export const tablePrompt = writable<TablePrompt>({
   losingScenarios: [],
   keyEvents: [],
   tense: 'present',
-  storyArcs: 'standard',
+  storyArcs: 'min',
   writingStyle: 'descriptive',
   voice: 'active',
   pacing: 'standard',
   tone: [
     {
       name: 'optimistic',
-      value: 'none',
+      value: 'standard',
     },
     {
       name: 'pessimistic',
-      value: 'none',
+      value: 'standard',
     },
     {
       name: 'sarcastic',
-      value: 'none',
+      value: 'standard',
     },
     {
       name: 'assertive',
-      value: 'none',
+      value: 'standard',
     },
     {
       name: 'aggressive',
-      value: 'none',
+      value: 'standard',
     },
     {
       name: 'passionate',
-      value: 'none',
+      value: 'standard',
     },
     {
       name: 'entertaining',
-      value: 'none',
+      value: 'standard',
     },
     {
       name: 'serious',
-      value: 'none',
+      value: 'standard',
     },
     {
       name: 'educational',
-      value: 'none',
+      value: 'standard',
     },
     {
       name: 'persuasive',
-      value: 'none',
+      value: 'standard',
     },
     {
       name: 'motivating',
-      value: 'none',
+      value: 'standard',
     },
     {
       name: 'curious',
-      value: 'none',
+      value: 'standard',
     },
     {
       name: 'humoristic',
-      value: 'none',
+      value: 'standard',
     },
     {
       name: 'surreal',
-      value: 'none',
+      value: 'standard',
     },
   ],
   additionalData: '',
@@ -105,7 +105,7 @@ export const clearAllData = () => {
     category: null,
   });
   promptSettings.set({
-    imageStyle: 'Realist',
+    imageStyle: 'Realistic',
     language: 'English',
     interactivity: 'standard',
     difficulty: 'standard',
@@ -134,59 +134,59 @@ export const clearAllData = () => {
     tone: [
       {
         name: 'optimistic',
-        value: 'none',
+        value: 'standard',
       },
       {
         name: 'pessimistic',
-        value: 'none',
+        value: 'standard',
       },
       {
         name: 'sarcastic',
-        value: 'none',
+        value: 'standard',
       },
       {
         name: 'assertive',
-        value: 'none',
+        value: 'standard',
       },
       {
         name: 'aggressive',
-        value: 'none',
+        value: 'standard',
       },
       {
         name: 'passionate',
-        value: 'none',
+        value: 'standard',
       },
       {
         name: 'entertaining',
-        value: 'none',
+        value: 'standard',
       },
       {
         name: 'serious',
-        value: 'none',
+        value: 'standard',
       },
       {
         name: 'educational',
-        value: 'none',
+        value: 'standard',
       },
       {
         name: 'persuasive',
-        value: 'none',
+        value: 'standard',
       },
       {
         name: 'motivating',
-        value: 'none',
+        value: 'standard',
       },
       {
         name: 'curious',
-        value: 'none',
+        value: 'standard',
       },
       {
         name: 'humoristic',
-        value: 'none',
+        value: 'standard',
       },
       {
         name: 'surreal',
-        value: 'none',
+        value: 'standard',
       },
     ],
     additionalData: '',

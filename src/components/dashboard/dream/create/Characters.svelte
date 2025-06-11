@@ -5,12 +5,15 @@
   import Dropdown from './Dropdown.svelte';
   import NewCharacter from './NewCharacter.svelte';
 
+  // ADD NEW SIDE CHARACTER
+
   let newSideCharacter: Character = {
     name: '',
     description: '',
     physicality: '',
     psychology: '',
   };
+
   const addSideCharacter = () => {
     $tablePrompt.sideCharacters = [
       ...$tablePrompt.sideCharacters,
@@ -23,6 +26,7 @@
       psychology: '',
     };
   };
+
   const removeSideCharacter = (index: number) => {
     $tablePrompt.sideCharacters = $tablePrompt.sideCharacters.filter(
       (character, nr) => {
@@ -30,6 +34,8 @@
       },
     );
   };
+
+  // ADD NEW RELATIONSHIP
 
   let newRelationship: Relationship = {
     type: 'neutral',
@@ -55,18 +61,14 @@
     );
   };
 
+  // UTILS
+
   $: relationshipExamples =
     newRelationship.type === 'friends'
       ? 'Family, Mentor/Protégé, Allies of Convenience, Unbreakable Bond...'
       : newRelationship.type === 'enemies'
         ? 'Betrayer, Rival, Respectful Opponent, Mortal Enemy, Frenemy...'
         : 'Stranger, Tenuous Trust, Business Relationship, Mysterious Past...';
-
-  const setRelationshipColor = (type: string, opacity: number = 1) => {
-    if (type === 'friends') return `rgba(0, 185, 55, ${opacity})`;
-    if (type === 'enemies') return `rgba(255, 60, 64, ${opacity})`;
-    return `rgba(150, 150, 150, ${opacity})`;
-  };
 
   $: characterValidation =
     newSideCharacter.name && newSideCharacter.description;
@@ -77,42 +79,44 @@
     newRelationship.connection[0] !== newRelationship.connection[1];
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
 <Dropdown name="Add Characters">
-  <div class="container-wrapper character-container">
-    <h2>Main Character</h2>
+  <div class="character-data flex">
+    <h5>Main Character</h5>
     <NewCharacter bind:character={$tablePrompt.mainCharacter} />
   </div>
 
   <hr />
 
-  <div class="container-wrapper">
-    <h2>Side Characters</h2>
+  <!-- SIDE CHARACTERS -->
+
+  <div class="character-data flex">
+    <h5>
+      Side Characters{$tablePrompt.sideCharacters.length
+        ? ': ' + $tablePrompt.sideCharacters.length
+        : ''}
+    </h5>
     {#if $tablePrompt.sideCharacters.length > 0}
-      <ul class="container-wrapper characters-container">
+      <ul class="side-characters flex">
         {#each $tablePrompt.sideCharacters as character, index}
-          <li class="container added-prompt side-character">
-            <h2 class="character-name">{character.name}</h2>
-            <div class="flex-row">
-              <h2>Description</h2>
-              <h3>{character.description}</h3>
-            </div>
+          <li class="flex transition">
+            <h4 class="character-name">{character.name}</h4>
+            <span class="flex">
+              <h5>Description</h5>
+              <p>{character.description}</p>
+            </span>
             {#if character.physicality}
-              <div class="flex-row">
-                <h2>Physicality</h2>
-                <h3>{character.physicality}</h3>
-              </div>
+              <span class="flex">
+                <h5>Physicality</h5>
+                <p>{character.physicality}</p>
+              </span>
             {/if}
             {#if character.psychology}
-              <div class="flex-row">
-                <h2>Psychology</h2>
-                <h3>{character.psychology}</h3>
-              </div>
+              <span class="flex">
+                <h5>Psychology</h5>
+                <p>{character.psychology}</p>
+              </span>
             {/if}
-            <button
-              class="red-button"
-              on:click={() => removeSideCharacter(index)}
-            >
+            <button class="red-btn" onclick={() => removeSideCharacter(index)}>
               Remove
             </button>
           </li>
@@ -127,28 +131,25 @@
       Provide both Name and Description for the new character
     </p>
   {/if}
-  <button on:click={addSideCharacter} disabled={!characterValidation}
-    >Add Side Character</button
-  >
+  <button onclick={addSideCharacter} disabled={!characterValidation}>
+    Add Side Character
+  </button>
 
   <hr />
 
-  <h2>Relationships</h2>
+  <!-- CHARACTERS RELATIONSHIPS -->
+
+  <h5>Relationships</h5>
   {#if $tablePrompt.relationships.length > 0}
-    <ul class="container-wrapper characters-container relationships-container">
+    <ul class="relationships flex-row">
       {#each $tablePrompt.relationships as { type, details, connection }, index}
-        <li
-          class="container added-prompt side-character"
-          style="background-color: {setRelationshipColor(type, 0.5)}"
-        >
-          <h2 class="character-name">{connection[0]}</h2>
+        <li class="flex transition {type}">
+          <h4 class="character-name">{connection[0]}</h4>
           {#if details}
-            <h3 class="relationship-details">
-              {details}
-            </h3>
+            <p>{details}</p>
           {/if}
-          <h2 class="character-name">{connection[1]}</h2>
-          <button class="red-button" on:click={() => removeRelationship(index)}>
+          <h4 class="character-name">{connection[1]}</h4>
+          <button class="red-btn" onclick={() => removeRelationship(index)}>
             Remove
           </button>
         </li>
@@ -156,28 +157,27 @@
     </ul>
   {/if}
 
-  <div class="container-wrapper dream-container relationship">
+  <section class="relationship-data flex">
     <div class="flex-row">
-      <h2>Type</h2>
-      <div class="container dream-radio-buttons">
+      <h5>Type</h5>
+      <span class="data-field flex-row">
         {#each dreamData.relationship as type}
-          <span
+          <button
+            class="void-btn dream-radio-btn"
             class:active={type === newRelationship.type}
-            role="button"
-            tabindex="0"
-            on:click={() => (newRelationship.type = type as any)}
+            onclick={() => (newRelationship.type = type as any)}
           >
             {dreamData.capitalize(type)}
-          </span>
+          </button>
         {/each}
-      </div>
+      </span>
     </div>
 
     <div class="flex-row">
-      <h2>Details</h2>
+      <h5>Details</h5>
       <input
         id="relationship-details"
-        class="dream-input dream-textfield"
+        class="data-field"
         type="text"
         placeholder={'E.g. ' + relationshipExamples}
         bind:value={newRelationship.details}
@@ -185,14 +185,10 @@
     </div>
 
     <div class="flex-row">
-      <h2>Connection</h2>
-      <div class="container relationship-characters">
+      <h5>Connection</h5>
+      <div class="connection data-field flex">
         <select
-          class="selector"
-          style="border-color: {setRelationshipColor(
-            newRelationship.type,
-            0.75,
-          )}"
+          class={newRelationship.type}
           bind:value={newRelationship.connection[0]}
         >
           <option value="" selected={true} disabled hidden>Select</option>
@@ -210,20 +206,10 @@
           {/if}
         </select>
 
-        <div
-          class="relationship-line"
-          style="background-color: {setRelationshipColor(
-            newRelationship.type,
-            0.75,
-          )}"
-        ></div>
+        <div class="relationship-line transition {newRelationship.type}"></div>
 
         <select
-          class="selector"
-          style="border-color: {setRelationshipColor(
-            newRelationship.type,
-            0.75,
-          )}"
+          class={newRelationship.type}
           bind:value={newRelationship.connection[1]}
         >
           <option value="" selected={true} disabled hidden>Select</option>
@@ -242,143 +228,215 @@
         </select>
       </div>
     </div>
-  </div>
+  </section>
 
   {#if $tablePrompt.sideCharacters.length < 1 && !$tablePrompt.mainCharacter.name}
-    <p class="validation">There is no characters added.</p>
+    <p class="validation">There is no characters added</p>
+  {:else if $tablePrompt.sideCharacters.length < 1 || ($tablePrompt.sideCharacters.length < 2 && !$tablePrompt.mainCharacter.name)}
+    <p class="validation">
+      You must have at least 2 characters to set up a relationship
+    </p>
   {/if}
 
   {#if newRelationship.connection[0] && newRelationship.connection[1] && newRelationship.connection[0] == newRelationship.connection[1]}
     <p class="validation">
-      A character cannot have a relationship with themselves! Please select two
-      different characters.
+      A character cannot have a relationship with themselves, please select two
+      different characters
     </p>
   {/if}
 
-  <button on:click={addRelationship} disabled={!relationsValidation}
-    >Add Relationship</button
-  >
+  <button onclick={addRelationship} disabled={!relationsValidation}>
+    Add Relationship
+  </button>
 </Dropdown>
 
-<style>
-  .characters-container {
-    gap: 1vw;
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
+
+  // CHARACTERS
+
+  .character-data {
+    flex-direction: column;
   }
 
-  .side-character {
-    box-shadow: 0 0.25vw 0.5vw #010020;
-    gap: 1vw;
+  .side-characters {
+    li {
+      padding: 1rem;
+      border-radius: 0.5rem;
+      @include gray(0.25);
+      @include box-shadow;
+
+      &:hover,
+      &:active {
+        @include bright;
+        @include scale-up(1.01);
+        @include box-shadow(deep);
+      }
+
+      .character-name {
+        width: auto;
+        text-align: center;
+        @include cyan(1, text);
+      }
+
+      span {
+        width: 100%;
+
+        @include respond-up(small-desktop) {
+          flex-direction: row;
+          justify-content: flex-start;
+
+          h5 {
+            width: 8rem;
+            flex: none;
+            text-align: right;
+          }
+
+          p {
+            text-align: left;
+          }
+        }
+
+        p {
+          padding: 0.5rem;
+          border-radius: 0.5rem;
+          @include white-txt;
+          @include dark-blue(0.5);
+          @include box-shadow(soft, inset);
+        }
+      }
+
+      button {
+        flex: none;
+      }
+    }
   }
 
-  .side-character h2 {
-    line-height: 1.5;
+  // RELATIONSHIPS
+
+  .relationships {
+    flex-wrap: wrap;
+
+    li {
+      padding: 1rem;
+      border-radius: 0.5rem;
+      @include gray(0.25);
+      @include box-shadow;
+
+      &:hover,
+      &:active {
+        @include bright;
+        @include scale-up(1.01);
+        @include box-shadow(deep);
+      }
+
+      .character-name {
+        width: 100%;
+        text-align: center;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        @include white-txt;
+        @include dark-blue(0.5);
+        @include box-shadow(soft, inset);
+      }
+
+      p {
+        text-transform: uppercase;
+        @include white-txt(soft);
+      }
+
+      &.friends {
+        @include deep-green(0.5);
+      }
+
+      &.enemies {
+        @include deep-red(0.5);
+      }
+
+      &.neutral {
+        @include blue(0.5);
+      }
+    }
   }
 
-  .side-character .flex-row {
-    justify-content: flex-end;
-  }
+  .relationship-data {
+    padding: 1rem;
+    border-radius: 1rem;
+    @include gray(0.25);
+    @include box-shadow;
 
-  .side-character h3 {
-    width: 85%;
-    color: #dedede;
-    line-height: 1.5;
-    background-color: rgba(22, 30, 95, 0.75);
-    padding: 1vw;
-    border-radius: 1.5vw;
-    box-shadow: inset 0 0 0.5vw #010020;
-  }
-
-  .character-name {
-    color: rgb(51, 226, 230);
-  }
-
-  .relationship {
-    width: auto;
-  }
-
-  #relationship-details {
-    resize: none;
-  }
-
-  .dream-radio-buttons {
-    width: 74vw !important;
-  }
-
-  .relationship-characters {
-    width: 74vw;
-    justify-content: center !important;
-    gap: 0;
-  }
-
-  .relationship-characters .selector {
-    border-width: 0.25vw;
-  }
-
-  .relationship-line {
-    width: 10vw;
-    height: 0.5vw;
-  }
-
-  .relationships-container {
-    flex-flow: row wrap;
-  }
-
-  .relationships-container h2 {
-    color: #dedede;
-  }
-
-  .relationship-details {
-    text-align: center;
-    width: auto !important;
-    background-color: rgba(1, 0, 32, 0.5) !important;
-  }
-
-  @media only screen and (max-width: 600px) {
-    .characters-container {
-      gap: 1em;
+    @include respond-up(small-desktop) {
+      h5 {
+        width: 8rem;
+        flex: none;
+        text-align: right;
+      }
     }
 
-    .side-character {
+    .data-field {
       width: 100%;
-      gap: 1em;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      @include dark-blue(0.5);
+      @include box-shadow(soft, inset);
+
+      &.connection {
+        flex-flow: column nowrap;
+        justify-content: center;
+        gap: 0;
+
+        .relationship-line {
+          width: 0.5rem;
+          height: 1rem;
+          @include dark-blue;
+
+          &.friends {
+            @include deep-green;
+          }
+
+          &.enemies {
+            @include deep-red;
+          }
+
+          &.neutral {
+            @include blue;
+          }
+        }
+
+        select {
+          max-width: 15rem;
+          z-index: 1;
+
+          &.friends {
+            border-color: $deep-green;
+          }
+
+          &.enemies {
+            border-color: $deep-red;
+          }
+
+          &.neutral {
+            border-color: $blue;
+          }
+        }
+
+        @include respond-up(small-desktop) {
+          flex-direction: row;
+
+          .relationship-line {
+            width: 10rem;
+            height: 0.25rem;
+          }
+        }
+      }
     }
 
-    .side-character .flex-row {
-      justify-content: center;
-    }
-
-    .side-character h2 {
-      display: none;
-    }
-
-    .side-character h3 {
-      width: 100%;
-      line-height: 2;
-    }
-
-    .character-name {
-      display: block !important;
-    }
-
-    .relationship {
-      width: 100vw;
-    }
-
-    .dream-radio-buttons {
-      width: 95vw !important;
-    }
-
-    .relationship-characters {
-      width: 95vw;
-      gap: 1em;
-    }
-
-    .relationship-line {
-      display: none;
-    }
-
-    .relationship-details {
-      padding: 0.5em 1em !important;
+    input {
+      text-align: left;
+      max-width: unset;
+      animation: none !important;
     }
   }
 </style>

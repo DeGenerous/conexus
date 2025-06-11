@@ -94,7 +94,8 @@ button:not(.void-btn),
 }
 
 .green-btn:not(.void-btn),
-.red-btn:not(.void-btn) {
+.red-btn:not(.void-btn),
+.rose-btn:not(.void-btn) {
   border-color: transparent !important;
 
   &:hover:not(&:disabled),
@@ -123,6 +124,17 @@ button:not(.void-btn),
   &:focus:not(&:disabled) {
     @include orange(1, bg, bright);
     box-shadow: 0 0 0.5rem $orange;
+  }
+}
+
+.rose-btn:not(.void-btn) {
+  @include rose;
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(&:disabled) {
+    @include rose(1, bg, bright);
+    box-shadow: 0 0 0.5rem $rose;
   }
 }
 

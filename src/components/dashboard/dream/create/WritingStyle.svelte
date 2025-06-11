@@ -6,27 +6,25 @@
   import Slider from './Slider.svelte';
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
 <Dropdown name="Build Writing Style">
-  <div class="dream-container style-options">
+  <section class="dream-container">
     <div class="flex-row">
-      <h2>Tense</h2>
-      <div class="container dream-radio-buttons">
+      <h4>Tense</h4>
+      <div class="container">
         {#each dreamData.tense as tense}
-          <span
+          <button
+            class="void-btn dream-radio-btn"
             class:active={tense === $tablePrompt.tense}
-            role="button"
-            tabindex="0"
-            on:click={() => ($tablePrompt.tense = tense)}
+            onclick={() => ($tablePrompt.tense = tense)}
           >
             {dreamData.capitalize(tense)}
-          </span>
+          </button>
         {/each}
       </div>
     </div>
 
     <div class="flex-row">
-      <h2>Story Arcs</h2>
+      <h4>Story Arcs</h4>
       <div class="container">
         <Slider
           bind:sliderValue={$tablePrompt.storyArcs}
@@ -42,39 +40,37 @@
     </div>
 
     <div class="flex-row">
-      <h2>Style</h2>
+      <h4>Style</h4>
       <div class="container dream-radio-buttons">
         {#each dreamData.writingStyle as style}
-          <span
+          <button
+            class="void-btn dream-radio-btn"
             class:active={style === $tablePrompt.writingStyle}
-            role="button"
-            tabindex="0"
-            on:click={() => ($tablePrompt.writingStyle = style)}
+            onclick={() => ($tablePrompt.writingStyle = style)}
           >
             {dreamData.capitalize(style)}
-          </span>
+          </button>
         {/each}
       </div>
     </div>
 
     <div class="flex-row">
-      <h2>Voice</h2>
+      <h4>Voice</h4>
       <div class="container dream-radio-buttons">
         {#each dreamData.voice as voice}
-          <span
+          <button
+            class="void-btn dream-radio-btn"
             class:active={voice === $tablePrompt.voice}
-            role="button"
-            tabindex="0"
-            on:click={() => ($tablePrompt.voice = voice)}
+            onclick={() => ($tablePrompt.voice = voice)}
           >
             {dreamData.capitalize(voice)}
-          </span>
+          </button>
         {/each}
       </div>
     </div>
 
     <div class="flex-row">
-      <h2>Pacing</h2>
+      <h4>Pacing</h4>
       <div class="container">
         <Slider
           bind:sliderValue={$tablePrompt.pacing}
@@ -88,15 +84,14 @@
         />
       </div>
     </div>
-  </div>
+  </section>
 
   <hr />
 
   <div class="input-container">
-    <label class="section-title" for="point-of-view">Point of View</label>
+    <label for="point-of-view">Point of View</label>
     <textarea
       id="point-of-view"
-      class="dream-input"
       placeholder="Specify the perspective of the story—first-person, second-person, or third-person—and whose eyes we experience the journey through. E.g. First-person, from the detective’s skeptical assistant, uncovering their mentor’s hidden dark secret."
       rows="3"
       bind:value={$tablePrompt.POV}
@@ -105,54 +100,35 @@
 
   <hr />
 
-  <h3>Story Tone</h3>
+  <h5>Story Tone</h5>
 
-  <div class="dream-container tone-characteristics">
-    {#each $tablePrompt.tone as { name, value }}
-      <div class="flex-row">
-        <h2>{dreamData.capitalize(name)}</h2>
-        <div class="container">
-          <Slider bind:sliderValue={value} />
-        </div>
+  {#each $tablePrompt.tone as { name, value }}
+    <span class="tone flex">
+      <h5>{dreamData.capitalize(name)}</h5>
+      <div class="container">
+        <Slider bind:sliderValue={value} inputValue={3} />
       </div>
-    {/each}
-  </div>
+    </span>
+  {/each}
 </Dropdown>
 
-<style>
-  textarea {
-    width: 80vw;
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
+
+  section {
+    width: 100%;
   }
 
-  label,
-  h3 {
-    color: #dedede;
-  }
+  .tone {
+    width: 100%;
 
-  .tone-characteristics {
-    width: auto;
-  }
+    @include respond-up(tablet) {
+      flex-direction: row;
 
-  .style-options {
-    width: 84vw;
-  }
-
-  .style-options .container {
-    width: 70vw;
-  }
-
-  @media only screen and (max-width: 600px) {
-    textarea {
-      width: 90vw;
-    }
-
-    .tone-characteristics,
-    .style-options {
-      width: 100vw;
-    }
-
-    .style-options .container {
-      width: 95vw;
+      h5 {
+        width: 10rem;
+        text-align: right;
+      }
     }
   }
 </style>

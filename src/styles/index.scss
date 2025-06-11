@@ -1,5 +1,5 @@
 // UTILITY CLASSES:
-// flex, flex-row, blur, validation, transition, gap-8
+// flex, flex-row, flex-wrap, blur, validation, transition, gap-8
 // Padding: pad-# 8, 16 (none); Padding-Inline: pad-inline
 // Border-radius: round-# 8, 12, 16 (none), 24, 32
 // Margin: mar, mar-inline (16), mar-auto
@@ -81,6 +81,18 @@ ul {
   cursor: default;
 }
 
+:where(img) {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  aspect-ratio: initial;
+}
+
+:where(hr) {
+  width: 95%;
+  @include white-border(0.1);
+}
+
 /* GENERAL STYLING */
 
 a {
@@ -113,6 +125,8 @@ html {
     width: 0px;
   }
 
+  // UTILITY CLASSES
+
   main,
   :where(.flex) {
     display: flex;
@@ -125,6 +139,10 @@ html {
   .flex-row {
     @extend .flex;
     flex-direction: row;
+  }
+
+  .flex-wrap {
+    flex-wrap: wrap;
   }
 
   .gap-8 {
@@ -202,6 +220,32 @@ html {
     transition: all 0.3s ease-in-out;
   }
 
+  .vert-scrollbar {
+    &::-webkit-scrollbar {
+      width: 0.5rem;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0),
+        rgba(51, 226, 230, 0.25),
+        rgba(0, 0, 0, 0)
+      );
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+
+    &::-webkit-scrollbar-thumb:hover,
+    &::-webkit-scrollbar-thumb:active {
+      background: rgba(51, 226, 230, 0.25);
+    }
+  }
+
   .container {
     @extend .flex;
     @extend .blur;
@@ -227,43 +271,93 @@ html {
     width: clamp(250px, 95%, 70rem);
   }
 
-  .dream-input,
-  .dream-textfield {
-    animation: dark-glowing 10s ease-in-out infinite;
-    @include white-txt;
-  }
+  // DREAM SECTION STYLING
 
   .dream-container {
     @extend .transparent-container;
     width: 95%;
-    align-items: flex-end;
+    max-width: 100rem;
 
     &,
     * {
-      animation-duration: 20s !important;
+      animation-duration: 36s !important;
+    }
+
+    input:not(input[type='range']),
+    textarea,
+    select {
+      animation: dark-glowing 10s ease-in-out infinite;
+      @include white-txt;
+      @include box-shadow(0 0 0.5rem rgba(0, 0, 0, 0.75));
+
+      &:hover:not(&:disabled),
+      &:active:not(&:disabled),
+      &:focus:not(&:disabled) {
+        transform: none;
+        @include white-txt;
+        @include box-shadow;
+        @include cyan-border;
+        @include bright;
+        @include scale(1.005, x);
+      }
+    }
+
+    h4,
+    h5 {
+      @include text-shadow;
     }
 
     div {
       width: 100%;
-      flex-direction: row;
+      flex-flow: row wrap;
       justify-content: space-around;
 
-      &.opaque-container {
+      @include respond-up(small-desktop) {
+        flex-wrap: nowrap;
+
+        h4 {
+          width: 18rem;
+          text-align: right;
+        }
       }
-    }
 
-    .input-container {
-      flex-flow: column nowrap;
+      &.container {
+        @include box-shadow(deep, inset);
+      }
 
-      label {
-        position: static;
+      &.input-container {
+        flex-flow: column nowrap;
+        margin-top: 0;
 
-        &::after {
-          content: '';
+        label {
+          position: static;
+
+          &::after {
+            content: '';
+          }
+        }
+      }
+
+      .dream-radio-btn {
+        text-transform: uppercase;
+        @include light-blue(1, text);
+        @include font(h4);
+
+        &:hover,
+        &:active,
+        &:focus {
+          @include scale;
+          @include bright;
+        }
+
+        &.active {
+          @include cyan(1, text);
         }
       }
     }
   }
+
+  // NAVIGATION ICONS
 
   .top-left-icon,
   .top-right-icon {
@@ -294,44 +388,6 @@ html {
 
   .top-right-icon {
     right: 1rem;
-  }
-
-  .vert-scrollbar {
-    &::-webkit-scrollbar {
-      width: 0.5rem;
-    }
-
-    &::-webkit-scrollbar-track {
-      background-color: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0),
-        rgba(51, 226, 230, 0.25),
-        rgba(0, 0, 0, 0)
-      );
-      border-radius: 0.5rem;
-      cursor: pointer;
-    }
-
-    &::-webkit-scrollbar-thumb:hover,
-    &::-webkit-scrollbar-thumb:active {
-      background: rgba(51, 226, 230, 0.25);
-    }
-  }
-
-  :where(img) {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    aspect-ratio: initial;
-  }
-
-  :where(hr) {
-    width: 95%;
-    @include white-border(0.1);
   }
 }
 

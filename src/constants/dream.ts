@@ -1,13 +1,17 @@
 const dreamData = {
   imageStyle: [
-    'Realist',
+    'Cinematic',
+    'Realistic',
     'Retro',
     'Anime',
     'Graphic Novel',
     'Cartoon',
     'Abstract',
     'Futuristic',
+    'Storybook',
+    'Pixel',
     'Black & White',
+    'Undefined',
   ],
   tense: ['past', 'present', 'future'],
   writingStyle: ['descriptive', 'narrative', 'expository'],

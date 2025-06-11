@@ -2,7 +2,7 @@
   import { tablePrompt } from '@stores/dream.svelte';
   import Dropdown from './Dropdown.svelte';
 
-  let newWinningScenario: string = '';
+  let newWinningScenario: string = $state('');
   const addWinningScenario = () => {
     if (newWinningScenario === '') return;
     $tablePrompt.winningScenarios = [
@@ -19,7 +19,7 @@
     );
   };
 
-  let newLosingScenario: string = '';
+  let newLosingScenario: string = $state('');
   const addLosingScenario = () => {
     if (newLosingScenario === '') return;
     $tablePrompt.losingScenarios = [
@@ -36,7 +36,7 @@
     );
   };
 
-  let newKeyEvent: string = '';
+  let newKeyEvent: string = $state('');
   const addKeyEvent = () => {
     if (newKeyEvent === '') return;
     $tablePrompt.keyEvents = [...$tablePrompt.keyEvents, newKeyEvent];
@@ -74,16 +74,13 @@
 <svelte:window on:keypress={handleEnterKey} />
 
 <Dropdown name="Describe Scenarios">
-  <h3>Winning Scenario</h3>
+  <h5>Winning Scenarios</h5>
   {#if $tablePrompt.winningScenarios.length > 0}
-    <ul class="container-wrapper winning-scenarios">
+    <ul class="winning-scenarios flex">
       {#each $tablePrompt.winningScenarios as scenario, index}
-        <li class="flex-row added-prompt">
-          <h3>{scenario}</h3>
-          <button
-            class="red-button"
-            on:click={() => removeWinningScenario(index)}
-          >
+        <li class="flex">
+          <p>{scenario}</p>
+          <button class="red-btn" onclick={() => removeWinningScenario(index)}>
             Remove
           </button>
         </li>
@@ -92,27 +89,23 @@
   {/if}
   <input
     id="winning-scenario"
-    class="dream-input"
     type="text"
-    placeholder="How does the story reach a happy or victorious ending? List key moments that lead to success."
+    placeholder="How could the story reach a victorious ending? List the possibilities."
     bind:value={newWinningScenario}
   />
-  <button on:click={addWinningScenario} disabled={newWinningScenario === ''}
-    >Add Winning Scenario</button
-  >
+  <button onclick={addWinningScenario} disabled={newWinningScenario === ''}>
+    Add Winning Scenario
+  </button>
 
   <hr />
 
-  <h3>Losing Scenario</h3>
+  <h5>Losing Scenarios</h5>
   {#if $tablePrompt.losingScenarios.length > 0}
-    <ul class="container-wrapper losing-scenarios">
+    <ul class="losing-scenarios flex">
       {#each $tablePrompt.losingScenarios as scenario, index}
-        <li class="flex-row added-prompt">
-          <h3>{scenario}</h3>
-          <button
-            class="red-button"
-            on:click={() => removeLosingScenario(index)}
-          >
+        <li class="flex">
+          <p>{scenario}</p>
+          <button class="red-btn" onclick={() => removeLosingScenario(index)}>
             Remove
           </button>
         </li>
@@ -121,24 +114,23 @@
   {/if}
   <input
     id="losing-scenario"
-    class="dream-input"
     type="text"
-    placeholder="What leads to failure, loss, or tragedy? List key missteps and dangers that lead to downfall."
+    placeholder="How could the story end as a failure? List the possibilities."
     bind:value={newLosingScenario}
   />
-  <button on:click={addLosingScenario} disabled={newLosingScenario === ''}
-    >Add Losing Scenario</button
-  >
+  <button onclick={addLosingScenario} disabled={newLosingScenario === ''}>
+    Add Losing Scenario
+  </button>
 
   <hr />
 
-  <h3>Key Events</h3>
+  <h5>Key Events</h5>
   {#if $tablePrompt.keyEvents.length > 0}
-    <ul class="container-wrapper losing-scenarios">
+    <ul class="key-events flex">
       {#each $tablePrompt.keyEvents as event, index}
-        <li class="flex-row added-prompt">
-          <h3>{event}</h3>
-          <button class="red-button" on:click={() => removeKeyEvent(index)}>
+        <li class="flex">
+          <p>{event}</p>
+          <button class="red-btn" onclick={() => removeKeyEvent(index)}>
             Remove
           </button>
         </li>
@@ -147,38 +139,72 @@
   {/if}
   <input
     id="key-event"
-    class="dream-input"
     type="text"
     placeholder="What major events shape the story? List key twists, challenges, or turning points."
     bind:value={newKeyEvent}
   />
-  <button on:click={addKeyEvent} disabled={newKeyEvent === ''}
-    >Add Key Event</button
-  >
+  <button onclick={addKeyEvent} disabled={newKeyEvent === ''}>
+    Add Key Event
+  </button>
 </Dropdown>
 
-<style>
-  h3 {
-    color: #dedede;
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
+
+  input {
+    width: 100%;
+    max-width: unset;
+    text-align: left;
   }
 
-  .winning-scenarios,
-  .losing-scenarios {
-    gap: 1vw;
-  }
+  ul {
+    li {
+      transition: 0.3s ease-in-out;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      @include gray(0.5);
+      @include box-shadow;
 
-  .dream-input {
-    width: 85vw;
-  }
+      @include respond-up(small-desktop) {
+        flex-direction: row;
 
-  @media only screen and (max-width: 600px) {
-    .winning-scenarios,
-    .losing-scenarios {
-      gap: 1em;
+        p {
+          text-align: left;
+        }
+      }
+
+      &:hover,
+      &:active {
+        @include bright;
+        @include scale-up(1.01);
+        @include box-shadow(deep);
+      }
+
+      p {
+        @include white-txt;
+      }
+
+      button {
+        flex: none;
+      }
     }
 
-    .dream-input {
-      width: 90vw;
+    &.winning-scenarios {
+      li {
+        @include deep-green(0.5);
+      }
+    }
+
+    &.losing-scenarios {
+      li {
+        @include deep-red(0.5);
+      }
+    }
+
+    &.key-events {
+      li {
+        @include blue(0.5);
+      }
     }
   }
 </style>

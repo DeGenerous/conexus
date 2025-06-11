@@ -21,8 +21,10 @@
 @mixin scale-up($intensity: 'deep') {
   @if $intensity == 'soft' {
     transform: scale(1.025) translateY(-0.25rem);
-  } @else {
+  } @else if $intensity == 'deep' {
     transform: scale(1.025) translateY(-0.5rem);
+  } @else {
+    transform: scale($intensity) translateY(-0.5rem);
   }
 }
 

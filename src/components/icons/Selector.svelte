@@ -6,13 +6,15 @@
     glowing = false,
     color = '#33e2e6',
     selectorSize = 1.5,
+    rotate = null,
   }: {
     focused: Nullable<number | boolean>;
     disabled: boolean;
     hideForMobiles: boolean;
     glowing?: boolean;
-    color: string;
-    selectorSize: number;
+    color?: string;
+    selectorSize?: number;
+    rotate?: Nullable<string>;
   } = $props();
 </script>
 
@@ -20,6 +22,7 @@
   class:focused
   class:disabled={disabled && !focused}
   class:pc-only={hideForMobiles}
+  class:inherit-color={rotate}
   xmlns="http://www.w3.org/2000/svg"
   viewBox="-100 -100 200 200"
   stroke-width="20"
@@ -29,6 +32,7 @@
   style:stroke={color}
   style:width="{selectorSize}rem"
   style:height="{selectorSize}rem"
+  style:transform="rotate({rotate}deg)"
 >
   <polygon points="-40 -90 -40 90 50 0" />
   {#if glowing}
@@ -59,6 +63,11 @@
       polygon {
         transform: scaleX(1.5);
       }
+    }
+
+    &.inherit-color {
+      stroke: inherit !important;
+      fill: inherit !important;
     }
   }
 </style>

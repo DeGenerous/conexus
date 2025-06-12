@@ -74,7 +74,11 @@
 <svelte:window on:keypress={handleEnterKey} />
 
 <Dropdown name="Describe Scenarios">
-  <h5>Winning Scenarios</h5>
+  <h4>
+    Winning Scenarios{$tablePrompt.winningScenarios.length
+      ? ': ' + $tablePrompt.winningScenarios.length
+      : ''}
+  </h4>
   {#if $tablePrompt.winningScenarios.length > 0}
     <ul class="winning-scenarios flex">
       {#each $tablePrompt.winningScenarios as scenario, index}
@@ -99,7 +103,11 @@
 
   <hr />
 
-  <h5>Losing Scenarios</h5>
+  <h4>
+    Losing Scenarios{$tablePrompt.losingScenarios.length
+      ? ': ' + $tablePrompt.losingScenarios.length
+      : ''}
+  </h4>
   {#if $tablePrompt.losingScenarios.length > 0}
     <ul class="losing-scenarios flex">
       {#each $tablePrompt.losingScenarios as scenario, index}
@@ -124,7 +132,11 @@
 
   <hr />
 
-  <h5>Key Events</h5>
+  <h4>
+    Key Events{$tablePrompt.keyEvents.length
+      ? ': ' + $tablePrompt.keyEvents.length
+      : ''}
+  </h4>
   {#if $tablePrompt.keyEvents.length > 0}
     <ul class="key-events flex">
       {#each $tablePrompt.keyEvents as event, index}
@@ -150,6 +162,10 @@
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
+
+  h4 {
+    text-align: center !important;
+  }
 
   input {
     width: 100%;

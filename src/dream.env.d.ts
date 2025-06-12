@@ -28,6 +28,8 @@ interface PromptSettings {
   interactivity: Min_Max;
   difficulty: Min_Max;
   length: Min_Max;
+  readingStyle: string;
+  kidsMode: Nullable<string>;
 }
 
 interface TablePrompt {

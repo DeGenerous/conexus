@@ -13,6 +13,8 @@ export const promptSettings = writable<PromptSettings>({
   interactivity: 'standard',
   difficulty: 'standard',
   length: 'standard',
+  readingStyle: 'simple',
+  kidsMode: null,
 });
 
 export const openPrompt = writable<string>('');
@@ -110,6 +112,8 @@ export const clearAllData = () => {
     interactivity: 'standard',
     difficulty: 'standard',
     length: 'standard',
+    readingStyle: 'simple',
+    kidsMode: null,
   });
   openPrompt.set('');
   tablePrompt.set({

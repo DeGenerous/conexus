@@ -17,11 +17,16 @@
   padding-inline: 1.5rem;
 
   @include respond-up(tablet) {
-    margin-bottom: -0.5rem;
+    margin-bottom: -1rem;
   }
 
-  h3 {
-    @include white-txt;
+  h2 {
+    text-align: left;
+    background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to right, $deep-red, $blue);
+    @include white-txt(0.5);
+    @include bright;
   }
 }
 

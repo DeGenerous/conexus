@@ -195,7 +195,7 @@
 
 {#if filteredTopics.length > 0}
   <div class="collection-header">
-    <h3>Filtered Stories</h3>
+    <h2>Filtered Stories</h2>
     <SortingSVG
       sorting={isSorting}
       onclick={() => {
@@ -229,7 +229,7 @@
   }
 
   .collection-header {
-    h3 {
+    h2 {
       @include green(1, text);
     }
   }

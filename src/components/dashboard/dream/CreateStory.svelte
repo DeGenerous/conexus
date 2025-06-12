@@ -40,6 +40,7 @@
     $storyData.name &&
     $storyData.description &&
     $storyData.description.length > 100 &&
+    $storyData.imagePrompt.length <= 1400 &&
     $storyData.category;
 </script>
 
@@ -87,7 +88,7 @@
 
   {#if $storyData.description && $storyData.description.length < 100}
     <p class="validation">
-      Description should be longer! Enter {100 - $storyData.description.length} more
+      Description should be longer, enter {100 - $storyData.description.length} more
       characters
     </p>
   {/if}
@@ -98,11 +99,18 @@
     <label for="image-prompts">Image Generation Instructions</label>
     <textarea
       id="image-prompts"
+      class:red-border={$storyData.imagePrompt.length > 1400}
       placeholder="What does your world feel like, what visual mood are you going for, and what elements stand out? Describe the environment, style, lighting, and textures you want to see."
       rows="2"
       bind:value={$storyData.imagePrompt}
     ></textarea>
   </div>
+
+  {#if $storyData.imagePrompt && $storyData.imagePrompt.length > 1400}
+    <p class="validation">
+      Please shorten your message to 1400 characters or less, you’ve typed {$storyData.imagePrompt.length}
+    </p>
+  {/if}
 </div>
 
 <!-- MAIN SETTINGS -->
@@ -111,10 +119,10 @@
     <h4>Content</h4>
     <div class="container">
       <div class="input-container">
-        <label for="style">Visual Style</label>
+        <label for="style">Visual style</label>
         <select id="style" bind:value={$promptSettings.imageStyle}>
           {#each dreamData.imageStyle as option}
-            <option value={option}>{dreamData.capitalize(option)}</option>
+            <option value={option}>{option}</option>
           {/each}
         </select>
       </div>
@@ -137,7 +145,7 @@
         <label for="frequency">Control</label>
         <select id="frequency" bind:value={$promptSettings.interactivity}>
           {#each dreamData.min_max as option}
-            <option value={option}>{dreamData.capitalize(option)}</option>
+            <option value={option}>{option}</option>
           {/each}
         </select>
       </div>
@@ -146,7 +154,7 @@
         <label for="difficulty">Difficulty</label>
         <select id="difficulty" bind:value={$promptSettings.difficulty}>
           {#each dreamData.min_max as option}
-            <option value={option}>{dreamData.capitalize(option)}</option>
+            <option value={option}>{option}</option>
           {/each}
         </select>
       </div>
@@ -161,6 +169,40 @@
         parameters={dreamData.min_max}
         inputValue={2}
       />
+    </div>
+  </div>
+
+  <div class="flex-row">
+    <h4>Text</h4>
+    <div class="container">
+      <div
+        class="reading-style input-container transition round-8 shad"
+        class:disabled={$promptSettings.kidsMode !== null}
+      >
+        <label for="reading-style">Reading style</label>
+        <select
+          id="reading-style"
+          bind:value={$promptSettings.readingStyle}
+          disabled={$promptSettings.kidsMode !== null}
+        >
+          {#each dreamData.readingStyle as option}
+            <option value={option}>{option}</option>
+          {/each}
+        </select>
+      </div>
+
+      <div
+        class="kids-mode input-container transition round-8 shad"
+        class:selected={$promptSettings.kidsMode !== null}
+      >
+        <label for="kids-mode">Kids mode</label>
+        <select id="kids-mode" bind:value={$promptSettings.kidsMode}>
+          <option value={null}>Off</option>
+          {#each dreamData.kidsMode as option}
+            <option value={option}>{option}</option>
+          {/each}
+        </select>
+      </div>
     </div>
   </div>
 
@@ -272,3 +314,43 @@
     Create a DREAM
   </button>
 </div>
+
+<style lang="scss">
+  @use "/src/styles/mixins" as *;
+
+  .reading-style {
+    padding-block: 0.5rem;
+    @include gray(0.25);
+
+    select {
+      animation: none;
+      @include dark-blue;
+    }
+
+    &.disabled {
+      opacity: 0.5;
+
+      select {
+        @include dark-blue(1, text);
+      }
+    }
+  }
+
+  .kids-mode {
+    padding-block: 0.5rem;
+    @include deep-green(0.5);
+
+    label {
+      @include green(1, text);
+    }
+
+    select {
+      animation: none;
+      @include dark-green;
+    }
+
+    &.selected {
+      @include deep-green(0.75);
+    }
+  }
+</style>

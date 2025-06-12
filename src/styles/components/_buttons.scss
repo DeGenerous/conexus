@@ -13,6 +13,7 @@ button:not(.void-btn),
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
+  flex: none;
   gap: 0.5rem;
   padding: 0.5rem;
   border-radius: 0.5rem;

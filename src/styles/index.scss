@@ -89,8 +89,8 @@ ul {
 }
 
 :where(hr) {
-  width: 95%;
-  @include white-border(0.1);
+  width: 100%;
+  @include gray-border(0.25);
 }
 
 /* GENERAL STYLING */
@@ -363,7 +363,7 @@ html {
   .top-right-icon {
     width: 2.75rem;
     border-radius: 50%;
-    z-index: 100;
+    z-index: 150;
 
     svg {
       border-radius: inherit;

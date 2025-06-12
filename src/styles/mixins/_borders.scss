@@ -4,6 +4,10 @@
   border: 1px solid rgba(255, 255, 255, $opacity);
 }
 
+@mixin gray-border($opacity: 1) {
+  border: 1px solid rgba(150, 150, 150, $opacity);
+}
+
 @mixin cyan-border($opacity: 1, $style: solid) {
   border: 1px $style rgba(51, 226, 230, $opacity);
   @if $style == 'dashed' {

@@ -17,7 +17,7 @@
             class:active={tense === $tablePrompt.tense}
             onclick={() => ($tablePrompt.tense = tense)}
           >
-            {dreamData.capitalize(tense)}
+            {tense}
           </button>
         {/each}
       </div>
@@ -48,7 +48,7 @@
             class:active={style === $tablePrompt.writingStyle}
             onclick={() => ($tablePrompt.writingStyle = style)}
           >
-            {dreamData.capitalize(style)}
+            {style}
           </button>
         {/each}
       </div>
@@ -63,7 +63,7 @@
             class:active={voice === $tablePrompt.voice}
             onclick={() => ($tablePrompt.voice = voice)}
           >
-            {dreamData.capitalize(voice)}
+            {voice}
           </button>
         {/each}
       </div>
@@ -84,27 +84,25 @@
         />
       </div>
     </div>
+
+    <div class="flex-row">
+      <h4>Point of View</h4>
+      <textarea
+        id="point-of-view"
+        placeholder="Specify the perspective of the story—first-person, second-person, or third-person—and whose eyes we experience the journey through. E.g. First-person, from the detective’s skeptical assistant, uncovering their mentor’s hidden dark secret."
+        rows="3"
+        bind:value={$tablePrompt.POV}
+      ></textarea>
+    </div>
   </section>
 
   <hr />
 
-  <div class="input-container">
-    <label for="point-of-view">Point of View</label>
-    <textarea
-      id="point-of-view"
-      placeholder="Specify the perspective of the story—first-person, second-person, or third-person—and whose eyes we experience the journey through. E.g. First-person, from the detective’s skeptical assistant, uncovering their mentor’s hidden dark secret."
-      rows="3"
-      bind:value={$tablePrompt.POV}
-    ></textarea>
-  </div>
-
-  <hr />
-
-  <h5>Story Tone</h5>
+  <h3>Story Tone</h3>
 
   {#each $tablePrompt.tone as { name, value }}
     <span class="tone flex">
-      <h5>{dreamData.capitalize(name)}</h5>
+      <h4>{name.charAt(0).toUpperCase() + name.slice(1)}</h4>
       <div class="container">
         <Slider bind:sliderValue={value} inputValue={3} />
       </div>
@@ -125,8 +123,8 @@
     @include respond-up(tablet) {
       flex-direction: row;
 
-      h5 {
-        width: 10rem;
+      h4 {
+        width: 12rem;
         text-align: right;
       }
     }

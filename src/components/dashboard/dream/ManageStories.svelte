@@ -1,3 +1,4 @@
+<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
 
@@ -90,35 +91,30 @@
   };
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_to_interactive_role -->
-<nav class="blur">
-  <h3
-    on:click={() => setNav('collection')}
+<nav class="flex-row">
+  <button
+    class="void-btn blur"
     class:selected={nav === 'collection'}
-    role="button"
-    tabindex="0"
+    on:click={() => setNav('collection')}
   >
     Collections
-  </h3>
-  <h3
-    on:click={() => setNav('categories')}
+  </button>
+  <button
+    class="void-btn blur"
     class:selected={nav === 'categories'}
-    role="button"
-    tabindex="0"
+    on:click={() => setNav('categories')}
   >
     Categories
-  </h3>
-  <h3
-    on:click={() => setNav('nft-gates')}
+  </button>
+  <button
+    class="void-btn blur"
     class:selected={nav === 'nft-gates'}
-    role="button"
-    tabindex="0"
+    on:click={() => setNav('nft-gates')}
   >
     NFT Gates
-  </h3>
+  </button>
 </nav>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
 <section class="container-wrapper">
   {#if nav === 'collection'}
     {#key availabilityKey}
@@ -127,78 +123,75 @@
       {:then collections}
         {storeAllTopics(collections)}
         {#each collections as { category_id, category_name, category_order, section_id, topics }}
-          <section class="container blur">
-            <div class="flex-row category-header">
-              <form id="category-order" class="flex-row">
-                <label for="category-order">Order:</label>
-                <input
-                  class="dream-input order-input"
-                  type="number"
-                  value={category_order}
-                  on:click|preventDefault={selectInput}
-                  on:input={(event) =>
-                    handleChangeCategoryOrder(event, category_id)}
-                />
-              </form>
-
-              <div class="collection-header">
-                <p>{category_name}: {topics.length}</p>
-              </div>
-
-              <form id="section" class="flex-row">
-                <label for="section">Select section:</label>
-                {#if sections}
-                  <select
-                    class="selector blur"
-                    value={section_id}
-                    on:change={(event) => {
-                      const target = event.target as HTMLSelectElement;
-                      if (target) {
-                        admin.changeCategorySection(
-                          parseInt(target.value),
-                          category_id,
-                        );
-                      }
-                    }}
-                  >
-                    {#each sections as { id, name }}
-                      <option value={id}>{name}</option>
-                    {/each}
-                  </select>
-                {/if}
-              </form>
+          <div class="category-header flex-row">
+            <div class="input-container">
+              <label for="category-order-{category_id}">Order:</label>
+              <input
+                id="category-order-{category_id}"
+                type="number"
+                value={category_order}
+                on:click|preventDefault={selectInput}
+                on:input={(event) =>
+                  handleChangeCategoryOrder(event, category_id)}
+              />
             </div>
-            <div class="tiles-collection">
-              {#each sortTopicsByOrder(topics) as { topic_name, order, available, topic_id }}
-                <a class="tile" href="/dashboard/dream/manage/{topic_name}">
-                  <h2>{topic_name}</h2>
-                  <form id="order" class="flex-row">
-                    <label for="order" class="order-label">Order:</label>
-                    <input
-                      class="dream-input order-input"
-                      type="number"
-                      value={order}
-                      on:click|preventDefault={selectInput}
-                      on:input={(event) => handleChangeOrder(event, topic_id)}
-                    />
-                  </form>
-                  <button
-                    class:green-button={available === 'available'}
-                    class:red-button={available === 'unavailable'}
-                    on:click|preventDefault={() =>
-                      admin
-                        .changeAvailability(
-                          topic_id,
-                          switchAvailable(available),
-                        )
-                        .then(() => (availabilityKey = available + topic_name))}
-                  >
-                    {available}
-                  </button>
-                </a>
-              {/each}
+
+            <h3 class="white-txt">{category_name}: {topics.length}</h3>
+
+            <div class="input-container">
+              <label for="section">Select section:</label>
+              {#if sections}
+                <select
+                  id="section"
+                  value={section_id}
+                  on:change={(event) => {
+                    const target = event.target as HTMLSelectElement;
+                    if (target) {
+                      admin.changeCategorySection(
+                        parseInt(target.value),
+                        category_id,
+                      );
+                    }
+                  }}
+                >
+                  {#each sections as { id, name }}
+                    <option value={id}>{name}</option>
+                  {/each}
+                </select>
+              {/if}
             </div>
-          </section>
+          </div>
+
+          <div class="tiles-collection">
+            {#each sortTopicsByOrder(topics) as { topic_name, order, available, topic_id }}
+              <a class="tile" href="/dashboard/dream/manage/{topic_name}">
+                <h4>{topic_name}</h4>
+                <div class="input-container">
+                  <label for="story-order-{topic_id}">Order:</label>
+                  <input
+                    id="story-order-{topic_id}"
+                    type="number"
+                    value={order}
+                    on:click|preventDefault={selectInput}
+                    on:input={(event) => handleChangeOrder(event, topic_id)}
+                  />
+                </div>
+                <button
+                  class:green-btn={available === 'available'}
+                  class:red-btn={available === 'unavailable'}
+                  on:click|preventDefault={() =>
+                    admin
+                      .changeAvailability(
+                        topic_id,
+                        switchAvailable(available),
+                      )
+                      .then(() => (availabilityKey = available + topic_name))}
+                >
+                  {available}
+                </button>
+              </a>
+            {/each}
+          </div>
         {/each}
       {/await}
     {/key}
@@ -209,93 +202,47 @@
   {/if}
 </section>
 
-<style>
+<style lang="scss">
+  @use "/src/styles/mixins" as *;
+
   nav {
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 125;
     width: 100vw;
-    display: flex;
-    flex-flow: row nowrap;
     justify-content: space-around;
-    align-items: center;
-    background-color: rgba(36, 65, 189, 0.75);
-    box-shadow: 0 0.25vw 0.5vw #010020;
-  }
+    gap: 0;
+    width: calc(100% - 12rem);
+    border-radius: 1rem;
+    @include blue(0.75);
+    @include box-shadow;
 
-  nav h3 {
-    width: 100%;
-    color: rgba(255, 255, 255, 0.75);
-    padding: 1vw;
-  }
+    button {
+      width: 100%;
+      padding: 0.5rem;
+      @include white-txt(soft);
+      @include font(h4);
 
-  nav h3:hover,
-  nav h3:active {
-    filter: brightness(125%);
-    background-color: rgba(45, 90, 216, 0.5);
-  }
+      &:first-of-type {
+        border-top-left-radius: 1rem;
+        border-bottom-left-radius: 1rem;
+      }
 
-  .selected {
-    color: rgb(51, 226, 230);
-    text-shadow: 0 0 0.1vw rgb(51, 226, 230);
-    background-color: rgba(45, 90, 216, 0.5);
-  }
+      &:last-of-type {
+        border-top-right-radius: 1rem;
+        border-bottom-right-radius: 1rem;
+      }
 
-  .container:not(.flex-row) {
-    width: 100vw;
-    padding-inline: 0;
-    border-radius: 0;
-  }
+      &:hover,
+      &:active {
+        @include bright;
+        @include light-blue(0.5);
+      }
 
-  .tiles-collection {
-    background-image: none;
-    background-color: rgba(22, 30, 95, 0.75);
-  }
-
-  .category-header {
-    width: 95%;
-    justify-content: space-between;
-  }
-
-  .tile {
-    padding: 1vw;
-    gap: 1vw;
-  }
-
-  .order-label {
-    color: #010020;
-    text-shadow: 0 0 0.1vw #010020;
-  }
-
-  .order-input {
-    text-align: center;
-    padding: 0;
-    width: 3.5vw;
-  }
-
-  button {
-    text-transform: capitalize;
-  }
-
-  @media only screen and (max-width: 600px) {
-    nav h3 {
-      padding: 1em;
-    }
-
-    .category-header {
-      flex-flow: row-reverse wrap;
-      justify-content: center;
-      gap: 0.5em 2em;
-    }
-
-    .tile {
-      padding: 1em;
-      gap: 1em;
-    }
-
-    .order-input {
-      padding: 0.25em 0.5em;
-      width: 1.5em;
+      &.selected {
+        @include cyan(1, text);
+        @include light-blue(0.5);
+      }
     }
   }
 </style>

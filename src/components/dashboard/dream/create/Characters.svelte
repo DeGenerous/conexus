@@ -81,7 +81,7 @@
 
 <Dropdown name="Add Characters">
   <div class="character-data flex">
-    <h5>Main Character</h5>
+    <h3>Main Character</h3>
     <NewCharacter bind:character={$tablePrompt.mainCharacter} />
   </div>
 
@@ -90,31 +90,31 @@
   <!-- SIDE CHARACTERS -->
 
   <div class="character-data flex">
-    <h5>
+    <h3>
       Side Characters{$tablePrompt.sideCharacters.length
         ? ': ' + $tablePrompt.sideCharacters.length
         : ''}
-    </h5>
+    </h3>
     {#if $tablePrompt.sideCharacters.length > 0}
-      <ul class="side-characters flex">
+      <ul class="side-characters flex-row">
         {#each $tablePrompt.sideCharacters as character, index}
           <li class="flex transition">
             <h4 class="character-name">{character.name}</h4>
-            <span class="flex">
-              <h5>Description</h5>
+            <div class="input-container">
+              <label for="side-character">Description</label>
               <p>{character.description}</p>
-            </span>
+            </div>
             {#if character.physicality}
-              <span class="flex">
-                <h5>Physicality</h5>
+              <div class="input-container">
+                <label for="side-character">Physicality</label>
                 <p>{character.physicality}</p>
-              </span>
+              </div>
             {/if}
             {#if character.psychology}
-              <span class="flex">
-                <h5>Psychology</h5>
+              <div class="input-container">
+                <label for="side-character">Psychology</label>
                 <p>{character.psychology}</p>
-              </span>
+              </div>
             {/if}
             <button class="red-btn" onclick={() => removeSideCharacter(index)}>
               Remove
@@ -139,7 +139,7 @@
 
   <!-- CHARACTERS RELATIONSHIPS -->
 
-  <h5>Relationships</h5>
+  <h3>Relationships</h3>
   {#if $tablePrompt.relationships.length > 0}
     <ul class="relationships flex-row">
       {#each $tablePrompt.relationships as { type, details, connection }, index}
@@ -159,7 +159,7 @@
 
   <section class="relationship-data flex">
     <div class="flex-row">
-      <h5>Type</h5>
+      <h4>Type</h4>
       <span class="data-field flex-row">
         {#each dreamData.relationship as type}
           <button
@@ -167,14 +167,14 @@
             class:active={type === newRelationship.type}
             onclick={() => (newRelationship.type = type as any)}
           >
-            {dreamData.capitalize(type)}
+            {type}
           </button>
         {/each}
       </span>
     </div>
 
     <div class="flex-row">
-      <h5>Details</h5>
+      <h4>Details</h4>
       <input
         id="relationship-details"
         class="data-field"
@@ -185,7 +185,7 @@
     </div>
 
     <div class="flex-row">
-      <h5>Connection</h5>
+      <h4>Connection</h4>
       <div class="connection data-field flex">
         <select
           class={newRelationship.type}
@@ -260,6 +260,8 @@
   }
 
   .side-characters {
+    flex-wrap: wrap;
+    
     li {
       padding: 1rem;
       border-radius: 0.5rem;
@@ -279,23 +281,8 @@
         @include cyan(1, text);
       }
 
-      span {
-        width: 100%;
-
-        @include respond-up(small-desktop) {
-          flex-direction: row;
-          justify-content: flex-start;
-
-          h5 {
-            width: 8rem;
-            flex: none;
-            text-align: right;
-          }
-
-          p {
-            text-align: left;
-          }
-        }
+      div {
+        // width: 100%;
 
         p {
           padding: 0.5rem;
@@ -308,6 +295,10 @@
 
       button {
         flex: none;
+      }
+
+      @include respond-up(large-desktop) {
+        max-width: 30rem;
       }
     }
   }
@@ -366,8 +357,8 @@
     @include box-shadow;
 
     @include respond-up(small-desktop) {
-      h5 {
-        width: 8rem;
+      h4 {
+        width: 10rem;
         flex: none;
         text-align: right;
       }

@@ -117,9 +117,9 @@
 
 <div class="collection-header">
   {#if !category || !section}
-    <h3>Loading stories...</h3>
+    <h2>Loading stories...</h2>
   {:else}
-    <h3>{category.name}</h3>
+    <h2>{category.name}</h2>
   {/if}
   <SortingSVG
     sorting={isSorting}

@@ -1,6 +1,4 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
-  import { onMount } from 'svelte';
   import countries from '@constants/countries.json';
   import dreamData from '@constants/dream';
   import { AdminApp } from '@lib/admin';
@@ -12,6 +10,9 @@
     clearAllData,
   } from '@stores/dream.svelte';
   import generatePrompt from '@utils/prompt';
+  import openModal from '@stores/modal.svelte';
+  import { resetDreamModal } from '@constants/modal';
+  import { GetCache, SetCache, ONE_YEAR_TTL, DRAFTS_KEY } from '@constants/cache';
 
   import Slider from './create/Slider.svelte';
   import Characters from './create/Characters.svelte';
@@ -21,11 +22,27 @@
 
   let admin = new AdminApp();
 
-  let promptFormat: 'Table' | 'Open' = 'Table';
+  let promptFormat: 'Table' | 'Open' = $state('Table');
 
-  onMount(async () => {
-    await checkUserState('/dashboard/dream/create', true);
+  $effect(() => {
+    checkUserState('/dashboard/dream/create', true);
   });
+
+  let validation = $derived(
+    $storyData.name &&
+    $storyData.description &&
+    $storyData.description.length > 100 &&
+    $storyData.imagePrompt.length <= 1400 &&
+    $storyData.category
+  )
+
+  // const saveDraft = () => {
+  //   const promptData: TablePrompt | string =
+  //     promptFormat === 'Table' ? $tablePrompt : $openPrompt;
+  //   console.log($storyData);
+  //   console.log($promptSettings);
+  //   console.log(promptData);
+  // }
 
   const generateStory = async () => {
     const promptData: TablePrompt | string =
@@ -35,13 +52,6 @@
     );
     window.location.reload();
   };
-
-  $: validation =
-    $storyData.name &&
-    $storyData.description &&
-    $storyData.description.length > 100 &&
-    $storyData.imagePrompt.length <= 1400 &&
-    $storyData.category;
 </script>
 
 <!-- CATEGORY, TITLE, DESCRIPTION, IMAGE PROMPT -->
@@ -108,7 +118,8 @@
 
   {#if $storyData.imagePrompt && $storyData.imagePrompt.length > 1400}
     <p class="validation">
-      Please shorten your message to 1400 characters or less, you’ve typed {$storyData.imagePrompt.length}
+      Please shorten your message to 1400 characters or less, you’ve typed {$storyData
+        .imagePrompt.length}
     </p>
   {/if}
 </div>
@@ -212,14 +223,14 @@
       <button
         class="void-btn dream-radio-btn"
         class:active={promptFormat === 'Table'}
-        on:click={() => (promptFormat = 'Table')}
+        onclick={() => (promptFormat = 'Table')}
       >
         Table
       </button>
       <button
         class="void-btn dream-radio-btn"
         class:active={promptFormat === 'Open'}
-        on:click={() => (promptFormat = 'Open')}
+        onclick={() => (promptFormat = 'Open')}
       >
         Open
       </button>
@@ -304,11 +315,15 @@
 {/if}
 
 <div class="flex-row flex-wrap">
-  <button class="red-btn blur" on:click={clearAllData}> Reset </button>
-  <!-- <button class="rose-btn blur" on:click={() => {}}> Save a draft </button> -->
+  <button class="red-btn blur" onclick={() => openModal(
+    resetDreamModal,
+    'Reset',
+    clearAllData,
+  )}> Reset </button>
+  <!-- <button class="rose-btn blur" onclick={saveDraft}> Save a draft </button> -->
   <button
     class="green-btn blur"
-    on:click={generateStory}
+    onclick={generateStory}
     disabled={!validation}
   >
     Create a DREAM
@@ -316,7 +331,7 @@
 </div>
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   .reading-style {
     padding-block: 0.5rem;

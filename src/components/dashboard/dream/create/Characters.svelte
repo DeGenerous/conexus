@@ -261,7 +261,7 @@
 
   .side-characters {
     flex-wrap: wrap;
-    
+
     li {
       padding: 1rem;
       border-radius: 0.5rem;

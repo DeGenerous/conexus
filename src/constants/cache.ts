@@ -51,6 +51,9 @@ export const SCALE_KEY = 'scale';
 export const VOLUME_KEY = (type: 'voice' | 'music'): string => `${type}_volume`;
 export const TTS_SPEED_KEY = 'tts_speed';
 
+// Story drafts (use 1 year TTL)
+export const DRAFTS_KEY = 'dream_drafts';
+
 const authKeys = [
   USER_CACHE_KEY,
   SUBSCRIPTIONSTATUS_CACHE_KEY,
@@ -115,6 +118,7 @@ export const ClearCache = (
       const customFont = localStorage.getItem(FONT_KEY);
       const customStyling = localStorage.getItem(STYLING_KEY);
       const customScale = localStorage.getItem(SCALE_KEY);
+      const storyDrafts = localStorage.getItem(DRAFTS_KEY);
       // deleting all values
       localStorage.clear();
       // restoring saved values
@@ -129,6 +133,7 @@ export const ClearCache = (
       if (customFont) localStorage.setItem(FONT_KEY, customFont);
       if (customStyling) localStorage.setItem(STYLING_KEY, customStyling);
       if (customScale) localStorage.setItem(SCALE_KEY, customScale);
+      if (storyDrafts) localStorage.setItem(DRAFTS_KEY, storyDrafts);
       break;
     default:
       localStorage.removeItem(key);

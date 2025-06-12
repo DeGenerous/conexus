@@ -115,17 +115,19 @@
   </button>
 </nav>
 
-<section class="container-wrapper">
-  {#if nav === 'collection'}
-    {#key availabilityKey}
-      {#await admin.fetchCollections()}
-        <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
-      {:then collections}
-        {storeAllTopics(collections)}
-        {#each collections as { category_id, category_name, category_order, section_id, topics }}
-          <div class="category-header flex-row">
+{#if nav === 'collection'}
+  {#key availabilityKey}
+    {#await admin.fetchCollections()}
+      <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
+    {:then collections}
+      {storeAllTopics(collections)}
+      {#each collections as { category_id, category_name, category_order, section_id, topics }}
+        <div class="collection-header">
+          <h2>{category_name}: {topics.length}</h2>
+
+          <span class="flex-row">
             <div class="input-container">
-              <label for="category-order-{category_id}">Order:</label>
+              <label for="category-order-{category_id}">Order</label>
               <input
                 id="category-order-{category_id}"
                 type="number"
@@ -136,10 +138,8 @@
               />
             </div>
 
-            <h3 class="white-txt">{category_name}: {topics.length}</h3>
-
             <div class="input-container">
-              <label for="section">Select section:</label>
+              <label for="section">Section</label>
               {#if sections}
                 <select
                   id="section"
@@ -160,50 +160,47 @@
                 </select>
               {/if}
             </div>
-          </div>
+          </span>
+        </div>
 
-          <div class="tiles-collection">
-            {#each sortTopicsByOrder(topics) as { topic_name, order, available, topic_id }}
-              <a class="tile" href="/dashboard/dream/manage/{topic_name}">
-                <h4>{topic_name}</h4>
-                <div class="input-container">
-                  <label for="story-order-{topic_id}">Order:</label>
-                  <input
-                    id="story-order-{topic_id}"
-                    type="number"
-                    value={order}
-                    on:click|preventDefault={selectInput}
-                    on:input={(event) => handleChangeOrder(event, topic_id)}
-                  />
-                </div>
-                <button
-                  class:green-btn={available === 'available'}
-                  class:red-btn={available === 'unavailable'}
-                  on:click|preventDefault={() =>
-                    admin
-                      .changeAvailability(
-                        topic_id,
-                        switchAvailable(available),
-                      )
-                      .then(() => (availabilityKey = available + topic_name))}
-                >
-                  {available}
-                </button>
-              </a>
-            {/each}
-          </div>
-        {/each}
-      {/await}
-    {/key}
-  {:else if nav === 'nft-gates'}
-    <NFTGates {classGates} {fetchClasses} {selectInput} />
-  {:else if nav === 'categories'}
-    <Categories />
-  {/if}
-</section>
+        <div class="tiles-collection">
+          {#each sortTopicsByOrder(topics) as { topic_name, order, available, topic_id }}
+            <a class="tile" href="/dashboard/dream/manage/{topic_name}">
+              <h4>{topic_name}</h4>
+              <div class="input-container">
+                <label for="story-order-{topic_id}">Order</label>
+                <input
+                  id="story-order-{topic_id}"
+                  type="number"
+                  value={order}
+                  on:click|preventDefault={selectInput}
+                  on:input={(event) => handleChangeOrder(event, topic_id)}
+                />
+              </div>
+              <button
+                class:green-btn={available === 'available'}
+                class:red-btn={available === 'unavailable'}
+                on:click|preventDefault={() =>
+                  admin
+                    .changeAvailability(topic_id, switchAvailable(available))
+                    .then(() => (availabilityKey = available + topic_name))}
+              >
+                {available}
+              </button>
+            </a>
+          {/each}
+        </div>
+      {/each}
+    {/await}
+  {/key}
+{:else if nav === 'nft-gates'}
+  <NFTGates {classGates} {fetchClasses} {selectInput} />
+{:else if nav === 'categories'}
+  <Categories />
+{/if}
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   nav {
     position: sticky;
@@ -242,6 +239,16 @@
       &.selected {
         @include cyan(1, text);
         @include light-blue(0.5);
+      }
+    }
+  }
+
+  .input-container {
+    @include respond-up(tablet) {
+      flex-direction: row;
+
+      label {
+        position: static;
       }
     }
   }

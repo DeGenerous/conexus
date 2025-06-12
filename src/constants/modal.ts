@@ -14,6 +14,8 @@ export const deleteUnfinishedModal = `
 export const resetSettingsModal = (type: any) =>
   `<h4>Are you sure you want to reset ${type} settings?</h4>`;
 
+export const resetDreamModal = `<h4>Are you sure you want to reset all data?</h4>`;
+
 export const gameRulesModal = `
   <h3 class="text-glowing">HOW TO PLAY CONEXUS</h3>
 

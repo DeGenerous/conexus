@@ -13,6 +13,8 @@
   let admin = new AdminApp();
   let view = new CoNexusApp();
 
+  let nav: 'collection' | 'categories' | 'nft-gates' = 'collection';
+
   let sections: Section[];
   let collections: Collection[] = [];
   let classGates: ClassGate[] = [];
@@ -41,8 +43,6 @@
   const storeAllTopics = (collections: Collection[]) => {
     const allTopics = collections.map((collection) => collection.topics).flat();
     const topicNames = allTopics.map(({ topic_name }) => topic_name);
-    console.log(topicNames);
-    console.log(topicNames.join(']['));
     SetCache(ALL_TOPICS_KEY, topicNames.join(']['), ALL_TOPICS_TTL);
   };
 
@@ -83,33 +83,27 @@
     });
     return sortedTopics;
   };
-
-  type NAV = 'collection' | 'categories' | 'nft-gates';
-  let nav: NAV = 'collection';
-  const setNav = (newNav: NAV) => {
-    nav = newNav;
-  };
 </script>
 
 <nav class="flex-row">
   <button
     class="void-btn blur"
     class:selected={nav === 'collection'}
-    on:click={() => setNav('collection')}
+    on:click={() => (nav = 'collection')}
   >
     Collections
   </button>
   <button
     class="void-btn blur"
     class:selected={nav === 'categories'}
-    on:click={() => setNav('categories')}
+    on:click={() => (nav = 'categories')}
   >
     Categories
   </button>
   <button
     class="void-btn blur"
     class:selected={nav === 'nft-gates'}
-    on:click={() => setNav('nft-gates')}
+    on:click={() => (nav = 'nft-gates')}
   >
     NFT Gates
   </button>
@@ -125,7 +119,7 @@
         <div class="collection-header">
           <h2>{category_name}: {topics.length}</h2>
 
-          <span class="flex-row">
+          <span class="controls container flex-row">
             <div class="input-container">
               <label for="category-order-{category_id}">Order</label>
               <input
@@ -204,13 +198,11 @@
 
   nav {
     position: sticky;
-    top: 0;
+    top: 4rem;
     z-index: 125;
     width: 100vw;
     justify-content: space-around;
     gap: 0;
-    width: calc(100% - 12rem);
-    border-radius: 1rem;
     @include blue(0.75);
     @include box-shadow;
 
@@ -218,17 +210,7 @@
       width: 100%;
       padding: 0.5rem;
       @include white-txt(soft);
-      @include font(h4);
-
-      &:first-of-type {
-        border-top-left-radius: 1rem;
-        border-bottom-left-radius: 1rem;
-      }
-
-      &:last-of-type {
-        border-top-right-radius: 1rem;
-        border-bottom-right-radius: 1rem;
-      }
+      @include font(h5);
 
       &:hover,
       &:active {
@@ -241,6 +223,24 @@
         @include light-blue(0.5);
       }
     }
+
+    @include respond-up(small-desktop) {
+      top: 0;
+      width: clamp(20rem, calc(100% - 12rem), 85rem);
+      border-radius: 1rem;
+
+      button {
+        &:first-of-type {
+          border-top-left-radius: 1rem;
+          border-bottom-left-radius: 1rem;
+        }
+
+        &:last-of-type {
+          border-top-right-radius: 1rem;
+          border-bottom-right-radius: 1rem;
+        }
+      }
+    }
   }
 
   .input-container {
@@ -249,6 +249,60 @@
 
       label {
         position: static;
+      }
+    }
+  }
+
+  input[type='number'] {
+    width: 5rem;
+    @include dark-blue(0.75);
+  }
+
+  .collection-header {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding-inline: 0;
+    margin-block: 1rem -1rem;
+
+    h2 {
+      width: 100%;
+      text-align: center;
+    }
+
+    .controls {
+      width: 100%;
+      margin-inline: 0;
+      border-radius: 0;
+      @include box-glow(inset, 0.25);
+    }
+
+    @include respond-up(small-desktop) {
+      flex-wrap: nowrap;
+      align-items: flex-end;
+      padding-left: 1.5rem;
+
+      h2 {
+        width: auto;
+        text-align: left;
+      }
+
+      .controls {
+        width: auto;
+        border-top-left-radius: 1rem;
+      }
+    }
+  }
+
+  .tiles-collection {
+    min-height: unset;
+
+    .tile {
+      padding-block: 1rem;
+      gap: 1rem;
+      justify-content: flex-end;
+
+      h4 {
+        height: 100%;
       }
     }
   }

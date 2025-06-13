@@ -1,6 +1,7 @@
+<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
-  import { AdminApp } from '@lib/admin';
   import { onMount } from 'svelte';
+  import { AdminApp } from '@lib/admin';
 
   let admin = new AdminApp();
 
@@ -19,107 +20,66 @@
   };
 </script>
 
-<div class="dream-container blur categories-list">
-  <div class="flex-row">
-    <h2>Categories</h2>
-    <div class="container flex-row categories-wrapper">
-      {#if categories.length > 0}
-        {#each categories as { name }}
-          <div class="category">
-            <h3>{name}</h3>
-          </div>
-        {/each}
-      {:else}
-        <h3>No categories found.</h3>
-      {/if}
-    </div>
+<section class="dream-container">
+  <h4>Categories</h4>
+  <div class="container">
+    {#if categories.length > 0}
+      {#each categories as { name }}
+        <button class="void-btn transition pad-8 pad-inline round-8 shad">
+          <h5>{name}</h5>
+        </button>
+      {/each}
+    {:else}
+      <p class="validation">No categories found</p>
+    {/if}
   </div>
-</div>
+</section>
 
-<div class="container blur flex-row new-category">
+<div class="new-category container">
   <input
-    class="dream-input"
     bind:value={newCategoryName}
     placeholder="Enter Name"
   />
-  <button on:click={createNewCategory}>Add New Category</button>
+  <button class="green-btn" on:click={createNewCategory}>
+    Add New Category
+  </button>
 </div>
 
-<style>
+<style lang="scss">
+  @use "/src/styles/mixins" as *;
+
+  .dream-container {
+    .container {
+      flex-wrap: wrap;
+      justify-content: center;
+
+      button {
+        @include gray(0.25);
+        @include white-txt(soft);
+
+        &:hover,
+        &:active {
+          @include cyan(1, text);
+          @include light-blue(0.5);
+          @include scale-up(soft);
+          @include box-shadow(deep);
+        }
+
+        h5 {
+          color: inherit;
+          text-shadow: none;
+        }
+      }
+    }
+  }
+
   .new-category {
-    width: 50vw;
-    padding: 2vw;
-    gap: 2vw;
-    border-radius: 1.5vw;
-  }
-
-  .new-category input {
-    width: 30vw;
-  }
-
-  .new-category button {
-    width: 20vw;
-  }
-
-  .categories-list {
-    align-items: center;
-    width: auto;
-    max-width: 95vw;
-  }
-
-  .categories-wrapper {
-    flex-flow: row wrap;
-    justify-content: center !important;
-  }
-
-  .category {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vw;
-    padding: 1vw;
-    background-color: rgba(56, 117, 250, 0.5);
-    border-radius: 1vw;
-    box-shadow: 0 0.25vw 0.5vw #010020;
-  }
-
-  .category h3 {
-    color: #dedede;
-  }
-
-  @media only screen and (max-width: 600px) {
-    .categories-list {
-      width: 100vw;
-      max-width: none;
+    input {
+      width: 100%;
     }
 
-    .categories-list .container {
-      flex-flow: row wrap;
-    }
-
-    .category {
-      gap: 1em;
-      padding: 0.5em;
-      border-radius: 0.5em;
-    }
-  }
-
-  @media only screen and (max-width: 600px) {
-    .new-category {
-      width: 100vw;
-      padding: 1.5em 1em;
-      gap: 1em;
-      border-radius: 0;
-    }
-
-    .new-category input {
-      width: 95vw;
-      text-align: center;
-    }
-
-    .new-category button {
-      width: 50vw;
+    @include respond-up(tablet) {
+      flex-direction: row;
     }
   }
 </style>

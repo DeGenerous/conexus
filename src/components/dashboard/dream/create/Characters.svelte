@@ -351,6 +351,8 @@
   }
 
   .relationship-data {
+    width: 100%;
+    max-width: 60rem;
     padding: 1rem;
     border-radius: 1rem;
     @include gray(0.25);
@@ -380,7 +382,7 @@
 
         .relationship-line {
           width: 0.5rem;
-          height: 1rem;
+          height: 2rem;
           @include dark-blue;
 
           &.friends {

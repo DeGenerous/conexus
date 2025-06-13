@@ -3,12 +3,6 @@ import Layout from '@layouts/Layout.astro';
 
 import ManageStories from '@components/dashboard/dream/ManageStories.svelte';
 
-const { topic } = Astro.params;
-
-if (!topic) {
-  Astro.redirect('/');
-}
-
 const meta = {
   header: 'Manage Stories',
   nav: 'Manage Stories',

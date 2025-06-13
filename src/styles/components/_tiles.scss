@@ -8,25 +8,37 @@
 // STORY TILES CONTAINER
 
 .collection-header {
+  position: relative;
   width: 100vw;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 1rem;
   padding-inline: 1.5rem;
-
-  @include respond-up(tablet) {
-    margin-bottom: -1rem;
-  }
+  z-index: 50;
 
   h2 {
-    text-align: left;
+    width: 100%;
     background-clip: text;
     color: transparent;
     background-image: linear-gradient(to right, $deep-red, $blue);
     @include white-txt(0.5);
     @include bright;
+  }
+
+  button {
+    position: absolute;
+    bottom: -4.5rem;
+    right: 0.5rem;
+  }
+
+  @include respond-up(tablet) {
+    margin-bottom: -1rem;
+
+    button {
+      bottom: 0.5rem;
+    }
   }
 }
 

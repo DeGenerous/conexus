@@ -128,6 +128,7 @@
       isSorting = !isSorting;
       handleSorting();
     }}
+    hideForMobiles={true}
   />
 </div>
 

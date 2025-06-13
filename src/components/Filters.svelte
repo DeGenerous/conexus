@@ -195,13 +195,14 @@
 
 {#if filteredTopics.length > 0}
   <div class="collection-header">
-    <h2>Filtered Stories</h2>
+    <h2 class="text-glowing">Filtered Stories</h2>
     <SortingSVG
       sorting={isSorting}
       onclick={() => {
         isSorting = !isSorting;
         handleSorting();
       }}
+      hideForMobiles={true}
     />
   </div>
   <div class="tiles-collection filtered-tiles" on:scroll={handleScroll}>
@@ -225,12 +226,6 @@
 
     @include respond-up(tablet) {
       flex-direction: row;
-    }
-  }
-
-  .collection-header {
-    h2 {
-      @include green(1, text);
     }
   }
 </style>

@@ -96,13 +96,14 @@ button:not(.void-btn),
 
 .green-btn:not(.void-btn),
 .red-btn:not(.void-btn),
-.rose-btn:not(.void-btn) {
+.rose-btn:not(.void-btn),
+.orange-btn:not(.void-btn) {
   border-color: transparent !important;
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
   &:focus:not(&:disabled) {
-    @include dark-blue(1, text);
+    color: black;
   }
 }
 

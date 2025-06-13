@@ -50,7 +50,8 @@
     await admin.createNewStory(
       generatePrompt($storyData, $promptSettings, promptData),
     );
-    window.location.reload();
+    clearAllData();
+    // TODO: openModal -> navigate to the created story in /dream/manage/
   };
 </script>
 

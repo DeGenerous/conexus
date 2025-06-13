@@ -53,6 +53,9 @@ export const TTS_SPEED_KEY = 'tts_speed';
 
 // Story drafts (use 1 year TTL)
 export const DRAFTS_KEY = 'dream_drafts';
+// export const DRAFT_INDEX_KEY = 'draft-index';
+// export const DRAFT_KEY = (id: string) => `draft:${id}`;
+// export const CURRENT_DAFT_KEY = 'current-draft';
 
 const authKeys = [
   USER_CACHE_KEY,

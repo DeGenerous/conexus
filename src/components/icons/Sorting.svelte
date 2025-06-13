@@ -3,10 +3,12 @@
     onclick = () => {},
     disabled = false,
     sorting = false,
+    hideForMobiles = false,
   }: {
     onclick: () => void;
     disabled?: boolean;
     sorting: boolean;
+    hideForMobiles?: boolean;
   } = $props();
 </script>
 
@@ -41,7 +43,7 @@
     <rect x="-30" y="2" width="80" height="20" rx="4" />
     <rect x="-30" y="52" width="55" height="20" rx="4" />
   </svg>
-  A-Z
+  <span class:pc-only={hideForMobiles}>A-Z</span>
 </button>
 
 <style lang="scss">

@@ -56,14 +56,18 @@
     <div class="container">
       {#if classGates.length > 0}
         {#each classGates as { id, name, start_token_id, end_token_id }}
-          <button class="void-btn transition flex-row pad-8 pad-inline round-8 shad">
+          <span
+            class="nft-class flex-row gap-8 pad-8 round-8 shad"
+            role="button"
+            tabindex="0"
+          >
             <h5>{name}: {start_token_id} - {end_token_id}</h5>
             <CloseSVG
               onclick={async () => await handleDeleteClass(id)}
               voidBtn={true}
               dark={true}
             />
-          </button>
+          </span>
         {/each}
       {:else}
         <p class="validation">There is no Classes for Potentials yet</p>
@@ -120,20 +124,21 @@
 </div>
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   .dream-container {
     .container {
       flex-wrap: wrap;
       justify-content: center;
-      
+
       @include respond-up(tablet) {
         &.new-class {
           flex-wrap: nowrap;
         }
       }
 
-      button {
+      .nft-class {
+        padding-left: 1rem;
         @include dark-red(1, text);
         @include orange(0.85);
 

@@ -1,6 +1,7 @@
 <!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { tippy } from 'svelte-tippy';
 
   import { AdminApp } from '@lib/admin';
   import { CoNexusApp } from '@lib/view';
@@ -172,6 +173,7 @@
                 />
               </div>
               <button
+                use:tippy={{ content: 'Toggle visibility', animation: 'scale' }}
                 class:green-btn={available === 'available'}
                 class:red-btn={available === 'unavailable'}
                 on:click|preventDefault={() =>

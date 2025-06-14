@@ -1,9 +1,12 @@
+<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
 
   import { CoNexusApp } from '@lib/view';
   import { availableGenres } from '@stores/view.svelte';
+
+  import CloseSVG from '@components/icons/Close.svelte';
 
   let viewApp = new CoNexusApp();
 
@@ -51,38 +54,33 @@
   });
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<div class="dream-container blur genres-list">
+<div class="dream-container">
   <div class="flex-row">
-    <h2>Genres</h2>
-    <div class="container flex-row genres-wrapper">
+    <h4>Genres</h4>
+    <div class="container">
       {#if $genres.length > 0}
         {#each $genres as genre (genre)}
-          <div class="genre">
-            <h3>{genre}</h3>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="-100 -100 200 200"
-              class="close-svg"
-              stroke="rgba(255, 60, 64, 0.85)"
-              stroke-width="30"
-              stroke-linecap="round"
-              on:click={() => handleRemoveGenre(genre)}
-              role="button"
-              tabindex="0"
-            >
-              <path d="M -65 -65 L 65 65 M -65 65 L 65 -65" fill="none" />
-            </svg>
-          </div>
+          <span
+            class="genre flex-row gap-8 pad-8 round-8 shad"
+            role="button"
+            tabindex="0"
+          >
+            <h5>{genre}</h5>
+            <CloseSVG
+              onclick={() => handleRemoveGenre(genre)}
+              voidBtn={true}
+              dark={true}
+            />
+          </span>
         {/each}
       {:else}
-        <h3>No genres selected</h3>
+        <p class="valigation">No genres selected</p>
       {/if}
     </div>
   </div>
 
-  <div class="flex-row add-genre-container">
-    <select class="selector" bind:value={$newGenre}>
+  <div class="add-genre flex-row">
+    <select bind:value={$newGenre}>
       <option value="" hidden disabled>Select</option>
       {#each availableGenres.filter((g) => !$genres.includes(g.name)) as genre}
         <option value={genre.name}>{genre.name}</option>
@@ -92,56 +90,37 @@
   </div>
 </div>
 
-<style>
-  .genres-list {
-    align-items: center;
-    width: auto;
-    max-width: 95vw;
-  }
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
 
-  .genres-wrapper {
-    flex-flow: row wrap;
-    justify-content: center !important;
-  }
+  .dream-container {
+    .container {
+      flex-wrap: wrap;
+      justify-content: center;
 
-  .genre {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vw;
-    padding: 1vw;
-    background-color: rgba(56, 117, 250, 0.5);
-    border-radius: 1vw;
-    box-shadow: 0 0.25vw 0.5vw #010020;
-  }
+      .genre {
+        padding-left: 1rem;
+        @include purple;
+        @include white-txt;
 
-  .genre h3 {
-    color: #dedede;
-  }
+        &:hover,
+        &:active {
+          @include dark-red(1, text);
+          @include purple(1, bg, bright);
+          @include scale-up(soft);
+          @include box-shadow(deep);
+        }
 
-  @media only screen and (max-width: 600px) {
-    .genres-list {
-      width: 100vw;
-      max-width: none;
+        h5 {
+          color: inherit;
+          text-shadow: none;
+          text-transform: uppercase;
+        }
+      }
     }
 
-    .genres-list .container {
-      flex-flow: row wrap;
-    }
-
-    .selector {
-      width: 95vw;
-    }
-
-    .genre {
-      gap: 1em;
-      padding: 0.5em;
-      border-radius: 0.5em;
-    }
-
-    .add-genre-container {
-      gap: 1em;
+    .add-genre {
+      justify-content: center;
     }
   }
 </style>

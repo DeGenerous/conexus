@@ -20,6 +20,7 @@ type Relationship = {
 type Tone = {
   name: string;
   value: None_Max;
+  hints?: string[];
 }[];
 
 interface PromptSettings {

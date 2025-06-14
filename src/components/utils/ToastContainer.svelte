@@ -21,8 +21,8 @@
 
     @include respond-up(small-desktop) {
       top: 3rem;
-      width: calc(100vw - 10rem);
-      left: 5rem;
+      width: calc(100vw - 40%);
+      left: 20%;
     }
   }
 </style>

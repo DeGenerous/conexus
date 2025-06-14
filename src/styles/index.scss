@@ -114,7 +114,7 @@ html {
   word-spacing: 0.2em;
   background-color: black;
 
-  @include cyan(0.75, 'text');
+  @include cyan(0.85, 'text');
   @include font;
 
   @include respond-up('small-desktop') {
@@ -364,6 +364,7 @@ html {
     width: 2.75rem;
     border-radius: 50%;
     z-index: 150;
+    filter: drop-shadow(0 0.25rem 0.25rem rgba(0, 0, 0, 0.75));
 
     svg {
       border-radius: inherit;

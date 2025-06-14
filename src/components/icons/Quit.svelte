@@ -44,7 +44,7 @@
       fill: $cyan;
 
       svg {
-        transform: scale(1.05);
+        transform: scale(1.1);
 
         #quit-svg-mask path {
           transform: scale(1.2);

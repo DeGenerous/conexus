@@ -55,8 +55,8 @@
     color: $soft-white !important;
 
     &.sorting {
-      fill: $cyan;
-      stroke: $cyan;
+      fill: $white;
+      stroke: $white;
 
       svg {
         transform: scale(1.1);

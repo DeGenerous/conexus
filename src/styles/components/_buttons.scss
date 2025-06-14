@@ -19,8 +19,8 @@ button:not(.void-btn),
   border-radius: 0.5rem;
   outline: none;
   text-transform: uppercase;
-  @include white-txt(soft);
-  @include light-blue(0.5);
+  @include white-txt(0.9);
+  @include blue(0.85);
   @include cyan-border(0.5);
 
   @include respond-up(small-desktop) {
@@ -32,7 +32,7 @@ button:not(.void-btn),
   &:active:not(&:disabled),
   &:focus:not(&:disabled) {
     @include cyan(1, text);
-    @include light-blue(1, bg);
+    @include blue(1, bg, bright);
     @include box-glow;
     @include scale;
     @include cyan-border;
@@ -72,77 +72,88 @@ button:not(.void-btn),
   }
 }
 
+// COLORED STYLING
+
+// Green
 .green-btn:not(.void-btn) {
+  border-color: transparent !important;
+  @include dark-green(0.85, text);
   @include green(0.75);
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
   &:focus:not(&:disabled) {
-    @include green;
     box-shadow: 0 0 0.5rem $green;
+    @include dark-green(1, text);
+    @include green;
   }
 }
 
+// Red
 .red-btn:not(.void-btn) {
+  border-color: transparent !important;
+  @include dark-red(0.85, text);
   @include red(0.75);
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
   &:focus:not(&:disabled) {
-    @include red;
     box-shadow: 0 0 0.5rem $red;
+    @include dark-red(1, text);
+    @include red;
   }
 }
 
-.green-btn:not(.void-btn),
-.red-btn:not(.void-btn),
-.rose-btn:not(.void-btn),
-.orange-btn:not(.void-btn) {
-  border-color: transparent !important;
-
-  &:hover:not(&:disabled),
-  &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
-    color: black;
-  }
-}
-
+// Purple
 .purple-btn:not(.void-btn) {
+  border-color: transparent !important;
   @include purple;
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
   &:focus:not(&:disabled) {
-    @include purple(1, bg, bright);
     box-shadow: 0 0 0.5rem $purple;
+    @include purple(1, bg, bright);
+    @include dark-blue(1, text);
   }
 }
 
+// Orange
 .orange-btn:not(.void-btn) {
+  border-color: transparent !important;
+  @include dark-red(0.85, text);
   @include orange;
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
   &:focus:not(&:disabled) {
-    @include orange(1, bg, bright);
     box-shadow: 0 0 0.5rem $orange;
+    @include dark-red(1, text);
+    @include orange(1, bg, bright);
   }
 }
 
+// Rose
 .rose-btn:not(.void-btn) {
-  @include rose;
+  border-color: transparent !important;
+  @include dark-red(0.85, text);
+  @include rose(0.85);
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
   &:focus:not(&:disabled) {
-    @include rose(1, bg, bright);
     box-shadow: 0 0 0.5rem $rose;
+    @include dark-red(1, text);
+    @include rose(1, bg, bright);
   }
 }
 
+// ADDITIONAL STYLING
+
 .active-btn:not(.void-btn) {
   background-color: $deep-green !important;
-  color: $cyan !important;
+  color: $white !important;
+  border-color: $green !important;
 }
 
 :where(.void-btn) {

@@ -12,7 +12,12 @@
   import generatePrompt from '@utils/prompt';
   import openModal from '@stores/modal.svelte';
   import { resetDreamModal } from '@constants/modal';
-  import { GetCache, SetCache, ONE_YEAR_TTL, DRAFTS_KEY } from '@constants/cache';
+  import {
+    GetCache,
+    SetCache,
+    ONE_YEAR_TTL,
+    DRAFTS_KEY,
+  } from '@constants/cache';
 
   import Slider from './create/Slider.svelte';
   import Characters from './create/Characters.svelte';
@@ -30,11 +35,11 @@
 
   let validation = $derived(
     $storyData.name &&
-    $storyData.description &&
-    $storyData.description.length > 100 &&
-    $storyData.imagePrompt.length <= 1400 &&
-    $storyData.category
-  )
+      $storyData.description &&
+      $storyData.description.length > 100 &&
+      $storyData.imagePrompt.length <= 1400 &&
+      $storyData.category,
+  );
 
   // const saveDraft = () => {
   //   const promptData: TablePrompt | string =
@@ -207,7 +212,7 @@
         class="kids-mode input-container transition round-8 shad"
         class:selected={$promptSettings.kidsMode !== null}
       >
-        <label for="kids-mode">Kids mode</label>
+        <label for="kids-mode transition">Kids mode</label>
         <select id="kids-mode" bind:value={$promptSettings.kidsMode}>
           <option value={null}>Off</option>
           {#each dreamData.kidsMode as option}
@@ -316,17 +321,14 @@
 {/if}
 
 <div class="flex-row flex-wrap">
-  <button class="red-btn blur" onclick={() => openModal(
-    resetDreamModal,
-    'Reset',
-    clearAllData,
-  )}> Reset </button>
-  <!-- <button class="rose-btn blur" onclick={saveDraft}> Save a draft </button> -->
   <button
-    class="green-btn blur"
-    onclick={generateStory}
-    disabled={!validation}
+    class="red-btn blur"
+    onclick={() => openModal(resetDreamModal, 'Reset', clearAllData)}
   >
+    Reset
+  </button>
+  <!-- <button class="rose-btn blur" onclick={saveDraft}> Save a draft </button> -->
+  <button class="green-btn blur" onclick={generateStory} disabled={!validation}>
     Create a DREAM
   </button>
 </div>
@@ -366,7 +368,11 @@
     }
 
     &.selected {
-      @include deep-green(0.75);
+      @include deep-green;
+
+      label {
+        @include bright(150%);
+      }
     }
   }
 </style>

@@ -9,7 +9,7 @@ $soft-white: rgba(255, 255, 255, 0.9);
 $transparent-white: rgba(255, 255, 255, 0.5);
 $beige: rgb(250, 238, 209); // no mixin
 
-$cyan: rgb(51, 226, 230);
+$cyan: rgb(51, 226, 230); // #33e2e6
 $soft-cyan: rgba(51, 226, 230, 0.75);
 $transparent-cyan: rgba(51, 226, 230, 0.5);
 $deep-cyan: rgb(60, 180, 185); // no mixin
@@ -179,13 +179,13 @@ $dark-gray: rgb(16, 16, 16);
     @if $state == 'normal' {
       background-color: rgba(95, 80, 160, $opacity);
     } @else {
-      background-color: rgba(120, 100, 190, $opacity);
+      background-color: rgba(160, 120, 255, $opacity);
     }
   } @else if $type == 'text' {
     @if $state == 'normal' {
       color: rgba(95, 80, 160, $opacity);
     } @else {
-      color: rgba(120, 100, 190, $opacity);
+      color: rgba(160, 120, 255, $opacity);
     }
   }
 }
@@ -274,10 +274,6 @@ $dark-gray: rgb(16, 16, 16);
 
 :global(:where(h1)) {
   @include cyan(1, text);
-}
-
-:global(:where(h2)) {
-  @include cyan(0.75, text);
 }
 
 :global(:where(h4, h5)) {

@@ -7,7 +7,7 @@
   }: {
     parameters?: string[];
     inputValue?: number;
-    hints?: Nullable<string>;
+    hints?: Nullable<string[]>;
     sliderValue?: Nullable<string>;
   } = $props();
 

@@ -15,7 +15,9 @@
 
     switch (option) {
       case 'copy':
-        await navigator.clipboard.writeText(window.location.href);
+        await navigator.clipboard.writeText(
+          `${message}\n${window.location.href}`,
+        );
         copyBtn.classList.add('copied');
         setTimeout(() => copyBtn.classList.remove('copied'), 600);
         break;
@@ -45,15 +47,6 @@
   >
     <button
       class="min-size-btn void-btn flex"
-      onclick={() => handleOptionclick('discord')}
-      use:tippy={{ content: 'Join our community', animation: 'scale' }}
-      aria-label="Share on Discord"
-      {disabled}
-    >
-      <img src="/icons/discord.png" alt="Discord" />
-    </button>
-    <button
-      class="min-size-btn void-btn flex"
       onclick={() => handleOptionclick('twitter')}
       use:tippy={{ content: 'Share on X', animation: 'scale' }}
       aria-label="Share on X"
@@ -72,6 +65,15 @@
     </button>
     <button
       class="min-size-btn void-btn flex"
+      onclick={() => handleOptionclick('discord')}
+      use:tippy={{ content: 'Join our community', animation: 'scale' }}
+      aria-label="Share on Discord"
+      {disabled}
+    >
+      <img src="/icons/discord.png" alt="Discord" />
+    </button>
+    <button
+      class="min-size-btn void-btn flex"
       onclick={() => handleOptionclick('copy')}
       onpointerover={() => {
         if (!disabled) copySvgFocus = true;
@@ -82,7 +84,7 @@
       }}
       onblur={() => (copySvgFocus = null)}
       bind:this={copyBtn}
-      use:tippy={{ content: 'Copy story link', animation: 'scale' }}
+      use:tippy={{ content: 'Copy to clipboard', animation: 'scale' }}
       aria-label="Copy link"
       {disabled}
     >

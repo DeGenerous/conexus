@@ -287,11 +287,13 @@
 
     h1 {
       text-transform: capitalize;
+      @include text-shadow;
     }
   }
 
   .subheading {
     margin: 2rem auto;
+    @include text-shadow;
 
     @include respond-up(small-desktop) {
       width: clamp(20rem, 95%, 80rem);

@@ -37,6 +37,8 @@
     &:active,
     &:hover,
     &:focus {
+      stroke: $dark-red;
+
       svg {
         @include scale(1.2);
         @include bright;

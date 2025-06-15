@@ -71,7 +71,7 @@
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<section class="container">
+<section class="container fade-in">
   <p class="text-glowing">Dream It. Create It. Bring It to Life.</p>
   <a class="button-anchor button-glowing" href="/dashboard/dream/create">
     Create
@@ -89,7 +89,7 @@
   <p class="text-glowing">Upload media, refine, and perfect your vision.</p>
 </section>
 
-<div class="container">
+<div class="container fade-in">
   <p class="transparent-white-txt">Import Story Object (DevTool)</p>
 
   {#if importedFile}

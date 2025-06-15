@@ -180,7 +180,7 @@
     </span>
   {/key}
 
-  <section class="dream-container">
+  <section class="dream-container fade-in">
     <!-- STORY NAME & CATEGORY -->
     <div class="flex-row">
       <h4>Story</h4>
@@ -379,7 +379,7 @@
 
   .edit-wrapper {
     flex-flow: row wrap;
-    
+
     @include respond-up(small-desktop) {
       flex-direction: column;
       align-items: flex-end;

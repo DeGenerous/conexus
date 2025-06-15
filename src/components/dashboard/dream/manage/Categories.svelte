@@ -20,7 +20,7 @@
   };
 </script>
 
-<section class="dream-container">
+<section class="dream-container fade-in">
   <h4>Categories</h4>
   <div class="container">
     {#if categories.length > 0}

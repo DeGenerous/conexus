@@ -117,7 +117,7 @@
     {:then collections}
       {storeAllTopics(collections)}
       {#each collections as { category_id, category_name, category_order, section_id, topics }}
-        <div class="collection-header">
+        <div class="collection-header fade-in">
           <h2>{category_name}: {topics.length}</h2>
 
           <span class="controls container flex-row">
@@ -158,7 +158,7 @@
           </span>
         </div>
 
-        <div class="tiles-collection">
+        <div class="tiles-collection fade-in">
           {#each sortTopicsByOrder(topics) as { topic_name, order, available, topic_id }}
             <a class="tile" href="/dashboard/dream/manage/{topic_name}">
               <h4>{topic_name}</h4>

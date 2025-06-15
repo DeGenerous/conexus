@@ -50,7 +50,7 @@
   }
 </script>
 
-<div class="dream-container">
+<div class="dream-container fade-in">
   <div class="flex">
     <h4>NFT Classes</h4>
     <div class="container">

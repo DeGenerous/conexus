@@ -155,16 +155,12 @@
 {#if isLoading}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {:else}
-  <section class="container">
+  <section class="container fade-in">
     <!-- Description Upload -->
     <div class="media-section flex">
       <h4>Description</h4>
       {#if description}
-        <span
-          class="content flex"
-          role="button"
-          tabindex="0"
-        >
+        <span class="content flex" role="button" tabindex="0">
           <img
             src={serveUrl(description)}
             alt="Description"
@@ -209,11 +205,7 @@
     <div class="media-section flex">
       <h4>Tile</h4>
       {#if tile}
-        <span
-          class="content flex"
-          role="button"
-          tabindex="0"
-        >
+        <span class="content flex" role="button" tabindex="0">
           <img
             src={serveUrl(tile)}
             alt="Tile"
@@ -258,11 +250,7 @@
     <div class="media-section flex">
       <h4>Video</h4>
       {#if video}
-        <span
-          class="content flex"
-          role="button"
-          tabindex="0"
-        >
+        <span class="content flex" role="button" tabindex="0">
           <video controls draggable="false">
             <source src={serveUrl(video)} type="video/mp4" />
             <track
@@ -314,21 +302,17 @@
       <h4>Backgrounds</h4>
       <div class="flex-row flex-wrap">
         {#if backgrounds.length}
-            {#each backgrounds as bg}
-              <span
-                class="content flex"
-                role="button"
-                tabindex="0"
+          {#each backgrounds as bg}
+            <span class="content flex" role="button" tabindex="0">
+              <img src={serveUrl(bg)} alt="Background" draggable="false" />
+              <button
+                class="red-btn"
+                on:click={() => handleDelete(bg, 'background')}
               >
-                <img src={serveUrl(bg)} alt="Background" draggable="false" />
-                <button
-                  class="red-btn"
-                  on:click={() => handleDelete(bg, 'background')}
-                >
-                  Delete
-                </button>
-              </span>
-            {/each}
+                Delete
+              </button>
+            </span>
+          {/each}
         {/if}
         {#if backgrounds.length < 3}
           <div
@@ -370,11 +354,7 @@
     <div class="media-section flex">
       <h4>Audio</h4>
       {#if audio}
-        <span
-          class="content audio-content"
-          role="button"
-          tabindex="0"
-        >
+        <span class="content audio-content" role="button" tabindex="0">
           <audio controls>
             <source src={serveUrl(audio)} type="audio/mpeg" />
             Your browser does not support the audio element.

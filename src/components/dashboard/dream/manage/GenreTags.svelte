@@ -54,73 +54,69 @@
   });
 </script>
 
-<div class="dream-container">
-  <div class="flex-row">
-    <h4>Genres</h4>
-    <div class="container">
-      {#if $genres.length > 0}
-        {#each $genres as genre (genre)}
-          <span
-            class="genre flex-row gap-8 pad-8 round-8 shad"
-            role="button"
-            tabindex="0"
-          >
-            <h5>{genre}</h5>
-            <CloseSVG
-              onclick={() => handleRemoveGenre(genre)}
-              voidBtn={true}
-              dark={true}
-            />
-          </span>
-        {/each}
-      {:else}
-        <p class="valigation">No genres selected</p>
-      {/if}
-    </div>
-  </div>
-
-  <div class="add-genre flex-row">
-    <select bind:value={$newGenre}>
-      <option value="" hidden disabled>Select</option>
-      {#each availableGenres.filter((g) => !$genres.includes(g.name)) as genre}
-        <option value={genre.name}>{genre.name}</option>
+<div class="flex-row">
+  <h4>Genres</h4>
+  <div class="container">
+    {#if $genres.length > 0}
+      {#each $genres as genre (genre)}
+        <span
+          class="genre flex-row gap-8 pad-8 round-8 shad"
+          role="button"
+          tabindex="0"
+        >
+          <h5>{genre}</h5>
+          <CloseSVG
+            onclick={() => handleRemoveGenre(genre)}
+            voidBtn={true}
+            dark={true}
+          />
+        </span>
       {/each}
-    </select>
-    <button on:click={handleAddGenre} disabled={!$newGenre}>Add Genre</button>
+    {:else}
+      <p class="valigation">No genres selected</p>
+    {/if}
   </div>
+</div>
+
+<div class="add-genre flex-row">
+  <select bind:value={$newGenre}>
+    <option value="" hidden disabled>Select</option>
+    {#each availableGenres.filter((g) => !$genres.includes(g.name)) as genre}
+      <option value={genre.name}>{genre.name}</option>
+    {/each}
+  </select>
+  <button on:click={handleAddGenre} disabled={!$newGenre}>Add Genre</button>
 </div>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .dream-container {
-    .container {
-      flex-wrap: wrap;
-      justify-content: center;
+  .container {
+    flex-wrap: wrap;
+    justify-content: center;
 
-      .genre {
-        padding-left: 1rem;
-        @include purple;
-        @include white-txt;
+    .genre {
+      padding-left: 1rem;
+      @include purple;
+      @include white-txt;
 
-        &:hover,
-        &:active {
-          @include dark-red(1, text);
-          @include purple(1, bg, bright);
-          @include scale-up(soft);
-          @include box-shadow(deep);
-        }
+      &:hover,
+      &:active {
+        @include dark-red(1, text);
+        @include purple(1, bg, bright);
+        @include scale-up(soft);
+        @include box-shadow(deep);
+      }
 
-        h5 {
-          color: inherit;
-          text-shadow: none;
-          text-transform: uppercase;
-        }
+      h5 {
+        color: inherit;
+        text-shadow: none;
+        text-transform: uppercase;
       }
     }
+  }
 
-    .add-genre {
-      justify-content: center;
-    }
+  .add-genre {
+    justify-content: center;
   }
 </style>

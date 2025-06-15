@@ -28,35 +28,37 @@
   }
 </script>
 
-<div class="flex">
-  <ul class="flex-row">
-    {#each options as { id, value }}
-      <button
-        class="void-btn dream-radio-btn"
-        class:active={id == inputValue}
-        onclick={() => {
-          inputValue = id;
-          handleChange();
-        }}
-      >
-        {value}
-      </button>
-    {/each}
-  </ul>
-  <input
-    type="range"
-    min="1"
-    max={options.length}
-    step="1"
-    bind:value={inputValue}
-    onchange={handleChange}
-  />
-  {#if hints}
-    {#key inputValue}
-      <p>{hints[inputValue - 1]}</p>
-    {/key}
-  {/if}
-</div>
+{#key sliderValue}
+  <div class="flex">
+    <ul class="flex-row">
+      {#each options as { id, value }}
+        <button
+          class="void-btn dream-radio-btn"
+          class:active={id == inputValue}
+          onclick={() => {
+            inputValue = id;
+            handleChange();
+          }}
+        >
+          {value}
+        </button>
+      {/each}
+    </ul>
+    <input
+      type="range"
+      min="1"
+      max={options.length}
+      step="1"
+      bind:value={inputValue}
+      onchange={handleChange}
+    />
+    {#if hints}
+      {#key inputValue}
+        <p>{hints[inputValue - 1]}</p>
+      {/key}
+    {/if}
+  </div>
+{/key}
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

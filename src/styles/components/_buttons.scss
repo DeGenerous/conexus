@@ -114,7 +114,7 @@ button:not(.void-btn),
   &:focus:not(&:disabled) {
     box-shadow: 0 0 0.5rem $purple;
     @include purple(1, bg, bright);
-    @include dark-blue(1, text);
+    @include dark-red(1, text);
   }
 }
 

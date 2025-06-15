@@ -78,7 +78,7 @@
   <hr />
 
   <div class="flex-row">
-    <h4>New Class</h4>
+    <h4>Add New Class</h4>
     <div class="new-class container flex-row">
       <div class="input-container">
         <label for="class-name">Class name</label>
@@ -139,11 +139,12 @@
 
       .nft-class {
         padding-left: 1rem;
-        @include dark-red(1, text);
+        @include dark-red(0.85, text);
         @include orange(0.85);
 
         &:hover,
         &:active {
+          @include dark-red(1, text);
           @include orange;
           @include scale-up(soft);
           @include box-shadow(deep);

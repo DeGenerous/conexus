@@ -60,7 +60,8 @@ svg * {
 
 button:disabled,
 input:disabled,
-select:disabled {
+select:disabled,
+textarea:disabled {
   cursor: not-allowed;
 }
 

@@ -74,109 +74,106 @@
   };
 </script>
 
-<div class="dream-container">
-  <div class="flex-row">
-    <h4>Web3 Gating</h4>
-    <div class="container">
-      {#if topicGatings.length > 0}
-        {#each topicGatings as { contract_name, class_id }}
-          <span
-            class="gating flex-row gap-8 pad-8 round-8 shad"
-            role="button"
-            tabindex="0"
+<div class="flex-row">
+  <h4>Web3 Gating</h4>
+  <div class="container">
+    {#if topicGatings.length > 0}
+      {#each topicGatings as { contract_name, class_id }}
+        <span
+          class="gating flex-row gap-8 pad-8 round-8 shad"
+          role="button"
+          tabindex="0"
+        >
+          <h5>
+            {contractGetter(contract_name).name}
+            {#if class_id}
+              {#await viewApp.fetchClassGate(class_id) then classGate}
+                ({classGate?.name})
+              {/await}
+            {/if}
+          </h5>
+          <CloseSVG
+            onclick={() => handleRemoveGating(topicGatings, contract_name)}
+            voidBtn={true}
+            dark={true}
+          />
+        </span>
+      {/each}
+    {:else}
+      <p class="validation">No NFT restriction selected.</p>
+    {/if}
+  </div>
+</div>
+
+<div class="add-gating flex-row">
+  <select bind:value={newGating} disabled={!filterContracts().length}>
+    <option value="" hidden disabled>Select</option>
+    {#each filterContracts() as gating}
+      <option value={gating}>{contractGetter(gating).name}</option>
+    {/each}
+  </select>
+
+  <button class="orange-btn" on:click={handleAddGating} disabled={!newGating}
+    >Gate Story</button
+  >
+</div>
+
+{#if newGating === 'Potential'}
+  <hr />
+
+  <h4>Select Class Restriction (Optional)</h4>
+  {#await viewApp.fetchClassGates() then classGating}
+    <div class="classes container">
+      {#if classGating.length > 0}
+        {#each classGating as { id, name }}
+          <button
+            class="void-btn dream-radio-btn"
+            class:active={newClassGating == id.toString()}
+            on:click={() => setClassGating(id)}
           >
-            <h5>
-              {contractGetter(contract_name).name}
-              {#if class_id}
-                {#await viewApp.fetchClassGate(class_id) then classGate}
-                  ({classGate?.name})
-                {/await}
-              {/if}
-            </h5>
-            <CloseSVG
-              onclick={() => handleRemoveGating(topicGatings, contract_name)}
-              voidBtn={true}
-              dark={true}
-            />
-          </span>
+            {name}
+          </button>
         {/each}
-      {:else}
-        <p class="validation">No NFT restriction selected.</p>
       {/if}
     </div>
-  </div>
-
-  <div class="add-gating flex-row">
-    <select bind:value={newGating} disabled={!filterContracts().length}>
-      <option value="" hidden disabled>Select</option>
-      {#each filterContracts() as gating}
-        <option value={gating}>{contractGetter(gating).name}</option>
-      {/each}
-    </select>
-
-    <button class="orange-btn" on:click={handleAddGating} disabled={!newGating}
-      >Gate Story</button
-    >
-  </div>
-
-  {#if newGating === 'Potential'}
-    <hr />
-
-    <h4>Select Class Restriction (Optional)</h4>
-    {#await viewApp.fetchClassGates() then classGating}
-      <div class="classes container">
-        {#if classGating.length > 0}
-          {#each classGating as { id, name }}
-            <button
-              class="void-btn dream-radio-btn"
-              class:active={newClassGating == id.toString()}
-              on:click={() => setClassGating(id)}
-            >
-              {name}
-            </button>
-          {/each}
-        {/if}
-      </div>
-    {/await}
-  {/if}
-</div>
+  {/await}
+{/if}
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .dream-container {
-    .container {
-      flex-wrap: wrap;
-      justify-content: center;
+  .container {
+    flex-wrap: wrap;
+    justify-content: center;
 
-      .gating {
-        padding-left: 1rem;
+    .gating {
+      padding-left: 1rem;
+      @include dark-red(0.85, text);
+      @include orange(0.85);
+
+      &:hover,
+      &:active {
         @include dark-red(1, text);
-        @include orange(0.85);
-
-        &:hover,
-        &:active {
-          @include orange;
-          @include scale-up(soft);
-          @include box-shadow(deep);
-        }
-
-        h5 {
-          color: inherit;
-          text-shadow: none;
-          text-transform: uppercase;
-        }
+        @include orange;
+        @include scale-up(soft);
+        @include box-shadow(deep);
       }
 
-      @include respond-up(tablet) {
-        &.classes {
-          justify-content: space-around;
-        }
+      h5 {
+        color: inherit;
+        text-shadow: none;
+        text-transform: uppercase;
       }
     }
 
-    .add-gating {
-      justify-content: center;
+    @include respond-up(tablet) {
+      &.classes {
+        justify-content: space-around;
+      }
     }
+  }
+
+  .add-gating {
+    justify-content: center;
   }
 </style>

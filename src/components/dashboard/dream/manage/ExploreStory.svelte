@@ -143,222 +143,209 @@
       categoryTopics[(activeStoryIndex + 1) % categoryTopics.length];
   })()}
 
-  <!-- STORY NAME -->
-  <div class="story-data dream-container">
+  <!-- KEY BUTTONS -->
+  {#key topic}
+    <span class="flex-row">
+      <button
+        class:green-btn={topic.available === 'available'}
+        class:red-btn={topic.available === 'unavailable'}
+        use:tippy={{ content: 'Toggle visibility', animation: 'scale' }}
+        on:click={() =>
+          admin
+            .changeAvailability(
+              topic.id,
+              switchAvailable(topic.available),
+            )
+            .then(async () => {
+              const topic_ = await admin.fetchTopic(topic_name);
+
+              if (!topic_) {
+                window.open('/dashboard/dream/manage/', '_self');
+                return;
+              }
+
+              topic = topic_;
+            })}>{topic.available}</button
+      >
+      <button
+        class="rose-btn"
+        use:tippy={{ content: 'Download story file', animation: 'scale' }}
+        on:click={downloadTopicJson}
+      >
+        Export JSON
+      </button>
+      <a
+        class="button-anchor purple-btn"
+        href={`/dashboard/dream/manage/demo?demoID=${topic.prompt_id}&demoName=${topic_name}`}
+      >
+        Play Demo
+      </a>
+    </span>
+  {/key}
+
+  <section class="dream-container">
+    <!-- STORY NAME & CATEGORY -->
     <div class="flex-row">
-      <h4>Name</h4>
-      <div class="story-name container">
-        {#if editingName}
-          <CloseSVG
-            onclick={() => {
-              editingName = false;
-              storyName = topic_name;
-            }}
-            voidBtn={true}
-          />
-        {/if}
-        <input
-          bind:value={storyName}
-          type="text"
-          size={storyName.length + 1}
-          maxlength="50"
-          disabled={!editingName}
-        />
-        {#if editingName}
-          <SaveSVG
-            onclick={() => {
-              editingName = false;
-              admin.editTopicName(topic_name, storyName);
-              window.open('/dashboard/dream/manage/', '_self');
-            }}
-            disabled={topic_name == storyName}
-          />
-        {:else}
-          <EditSVG bind:editing={editingName} />
-        {/if}
-      </div>
-    </div>
-
-    <!-- CATEGORY & KEY-BUTTONS -->
-    {#key topic}
-      <div class="settings flex-row">
-        <h4>Settings</h4>
-        <div class="container">
+      <h4>Story</h4>
+      <div class="story-data container">
+        <div class="story-name flex-row">
+          {#if editingName}
+            <CloseSVG
+              onclick={() => {
+                editingName = false;
+                storyName = topic_name;
+              }}
+            />
+          {/if}
           <div class="input-container">
-            <label for="category">Selected category</label>
-            {#if categories}
-              <select
-                value={topic.category_id}
-                on:change={(event) => {
-                  const target = event.target as HTMLSelectElement;
-                  if (target) {
-                    admin.editTopicCategory(topic.id, parseInt(target.value));
-                  }
-                }}
-              >
-                {#each categories as { id, name }}
-                  <option value={id}>{name}</option>
-                {/each}
-              </select>
-            {/if}
+            <label for="story-name">Story name</label>
+            <input
+              bind:value={storyName}
+              type="text"
+              size={storyName.length + 1}
+              maxlength="50"
+              disabled={!editingName}
+            />
           </div>
-
-          <div class="flex-row">
-            <button
-              class:green-btn={topic.available === 'available'}
-              class:red-btn={topic.available === 'unavailable'}
-              use:tippy={{ content: 'Toggle visibility', animation: 'scale' }}
-              on:click={() =>
-                admin
-                  .changeAvailability(
-                    topic.id,
-                    switchAvailable(topic.available),
-                  )
-                  .then(async () => {
-                    const topic_ = await admin.fetchTopic(topic_name);
-
-                    if (!topic_) {
-                      window.open('/dashboard/dream/manage/', '_self');
-                      return;
-                    }
-
-                    topic = topic_;
-                  })}>{topic.available}</button
+          {#if editingName}
+            <SaveSVG
+              onclick={() => {
+                editingName = false;
+                admin.editTopicName(topic_name, storyName);
+                window.open('/dashboard/dream/manage/', '_self');
+              }}
+              disabled={topic_name == storyName}
+            />
+          {:else}
+            <EditSVG bind:editing={editingName} />
+          {/if}
+        </div>
+        
+        <div class="input-container">
+          <label for="category">Selected category</label>
+          {#if categories}
+            <select
+              value={topic.category_id}
+              on:change={(event) => {
+                const target = event.target as HTMLSelectElement;
+                if (target) {
+                  admin.editTopicCategory(topic.id, parseInt(target.value));
+                }
+              }}
             >
-            <button
-              class="rose-btn"
-              use:tippy={{ content: 'Export story file', animation: 'scale' }}
-              on:click={downloadTopicJson}
-            >
-              Export JSON
-            </button>
-            <a
-              class="button-anchor purple-btn"
-              href={`/dashboard/dream/manage/demo?demoID=${topic.prompt_id}&demoName=${topic_name}`}
-            >
-              Play Demo
-            </a>
-          </div>
+              {#each categories as { id, name }}
+                <option value={id}>{name}</option>
+              {/each}
+            </select>
+          {/if}
         </div>
       </div>
-    {/key}
-  </div>
-
-  <!-- GENRES -->
-  <GenreTags {topic} {handleGenreChange} />
-
-  <!-- NFT RESTRICTIONS -->
-  <NftGating {topic} {handleGatingChange} />
-
-  <!-- DESCRIPTION -->
-  <div class="dream-container blur open-prompt">
-    <div class="flex-row box-header">
-      <h2>Description</h2>
-      <div class="flex-row">
-        {#if editingDescription}
-          <button
-            class="red-button"
-            on:click={() => (editingDescription = false)}>CANCEL</button
-          >
-          <button
-            class="green-button"
-            on:click={() => {
-              editingDescription = false;
-              if (topic_description == storyDescription) return;
-              admin.editTopicDescription(topic.id, storyDescription);
-            }}
-          >
-            SAVE
-          </button>
-        {:else}
-          <button on:click={() => (editingDescription = true)}>EDIT</button>
-        {/if}
-      </div>
     </div>
-    <textarea
-      id="description"
-      class="dream-input dream-textfield"
-      placeholder="Describe the overall story, its key themes, and what kind of journey the main character will take. Is it an epic adventure, a gripping mystery, or a heartwarming romance? Keep it engaging and set the stage for the reader!"
-      rows="5"
-      bind:value={storyDescription}
-      disabled={!editingDescription}
-    ></textarea>
-  </div>
 
-  <!-- IMAGE-PROMPT -->
-  <div class="dream-container blur open-prompt">
-    <div class="flex-row box-header">
-      <h2>Image Generation Instructions</h2>
-      <div class="flex-row">
-        {#if editingImagePrompt}
-          <button
-            class="red-button"
-            on:click={() => (editingImagePrompt = false)}>CANCEL</button
-          >
-          <button
-            class="green-button"
-            on:click={() => {
-              editingImagePrompt = false;
-              if (topic_imagePrompt == storyImagePrompt) return;
-              admin.editImagePrompt(topic.id, storyImagePrompt);
-            }}
-          >
-            SAVE
-          </button>
-        {:else}
-          <button on:click={() => (editingImagePrompt = true)}>EDIT</button>
-        {/if}
-      </div>
-    </div>
-    <textarea
-      id="image-prompt"
-      class="dream-input dream-textfield"
-      placeholder="E.g. A breathtaking cosmic landscape filled with swirling galaxies, ancient ruins, and a lone traveler standing at the edge of destiny."
-      rows="10"
-      bind:value={storyImagePrompt}
-      disabled={!editingImagePrompt}
-    ></textarea>
-  </div>
+    <hr />
 
-  <!-- PROMPT -->
-  <div class="dream-container blur open-prompt">
-    <div class="flex-row box-header">
-      <h2>Prompt</h2>
-      <div class="flex-row">
-        {#if editingPrompt}
-          <button class="red-button" on:click={() => (editingPrompt = false)}
-            >CANCEL</button
-          >
-          <button
-            class="green-button"
-            on:click={() => {
-              editingPrompt = false;
-              if (topic_prompt == storyPrompt) return;
-              admin.editPrompt(storyPrompt, topic.id, topic.prompt_id);
-            }}
-          >
-            SAVE
-          </button>
-        {:else}
-          <button on:click={() => (editingPrompt = true)}>EDIT</button>
-        {/if}
-      </div>
+    <!-- GENRES -->
+    <GenreTags {topic} {handleGenreChange} />
+
+    <hr />
+
+    <!-- NFT RESTRICTIONS -->
+    <NftGating {topic} {handleGatingChange} />
+
+    <hr />
+
+    <!-- DESCRIPTION -->
+    <div class="flex-row">
+      <span class="edit-wrapper flex">
+        <h4>Description</h4>
+        <span class="flex-row">
+          {#if editingDescription}
+            <CloseSVG onclick={() => (editingDescription = false)} />
+            <SaveSVG
+              onclick={() => {
+                editingDescription = false;
+                admin.editTopicDescription(topic.id, storyDescription);
+              }}
+              disabled={topic_description == storyDescription}
+            />
+          {:else}
+            <EditSVG bind:editing={editingDescription} />
+          {/if}
+        </span>
+      </span>
+      <textarea
+        id="description"
+        class="dream-input dream-textfield"
+        placeholder="Describe the overall story, its key themes, and what kind of journey the main character will take. Is it an epic adventure, a gripping mystery, or a heartwarming romance? Keep it engaging and set the stage for the reader!"
+        rows="5"
+        bind:value={storyDescription}
+        disabled={!editingDescription}
+      ></textarea>
     </div>
-    <textarea
-      id="prompt"
-      class="dream-input dream-textfield"
-      placeholder="Describe any scenario you want, and the AI will turn it into a story! Whether it's a thrilling mystery, an epic fantasy, or a hilarious adventure, your imagination sets the stage. You can be as detailed or vague as you like—every idea sparks a unique tale. E.g. Make a unique Sherlock Holmes story where during an investigation he ends up taking a new type of drug, deeply affecting him so he’ll lead a fight both versus himself and a serial killer."
-      rows="10"
-      bind:value={storyPrompt}
-      disabled={!editingPrompt}
-    ></textarea>
-  </div>
+
+     <!-- IMAGE-PROMPT -->
+    <div class="flex-row box-header">
+      <span class="edit-wrapper flex">
+        <h4>Image Generation Instructions</h4>
+        <span class="flex-row">
+          {#if editingImagePrompt}
+            <CloseSVG onclick={() => (editingImagePrompt = false)} />
+            <SaveSVG
+              onclick={() => {
+                editingImagePrompt = false;
+                admin.editImagePrompt(topic.id, storyImagePrompt);
+              }}
+              disabled={topic_imagePrompt == storyImagePrompt}
+            />
+          {:else}
+            <EditSVG bind:editing={editingImagePrompt} />
+          {/if}
+        </span>
+      </span>
+      <textarea
+        id="image-prompt"
+        class="dream-input dream-textfield"
+        placeholder="E.g. A breathtaking cosmic landscape filled with swirling galaxies, ancient ruins, and a lone traveler standing at the edge of destiny."
+        rows="5"
+        bind:value={storyImagePrompt}
+        disabled={!editingImagePrompt}
+      ></textarea>
+    </div>
+
+    <!-- PROMPT -->
+    <div class="flex-row box-header">
+      <span class="edit-wrapper flex">
+        <h4>Prompt</h4>
+        <span class="flex-row">
+          {#if editingPrompt}
+            <CloseSVG onclick={() => (editingPrompt = false)} /> <!-- todo reset data -->
+            <SaveSVG
+              onclick={() => {
+                editingPrompt = false;
+                admin.editPrompt(storyPrompt, topic.id, topic.prompt_id);
+              }}
+              disabled={topic_prompt == storyPrompt}
+            />
+          {:else}
+            <EditSVG bind:editing={editingPrompt} />
+          {/if}
+        </span>
+      </span>
+      <textarea
+        id="prompt"
+        placeholder="Describe any scenario you want, and the AI will turn it into a story! Whether it's a thrilling mystery, an epic fantasy, or a hilarious adventure, your imagination sets the stage. You can be as detailed or vague as you like—every idea sparks a unique tale. E.g. Make a unique Sherlock Holmes story where during an investigation he ends up taking a new type of drug, deeply affecting him so he’ll lead a fight both versus himself and a serial killer."
+        rows="5"
+        bind:value={storyPrompt}
+        disabled={!editingPrompt}
+      ></textarea>
+    </div>
+  </section>
 
   <!-- MEDIA FILES -->
   <Media bind:topic_id={topic.id} />
 
   <button
-    class="red-button blur"
+    class="red-btn blur"
     on:click={() =>
       openModal(deleteStoryModal, `Delete story: ${topic_name}`, () => {
         admin.deleteStory(topic.id);
@@ -369,55 +356,32 @@
   </button>
 {/if}
 
-<!-- <style>
-  .open-prompt {
-    align-items: center;
-    padding: 0.5vw;
-  }
-
-  .open-prompt h2 {
-    line-height: 4vw;
-  }
-
-  #description,
-  #prompt,
-  #image-prompt {
-    width: 90vw;
-  }
-
-  #description:disabled,
-  #prompt:disabled,
-  #image-prompt:disabled {
-    color: #bebebe;
-    cursor: not-allowed;
-  }
-</style> -->
-
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .story-data {
-    max-width: 70rem;
+  textarea {
+    min-height: 10rem;
+  }
 
+  .story-data {
     .story-name {
       flex-wrap: nowrap;
-      justify-content: center;
+      align-items: flex-end;
 
       input {
         width: 100%;
         animation: none;
       }
     }
+  }
 
-    .settings {
-      .container {
-        align-items: flex-end;
+  .edit-wrapper {
+    align-items: flex-end;
+  }
 
-        div {
-          width: auto;
-          justify-content: center;
-        }
-      }
-    }
+  #description:disabled,
+  #prompt:disabled,
+  #image-prompt:disabled {
+    @include white-txt(0.5);
   }
 </style>

@@ -99,6 +99,11 @@
       placeholder="Describe the central premise, key themes, the main character's emotional journey ahead, and what kicks off the plot. Focus on what’s at stake, what makes the world unique, and why this story matters - make users want to see more."
       rows="3"
       bind:value={$storyData.description}
+      style:min-height={
+        $storyData.description.length > 500
+          ? ($storyData.description.length / 50) + "rem"
+          : ''
+      }
     ></textarea>
   </div>
 
@@ -119,6 +124,11 @@
       placeholder="What does your world feel like, what visual mood are you going for, and what elements stand out? Describe the environment, style, lighting, and textures you want to see."
       rows="2"
       bind:value={$storyData.imagePrompt}
+      style:min-height={
+        $storyData.imagePrompt.length > 500
+          ? ($storyData.imagePrompt.length / 50) + "rem"
+          : ''
+      }
     ></textarea>
   </div>
 
@@ -253,6 +263,11 @@
         placeholder="Summarize the core of your story—who the main character is, what challenge they face, and what’s at stake in their journey."
         rows="2"
         bind:value={$tablePrompt.premise}
+        style:min-height={
+          $tablePrompt.premise.length > 500
+            ? ($tablePrompt.premise.length / 50) + "rem"
+            : ''
+        }
       ></textarea>
     </div>
 
@@ -263,6 +278,11 @@
         placeholder="Describe the time and place where your story unfolds, whether it's a futuristic city, a medieval kingdom, a distant galaxy, or somewhere beyond imagination."
         rows="2"
         bind:value={$tablePrompt.environment}
+        style:min-height={
+          $tablePrompt.environment.length > 500
+            ? ($tablePrompt.environment.length / 50) + "rem"
+            : ''
+        }
       ></textarea>
     </div>
 
@@ -273,6 +293,11 @@
         placeholder="Set the stage for your story—introduce the world, key events leading up to the present, and any important background details the reader needs to know."
         rows="2"
         bind:value={$tablePrompt.exposition}
+        style:min-height={
+          $tablePrompt.exposition.length > 500
+            ? ($tablePrompt.exposition.length / 50) + "rem"
+            : ''
+        }
       ></textarea>
     </div>
 
@@ -283,6 +308,11 @@
         placeholder="Describe how the story begins—introduce the main character, their current situation, and the inciting event that sets the plot in motion."
         rows="2"
         bind:value={$tablePrompt.firstAction}
+        style:min-height={
+          $tablePrompt.firstAction.length > 500
+            ? ($tablePrompt.firstAction.length / 50) + "rem"
+            : ''
+        }
       ></textarea>
     </div>
   </div>
@@ -302,6 +332,11 @@
       placeholder="Add any additional styling, references, details, twists, character ideas, or world-building elements you’d like to include in your story."
       rows="2"
       bind:value={$tablePrompt.additionalData}
+      style:min-height={
+        $tablePrompt.additionalData.length > 500
+          ? ($tablePrompt.additionalData.length / 50) + "rem"
+          : ''
+      }
     ></textarea>
   </div>
 {:else}
@@ -312,6 +347,11 @@
       placeholder="Describe any scenario you want, and the AI will turn it into a story! Whether it's a thrilling mystery, an epic fantasy, or a hilarious adventure, your imagination sets the stage. You can be as detailed or vague as you like—every idea sparks a unique tale. E.g. Make a unique Sherlock Holmes story where during an investigation he ends up taking a new type of drug, deeply affecting him so he’ll lead a fight both versus himself and a serial killer."
       rows="5"
       bind:value={$openPrompt}
+      style:min-height={
+        $openPrompt.length > 1000
+          ? ($openPrompt.length / 50) + "rem"
+          : ''
+      }
     ></textarea>
   </div>
 {/if}

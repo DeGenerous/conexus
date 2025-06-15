@@ -145,17 +145,14 @@
 
   <!-- KEY BUTTONS -->
   {#key topic}
-    <span class="flex-row">
+    <span class="flex-row flex-wrap">
       <button
         class:green-btn={topic.available === 'available'}
         class:red-btn={topic.available === 'unavailable'}
         use:tippy={{ content: 'Toggle visibility', animation: 'scale' }}
         on:click={() =>
           admin
-            .changeAvailability(
-              topic.id,
-              switchAvailable(topic.available),
-            )
+            .changeAvailability(topic.id, switchAvailable(topic.available))
             .then(async () => {
               const topic_ = await admin.fetchTopic(topic_name);
 
@@ -220,7 +217,7 @@
             <EditSVG bind:editing={editingName} />
           {/if}
         </div>
-        
+
         <div class="input-container">
           <label for="category">Selected category</label>
           {#if categories}
@@ -283,7 +280,7 @@
       ></textarea>
     </div>
 
-     <!-- IMAGE-PROMPT -->
+    <!-- IMAGE-PROMPT -->
     <div class="flex-row box-header">
       <span class="edit-wrapper flex">
         <h4>Image Generation Instructions</h4>
@@ -318,7 +315,8 @@
         <h4>Prompt</h4>
         <span class="flex-row">
           {#if editingPrompt}
-            <CloseSVG onclick={() => (editingPrompt = false)} /> <!-- todo reset data -->
+            <CloseSVG onclick={() => (editingPrompt = false)} />
+            <!-- todo reset data -->
             <SaveSVG
               onclick={() => {
                 editingPrompt = false;
@@ -360,7 +358,11 @@
   @use '/src/styles/mixins' as *;
 
   textarea {
-    min-height: 10rem;
+    min-height: 25rem;
+
+    @include respond-up(tablet) {
+      min-height: 12.5rem;
+    }
   }
 
   .story-data {
@@ -376,7 +378,12 @@
   }
 
   .edit-wrapper {
-    align-items: flex-end;
+    flex-flow: row wrap;
+    
+    @include respond-up(small-desktop) {
+      flex-direction: column;
+      align-items: flex-end;
+    }
   }
 
   #description:disabled,

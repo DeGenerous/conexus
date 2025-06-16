@@ -11,7 +11,7 @@
   } from '@stores/dream.svelte';
   import generatePrompt from '@utils/prompt';
   import openModal from '@stores/modal.svelte';
-  import { resetDreamModal } from '@constants/modal';
+  import { resetDreamModal, openStoryManage } from '@constants/modal';
   import {
     GetCache,
     SetCache,
@@ -55,8 +55,11 @@
     await admin.createNewStory(
       generatePrompt($storyData, $promptSettings, promptData),
     );
+    const storyLink = `/dashboard/dream/manage/${$storyData.name}`;
+    openModal(openStoryManage, 'Manage Story', () =>
+      window.open(storyLink, '_self'),
+    );
     clearAllData();
-    // TODO: openModal -> navigate to the created story in /dream/manage/
   };
 </script>
 

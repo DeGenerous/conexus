@@ -16,6 +16,11 @@ export const resetSettingsModal = (type: any) =>
 
 export const resetDreamModal = `<h4>Are you sure you want to reset all data?</h4>`;
 
+export const openStoryManage = `
+  <h4>Dream created!</h4>
+  <p>You can now customize, share, or edit your story. Want to head to the manage panel?</p>
+`;
+
 export const gameRulesModal = `
   <h3 class="text-glowing">HOW TO PLAY CONEXUS</h3>
 

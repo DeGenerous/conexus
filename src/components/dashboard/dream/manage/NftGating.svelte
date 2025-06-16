@@ -1,26 +1,36 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
-  import { onMount } from 'svelte';
-
   import { CoNexusApp } from '@lib/view';
   import { contractGetter } from '@constants/contracts';
 
   import CloseSVG from '@components/icons/Close.svelte';
 
-  export let topic: ViewTopic;
-  export let handleGatingChange = async (
-    topic_id: number,
-    contract_name: SupportedContracts,
-    method: 'add' | 'remove',
-    class_id?: string,
-  ) => {};
+  let {
+    topic,
+    handleGatingChange,
+  }: {
+    topic: ViewTopic;
+    handleGatingChange: (
+      topic_id: number,
+      contract_name: SupportedContracts,
+      method: 'add' | 'remove',
+      class_id?: string,
+    ) => Promise<void>;
+  } = $props();
 
   let viewApp = new CoNexusApp();
 
-  let topicGatings: TopicNFTGateWithContract[] = [];
-  const availableContracts: SupportedContracts[] = ['Potential', 'Ark', 'Apes'];
-  let newGating = '';
-  let newClassGating = '';
+  let topicGatings = $state<TopicNFTGateWithContract[]>([]);
+  const availableContracts = $state<SupportedContracts[]>([
+    'Potential',
+    'Ark',
+    'Apes',
+  ]);
+  let newGating = $state('');
+  let newClassGating = $state('');
+
+  $effect(() => {
+    fetchGates();
+  });
 
   const filterContracts = () =>
     availableContracts.filter(
@@ -31,8 +41,6 @@
   const fetchGates = async () => {
     topicGatings = await viewApp.fetchTopicGates(topic.id);
   };
-
-  onMount(fetchGates);
 
   async function handleRemoveGating(
     topicGatings: TopicNFTGate[],
@@ -113,7 +121,7 @@
     {/each}
   </select>
 
-  <button class="orange-btn" on:click={handleAddGating} disabled={!newGating}
+  <button class="orange-btn" onclick={handleAddGating} disabled={!newGating}
     >Gate Story</button
   >
 </div>
@@ -129,7 +137,7 @@
           <button
             class="void-btn dream-radio-btn"
             class:active={newClassGating == id.toString()}
-            on:click={() => setClassGating(id)}
+            onclick={() => setClassGating(id)}
           >
             {name}
           </button>

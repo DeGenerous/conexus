@@ -1,6 +1,4 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
 
   import { AdminApp } from '@lib/admin';
@@ -14,26 +12,26 @@
   let admin = new AdminApp();
   let view = new CoNexusApp();
 
-  let nav: 'collection' | 'categories' | 'nft-gates' = 'collection';
+  let nav: 'collection' | 'categories' | 'nft-gates' = $state('collection');
 
-  let sections: Section[];
-  let collections: Collection[] = [];
-  let classGates: ClassGate[] = [];
+  let sections = $state<Section[]>([]);
+  let collections = $state<Collection[]>([]);
+  let classGates = $state<ClassGate[]>([]);
 
-  let availabilityKey: string = '';
+  let availabilityKey = $state<string>('');
 
   const fetchClasses = async () => {
     classGates = await view.fetchClassGates();
   };
 
-  onMount(async () => {
-    await checkUserState('/dashboard/dream/manage', true);
+  $effect(() => {
+    checkUserState('/dashboard/dream/manage', true);
   });
 
-  onMount(async () => {
-    await view.getSections().then((data) => (sections = data));
-    collections = await admin.fetchCollections();
-    await fetchClasses();
+  $effect(() => {
+    view.getSections().then((data) => (sections = data));
+    admin.fetchCollections().then((data) => (collections = data));
+    fetchClasses();
   });
 
   const selectInput = (event: Event) => {
@@ -90,21 +88,21 @@
   <button
     class="void-btn blur"
     class:selected={nav === 'collection'}
-    on:click={() => (nav = 'collection')}
+    onclick={() => (nav = 'collection')}
   >
     Collections
   </button>
   <button
     class="void-btn blur"
     class:selected={nav === 'categories'}
-    on:click={() => (nav = 'categories')}
+    onclick={() => (nav = 'categories')}
   >
     Categories
   </button>
   <button
     class="void-btn blur"
     class:selected={nav === 'nft-gates'}
-    on:click={() => (nav = 'nft-gates')}
+    onclick={() => (nav = 'nft-gates')}
   >
     NFT Gates
   </button>
@@ -127,8 +125,8 @@
                 id="category-order-{category_id}"
                 type="number"
                 value={category_order}
-                on:click|preventDefault={selectInput}
-                on:input={(event) =>
+                onclick={selectInput}
+                oninput={(event) =>
                   handleChangeCategoryOrder(event, category_id)}
               />
             </div>
@@ -139,7 +137,7 @@
                 <select
                   id="section"
                   value={section_id}
-                  on:change={(event) => {
+                  onchange={(event) => {
                     const target = event.target as HTMLSelectElement;
                     if (target) {
                       admin.changeCategorySection(
@@ -168,18 +166,20 @@
                   id="story-order-{topic_id}"
                   type="number"
                   value={order}
-                  on:click|preventDefault={selectInput}
-                  on:input={(event) => handleChangeOrder(event, topic_id)}
+                  onclick={selectInput}
+                  oninput={(event) => handleChangeOrder(event, topic_id)}
                 />
               </div>
               <button
                 use:tippy={{ content: 'Toggle visibility', animation: 'scale' }}
                 class:green-btn={available === 'available'}
                 class:red-btn={available === 'unavailable'}
-                on:click|preventDefault={() =>
+                onclick={(e) => {
+                  e.preventDefault();
                   admin
                     .changeAvailability(topic_id, switchAvailable(available))
-                    .then(() => (availabilityKey = available + topic_name))}
+                    .then(() => (availabilityKey = available + topic_name));
+                }}
               >
                 {available}
               </button>

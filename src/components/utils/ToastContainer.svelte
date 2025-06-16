@@ -17,7 +17,7 @@
     position: fixed;
     top: 6rem;
     left: 0;
-    z-index: 50;
+    z-index: 1000;
 
     @include respond-up(small-desktop) {
       top: 3rem;

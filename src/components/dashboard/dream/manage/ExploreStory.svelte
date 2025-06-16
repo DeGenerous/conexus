@@ -1,4 +1,3 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
@@ -16,29 +15,34 @@
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
 
-  export let topic_name = 'story';
+  let {
+    topic_name = 'story',
+  }: {
+    topic_name: string;
+  } = $props();
 
   let admin = new AdminApp();
-  let topic: ViewTopic;
-  let categories: CategoryView[] = [];
+  let topic = $state<ViewTopic>();
+  let categories = $state<CategoryView[]>([]);
 
-  let storyName = topic_name;
+  let storyName = $derived<string>(topic_name);
 
-  let topic_description: string = '';
-  $: storyDescription = topic_description;
+  let topic_description = $state<string>('');
+  let storyDescription = $derived<string>(topic_description);
 
-  let topic_prompt: string = '';
-  $: storyPrompt = topic_prompt;
+  let topic_prompt = $state<string>('');
+  let storyPrompt = $derived<string>(topic_prompt);
 
-  let topic_imagePrompt: string = '';
-  $: storyImagePrompt = topic_imagePrompt;
+  let topic_imagePrompt = $state<string>('');
+  let storyImagePrompt = $derived<string>(topic_imagePrompt);
 
   let jsonBlob: Nullable<Blob> = null;
 
   let categoryTopics: string[] = [];
   let activeStoryIndex: number = 0;
-  $: prevStoryIndex =
-    activeStoryIndex <= 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
+  let prevStoryIndex = $derived(
+    activeStoryIndex <= 0 ? categoryTopics.length - 1 : activeStoryIndex - 1,
+  );
 
   onMount(async () => {
     const topic_ = await admin.fetchTopic(topic_name);
@@ -76,18 +80,18 @@
     }
   });
 
-  let editingName: boolean = false;
-  let editingDescription: boolean = false;
-  let editingPrompt: boolean = false;
-  let editingImagePrompt: boolean = false;
+  let editingName = $state<boolean>(false);
+  let editingDescription = $state<boolean>(false);
+  let editingPrompt = $state<boolean>(false);
+  let editingImagePrompt = $state<boolean>(false);
 
   async function handleGenreChange(genre_id: number, method: 'add' | 'remove') {
     switch (method) {
       case 'add':
-        await admin.addGenre(topic.id, genre_id);
+        await admin.addGenre(topic!.id, genre_id);
         break;
       case 'remove':
-        await admin.removeGenre(topic.id, genre_id);
+        await admin.removeGenre(topic!.id, genre_id);
         break;
     }
   }
@@ -150,9 +154,9 @@
         class:green-btn={topic.available === 'available'}
         class:red-btn={topic.available === 'unavailable'}
         use:tippy={{ content: 'Toggle visibility', animation: 'scale' }}
-        on:click={() =>
+        onclick={() =>
           admin
-            .changeAvailability(topic.id, switchAvailable(topic.available))
+            .changeAvailability(topic!.id, switchAvailable(topic!.available))
             .then(async () => {
               const topic_ = await admin.fetchTopic(topic_name);
 
@@ -167,7 +171,7 @@
       <button
         class="rose-btn"
         use:tippy={{ content: 'Download story file', animation: 'scale' }}
-        on:click={downloadTopicJson}
+        onclick={downloadTopicJson}
       >
         Export JSON
       </button>
@@ -223,10 +227,10 @@
           {#if categories}
             <select
               value={topic.category_id}
-              on:change={(event) => {
+              onchange={(event) => {
                 const target = event.target as HTMLSelectElement;
                 if (target) {
-                  admin.editTopicCategory(topic.id, parseInt(target.value));
+                  admin.editTopicCategory(topic!.id, parseInt(target.value));
                 }
               }}
             >
@@ -261,7 +265,7 @@
             <SaveSVG
               onclick={() => {
                 editingDescription = false;
-                admin.editTopicDescription(topic.id, storyDescription);
+                admin.editTopicDescription(topic!.id, storyDescription);
               }}
               disabled={topic_description == storyDescription}
             />
@@ -290,7 +294,7 @@
             <SaveSVG
               onclick={() => {
                 editingImagePrompt = false;
-                admin.editImagePrompt(topic.id, storyImagePrompt);
+                admin.editImagePrompt(topic!.id, storyImagePrompt);
               }}
               disabled={topic_imagePrompt == storyImagePrompt}
             />
@@ -320,7 +324,7 @@
             <SaveSVG
               onclick={() => {
                 editingPrompt = false;
-                admin.editPrompt(storyPrompt, topic.id, topic.prompt_id);
+                admin.editPrompt(storyPrompt, topic!.id, topic!.prompt_id);
               }}
               disabled={topic_prompt == storyPrompt}
             />
@@ -344,9 +348,9 @@
 
   <button
     class="red-btn blur"
-    on:click={() =>
+    onclick={() =>
       openModal(deleteStoryModal, `Delete story: ${topic_name}`, () => {
-        admin.deleteStory(topic.id);
+        admin.deleteStory(topic!.id);
         window.open('/dashboard/dream/manage/', '_self');
       })}
   >

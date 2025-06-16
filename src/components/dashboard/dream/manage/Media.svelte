@@ -1,28 +1,29 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
-  import { onMount } from 'svelte';
-
   import { serveUrl } from '@constants/media';
   import MediaManager from '@lib/media';
 
+  let { topic_id = $bindable() }: { topic_id: number } = $props();
+
   let mediaManager = new MediaManager();
 
-  export let topic_id: number;
+  let isLoading = $state<boolean>(true);
 
-  let isLoading = true;
+  let backgrounds = $state<string[]>([]);
+  let description = $state<string | null>(null);
+  let tile = $state<string | null>(null);
+  let audio = $state<string | null>(null);
+  let video = $state<string | null>(null);
 
-  let backgrounds: string[] = [];
-  let description: string | null = null;
-  let tile: string | null = null;
-  let audio: string | null = null;
-  let video: string | null = null;
+  let tooMuchFiles = $state<boolean>(false);
 
-  let tooMuchFiles: boolean = false;
-
-  let dragover: boolean = false;
+  let dragover = $state<boolean>(false);
 
   const ondragleave = () => (dragover = false);
   const ondragover = () => (dragover = true);
+
+  $effect(() => {
+    loadMedia();
+  });
 
   // Fetch stored media on load
   const loadMedia = async () => {
@@ -146,17 +147,13 @@
       console.error('Failed to delete media:', error);
     }
   };
-
-  onMount(async () => {
-    await loadMedia();
-  });
 </script>
 
 {#if isLoading}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {:else}
   <section class="dream-container fade-in">
-    <div class="container">
+    <div class="container content-wrapper">
       <!-- Description Upload -->
       <div class="media-section flex">
         <h4>Description</h4>
@@ -170,7 +167,7 @@
             />
             <button
               class="red-btn"
-              on:click={() => handleDelete(description ?? '', 'description')}
+              onclick={() => handleDelete(description ?? '', 'description')}
             >
               Delete
             </button>
@@ -179,8 +176,8 @@
           <div
             class="dropzone"
             class:dragover
-            on:dragover={ondragover}
-            on:dragleave={ondragleave}
+            {ondragover}
+            {ondragleave}
             role="button"
             tabindex="-1"
           >
@@ -196,7 +193,7 @@
               max="1"
               size="1572864"
               accept="image/avif"
-              on:change={(e) => handleFileUpload(e, 'description')}
+              onchange={(e) => handleFileUpload(e, 'description')}
             />
           </div>
         {/if}
@@ -215,7 +212,7 @@
             />
             <button
               class="red-btn"
-              on:click={() => handleDelete(tile ?? '', 'tile')}
+              onclick={() => handleDelete(tile ?? '', 'tile')}
             >
               Delete
             </button>
@@ -224,8 +221,8 @@
           <div
             class="dropzone"
             class:dragover
-            on:dragover={ondragover}
-            on:dragleave={ondragleave}
+            {ondragover}
+            {ondragleave}
             role="button"
             tabindex="-1"
           >
@@ -241,7 +238,7 @@
               max="1"
               size="1572864"
               accept="image/avif"
-              on:change={(e) => handleFileUpload(e, 'tile')}
+              onchange={(e) => handleFileUpload(e, 'tile')}
             />
           </div>
         {/if}
@@ -264,7 +261,7 @@
             </video>
             <button
               class="red-btn"
-              on:click={() => handleDelete(video ?? '', 'video')}
+              onclick={() => handleDelete(video ?? '', 'video')}
             >
               Delete
             </button>
@@ -273,8 +270,8 @@
           <div
             class="dropzone"
             class:dragover
-            on:dragover={ondragover}
-            on:dragleave={ondragleave}
+            {ondragover}
+            {ondragleave}
             role="button"
             tabindex="-1"
           >
@@ -290,7 +287,7 @@
               max="1"
               size="10485760"
               accept="video/mp4"
-              on:change={(e) => handleFileUpload(e, 'video')}
+              onchange={(e) => handleFileUpload(e, 'video')}
             />
           </div>
         {/if}
@@ -308,7 +305,7 @@
                 <img src={serveUrl(bg)} alt="Background" draggable="false" />
                 <button
                   class="red-btn"
-                  on:click={() => handleDelete(bg, 'background')}
+                  onclick={() => handleDelete(bg, 'background')}
                 >
                   Delete
                 </button>
@@ -319,8 +316,8 @@
             <div
               class="dropzone"
               class:dragover
-              on:dragover={ondragover}
-              on:dragleave={ondragleave}
+              {ondragover}
+              {ondragleave}
               role="button"
               tabindex="-1"
             >
@@ -339,7 +336,7 @@
                 max="1"
                 size="1572864"
                 accept="image/avif"
-                on:change={(e) => handleFileUpload(e, 'background')}
+                onchange={(e) => handleFileUpload(e, 'background')}
               />
             </div>
           {/if}
@@ -364,7 +361,7 @@
             </audio>
             <button
               class="red-btn"
-              on:click={() => handleDelete(audio ?? '', 'audio')}
+              onclick={() => handleDelete(audio ?? '', 'audio')}
             >
               Delete
             </button>
@@ -373,8 +370,8 @@
           <div
             class="dropzone audio-content"
             class:dragover
-            on:dragover={ondragover}
-            on:dragleave={ondragleave}
+            {ondragover}
+            {ondragleave}
             role="button"
             tabindex="-1"
           >
@@ -390,7 +387,7 @@
               max="1"
               size="6291456"
               accept="audio/mp3"
-              on:change={(e) => handleFileUpload(e, 'audio')}
+              onchange={(e) => handleFileUpload(e, 'audio')}
             />
           </div>
         {/if}
@@ -411,17 +408,17 @@
       margin-inline: 0;
     }
 
+    .content-wrapper {
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
     .media-section {
       width: auto;
       flex-direction: column;
-
-      .content-wrapper {
-        display: flex;
-        flex-flow: row wrap;
-        justify-content: center;
-        align-items: flex-start;
-        gap: 1rem;
-      }
 
       h4 {
         width: auto;
@@ -430,7 +427,7 @@
 
       .dropzone {
         width: 14rem;
-        height: 18rem;
+        height: 17rem;
         padding: 1rem;
       }
 
@@ -443,7 +440,7 @@
         padding: 0.5rem;
         border-radius: 0.5rem;
         width: 14rem;
-        max-height: 18rem;
+        max-height: 17rem;
         @include gray(0.25);
         @include box-shadow;
 

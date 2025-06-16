@@ -1,4 +1,3 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { AdminApp } from '@lib/admin';
 
@@ -6,13 +5,19 @@
 
   let admin = new AdminApp();
 
-  export let classGates: ClassGate[] = [];
-  export let fetchClasses: () => Promise<void>;
-  export let selectInput: (event: Event) => void;
+  let {
+    classGates = [],
+    fetchClasses,
+    selectInput,
+  }: {
+    classGates: ClassGate[];
+    fetchClasses: () => Promise<void>;
+    selectInput: (event: Event) => void;
+  } = $props();
 
-  let newClassName: string = '';
-  let newClassRangeFrom: number | undefined;
-  let newClassRangeTo: number | undefined;
+  let newClassName = $state<string>('');
+  let newClassRangeFrom = $state<number | undefined>(undefined);
+  let newClassRangeTo = $state<number | undefined>(undefined);
 
   async function handleDeleteClass(id: number) {
     admin.deleteClassGate(id).then(fetchClasses);
@@ -38,7 +43,9 @@
       newClassRangeTo = newClassRangeFrom + 1;
   };
 
-  $: classValidation = newClassName && newClassRangeFrom && newClassRangeTo;
+  let classValidation = $derived(
+    newClassName && newClassRangeFrom && newClassRangeTo,
+  );
 
   async function handleAddClass() {
     admin
@@ -97,8 +104,8 @@
             type="number"
             min="1"
             max="999"
-            on:click|preventDefault={selectInput}
-            on:input={validateRangeFrom}
+            onclick={selectInput}
+            oninput={validateRangeFrom}
             disabled={!newClassRangeTo}
           />
           <span>-</span>
@@ -108,8 +115,8 @@
             type="number"
             min="2"
             max="1000"
-            on:click|preventDefault={selectInput}
-            on:input={validateRangeTo}
+            onclick={selectInput}
+            oninput={validateRangeTo}
           />
         </span>
       </div>
@@ -118,7 +125,7 @@
 
   <button
     class="orange-btn"
-    on:click={handleAddClass}
+    onclick={handleAddClass}
     disabled={!classValidation}>Add New Class</button
   >
 </div>

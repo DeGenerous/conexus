@@ -1,15 +1,13 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { AdminApp } from '@lib/admin';
 
   let admin = new AdminApp();
 
-  let categories: CategoryView[] = [];
-  let newCategoryName: string = '';
+  let categories = $state<CategoryView[]>([]);
+  let newCategoryName = $state<string>('');
 
-  onMount(async () => {
-    categories = await admin.fetchCategories();
+  $effect(() => {
+    admin.fetchCategories().then((res) => (categories = res));
   });
 
   const createNewCategory = async () => {
@@ -41,7 +39,7 @@
 
 <div class="new-category container">
   <input bind:value={newCategoryName} placeholder="Enter Name" />
-  <button class="green-btn" on:click={createNewCategory}>
+  <button class="green-btn" onclick={createNewCategory}>
     Add New Category
   </button>
 </div>

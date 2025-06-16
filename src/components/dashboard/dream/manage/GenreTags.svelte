@@ -1,8 +1,4 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { writable } from 'svelte/store';
-
   import { CoNexusApp } from '@lib/view';
   import { availableGenres } from '@stores/view.svelte';
 
@@ -10,55 +6,56 @@
 
   let viewApp = new CoNexusApp();
 
-  export let topic: ViewTopic;
-  export let handleGenreChange = async (
-    genreId: number,
-    method: 'add' | 'remove',
-  ) => {};
+  let {
+    topic,
+    handleGenreChange,
+  }: {
+    topic: ViewTopic;
+    handleGenreChange: (
+      genreId: number,
+      method: 'add' | 'remove',
+    ) => Promise<void>;
+  } = $props();
 
-  let genres = writable<string[]>([]);
-  let newGenre = writable('');
+  let genres = $state<string[]>([]);
+  let newGenre = $state('');
 
-  onMount(() => {
+  $effect(() => {
     if (topic && topic.genres && topic.genres.length)
-      genres.set(topic.genres.split(',').map((genre: string) => genre.trim()));
+      genres = topic.genres.split(',').map((genre: string) => genre.trim());
+  });
+
+  $effect(() => {
+    viewApp.getGenres().then((genres_) => {
+      if (genres_) {
+        availableGenres.splice(0, availableGenres.length, ...genres_);
+      }
+    });
   });
 
   async function handleRemoveGenre(genreToRemove: string) {
-    genres.update((prevGenres) =>
-      prevGenres.filter((genre) => genre !== genreToRemove),
-    );
+    genres = genres.filter((genre) => genre !== genreToRemove);
 
     const genre = availableGenres.find((g: Genre) => g.name === genreToRemove);
     if (genre) await handleGenreChange(genre.id, 'remove');
   }
 
   function handleAddGenre() {
-    newGenre.update((value) => {
-      if (value && !$genres.includes(value)) {
-        genres.update((prev) => [...prev, value]);
+    if (newGenre && !genres.includes(newGenre)) {
+      genres = [...genres, newGenre];
 
-        const genre = availableGenres.find((g) => g.name === value);
-        if (genre) handleGenreChange(genre.id, 'add');
-      }
-      return '';
-    });
-  }
-
-  onMount(async () => {
-    const genres_ = await viewApp.getGenres();
-
-    if (genres_) {
-      availableGenres.splice(0, availableGenres.length, ...genres_);
+      const genre = availableGenres.find((g) => g.name === newGenre);
+      if (genre) handleGenreChange(genre.id, 'add');
     }
-  });
+    newGenre = '';
+  }
 </script>
 
 <div class="flex-row">
   <h4>Genres</h4>
   <div class="container">
-    {#if $genres.length > 0}
-      {#each $genres as genre (genre)}
+    {#if genres.length > 0}
+      {#each genres as genre (genre)}
         <span
           class="genre flex-row gap-8 pad-8 round-8 shad"
           role="button"
@@ -79,13 +76,13 @@
 </div>
 
 <div class="add-genre flex-row">
-  <select bind:value={$newGenre}>
+  <select bind:value={newGenre}>
     <option value="" hidden disabled>Select</option>
-    {#each availableGenres.filter((g) => !$genres.includes(g.name)) as genre}
+    {#each availableGenres.filter((g) => !genres.includes(g.name)) as genre}
       <option value={genre.name}>{genre.name}</option>
     {/each}
   </select>
-  <button on:click={handleAddGenre} disabled={!$newGenre}>Add Genre</button>
+  <button onclick={handleAddGenre} disabled={!newGenre}>Add Genre</button>
 </div>
 
 <style lang="scss">

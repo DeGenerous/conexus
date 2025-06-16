@@ -1,4 +1,3 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
   import { AdminApp } from '@lib/admin';
@@ -10,17 +9,16 @@
   let adminApp: AdminApp = new AdminApp();
   let game: CoNexusGame = new CoNexusGame();
 
-  let promptId: string | null = null;
-  let topic_name: string | null = null;
-  let story: GameData | null = null;
-  let step: StepData | null = null;
+  let promptId: string | null = $state(null);
+  let topic_name: string | null = $state(null);
+  let story: GameData | null = $state(null);
 
-  let loading: boolean = false;
-  let nextStepLoading: boolean = false;
-  let demoStarted: boolean = false;
-  let focusedOption: Nullable<number> = null;
+  let loading: boolean = $state(false);
+  let nextStepLoading: boolean = $state(false);
+  let demoStarted: boolean = $state(false);
+  let focusedOption: Nullable<number> = $state(null);
 
-  onMount(() => {
+  $effect(() => {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       promptId = urlParams.get('demoID');
@@ -48,8 +46,6 @@
     if (data) story = data;
     nextStepLoading = false;
   };
-
-  $: step = story as StepData;
 </script>
 
 {#if !demoStarted}
@@ -59,7 +55,7 @@
       {#if topic_name}
         <h4 class="text-glowing fade-in">{topic_name}</h4>
       {/if}
-      <button class="start-btn" on:click={startDemo} disabled={!topic_name}>
+      <button class="start-btn" onclick={startDemo} disabled={!topic_name}>
         {#if topic_name}
           Start Demo
         {:else}
@@ -82,22 +78,22 @@
   </div>
 {:else}
   <section class="demo-step dream-container">
-    <h3 class="text-glowing">{step.title}</h3>
+    <h3 class="text-glowing">{story.title}</h3>
     <div class="text container">
-      {step.story}
+      {story.story}
     </div>
-    {#if step.options.length > 0}
+    {#if story.options.length > 0}
       <div class="options container flex">
-        {#each step.options as option, i}
+        {#each story.options as option, i}
           <button
             class="void-btn flex-row text-glowing"
-            on:click={() => story && handleResponse(story.id.toString(), i + 1)}
-            on:pointerover={() => {
+            onclick={() => story && handleResponse(story.id.toString(), i + 1)}
+            onpointerover={() => {
               if (!nextStepLoading) {
                 focusedOption = i;
               }
             }}
-            on:pointerout={() => {
+            onpointerout={() => {
               if (!nextStepLoading) {
                 focusedOption = null;
               }
@@ -120,7 +116,7 @@
         <LoadingSVG />
       {/if}
       <h5>{topic_name}:</h5>
-      <h5>Step {step.step}</h5>
+      <h5>Step {story.step}</h5>
     </div>
   </section>
 {/if}

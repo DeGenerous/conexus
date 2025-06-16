@@ -219,6 +219,7 @@
       }
 
       .custom-themes {
+        width: 100%;
         flex-flow: row wrap;
 
         .theme-option {
@@ -240,10 +241,6 @@
           p {
             width: 100%;
             @include box-shadow(soft, inset);
-          }
-
-          @include respond-up(tablet) {
-            width: auto;
           }
 
           &.selected {
@@ -279,6 +276,14 @@
 
         .add-theme {
           width: 100%;
+        }
+
+        @include respond-up(tablet) {
+          width: auto;
+
+          .theme-option {
+            width: auto;
+          }
         }
       }
     }

@@ -4,7 +4,7 @@
 
 dialog {
   position: fixed;
-  width: clamp(250px, 90%, 50rem);
+  width: 95%;
   margin: auto;
   border-radius: 1rem;
   overflow-x: hidden;
@@ -16,6 +16,10 @@ dialog {
   transform: none;
 
   @include dark-blue(0.75);
+
+  @include respond-up(tablet) {
+    width: clamp(250px, 90%, 50rem);
+  }
 
   @starting-style {
     opacity: 0;

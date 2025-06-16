@@ -313,7 +313,9 @@ a11y_no_noninteractive_element_interactions -->
       </h4>
     {/if}
 
-    <article style:max-width="{customScale.paragraphWidth}%">
+    <article
+      style:max-width={width >= 1440 ? `${customScale.paragraphWidth}%` : ''}
+    >
       {step.story}
     </article>
 
@@ -329,7 +331,9 @@ a11y_no_noninteractive_element_interactions -->
         Story Summary
       </h4>
 
-      <article style:max-width="{customScale.paragraphWidth}%">
+      <article
+        style:max-width={width >= 1440 ? `${customScale.paragraphWidth}%` : ''}
+      >
         {step.summary}
       </article>
 
@@ -344,7 +348,11 @@ a11y_no_noninteractive_element_interactions -->
       </h4>
 
       {#if step.trait_description}
-        <article style:max-width="{customScale.paragraphWidth}%">
+        <article
+          style:max-width={width >= 1440
+            ? `${customScale.paragraphWidth}%`
+            : ''}
+        >
           {step.trait_description}
         </article>
       {/if}
@@ -356,7 +364,7 @@ a11y_no_noninteractive_element_interactions -->
         style:font-style={$customFont.italic ? 'italic' : ''}
         style:color={$customFont.accentColor}
         style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
-        style:max-width="{customScale.optionsWidth}%"
+        style:max-width={width >= 1440 ? `${customScale.optionsWidth}%` : ''}
       >
         <button
           id="option-0"

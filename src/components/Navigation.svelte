@@ -97,9 +97,7 @@
         fill="white"
       >
         <polygon
-          points="
-              -75 0 -10 -65 -10 65
-            "
+          points="-75 0 -10 -65 -10 65"
           stroke-width="10"
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -235,12 +233,10 @@
         xmlns="http://www.w3.org/2000/svg"
         viewBox="-100 -100 200 200"
         fill="white"
-        transform="rotate(180)"
+        style:transform="rotate(180deg)"
       >
         <polygon
-          points="
-              -75 0 -10 -65 -10 65
-            "
+          points="-75 0 -10 -65 -10 65"
           stroke-width="10"
           stroke-linecap="round"
           stroke-linejoin="round"

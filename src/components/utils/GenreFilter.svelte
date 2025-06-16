@@ -39,6 +39,7 @@
 
     select {
       width: 100%;
+      min-height: 2.75rem !important;
     }
 
     @include respond-up(tablet) {

@@ -782,12 +782,16 @@ a11y_no_noninteractive_element_interactions -->
     }
 
     article {
-      width: clamp(250px, 95%, 70rem);
+      width: 100%;
       padding-inline: 1rem;
       text-align: left;
       white-space: pre-wrap;
       color: inherit;
       text-shadow: inherit;
+
+      @include respond-up(tablet) {
+        width: clamp(250px, 95%, 70rem);
+      }
 
       @include respond-up(large-desktop) {
         width: 100%;
@@ -931,7 +935,7 @@ a11y_no_noninteractive_element_interactions -->
     // ADDITIONAL CONTROLLERS STYLING
     section {
       @extend :global(.shad-behind);
-      max-height: 80vh;
+      max-height: 70vh;
       overflow-y: auto;
       display: flex;
       flex-flow: row wrap;

@@ -47,7 +47,6 @@
   backdrop-filter: blur(1rem);
   width: 100vw;
   height: auto;
-  min-height: 22rem;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
@@ -59,6 +58,10 @@
   animation: transparent-glowing 10s ease-in-out infinite;
   scrollbar-width: thin;
   scrollbar-color: $transparent-cyan transparent;
+
+  @include respond-up(tablet) {
+    min-height: 22rem;
+  }
 
   &.filtered-tiles {
     background-color: rgba(75, 112, 50, 0.5) !important;
@@ -165,7 +168,7 @@
 // STORY TILE
 
 .tile {
-  width: 15rem;
+  width: 10rem;
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
@@ -189,13 +192,9 @@
     @include box-shadow(deep);
   }
 
-  @include respond-up(quad-hd) {
-    width: 10vw;
-  }
-
   img {
     width: 100%;
-    min-height: 10rem;
+    min-height: 5rem;
     height: 100%;
     border-radius: 0.75rem;
     @include dark-blue(0.5);
@@ -205,6 +204,18 @@
   h5 {
     padding-inline: 1rem;
     color: inherit;
+  }
+
+  @include respond-up(tablet) {
+    width: 15rem;
+
+    img { 
+      min-height: 10rem;
+    }
+  }
+
+  @include respond-up(quad-hd) {
+    width: 10vw;
   }
 
   &.gated-story {
@@ -237,7 +248,7 @@
   }
 
   .gatings {
-    display: flex;
+    display: none;
     flex-flow: row nowrap;
     justify-content: center;
     align-items: center;
@@ -250,6 +261,10 @@
 
     svg {
       fill: $soft-white;
+    }
+
+    @include respond-up(tablet) {
+      display: flex;
     }
   }
 }

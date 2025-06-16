@@ -1,160 +1,134 @@
-<script>
-  export let url = '';
-  export let onClick = () => {};
+<script lang="ts">
+  import { tippy } from 'svelte-tippy';
+  import CopySVG from '@components/icons/Copy.svelte';
 
-  let showOptions = false;
+  let { disabled = false }: { disabled?: boolean } = $props();
 
-  const handleShareClick = () => {
-    showOptions = !showOptions;
-  };
+  let copySvgFocus = $state<Nullable<string | boolean>>(null);
+  let copyBtn: HTMLButtonElement;
 
-  const handleOptionClick = async (option) => {
-    showOptions = false;
-    onClick();
+  const handleOptionclick = async (option: string) => {
+    const message = `Check out the AI story I'm playing on CoNexus!`;
 
-    url = url || window.location.href;
-
-    const message = `Check out the AI story I'm playing on CoNexus! \n ${url}`;
+    const encodedMessage = encodeURIComponent(message);
+    const encodedURI = encodeURIComponent(window.location.href);
 
     switch (option) {
       case 'copy':
-        await navigator.clipboard.writeText(`${message}`);
-        alert('Copied to clipboard!');
+        await navigator.clipboard.writeText(
+          `${message}\n${window.location.href}`,
+        );
+        copyBtn.classList.add('copied');
+        setTimeout(() => copyBtn.classList.remove('copied'), 600);
         break;
       case 'discord':
-        const discordShareUrl = `https://discord.com/channels/@me`;
-        await navigator.clipboard.writeText(`${message}`);
-        window.open(discordShareUrl, '_blank');
+        const shareUrlDiscord = `https://discord.gg/349FgMSUK8`;
+        await navigator.clipboard.writeText(window.location.href);
+        window.open(shareUrlDiscord, '_blank');
         break;
       case 'twitter':
-        const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
-        window.open(shareUrl, '_blank');
+        const shareUrlTwitter = `https://twitter.com/intent/tweet?text=${encodedMessage}&url=${encodedURI}`;
+        window.open(shareUrlTwitter, '_blank');
+        break;
+      case 'facebook':
+        const shareUrlFacebook = `https://www.facebook.com/sharer/sharer.php?u=${encodedURI}&quote=${encodedMessage}`;
+        window.open(shareUrlFacebook, '_blank');
         break;
     }
   };
 </script>
 
-<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role a11y_click_events_have_key_events -->
-<section>
-  <button
-    class="share-button"
-    style={showOptions ? 'justify-content: space-between;' : ''}
-    on:click={handleShareClick}
+<div class="share flex-row gap-8">
+  <p class="transparent-white-txt">SHARE:</p>
+
+  <span
+    class="flex-row pad-inline round-8 shad loading-animation"
+    class:transparent-glowing={!disabled}
   >
-    {#if showOptions}
-      <span>SHARE:</span>
-      <img
-        src="/icons/discord.png"
-        alt="Share"
-        on:click={() => handleOptionClick('discord')}
-        role="button"
-        tabindex="0"
-      />
-      <img
-        src="/icons/twitter.png"
-        alt="Share"
-        on:click={() => handleOptionClick('twitter')}
-        role="button"
-        tabindex="0"
-      />
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="-100 -100 200 200"
-        fill="none"
-        stroke="rgb(51, 226, 230)"
-        stroke-width="15"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        opacity="0.75"
-        on:click={() => handleOptionClick('copy')}
-        role="button"
-        tabindex="0"
-        aria-label="Copy"
-      >
-        <defs>
-          <mask id="copy-checkmark">
-            <rect
-              x="-45"
-              y="-60"
-              width="130"
-              height="150"
-              fill="white"
-              stroke="white"
-            />
-            <path
-              d="
-                M -10 10
-                L 10 40
-                L 50 -20
-              "
-              fill="none"
-              stroke="black"
-            />
-          </mask>
-        </defs>
+    <button
+      class="min-size-btn void-btn flex"
+      onclick={() => handleOptionclick('twitter')}
+      use:tippy={{ content: 'Share on X', animation: 'scale' }}
+      aria-label="Share on X"
+      {disabled}
+    >
+      <img src="/icons/twitter.png" alt="X" />
+    </button>
+    <button
+      class="min-size-btn void-btn flex"
+      onclick={() => handleOptionclick('facebook')}
+      use:tippy={{ content: 'Share on Facebook', animation: 'scale' }}
+      aria-label="Share on Facebook"
+      {disabled}
+    >
+      <img src="/icons/facebook.png" alt="Facebook" />
+    </button>
+    <button
+      class="min-size-btn void-btn flex"
+      onclick={() => handleOptionclick('discord')}
+      use:tippy={{ content: 'Join our community', animation: 'scale' }}
+      aria-label="Share on Discord"
+      {disabled}
+    >
+      <img src="/icons/discord.png" alt="Discord" />
+    </button>
+    <button
+      class="min-size-btn void-btn flex"
+      onclick={() => handleOptionclick('copy')}
+      onpointerover={() => {
+        if (!disabled) copySvgFocus = true;
+      }}
+      onfocus={() => (copySvgFocus = true)}
+      onpointerout={() => {
+        if (!disabled) copySvgFocus = null;
+      }}
+      onblur={() => (copySvgFocus = null)}
+      bind:this={copyBtn}
+      use:tippy={{ content: 'Copy to clipboard', animation: 'scale' }}
+      aria-label="Copy link"
+      {disabled}
+    >
+      <CopySVG {copySvgFocus} data={false} />
+    </button>
+  </span>
+</div>
 
-        <path
-          d="
-            M 40 -67
-            L 40 -90
-            L -90 -90
-            L -90 60
-            L -52 60
-          "
-          fill="none"
-        />
-        <rect
-          x="-45"
-          y="-60"
-          width="130"
-          height="150"
-          mask="url(#copy-checkmark)"
-        />
-      </svg>
-    {:else}
-      SHARE
-    {/if}
-  </button>
-</section>
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
 
-<style>
-  section {
-    position: relative;
-    display: flex;
-  }
+  .share {
+    p {
+      display: none;
+      @include font(caption);
 
-  img,
-  svg {
-    height: 1.5vw;
-    filter: drop-shadow(0 0 0.1vw #010020);
-    margin-inline: 0.5vw;
-    border-radius: 20%;
-  }
-
-  img:hover,
-  img:active,
-  svg:hover,
-  svg:active {
-    transform: scale(1.025) translateY(-0.25vw);
-    filter: drop-shadow(0 0.25vw 0.25vw #010020);
-  }
-
-  span {
-    cursor: pointer;
-    margin-right: 1vw;
-  }
-
-  @media only screen and (max-width: 600px) {
-    button {
-      width: 80vw;
-      font-size: 1.5em;
-      line-height: 1.5em;
-      padding: 0.25em 0.5em;
+      @include respond-up(tablet) {
+        display: block;
+      }
     }
 
-    img,
-    svg {
-      height: 1.25em;
+    span {
+      min-height: 2.5rem;
+      @include cyan(0.1);
+
+      button {
+        border-radius: 20%;
+        width: 1.5rem;
+
+        img {
+          border-radius: inherit;
+        }
+
+        &:hover:not(&:disabled),
+        &:active:not(&:disabled),
+        &:focus:not(&:disabled) {
+          @include scale(0.9);
+          @include bright;
+        }
+
+        &:disabled {
+          opacity: 0.25;
+        }
+      }
     }
   }
 </style>

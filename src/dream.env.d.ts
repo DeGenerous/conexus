@@ -20,6 +20,7 @@ type Relationship = {
 type Tone = {
   name: string;
   value: None_Max;
+  hints?: string[];
 }[];
 
 interface PromptSettings {
@@ -28,6 +29,8 @@ interface PromptSettings {
   interactivity: Min_Max;
   difficulty: Min_Max;
   length: Min_Max;
+  readingStyle: string;
+  kidsMode: Nullable<string>;
 }
 
 interface TablePrompt {
@@ -54,7 +57,7 @@ interface TablePrompt {
 interface StoryData {
   name: string;
   description: string;
-  imagePrompts: string[];
+  imagePrompt: string;
   category: Nullable<number>;
 }
 
@@ -76,7 +79,13 @@ type ClassGate = {
   created_at: Date;
 };
 
-type SupportedContracts = 'Potential' | 'Ark' | 'Moonsign' | 'Apes' | 'Anyone' | 'All';
+type SupportedContracts =
+  | 'Potential'
+  | 'Ark'
+  | 'Moonsign'
+  | 'Apes'
+  | 'Anyone'
+  | 'All';
 
 type TopicNFTGate = {
   topic_id: number;

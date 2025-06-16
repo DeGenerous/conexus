@@ -97,6 +97,32 @@ type Genre = {
   name: string;
 };
 
+type StoryNavigation = {
+  link: Nullable<string>;
+  name: Nullable<string>;
+};
+
+type ConexusBG = {
+  opacity: number;
+  color: string;
+};
+
+type ConexusModal = {
+  content: string;
+  button: string;
+  buttonFunc: () => void;
+  buttonClass: string;
+};
+
+type Password = 'login' | 'signup' | 'edit' | 'reset';
+
+type PasswordVisibility = {
+  login: boolean;
+  signup: boolean;
+  edit: boolean;
+  reset: boolean;
+};
+
 type FolderContent = {
   id: string;
   name: string;

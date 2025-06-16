@@ -1,14 +1,20 @@
 const dreamData = {
   imageStyle: [
-    'Realist',
+    'Cinematic',
+    'Realistic',
     'Retro',
     'Anime',
     'Graphic Novel',
     'Cartoon',
     'Abstract',
     'Futuristic',
+    'Storybook',
+    'Pixel',
     'Black & White',
+    'Undefined',
   ],
+  readingStyle: ['simple', 'casual', 'vivid', 'literary'],
+  kidsMode: ['starter', 'explorer', 'legend'],
   tense: ['past', 'present', 'future'],
   writingStyle: ['descriptive', 'narrative', 'expository'],
   voice: ['active', 'passive'],
@@ -30,7 +36,6 @@ const dreamData = {
   ],
   relationship: ['friends', 'neutral', 'enemies'],
   min_max: ['min', 'standard', 'max'],
-  capitalize: (input: string) => input.charAt(0).toUpperCase() + input.slice(1),
 };
 
 export default dreamData;

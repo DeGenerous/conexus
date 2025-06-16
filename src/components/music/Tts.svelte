@@ -1,39 +1,47 @@
 <script lang="ts">
-  import { story } from '@stores/conexus';
-  import { tts_volume, tts_speed } from '@stores/volumes';
+  import { story, game } from '@stores/conexus.svelte';
+  import sound from '@stores/volumes.svelte';
 
   let audio: HTMLAudioElement;
 
   let last_tts: Blob | null = null;
   let tts: Blob | null = null;
 
-  $: step = $story?.step_data as StepData;
+  const stepTTS = $derived.by<Blob>(() => $story?.step_data?.tts!);
 
-  $: if (step && step.tts && last_tts !== step.tts) {
-    audio.src = window.URL.createObjectURL(step.tts);
-    audio.play();
-    tts = step.tts;
-    last_tts = step.tts;
-  }
-
-  $: if (audio && $tts_volume) setVolume();
-  $: if (audio && $tts_speed) adjustTtsSpeed();
-
-  $: if ($tts_volume.restart) {
-    if (tts) {
-      audio.src = window.URL.createObjectURL(tts);
+  $effect(() => {
+    if (stepTTS && last_tts !== stepTTS) {
+      audio.src = window.URL.createObjectURL(stepTTS);
       audio.play();
-      adjustTtsSpeed();
+      tts = stepTTS;
+      last_tts = stepTTS;
     }
-    $tts_volume.restart = false;
-  }
+  });
+
+  $effect(() => {
+    if (sound.voice.volume) setVolume();
+  });
+
+  $effect(() => {
+    if (sound.tts_speed) adjustTtsSpeed();
+  });
+
+  $effect(() => {
+    if (sound.voice.restart) {
+      if (tts) {
+        audio.src = window.URL.createObjectURL(tts);
+        audio.play();
+        adjustTtsSpeed();
+      }
+      sound.voice.restart = false;
+    }
+  });
 
   const setVolume = () =>
-    (audio.volume = $tts_volume.muted ? 0 : $tts_volume.volume);
+    (audio.volume = sound.voice.muted ? 0 : sound.voice.volume);
 
   const adjustTtsSpeed = () => {
-    audio.playbackRate = $tts_speed;
-    localStorage.setItem('tts-speed', $tts_speed.toString());
+    audio.playbackRate = sound.tts_speed;
   };
 </script>
 

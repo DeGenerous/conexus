@@ -1,5 +1,5 @@
 ---
-import Category from '@components/Category.svelte';
+import Section from '@components/Section.svelte';
 import { mediaURL } from '@constants/media';
 import Layout from '@layouts/Layout.astro';
 
@@ -37,7 +37,7 @@ const sectionImage = section?.split(' ').join('').split('%20').join('');
 const sectionName = section?.replace(/%20/g, ' ');
 
 const meta = {
-  title: `Welcome to CoNexus | ${sectionName}`,
+  title: `${sectionName} | CoNexus`,
   image: `${mediaURL}/conexus-sections/${sectionImage?.toLocaleLowerCase()}.avif`,
   imageType: 'image/avif',
   url: `https://conexus-test.degenerousdao.com/${section}`,
@@ -48,8 +48,8 @@ const meta = {
 };
 ---
 
-<main>
-  <Layout {...meta}>
-    <Category {section} client:load />
-  </Layout>
-</main>
+<Layout {...meta}>
+  <main>
+    <Section {section} client:load />
+  </main>
+</Layout>

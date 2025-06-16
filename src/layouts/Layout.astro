@@ -1,21 +1,13 @@
 ---
-// import { ClientRouter } from 'astro:transitions';
 import { SEO } from 'astro-seo';
+import { seoConfig } from '../../utils/seoConfig';
 
 import ToastContainer from '@components/utils/ToastContainer.svelte';
 import Modal from '@components/utils/Modal.svelte';
-import Navigation from '@components/utils/Navigation.svelte';
+import Navigation from '@components/Navigation.svelte';
 import CookieBanner from '@components/utils/CookieBanner.svelte';
 
-import { seoConfig } from '../../utils/seoConfig';
-
-import '@styles/reset.css';
-import '@styles/global.css';
-import '@styles/rainbow-kit.css';
-import '@styles/icons.css';
-import '@styles/utils.css';
-import '@styles/tiles.css';
-import '@styles/dream.css';
+import '@styles/index.scss';
 
 type LayoutProps = {
   header?: string;
@@ -27,7 +19,6 @@ type LayoutProps = {
   ogTitle?: string;
   description?: string;
   image?: string;
-  imageType?: string;
   url?: string;
   type?: string;
   disableIndexing?: boolean;
@@ -39,11 +30,10 @@ const {
   nav,
   arrow,
   story,
-  title = 'Welcome to CoNexus',
+  title = 'CoNexus | DeGenerous DAO',
   description = 'CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.',
   image = '/favicon.ico',
-  imageType,
-  url = 'https://conexus-test.degenerousdao.com/',
+  url = 'https://conexus.degenerousdao.com/',
   type = 'website',
 
   ogTitle,
@@ -53,48 +43,38 @@ const {
 
 <html lang="en">
   <head>
-    <title>CoNexus | DeGenerous DAO</title>
-
     <meta charset="utf-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#161e5f" />
+    <meta
+      name="robots"
+      content={disableIndexing ? 'noindex, nofollow' : 'index, follow'}
+    />
+
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link type="text/plain" rel="author" href="/humans.txt" />
+    <link rel="manifest" href="/manifest.webmanifest" />
 
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-    <link
-      rel="preconnect"
-      crossorigin="anonymous"
-      href="https://fonts.googleapis.com"
-    />
-    <link
-      rel="preconnect"
-      crossorigin="anonymous"
-      href="https://fonts.gstatic.com"
-    />
-    <link
-      rel="stylesheet"
-      crossorigin="anonymous"
-      href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap"
-    />
-
-    <!-- SEO. -->
     <SEO
       title={title}
-      description={seoConfig.description || description}
+      description={description || seoConfig.description}
       noindex={disableIndexing}
       nofollow={disableIndexing}
+      canonical={`${seoConfig.baseURL}${Astro.url.pathname}`}
       openGraph={{
         basic: {
           title: ogTitle || title,
-          type: 'website',
-          image: seoConfig.image.url || image,
+          type,
+          image: image || seoConfig.image.url,
+          url: url || seoConfig.baseURL,
         },
         image: {
           width: seoConfig.image.width,
           height: seoConfig.image.height,
-          alt: seoConfig.image.alt || title,
+          alt: seoConfig.image.alt,
+          url: seoConfig.image.url,
+          type: seoConfig.image.type,
         },
         optional: {
           siteName: seoConfig.siteName,
@@ -103,123 +83,68 @@ const {
       }}
       twitter={{
         card: 'summary_large_image',
+        site: seoConfig.twitter.site,
+        creator: seoConfig.twitter.creator,
       }}
     />
 
-    <!-- Service Worker -->
+    <!-- Preconnect to tracking domains -->
+    <link rel="preconnect" href="https://www.clarity.ms" crossorigin />
+    <link rel="preconnect" href="https://static.ads-twitter.com" crossorigin />
 
-    <!-- <script is:inline src="/registerSW.js"></script> -->
-    <link rel="manifest" href="/manifest.webmanifest" />
+    <!-- Clarity by Microsoft, integrated with our Google Analytics -->
+    <script type="text/javascript" is:inline>
+      (function (c, l, a, r, i, t, y) {
+        c[a] =
+          c[a] ||
+          function () {
+            (c[a].q = c[a].q || []).push(arguments);
+          };
+        t = l.createElement(r);
+        t.async = 1;
+        t.src = 'https://www.clarity.ms/tag/' + i;
+        y = l.getElementsByTagName(r)[0];
+        y.parentNode.insertBefore(t, y);
+      })(window, document, 'clarity', 'script', 'rpwb9gsgjt');
+    </script>
 
-    <!-- <meta
-      http-equiv="Content-Security-Policy"
-      content="upgrade-insecure-requests"
-    /> -->
+    <!-- Twitter conversion tracking base code -->
+    <script is:inline>
+      !(function (e, t, n, s, u, a) {
+        e.twq ||
+          ((s = e.twq =
+            function () {
+              s.exe ? s.exe.apply(s, arguments) : s.queue.push(arguments);
+            }),
+          (s.version = '1.1'),
+          (s.queue = []),
+          (u = t.createElement(n)),
+          (u.async = !0),
+          (u.src = 'https://static.ads-twitter.com/uwt.js'),
+          (a = t.getElementsByTagName(n)[0]),
+          a.parentNode.insertBefore(u, a));
+      })(window, document, 'script');
 
-    <!-- Open Graph Meta Tags -->
-    <!-- <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={image} />
-    <meta property="og:image:type" content={imageType ?? 'image/png'} />
-    <meta property="og:url" content={url} />
-    <meta property="og:type" content={type} /> -->
-
-    <!-- Twitter Card Meta Tags (optional for better previews) -->
-    <!-- <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={image} /> -->
-    <!-- <ClientRouter /> -->
+      twq('config', 'pqifz');
+    </script>
   </head>
   <body>
     <ToastContainer client:load />
-    {!story && <Navigation activeTab={nav} {arrow} client:load />}
-    <header>
-      {
-        header === 'CoNexus' ? (
-          <picture>
-            <source srcset="title.avif" type="image/avif" />
-            <img
-              class="title blur"
-              src="title.png"
-              alt="CoNexus"
-              draggable="false"
-            />
-          </picture>
-        ) : (
-          header && <h1>{header}</h1>
-        )
-      }
-    </header>
-    {subheading && <p class="subheading" set:html={subheading} />}
+
+    <Navigation
+      {header}
+      {subheading}
+      activeTab={nav}
+      {arrow}
+      storyName={story}
+      client:load
+    />
 
     <slot />
 
     <Modal client:load />
 
     <CookieBanner client:load />
-    <style>
-      header {
-        padding-inline: 1vw;
-      }
-
-      picture {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .title {
-        width: 33vw;
-        height: auto;
-        filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
-        box-shadow:
-          inset 0 0 0.5vw rgba(51, 226, 230, 0.5),
-          0 0.25vw 0.25vw #010020;
-        background-color: rgba(51, 226, 230, 0.5);
-        padding: 1vw 2vw;
-        border-radius: 1.5vw;
-        aspect-ratio: initial;
-      }
-
-      .subheading {
-        width: 90%;
-        font-size: 1.5vw;
-        line-height: 2.5vw;
-        text-align: center;
-        color: rgba(51, 226, 230, 0.75);
-        text-shadow: 0 0.25vw 0.25vw #010020;
-      }
-
-      .circle-icon {
-        visibility: hidden;
-      }
-
-      @media only screen and (max-width: 600px) {
-        header {
-          padding-inline: 1em;
-        }
-
-        .title {
-          width: 75vw;
-          border-radius: 1em;
-          padding: 0.75em 1.5em;
-        }
-
-        .subheading {
-          font-size: inherit;
-          line-height: 1.5em;
-          padding: 1em;
-          background-color: rgba(22, 30, 95, 0.5);
-          -webkit-backdrop-filter: blur(2vw);
-          backdrop-filter: blur(2vw);
-          box-shadow:
-            inset 0 0 0.5vw rgba(51, 226, 230, 0.5),
-            0 0 0.5vw #010020;
-          border-radius: 1em;
-        }
-      }
-    </style>
   </body>
 </html>
 

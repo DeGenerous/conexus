@@ -1,6 +1,6 @@
 // import { Account } from '@lib/account';
 import { GetCache, USER_CACHE_KEY } from '@constants/cache';
-import { authenticated, web3LoggedIn } from '@stores/account';
+import { authenticated } from '@stores/account.svelte';
 
 function redirectTo(path: string) {
   if (typeof window !== 'undefined') {
@@ -44,7 +44,6 @@ export async function checkUserState(
       if (cache) {
         user = cache as User;
         authenticated.set({ user, loggedIn: true });
-        web3LoggedIn.set(true);
       }
 
       if (!user) {
@@ -62,12 +61,5 @@ export async function checkUserState(
       redirectTo('/referral');
       return;
     }
-  }
-}
-
-export function checkWeb3LoginState(loggedIn: boolean, path: string): void {
-  if (!loggedIn && path !== 'Community Picks') {
-    redirectTo('/');
-    return;
   }
 }

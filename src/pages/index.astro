@@ -16,49 +16,15 @@ const footerText = [
 ];
 ---
 
-<main>
-  <Layout {...meta}>
+<Layout {...meta}>
+  <main>
     <Menu client:load />
-    <footer>
-      {footerText.map((text: any) => <p class="footer-text">{text}</p>)}
+    <footer class="flex">
+      {
+        footerText.map((text: any) => (
+          <p class="pad-inline text-shad">{text}</p>
+        ))
+      }
     </footer>
-  </Layout>
-</main>
-
-<style>
-  footer {
-    width: 90%;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vw;
-  }
-
-  .footer-text {
-    text-align: center;
-    font-size: 1.5vw;
-    line-height: 2.5vw;
-    color: rgba(51, 226, 230, 0.75);
-    text-shadow: 0 0.25vw 0.25vw #010020;
-  }
-
-  @media only screen and (max-width: 600px) {
-    footer {
-      gap: 0.5em;
-    }
-
-    .footer-text {
-      font-size: inherit;
-      line-height: 2em;
-      padding: 1em;
-      background-color: rgba(22, 30, 95, 0.5);
-      -webkit-backdrop-filter: blur(2vw);
-      backdrop-filter: blur(2vw);
-      box-shadow:
-        inset 0 0 0.5vw rgba(51, 226, 230, 0.5),
-        0 0 0.5vw #010020;
-      border-radius: 1em;
-    }
-  }
-</style>
+  </main>
+</Layout>

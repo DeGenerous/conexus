@@ -1,14 +1,26 @@
 <script lang="ts">
-  export let image: string | undefined;
-  export let image_type: string = 'url';
-  export let width: number;
-  export let fullWidthImage: boolean = false;
+  let {
+    width,
+    image,
+    image_type = 'url',
+    imageWidth = 800,
+    imageHeight = 512,
+    boxShadow = true,
+  }: {
+    width: number;
+    image: string | undefined;
+    image_type?: string;
+    imageWidth: number;
+    imageHeight: number;
+    boxShadow: boolean;
+  } = $props();
 
-  let isLoading = true;
-  let imageSrc = '';
+  let fullWidthImage = $state<boolean>(false);
+  let isLoading = $state<boolean>(true);
+  let imageSrc = $state<string>('');
 
   // Watch for changes in image props
-  $: {
+  $effect(() => {
     if (image) {
       if (image_type === 'url') {
         imageSrc = image;
@@ -21,7 +33,7 @@
       imageSrc = ''; // Reset image source when null
       isLoading = true;
     }
-  }
+  });
 
   function handleImageLoad() {
     isLoading = false; // Hide loader once the image loads
@@ -33,55 +45,77 @@
   }
 </script>
 
-{#if isLoading}
-  <img class="image loading-image" src="/icons/loading.png" alt="Loading..." />
-  {#if width <= 600}
-    <p class="click-hint" style:display={fullWidthImage ? 'none' : 'block'}>
-      Click to change image size
-    </p>
+<button
+  id="step-image"
+  class="void-btn transparent-container"
+  onclick={() => (fullWidthImage = !fullWidthImage)}
+  class:slim={!fullWidthImage}
+  style:box-shadow={boxShadow ? '' : 'none'}
+  style:max-width="{imageWidth}px"
+  style={width < 768 ? '' : `height: ${imageHeight}px`}
+>
+  {#if isLoading}
+    <span class="pulse-animation">
+      <img src="/icons/loading.png" alt="Loading..." />
+      <p>Click to change image size</p>
+    </span>
+  {:else}
+    <img
+      src={imageSrc}
+      alt=""
+      onload={handleImageLoad}
+      onerror={handleImageError}
+    />
   {/if}
-{/if}
+</button>
 
-<img
-  class="image"
-  src={imageSrc}
-  alt=""
-  on:load={handleImageLoad}
-  on:error={handleImageError}
-  style={isLoading ? 'display: none;' : 'display: block;'}
-/>
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
 
-<style>
-  .image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 1em;
-  }
+  .transparent-container {
+    padding: 0 !important;
 
-  .loading-image {
-    object-fit: contain;
-    animation: pulse 5s linear infinite;
-  }
+    span {
+      position: relative;
+      width: 100%;
+      height: 100%;
 
-  @keyframes pulse {
-    0% {
-      opacity: 0.2;
+      p {
+        position: absolute;
+        width: 100%;
+        bottom: 1rem;
+      }
     }
-    50% {
-      opacity: 0.8;
-    }
-    100% {
-      opacity: 0.2;
-    }
-  }
 
-  .click-hint {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    bottom: 1em;
-    color: rgb(51, 226, 230);
-    animation: pulse 5s linear infinite;
+    img {
+      max-height: inherit;
+      height: 100%;
+      border-radius: inherit;
+    }
+
+    &.slim {
+      height: 512px;
+    }
+
+    @include respond-up(tablet) {
+      cursor: default;
+
+      p {
+        display: none;
+      }
+
+      &.slim {
+        height: auto;
+      }
+    }
+
+    @include respond-up(large-desktop) {
+      width: 100%;
+      height: unset;
+
+      img {
+        height: inherit;
+      }
+    }
   }
 </style>

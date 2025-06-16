@@ -1,92 +1,78 @@
+<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { tippy } from 'svelte-tippy';
 
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
   import Tts from '@components/music/Tts.svelte';
-  import Profile from '@components/Profile.svelte';
   import Step from '@components/Step.svelte';
-  import BackArrow from '@components/utils/BackArrow.svelte';
+  import DeleteSVG from '@components/icons/Delete.svelte';
+  import PlaySVG from '@components/icons/Play.svelte';
+  import LoadingSVG from '@components/icons/Loading.svelte';
+  import LockSVG from '@components/icons/Lock.svelte';
   import Share from '@components/utils/Share.svelte';
-  import { blankImage, serveUrl } from '@constants/media';
+  import { serveUrl } from '@constants/media';
   import { contractGetter } from '@constants/contracts';
   import MediaManager from '@lib/media';
   import { CoNexusGame } from '@lib/story';
-  import { loading, story, background_image } from '@stores/conexus';
-  import {
-    showModal,
-    secondButton,
-    secondButtonClass,
-    handleSecondButton,
-    modalContent,
-  } from '@stores/modal';
+  import { story, game } from '@stores/conexus.svelte';
+  import { prevStory, nextStory } from '@stores/navigation.svelte';
   import { checkUserState } from '@utils/route-guard';
   import { GetCache, SECTION_CATEGORIES_KEY } from '@constants/cache';
   import detectIOS from '@utils/ios-device';
+  import openModal from '@stores/modal.svelte';
+  import { deleteUnfinishedModal } from '@constants/modal';
 
   export let section: string;
   export let story_name: string;
 
   let scroll: number;
 
-  const game: CoNexusGame = new CoNexusGame();
+  const conexusGame: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
-
-  let categoryTopics: TopicsInSection[] = [];
-  let activeStoryIndex: number = 0;
-  $: prevStoryIndex =
-    activeStoryIndex <= 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
-
-  let iosDevice: boolean = false;
-
-  onMount(async () => {
-    await checkUserState('/story');
-
-    iosDevice = detectIOS();
-
-    const storedTopics = JSON.parse(
-      GetCache(SECTION_CATEGORIES_KEY(section)) as string,
-    )
-      .map((category: CategoryInSection) => category.topics)
-      .flat();
-    if (storedTopics) {
-      categoryTopics = storedTopics;
-      const categoryTopicNames: string[] = categoryTopics!.map(
-        (story) => story.topic_name,
-      );
-      activeStoryIndex = categoryTopicNames?.indexOf(story_name);
-    }
-  });
-
-  let deletedStories: string[] = []; // temp storage before reload for immediate removal
-  let noUnfinishedStoriesLeft: boolean = false;
-  let backgroundImageUrl: string = '/defaultBG.avif';
 
   const handleSetMedia = async (topic_id: number) => {
     await media.setBackgroundImage(topic_id);
     await media.playBackgroundMusic(topic_id);
   };
 
-  background_image.subscribe((value) => {
-    if (value) {
-      backgroundImageUrl = value;
+  // Switching between NEIGHBOUR stories
+  let categoryTopics: TopicInSection[] = [];
+  let activeStoryIndex: number = 0;
+  $: prevStoryIndex =
+    activeStoryIndex <= 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
+
+  onMount(async () => {
+    await checkUserState('/story');
+
+    // Get all topics in SECTION from the localStorage
+    const storedTopics = GetCache<CategoryInSection[]>(
+      SECTION_CATEGORIES_KEY(section),
+    )
+      ?.map((category: CategoryInSection) => category.topics)
+      .flat();
+    if (storedTopics) {
+      categoryTopics = storedTopics;
+      // Get array of STORY NAMES to display on button
+      const categoryTopicNames: string[] = categoryTopics!.map(
+        (story) => story.topic_name,
+      );
+      // Find index of selected story to get PREV & NEXT story index
+      activeStoryIndex = categoryTopicNames?.indexOf(story_name);
     }
   });
 
-  function openModal(story: any) {
-    $secondButton = `Delete story: ${story.category}`;
-    $secondButtonClass = 'red-button';
-    $handleSecondButton = () => DeleteStory(story.story_id);
-    $modalContent = `<h2>Are you sure you want to delete this story?</h2>
-        <h3>This action is irreversible. You will lose all progress on this story.</h3>`;
-    $showModal = true;
-  }
+  // CONTINUE SHAPING section
+
+  let deletedStories: string[] = []; // temp storage before reload for immediate removal
+  let noUnfinishedStoriesLeft: boolean = false;
 
   async function DeleteStory(story_id: any) {
     try {
-      await game.delete(story_id);
-      deletedStories[deletedStories.length] = story_id;
-      $showModal = false;
-      await game.storyContinuables(story_name!).then((continuables) => {
+      await conexusGame.delete(story_id);
+      deletedStories[deletedStories.length] = story_id; // hide deleted story from user
+      await conexusGame.storyContinuables(story_name!).then((continuables) => {
+        // Hide CINTINUE SHAPING section if no unfinished stories left
         if (continuables.length == 0) noUnfinishedStoriesLeft = true;
       });
     } catch (error) {
@@ -94,33 +80,24 @@
     }
   }
 
-  // SVG Icons
-  const handleDeleteSvg = (id: string, state: 'focus' | 'blur') => {
-    const deleteSvgIcon = document.getElementById(`delete-icon-${id}`);
-    const deleteSvgCircle = document.getElementById(`delete-circle-${id}`);
-    if (state == 'focus') {
-      deleteSvgIcon!.setAttribute('transform', 'scale(1.5)');
-      deleteSvgCircle!.setAttribute('r', '0');
-      deleteSvgCircle!.style.opacity = '0';
-    } else if (state == 'blur') {
-      deleteSvgIcon!.setAttribute('transform', 'scale(1)');
-      deleteSvgCircle!.setAttribute('r', '90');
-      deleteSvgCircle!.style.opacity = '1';
-    }
-  };
+  // Calculate story creation date to show on CONTINUE button
+  const convertDate = (date: string | Date) => {
+    if (!date) return 'CORRUPTED';
+    date = new Date(date);
 
-  const handlePlaySvg = (id: string, state: 'focus' | 'blur') => {
-    const playSvgIcon = document.getElementById(`play-icon-${id}`);
-    const playSvgCircle = document.getElementById(`play-circle-${id}`);
-    if (state == 'focus') {
-      playSvgIcon!.setAttribute('transform', 'scale(1.5)');
-      playSvgCircle!.setAttribute('r', '0');
-      playSvgCircle!.style.opacity = '0';
-    } else if (state == 'blur') {
-      playSvgIcon!.setAttribute('transform', 'scale(1)');
-      playSvgCircle!.setAttribute('r', '90');
-      playSvgCircle!.style.opacity = '1';
-    }
+    let minutes = String(date.getMinutes());
+    let hours = String(date.getHours());
+
+    let day = String(date.getDate());
+    let month = String(date.getMonth() + 1);
+    let year = String(date.getFullYear());
+
+    if (Number(minutes) < 10) minutes = '0' + minutes;
+    if (Number(hours) < 10) hours = '0' + hours;
+    if (Number(day) < 10) day = '0' + day;
+    if (Number(month) < 10) month = '0' + month;
+
+    return `${day}.${month}.${year.slice(2)} ${hours}:${minutes}`;
   };
 </script>
 
@@ -128,298 +105,188 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $story === null}
-  <section class="container-wrapper">
-    {#await game.getTopic(section, story_name)}
-      <header>
-        <BackArrow />
-        <Profile />
-      </header>
+  {#await conexusGame.getTopic(section, story_name)}
+    <div class="story-wrapper flex">
+      <section class="story container">
+        <span class="fake-img loading-animation round-8"></span>
 
-      <div class="story-container blur">
-        <div class="picture default-picture loading-animation"></div>
+        <div class="flex">
+          <span
+            class="loading-animation default-genres genres round-8 pad-8 pad-inline shad"
+          ></span>
 
-        <section class="story-info">
-          <article>
-            <article>
-              <div class="genres" style="opacity: 0.5">
-                <p>Genres:</p>
-                <p class="genres-list default-genres loading-animation"></p>
-              </div>
-              <div class="default-line loading-animation"></div>
-              <div class="default-line loading-animation"></div>
-              <div class="default-line loading-animation"></div>
-              <div class="default-line loading-animation last-line"></div>
-            </article>
-          </article>
-          <div class="story-buttons-container">
-            <button disabled>SHARE</button>
+          <span class="buttons flex-row">
+            <Share disabled={true} />
             <button disabled>PLAY NOW</button>
-          </div>
-        </section>
-      </div>
-    {:then topic: TopicThumbnail}
-      <header>
-        <BackArrow />
-        <h1 class="fade-in">{topic.name.trim()}</h1>
-        <Profile />
-      </header>
-
-      {#if categoryTopics.length > 0}
-        <div class="buttons-wrapper stories-switcher">
-          <a
-            class="buttons-wrapper switch-arrow"
-            href="/sections/{section}/{categoryTopics[prevStoryIndex]
-              .topic_name}?id={categoryTopics[prevStoryIndex].topic_id}"
-          >
-            <img src="/icons/switch-arrow.svg" alt="Switch" />
-            <h3 style:text-align="left">
-              {categoryTopics[prevStoryIndex].topic_name}
-            </h3>
-          </a>
-
-          <a
-            class="buttons-wrapper switch-arrow"
-            href="/sections/{section}/{categoryTopics[
-              (activeStoryIndex + 1) % categoryTopics.length
-            ].topic_name}?id={categoryTopics[
-              (activeStoryIndex + 1) % categoryTopics.length
-            ].topic_id}"
-          >
-            <h3 style:text-align="right">
-              {categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
-                .topic_name}
-            </h3>
-            <img
-              src="/icons/switch-arrow.svg"
-              alt="Switch"
-              style="transform: rotate(180deg)"
-            />
-          </a>
-        </div>
-      {/if}
-
-      <div class="story-container blur">
-        <img
-          class="picture fade-in"
-          src={serveUrl(topic?.description_file_id) ?? blankImage}
-          alt={topic?.name}
-          draggable="false"
-          width="1024"
-          height="1024"
-        />
-
-        <section class="story-info">
-          <article>
-            {#if topic.genres}
-              <div class="genres">
-                <p>Genres:</p>
-                <p class="genres-list fade-in">{topic.genres}</p>
-              </div>
-            {/if}
-            <p class="description fade-in">{topic.description}</p>
-          </article>
-          <div class="story-buttons-container">
-            <Share />
-            <button
-              on:click={() =>
-                topic && game.startGame(topic.name, topic.id, handleSetMedia)}
-              disabled={$loading}
-              style={$loading ? 'color: rgb(51, 226, 230)' : ''}
-            >
-              {#if $loading}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 100 100"
-                  class="loading-svg"
-                  stroke="transparent"
-                  stroke-width="7.5"
-                  stroke-dasharray="288.5"
-                  stroke-linecap="round"
-                  fill="none"
-                >
-                  <path
-                    d="
-                        M 50 96 a 46 46 0 0 1 0 -92 46 46 0 0 1 0 92
-                      "
-                    transform-origin="50 50"
-                  />
-                </svg>
-                Loading...
-              {:else}
-                PLAY NOW
-              {/if}
-            </button>
-          </div>
-        </section>
-      </div>
-
-      {#if topic.nft_gate && topic.nft_gate.length > 0}
-        <div class="gating">
-          <span class="gating-icon-wrapper">
-            <img class="gating-icon" src="/icons/lock.svg" alt="Restricted" />
           </span>
-          <h3>This story is only available to holders of:</h3>
-          {#each topic.nft_gate as { contract_name, class_name, amount }}
-            <span>
-              {#if contractGetter(contract_name)}
-                {#await Promise.resolve(contractGetter(contract_name)) then contract}
-                  <a
-                    href={contract.link || '#'}
-                    class:inactive-link={!contract.link}
-                    target="_blank"
-                  >
-                    {#if amount && amount > 0}
-                      ${contract.name.toUpperCase()} ({amount})
-                    {:else if class_name}
-                      {contract.name} ({class_name})
-                    {:else}
-                      {contract.name}
-                    {/if}
-                  </a>
-                {/await}
-              {/if}
-            </span>
-          {/each}
         </div>
-      {/if}
+      </section>
+    </div>
+  {:then topic: TopicThumbnail}
+    {@html (() => {
+      if (!categoryTopics.length) return;
+      prevStory.link = `/sections/${section}/${categoryTopics[prevStoryIndex].topic_name}?id=${
+        categoryTopics[prevStoryIndex].topic_id
+      }`;
+      prevStory.name = categoryTopics[prevStoryIndex].topic_name;
+      nextStory.link = `/sections/${section}/${
+        categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
+          .topic_name
+      }?id=${categoryTopics[(activeStoryIndex + 1) % categoryTopics.length].topic_id}`;
+      nextStory.name =
+        categoryTopics[
+          (activeStoryIndex + 1) % categoryTopics.length
+        ].topic_name;
+    })()}
 
-      {#await game.storyContinuables(story_name!) then continuables: ContinuableStory[]}
-        {#if continuables.length > 0}
-          {#if !noUnfinishedStoriesLeft}
-            <section class="unfinished-stories fade-in blur">
-              <h3>Continue Shaping:</h3>
-              <div class="continue-shaping-container">
-                {#each continuables as continuable}
-                  {#if !deletedStories.includes(continuable.story_id)}
-                    <div class="unfinished-story">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="-100 -100 200 200"
-                        class="delete-svg continue-shaping-btn"
-                        fill="none"
-                        stroke={$loading ? '#010020' : 'rgb(255, 60, 64)'}
-                        stroke-width="15"
-                        stroke-linecap="round"
-                        on:click|preventDefault={() => {
-                          if (!$loading) openModal(continuable);
-                        }}
-                        on:pointerover={() => {
-                          if (!$loading)
-                            handleDeleteSvg(continuable.story_id, 'focus');
-                        }}
-                        on:pointerout={() => {
-                          if (!$loading)
-                            handleDeleteSvg(continuable.story_id, 'blur');
-                        }}
-                        role="button"
-                        tabindex="0"
-                        style={$loading ? 'cursor: not-allowed' : ''}
-                      >
-                        <path
-                          id="delete-icon-{continuable.story_id}"
-                          d="
-                              M -35 -35
-                              L 35 35
-                              M -35 35
-                              L 35 -35
-                            "
-                        />
-                        <circle
-                          id="delete-circle-{continuable.story_id}"
-                          r="90"
-                        />
-                      </svg>
-                      <h3>
-                        {continuable.story_id.split('-')[0]} - {new Date(
-                          continuable.created ?? '',
-                        ).toLocaleDateString()}
-                      </h3>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="-100 -100 200 200"
-                        class="play-svg continue-shaping-btn"
-                        fill="none"
-                        stroke={$loading ? '#010020' : 'rgb(0, 185, 55)'}
-                        stroke-width="15"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        on:click|preventDefault={() => {
-                          if (!$loading)
-                            game.continueGame(continuable, handleSetMedia);
-                        }}
-                        on:pointerover={() => {
-                          if (!$loading)
-                            handlePlaySvg(continuable.story_id, 'focus');
-                        }}
-                        on:pointerout={() => {
-                          if (!$loading)
-                            handlePlaySvg(continuable.story_id, 'blur');
-                        }}
-                        role="button"
-                        tabindex="0"
-                        style={$loading ? 'cursor: not-allowed' : ''}
-                      >
-                        <polygon
-                          id="play-icon-{continuable.story_id}"
-                          points="
-                            -26 -36 -26 36 36 0
-                          "
-                          fill={$loading ? '#010020' : 'rgb(0, 185, 55)'}
-                        />
-                        <circle
-                          id="play-circle-{continuable.story_id}"
-                          r="90"
-                        />
-                      </svg>
-                    </div>
-                  {/if}
-                {/each}
-              </div>
-            </section>
+    <div
+      class="story-wrapper flex"
+      style:cursor={game.loading ? 'progress' : ''}
+    >
+      <section class="story container">
+        {#if topic?.video_file_id}
+          <video
+            class="round-8 transparent-glowing"
+            controls
+            autoplay
+            loop
+            muted
+          >
+            <source src={serveUrl(topic?.video_file_id)} type="video/mp4" />
+            <track kind="captions" />
+          </video>
+        {:else}
+          <img
+            class="round-8 transparent-glowing"
+            src={serveUrl(topic?.description_file_id)}
+            alt={topic?.name}
+            draggable="false"
+            width="1024"
+          />
+        {/if}
+        <div class="flex">
+          {#if topic.genres}
+            <span class="genres round-8 pad-8 shad transparent-glowing">
+              <p class="text-glowing">{topic.genres.toUpperCase()}</p>
+            </span>
           {/if}
+
+          <span class="buttons flex-row">
+            {#if game.loading}
+              <span class="flex-row gap-8">
+                <LoadingSVG />
+                <button disabled>LOADING</button>
+              </span>
+            {:else}
+              <Share />
+              <button
+                class="button-glowing"
+                on:click={() =>
+                  topic &&
+                  conexusGame.startGame(topic.name, topic.id, handleSetMedia)}
+              >
+                PLAY NOW
+              </button>
+            {/if}
+          </span>
+        </div>
+      </section>
+
+      {#await conexusGame.storyContinuables(story_name!) then continuables: ContinuableStory[]}
+        {#if continuables.length > 0 && !noUnfinishedStoriesLeft}
+          <section
+            class="unfinished-stories transparent-container vert-scrollbar"
+          >
+            <h5 class="text-glowing">
+              Continue Shaping: {continuables.length - deletedStories.length}
+            </h5>
+            {#each continuables as continuable}
+              {#if !deletedStories.includes(continuable.story_id)}
+                <div class="flex-row pad-8 round" role="button" tabindex="0">
+                  <DeleteSVG
+                    disabled={game.loading}
+                    onclick={() =>
+                      openModal(
+                        deleteUnfinishedModal,
+                        `Delete story: ${continuable.category}`,
+                        () => DeleteStory(continuable.story_id),
+                      )}
+                  />
+                  <span class="flex">
+                    <p>{convertDate(continuable.created!)}</p>
+                    <p class="story-id">{continuable.story_id.split('-')[0]}</p>
+                  </span>
+                  <PlaySVG
+                    disabled={game.loading}
+                    onclick={() =>
+                      conexusGame.continueGame(continuable, handleSetMedia)}
+                  />
+                </div>
+              {/if}
+            {/each}
+          </section>
         {/if}
       {:catch}
-        <section class="unfinished-stories blur">
-          <h3>Failed to fetch unfinished stories...</h3>
+        <section class="unfinished-stories transparent-container">
+          <p class="validation">Failed to fetch unfinished stories...</p>
         </section>
       {/await}
+    </div>
 
-      {#if topic?.video_file_id}
-        <video class="blur story-video" controls autoplay loop muted>
-          <source src={serveUrl(topic?.video_file_id)} type="video/mp4" />
-          <track kind="captions" />
-        </video>
-      {/if}
-    {:catch}
-      <header>
-        <BackArrow />
-        <Profile />
-      </header>
+    {#if topic.nft_gate && topic.nft_gate.length > 0}
+      <section
+        class="flex gating blur pad-8 gap-8 mar-auto round-12 shad wavy-mask-left-right"
+      >
+        <div class="flex-row">
+          <LockSVG />
+          <h5>Only available to holders of:</h5>
+        </div>
+        <span class="flex-row pad-8 pad-inline round-8">
+          {#each topic.nft_gate as { contract_name, class_name, amount }}
+            {#if contractGetter(contract_name)}
+              {#await Promise.resolve(contractGetter(contract_name)) then contract}
+                <a
+                  href={contract.link ||
+                    'https://degenerousdao.gitbook.io/wiki'}
+                  class:inactive-link={!contract.link}
+                  target="_blank"
+                  on:click={(event) => {
+                    if (contract.link) return;
+                    if (
+                      !confirm(
+                        'This collection is no longer available. Would you like to explore the wiki for more details?',
+                      )
+                    )
+                      event.preventDefault();
+                  }}
+                  use:tippy={{ content: 'Check details', animation: 'scale' }}
+                >
+                  {#if amount && amount > 0}
+                    {amount} ${contract.name.toUpperCase()}
+                  {:else if class_name}
+                    {contract.name} ({class_name})
+                  {:else}
+                    {contract.name}
+                  {/if}
+                </a>
+              {/await}
+            {/if}
+          {/each}
+        </span>
+      </section>
+    {/if}
 
-      <div class="story-container blur">
-        <div class="picture default-picture"></div>
-
-        <section class="story-info">
-          <article>
-            <article>
-              <div class="genres" style="opacity: 0.5">
-                <p>Failed to fetch story...</p>
-              </div>
-              <div class="genres" style="opacity: 0.5">
-                <p>Please try again or contact support.</p>
-              </div>
-            </article>
-          </article>
-          <div class="story-buttons-container">
-            <button disabled>SHARE</button>
-            <button disabled>ERROR</button>
-          </div>
-        </section>
-      </div>
-    {/await}
-  </section>
+    <p class="description transparent-container white-txt text-shad">
+      {topic.description}
+    </p>
+  {:catch}
+    <div class="container">
+      <h4 class="red-txt">Failed to fetch story...</h4>
+      <p class="soft-white-txt">Please try again or contact support.</p>
+    </div>
+  {/await}
 {:else}
-  {#if !iosDevice}
+  {#if !detectIOS()}
     <BackgroundMusic />
   {/if}
   <Tts />
@@ -427,506 +294,212 @@
   <Step {story_name} />
 {/if}
 
-<div
-  class="pc-background"
-  style:background-image={`url(${backgroundImageUrl})`}
-></div>
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
 
-<div
-  class="mobile-background"
-  style:background-image={`url(${backgroundImageUrl})`}
-  style:top={`max(-${scroll / 25}vh, -100vh)`}
-></div>
+  .story-wrapper {
+    .story {
+      width: 90%;
+      max-width: 50rem;
+      min-width: 250px;
 
-<style>
-  :global(html) {
-    background-image: none !important;
-    background-color: black !important;
-  }
+      img,
+      .fake-img {
+        width: 100%;
+        height: 25rem;
+        @include box-shadow;
+        @include cyan(0.1);
+      }
 
-  .pc-background {
-    display: block;
-    z-index: -1000;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-size: cover;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 0.25;
-  }
+      video {
+        max-width: 100%;
+        max-height: 25rem;
+        @include box-shadow;
 
-  .mobile-background {
-    display: none;
-  }
+        @include respond-up(tablet) {
+          min-height: 20rem;
+        }
+      }
 
-  header {
-    width: 100vw;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1vw;
-  }
+      div {
+        width: 100%;
 
-  header h1 {
-    font-size: 4vw;
-  }
+        span {
+          width: 100%;
+        }
 
-  .story-container {
-    max-width: 95%;
-    min-width: 75%;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 2vw;
-    padding: 2vw;
-    background-color: rgba(1, 0, 32, 0.5);
-    box-shadow:
-      inset 0 0 0.5vw rgba(51, 226, 230, 0.25),
-      0 0 0.5vw #010020;
-    border-radius: 1.5vw;
-    transition: all 2s cubic-bezier(0.075, 0.82, 0.165, 1);
-  }
+        .genres {
+          @include cyan(0.1);
+          @include font(small);
 
-  .story-info {
-    min-height: 25vw;
-    width: 100%;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: space-between;
-    gap: 2vw;
-  }
+          p {
+            padding: 0;
+            font-size: inherit;
+            line-height: inherit;
+          }
 
-  .picture {
-    min-height: 25vw;
-    height: 25vw;
-    width: auto;
-    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.25));
-    border-radius: 1vw;
-  }
+          &.default-genres {
+            min-width: 20rem;
+            min-height: 2.2rem;
+          }
+        }
 
-  article {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 2vw;
-  }
+        .buttons {
+          justify-content: space-between;
+        }
+      }
 
-  .genres {
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-    gap: 1vw;
-    font-size: 1.5vw;
-    line-height: 2vw;
-    color: rgba(51, 226, 230, 0.75);
-  }
+      @include respond-up(tablet) {
+        div {
+          flex-direction: row;
+          justify-content: space-between;
+          gap: 1rem;
+          flex: none;
 
-  .genres-list {
-    text-align: center;
-    padding: 1vw;
-    border-radius: 1vw;
-    color: rgba(51, 226, 230, 0.75);
-    font-size: 1.5vw;
-    line-height: 2vw;
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
-    background-color: rgba(51, 226, 230, 0.1);
-  }
+          span {
+            max-width: 100%;
+            width: auto;
+          }
 
-  .description {
-    max-height: 20vw;
-    font-size: 1.5vw;
-    line-height: 3vw;
-    text-shadow: 0 0.25vw 0.25vw #010020;
-    overflow: auto;
-  }
+          .buttons {
+            justify-content: flex-end;
 
-  .description::-webkit-scrollbar {
-    width: 0.5vw;
-  }
+            * {
+              flex: none;
+            }
+          }
+        }
+      }
 
-  .description::-webkit-scrollbar-track {
-    background-color: rgba(0, 0, 0, 0);
-  }
-
-  .description::-webkit-scrollbar-thumb {
-    background: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0),
-      rgba(51, 226, 230, 0.5),
-      rgba(0, 0, 0, 0)
-    );
-    border-radius: 0.5vw;
-    cursor: pointer;
-  }
-
-  .description::-webkit-scrollbar-thumb:hover,
-  .description::-webkit-scrollbar-thumb:active {
-    background: rgba(51, 226, 230, 0.5);
-  }
-
-  .story-buttons-container {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2vw;
-  }
-
-  .unfinished-stories {
-    max-width: 95%;
-    background-color: rgba(51, 226, 230, 0.1);
-    box-shadow:
-      inset 0 0 0.5vw rgba(51, 226, 230, 0.25),
-      0 0 0.5vw #010020;
-    border-radius: 1.5vw;
-    padding: 1vw;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vw;
-  }
-
-  .continue-shaping-container {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vw;
-  }
-
-  .unfinished-story {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vw;
-    color: rgba(255, 255, 255, 0.5);
-    background-color: rgba(36, 65, 189, 0.75);
-    border: 0.05vw solid rgba(51, 226, 230, 0.5);
-    box-shadow: 0 0 0.5vw #010020;
-    border-radius: 1.5vw;
-    padding: 0.5vw;
-  }
-
-  h3 {
-    color: inherit;
-  }
-
-  .unfinished-story:hover,
-  .unfinished-story:active {
-    background-color: rgba(45, 90, 216, 0.9);
-    color: rgba(51, 226, 230, 0.9);
-    box-shadow: 0 0.5vw 0.5vw #010020;
-    transform: scale(1.025) translateY(-0.25vw);
-  }
-
-  .unfinished-story svg {
-    width: 2.5vw;
-    height: 2.5vw;
-  }
-
-  .story-buttons-container button {
-    gap: 1vw;
-  }
-
-  .loading-svg {
-    height: 1.5vw;
-    width: 1.5vw;
-  }
-
-  .stories-switcher {
-    width: 100vw;
-    padding-inline: 2vw;
-    gap: 2vw;
-    flex-flow: row nowrap;
-  }
-
-  .switch-arrow {
-    flex-flow: row nowrap;
-    gap: 1vw;
-  }
-
-  .switch-arrow img {
-    flex: none;
-  }
-
-  .gating {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vw;
-    padding: 0.5vw;
-    border-radius: 1vw;
-    background-color: rgba(255, 140, 0, 0.75);
-  }
-
-  .gating-icon {
-    width: 2vw;
-    height: 2vw;
-  }
-
-  .gating h3 {
-    color: #010020;
-  }
-
-  .gating span a {
-    color: rgb(255, 165, 40);
-    line-height: 2vw;
-  }
-
-  .gating span a:hover,
-  .gating span a:active {
-    filter: brightness(125%);
-  }
-
-  .inactive-link {
-    text-decoration: none !important;
-    filter: none !important;
-    cursor: not-allowed;
-    pointer-events: none;
-  }
-
-  .gating span {
-    display: flex;
-    justify-content: center;
-    padding: 1vw;
-    border-radius: 0.75vw;
-    background-color: rgba(32, 0, 1, 0.75);
-  }
-
-  /* LOADING */
-
-  .default-picture {
-    min-width: 25vw;
-    height: 25vw;
-    filter: none;
-    background-color: rgba(51, 226, 230, 0.1);
-  }
-
-  .default-genres {
-    min-width: 35vw;
-    color: transparent;
-    text-shadow: none !important;
-    height: 4vw;
-    background-color: rgba(51, 226, 230, 0.2);
-  }
-
-  .default-line {
-    background-color: rgba(51, 226, 230, 0.1);
-    height: 1.5vw;
-    width: 44vw;
-    margin-block: -0.5vw;
-  }
-
-  .last-line {
-    width: 25vw;
-  }
-
-  @media only screen and (max-width: 600px) {
-    :global(html) {
-      padding-bottom: 2em !important;
-    }
-
-    .pc-background {
-      display: none;
-    }
-
-    .mobile-background {
-      display: block;
-      z-index: -1000;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 200vh;
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: top;
-      opacity: 0.25;
-      transition: none;
-    }
-
-    .story-info {
-      width: auto;
-    }
-
-    .story-buttons-container button {
-      gap: 0.5em;
-    }
-
-    header {
-      position: sticky;
-      top: 0;
-      background-color: rgba(1, 0, 32, 0.75);
-      box-shadow: 0 0.5vw 0.5vw #010020;
-      -webkit-backdrop-filter: blur(2vw);
-      backdrop-filter: blur(2vw);
-      z-index: 2;
-      padding: 1em;
-    }
-
-    header h1 {
-      font-size: 1.5em;
-    }
-
-    .story-container {
-      max-width: 100%;
-      flex-direction: column;
-      gap: 1.5em;
-      padding-top: 1.5em;
-      border-radius: 0;
-      border-left: none;
-      border-right: none;
-    }
-
-    .picture {
-      height: auto;
-      width: 90vw;
-      border-radius: 0.5em;
-    }
-
-    article {
-      flex-direction: column-reverse;
-      min-height: none;
-      align-items: center;
-    }
-
-    .genres {
-      flex-direction: column;
-      gap: 0.25em;
-      font-size: 1.2em;
-      line-height: 2em;
-      width: 90vw;
-    }
-
-    .genres-list {
-      padding: 0.5em;
-      font-size: 1em;
-      line-height: 1.5em;
-      text-shadow: 0 0 0.1em #010020;
-      border-radius: 0.5em;
-    }
-
-    .default-genres {
-      width: 80vw;
-    }
-
-    .description {
-      text-align: center;
-      font-size: 1em;
-      line-height: 2em;
-      width: 90vw;
-      max-height: none;
-    }
-
-    .story-buttons-container {
-      width: 100vw;
-      flex-direction: column-reverse;
-      align-items: center;
-      gap: 1.5em;
-      margin-block: 1.5em;
-    }
-
-    button {
-      width: 80vw;
-      font-size: 1.5em;
-      line-height: 1.5em;
-      padding: 0.25em 0.5em;
+      @include respond-up(small-desktop) {
+        max-width: 68rem;
+        width: auto;
+      }
     }
 
     .unfinished-stories {
-      max-width: 100%;
-      border-radius: 0;
-      border-left: none;
-      border-right: none;
-      padding: 1em;
-      gap: 1em;
+      overflow-x: hidden !important;
+
+      h5 {
+        width: 100%;
+        text-transform: uppercase;
+        @include font(small);
+      }
+
+      div {
+        width: 100%;
+        justify-content: space-between;
+        flex: none;
+        @include white-txt(soft);
+        @include cyan(0.2);
+        @include box-shadow;
+
+        &:hover,
+        &:active {
+          @include cyan(1, text);
+          @include light-blue(0.5);
+          @include scale-up(soft);
+          @include box-shadow(deep);
+        }
+
+        span {
+          gap: 0;
+
+          .story-id {
+            opacity: 0.5;
+            @include font(caption);
+          }
+        }
+      }
+
+      @include respond-up(tablet) {
+        flex-flow: row wrap;
+        width: 90%;
+        max-width: 50rem;
+
+        div {
+          width: auto;
+        }
+      }
+
+      @include respond-up(small-desktop) {
+        max-width: 68rem;
+      }
     }
 
-    .continue-shaping-container {
-      gap: 1em;
+    @include respond-up(large-desktop) {
+      flex-direction: row;
+
+      .story {
+        margin-inline: unset;
+      }
+
+      .unfinished-stories {
+        margin-inline: unset;
+        align-items: flex-start;
+        width: 18rem;
+        max-height: 30.5rem;
+        overflow: auto;
+
+        @include respond-up(full-hd) {
+          width: 36rem;
+        }
+
+        @include respond-up(quad-hd) {
+          width: 52rem;
+        }
+      }
+    }
+  }
+
+  .gating {
+    margin-top: 1rem;
+    width: 100%;
+    max-width: 50rem;
+    stroke: $dark-red;
+    @include orange(0.85);
+
+    div {
+      h5 {
+        text-align: left;
+        @include dark-red(1, text);
+      }
     }
 
-    .unfinished-story {
-      gap: 1em;
-      padding: 0.5em;
-      width: 90vw;
-      justify-content: space-between;
-      border-radius: 1em;
-    }
-
-    .unfinished-story svg {
-      width: 1.75em;
-      height: 1.75em;
-    }
-
-    .default-picture {
-      height: 90vw;
-    }
-
-    .default-genres {
-      min-width: none;
-      width: 80vw;
-      height: 2.5em;
-    }
-
-    .default-line {
-      height: 1em;
-      width: 80vw;
-      margin-block: 0.25em;
-    }
-
-    .last-line {
-      width: 80vw;
-    }
-
-    .loading-svg {
-      height: 1em;
-      width: 1em;
-    }
-
-    .stories-switcher {
-      gap: 1em;
-      padding-inline: 1em;
-    }
-
-    .switch-arrow {
-      gap: 0.5em;
-    }
-
-    .gating {
+    span {
       width: 100%;
-      flex-direction: column;
-      gap: 0.5em;
-      padding: 0.5em;
-      border-radius: 0;
-    }
+      flex-wrap: wrap;
+      @include dark-red(0.5);
+      @include white-txt(soft);
+      @include box-shadow(soft, inset);
 
-    .gating-icon {
-      width: 1.25em;
-      height: 1.25em;
-    }
+      a {
+        text-decoration: underline dashed $transparent-white;
+        @include white-txt;
 
-    .gating span a {
-      line-height: 1.25em;
-    }
+        &:hover:not(&.inactive-link),
+        &:active:not(&.inactive-link),
+        &:focus:not(&.inactive-link) {
+          text-decoration: underline $orange;
+          color: $bright-orange;
+        }
 
-    .gating span {
-      padding: 0.5em 1em;
-      border-radius: 0.5em;
-    }
+        &.inactive-link {
+          cursor: help;
 
-    .gating-icon-wrapper {
-      display: none !important;
+          &:hover,
+          &:active,
+          &:focus {
+            text-decoration: underline $deep-orange;
+            color: $deep-orange;
+          }
+        }
+      }
     }
+  }
+
+  .description {
+    margin-top: 1rem;
+    width: clamp(250px, 95%, 90rem);
   }
 </style>

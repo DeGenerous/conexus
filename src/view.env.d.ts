@@ -10,25 +10,18 @@ type TopicInCategoryInSection = {
   category_id?: number;
 };
 
-type CategoryInSection = {
-  name: string;
-  order: number;
-  topics: TopicInCategoryInSection[];
-  created_at?: Date;
-};
-
-type TopicsInSection = {
+type TopicInSection = {
   topic_id: number;
   topic_name: string;
   topic_order: number;
 };
 
-type CategoriesInSection = {
+type CategoryInSection = {
   id: number;
   name: string;
   order: number;
   topic_count: number;
-  topics: TopicsInSection[];
+  topics: TopicInSection[];
 };
 
 type NFTGate = {

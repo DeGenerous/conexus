@@ -1,22 +1,29 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
   import { serveUrl } from '@constants/media';
   import MediaManager from '@lib/media';
 
+  let { topic_id = $bindable() }: { topic_id: number } = $props();
+
   let mediaManager = new MediaManager();
 
-  export let topic_id: number;
+  let isLoading = $state<boolean>(true);
 
-  let isLoading = true;
+  let backgrounds = $state<string[]>([]);
+  let description = $state<string | null>(null);
+  let tile = $state<string | null>(null);
+  let audio = $state<string | null>(null);
+  let video = $state<string | null>(null);
 
-  let backgrounds: string[] = [];
-  let description: string | null = null;
-  let tile: string | null = null;
-  let audio: string | null = null;
-  let video: string | null = null;
+  let tooMuchFiles = $state<boolean>(false);
 
-  let tooMuchFiles: boolean = false;
+  let dragover = $state<boolean>(false);
+
+  const ondragleave = () => (dragover = false);
+  const ondragover = () => (dragover = true);
+
+  $effect(() => {
+    loadMedia();
+  });
 
   // Fetch stored media on load
   const loadMedia = async () => {
@@ -140,297 +147,333 @@
       console.error('Failed to delete media:', error);
     }
   };
-
-  onMount(async () => {
-    await loadMedia();
-  });
 </script>
 
 {#if isLoading}
-  <h2>Loading media...</h2>
+  <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {:else}
-  <div class="container blur media-wrapper">
-    <!-- Background Upload -->
-    <h2>Backgrounds</h2>
-    {#if backgrounds.length >= 3}
-      <h3>You've already uploaded 3 backgrounds.</h3>
-    {:else}
-      <label for="backgrounds-upload">Upload Backgrounds (Max 3)</label>
-      <input
-        id="backgrounds-upload"
-        type="file"
-        multiple
-        max={3 - backgrounds.length}
-        size="1572864"
-        accept="image/avif"
-        on:change={(e) => handleFileUpload(e, 'background')}
-      />
-      <h3>Only AVIF format is accepted.</h3>
-      <h3 class="mobile-note">Only &lt1.5MB files.</h3>
-      {#if tooMuchFiles}
-        <p class="validation">You can only upload up to 3 background images!</p>
-      {/if}
-    {/if}
-
-    <div class="media-grid">
-      {#each backgrounds as bg}
-        <div class="preview-wrapper">
-          <img
-            src={serveUrl(bg)}
-            alt="Background"
-            class="preview"
-            draggable="false"
-          />
-          <button
-            class="red-button"
-            on:click={() => handleDelete(bg, 'background')}
+  <section class="dream-container fade-in">
+    <div class="container content-wrapper">
+      <!-- Description Upload -->
+      <div class="media-section flex">
+        <h4>Description</h4>
+        {#if description}
+          <span class="content flex" role="button" tabindex="0">
+            <img
+              src={serveUrl(description)}
+              alt="Description"
+              class="preview"
+              draggable="false"
+            />
+            <button
+              class="red-btn"
+              onclick={() => handleDelete(description ?? '', 'description')}
+            >
+              Delete
+            </button>
+          </span>
+        {:else}
+          <div
+            class="dropzone"
+            class:dragover
+            {ondragover}
+            {ondragleave}
+            role="button"
+            tabindex="-1"
           >
-            Delete
-          </button>
-        </div>
-      {/each}
+            <label for="description-upload">
+              📁 Drop image here or click to upload
+              <br />
+              <br />
+              ❗ Only &lt1.5MB AVIF files
+            </label>
+            <input
+              id="description-upload"
+              type="file"
+              max="1"
+              size="1572864"
+              accept="image/avif"
+              onchange={(e) => handleFileUpload(e, 'description')}
+            />
+          </div>
+        {/if}
+      </div>
+
+      <!-- Tile Upload -->
+      <div class="media-section flex">
+        <h4>Tile</h4>
+        {#if tile}
+          <span class="content flex" role="button" tabindex="0">
+            <img
+              src={serveUrl(tile)}
+              alt="Tile"
+              class="preview"
+              draggable="false"
+            />
+            <button
+              class="red-btn"
+              onclick={() => handleDelete(tile ?? '', 'tile')}
+            >
+              Delete
+            </button>
+          </span>
+        {:else}
+          <div
+            class="dropzone"
+            class:dragover
+            {ondragover}
+            {ondragleave}
+            role="button"
+            tabindex="-1"
+          >
+            <label for="tile-upload">
+              📁 Drop image here or click to upload
+              <br />
+              <br />
+              ❗ Only &lt1.5MB AVIF files
+            </label>
+            <input
+              id="tile-upload"
+              type="file"
+              max="1"
+              size="1572864"
+              accept="image/avif"
+              onchange={(e) => handleFileUpload(e, 'tile')}
+            />
+          </div>
+        {/if}
+      </div>
+
+      <!-- Video Upload -->
+      <div class="media-section flex">
+        <h4>Video</h4>
+        {#if video}
+          <span class="content flex" role="button" tabindex="0">
+            <video controls draggable="false">
+              <source src={serveUrl(video)} type="video/mp4" />
+              <track
+                kind="captions"
+                src="path/to/captions.vtt"
+                srclang="en"
+                label="English"
+              />
+              Your browser does not support the video tag.
+            </video>
+            <button
+              class="red-btn"
+              onclick={() => handleDelete(video ?? '', 'video')}
+            >
+              Delete
+            </button>
+          </span>
+        {:else}
+          <div
+            class="dropzone"
+            class:dragover
+            {ondragover}
+            {ondragleave}
+            role="button"
+            tabindex="-1"
+          >
+            <label for="video-upload">
+              📁 Drop video here or click to upload
+              <br />
+              <br />
+              ❗ Only &lt10MB MP4 files
+            </label>
+            <input
+              id="video-upload"
+              type="file"
+              max="1"
+              size="10485760"
+              accept="video/mp4"
+              onchange={(e) => handleFileUpload(e, 'video')}
+            />
+          </div>
+        {/if}
+      </div>
     </div>
 
-    <hr />
+    <div class="container">
+      <!-- Background Upload -->
+      <div class="media-section flex">
+        <h4>Backgrounds</h4>
+        <div class="content-wrapper">
+          {#if backgrounds.length}
+            {#each backgrounds as bg}
+              <span class="content flex" role="button" tabindex="0">
+                <img src={serveUrl(bg)} alt="Background" draggable="false" />
+                <button
+                  class="red-btn"
+                  onclick={() => handleDelete(bg, 'background')}
+                >
+                  Delete
+                </button>
+              </span>
+            {/each}
+          {/if}
+          {#if backgrounds.length < 3}
+            <div
+              class="dropzone"
+              class:dragover
+              {ondragover}
+              {ondragleave}
+              role="button"
+              tabindex="-1"
+            >
+              <label for="tile-upload">
+                📁 Drop image(s) here or click to upload
+                <br />
+                <br />
+                ❗ Only &lt1.5MB AVIF files
+                <br />
+                <br />
+                Up to 3 files
+              </label>
+              <input
+                id="tile-upload"
+                type="file"
+                max="1"
+                size="1572864"
+                accept="image/avif"
+                onchange={(e) => handleFileUpload(e, 'background')}
+              />
+            </div>
+          {/if}
+        </div>
+        {#if tooMuchFiles}
+          <p class="validation">
+            You can only upload up to 3 background images!
+          </p>
+        {/if}
+      </div>
+    </div>
 
-    <!-- Description Upload -->
-    <h2>Description</h2>
-    {#if description}
-      <h3>You've already uploaded a description picture.</h3>
-    {:else}
-      <label for="description-upload">Upload Description Picture</label>
-      <input
-        id="description-upload"
-        type="file"
-        max="1"
-        size="1572864"
-        accept="image/avif"
-        on:change={(e) => handleFileUpload(e, 'description')}
-      />
-      <h3>Only AVIF format is accepted.</h3>
-      <h3 class="mobile-note">Only &lt1.5MB files.</h3>
-    {/if}
-    {#if description}
-      <img
-        src={serveUrl(description)}
-        alt="Description"
-        class="preview"
-        draggable="false"
-      />
-      <button
-        class="red-button"
-        on:click={() => handleDelete(description ?? '', 'description')}
-      >
-        Delete
-      </button>
-    {/if}
-
-    <hr />
-
-    <!-- Tile Upload -->
-    <h2>Tile</h2>
-    {#if tile}
-      <h3>You've already uploaded a tile picture.</h3>
-    {:else}
-      <label for="tile-upload">Upload Tile Picture</label>
-      <input
-        id="tile-upload"
-        type="file"
-        max="1"
-        size="1572864"
-        accept="image/avif"
-        on:change={(e) => handleFileUpload(e, 'tile')}
-      />
-      <h3>Only AVIF format is accepted.</h3>
-      <h3 class="mobile-note">Only &lt1.5MB files.</h3>
-    {/if}
-    {#if tile}
-      <img src={serveUrl(tile)} alt="Tile" class="preview" draggable="false" />
-      <button
-        class="red-button"
-        on:click={() => handleDelete(tile ?? '', 'tile')}
-      >
-        Delete
-      </button>
-    {/if}
-
-    <hr />
-
-    <!-- Audio Upload -->
-    <h2>Audio</h2>
-    {#if audio}
-      <h3>You've already uploaded an audio file.</h3>
-    {:else}
-      <label for="audio-upload">Upload Audio</label>
-      <input
-        id="audio-upload"
-        type="file"
-        max="1"
-        size="6291456"
-        accept="audio/mp3"
-        on:change={(e) => handleFileUpload(e, 'audio')}
-      />
-      <h3>Only MP3 format is accepted.</h3>
-      <h3 class="mobile-note">Only &lt6MB files.</h3>
-    {/if}
-    {#if audio}
-      <audio controls>
-        <source src={serveUrl(audio)} type="audio/mpeg" />
-        Your browser does not support the audio element.
-      </audio>
-      <button
-        class="red-button"
-        on:click={() => handleDelete(audio ?? '', 'audio')}
-      >
-        Delete
-      </button>
-    {/if}
-
-    <hr />
-
-    <!-- Video Upload -->
-    <h2>Video</h2>
-    {#if video}
-      <h3>You've already uploaded a video file.</h3>
-    {:else}
-      <label for="video-upload">Upload Video File</label>
-      <input
-        id="video-upload"
-        type="file"
-        max="1"
-        size="10485760"
-        accept="video/mp4"
-        on:change={(e) => handleFileUpload(e, 'video')}
-      />
-      <h3>Only MP4 format is accepted.</h3>
-      <h3 class="mobile-note">Only &lt10MB files.</h3>
-    {/if}
-    {#if video}
-      <video controls class="preview video-preview" draggable="false">
-        <source src={serveUrl(video)} type="video/mp4" />
-        <track
-          kind="captions"
-          src="path/to/captions.vtt"
-          srclang="en"
-          label="English"
-        />
-        Your browser does not support the video tag.
-      </video>
-      <button
-        class="red-button"
-        on:click={() => handleDelete(video ?? '', 'video')}
-      >
-        Delete
-      </button>
-    {/if}
-  </div>
+    <div class="container">
+      <!-- Audio Upload -->
+      <div class="media-section flex">
+        <h4>Audio</h4>
+        {#if audio}
+          <span class="content audio-content" role="button" tabindex="0">
+            <audio controls>
+              <source src={serveUrl(audio)} type="audio/mpeg" />
+              Your browser does not support the audio element.
+            </audio>
+            <button
+              class="red-btn"
+              onclick={() => handleDelete(audio ?? '', 'audio')}
+            >
+              Delete
+            </button>
+          </span>
+        {:else}
+          <div
+            class="dropzone audio-content"
+            class:dragover
+            {ondragover}
+            {ondragleave}
+            role="button"
+            tabindex="-1"
+          >
+            <label for="audio-upload">
+              📁 Drop audio here or click to upload
+              <br />
+              <br />
+              ❗ Only &lt6MB MP3 files
+            </label>
+            <input
+              id="audio-upload"
+              type="file"
+              max="1"
+              size="6291456"
+              accept="audio/mp3"
+              onchange={(e) => handleFileUpload(e, 'audio')}
+            />
+          </div>
+        {/if}
+      </div>
+    </div>
+  </section>
 {/if}
 
-<style>
-  input[type='file'] {
-    display: none;
-  }
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
 
-  label {
-    cursor: pointer;
-    padding: 1vw;
-    font-size: 1.5vw;
-    line-height: 1.5vw;
-    color: #dedede;
-    background-color: rgba(56, 117, 250, 0.5);
-    border: 0.1vw solid rgba(51, 226, 230, 0.5);
-    border-radius: 1vw;
-  }
-
-  label:hover,
-  label:active {
-    color: rgba(51, 226, 230, 0.9);
-    background-color: rgba(56, 117, 250, 0.9);
-    border-color: rgba(51, 226, 230, 0.9);
-    filter: drop-shadow(0 0 0.5vw rgba(51, 226, 230, 0.5));
-    text-shadow: 0 0 0.25vw rgba(1, 0, 32, 0.5);
-    transform: scale(1.05);
-  }
-
-  .media-wrapper {
-    width: 95vw;
-  }
-
-  .media-grid {
-    display: flex;
+  .dream-container {
     flex-flow: row wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vw;
-  }
+    align-items: flex-start;
 
-  .preview-wrapper {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5vw;
-  }
-
-  .preview {
-    width: 20vw;
-    border-radius: 1vw;
-    box-shadow: 0 0.25vw 0.5vw #010020;
-    background-color: rgba(51, 226, 230, 0.1);
-  }
-
-  .preview:hover,
-  .preview:active {
-    transform: scale(1.1);
-    filter: brightness(125%);
-  }
-
-  .video-preview {
-    width: 50vw;
-    transform: none !important;
-    filter: none !important;
-    cursor: pointer;
-  }
-
-  audio {
-    width: 30vw;
-  }
-
-  .mobile-note {
-    display: none;
-  }
-
-  @media only screen and (max-width: 600px) {
-    .media-wrapper {
-      width: 100vw;
+    & > .container {
+      width: auto;
+      margin-inline: 0;
     }
 
-    label {
-      font-size: 1em;
-      line-height: 1.75em;
-      padding: 0.25em 1em;
-      border-radius: 0.5em;
+    .content-wrapper {
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 1rem;
     }
 
-    .media-grid {
-      gap: 1em;
-    }
+    .media-section {
+      width: auto;
+      flex-direction: column;
 
-    .preview-wrapper {
-      gap: 1em;
-    }
+      h4 {
+        width: auto;
+        text-align: center;
+      }
 
-    .preview {
-      width: 90vw;
-      border-radius: 0.5em;
-    }
+      .dropzone {
+        width: 14rem;
+        height: 17rem;
+        padding: 1rem;
+      }
 
-    audio {
-      width: 90vw;
-    }
+      .content {
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        width: 14rem;
+        max-height: 17rem;
+        @include gray(0.25);
+        @include box-shadow;
 
-    .mobile-note {
-      display: block;
+        img,
+        video {
+          width: 100%;
+          min-height: 7rem;
+          max-height: 100%;
+          border-radius: 0.25rem;
+          @include dark-blue(0.5);
+        }
+
+        &:hover,
+        &:active {
+          @include light-blue(0.5);
+          @include bright;
+          @include scale-up(soft);
+          @include box-shadow(deep);
+        }
+      }
+
+      .audio-content {
+        min-width: 20rem;
+
+        @include respond-up(small-desktop) {
+          width: 36rem;
+          max-height: 7rem;
+        }
+
+        audio {
+          width: 100%;
+        }
+      }
     }
   }
 </style>

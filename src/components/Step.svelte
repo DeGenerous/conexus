@@ -379,7 +379,7 @@ a11y_no_noninteractive_element_interactions -->
         class:transparent-container={$customStyling.optionsContainer}
         style:color={$customFont.accentColor}
         style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
-        style:max-width="{customScale.optionsWidth}%"
+        style:max-width={width >= 1440 ? `${customScale.optionsWidth}%` : ''}
       >
         {#each step.options as option, i}
           <button

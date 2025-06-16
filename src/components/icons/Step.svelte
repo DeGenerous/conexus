@@ -42,6 +42,7 @@
       font-family: inherit;
       z-index: 2;
       @include dark-blue(1, text);
+      @include font(caption);
     }
 
     svg {

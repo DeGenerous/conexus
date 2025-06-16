@@ -35,6 +35,7 @@
   });
 
   const selectInput = (event: Event) => {
+    event.preventDefault();
     const input = event.target as HTMLInputElement;
     input.select();
   };

@@ -77,6 +77,14 @@
     if (storedTopics) {
       categoryTopics = storedTopics.split('][');
       activeStoryIndex = categoryTopics?.indexOf(topic.name);
+
+      prevStory.link = `/dashboard/dream/manage/${categoryTopics[prevStoryIndex]}`;
+      prevStory.name = categoryTopics[prevStoryIndex];
+      nextStory.link = `/dashboard/dream/manage/${
+        categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
+      }`;
+      nextStory.name =
+        categoryTopics[(activeStoryIndex + 1) % categoryTopics.length];
     }
   });
 
@@ -136,17 +144,6 @@
 {#if !topic}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {:else}
-  {@html (() => {
-    if (!categoryTopics.length) return;
-    prevStory.link = `/dashboard/dream/manage/${categoryTopics[prevStoryIndex]}`;
-    prevStory.name = categoryTopics[prevStoryIndex];
-    nextStory.link = `/dashboard/dream/manage/${
-      categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
-    }`;
-    nextStory.name =
-      categoryTopics[(activeStoryIndex + 1) % categoryTopics.length];
-  })()}
-
   <!-- KEY BUTTONS -->
   {#key topic}
     <span class="flex-row flex-wrap">

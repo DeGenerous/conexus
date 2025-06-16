@@ -167,18 +167,32 @@
   <div class="flex-row">
     <h4>Interactivity</h4>
     <div class="container">
-      <div class="input-container">
+      <div
+        class="input-container"
+        class:disabled={$promptSettings.kidsMode !== null}
+      >
         <label for="frequency">Control</label>
-        <select id="frequency" bind:value={$promptSettings.interactivity}>
+        <select
+          id="frequency"
+          bind:value={$promptSettings.interactivity}
+          disabled={$promptSettings.kidsMode !== null}
+        >
           {#each dreamData.min_max as option}
             <option value={option}>{option}</option>
           {/each}
         </select>
       </div>
 
-      <div class="input-container">
+      <div
+        class="input-container"
+        class:disabled={$promptSettings.kidsMode !== null}
+      >
         <label for="difficulty">Difficulty</label>
-        <select id="difficulty" bind:value={$promptSettings.difficulty}>
+        <select
+          id="difficulty"
+          bind:value={$promptSettings.difficulty}
+          disabled={$promptSettings.kidsMode !== null}
+        >
           {#each dreamData.min_max as option}
             <option value={option}>{option}</option>
           {/each}
@@ -187,22 +201,23 @@
     </div>
   </div>
 
-  <div class="flex-row">
+  <div class="flex-row" class:disabled={$promptSettings.kidsMode !== null}>
     <h4>Length</h4>
     <div class="container">
       <Slider
         bind:sliderValue={$promptSettings.length}
         parameters={dreamData.min_max}
         inputValue={2}
+        disabled={$promptSettings.kidsMode !== null}
       />
     </div>
   </div>
 
   <div class="flex-row">
-    <h4>Text</h4>
+    <h4>Settings</h4>
     <div class="container">
       <div
-        class="reading-style input-container transition round-8 shad"
+        class="input-container"
         class:disabled={$promptSettings.kidsMode !== null}
       >
         <label for="reading-style">Reading style</label>
@@ -363,21 +378,11 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .reading-style {
-    padding-block: 0.5rem;
-    @include gray(0.25);
+  .disabled {
+    opacity: 0.5;
 
     select {
-      animation: none;
-      @include dark-blue;
-    }
-
-    &.disabled {
-      opacity: 0.5;
-
-      select {
-        @include dark-blue(1, text);
-      }
+      color: transparent;
     }
   }
 

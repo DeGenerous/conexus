@@ -4,11 +4,13 @@
     inputValue = 1,
     hints = null,
     sliderValue = $bindable(null),
+    disabled = false,
   }: {
     parameters?: string[];
     inputValue?: number;
     hints?: Nullable<string[]>;
     sliderValue?: Nullable<string>;
+    disabled?: boolean;
   } = $props();
 
   const setOptions = () => {
@@ -30,7 +32,7 @@
 
 {#key sliderValue}
   <div class="flex">
-    <ul class="flex-row">
+    <ul class="flex-row" class:disabled>
       {#each options as { id, value }}
         <button
           class="void-btn dream-radio-btn"
@@ -51,6 +53,7 @@
       step="1"
       bind:value={inputValue}
       onchange={handleChange}
+      {disabled}
     />
     {#if hints}
       {#key inputValue}
@@ -73,6 +76,12 @@
 
       .dream-radio-btn {
         @include font(small);
+      }
+
+      &.disabled {
+        .dream-radio-btn {
+          opacity: 0;
+        }
       }
     }
 

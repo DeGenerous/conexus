@@ -1,6 +1,8 @@
 <script lang="ts">
   import { serveUrl } from '@constants/media';
+  import { validateFiles } from '@utils/file-validation';
   import MediaManager from '@lib/media';
+  import { toastStore } from '@stores/toast.svelte';
 
   let { topic_id = $bindable() }: { topic_id: number } = $props();
 
@@ -20,6 +22,24 @@
 
   const ondragleave = () => (dragover = null);
   const ondragover = (type: string) => (dragover = type);
+
+  // map UI ‘MediaType’ → slot key
+  const typeToSlot = {
+    description: 'description',
+    tile: 'tile',
+    background: 'background',
+    video: 'video',
+    audio: 'audio',
+  };
+
+  // Counts already present in state
+  const counters = {
+    description: () => (description ? 1 : 0),
+    tile: () => (tile ? 1 : 0),
+    background: () => backgrounds.length,
+    video: () => (video ? 1 : 0),
+    audio: () => (audio ? 1 : 0),
+  };
 
   $effect(() => {
     loadMedia();
@@ -62,70 +82,34 @@
   };
 
   // Handle file upload
-  const handleFileUpload = async (event: Event, type: MediaType) => {
-    const input = event.target as HTMLInputElement;
+  const handleFileUpload = async (e: Event, type: MediaType) => {
+    const input = e.target as HTMLInputElement;
     if (!input.files) return;
 
-    const files = Array.from(input.files);
-    dragover = null;
-
     try {
-      if (type === 'background') {
-        // Check for files length
-        if (files.length + backgrounds.length > 3) {
-          tooMuchFiles = true;
-          setTimeout(() => (tooMuchFiles = false), 5000);
-          return;
-        }
-        for (const file of files) {
-          const response = await mediaManager.uploadTopicMedia(
-            file,
-            topic_id,
-            'background',
-          );
-          backgrounds = [...backgrounds, ...response].slice(0, 3); // Keep max 3
-        }
-      } else {
-        if (files.length > 1) {
-          alert('Only one file is allowed for this type.');
-          return;
-        }
+      const slot = type;
+      const files = Array.from(input.files);
+      const accepted = await validateFiles(slot, files, counters[slot]());
 
-        if (type === 'description') {
-          const response = await mediaManager.uploadTopicMedia(
-            files[0],
-            topic_id,
-            'description',
-          );
-          description = response[0];
-        } else if (type === 'tile') {
-          const response = await mediaManager.uploadTopicMedia(
-            files[0],
-            topic_id,
-            'tile',
-          );
-          tile = response[0];
-        } else if (type === 'audio') {
-          const response = await mediaManager.uploadTopicMedia(
-            files[0],
-            topic_id,
-            'audio',
-          );
-          audio = response[0];
-        } else if (type === 'video') {
-          const response = await mediaManager.uploadTopicMedia(
-            files[0],
-            topic_id,
-            'video',
-          );
-          video = response[0];
-        }
-
-        // Reset input value
-        input.value = '';
+      for (const file of accepted) {
+        const [result] = await mediaManager.uploadTopicMedia(
+          file,
+          topic_id,
+          slot,
+        );
+        /* update local reactive vars exactly as before */
+        if (slot === 'background')
+          backgrounds = [...backgrounds, result].slice(0, 3);
+        else if (slot === 'description') description = result;
+        else if (slot === 'tile') tile = result;
+        else if (slot === 'video') video = result;
+        else if (slot === 'audio') audio = result;
       }
-    } catch (error) {
-      console.error('File upload failed:', error);
+    } catch (err) {
+      toastStore.show(String(err), 'error');
+    } finally {
+      input.value = '';
+      dragover = null;
     }
   };
 

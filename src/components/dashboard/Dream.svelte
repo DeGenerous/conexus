@@ -1,6 +1,7 @@
 <script lang="ts">
   import { checkUserState } from '@utils/route-guard';
   import { AdminApp } from '@lib/admin';
+  import { toastStore } from '@stores/toast.svelte';
 
   import CloseSVG from '@components/icons/Close.svelte';
 
@@ -64,7 +65,7 @@
       isValidStory(importedStory);
       await admin.createNewStory(importedStory);
     } catch (error) {
-      alert('You imported an invalid Story JSON');
+      toastStore.show('You imported an invalid Story JSON', 'error');
     }
     importedFile = null;
   };

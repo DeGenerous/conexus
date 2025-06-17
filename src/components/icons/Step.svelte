@@ -29,6 +29,7 @@
   @use '/src/styles/mixins' as *;
 
   button {
+    width: 2rem;
     fill: $light-blue;
     position: relative;
     font-family: inherit;

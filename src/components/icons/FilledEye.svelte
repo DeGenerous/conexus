@@ -39,6 +39,7 @@
   @use '/src/styles/mixins' as *;
 
   button {
+    width: 2rem;
     fill: $light-blue;
     stroke: $light-blue;
 

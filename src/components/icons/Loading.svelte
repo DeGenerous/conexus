@@ -46,6 +46,7 @@
 
 <style>
   button {
+    width: 2rem;
     cursor: wait !important;
 
     svg {

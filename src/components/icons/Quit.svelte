@@ -35,6 +35,7 @@
     fill: $soft-cyan;
 
     &.void-btn {
+      width: 2rem;
       fill: $light-blue;
     }
 

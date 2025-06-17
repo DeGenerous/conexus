@@ -448,8 +448,8 @@ a11y_no_noninteractive_element_interactions -->
             control={true}
           />
         </div>
-        <div>
-          <label class:pc-only={!detectIOS()} for="filled-eye">Styling</label>
+        <div class:pad-inline={detectIOS()}>
+          <label class:pc-only={!detectIOS()} for="filled-eye"> Styling </label>
           <FilledEyeSVG
             onclick={() => switchController('styling')}
             active={activeControlPanel == 'styling'}
@@ -464,7 +464,7 @@ a11y_no_noninteractive_element_interactions -->
             />
           </div>
         {/if}
-        <div>
+        <div class:pad-inline={detectIOS()}>
           <label class:pc-only={!detectIOS()} for="step-control">Step</label>
           <StepSVG
             text={`${step.step < 10 ? '0' : ''}${step.step}`}
@@ -928,6 +928,10 @@ a11y_no_noninteractive_element_interactions -->
 
           @include respond-up(small-desktop) {
             padding-block: 0.5rem;
+          }
+
+          &.pad-inline {
+            padding-inline: 0.5rem;
           }
 
           &.scale-icon {

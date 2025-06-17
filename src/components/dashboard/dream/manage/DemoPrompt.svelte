@@ -124,6 +124,11 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
+  .dream-container,
+  .transparent-container {
+    margin-top: 1rem;
+  }
+
   .dream-container {
     width: auto;
 

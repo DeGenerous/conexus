@@ -42,7 +42,8 @@
   <p class="transparent-white-txt">SHARE:</p>
 
   <span
-    class="flex-row pad-inline round-8 shad loading-animation"
+    class="flex-row pad-inline round-8 shad"
+    class:loading-animation={disabled}
     class:transparent-glowing={!disabled}
   >
     <button
@@ -98,12 +99,7 @@
 
   .share {
     p {
-      display: none;
       @include font(caption);
-
-      @include respond-up(tablet) {
-        display: block;
-      }
     }
 
     span {

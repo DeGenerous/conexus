@@ -77,7 +77,11 @@
     <Profile />
   </header>
 
-  <p class="subheading pad-inline text-shad">{@html subheading}</p>
+  {#if subheading}
+    <p class="mobile-text-wrapper subheading pad-inline text-shad">
+      {@html subheading}
+    </p>
+  {/if}
 
   <nav
     class="flex-row blur transition semi-transparent-dark-bg shad-behind dark-glowing-opaque"
@@ -317,6 +321,14 @@
       stroke: $white;
       @include white-txt;
 
+      &:first-of-type {
+        padding-left: 0.5rem;
+      }
+
+      &:last-of-type {
+        padding-right: 0.5rem;
+      }
+
       svg {
         width: 2rem;
       }
@@ -340,10 +352,12 @@
         max-width: 5rem;
         text-overflow: ellipsis;
         overflow-x: hidden;
-        @include font(caption);
+        text-transform: uppercase;
+        font-size: 0.5rem;
 
         @include respond-up(tablet) {
           max-width: 7rem;
+          text-transform: none;
         }
       }
     }

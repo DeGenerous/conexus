@@ -16,10 +16,10 @@
 
   let tooMuchFiles = $state<boolean>(false);
 
-  let dragover = $state<boolean>(false);
+  let dragover = $state<Nullable<string>>(null);
 
-  const ondragleave = () => (dragover = false);
-  const ondragover = () => (dragover = true);
+  const ondragleave = () => (dragover = null);
+  const ondragover = (type: string) => (dragover = type);
 
   $effect(() => {
     loadMedia();
@@ -67,6 +67,7 @@
     if (!input.files) return;
 
     const files = Array.from(input.files);
+    dragover = null;
 
     try {
       if (type === 'background') {
@@ -175,8 +176,8 @@
         {:else}
           <div
             class="dropzone"
-            class:dragover
-            {ondragover}
+            class:dragover={dragover === 'description'}
+            ondragover={() => ondragover('description')}
             {ondragleave}
             role="button"
             tabindex="-1"
@@ -220,8 +221,8 @@
         {:else}
           <div
             class="dropzone"
-            class:dragover
-            {ondragover}
+            class:dragover={dragover === 'tile'}
+            ondragover={() => ondragover('tile')}
             {ondragleave}
             role="button"
             tabindex="-1"
@@ -269,8 +270,8 @@
         {:else}
           <div
             class="dropzone"
-            class:dragover
-            {ondragover}
+            class:dragover={dragover === 'video'}
+            ondragover={() => ondragover('video')}
             {ondragleave}
             role="button"
             tabindex="-1"
@@ -315,13 +316,13 @@
           {#if backgrounds.length < 3}
             <div
               class="dropzone"
-              class:dragover
-              {ondragover}
+              class:dragover={dragover === 'bg'}
+              ondragover={() => ondragover('bg')}
               {ondragleave}
               role="button"
               tabindex="-1"
             >
-              <label for="tile-upload">
+              <label for="bg-upload">
                 📁 Drop image(s) here or click to upload
                 <br />
                 <br />
@@ -331,7 +332,7 @@
                 Up to 3 files
               </label>
               <input
-                id="tile-upload"
+                id="bg-upload"
                 type="file"
                 max="1"
                 size="1572864"
@@ -369,8 +370,8 @@
         {:else}
           <div
             class="dropzone audio-content"
-            class:dragover
-            {ondragover}
+            class:dragover={dragover === 'audio'}
+            ondragover={() => ondragover('audio')}
             {ondragleave}
             role="button"
             tabindex="-1"
@@ -464,6 +465,7 @@
 
       .audio-content {
         min-width: 20rem;
+        height: unset;
 
         @include respond-up(small-desktop) {
           width: 36rem;

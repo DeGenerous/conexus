@@ -18,6 +18,8 @@
     defaultFont,
     defaultStyling,
     defaultScale,
+    lightThemeFont,
+    lightThemeStyling,
   } from '@constants/customization';
   import openModal, {
     showModal,
@@ -27,6 +29,7 @@
     customStyling,
   } from '@stores/modal.svelte';
   import { resetSettingsModal, gameRulesModal } from '@constants/modal';
+  import isColorLight from '@utils/brightness';
 
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
@@ -45,6 +48,8 @@
 
   let width: number;
   let height: number;
+
+  let showCustomization: boolean = false;
 
   $: step = $story?.step_data as StepData;
 
@@ -535,51 +540,40 @@ a11y_no_noninteractive_element_interactions -->
       on:pointerleave={hideControlsAfterDelay}
       on:click|stopPropagation
     >
-      <div class="font-family transparent-container flex-row">
-        <span class="flex-row">
-          <label for="custom-font">Font</label>
-          <select id="custom-font" bind:value={$customFont.family}>
-            <option value="PT Serif Caption">Default (serif)</option>
-            <option value="Merriweather">Merriweather</option>
-            <option value="Lora">Lora</option>
-            <option value="Roboto">Roboto</option>
-            <option value="Verdana">Verdana</option>
-            <option value="Monospace">Monospace</option>
-            <option value="Courier Prime">Courier prime</option>
-            <option value="Comic Neue">Comic Neue</option>
-            <option value="Caveat">Caveat</option>
-          </select>
-        </span>
+      <span class="custom-themes flex">
+        {#if isColorLight($customStyling.bgColor)}
+          <ResetSVG
+            onclick={() => {
+              $customFont = defaultFont;
+              $customStyling = defaultStyling;
+            }}
+            text="Apply DARK Theme"
+          />
+        {:else}
+          <ResetSVG
+            onclick={() => {
+              $customFont = lightThemeFont;
+              $customStyling = lightThemeStyling;
+            }}
+            text="Apply LIGHT Theme"
+          />
+        {/if}
 
-        <span class="flex-row gap-8">
-          {#if $customFont.family !== 'PT Serif Caption'}
-            <button
-              class:active-btn={$customFont.bold}
-              on:click={() => ($customFont!.bold = !$customFont!.bold)}
-            >
-              bold
-            </button>
-          {/if}
+        <button class="purple-btn" on:click={openThemeSettings}>
+          Manage Themes 🧩
+        </button>
 
-          {#if $customFont.family !== 'Caveat'}
-            <button
-              class:active-btn={$customFont.italic}
-              on:click={() => ($customFont!.italic = !$customFont!.italic)}
-            >
-              italic
-            </button>
-          {/if}
+        <button
+          class:active-btn={showCustomization}
+          on:click={() => (showCustomization = !showCustomization)}
+        >
+          Customize look 🎨
+        </button>
+      </span>
 
-          <button
-            class:active-btn={$customFont.shadow}
-            on:click={() => ($customFont!.shadow = !$customFont!.shadow)}
-          >
-            shadow
-          </button>
-        </span>
-
+      <div class="transparent-container flex-row">
         <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-          <label for="text-color">Base color</label>
+          <label for="text-color">Main color</label>
           <input
             id="text-color"
             type="color"
@@ -588,55 +582,16 @@ a11y_no_noninteractive_element_interactions -->
         </span>
 
         <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-          <label for="title-color">Accent color</label>
+          <label for="title-color">Highlight color</label>
           <input
             id="title-color"
             type="color"
             bind:value={$customFont.accentColor}
           />
         </span>
-      </div>
-
-      <div class="font-size transparent-container">
-        <span class="flex-row">
-          <label for="text-size">Base size</label>
-          <select id="text-size" bind:value={$customFont.baseSize}>
-            <option value="caption">Tiny</option>
-            <option value="small">Small</option>
-            <option value="body">Normal</option>
-            <option value="h5">Big</option>
-            <option value="h4">Huge</option>
-          </select>
-        </span>
-
-        <span class="flex-row">
-          <label for="title-size">Accent size</label>
-          <select id="title-size" bind:value={$customFont.accentSize}>
-            <option value="caption">Tiny</option>
-            <option value="small">Small</option>
-            <option value="body">Normal</option>
-            <option value="h5">Big</option>
-            <option value="h4">Huge</option>
-          </select>
-        </span>
-      </div>
-
-      <div class="transparent-container flex-row">
-        <label for="bg-opacity">BG image opacity</label>
-        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-          <input
-            id="bg-opacity"
-            type="range"
-            min="0"
-            max="100"
-            step="5"
-            bind:value={$customStyling.bgPictureOpacity}
-          />
-          <p>{$customStyling.bgPictureOpacity}%</p>
-        </span>
 
         <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-          <label for="bg-color">BG color</label>
+          <label for="bg-color">Background color</label>
           <input
             id="bg-color"
             type="color"
@@ -645,37 +600,115 @@ a11y_no_noninteractive_element_interactions -->
         </span>
       </div>
 
-      <div class="transparent-container flex-row">
-        <button
-          class:active-btn={$customStyling.boxShadow}
-          on:click={() =>
-            ($customStyling!.boxShadow = !$customStyling!.boxShadow)}
-        >
-          box shadow
-        </button>
+      {#if showCustomization}
+        <div class="fade-in font-family transparent-container flex-row">
+          <span class="flex-row">
+            <label for="custom-font">Font</label>
+            <select id="custom-font" bind:value={$customFont.family}>
+              <option value="PT Serif Caption">Default (serif)</option>
+              <option value="Merriweather">Merriweather</option>
+              <option value="Lora">Lora</option>
+              <option value="Roboto">Roboto</option>
+              <option value="Verdana">Verdana</option>
+              <option value="Monospace">Monospace</option>
+              <option value="Courier Prime">Courier prime</option>
+              <option value="Comic Neue">Comic Neue</option>
+              <option value="Caveat">Caveat</option>
+            </select>
+          </span>
 
-        <button
-          class:active-btn={$customStyling.optionsContainer}
-          on:click={() =>
-            ($customStyling!.optionsContainer =
-              !$customStyling!.optionsContainer)}
-        >
-          options box
-        </button>
+          <span class="flex-row">
+            <label for="text-size">Main text size</label>
+            <select id="text-size" bind:value={$customFont.baseSize}>
+              <option value="caption">Minimal</option>
+              <option value="small">Compact</option>
+              <option value="body">Standard</option>
+              <option value="h5">Large</option>
+              <option value="h4">Maximal</option>
+            </select>
+          </span>
 
-        <button
-          class:active-btn={$customStyling.optionSelector}
-          on:click={() =>
-            ($customStyling!.optionSelector = !$customStyling!.optionSelector)}
-        >
-          option selector
-        </button>
-      </div>
-      <span class="custom-themes flex-row">
-        <button class="purple-btn" on:click={openThemeSettings}>
-          Manage Themes
-        </button>
-      </span>
+          <span class="flex-row">
+            <label for="title-size">Highlight size</label>
+            <select id="title-size" bind:value={$customFont.accentSize}>
+              <option value="caption">Minimal</option>
+              <option value="small">Compact</option>
+              <option value="body">Standard</option>
+              <option value="h5">Large</option>
+              <option value="h4">Maximal</option>
+            </select>
+          </span>
+
+          <span class="flex-row gap-8">
+            {#if $customFont.family !== 'PT Serif Caption'}
+              <button
+                class:active-btn={$customFont.bold}
+                on:click={() => ($customFont!.bold = !$customFont!.bold)}
+              >
+                bold
+              </button>
+            {/if}
+
+            {#if $customFont.family !== 'Caveat'}
+              <button
+                class:active-btn={$customFont.italic}
+                on:click={() => ($customFont!.italic = !$customFont!.italic)}
+              >
+                italic
+              </button>
+            {/if}
+
+            <button
+              class:active-btn={$customFont.shadow}
+              on:click={() => ($customFont!.shadow = !$customFont!.shadow)}
+            >
+              shadow
+            </button>
+          </span>
+        </div>
+
+        <div class="fade-in transparent-container flex-row">
+          <label for="bg-opacity">Background image visibility</label>
+          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+            <input
+              id="bg-opacity"
+              type="range"
+              min="0"
+              max="100"
+              step="5"
+              bind:value={$customStyling.bgPictureOpacity}
+            />
+            <p>{$customStyling.bgPictureOpacity}%</p>
+          </span>
+
+          <button
+            class:active-btn={$customStyling.optionsContainer}
+            on:click={() =>
+              ($customStyling!.optionsContainer =
+                !$customStyling!.optionsContainer)}
+          >
+            options box
+          </button>
+
+          <button
+            class:active-btn={$customStyling.boxShadow}
+            on:click={() =>
+              ($customStyling!.boxShadow = !$customStyling!.boxShadow)}
+          >
+            box shadow
+          </button>
+
+          <button
+            id="option-selector-btn"
+            class:active-btn={$customStyling.optionSelector}
+            on:click={() =>
+              ($customStyling!.optionSelector =
+                !$customStyling!.optionSelector)}
+          >
+            option selector
+          </button>
+        </div>
+      {/if}
     </section>
 
     <!-- SCALE CONTROLLER -->
@@ -849,6 +882,7 @@ a11y_no_noninteractive_element_interactions -->
       bottom: 0;
       width: 100vw;
       height: 4rem;
+      padding-inline: 1rem;
       z-index: 100;
       justify-content: space-between;
       @include navy;
@@ -943,7 +977,7 @@ a11y_no_noninteractive_element_interactions -->
     // ADDITIONAL CONTROLLERS STYLING
     section {
       @extend :global(.shad-behind);
-      max-height: 70vh;
+      max-height: 50vh;
       overflow-y: auto;
       display: flex;
       flex-flow: row wrap;
@@ -959,6 +993,18 @@ a11y_no_noninteractive_element_interactions -->
       transition: all 0.6s ease-in-out;
       background-color: $dark-gray;
       @include white-txt(soft);
+
+      @include respond-up(tablet) {
+        max-height: 70vh;
+      }
+
+      #option-selector-btn {
+        display: none;
+
+        @include respond-up(tablet) {
+          display: flex;
+        }
+      }
 
       div {
         width: 100%;
@@ -1025,16 +1071,15 @@ a11y_no_noninteractive_element_interactions -->
           gap: 1rem 1.5rem;
         }
 
-        .font-size {
-          align-items: flex-end;
-
-          @include respond-up(tablet) {
-            gap: 1.5rem;
-          }
-        }
-
         .custom-themes {
           width: 100%;
+          flex-flow: column nowrap;
+          padding-bottom: 1rem;
+
+          @include respond-up(tablet) {
+            flex-flow: row wrap;
+            padding-bottom: 0;
+          }
         }
       }
     }

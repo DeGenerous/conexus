@@ -4,7 +4,7 @@
     text = 'Save',
     disabled = false,
   }: {
-    onclick: () => void;
+    onclick: (e: Event) => void | Promise<void>;
     text?: string;
     disabled?: boolean;
   } = $props();

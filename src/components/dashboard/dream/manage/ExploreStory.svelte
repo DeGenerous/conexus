@@ -210,7 +210,7 @@
               onclick={() => {
                 editingName = false;
                 admin.editTopicName(topic_name, storyName);
-                window.open('/dashboard/dream/manage/', '_self');
+                window.open(`/dashboard/dream/manage/${storyName}`, '_self');
               }}
               disabled={topic_name == storyName}
             />

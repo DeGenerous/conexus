@@ -43,6 +43,10 @@
       z-index: 2;
       @include dark-blue(1, text);
       @include font(caption);
+
+      @include respond-up(small-desktop) {
+        @include font(body);
+      }
     }
 
     svg {

@@ -32,6 +32,7 @@
   import CopySVG from '@components/icons/Copy.svelte';
   import StarSVG from '@components/icons/Star.svelte';
   import DiscordBtn from '@components/icons/Discord.svelte';
+  import SaveSVG from './icons/Checkmark.svelte';
 
   let dialog: HTMLDialogElement;
 
@@ -155,7 +156,8 @@
   let editPassword: string = '';
   let editPasswordConfirm: string = '';
 
-  const saveChangedPassword = async () => {
+  const saveChangedPassword = async (e: Event) => {
+    e.preventDefault();
     $accountError = null as AccountError; // reset storage from any old errors
     await account.changePassword({
       old_password: editOldPassword,
@@ -163,6 +165,8 @@
     });
     if (!$accountError || !$accountError.changePassword)
       editingPassword = false;
+    editPassword = '';
+    editPasswordConfirm = '';
   };
 
   // Select wallet address as the main one
@@ -363,16 +367,12 @@ a11y-no-static-element-interactions-->
                   >
                     Cancel
                   </button>
-                  <button
-                    class="green-btn"
-                    type="submit"
-                    on:click|preventDefault={saveChangedPassword}
+                  <SaveSVG
+                    onclick={saveChangedPassword}
                     disabled={!editPassword ||
                       !regexpPasswordValidation.test(editPassword) ||
                       editPassword !== editPasswordConfirm}
-                  >
-                    Save
-                  </button>
+                  />
                 {:else}
                   <button
                     type="button"

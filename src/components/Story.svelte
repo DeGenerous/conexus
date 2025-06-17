@@ -115,7 +115,7 @@
             class="loading-animation default-genres genres round-8 pad-8 pad-inline shad"
           ></span>
 
-          <span class="buttons flex-row">
+          <span class="buttons flex-row flex-wrap">
             <Share disabled={true} />
             <button disabled>PLAY NOW</button>
           </span>
@@ -171,7 +171,7 @@
             </span>
           {/if}
 
-          <span class="buttons flex-row">
+          <span class="buttons flex-row flex-wrap">
             {#if game.loading}
               <span class="flex-row gap-8">
                 <LoadingSVG />
@@ -298,6 +298,8 @@
   @use '/src/styles/mixins' as *;
 
   .story-wrapper {
+    margin-top: 1rem;
+
     .story {
       width: 90%;
       max-width: 50rem;
@@ -342,10 +344,6 @@
             min-width: 20rem;
             min-height: 2.2rem;
           }
-        }
-
-        .buttons {
-          justify-content: space-between;
         }
       }
 

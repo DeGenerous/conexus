@@ -8,11 +8,10 @@
   border: 1px solid rgba(150, 150, 150, $opacity);
 }
 
-@mixin cyan-border($opacity: 1, $style: solid) {
-  border: 1px $style rgba(51, 226, 230, $opacity);
-  @if $style == 'dashed' {
-    border-width: 2px;
-  }
+@mixin cyan-border($opacity: 1, $style: solid, $width: 1px) {
+  border-width: $width;
+  border-style: $style;
+  border-color: rgba(51, 226, 230, $opacity);
 }
 
 @mixin dark-border($opacity: 1) {

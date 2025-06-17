@@ -108,7 +108,7 @@
         </span>
       {/each}
     {:else}
-      <p class="validation">No NFT restriction selected.</p>
+      <p class="validation">No NFT restriction selected</p>
     {/if}
   </div>
 </div>

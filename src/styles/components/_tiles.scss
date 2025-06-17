@@ -16,6 +16,7 @@
   justify-content: center;
   gap: 1rem;
   padding-inline: 1.5rem;
+  margin-block: 1rem 0;
   z-index: 50;
 
   h2 {
@@ -34,7 +35,7 @@
   }
 
   @include respond-up(tablet) {
-    margin-bottom: -1rem;
+    margin-block: 0 -1rem;
 
     button {
       bottom: 0.5rem;
@@ -178,7 +179,7 @@
   border-radius: 1rem;
   text-decoration: none !important;
   flex: none;
-  @include blue;
+  @include blue(0.75);
   @include white-txt;
   @include box-shadow;
 
@@ -186,7 +187,7 @@
   &:active:not(.loading-tile),
   &:focus:not(.loading-tile) {
     @include dark-blue(1, text);
-    @include blue(1, bg, bright);
+    @include blue(0.9, bg, bright);
     @include bright;
     @include scale-up;
     @include box-shadow(deep);

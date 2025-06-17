@@ -222,10 +222,10 @@
 
   .filters {
     width: 100vw;
-    padding-inline: 1.5rem;
 
     @include respond-up(tablet) {
       flex-direction: row;
+      padding-inline: 1.5rem;
     }
   }
 </style>

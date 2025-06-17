@@ -113,7 +113,11 @@ html {
   padding-block: 4rem 6rem;
   letter-spacing: 0.025rem;
   word-spacing: 0.2em;
-  background-color: black;
+  background-color: $dark-blue;
+
+  @include respond-up(small-desktop) {
+    background-color: black;
+  }
 
   @include cyan(0.85, 'text');
   @include font;
@@ -266,6 +270,20 @@ html {
   .opaque-container {
     @extend .container;
     animation: dark-glowing-opaque 10s ease-in-out infinite;
+  }
+
+  .mobile-text-wrapper {
+    @extend .transparent-container;
+    display: block;
+
+    @include respond-up(small-desktop) {
+      box-shadow: none;
+      animation: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      width: auto;
+      padding: 0;
+    }
   }
 
   .wide-container {

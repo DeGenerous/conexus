@@ -15,7 +15,7 @@
   } = $props();
 </script>
 
-<div class="flex-row blur pad-8 round-8 shad" class:active={activeGenre}>
+<div class="flex-row blur pad-8 shad" class:active={activeGenre}>
   {#if activeGenre}
     <ResetSVG onclick={resetGenres} />
   {:else}
@@ -43,6 +43,8 @@
     }
 
     @include respond-up(tablet) {
+      border-radius: 0.5rem;
+
       &,
       select {
         width: auto;

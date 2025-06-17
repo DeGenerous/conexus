@@ -378,6 +378,14 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
+  #blank {
+    min-height: 25rem;
+
+    @include respond-up(small-desktop) {
+      min-height: 12vw;
+    }
+  }
+
   .disabled {
     opacity: 0.5;
 

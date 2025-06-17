@@ -23,7 +23,7 @@
   };
 </script>
 
-<div class="flex-row blur pad-8 round-8 shad" class:active={searchField}>
+<div class="flex-row blur pad-8 shad" class:active={searchField}>
   {#if isSearching}
     <LoadingSVG />
   {:else}
@@ -60,6 +60,8 @@
     }
 
     @include respond-up(tablet) {
+      border-radius: 0.5rem;
+
       & {
         width: auto;
       }

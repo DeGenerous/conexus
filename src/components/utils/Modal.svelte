@@ -20,6 +20,7 @@
   } from '@constants/cache';
 
   import CloseSVG from '@components/icons/Close.svelte';
+  import SaveSVG from '@components/icons/Checkmark.svelte';
 
   let dialog: HTMLDialogElement;
 
@@ -95,9 +96,9 @@
   // Cache only custom themes, first two THEME-objects we provide by default (dark/light)
   const cacheCustomThemes = () => {
     ClearCache(THEMES_KEY);
-    if ($customThemes.length === 2) return;
+    if ($customThemes.length === 8) return;
 
-    SetCache(THEMES_KEY, $customThemes.slice(2), ONE_YEAR_TTL);
+    SetCache(THEMES_KEY, $customThemes.slice(8), ONE_YEAR_TTL);
   };
 </script>
 
@@ -164,9 +165,11 @@
             bind:value={newThemeName}
             disabled={anyThemeMatched()}
           />
-          <button on:click={handleAddTheme} disabled={anyThemeMatched()}>
-            Save Your Current Theme
-          </button>
+          <SaveSVG
+            onclick={handleAddTheme}
+            disabled={anyThemeMatched()}
+            text="Save Current Theme"
+          />
         </div>
       </ul>
     {/if}

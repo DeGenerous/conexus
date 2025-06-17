@@ -195,16 +195,17 @@ input[type='number']::-webkit-inner-spin-button {
   transition: all 0.3s ease-in-out;
   @include dark-blue(0.75);
   @include cyan(1, text);
-  @include cyan-border(0.5, dashed);
+  @include cyan-border(0.5, dashed, 2px);
 
   &:hover {
     @include bright;
     @include box-glow;
-    @include cyan-border(1, dashed);
+    @include cyan-border(1, dashed, 2px);
   }
 
   &.dragover {
     @include navy;
+    @include cyan-border(1, solid, 2px);
 
     label {
       @include cyan(1, text);
@@ -228,7 +229,7 @@ input[type='number']::-webkit-inner-spin-button {
 
 textarea {
   width: 100%;
-  min-height: 25vh;
+  min-height: 16rem;
   max-height: 80vh;
   resize: vertical;
   outline: none;

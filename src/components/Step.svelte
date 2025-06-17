@@ -571,37 +571,37 @@ a11y_no_noninteractive_element_interactions -->
         </button>
       </span>
 
-      <div class="transparent-container flex-row">
-        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-          <label for="text-color">Main color</label>
-          <input
-            id="text-color"
-            type="color"
-            bind:value={$customFont.baseColor}
-          />
-        </span>
-
-        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-          <label for="title-color">Highlight color</label>
-          <input
-            id="title-color"
-            type="color"
-            bind:value={$customFont.accentColor}
-          />
-        </span>
-
-        <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-          <label for="bg-color">Background color</label>
-          <input
-            id="bg-color"
-            type="color"
-            bind:value={$customStyling.bgColor}
-          />
-        </span>
-      </div>
-
       {#if showCustomization}
-        <div class="fade-in font-family transparent-container flex-row">
+        <div class="fade-in transparent-container flex-row">
+          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+            <label for="text-color">Main color</label>
+            <input
+              id="text-color"
+              type="color"
+              bind:value={$customFont.baseColor}
+            />
+          </span>
+
+          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+            <label for="title-color">Highlight color</label>
+            <input
+              id="title-color"
+              type="color"
+              bind:value={$customFont.accentColor}
+            />
+          </span>
+
+          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+            <label for="bg-color">Background color</label>
+            <input
+              id="bg-color"
+              type="color"
+              bind:value={$customStyling.bgColor}
+            />
+          </span>
+        </div>
+
+        <div class="font-family fade-in transparent-container flex-row">
           <span class="flex-row">
             <label for="custom-font">Font</label>
             <select id="custom-font" bind:value={$customFont.family}>
@@ -1078,11 +1078,11 @@ a11y_no_noninteractive_element_interactions -->
         .custom-themes {
           width: 100%;
           flex-flow: column nowrap;
-          padding-bottom: 1rem;
+          padding-block: 1rem;
 
           @include respond-up(tablet) {
             flex-flow: row wrap;
-            padding-bottom: 0;
+            padding-block: 0;
           }
         }
       }

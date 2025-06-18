@@ -213,6 +213,7 @@ a11y-no-static-element-interactions-->
   bind:this={dialog}
   on:close={() => ($showProfile = false)}
   on:click|self={() => ($showProfile = false)}
+  aria-label="Profile"
 >
   <div on:click|stopPropagation>
     <header class="flex">

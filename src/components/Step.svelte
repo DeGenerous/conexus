@@ -389,7 +389,7 @@ a11y_no_noninteractive_element_interactions -->
         style:color={$customFont.accentColor}
         style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
         style:max-width={width >= 1440 ? `${customScale.optionsWidth}%` : ''}
-        style:width="{100 * zoom}%"
+        style:width="{width >= 1440 ? 100 * zoom : 95}%"
         style:zoom
       >
         <button
@@ -406,7 +406,7 @@ a11y_no_noninteractive_element_interactions -->
         style:color={$customFont.accentColor}
         style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
         style:max-width={width >= 1440 ? `${customScale.optionsWidth}%` : ''}
-        style:width="{100 * zoom}%"
+        style:width="{width >= 1440 ? 100 * zoom : 95}%"
         style:zoom
       >
         {#each step.options as option, i}

@@ -669,7 +669,9 @@ a11y_no_noninteractive_element_interactions -->
 
         <div class="fade-in transparent-container flex-row">
           <label for="bg-opacity">Background image visibility</label>
-          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
+          <span
+            class="bg-image-slider flex-row pad-8 round-8 gap-8 dark-glowing"
+          >
             <input
               id="bg-opacity"
               type="range"
@@ -680,22 +682,17 @@ a11y_no_noninteractive_element_interactions -->
             />
             <p>{$customStyling.bgPictureOpacity}%</p>
           </span>
+        </div>
 
+        <div class="fade-in transparent-container flex-row">
+          <label for="layout">Layout</label>
           <button
             class:active-btn={$customStyling.optionsContainer}
             on:click={() =>
               ($customStyling!.optionsContainer =
                 !$customStyling!.optionsContainer)}
           >
-            options box
-          </button>
-
-          <button
-            class:active-btn={$customStyling.boxShadow}
-            on:click={() =>
-              ($customStyling!.boxShadow = !$customStyling!.boxShadow)}
-          >
-            box shadow
+            options frame
           </button>
 
           <button
@@ -706,6 +703,14 @@ a11y_no_noninteractive_element_interactions -->
                 !$customStyling!.optionSelector)}
           >
             option selector
+          </button>
+
+          <button
+            class:active-btn={$customStyling.boxShadow}
+            on:click={() =>
+              ($customStyling!.boxShadow = !$customStyling!.boxShadow)}
+          >
+            box shadow
           </button>
         </div>
       {/if}
@@ -1083,6 +1088,26 @@ a11y_no_noninteractive_element_interactions -->
           @include respond-up(tablet) {
             flex-flow: row wrap;
             padding-block: 0;
+          }
+        }
+
+        .bg-image-slider {
+          width: 100%;
+
+          input {
+            width: 85%;
+          }
+
+          p {
+            flex: none;
+          }
+
+          @include respond-up(tablet) {
+            width: auto;
+
+            input {
+              width: clamp(250px, 50vw, 20rem);
+            }
           }
         }
       }

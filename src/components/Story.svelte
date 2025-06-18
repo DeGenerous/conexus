@@ -59,6 +59,26 @@
       );
       // Find index of selected story to get PREV & NEXT story index
       activeStoryIndex = categoryTopicNames?.indexOf(story_name);
+
+      if (!categoryTopics.length) return;
+      // Update index value during mount
+      prevStoryIndex =
+        activeStoryIndex <= 0
+          ? categoryTopics.length - 1
+          : activeStoryIndex - 1;
+      // Set up routes for switching between stories
+      prevStory.link = `/sections/${section}/${categoryTopics[prevStoryIndex].topic_name}?id=${
+        categoryTopics[prevStoryIndex].topic_id
+      }`;
+      prevStory.name = categoryTopics[prevStoryIndex].topic_name;
+      nextStory.link = `/sections/${section}/${
+        categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
+          .topic_name
+      }?id=${categoryTopics[(activeStoryIndex + 1) % categoryTopics.length].topic_id}`;
+      nextStory.name =
+        categoryTopics[
+          (activeStoryIndex + 1) % categoryTopics.length
+        ].topic_name;
     }
   });
 
@@ -116,29 +136,13 @@
           ></span>
 
           <span class="buttons flex-row flex-wrap">
-            <Share disabled={true} />
             <button disabled>PLAY NOW</button>
+            <Share disabled={true} />
           </span>
         </div>
       </section>
     </div>
   {:then topic: TopicThumbnail}
-    {@html (() => {
-      if (!categoryTopics.length) return;
-      prevStory.link = `/sections/${section}/${categoryTopics[prevStoryIndex].topic_name}?id=${
-        categoryTopics[prevStoryIndex].topic_id
-      }`;
-      prevStory.name = categoryTopics[prevStoryIndex].topic_name;
-      nextStory.link = `/sections/${section}/${
-        categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
-          .topic_name
-      }?id=${categoryTopics[(activeStoryIndex + 1) % categoryTopics.length].topic_id}`;
-      nextStory.name =
-        categoryTopics[
-          (activeStoryIndex + 1) % categoryTopics.length
-        ].topic_name;
-    })()}
-
     <div
       class="story-wrapper flex"
       style:cursor={game.loading ? 'progress' : ''}
@@ -178,7 +182,6 @@
                 <button disabled>LOADING</button>
               </span>
             {:else}
-              <Share />
               <button
                 class="button-glowing"
                 on:click={() =>
@@ -187,6 +190,7 @@
               >
                 PLAY NOW
               </button>
+              <Share />
             {/if}
           </span>
         </div>
@@ -361,6 +365,10 @@
 
           .buttons {
             justify-content: flex-end;
+
+            @include respond-up(small-desktop) {
+              flex-direction: row-reverse;
+            }
 
             * {
               flex: none;

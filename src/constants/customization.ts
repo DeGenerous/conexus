@@ -170,3 +170,24 @@ export const epicThemeStyling: CustomStyling = {
   bgPictureOpacity: 30,
   bgColor: '#1a1a1a',
 };
+
+// ROMANTIC THEME
+
+export const romanticThemeFont: CustomFont = {
+  family: 'Caveat',
+  baseSize: 'body',
+  accentSize: 'h4',
+  baseColor: '#4a2c2a', // deep rosewood
+  accentColor: '#d16ba5', // rose pink
+  bold: true,
+  italic: true,
+  shadow: false,
+};
+
+export const romanticThemeStyling: CustomStyling = {
+  boxShadow: true,
+  optionsContainer: true,
+  optionSelector: true,
+  bgPictureOpacity: 10,
+  bgColor: '#fff0f5', // lavender blush
+};

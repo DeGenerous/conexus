@@ -271,7 +271,7 @@
     top: 0;
     width: 100vw;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 1.5rem;
     z-index: 100;
 
     @include respond-up(small-desktop) {

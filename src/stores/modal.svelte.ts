@@ -16,6 +16,8 @@ import {
   noirThemeStyling,
   epicThemeFont,
   epicThemeStyling,
+  romanticThemeFont,
+  romanticThemeStyling,
 } from '@constants/customization';
 
 export const showModal = writable<boolean>(false);
@@ -71,6 +73,12 @@ export const customThemes = writable<CustomTheme[]>([
     name: 'Epic',
     font: epicThemeFont,
     styling: epicThemeStyling,
+    standard: true,
+  },
+  {
+    name: 'Romantic',
+    font: romanticThemeFont,
+    styling: romanticThemeStyling,
     standard: true,
   },
 ]);

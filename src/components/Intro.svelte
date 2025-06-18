@@ -6,8 +6,8 @@
   let app: CoNexusApp = new CoNexusApp();
 
   const menuText: string[] = [
-    'A new world with no limits awaits you.',
-    'Within CoNexus, you will transcend the boundaries of reality as we know it.',
+    'A new world of endless possibilities awaits you.',
+    'Infinitely unique. Never repeatable.',
   ];
 </script>
 

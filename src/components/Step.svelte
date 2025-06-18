@@ -1,6 +1,7 @@
 <!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { tippy } from 'svelte-tippy';
 
   import { story, game } from '@stores/conexus.svelte';
   import conexusBG from '@stores/background.svelte';
@@ -24,7 +25,6 @@
   import openModal, {
     showModal,
     themeSettings,
-    customThemes,
     customFont,
     customStyling,
   } from '@stores/modal.svelte';
@@ -48,6 +48,8 @@
 
   let width: number;
   let height: number;
+
+  let zoom: number = 1;
 
   let showCustomization: boolean = false;
 
@@ -87,6 +89,11 @@
 
   const cancelHide = () => {
     clearTimeout(hiddenControlsTimeout);
+  };
+
+  const toggleZoom = () => {
+    if (zoom === 1) zoom = 0.5;
+    else zoom = 1;
   };
 
   // FONT FOR ALL ELEMENTS INSIDE step-wrapper
@@ -163,6 +170,10 @@
     switch (event.key) {
       case 'f': {
         game.fullscreen = !game.fullscreen;
+        break;
+      }
+      case 'z': {
+        toggleZoom();
         break;
       }
       case 'ArrowLeft': {
@@ -300,6 +311,7 @@ a11y_no_noninteractive_element_interactions -->
   >
     <ImageDisplay
       {width}
+      {zoom}
       image={step.image}
       image_type={step.image_type}
       imageWidth={customScale.imageWidth}
@@ -313,6 +325,7 @@ a11y_no_noninteractive_element_interactions -->
         class:text-shad={$customFont.shadow}
         style:font-style={$customFont.italic ? 'italic' : ''}
         style:color={$customFont.accentColor}
+        style:zoom
       >
         {step.title}
       </h4>
@@ -320,6 +333,8 @@ a11y_no_noninteractive_element_interactions -->
 
     <article
       style:max-width={width >= 1440 ? `${customScale.paragraphWidth}%` : ''}
+      style:width="{100 * zoom}%"
+      style:zoom
     >
       {step.story}
     </article>
@@ -332,12 +347,14 @@ a11y_no_noninteractive_element_interactions -->
         class:text-shad={$customFont.shadow}
         style:font-style={$customFont.italic ? 'italic' : ''}
         style:color={$customFont.accentColor}
+        style:zoom
       >
         Story Summary
       </h4>
 
       <article
         style:max-width={width >= 1440 ? `${customScale.paragraphWidth}%` : ''}
+        style:zoom
       >
         {step.summary}
       </article>
@@ -347,6 +364,7 @@ a11y_no_noninteractive_element_interactions -->
         class:text-shad={$customFont.shadow}
         style:font-style={$customFont.italic ? 'italic' : ''}
         style:color={$customFont.accentColor}
+        style:zoom
       >
         CoNexus identified your trait as:
         <strong class="text-glowing">{step.trait}</strong>
@@ -357,6 +375,7 @@ a11y_no_noninteractive_element_interactions -->
           style:max-width={width >= 1440
             ? `${customScale.paragraphWidth}%`
             : ''}
+          style:zoom
         >
           {step.trait_description}
         </article>
@@ -370,6 +389,8 @@ a11y_no_noninteractive_element_interactions -->
         style:color={$customFont.accentColor}
         style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
         style:max-width={width >= 1440 ? `${customScale.optionsWidth}%` : ''}
+        style:width="{100 * zoom}%"
+        style:zoom
       >
         <button
           id="option-0"
@@ -385,6 +406,8 @@ a11y_no_noninteractive_element_interactions -->
         style:color={$customFont.accentColor}
         style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
         style:max-width={width >= 1440 ? `${customScale.optionsWidth}%` : ''}
+        style:width="{100 * zoom}%"
+        style:zoom
       >
         {#each step.options as option, i}
           <button
@@ -501,7 +524,13 @@ a11y_no_noninteractive_element_interactions -->
         <span class="flex gap-8">
           <h5 class="title">{story_name.trim()}</h5>
           <hr />
-          <h5>Step {step.step}</h5>
+          <h5>
+            {#if step.title}
+              {step.title}
+            {:else}
+              Step {step.step}
+            {/if}
+          </h5>
         </span>
         <SwitchSVG
           onclick={() => $story?.loadGameStep(step.step + 1)}
@@ -724,6 +753,9 @@ a11y_no_noninteractive_element_interactions -->
       on:pointerleave={hideControlsAfterDelay}
       on:click|stopPropagation
     >
+      {#if zoom !== 1}
+        <p class="zoom-hint validation green-txt">Zoomed-out mode active 🖼️</p>
+      {/if}
       <div class="image-scale transparent-container">
         <span class="flex-row">
           <label for="image-width">Picture width</label>
@@ -787,7 +819,7 @@ a11y_no_noninteractive_element_interactions -->
           </span>
         </span>
       </div>
-      <span class="reset-wrapper flex-row">
+      <span class="flex-row flex-wrap">
         <ResetSVG
           text="Reset to default scale"
           onclick={() =>
@@ -797,6 +829,20 @@ a11y_no_noninteractive_element_interactions -->
               () => updateScale('reset'),
             )}
         />
+        <button
+          class:green-btn={zoom !== 1}
+          use:tippy={{
+            content: "Press 'Z' to toggle zoom",
+            animation: 'scale',
+          }}
+          on:click={toggleZoom}
+        >
+          {#if zoom === 1}
+            Zoom down
+          {:else}
+            Reset zoom
+          {/if}
+        </button>
       </span>
     </section>
   </section>
@@ -1031,12 +1077,6 @@ a11y_no_noninteractive_element_interactions -->
         transform: none;
       }
 
-      .reset-wrapper {
-        flex-wrap: wrap;
-        justify-content: space-around;
-        width: 100%;
-      }
-
       // STEPS
       &.step-controller {
         div {
@@ -1072,6 +1112,11 @@ a11y_no_noninteractive_element_interactions -->
             display: none;
           }
         }
+      }
+
+      // SCALE
+      .zoom-hint {
+        width: 100%;
       }
 
       // STYLING

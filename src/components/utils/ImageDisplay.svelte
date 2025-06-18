@@ -1,6 +1,7 @@
 <script lang="ts">
   let {
     width,
+    zoom,
     image,
     image_type = 'url',
     imageWidth = 800,
@@ -8,6 +9,7 @@
     boxShadow = true,
   }: {
     width: number;
+    zoom: number;
     image: string | undefined;
     image_type?: string;
     imageWidth: number;
@@ -53,6 +55,7 @@
   style:box-shadow={boxShadow ? '' : 'none'}
   style:max-width="{imageWidth}px"
   style={width < 768 ? '' : `height: ${imageHeight}px`}
+  style:zoom
 >
   {#if isLoading}
     <span class="pulse-animation">

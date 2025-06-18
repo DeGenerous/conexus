@@ -180,7 +180,7 @@ export const romanticThemeFont: CustomFont = {
   baseColor: '#4a2c2a', // deep rosewood
   accentColor: '#d16ba5', // rose pink
   bold: true,
-  italic: true,
+  italic: false,
   shadow: false,
 };
 

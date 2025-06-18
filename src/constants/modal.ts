@@ -33,6 +33,7 @@ export const gameRulesModal = `
     <li><span class="keyboard-btn">←</span> / <span class="keyboard-btn">→</span> — move between steps</li>
     <li><span class="keyboard-btn">F</span> — toggle fullscreen</li>
     <li><span class="keyboard-btn">M</span> — toggle mute</li>
+    <li><span class="keyboard-btn">Z</span> - toggle zoomed-out mode to fit all content in view</li>
   </ul>
 
   <h5>Want full control? It’s yours.</h5>

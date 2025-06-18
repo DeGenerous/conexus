@@ -838,7 +838,7 @@ a11y_no_noninteractive_element_interactions -->
           on:click={toggleZoom}
         >
           {#if zoom === 1}
-            Zoom down
+            Zoom out
           {:else}
             Reset zoom
           {/if}

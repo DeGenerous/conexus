@@ -7,7 +7,7 @@ import {
 } from '@constants/cache';
 import { api_error } from '@errors/index';
 import { AdminAPI } from '@service/routes';
-import { toastStore } from '@stores/toast';
+import { toastStore } from '@stores/toast.svelte';
 
 export class AdminApp extends AdminAPI {
   // Constructor
@@ -230,7 +230,7 @@ export class AdminApp extends AdminAPI {
   /**
    * Changes the availability status of a prompt.
    *
-   * @param {number} prompt_id - The ID of the prompt to change availability for.
+   * @param {number} topic_id - The ID of the prompt to change availability for.
    * @param {'available' | 'unavailable'} available - The new availability status to set.
    * @returns {Promise<void>} A promise that resolves when the availability status has been changed.
    *
@@ -683,6 +683,6 @@ export class AdminApp extends AdminAPI {
   }
 
   private clearCache() {
-    ClearCache('manage');
+    ClearCache('view');
   }
 }

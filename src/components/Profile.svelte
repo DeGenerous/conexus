@@ -1,20 +1,16 @@
+<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import DoorSVG from '@components/icons/Door.svelte';
-  import EyeSVG from '@components/icons/Eye.svelte';
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import { Account } from '@lib/account';
-  import { authenticated, referralCodes, accountError } from '@stores/account';
   import {
-    showModal,
-    showProfile,
-    secondButton,
-    secondButtonClass,
-    handleSecondButton,
-    modalContent,
-  } from '@stores/modal';
-  import passwordVisible from '@stores/password-visibility';
+    authenticated,
+    referralCodes,
+    accountError,
+  } from '@stores/account.svelte';
+  import { showProfile } from '@stores/modal.svelte';
+  import passwordVisible from '@stores/password-visibility.svelte';
   import {
     regexpEmail,
     regexpPasswordValidation,
@@ -25,77 +21,61 @@
     regexpSpecialCharCheck,
     regexpRestrictedCharsCheck,
   } from '@constants/regexp';
+  import openModal from '@stores/modal.svelte';
+  import { walletSwitchModal } from '@constants/modal';
+
+  import ProfileSVG from '@components/icons/Profile.svelte';
+  import DoorSVG from '@components/icons/Door.svelte';
+  import EyeSVG from '@components/icons/Eye.svelte';
+  import QuitSVG from '@components/icons/Quit.svelte';
+  import CloseSVG from '@components/icons/Close.svelte';
+  import CopySVG from '@components/icons/Copy.svelte';
+  import StarSVG from '@components/icons/Star.svelte';
+  import DiscordBtn from '@components/icons/Discord.svelte';
+  import SaveSVG from './icons/Checkmark.svelte';
 
   let dialog: HTMLDialogElement;
 
   $: if (dialog && $showProfile) {
+    dialog.classList.remove('dialog-fade-out');
     dialog.showModal();
   } else if (dialog) {
-    dialog.close();
+    dialog.classList.add('dialog-fade-out'); // animation before close
+    setTimeout(() => dialog.close(), 300);
     if (!isLogged) {
+      // Back to the LOGIN OPTIONS
       signUp = false;
       signInWithEmail = false;
     } else {
+      // Ensure that CHANGE PASSWORD is closed
       editingPassword = false;
     }
   }
 
   const handleBackArrow = () => {
     if (signUp) {
+      // Back from SIGN UP window
       signUp = false;
       return;
     }
     if (signInWithEmail) {
+      // Back from SIGN IN WITH EMAIL window
       signInWithEmail = false;
       return;
     }
+    // Close dialog if already on LOGIN OPTIONS window
     $showProfile = false;
   };
 
-  // Sign-in
-  let user: Nullable<User>;
-  let isLogged: boolean;
+  // NON-SIGNED WINDOWS
 
-  let signUp: boolean;
-  let signInWithEmail: boolean;
+  let signUp: boolean; // go to SIGN UP window if TRUE
+  let signInWithEmail: boolean; // go to SIGN IN WITH EMAIL window if TRUE
   let loginMail: string = '';
   let loginPassword: string = '';
 
-  let subStatus: SubscriptionStatus | null = null;
+  // SIGN UP FORM WINDOW
 
-  let account: Account = new Account();
-
-  onMount(async () => {
-    await account.me();
-  });
-
-  authenticated.subscribe((value) => {
-    user = value.user;
-    isLogged = value.loggedIn;
-  });
-
-  $: if (isLogged && account && user && user.email_confirmed) {
-    account.getReferralCodes();
-    checkSubscription();
-  }
-
-  // Change password
-  let editingPassword: boolean = false;
-  let editOldPassword: string = '';
-  let editPassword: string = '';
-  let editPasswordConfirm: string = '';
-
-  const saveChangedPassword = async () => {
-    $accountError = null as AccountError;
-    await account.changePassword({
-      old_password: editOldPassword,
-      new_password: editPassword,
-    });
-    if (!$accountError || !$accountError.changePassword)
-      editingPassword = false;
-  };
-
-  // Sign-up form
   let referralCode: string = '';
   let referralCodeValid: boolean = false;
   let first_name: string = '';
@@ -116,8 +96,10 @@
 
   $: isFormValid = mandatoryFields && termsAccepted && referralCodeValid;
 
+  // Validate referral code when length is 16 characters
   $: if (referralCode.length === 16) validateReferralCode();
   $: if (referralCode.length < 16) referralCodeValid = false;
+
   async function validateReferralCode() {
     const referralObject: ReferralCode | null =
       await account.validateReferralCode(referralCode);
@@ -128,58 +110,81 @@
     }
   }
 
+  // Sign up user with Email and Referral Code
   const referralSignup = async (event: Event) => {
-    event.preventDefault();
-    await account
-      .signup({
-        user: {
-          first_name: first_name.trim(),
-          last_name: last_name.trim(),
-          email: email.trim(),
-          password,
-          referred: referralCodeValid,
-          role: 'user',
-        },
-        referral_code: referralCode,
-        newsletter: newsletterSignup,
-      })
-      .then((res) => {
-        if (res !== null) location.reload();
-      });
+    event.preventDefault(); // prevent page reload by form
+    await account.signup({
+      user: {
+        first_name: first_name.trim(),
+        last_name: last_name.trim(),
+        email: email.trim(),
+        password,
+        referred: referralCodeValid,
+        role: 'user',
+      },
+      referral_code: referralCode,
+      newsletter: newsletterSignup,
+    });
   };
 
-  // Utility functions
-  let activeWalletStyling = `
-    color: rgb(51, 226, 230);
-    background-color: rgb(45, 90, 216);
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25), 0 0 0.5vw rgba(51, 226, 230, 0.5);
-  `;
+  // SIGNED IN USER PROFILE
 
-  const walletSelectConfirm = (address: string) => {
-    $secondButton = 'Select';
-    $secondButtonClass = 'green-button';
-    $handleSecondButton = () => {
-      handleWalletSelect(address);
-      $showModal = false;
-    };
-    $modalContent =
-      '<h2>Are you sure you want to select this address as your main one?</h2>';
-    $showModal = true;
+  let account: Account = new Account();
+
+  let user: Nullable<User>;
+  let isLogged: boolean;
+
+  let subStatus: SubscriptionStatus | null = null;
+
+  authenticated.subscribe((value) => {
+    user = value.user;
+    isLogged = value.loggedIn;
+  });
+
+  onMount(async () => {
+    await account.me();
+  });
+
+  $: if (isLogged && account && user && user.email_confirmed) {
+    account.getReferralCodes();
+    checkSubscription();
+  }
+
+  // Change password
+  let editingPassword: boolean = false;
+  let editOldPassword: string = '';
+  let editPassword: string = '';
+  let editPasswordConfirm: string = '';
+
+  const saveChangedPassword = async (e: Event) => {
+    e.preventDefault();
+    $accountError = null as AccountError; // reset storage from any old errors
+    await account.changePassword({
+      old_password: editOldPassword,
+      new_password: editPassword,
+    });
+    if (!$accountError || !$accountError.changePassword)
+      editingPassword = false;
+    editPassword = '';
+    editPasswordConfirm = '';
   };
 
+  // Select wallet address as the main one
   const handleWalletSelect = async (address: string) => {
     await account.selectMainWallet(address);
     if ($accountError && $accountError.selectMainWallet) return;
-    // reload the page to update the user object
+    // Reload the page to update the user object
     location.reload();
   };
 
-  // SVG Icons
-  let profileSvgFocus: boolean = false;
-  let backArrowSvgFocus: boolean = false;
-  let closeSvgFocus: boolean = false;
-  let signInSvgFocus: boolean = false;
-  let signOutSvgFocus: boolean = false;
+  let copySvgFocus: Nullable<string> = null;
+
+  const copyRefCode = (refCode: string) => {
+    let codeBtn = document.getElementById(refCode) as HTMLButtonElement;
+    navigator.clipboard.writeText(refCode);
+    codeBtn.classList.add('copied'); // animation
+    setTimeout(() => codeBtn.classList.remove('copied'), 600);
+  };
 
   // Newsletter
   const checkSubscription = async () => {
@@ -198,189 +203,65 @@
   };
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
-<span class="profile-icon-container">
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="-100 -100 200 200"
-    class="circle-icon"
-  >
-    <defs>
-      <mask id="profile-svg-mask">
-        <circle r="95" fill="white" />
-        <g
-          class="profile-svg-mask"
-          fill="black"
-          transform={profileSvgFocus ? 'scale(1.1)' : ''}
-        >
-          <circle cy="-25" r="30" />
-          <path
-            d="
-                M -55 55
-                Q -60 20 -25 15
-                L 25 15
-                Q 60 20 55 55
-                Z
-              "
-          />
-        </g>
-      </mask>
-    </defs>
+<ProfileSVG onclick={() => ($showProfile = true)} />
 
-    <circle
-      class="profile-svg"
-      r="95"
-      fill="rgba(51, 226, 230, 0.75)"
-      mask="url(#profile-svg-mask)"
-      on:click={() => ($showProfile = true)}
-      on:pointerover={() => (profileSvgFocus = true)}
-      on:pointerout={() => (profileSvgFocus = false)}
-      role="button"
-      tabindex="0"
-    />
-  </svg>
-</span>
-
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
-<!-- svelte-ignore a11y-no-static-element-interactions a11y_no_noninteractive_element_to_interactive_role -->
-<!-- svelte-ignore a11y_consider_explicit_label -->
+<!-- svelte-ignore
+a11y-click-events-have-key-events
+a11y-no-static-element-interactions-->
 <dialog
   class="blur"
   bind:this={dialog}
   on:close={() => ($showProfile = false)}
   on:click|self={() => ($showProfile = false)}
+  aria-label="Profile"
 >
   <div on:click|stopPropagation>
-    <header>
+    <header class="flex">
       {#if isLogged}
-        <button
-          class="login-button"
-          on:click={() => {
-            account.signout();
-          }}
-          on:pointerover={() => (signOutSvgFocus = true)}
-          on:pointerout={() => (signOutSvgFocus = false)}
-        >
-          <DoorSVG state="outside" {signOutSvgFocus} bigIcon={true} />
-        </button>
+        <DoorSVG
+          state="outside"
+          text="Sign out"
+          onclick={() => account.signout()}
+        />
       {:else}
-        <button
-          class="back-arrow"
-          on:click|stopPropagation={handleBackArrow}
-          on:pointerover={() => (backArrowSvgFocus = true)}
-          on:pointerout={() => (backArrowSvgFocus = false)}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
-            <defs>
-              <mask id="quit-svg-mask">
-                <circle r="95" fill="white" />
-                <path
-                  class="quit-svg-mask"
-                  d="
-                      M 50 0
-                      L -50 0
-                      L 0 -50
-                      M -50 0
-                      L 0 50
-                    "
-                  fill="none"
-                  stroke="black"
-                  stroke-width="25"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  transform={backArrowSvgFocus ? 'scale(1.2)' : ''}
-                />
-              </mask>
-            </defs>
-
-            <circle
-              style="
-                  transition: all 0.3s ease-in-out;
-                  transform: {backArrowSvgFocus ? 'scale(1.05);' : 'none'}
-                  fill: {backArrowSvgFocus
-                ? 'rgb(51, 226, 230)'
-                : 'rgba(51, 226, 230, 0.75)'}
-                "
-              fill="rgba(51, 226, 230, 0.75)"
-              r="95"
-              mask="url(#quit-svg-mask)"
-            />
-          </svg>
-        </button>
+        <QuitSVG onclick={handleBackArrow} />
       {/if}
-      <button
-        class="close-button"
-        on:click|stopPropagation={() => ($showProfile = false)}
-        on:pointerover={() => (closeSvgFocus = true)}
-        on:pointerout={() => (closeSvgFocus = false)}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="-100 -100 200 200"
-          class="close-svg"
-          stroke="rgba(255, 60, 64, 0.85)"
-          stroke-width="30"
-          stroke-linecap="round"
-          style="
-              transform: {closeSvgFocus ? 'scale(1.2);' : 'none'}
-              stroke: {closeSvgFocus
-            ? 'rgb(255, 60, 64)'
-            : 'rgba(255, 60, 64, 0.85)'}
-            "
-        >
-          <path
-            d="
-                M -65 -65
-                L 65 65
-                M -65 65
-                L 65 -65
-              "
-            fill="none"
-          />
-        </svg>
-      </button>
+      <CloseSVG onclick={() => ($showProfile = false)} />
     </header>
 
     <!-- USER PROFILE -->
     {#if isLogged && user}
-      <section class="profile-window">
+      <section class="profile-window flex">
         <hr />
 
         {#if user.available}
-          <h3 class="stories-count">
+          <p>
             Credits remaining this month:
             <strong>
               {user.available.bonus}
             </strong>
-          </h3>
+          </p>
         {:else}
-          <div class="error-message">
-            <p><strong>Error:</strong>Unavailable</p>
-          </div>
+          <p class="validation">Error fetching credits...</p>
         {/if}
 
         <hr />
 
         {#if user?.email && user?.first_name}
-          <div class="user-profile-info">
+          <form class="flex">
             <div class="input-container">
               <label for="mail">Email</label>
-              <input
-                class="user-input"
-                type="email"
-                value={user.email}
-                disabled
-              />
+              <input id="mail" type="email" value={user.email} disabled />
             </div>
             {#if !user.email_confirmed && !user.is_oauth}
               <p class="validation">
-                Please check your inbox and confirm email.
+                Please check your inbox and confirm email
               </p>
             {/if}
             <div class="input-container">
               <label for="first-name">First name</label>
               <input
-                class="user-input"
+                id="first-name"
                 type="text"
                 value={user.first_name}
                 disabled={true}
@@ -389,7 +270,7 @@
             <div class="input-container">
               <label for="last-name">Last name</label>
               <input
-                class="user-input"
+                id="last-name"
                 type="text"
                 value={user.last_name}
                 disabled={true}
@@ -400,9 +281,9 @@
               <div class="input-container">
                 <label for="password">Old password</label>
                 <input
-                  class="user-input highlighted-border"
+                  id="password"
                   class:red-border={!editOldPassword}
-                  type={$passwordVisible.edit ? 'text' : 'password'}
+                  type={passwordVisible.edit ? 'text' : 'password'}
                   placeholder="Enter old password"
                   bind:value={editOldPassword}
                 />
@@ -413,26 +294,23 @@
               {/if}
 
               <div class="input-container">
-                <label for="password">New password</label>
-                <div class="password-input-container">
-                  <input
-                    class="user-input highlighted-border"
-                    class:red-border={!regexpPasswordValidation.test(
-                      editPassword,
-                    )}
-                    type={$passwordVisible.edit ? 'text' : 'password'}
-                    placeholder="Provide new password"
-                    bind:value={editPassword}
-                  />
-                  <EyeSVG visibility="edit" />
-                </div>
+                <label for="new-password">New password</label>
+                <input
+                  id="new-password"
+                  class:red-border={!regexpPasswordValidation.test(
+                    editPassword,
+                  )}
+                  type={passwordVisible.edit ? 'text' : 'password'}
+                  placeholder="Provide new password"
+                  bind:value={editPassword}
+                />
+                <EyeSVG visibility="edit" />
               </div>
               <input
-                class="user-input highlighted-border"
                 class:red-border={!regexpPasswordValidation.test(
                   editPassword,
                 ) || editPassword !== editPasswordConfirm}
-                type={$passwordVisible.edit ? 'text' : 'password'}
+                type={passwordVisible.edit ? 'text' : 'password'}
                 placeholder="Confirm new password"
                 bind:value={editPasswordConfirm}
               />
@@ -481,95 +359,78 @@
             {/if}
 
             {#if !user.is_oauth}
-              <div class="edit-buttons">
+              <div class="flex-row">
                 {#if editingPassword}
-                  <button on:click={() => (editingPassword = false)}>
+                  <button
+                    class="red-btn"
+                    type="button"
+                    on:click={() => (editingPassword = false)}
+                  >
                     Cancel
                   </button>
-                  <button
-                    on:click={saveChangedPassword}
+                  <SaveSVG
+                    onclick={saveChangedPassword}
                     disabled={!editPassword ||
                       !regexpPasswordValidation.test(editPassword) ||
                       editPassword !== editPasswordConfirm}
-                  >
-                    Save
-                  </button>
+                  />
                 {:else}
-                  <button on:click={() => (editingPassword = true)}>
+                  <button
+                    type="button"
+                    on:click={() => (editingPassword = true)}
+                  >
                     Change password
                   </button>
                 {/if}
               </div>
             {/if}
-          </div>
+          </form>
 
           <hr />
         {/if}
 
         {#key user}
-          <div class="wallet-connect">
+          <div class="web3-wallets flex">
             {#if user && !user.faux}
               {#if user.wallets && user.wallets.length >= 1}
-                <div class="wallets-container">
-                  <h2>Connected Addresses:</h2>
-                  <ul>
-                    {#each user.wallets.filter((address) => !address.faux) as wallet, index}
-                      <li
-                        class="wallet"
-                        style={wallet.wallet == user.main_wallet
-                          ? activeWalletStyling
-                          : ''}
+                <h4>Connected Addresses</h4>
+                <ul class="flex-row">
+                  {#each user.wallets.filter((address) => !address.faux) as wallet, index}
+                    <button
+                      class="wallet void-btn flex-row pad-8 round-8 blue-bg dark-txt"
+                      on:click={() => {
+                        if (wallet.wallet != user!.main_wallet)
+                          openModal(
+                            walletSwitchModal,
+                            'Select wallet',
+                            () => handleWalletSelect(wallet.wallet),
+                            'green-btn',
+                          );
+                      }}
+                      disabled={wallet.wallet == user.main_wallet}
+                    >
+                      <h4>{index + 1}</h4>
+                      <p
+                        class="pad-8 round-8 transparent-dark-bg soft-white-txt"
                       >
-                        <p>{index + 1}</p>
-                        <span
-                          style={wallet.wallet == user.main_wallet
-                            ? 'color: rgb(51, 226, 230);'
-                            : ''}
-                          >{wallet.wallet.slice(0, 6) +
-                            '...' +
-                            wallet.wallet.slice(-4)}</span
-                        >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          class="star-svg"
-                          fill="#010020"
-                          style={wallet.wallet === user.main_wallet
-                            ? 'fill: rgb(51, 226, 230)'
-                            : ''}
-                          on:click={() => {
-                            if (wallet.wallet != user!.main_wallet)
-                              walletSelectConfirm(wallet.wallet);
-                          }}
-                          role="button"
-                          tabindex="0"
-                        >
-                          <path
-                            d="m12 3 2.23 6.88h7.23l-5.85 4.24L17.85 21 12 16.75 6.15 21l2.24-6.88-5.85-4.24h7.23L12 3z"
-                          >
-                          </path>
-                        </svg>
-                      </li>
-                    {/each}
-                  </ul>
-                  {#if user?.email && user?.first_name}
-                    <div class="buttons-container">
-                      <WalletConnect
-                        linking={true}
-                        title={'Add another address'}
-                      />
-                    </div>
-                  {/if}
-                </div>
+                        {wallet.wallet.slice(0, 6) +
+                          '...' +
+                          wallet.wallet.slice(-4)}
+                      </p>
+                      <StarSVG focused={wallet.wallet == user!.main_wallet} />
+                    </button>
+                  {/each}
+                </ul>
+                {#if user?.email && user?.first_name}
+                  <WalletConnect linking={true} title={'Add another address'} />
+                {/if}
 
                 {#if $accountError && $accountError.selectMainWallet}
                   <p class="validation">{$accountError.selectMainWallet}</p>
                 {/if}
               {/if}
             {:else}
-              <div class="buttons-container">
-                <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
-              </div>
+              <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
             {/if}
           </div>
         {/key}
@@ -577,85 +438,46 @@
         {#if user?.email && user?.first_name && user?.email_confirmed}
           <hr />
 
-          <h2>Your referral codes</h2>
           {#if $referralCodes != null}
-            {#key $referralCodes}
-              <div class="referral-codes">
-                {#each $referralCodes as code}
-                  <div class="ref-code-container">
-                    <input
-                      class="ref-code"
+            {#if $referralCodes.filter((code) => code.is_used).length == 10}
+              <h4 class="text-glowing">You've unlocked all 10 referrals!</h4>
+              <p class="text-glowing">
+                Your early support won't go unnoticed. Stay tuned for updates.
+              </p>
+            {:else}
+              {#key $referralCodes}
+                <h4>Your referral codes</h4>
+                <ul class="referral-codes flex-row">
+                  {#each $referralCodes as code}
+                    <button
+                      class="ref-code void-btn flex-row pad-8 round-8 dark-txt"
+                      class:used-code={code.is_used}
                       id={code.code}
-                      class:active-code={!code.is_used}
-                      value={code.code}
-                      disabled
-                    />
-                    {#if !code.is_used}
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="-100 -100 200 200"
-                        class="copy-svg"
-                        fill="none"
-                        stroke="rgb(51, 226, 230)"
-                        stroke-width="15"
-                        stroke-linejoin="round"
-                        stroke-linecap="round"
-                        opacity="0.75"
-                        on:click={() =>
-                          navigator.clipboard.writeText(code.code)}
-                        role="button"
-                        tabindex="0"
-                        aria-label="Copy code"
+                      on:click={() => copyRefCode(code.code)}
+                      on:pointerover={() => (copySvgFocus = code.code)}
+                      on:focus={() => (copySvgFocus = code.code)}
+                      on:pointerout={() => (copySvgFocus = null)}
+                      on:blur={() => (copySvgFocus = null)}
+                      aria-label="Copy code {code.code}"
+                      tabindex={code.is_used ? -1 : 0}
+                    >
+                      <p
+                        class="pad-8 round-8 soft-white-txt transparent-dark-bg"
                       >
-                        <defs>
-                          <mask id="copy-checkmark">
-                            <rect
-                              x="-45"
-                              y="-60"
-                              width="130"
-                              height="150"
-                              fill="white"
-                              stroke="white"
-                            />
-                            <path
-                              d="
-                                  M -10 10
-                                  L 10 40
-                                  L 50 -20
-                                "
-                              fill="none"
-                              stroke="black"
-                            />
-                          </mask>
-                        </defs>
-
-                        <path
-                          d="
-                              M 40 -67
-                              L 40 -90
-                              L -90 -90
-                              L -90 60
-                              L -52 60
-                            "
-                          fill="none"
-                        />
-                        <rect
-                          x="-45"
-                          y="-60"
-                          width="130"
-                          height="150"
-                          mask="url(#copy-checkmark)"
-                        />
-                      </svg>
-                    {/if}
-                  </div>
-                {/each}
-              </div>
-            {/key}
-            <h2>
-              Your referrals: {$referralCodes.filter((code) => code.is_used)
-                .length}
-            </h2>
+                        {code.code}
+                      </p>
+                      {#if !code.is_used}
+                        <CopySVG {copySvgFocus} data={code.code} />
+                      {/if}
+                    </button>
+                  {/each}
+                </ul>
+                <h4>
+                  Your referrals: {$referralCodes.filter((code) => code.is_used)
+                    .length} / 10
+                </h4>
+              {/key}
+            {/if}
           {:else}
             <button
               on:click={() => {
@@ -681,29 +503,30 @@
             <hr />
 
             {#if subStatus.is_active}
-              <h2>Newsletter Subscription</h2>
+              <h4>Newsletter Subscription</h4>
 
               {#if subStatus.subscribed_at}
-                <h3>
+                <h5
+                  class="subscription pad-8 round-8 transparent-gray-bg dark-txt shad"
+                >
                   Active since: {dateToString(subStatus.subscribed_at.Time)}
-                </h3>
+                </h5>
               {/if}
-              <h3
-                class="unsubscribe-button"
+              <button
+                class="unsubscribe-button void-btn min-size-btn"
                 on:click={() => {
                   account
                     .unsubscribeNewsletter()
                     .then(() => checkSubscription());
                 }}
-                role="button"
-                tabindex="0"
               >
                 Unsubscribe
-              </h3>
+              </button>
             {:else}
               <div class="newsletter-subscription">
-                <h3>Subscribe to Newsletter:</h3>
+                <h4>Subscribe to Newsletter:</h4>
                 <button
+                  class="green-btn"
                   on:click={() => {
                     account
                       .subscribeNewsletter()
@@ -729,73 +552,62 @@
 
         <hr />
 
-        <h3>Report bugs or ask for help:</h3>
-        <div class="buttons-wrapper">
+        <h4>Report bugs or ask for help</h4>
+        <div class="flex-row">
           <a href="mailto:support@degenerousdao.com">Support</a>
           <span style:color="#bebebe">|</span>
           <a href="https://discord.gg/349FgMSUK8">Discord</a>
         </div>
       </section>
     {:else}
-      <section class="sign-container">
-        <h1>{signUp ? 'Sign up' : 'Sign in'}</h1>
+      <section class="sign-container flex">
+        <h2>{signUp ? 'Sign up' : 'Sign in'}</h2>
         <hr />
 
         {#if !signUp}
           <!-- SIGN-IN window -->
           {#if signInWithEmail}
-            <form class="login-form">
+            <form class="flex">
               <div class="input-container">
                 <label for="user-mail">Email</label>
                 <input
                   bind:value={loginMail}
-                  class="user-input"
                   type="email"
                   id="user-mail"
                   placeholder="Enter your email"
+                  autocomplete="email"
                   required
                 />
               </div>
               <div class="input-container">
                 <label for="user-password">Password</label>
-                <div class="password-input-container">
-                  <input
-                    bind:value={loginPassword}
-                    class="user-input"
-                    type={$passwordVisible.login ? 'text' : 'password'}
-                    id="user-password"
-                    placeholder="Enter your password"
-                    minlength="8"
-                    required
-                  />
-                  <EyeSVG visibility="login" />
-                </div>
+                <input
+                  bind:value={loginPassword}
+                  type={passwordVisible.login ? 'text' : 'password'}
+                  id="user-password"
+                  placeholder="Enter your password"
+                  autocomplete="current-password"
+                  minlength="8"
+                  required
+                />
+                <EyeSVG visibility="login" />
               </div>
 
               {#if $accountError && $accountError.signin}
                 <p class="validation">{$accountError.signin}</p>
               {/if}
 
-              <button
-                class="sign-in-button"
-                on:click|preventDefault={() =>
+              <DoorSVG
+                state="inside"
+                text="Sign in"
+                disabled={!(loginMail && loginPassword)}
+                onclick={() =>
                   account.signin({
                     email: loginMail,
                     password: loginPassword,
                   })}
-                on:pointerover={() => {
-                  if (loginMail && loginPassword) signInSvgFocus = true;
-                }}
-                on:pointerout={() => {
-                  if (loginMail && loginPassword) signInSvgFocus = false;
-                }}
-                disabled={!(loginMail && loginPassword)}
-              >
-                <DoorSVG state="inside" {signInSvgFocus} />
-                Sign in
-              </button>
+              />
               <a href="/reset-password">Forgot password?</a>
-              <!-- svelte-ignore a11y_missing_attribute -->
               <a
                 href="/"
                 on:click={(event) => {
@@ -806,8 +618,9 @@
             </form>
           {:else}
             <!-- SIGN-IN general window -->
-            <div class="buttons-container">
+            <div class="sign-options flex">
               <button
+                class="sign-button"
                 on:click={() => {
                   account.googleSignin();
                 }}
@@ -821,36 +634,35 @@
               {/if}
 
               <button
+                class="sign-button"
                 on:click={() => {
                   signInWithEmail = true;
                 }}
               >
-                <img class="sign-icon" src="/icons/email.png" alt="Google" />
-                <p class="sign-lable">with email</p>
+                <img src="/icons/email.png" alt="Google" />
+                <p>with email</p>
               </button>
               <WalletConnect title={'with Web3 wallet'} />
             </div>
             <hr />
-            <h3>Don't have an account yet?</h3>
-            <div class="buttons-container">
-              <button
-                on:click={() => {
-                  signUp = true;
-                }}
-              >
-                <img class="sign-icon" src="/icons/email.png" alt="Google" />
-                <p class="sign-lable">Sign up with email</p>
-              </button>
-            </div>
+            <h4>Don't have an account yet?</h4>
+            <button
+              class="sign-button"
+              on:click={() => {
+                signUp = true;
+              }}
+            >
+              <img src="/icons/email.png" alt="Google" />
+              <p>Sign up with email</p>
+            </button>
           {/if}
         {:else}
           <!-- SIGN-UP window -->
 
-          <form class="signup-form">
+          <form class="signup-form flex">
             <div class="input-container">
               <label for="new-user-mail">Mail</label>
               <input
-                class="user-input"
                 class:red-border={!regexpEmail.test(email)}
                 type="email"
                 id="new-user-mail"
@@ -866,29 +678,25 @@
 
             <div class="input-container">
               <label for="new-user-password">Password</label>
-              <div class="password-input-container">
-                <input
-                  class="user-input"
-                  class:red-border={!regexpPasswordValidation.test(password)}
-                  id="new-user-password"
-                  placeholder="Enter password"
-                  minlength="8"
-                  type={$passwordVisible.signup ? 'text' : 'password'}
-                  bind:value={password}
-                  required
-                />
-                <EyeSVG visibility="signup" />
-              </div>
+              <input
+                class:red-border={!regexpPasswordValidation.test(password)}
+                id="new-user-password"
+                placeholder="Enter password"
+                minlength="8"
+                type={passwordVisible.signup ? 'text' : 'password'}
+                bind:value={password}
+                required
+              />
+              <EyeSVG visibility="signup" />
             </div>
             <input
-              class="user-input"
               class:red-border={!regexpPasswordValidation.test(password) ||
                 password !== confirmPassword}
               id="confirm-new-user-password"
               placeholder="Confirm password"
               bind:value={confirmPassword}
               required
-              type={$passwordVisible.signup ? 'text' : 'password'}
+              type={passwordVisible.signup ? 'text' : 'password'}
             />
 
             {#if password}
@@ -930,7 +738,6 @@
             <div class="input-container">
               <label for="user-first-name">First name</label>
               <input
-                class="user-input"
                 class:red-border={!first_name.trim()}
                 type="text"
                 id="user-first-name"
@@ -941,7 +748,6 @@
             <div class="input-container">
               <label for="user-last-name">Last name</label>
               <input
-                class="user-input"
                 class:red-border={!last_name.trim()}
                 type="text"
                 id="user-last-name"
@@ -952,8 +758,7 @@
             <div class="input-container">
               <label for="user-ref-code">Referral code</label>
               <input
-                class="user-input"
-                class:red-border={!referralCodeValid}
+                class={referralCodeValid ? 'green-border' : 'red-border'}
                 type="text"
                 id="user-ref-code"
                 placeholder="A11A7528D9C82915"
@@ -965,28 +770,15 @@
             </div>
 
             {#if referralCode.length === 16}
-              {#await account.validateReferralCode(referralCode)}
-                <p class="validation">Checking referral code...</p>
-              {:then referralObject}
-                {#if referralObject}
-                  <p class="validation green">Referral code is valid</p>
-                {:else}
-                  <p class="validation">Referral code is invalid</p>
-                {/if}
-              {:catch}
-                <p class="validation">Some error occured...</p>
-              {/await}
+              {#if referralCodeValid}
+                <p class="validation green-txt">Referral code is valid</p>
+              {:else}
+                <p class="validation">Referral code is invalid</p>
+              {/if}
             {:else if referralCode}
               <p class="validation">Code should contain 16 characters</p>
             {:else}
-              <p class="validation">
-                Enter your referral code. Don't have one yet? Find yours
-                <a
-                  href="https://discord.gg/349FgMSUK8"
-                  target="_blank"
-                  rel="noopener noreferrer">here</a
-                >!
-              </p>
+              <p class="validation">Enter your referral code.</p>
             {/if}
 
             {#if !mandatoryFields}
@@ -997,8 +789,8 @@
               <p class="validation">{$accountError.signup}</p>
             {/if}
 
-            <div class="agreements-container">
-              <div class="agreement">
+            <div class="agreements-container flex">
+              <span class="flex-row" class:mandatory={!termsAccepted}>
                 <input
                   type="checkbox"
                   id="terms"
@@ -1006,23 +798,16 @@
                     termsAccepted = event.target?.checked;
                   }}
                 />
-                <label
-                  for="terms"
-                  class="terms"
-                  style={termsAccepted ? '' : 'color: rgba(255, 50, 50, 0.75);'}
-                >
+                <label for="terms">
                   * I have read and agree to the <a
                     href="https://docs.google.com/document/d/1fEemq6HVM_h8ZTbc_Fl_k3RvlPdjYd70TI1iloT5gXA/edit?usp=sharing"
                     target="_blank"
-                    style={termsAccepted
-                      ? ''
-                      : 'color: rgba(255, 50, 50, 0.9);'}
                   >
                     Terms of Service</a
                   >.
                 </label>
-              </div>
-              <div class="agreement">
+              </span>
+              <span class="flex-row">
                 <input
                   type="checkbox"
                   id="newsletter"
@@ -1030,448 +815,171 @@
                     newsletterSignup = event.target?.checked;
                   }}
                 />
-                <label for="newsletter" class="newsletter">
+                <label for="newsletter">
                   I'd like to receive news twice a month.
                 </label>
-              </div>
+              </span>
             </div>
-            <button
-              class="sign-button"
-              on:click={referralSignup}
-              disabled={!isFormValid}>Create account</button
+            <button on:click={referralSignup} disabled={!isFormValid}
+              >Create account</button
             >
           </form>
+
+          <hr />
+
+          <h5>Don't have a ref code?</h5>
+          <DiscordBtn text="Find yours on Discord" />
         {/if}
       </section>
     {/if}
   </div>
 </dialog>
 
-<style>
-  dialog {
-    width: 65vw;
-    height: 90%;
-    background-color: rgba(1, 0, 32, 0.75);
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.5);
-    border-radius: 1.5vw;
-    overflow-x: hidden;
-  }
-
-  dialog::-webkit-scrollbar {
-    width: 0.5vw;
-  }
-
-  dialog::-webkit-scrollbar-track {
-    background-color: rgba(0, 0, 0, 0);
-  }
-
-  dialog::-webkit-scrollbar-thumb {
-    background: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0),
-      rgba(51, 226, 230, 0.5),
-      rgba(0, 0, 0, 0)
-    );
-    border-radius: 0.5vw;
-    cursor: pointer;
-  }
-
-  dialog::-webkit-scrollbar-thumb:hover,
-  dialog::-webkit-scrollbar-thumb:active {
-    background: rgba(51, 226, 230, 0.5);
-  }
-
-  dialog::backdrop {
-    background: rgba(0, 0, 0, 0.75);
-  }
-
-  dialog[open] {
-    animation: zoom 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  dialog[open]::backdrop {
-    animation: fade 0.25s ease-out;
-  }
-
-  dialog > div {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    padding: 1vw;
-  }
-
-  /* Control buttons */
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
 
   header {
-    display: flex;
-    flex-flow: row nowrap;
+    flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    margin-bottom: 1rem;
   }
 
-  .back-arrow,
-  .close-button,
-  .login-button {
-    padding: 0.5vw;
-  }
-
-  .back-arrow svg,
-  .close-button svg {
-    height: 3vw;
-    width: 3vw;
-  }
-
-  /* SIGN-IN & SIGN-UP */
-
-  .sign-container,
-  .login-form,
-  .signup-form,
-  .user-profile-info {
-    display: flex;
-    flex-flow: column nowrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5vw;
-  }
-
-  .user-profile-info {
-    gap: 1vw;
-  }
-
-  .login-form a {
-    color: rgba(51, 226, 230, 0.65);
-  }
-
-  .login-form a:hover,
-  .login-form a:active {
-    color: rgb(51, 226, 230);
-  }
-
-  .agreements-container {
-    display: flex;
-    flex-flow: column nowrap;
-    align-items: flex-start;
-    width: 100%;
-  }
-
-  .agreement {
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-    justify-content: center;
-    padding: 1vw;
-    gap: 1vw;
-  }
-
-  .agreement label {
-    cursor: pointer;
-  }
-
-  #terms,
-  #newsletter {
-    /* -webkit-transform: scale(2);
-    transform: scale(2); */
-    width: 1.5vw;
-    height: 1.5vw;
-    flex: 1;
-    accent-color: rgba(51, 226, 230, 0.75);
-    cursor: pointer;
-  }
-
-  .terms > a {
-    color: rgba(255, 255, 255, 0.65);
-  }
-
-  /* USER PROFILE window */
-
+  /* USER PROFILE */
   .profile-window {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1.5vw;
-    padding-block: 1vw;
-  }
+    .web3-wallets {
+      ul {
+        flex-wrap: wrap;
+      }
 
-  .edit-buttons {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    gap: 1vw;
-  }
+      .wallet {
+        min-width: 14rem;
+        width: 100%;
+        justify-content: space-between;
+        gap: 0.5rem;
+        @include box-shadow;
 
-  .stories-count {
-    color: rgba(51, 226, 230, 0.65);
-  }
+        h4 {
+          color: inherit;
+        }
 
-  .stories-count strong {
-    color: rgba(51, 226, 230, 0.9);
-  }
+        p {
+          width: 100%;
+          @include box-shadow(soft, inset);
+        }
 
-  /* Web3 wallet section */
+        &:hover:not(&:disabled),
+        &:active:not(&:disabled),
+        &:focus:not(&:disabled) {
+          @include scale-up(soft);
+          @include bright;
+          @include box-shadow(deep);
+        }
 
-  .wallet-connect {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 2vw;
-  }
+        &:disabled {
+          cursor: not-allowed;
+          fill: $cyan;
+          box-shadow: $shadow-plus-inset-glow;
+          @include cyan(1, text);
+          @include blue(1, bg, bright);
 
-  .wallets-container {
-    min-width: 65vw;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 2vw;
-  }
+          p {
+            color: $cyan;
+          }
+        }
 
-  ul {
-    max-width: 55vw;
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: center;
-    gap: 1vw;
-  }
-
-  .wallet {
-    min-width: 22.5vw;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1vw;
-    padding: 0.5vw 1vw;
-    font-size: 2vw;
-    background-color: rgb(36, 65, 189);
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
-    border-radius: 1vw;
-    cursor: default;
-    color: #010020;
-  }
-
-  .wallet span {
-    text-align: center;
-    padding: 1vw 2vw;
-    font-size: 1.5vw;
-    color: rgba(255, 255, 255, 0.6);
-    background-color: rgba(1, 0, 32, 0.5);
-    box-shadow: inset 0 0 0.5vw #010020;
-    border-radius: 1vw;
-  }
-
-  .star-svg {
-    height: 3vw;
-    width: 3vw;
-  }
-
-  /* Referral codes container */
-
-  .referral-codes {
-    width: 90%;
-    padding: 1vw 2vw;
-    margin-inline: auto;
-    display: grid;
-    grid-template-columns: 50% 50%;
-    justify-content: center;
-    gap: 1vw;
-    box-shadow: inset 0 0 0.5vw rgba(51, 226, 230, 0.25);
-    border-radius: 1vw;
-    background-color: rgba(51, 226, 230, 0.1);
-  }
-
-  .ref-code-container {
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-    justify-content: space-between;
-    background-color: rgba(0, 0, 0, 0.1);
-    box-shadow: 0 0 0.5vw rgba(51, 226, 230, 0.25);
-    border-radius: 1vw;
-    padding: 1vw;
-  }
-
-  .ref-code {
-    font-size: 1.5vw;
-    line-height: 1.5vw;
-    border: none;
-    outline: none;
-    background-color: rgba(0, 0, 0, 0);
-  }
-
-  .copy-svg {
-    width: 2vw;
-    height: 2vw;
-  }
-
-  .active-code {
-    color: rgba(255, 255, 255, 0.75);
-    text-shadow: 0 0 0.1vw rgb(51, 226, 230);
-    cursor: text;
-  }
-
-  /* Newsletter */
-
-  .newsletter-subscription {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vw;
-  }
-
-  .newsletter-subscription button {
-    background-color: rgba(0, 185, 55, 0.75);
-  }
-
-  .newsletter-subscription button:hover,
-  .newsletter-subscription button:active {
-    color: #010020;
-    background-color: rgb(0, 185, 55);
-  }
-
-  .unsubscribe-button {
-    color: rgba(255, 60, 64, 0.75);
-    cursor: pointer;
-  }
-
-  .unsubscribe-button:hover,
-  .unsubscribe-button:active {
-    color: rgb(255, 60, 64);
-    text-decoration: underline;
-  }
-
-  /* Profile icon */
-
-  .profile-icon-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  @media only screen and (max-width: 600px) {
-    dialog {
-      width: 100vw;
-      height: 100%;
-      border-radius: 1em;
-      overflow-y: scroll;
-    }
-
-    dialog > div {
-      padding: 1em;
-    }
-
-    .back-arrow,
-    .close-button,
-    .login-button {
-      padding: 0.35em;
-    }
-
-    .back-arrow svg,
-    .close-button svg {
-      height: 1.5em;
-      width: 1.5em;
-    }
-
-    .sign-container,
-    .login-form,
-    .signup-form,
-    .user-profile-info,
-    .agreement,
-    .wallets-container,
-    .edit-buttons,
-    ul {
-      gap: 1em;
-    }
-
-    .edit-buttons,
-    .wallet-connect {
-      flex-direction: column;
-    }
-
-    ul {
-      flex-flow: column nowrap;
-      max-width: none;
-    }
-
-    .wallet {
-      min-width: 75vw;
-      gap: 0.5em;
-      padding: 0.25em 0.5em;
-      font-size: 1.2em;
-      width: auto;
-      border-radius: 0.5em;
-    }
-
-    .wallet span {
-      width: 100%;
-      padding: 0.25em 1em;
-      font-size: 1em;
-      border-radius: 0.5em;
-    }
-
-    .star-svg {
-      height: 1.75em;
-      width: 1.75em;
-    }
-
-    #terms,
-    #newsletter {
-      /* -webkit-transform: scale(1.5);
-      transform: scale(1.5); */
-      width: 1em;
-      height: 1em;
-    }
-
-    .profile-window {
-      gap: 0.5em;
-      padding-block: 0.5em;
+        @include respond-up(tablet) {
+          width: auto;
+        }
+      }
     }
 
     .referral-codes {
-      grid-template-columns: 100%;
-      gap: 0.5em;
-      padding: 1em;
-      width: 100%;
+      flex-wrap: wrap;
+
+      .ref-code {
+        width: 100%;
+        gap: 0.5rem;
+        background-color: $deep-green;
+        @include box-shadow;
+
+        &:hover:not(.used-code),
+        &:active:not(.used-code),
+        &:focus:not(.used-code) {
+          @include scale-up(soft);
+          @include bright;
+          @include box-shadow(deep);
+        }
+
+        p {
+          width: 100%;
+          @include box-shadow(soft, inset);
+        }
+
+        &.used-code {
+          cursor: not-allowed;
+          @include gray(0.25);
+
+          p {
+            @include white-txt(0.5);
+          }
+        }
+
+        @include respond-up(tablet) {
+          width: auto;
+        }
+      }
     }
 
-    .ref-code-container {
-      padding: 0.5em 1em;
-      border-radius: 0.5em;
+    .subscription {
+      background-color: $deep-green;
+      @include white-txt;
     }
 
-    .ref-code {
-      font-size: 1em;
-      line-height: 1.5em;
-      padding: 0.25em 0.5em;
-    }
+    .unsubscribe-button {
+      width: auto;
+      height: auto;
+      @include red(0.5, text);
 
-    .copy-svg {
-      width: 1em;
-      height: 1em;
-    }
-
-    .newsletter-subscription {
-      gap: 0.5em;
+      &:hover,
+      &:active,
+      &:focus {
+        text-decoration: underline;
+        @include red(1, text);
+      }
     }
   }
 
-  @keyframes zoom {
-    from {
-      transform: scale(1.5);
-    }
-    to {
-      transform: scale(1);
+  /* SIGN-IN window */
+  .sign-container {
+    width: 100%;
+
+    form {
+      margin-top: 1rem;
     }
   }
 
-  @keyframes fade {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
+  /* SIGN-UP window */
+  .signup-form {
+    .agreements-container {
+      span {
+        gap: 0.5rem;
+
+        a {
+          @include cyan(1, text);
+        }
+
+        label {
+          color: inherit;
+        }
+
+        &.mandatory {
+          @include red(0.75, text);
+
+          a {
+            @include red(1, text);
+          }
+        }
+      }
     }
   }
 </style>

@@ -5,21 +5,22 @@ import ExploreStory from '@components/dashboard/dream/manage/ExploreStory.svelte
 
 const { topic } = Astro.params;
 
+if (!topic) {
+  Astro.redirect('/');
+}
+
 const meta = {
   header: 'Refine & Enhance',
   nav: topic,
+  story: topic,
   arrow: '/dashboard/dream/manage',
   subheading:
     'Polish your idea and set the stage for an unforgettable journey.',
 };
-
-if (!topic) {
-  Astro.redirect('/');
-}
 ---
 
-<main>
-  <Layout {...meta}>
+<Layout {...meta}>
+  <main>
     <ExploreStory topic_name={topic} client:load />
-  </Layout>
-</main>
+  </main>
+</Layout>

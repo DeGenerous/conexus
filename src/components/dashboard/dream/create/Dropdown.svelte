@@ -1,81 +1,82 @@
-<script>
-  export let name;
-  let isOpen = false;
+<script lang="ts">
+  import { type Snippet } from 'svelte';
+
+  import SelectorSVG from '@components/icons/Selector.svelte';
+
+  let { children, name }: { children: Snippet; name: string } = $props();
+
+  let isOpen = $state(false);
 
   const toggleDropdown = () => {
     isOpen = !isOpen;
   };
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<section class="blur">
-  <div
-    class="buttons-wrapper"
-    on:click={toggleDropdown}
-    role="button"
-    tabindex="0"
+<section class="dream-container">
+  <button
+    class="void-btn flex-row"
+    class:active={isOpen}
+    onclick={toggleDropdown}
   >
-    <h2 style={isOpen ? 'color: rgb(51, 226, 230)' : ''}>{name}</h2>
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="-100 -100 200 200"
-      class="option-selector-svg"
-      fill={isOpen ? 'rgb(51, 226, 230)' : '#dedede'}
-      stroke={isOpen ? 'rgb(51, 226, 230)' : '#dedede'}
-      stroke-width="20"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      transform={isOpen ? 'rotate(180)' : ''}
-    >
-      <polygon
-        class="option-selector-icon"
-        points="
-          -40 -90 -40 90 50 0
-        "
-        transform="rotate(90)"
-      />
-    </svg>
-  </div>
+    <h4>{name}</h4>
+    <SelectorSVG
+      focused={null}
+      disabled={false}
+      hideForMobiles={false}
+      color={isOpen ? 'rgb(51, 226, 230)' : 'white'}
+      rotate={isOpen ? '270' : '90'}
+    />
+  </button>
   {#if isOpen}
-    <div class="container">
-      <slot />
+    <div class="container transition">
+      {@render children()}
     </div>
   {/if}
 </section>
 
-<style>
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
+
   section {
-    width: 95vw;
-    background-color: rgba(36, 65, 189, 0.5);
-    box-shadow: 0 0.25vw 0.5vw #010020;
-    padding: 0.5vw;
-    border-radius: 1.75vw;
-  }
+    button {
+      width: 100%;
+      justify-content: space-between;
+      fill: $light-blue;
+      stroke: $light-blue;
+      color: $light-blue;
 
-  .buttons-wrapper {
-    width: 100%;
-    padding-block: 1vw;
-  }
+      h4 {
+        padding-left: 3rem;
+        width: 100%;
+        color: inherit;
+      }
 
-  .buttons-wrapper:hover,
-  .buttons-wrapper:active {
-    filter: brightness(125%);
-  }
+      &:active,
+      &:hover,
+      &.active {
+        fill: $cyan;
+        stroke: $cyan;
+        color: $cyan;
+      }
 
-  .container {
-    width: 100%;
-    animation: fadeIn 0.6s ease-in-out forwards;
-    background-color: rgba(1, 0, 32, 0.5);
-  }
-
-  @media only screen and (max-width: 600px) {
-    section {
-      width: 100vw;
-      border-radius: 0;
+      &:hover,
+      &:focus {
+        @include bright;
+      }
     }
 
-    .container {
-      border-radius: 0;
+    div {
+      flex-direction: column;
+      transition-timing-function: linear;
+
+      // Fallback if no support
+      opacity: 1;
+      filter: none;
+
+      @starting-style {
+        opacity: 0.75;
+        filter: brightness(75%);
+      }
     }
   }
 </style>

@@ -14,13 +14,7 @@ function generatePrompt(
 ): CreatePrompt {
   let imagePrompt: string = `Use ${settings.imageStyle} style.\n\n`;
 
-  // SETTING UP THE MAIN IMAGE PROMPT
-  if (props.imagePrompts.length > 1) {
-    imagePrompt += 'Image prompts:\n';
-    props.imagePrompts.map((prompt) => {
-      imagePrompt += `- ${prompt}\n`;
-    });
-  } else imagePrompt = props.imagePrompts[0];
+  imagePrompt += props.imagePrompt;
 
   // ADDING CHARACTERS TO THE IMAGE PROMPT
   if (typeof data !== 'string') {

@@ -1,4 +1,4 @@
-import { toastStore } from '@stores/toast';
+import { toastStore } from '@stores/toast.svelte';
 import { ClearCache } from '@constants/cache';
 
 export const api_error = (error: APIError, display: boolean = true) => {

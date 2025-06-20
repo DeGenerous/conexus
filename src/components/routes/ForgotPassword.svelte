@@ -4,40 +4,29 @@
 
   const acct: Account = new Account();
 
-  let email: string = '';
+  let email = $state<string>('');
 
-  $: emailValidation = regexpEmail.test(email);
+  const emailValidation = $derived<boolean>(regexpEmail.test(email));
 </script>
 
-<div class="container-wrapper">
-  <div class="container blur">
-    <h3>You will receive a confirmation email with a link</h3>
-    <input
-      class="user-input"
-      class:red-border={!emailValidation}
-      type="email"
-      bind:value={email}
-      placeholder="Email"
-      required
-    />
+<section class="container">
+  <h4>You will receive a confirmation email with a link</h4>
+  <input
+    class:red-border={!emailValidation}
+    type="email"
+    bind:value={email}
+    placeholder="Email"
+    required
+  />
 
-    {#if !emailValidation}
-      <p class="validation">Provide the email associated with your profile</p>
-    {/if}
+  {#if !emailValidation}
+    <p class="validation">Provide the email associated with your profile</p>
+  {/if}
 
-    <button
-      on:click={() => acct.forgotPassword(email)}
-      disabled={!email || !emailValidation}
-    >
-      Send Verification Link
-    </button>
-  </div>
-</div>
-
-<style>
-  @media only screen and (max-width: 600px) {
-    .container-wrapper {
-      margin-top: 2em;
-    }
-  }
-</style>
+  <button
+    onclick={() => acct.forgotPassword(email)}
+    disabled={!email || !emailValidation}
+  >
+    Send Verification Link
+  </button>
+</section>

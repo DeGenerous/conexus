@@ -10,7 +10,7 @@ export default class ViewAPI extends Fetcher {
   }
 
   async sectionCategories(section: string, page: number, pageSize: number) {
-    return this.request<CategoriesInSection[]>(
+    return this.request<CategoryInSection[]>(
       `/view/section-categories/${section}?page=${page}&limit=${pageSize}`,
     );
   }

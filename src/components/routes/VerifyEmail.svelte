@@ -1,36 +1,36 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
   import { Account } from '@lib/account';
-  import { USER_CACHE_KEY, ClearCache } from '@constants/cache';
+  import { ClearCache } from '@constants/cache';
 
-  export let token: string;
+  import LoadingSVG from '@components/icons/Loading.svelte';
+
+  let { token }: { token: string } = $props();
 
   const acct: Account = new Account();
 
-  onMount(() => {
+  let failed = $state<boolean>(false);
+
+  $effect(() => {
     acct.confirmEmail(token).then((res) => {
       if (res === true) {
-        ClearCache(USER_CACHE_KEY);
+        ClearCache('auth');
         window.location.href = '/';
-      }
+      } else failed = true;
     });
   });
 </script>
 
-<section class="container-wrapper">
-  <div class="container blur">
-    <h1>Verifying email...</h1>
-    <h3>Please wait while we verify your email address.</h3>
-    <h3>If you are not redirected, please click the button below.</h3>
-    <button on:click={() => window.open('/', '_self')}>Return home</button>
-  </div>
+<section class="container">
+  {#if failed}
+    <h4 class="red-txt">Failed to verify email...</h4>
+    <h5>Please check your mailbox again and follow the latest link.</h5>
+  {:else}
+    <span class="flex-row">
+      <LoadingSVG />
+      <h4 class="text-glowing">Verifying email...</h4>
+    </span>
+    <h5>Please wait while we verify your email address.</h5>
+    <h5>If you are not redirected, please click the button below.</h5>
+  {/if}
+  <button onclick={() => window.open('/', '_self')}>Return home</button>
 </section>
-
-<style>
-  @media only screen and (max-width: 600px) {
-    .container-wrapper {
-      margin-top: 2em;
-    }
-  }
-</style>

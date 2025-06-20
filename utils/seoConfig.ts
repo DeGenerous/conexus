@@ -11,15 +11,18 @@ export const seoConfig = {
     'CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.',
   type: 'website',
   image: {
-    url: 'https://media.degenerousdao.com/logo.png', // Change this to your website's OpenGraph image URL.
-    alt: 'CoNexus - Degenerous DAO', // Change this to your website's OpenGraph image alt text.
-    width: 1200,
-    height: 630,
+    url: 'https://media.degenerousdao.com/assets/logo.png', // Change this to your website's OpenGraph image URL.
+    alt: 'Degenerous DAO', // Change this to your website's OpenGraph image alt text.
+    width: 480,
+    height: 480,
+    type: 'image/png',
   },
   siteName: 'CoNexus - Degenerous DAO', // Change this to your website's site name.
   locale: 'en_US', // Change this to your website's locale.
   twitter: {
     card: 'summary_large_image',
+    site: '@degenerousdao',
+    creator: '@Maxi_maximalist',
   },
 };
 
@@ -33,8 +36,8 @@ export const manifest: Partial<ManifestOptions> = {
     'CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.',
   display: 'fullscreen',
   start_url: '/',
-  background_color: '#010020',
-  theme_color: '#010020',
+  background_color: '#000000',
+  theme_color: '#161e5f',
   lang: 'en-US',
   orientation: 'any',
   prefer_related_applications: false,
@@ -107,6 +110,7 @@ export const manifest: Partial<ManifestOptions> = {
       src: '/icons/icon-512.png',
       sizes: '512x512',
       type: 'image/png',
+      purpose: 'maskable',
     },
   ],
 };

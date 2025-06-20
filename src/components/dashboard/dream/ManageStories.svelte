@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { tippy } from 'svelte-tippy';
 
   import { AdminApp } from '@lib/admin';
   import { CoNexusApp } from '@lib/view';
@@ -12,27 +12,30 @@
   let admin = new AdminApp();
   let view = new CoNexusApp();
 
-  let sections: Section[];
-  let collections: Collection[] = [];
-  let classGates: ClassGate[] = [];
+  let nav: 'collection' | 'categories' | 'nft-gates' = $state('collection');
 
-  let availabilityKey: string = '';
+  let sections = $state<Section[]>([]);
+  let collections = $state<Collection[]>([]);
+  let classGates = $state<ClassGate[]>([]);
+
+  let availabilityKey = $state<string>('');
 
   const fetchClasses = async () => {
     classGates = await view.fetchClassGates();
   };
 
-  onMount(async () => {
-    await checkUserState('/dashboard/dream/manage', true);
+  $effect(() => {
+    checkUserState('/dashboard/dream/manage', true);
   });
 
-  onMount(async () => {
-    await view.getSections().then((data) => (sections = data));
-    collections = await admin.fetchCollections();
-    await fetchClasses();
+  $effect(() => {
+    view.getSections().then((data) => (sections = data));
+    admin.fetchCollections().then((data) => (collections = data));
+    fetchClasses();
   });
 
   const selectInput = (event: Event) => {
+    event.preventDefault();
     const input = event.target as HTMLInputElement;
     input.select();
   };
@@ -40,8 +43,6 @@
   const storeAllTopics = (collections: Collection[]) => {
     const allTopics = collections.map((collection) => collection.topics).flat();
     const topicNames = allTopics.map(({ topic_name }) => topic_name);
-    console.log(topicNames);
-    console.log(topicNames.join(']['));
     SetCache(ALL_TOPICS_KEY, topicNames.join(']['), ALL_TOPICS_TTL);
   };
 
@@ -82,220 +83,230 @@
     });
     return sortedTopics;
   };
-
-  type NAV = 'collection' | 'categories' | 'nft-gates';
-  let nav: NAV = 'collection';
-  const setNav = (newNav: NAV) => {
-    nav = newNav;
-  };
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_to_interactive_role -->
-<nav class="blur">
-  <h3
-    on:click={() => setNav('collection')}
+<nav class="flex-row">
+  <button
+    class="void-btn blur"
     class:selected={nav === 'collection'}
-    role="button"
-    tabindex="0"
+    onclick={() => (nav = 'collection')}
   >
     Collections
-  </h3>
-  <h3
-    on:click={() => setNav('categories')}
+  </button>
+  <button
+    class="void-btn blur"
     class:selected={nav === 'categories'}
-    role="button"
-    tabindex="0"
+    onclick={() => (nav = 'categories')}
   >
     Categories
-  </h3>
-  <h3
-    on:click={() => setNav('nft-gates')}
+  </button>
+  <button
+    class="void-btn blur"
     class:selected={nav === 'nft-gates'}
-    role="button"
-    tabindex="0"
+    onclick={() => (nav = 'nft-gates')}
   >
     NFT Gates
-  </h3>
+  </button>
 </nav>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<section class="container-wrapper">
-  {#if nav === 'collection'}
-    {#key availabilityKey}
-      {#await admin.fetchCollections()}
-        <img class="loading-icon" src="/icons/loading.png" alt="Loading" />
-      {:then collections}
-        {storeAllTopics(collections)}
-        {#each collections as { category_id, category_name, category_order, section_id, topics }}
-          <section class="container blur">
-            <div class="buttons-wrapper category-header">
-              <form id="category-order" class="buttons-wrapper">
-                <label for="category-order">Order:</label>
+{#if nav === 'collection'}
+  {#key availabilityKey}
+    {#await admin.fetchCollections()}
+      <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
+    {:then collections}
+      {storeAllTopics(collections)}
+      {#each collections as { category_id, category_name, category_order, section_id, topics }}
+        <div class="collection-header fade-in">
+          <h2>{category_name}: {topics.length}</h2>
+
+          <span class="controls container flex-row">
+            <div class="input-container">
+              <label for="category-order-{category_id}">Order</label>
+              <input
+                id="category-order-{category_id}"
+                type="number"
+                value={category_order}
+                onclick={selectInput}
+                oninput={(event) =>
+                  handleChangeCategoryOrder(event, category_id)}
+              />
+            </div>
+
+            <div class="input-container">
+              <label for="section">Section</label>
+              {#if sections}
+                <select
+                  id="section"
+                  value={section_id}
+                  onchange={(event) => {
+                    const target = event.target as HTMLSelectElement;
+                    if (target) {
+                      admin.changeCategorySection(
+                        parseInt(target.value),
+                        category_id,
+                      );
+                    }
+                  }}
+                >
+                  {#each sections as { id, name }}
+                    <option value={id}>{name}</option>
+                  {/each}
+                </select>
+              {/if}
+            </div>
+          </span>
+        </div>
+
+        <div class="tiles-collection fade-in">
+          {#each sortTopicsByOrder(topics) as { topic_name, order, available, topic_id }}
+            <a class="tile" href="/dashboard/dream/manage/{topic_name}">
+              <h4>{topic_name}</h4>
+              <div class="input-container">
+                <label for="story-order-{topic_id}">Order</label>
                 <input
-                  class="story-input order-input"
+                  id="story-order-{topic_id}"
                   type="number"
-                  value={category_order}
-                  on:click|preventDefault={selectInput}
-                  on:input={(event) =>
-                    handleChangeCategoryOrder(event, category_id)}
+                  value={order}
+                  onclick={selectInput}
+                  oninput={(event) => handleChangeOrder(event, topic_id)}
                 />
-              </form>
-
-              <div class="collection-header">
-                <p>{category_name}: {topics.length}</p>
               </div>
+              <button
+                use:tippy={{ content: 'Toggle visibility', animation: 'scale' }}
+                class:green-btn={available === 'available'}
+                class:red-btn={available === 'unavailable'}
+                onclick={(e) => {
+                  e.preventDefault();
+                  admin
+                    .changeAvailability(topic_id, switchAvailable(available))
+                    .then(() => (availabilityKey = available + topic_name));
+                }}
+              >
+                {available}
+              </button>
+            </a>
+          {/each}
+        </div>
+      {/each}
+    {/await}
+  {/key}
+{:else if nav === 'nft-gates'}
+  <NFTGates {classGates} {fetchClasses} {selectInput} />
+{:else if nav === 'categories'}
+  <Categories />
+{/if}
 
-              <form id="section" class="buttons-wrapper">
-                <label for="section">Select section:</label>
-                {#if sections}
-                  <select
-                    class="selector blur"
-                    value={section_id}
-                    on:change={(event) => {
-                      const target = event.target as HTMLSelectElement;
-                      if (target) {
-                        admin.changeCategorySection(
-                          parseInt(target.value),
-                          category_id,
-                        );
-                      }
-                    }}
-                  >
-                    {#each sections as { id, name }}
-                      <option value={id}>{name}</option>
-                    {/each}
-                  </select>
-                {/if}
-              </form>
-            </div>
-            <div class="tiles-collection">
-              {#each sortTopicsByOrder(topics) as { topic_name, order, available, topic_id }}
-                <a class="tile" href="/dashboard/dream/manage/{topic_name}">
-                  <h2>{topic_name}</h2>
-                  <form id="order" class="buttons-wrapper">
-                    <label for="order" class="order-label">Order:</label>
-                    <input
-                      class="story-input order-input"
-                      type="number"
-                      value={order}
-                      on:click|preventDefault={selectInput}
-                      on:input={(event) => handleChangeOrder(event, topic_id)}
-                    />
-                  </form>
-                  <button
-                    class:green-button={available === 'available'}
-                    class:red-button={available === 'unavailable'}
-                    on:click|preventDefault={() =>
-                      admin
-                        .changeAvailability(
-                          topic_id,
-                          switchAvailable(available),
-                        )
-                        .then(() => (availabilityKey = available + topic_name))}
-                  >
-                    {available}
-                  </button>
-                </a>
-              {/each}
-            </div>
-          </section>
-        {/each}
-      {/await}
-    {/key}
-  {:else if nav === 'nft-gates'}
-    <NFTGates {classGates} {fetchClasses} {selectInput} />
-  {:else if nav === 'categories'}
-    <Categories />
-  {/if}
-</section>
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
 
-<style>
   nav {
     position: sticky;
-    top: 0;
-    z-index: 100;
+    top: 4rem;
+    z-index: 125;
     width: 100vw;
-    display: flex;
-    flex-flow: row nowrap;
     justify-content: space-around;
-    align-items: center;
-    background-color: rgba(36, 65, 189, 0.75);
-    box-shadow: 0 0.25vw 0.5vw #010020;
+    gap: 0;
+    @include blue(0.75);
+    @include box-shadow;
+
+    button {
+      width: 100%;
+      padding: 0.5rem;
+      @include white-txt(soft);
+      @include font(h5);
+
+      &:hover,
+      &:active {
+        @include bright;
+        @include light-blue(0.5);
+      }
+
+      &.selected {
+        @include cyan(1, text);
+        @include light-blue(0.5);
+      }
+    }
+
+    @include respond-up(small-desktop) {
+      top: 0;
+      width: clamp(20rem, calc(100% - 12rem), 85rem);
+      border-radius: 1rem;
+
+      button {
+        &:first-of-type {
+          border-top-left-radius: 1rem;
+          border-bottom-left-radius: 1rem;
+        }
+
+        &:last-of-type {
+          border-top-right-radius: 1rem;
+          border-bottom-right-radius: 1rem;
+        }
+      }
+    }
   }
 
-  nav h3 {
-    width: 100%;
-    color: rgba(255, 255, 255, 0.75);
-    padding: 1vw;
+  .input-container {
+    @include respond-up(tablet) {
+      flex-direction: row;
+
+      label {
+        position: static;
+      }
+    }
   }
 
-  nav h3:hover,
-  nav h3:active {
-    filter: brightness(125%);
-    background-color: rgba(45, 90, 216, 0.5);
+  input[type='number'] {
+    width: 5rem;
+    @include dark-blue(0.75);
   }
 
-  .selected {
-    color: rgb(51, 226, 230);
-    text-shadow: 0 0 0.1vw rgb(51, 226, 230);
-    background-color: rgba(45, 90, 216, 0.5);
-  }
-
-  .container:not(.buttons-wrapper) {
-    width: 100vw;
+  .collection-header {
+    flex-wrap: wrap;
+    justify-content: space-between;
     padding-inline: 0;
-    border-radius: 0;
+    margin-block: 1rem -1rem;
+
+    h2 {
+      width: 100%;
+      text-align: center;
+    }
+
+    .controls {
+      width: 100%;
+      margin-inline: 0;
+      border-radius: 0;
+      @include box-glow(inset, 0.25);
+    }
+
+    @include respond-up(small-desktop) {
+      flex-wrap: nowrap;
+      align-items: flex-end;
+      padding-left: 1.5rem;
+
+      h2 {
+        width: auto;
+        text-align: left;
+      }
+
+      .controls {
+        width: auto;
+        border-top-left-radius: 1rem;
+      }
+    }
   }
 
   .tiles-collection {
-    background-image: none;
-    background-color: rgba(22, 30, 95, 0.75);
-  }
-
-  .category-header {
-    width: 95%;
-    justify-content: space-between;
-  }
-
-  .tile {
-    padding: 1vw;
-    gap: 1vw;
-  }
-
-  .order-label {
-    color: #010020;
-    text-shadow: 0 0 0.1vw #010020;
-  }
-
-  .order-input {
-    text-align: center;
-    padding: 0;
-    width: 3.5vw;
-  }
-
-  button {
-    text-transform: capitalize;
-  }
-
-  @media only screen and (max-width: 600px) {
-    nav h3 {
-      padding: 1em;
-    }
-
-    .category-header {
-      flex-flow: row-reverse wrap;
-      justify-content: center;
-      gap: 0.5em 2em;
-    }
+    min-height: unset;
 
     .tile {
-      padding: 1em;
-      gap: 1em;
-    }
+      padding-block: 1rem;
+      gap: 1rem;
+      justify-content: flex-end;
 
-    .order-input {
-      padding: 0.25em 0.5em;
-      width: 1.5em;
+      h4 {
+        height: 100%;
+      }
     }
   }
 </style>

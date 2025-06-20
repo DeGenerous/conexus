@@ -1,129 +1,84 @@
 <script lang="ts">
-  import { ClearCache, CATEGORY_CACHE_KEY } from '@constants/cache';
   import { AdminApp } from '@lib/admin';
-  import { onMount } from 'svelte';
 
   let admin = new AdminApp();
 
-  let categories: CategoryView[] = [];
-  let newCategoryName: string = '';
+  let categories = $state<CategoryView[]>([]);
+  let newCategoryName = $state<string>('');
 
-  onMount(async () => {
-    categories = await admin.fetchCategories();
+  $effect(() => {
+    admin.fetchCategories().then((res) => (categories = res));
   });
 
   const createNewCategory = async () => {
     await admin.newCategory(newCategoryName).then(async () => {
-      // delete categories from localstorage
-      ClearCache(CATEGORY_CACHE_KEY);
-      // fetch categories again
       categories = await admin.fetchCategories();
       newCategoryName = '';
     });
   };
 </script>
 
-<div class="dream-box blur categories-list">
-  <div class="buttons-wrapper">
-    <h2>Categories</h2>
-    <div class="container buttons-wrapper categories-wrapper">
-      {#if categories.length > 0}
-        {#each categories as { name }}
-          <div class="category">
-            <h3>{name}</h3>
-          </div>
-        {/each}
-      {:else}
-        <h3>No categories found.</h3>
-      {/if}
-    </div>
+<section class="dream-container fade-in">
+  <h4>Categories</h4>
+  <div class="container">
+    {#if categories.length > 0}
+      {#each categories as { name }}
+        <span
+          class="category pad-8 pad-inline round-8 shad"
+          role="button"
+          tabindex="0"
+        >
+          <h5>{name}</h5>
+        </span>
+      {/each}
+    {:else}
+      <p class="validation">No categories found</p>
+    {/if}
   </div>
+</section>
+
+<div class="new-category container">
+  <input bind:value={newCategoryName} placeholder="Enter Name" />
+  <button class="green-btn" onclick={createNewCategory}>
+    Add New Category
+  </button>
 </div>
 
-<div class="container blur buttons-wrapper new-category">
-  <input
-    class="story-input"
-    bind:value={newCategoryName}
-    placeholder="Enter Name"
-  />
-  <button on:click={createNewCategory}>Add New Category</button>
-</div>
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
 
-<style>
+  .dream-container {
+    .container {
+      flex-wrap: wrap;
+      justify-content: center;
+
+      .category {
+        @include gray(0.25);
+        @include white-txt(soft);
+
+        &:hover,
+        &:active {
+          @include cyan(1, text);
+          @include light-blue(0.5);
+          @include scale-up(soft);
+          @include box-shadow(deep);
+        }
+
+        h5 {
+          color: inherit;
+          text-shadow: none;
+        }
+      }
+    }
+  }
+
   .new-category {
-    width: 50vw;
-    padding: 2vw;
-    gap: 2vw;
-    border-radius: 1.5vw;
-  }
-
-  .new-category input {
-    width: 30vw;
-  }
-
-  .new-category button {
-    width: 20vw;
-  }
-
-  .categories-list {
-    align-items: center;
-    width: auto;
-    max-width: 95vw;
-  }
-
-  .categories-wrapper {
-    flex-flow: row wrap;
-    justify-content: center !important;
-  }
-
-  .category {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1vw;
-    padding: 1vw;
-    background-color: rgba(56, 117, 250, 0.5);
-    border-radius: 1vw;
-    box-shadow: 0 0.25vw 0.5vw #010020;
-  }
-
-  .category h3 {
-    color: #dedede;
-  }
-
-  @media only screen and (max-width: 600px) {
-    .categories-list {
-      width: 100vw;
-      max-width: none;
+    input {
+      width: 100%;
     }
 
-    .categories-list .container {
-      flex-flow: row wrap;
-    }
-
-    .category {
-      gap: 1em;
-      padding: 0.5em;
-      border-radius: 0.5em;
-    }
-  }
-
-  @media only screen and (max-width: 600px) {
-    .new-category {
-      width: 100vw;
-      padding: 1.5em 1em;
-      gap: 1em;
-      border-radius: 0;
-    }
-
-    .new-category input {
-      width: 95vw;
-      text-align: center;
-    }
-
-    .new-category button {
-      width: 50vw;
+    @include respond-up(tablet) {
+      flex-direction: row;
     }
   }
 </style>

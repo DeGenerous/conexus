@@ -3,19 +3,22 @@
   import { AdminApp } from '@lib/admin';
   import { CoNexusGame } from '@lib/story';
 
+  import LoadingSVG from '@components/icons/Loading.svelte';
+  import SelectorSVG from '@components/icons/Selector.svelte';
+
   let adminApp: AdminApp = new AdminApp();
   let game: CoNexusGame = new CoNexusGame();
 
-  let promptId: string | null = null;
-  let topic_name: string | null = null;
-  let story: GameData | null = null;
-  let step: StepData | null = null;
+  let promptId: string | null = $state(null);
+  let topic_name: string | null = $state(null);
+  let story: GameData | null = $state(null);
 
-  let loading: boolean = false;
-  let nextStepLoading: boolean = false;
-  let demoStarted: boolean = false;
+  let loading: boolean = $state(false);
+  let nextStepLoading: boolean = $state(false);
+  let demoStarted: boolean = $state(false);
+  let focusedOption: Nullable<number> = $state(null);
 
-  onMount(() => {
+  $effect(() => {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       promptId = urlParams.get('demoID');
@@ -43,203 +46,149 @@
     if (data) story = data;
     nextStepLoading = false;
   };
-
-  $: step = story as StepData;
 </script>
 
-<section class="container-wrapper">
-  <div class="container blur" class:story-container={story}>
-    <h3 class:hide={story}>Experience how your prompt comes to life.</h3>
-    {#if !demoStarted}
-      <button class="start-btn" on:click={startDemo} disabled={!topic_name}>
+{#if !demoStarted}
+  <section class="dream-container fade-in">
+    <h5>Experience how your prompt comes to life.</h5>
+    <div class="container">
+      {#if topic_name}
+        <h4 class="text-glowing fade-in">{topic_name}</h4>
+      {/if}
+      <button class="start-btn" onclick={startDemo} disabled={!topic_name}>
         {#if topic_name}
-          Start {topic_name} Demo
+          Start Demo
         {:else}
           Loading...
         {/if}
       </button>
-    {:else if loading}
-      <div class="buttons-wrapper">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 100 100"
-          class="loading-svg"
-          stroke="transparent"
-          stroke-width="7.5"
-          stroke-dasharray="288.5"
-          stroke-linecap="round"
-          fill="none"
-        >
-          <path
-            d="
-                M 50 96 a 46 46 0 0 1 0 -92 46 46 0 0 1 0 92
-              "
-            transform-origin="50 50"
-          />
-        </svg>
-        <h3 class="loading">Preparing a demo...</h3>
-      </div>
-    {:else if !story}
-      <p class="validation">Sorry, we couldn't find that prompt</p>
-    {:else}
-      <h2>{step.title}</h2>
-      <article class="container blur">
-        {step.story}
-      </article>
-      {#if step.options.length > 0}
-        <div class="options-container blur">
-          {#each step.options as option, i}
-            <button
-              class="option"
-              on:click={() =>
-                story && handleResponse(story.id.toString(), i + 1)}
+    </div>
+    <h5>
+      Play through the opening moments of your creation and refine your vision.
+    </h5>
+  </section>
+{:else if loading}
+  <div class="transparent-container flex-row fade-in">
+    <h5 class="loading-title text-glowing">Preparing a demo, please wait...</h5>
+    <LoadingSVG />
+  </div>
+{:else if !story}
+  <div class="transparent-container fade-in">
+    <p class="validation">Sorry, we couldn't find that prompt</p>
+  </div>
+{:else}
+  <section class="demo-step dream-container">
+    <h3 class="text-glowing">{story.title}</h3>
+    <div class="text container">
+      {story.story}
+    </div>
+    {#if story.options.length > 0}
+      <div class="options container flex">
+        {#each story.options as option, i}
+          <button
+            class="void-btn flex-row text-glowing"
+            onclick={() => story && handleResponse(story.id.toString(), i + 1)}
+            onpointerover={() => {
+              if (!nextStepLoading) {
+                focusedOption = i;
+              }
+            }}
+            onpointerout={() => {
+              if (!nextStepLoading) {
+                focusedOption = null;
+              }
+            }}
+            disabled={nextStepLoading}
+          >
+            <SelectorSVG
+              focused={focusedOption === i}
               disabled={nextStepLoading}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="-100 -100 200 200"
-                class="option-selector-svg"
-                fill="rgb(51, 226, 2305)"
-                stroke="rgb(51, 226, 230)"
-                stroke-width="20"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <polygon points="-40 -90 -40 90 50 0" opacity="0.75" />
-              </svg>
-              {option}
-            </button>
-          {/each}
-        </div>
-      {/if}
-      <div class="buttons-wrapper story-data">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 100 100"
-          class="loading-svg"
-          stroke="transparent"
-          stroke-width="7.5"
-          stroke-dasharray="288.5"
-          stroke-linecap="round"
-          fill="none"
-          visibility={nextStepLoading ? 'visible' : 'hidden'}
-        >
-          <path
-            d="
-                M 50 96 a 46 46 0 0 1 0 -92 46 46 0 0 1 0 92
-              "
-            transform-origin="50 50"
-          />
-        </svg>
-        <h3>{topic_name}:</h3>
-        <h3>Step {step.step}</h3>
+              hideForMobiles={true}
+              glowing={true}
+            />
+            {option}
+          </button>
+        {/each}
       </div>
     {/if}
-    <h3 class:hide={story}>
-      Play through the opening moments of your creation and refine your vision.
-    </h3>
-  </div>
-</section>
+    <div class="step flex-row">
+      {#if nextStepLoading}
+        <LoadingSVG />
+      {/if}
+      <h5>{topic_name}:</h5>
+      <h5>Step {story.step}</h5>
+    </div>
+  </section>
+{/if}
 
-<style>
-  .hide {
-    display: none;
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
+
+  .dream-container,
+  .transparent-container {
+    margin-top: 1rem;
   }
 
-  .story-container {
-    background-color: transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    box-shadow: none;
-  }
+  .dream-container {
+    width: auto;
 
-  .loading,
-  .story-data h3 {
-    color: rgba(51, 226, 230, 0.85);
-  }
-
-  .story-data {
-    margin-left: -2.5%;
-  }
-
-  article {
-    font-size: 1.25vw;
-    line-height: 2.5vw;
-    text-shadow: 0 0.25vw 0.25vw #010020;
-  }
-
-  .options-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 1vw;
-    border-radius: 1em;
-    background-color: rgba(51, 226, 230, 0.05);
-    box-shadow:
-      inset 0 0 0.5vw rgba(51, 226, 230, 0.25),
-      0 0 0.5vw #010020;
-  }
-
-  .option {
-    width: 100%;
-    justify-content: flex-start;
-    gap: 0.75em;
-    text-align: start;
-    font-size: 1.5vw;
-    line-height: 3vw;
-    color: rgba(51, 226, 230, 0.75);
-    background-color: rgba(0, 0, 0, 0);
-    border: none;
-  }
-
-  .option:hover,
-  .option:active {
-    color: rgba(51, 226, 230, 1);
-    text-shadow: 0 0.25vw 0.5vw #010020;
-    filter: none;
-    transform: scale(1.025) translateX(0.5%);
-  }
-
-  .option:disabled {
-    opacity: 0.75;
-    color: rgba(51, 226, 230, 0.6);
-    text-shadow: none !important;
-  }
-
-  .option:disabled:hover,
-  .option:disabled:active {
-    border: none;
-    background-color: transparent;
-    color: rgba(51, 226, 230, 0.6);
-    filter: none;
-    transform: none;
-  }
-
-  @media screen and (max-width: 600px) {
     .container {
-      width: 100vw;
-      border-radius: 0;
+      width: auto;
+      padding-inline: 1.5rem;
+
+      h4 {
+        width: auto;
+      }
+    }
+  }
+
+  .loading-title {
+    text-align: left;
+  }
+
+  .demo-step {
+    max-width: min(95%, 100rem);
+
+    .text {
+      text-align: left;
+      white-space: pre-wrap;
+      @include white-txt;
     }
 
-    article {
-      font-size: 1em;
-      line-height: 1.75em;
-      padding-inline: 1em !important;
+    .options {
+      flex-direction: column;
+      align-items: flex-start;
+
+      @include respond-up(small-desktop) {
+        width: 100%;
+      }
+
+      button {
+        width: 100%;
+        justify-content: flex-start;
+        text-align: left;
+
+        @include font(h5);
+
+        &:hover:not(&:disabled),
+        &:active:not(&:disabled),
+        &:focus:not(&:disabled) {
+          filter: hue-rotate(30deg) saturate(200%);
+        }
+
+        &:disabled:not(&.active-option) {
+          opacity: 0.25;
+        }
+      }
     }
 
-    .options-container {
-      gap: 1em;
-      padding: 1em 0.5em;
-    }
+    .step {
+      justify-content: center;
 
-    .option {
-      font-size: 1em;
-      line-height: 2em;
-    }
-
-    .option svg {
-      display: none;
+      h5 {
+        text-shadow: none;
+        @include white-txt;
+      }
     }
   }
 </style>

@@ -3,8 +3,8 @@
 import { serveUrl } from '@constants/media';
 import { tracks } from '@constants/tracks';
 import { MediaAPI } from '@service/routes';
-import { toastStore } from '@stores/toast';
-import { background_image, background_music } from '@stores/conexus';
+import { toastStore } from '@stores/toast.svelte';
+import { game } from '@stores/conexus.svelte';
 
 class MediaManager {
   private mediaAPI: MediaAPI;
@@ -49,20 +49,11 @@ class MediaManager {
     topic_id: string,
     media_type: MediaType,
   ): Promise<string[]> {
-    // const KEY = `${MEDIA_CACHE_KEY}_${topic_id}_${media_type}`;
-
-    // const cachedData = GetCache<string[]>(KEY);
-    // if (cachedData) {
-    //   return cachedData;
-    // }
-
     const { data } = await this.mediaAPI.getFile(topic_id, media_type);
 
     if (!data) {
       return [];
     }
-
-    // SetCache<string[]>(KEY, data, MEDIA_CACHE_TTL);
 
     return data;
   }
@@ -111,7 +102,10 @@ class MediaManager {
     const images = await this.fetchMedia(topic_id, 'background');
     if (images.length > 0) {
       let randomImage = images[Math.floor(Math.random() * images.length)];
-      background_image.set(serveUrl(randomImage));
+      game.background_image = serveUrl(randomImage);
+
+      console.log('bg image is set');
+      console.log(game.background_image);
     }
   }
 
@@ -120,7 +114,7 @@ class MediaManager {
 
     const audio = await this.fetchMedia(topic_id, 'audio');
     if (audio.length > 0) {
-      background_music.set(serveUrl(audio[0]));
+      game.background_music = serveUrl(audio[0]);
       return;
     }
 
@@ -145,7 +139,7 @@ class MediaManager {
       queue = shuffle([...tracks]);
     }
 
-    background_music.set(queue.pop());
+    game.background_music = queue.pop();
 
     localStorage.setItem('queue', JSON.stringify(queue));
   }

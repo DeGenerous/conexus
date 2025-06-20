@@ -1,32 +1,57 @@
-<script>
+<script lang="ts">
   import dreamData from '@constants/dream';
-  import { tablePrompt } from '@stores/dream';
+  import { tablePrompt } from '@stores/dream.svelte';
 
   import Dropdown from './Dropdown.svelte';
   import Slider from './Slider.svelte';
+
+  const tenseHints = {
+    past: 'Tells the story as if it already happened, allowing reflection and depth. Great for epic tales and classic adventures.',
+    present:
+      'Unfolds events in real time, creating urgency and immediacy. Ideal for thrillers or immersive experiences.',
+    future:
+      'Projects events that will happen, often suited for sci-fi, speculation, or visionary storytelling.',
+  };
+
+  const styleHints = {
+    descriptive:
+      'Rich in sensory detail and atmosphere. Perfect for building vivid worlds and emotional depth.',
+    narrative:
+      'Focused on plot and characters. Moves the story forward through scenes, actions, and dialogue.',
+    expository:
+      'Explains ideas, settings, or events directly. Useful for informative or philosophical stories.',
+  };
+
+  const voiceHints = {
+    active:
+      'The subject performs the action. Direct, engaging, and dynamic (“She solved the mystery”).',
+    passive:
+      'The subject receives the action. Subtle, reflective, or mysterious (“The mystery was solved by her”).',
+  };
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
 <Dropdown name="Build Writing Style">
-  <div class="dream-box style-options">
-    <div class="buttons-wrapper">
-      <h2>Tense</h2>
-      <div class="container dream-radio-buttons">
-        {#each dreamData.tense as tense}
-          <span
-            class:active={tense === $tablePrompt.tense}
-            role="button"
-            tabindex="0"
-            on:click={() => ($tablePrompt.tense = tense)}
-          >
-            {dreamData.capitalize(tense)}
-          </span>
-        {/each}
+  <section class="dream-container">
+    <div class="flex-row">
+      <h4>Tense</h4>
+      <div class="container">
+        <span class="flex-row">
+          {#each dreamData.tense as tense}
+            <button
+              class="void-btn dream-radio-btn"
+              class:active={tense === $tablePrompt.tense}
+              onclick={() => ($tablePrompt.tense = tense)}
+            >
+              {tense}
+            </button>
+          {/each}
+        </span>
+        <p>{tenseHints[$tablePrompt.tense]}</p>
       </div>
     </div>
 
-    <div class="buttons-wrapper">
-      <h2>Story Arcs</h2>
+    <div class="flex-row">
+      <h4>Story Arcs</h4>
       <div class="container">
         <Slider
           bind:sliderValue={$tablePrompt.storyArcs}
@@ -41,40 +66,44 @@
       </div>
     </div>
 
-    <div class="buttons-wrapper">
-      <h2>Style</h2>
-      <div class="container dream-radio-buttons">
-        {#each dreamData.writingStyle as style}
-          <span
-            class:active={style === $tablePrompt.writingStyle}
-            role="button"
-            tabindex="0"
-            on:click={() => ($tablePrompt.writingStyle = style)}
-          >
-            {dreamData.capitalize(style)}
-          </span>
-        {/each}
+    <div class="flex-row">
+      <h4>Style</h4>
+      <div class="container">
+        <span class="flex-row">
+          {#each dreamData.writingStyle as style}
+            <button
+              class="void-btn dream-radio-btn"
+              class:active={style === $tablePrompt.writingStyle}
+              onclick={() => ($tablePrompt.writingStyle = style)}
+            >
+              {style}
+            </button>
+          {/each}
+        </span>
+        <p>{styleHints[$tablePrompt.writingStyle]}</p>
       </div>
     </div>
 
-    <div class="buttons-wrapper">
-      <h2>Voice</h2>
-      <div class="container dream-radio-buttons">
-        {#each dreamData.voice as voice}
-          <span
-            class:active={voice === $tablePrompt.voice}
-            role="button"
-            tabindex="0"
-            on:click={() => ($tablePrompt.voice = voice)}
-          >
-            {dreamData.capitalize(voice)}
-          </span>
-        {/each}
+    <div class="flex-row">
+      <h4>Voice</h4>
+      <div class="container">
+        <span class="flex-row">
+          {#each dreamData.voice as voice}
+            <button
+              class="void-btn dream-radio-btn"
+              class:active={voice === $tablePrompt.voice}
+              onclick={() => ($tablePrompt.voice = voice)}
+            >
+              {voice}
+            </button>
+          {/each}
+        </span>
+        <p>{voiceHints[$tablePrompt.voice]}</p>
       </div>
     </div>
 
-    <div class="buttons-wrapper">
-      <h2>Pacing</h2>
+    <div class="flex-row">
+      <h4>Pacing</h4>
       <div class="container">
         <Slider
           bind:sliderValue={$tablePrompt.pacing}
@@ -88,71 +117,64 @@
         />
       </div>
     </div>
-  </div>
 
-  <hr />
-
-  <div class="input-container">
-    <label class="section-title" for="point-of-view">Point of View</label>
-    <textarea
-      id="point-of-view"
-      class="story-input"
-      placeholder="Specify the perspective of the story—first-person, second-person, or third-person—and whose eyes we experience the journey through. E.g. First-person, from the detective’s skeptical assistant, uncovering their mentor’s hidden dark secret."
-      rows="3"
-      bind:value={$tablePrompt.POV}
-    ></textarea>
-  </div>
+    <div class="flex-row">
+      <h4>Point of View</h4>
+      <textarea
+        id="point-of-view"
+        placeholder="Specify the perspective of the story—first-person, second-person, or third-person—and whose eyes we experience the journey through. E.g. First-person, from the detective’s skeptical assistant, uncovering their mentor’s hidden dark secret."
+        rows="3"
+        bind:value={$tablePrompt.POV}
+      ></textarea>
+    </div>
+  </section>
 
   <hr />
 
   <h3>Story Tone</h3>
 
-  <div class="dream-box tone-characteristics">
-    {#each $tablePrompt.tone as { name, value }}
-      <div class="buttons-wrapper">
-        <h2>{dreamData.capitalize(name)}</h2>
-        <div class="container">
-          <Slider bind:sliderValue={value} />
-        </div>
+  {#each $tablePrompt.tone as { name, value, hints }}
+    <span class="tone flex">
+      <h4>{name.charAt(0).toUpperCase() + name.slice(1)}</h4>
+      <div class="container">
+        <Slider bind:sliderValue={value} inputValue={3} {hints} />
       </div>
-    {/each}
-  </div>
+    </span>
+  {/each}
 </Dropdown>
 
-<style>
-  textarea {
-    width: 80vw;
-  }
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
 
-  label,
-  h3 {
-    color: #dedede;
-  }
+  section {
+    width: 100%;
 
-  .tone-characteristics {
-    width: auto;
-  }
+    .container {
+      flex-direction: column;
 
-  .style-options {
-    width: 84vw;
-  }
+      span {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: space-around;
+      }
 
-  .style-options .container {
-    width: 70vw;
-  }
-
-  @media only screen and (max-width: 600px) {
-    textarea {
-      width: 90vw;
+      p {
+        @include white-txt(0.5);
+        @include font(caption);
+      }
     }
+  }
 
-    .tone-characteristics,
-    .style-options {
-      width: 100vw;
-    }
+  .tone {
+    width: 100%;
 
-    .style-options .container {
-      width: 95vw;
+    @include respond-up(tablet) {
+      flex-direction: row;
+
+      h4 {
+        width: 12rem;
+        text-align: right;
+      }
     }
   }
 </style>

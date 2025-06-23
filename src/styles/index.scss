@@ -74,11 +74,13 @@ textarea:disabled {
   opacity: 1 !important; // for iOS
 }
 
-ul:not(.default-ul) {
+ul:not(.default-ul),
+ol:not(.default-ol) {
   list-style-type: none;
 }
 
-.default-ul {
+.default-ul,
+.default-ol {
   text-align: left;
   list-style-position: inside;
 }
@@ -446,6 +448,76 @@ html {
           p {
             @include cyan(0.75, text);
           }
+        }
+      }
+    }
+  }
+
+  .blog-page {
+    @extend .transparent-container;
+    width: 95%;
+    max-width: 80rem;
+    margin-top: 1rem;
+    @include white-txt;
+
+    h5 {
+      @include cyan(1, text);
+    }
+
+    .cards-list {
+      @extend .container;
+      width: 100%;
+      @include box-shadow(deep, inset);
+
+      .card {
+        @extend .gray-tile;
+        width: 100%;
+        padding: 1rem;
+        gap: 1rem;
+
+        h4 {
+          @include cyan(1, text);
+        }
+
+        .details {
+          @extend .container;
+          animation: none;
+          width: 100%;
+          align-items: flex-start;
+          @include white-txt(0.5);
+          @include dark-blue(0.5);
+          @include box-shadow(soft, inset);
+
+          p {
+            text-align: left;
+
+            strong {
+              @include white-txt;
+            }
+          }
+        }
+
+        &:hover,
+        &:active,
+        &:focus {
+          .details {
+            @include dark-blue(0.75);
+            @include light-blue(1, text);
+
+            p {
+              strong {
+                @include light-blue(1, text);
+              }
+            }
+          }
+        }
+      }
+
+      @include respond-up(small-desktop) {
+        flex-flow: row wrap;
+
+        .card {
+          width: 49%;
         }
       }
     }

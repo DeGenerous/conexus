@@ -323,3 +323,15 @@
     @include dark-green(1, text);
   }
 }
+
+.gray-tile {
+  @extend .tile;
+  @include gray(0.25);
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(&:disabled) {
+    @include light-blue(0.5);
+    @include cyan(1, text);
+  }
+}

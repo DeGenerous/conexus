@@ -1,6 +1,8 @@
 ---
 import Layout from '@layouts/Layout.astro';
 
+import { topTools } from '@constants/blog';
+
 const meta = {
   title: 'Blog | CoNexus',
   nav: 'Blog',
@@ -12,5 +14,67 @@ const meta = {
 ---
 
 <Layout {...meta}>
-  <span></span>
+  <h3>
+    Top Choose-Your-Own-Adventure Tools to Bring Your Story to Life (2025)
+  </h3>
+  <div class="blog-page">
+    <h5>
+      Looking to Build an Interactive Story? These Tools Let You Create
+      Branching Narratives Without Limits.
+    </h5>
+    <p>
+      The rise of interactive fiction and non-linear storytelling has opened the
+      door for creators of all backgrounds to craft immersive experiences.
+      Whether you’re building a fantasy epic, a romance visual novel, or a
+      sci-fi mystery, choose-your-own-adventure (CYOA) tools help bring those
+      stories to life.
+    </p>
+    <p>
+      Below are some of the top platforms available in 2025 for designing
+      branching narratives, including free no-code options and powerful engines
+      for experienced developers.
+    </p>
+    <ol class="cards-list">
+      {
+        topTools.map(
+          ({ name, bestFor, platform, pricing, description, url }) => {
+            return (
+              <a class="card" href={url}>
+                <h4>{name}</h4>
+                <span class="details">
+                  <p>
+                    Best for: <strong>{bestFor}</strong>
+                  </p>
+                  <p>
+                    Platform: <strong>{platform}</strong>
+                  </p>
+                  <p>
+                    Pricing: <strong>{pricing}</strong>
+                  </p>
+                </span>
+                <p>{description}</p>
+              </a>
+            );
+          }
+        )
+      }
+    </ol>
+    <h5>Final Thoughts</h5>
+    <p>Choosing the right CYOA tool depends on your goals.</p>
+    <ul class="default-ul">
+      <li>
+        If you want full creative control and scripting power, try Ink or
+        ChoiceScript.
+      </li>
+      <li>If you're focused on visual novels, go for RenPy.</li>
+      <li>
+        If you want a modern, no-code experience with built-in replayability,
+        AI-generated visuals, and flexible customization, explore CoNexus.
+      </li>
+    </ul>
+    <p>
+      The future of storytelling is interactive — and these tools are making it
+      more accessible than ever.
+    </p>
+  </div>
 </Layout>

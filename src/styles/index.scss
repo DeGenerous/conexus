@@ -389,6 +389,68 @@ html {
     }
   }
 
+  // BLOG SECTION STYLING
+
+  .blog-pages {
+    @extend .flex;
+
+    a {
+      @extend .transparent-container;
+      width: 95%;
+      max-width: 80rem;
+
+      img {
+        border-radius: 0.5rem;
+      }
+
+      article {
+        @extend .flex;
+        align-items: flex-start;
+
+        h5 {
+          @include white-txt;
+        }
+
+        p {
+          @include white-txt(soft);
+        }
+      }
+
+      @include respond-up(tablet) {
+        flex-direction: row;
+
+        img {
+          width: 10rem;
+        }
+
+        article {
+          h5,
+          p {
+            text-align: left;
+          }
+        }
+      }
+
+      &:hover,
+      &:active,
+      &:focus {
+        text-decoration: none;
+        @include bright;
+        @include scale-up(soft);
+
+        article {
+          h5 {
+            @include cyan(1, text);
+          }
+
+          p {
+            @include cyan(0.75, text);
+          }
+        }
+      }
+    }
+  }
+
   // NAVIGATION ICONS
 
   .top-left-icon,

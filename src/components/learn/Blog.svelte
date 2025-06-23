@@ -2,25 +2,14 @@
   import blogPosts from '@constants/blog';
 </script>
 
-<section class="flex">
-  {#each blogPosts as { image, title, description }}
-    <div class="preview flex-row">
-      <img src={image} alt={title} />
-      <article class="flex">
+<section class="blog-pages">
+  {#each blogPosts as { url, title, description }}
+    <a href="/learn/blog/{url}">
+      <img class="shad-behind" src="/learn/blog/{url}.avif" alt={title} />
+      <article>
         <h5>{title}</h5>
         <p>{description}</p>
       </article>
-    </div>
+    </a>
   {/each}
 </section>
-
-<style lang="scss">
-  @use '/src/styles/mixins' as *;
-
-  section {
-    color: $soft-white;
-
-    .preview {
-    }
-  }
-</style>

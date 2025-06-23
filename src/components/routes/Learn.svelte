@@ -8,13 +8,13 @@
     <a class="tile purple-tile" href="/learn/faq">
       <img src="/learn/faq.avif" alt="FAQ" />
       <h5>FAQ</h5>
-      <p>CoNexus Explained</p>
+      <p class="pc-only">CoNexus Explained</p>
     </a>
 
     <a class="tile purple-tile" href="/learn/blog">
       <img src="/learn/blog.avif" alt="Blog" />
       <h5>Blog</h5>
-      <p>Beyond the Story</p>
+      <p class="pc-only">Beyond the Story</p>
     </a>
   </div>
 

@@ -1,46 +1,42 @@
 const blogPages: {
-  image?: string;
+  url: string;
   title: string;
   description: string;
-  content: string;
 }[] = [
   {
-    image: '',
+    url: 'choose-your-own-adventure-tools',
     title:
       'Top Choose-Your-Own-Adventure Tools to Bring Your Story to Life (2025)',
     description:
       'Looking for the best choose-your-own-adventure tools to build interactive stories in 2025? Explore free and advanced platforms for creating branching narratives, visual novels, and story games — with and without code.',
-    content: `
-      <h4>
-        Looking to Build an Interactive Story? These Tools Let You Create Branching Narratives Without Limits.
-      </h4>
-      <p>
-        The rise of interactive fiction and non-linear storytelling has opened the door for creators of all backgrounds to craft immersive experiences. Whether you’re building a fantasy epic, a romance visual novel, or a sci-fi mystery, choose-your-own-adventure (CYOA) tools help bring those stories to life.
-      </p>
-      <p>
-        Below are some of the top platforms available in 2025 for designing branching narratives, including free no-code options and powerful engines for experienced developers.
-      </p>
-      <ol>
-        <li class="flex">
-          <h3>Twine</h3>
-          <p>Best for: <b>Beginners and writers</b></p>
-          <p>Platform: <b>Web</b></p>
-          <p>Pricing: <b>Free and open-source</b></p>
-          <article>
-            Twine is a beloved classic in the interactive fiction community. It uses a simple visual interface and link-based scripting that allows you to connect passages like web pages. While it’s beginner-friendly, it also supports advanced logic for more dynamic narratives using variables and JavaScript.
-          </article>
-        </li>
-        <li class="flex">
-          <h3>Ink by Inkle</h3>
-          <p>Best for: <b>Beginners and writers</b></p>
-          <p>Platform: <b>Web</b></p>
-          <p>Pricing: <b>Free and open-source</b></p>
-          <article>
-            Twine is a beloved classic in the interactive fiction community. It uses a simple visual interface and link-based scripting that allows you to connect passages like web pages. While it’s beginner-friendly, it also supports advanced logic for more dynamic narratives using variables and JavaScript.
-          </article>
-        </li>
-      </ol>
-    `,
+  },
+  {
+    url: 'play-story-games-online',
+    title:
+      'Play Story Games Online: The Best Ways to Experience Interactive Narratives in 2025',
+    description:
+      'Looking for the best places to play story games online? Explore interactive fiction, choice-based adventures, and AI-powered story platforms you can try instantly in 2025.',
+  },
+  {
+    url: 'create-interactive-fiction',
+    title:
+      'Create Interactive Fiction: Tools and Tips for Storytellers in 2025',
+    description:
+      'Want to create interactive fiction? Discover the best tools, platforms, and techniques to start building branching narratives and story games online in 2025 — no coding required.',
+  },
+  {
+    url: 'best-visual-novels',
+    title:
+      'Best Visual Novels to Play in 2025',
+    description:
+      'Looking for the best visual novels to play in 2025? Explore immersive, choice-driven stories across romance, mystery, fantasy, and more — available online and on all platforms.',
+  },
+  {
+    url: 'ai-stories',
+    title:
+      'Best Platforms to Explore AI Stories in 2025',
+    description:
+      'Curious about AI-generated stories? Discover the best platforms for reading, playing, or creating AI-powered narratives in 2025 — from interactive adventures to personalized fiction.',
   },
 ];
 

@@ -22,7 +22,7 @@
         setTimeout(() => copyBtn.classList.remove('copied'), 600);
         break;
       case 'discord':
-        const shareUrlDiscord = `https://discord.gg/349FgMSUK8`;
+        const shareUrlDiscord = `http://degenerousdao.com/join`;
         await navigator.clipboard.writeText(window.location.href);
         window.open(shareUrlDiscord, '_blank');
         break;

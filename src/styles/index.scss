@@ -74,8 +74,13 @@ textarea:disabled {
   opacity: 1 !important; // for iOS
 }
 
-ul {
+ul:not(.default-ul) {
   list-style-type: none;
+}
+
+.default-ul {
+  text-align: left;
+  list-style-position: inside;
 }
 
 :where(h1, h2, h3, h4, h5, p) {
@@ -92,6 +97,17 @@ ul {
 :where(hr) {
   width: 100%;
   @include gray-border(0.25);
+}
+
+:where(code) {
+  font-family: monospace;
+  @include gray(0.1);
+}
+
+:where(b) {
+  font-weight: bold;
+  color: $white;
+  @include text-shadow;
 }
 
 /* GENERAL STYLING */
@@ -115,14 +131,11 @@ html {
   word-spacing: 0.2em;
   background-color: $dark-blue;
 
-  @include respond-up(small-desktop) {
-    background-color: black;
-  }
-
   @include cyan(0.85, 'text');
   @include font;
 
   @include respond-up('small-desktop') {
+    background-color: black;
     padding-block: 4rem 2rem;
   }
 

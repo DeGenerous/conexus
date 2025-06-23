@@ -754,7 +754,9 @@ a11y_no_noninteractive_element_interactions -->
       on:click|stopPropagation
     >
       {#if zoom !== 1}
-        <p class="zoom-hint validation green-txt">Zoomed-out mode active - perfect for screenshots 🖼️</p>
+        <p class="zoom-hint validation green-txt">
+          Zoomed-out mode active - perfect for screenshots 🖼️
+        </p>
       {/if}
       <div class="image-scale transparent-container">
         <span class="flex-row">

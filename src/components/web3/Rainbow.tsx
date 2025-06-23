@@ -22,21 +22,38 @@ import { AccountAPI, AuthAPI } from '@service/routes';
 
 import '@rainbow-me/rainbowkit/styles.css';
 
-const Web3Provider = ({ linking, children }) => {
+const wagmiConfig = getDefaultConfig({
+  appName: 'Degenerous DAO',
+  appIcon: `${assetsURL}/logo.png`,
+  appUrl: 'https://degenerousdao.com', // prod
+  // appUrl: 'http://localhost:4321', // dev
+  projectId: '0b8a3fac6220753a719b9aeceb8f19fb',
+  chains: [mainnet, base],
+  ssr: false, // If your dApp uses server side rendering (SSR)
+  pollingInterval: 12000, // How often (in ms) to poll for updates
+});
+
+const queryClient = new QueryClient();
+
+const rkTheme = darkTheme({
+  accentColor: 'rgb(51, 226, 230)',
+  accentColorForeground: 'rgb(51, 226, 230)',
+  borderRadius: 'large',
+  fontStack: 'rounded',
+  overlayBlur: 'large',
+});
+
+const Web3Provider = ({
+  children,
+  linking,
+}: {
+  children: React.ReactNode;
+  linking?: boolean;
+}) => {
   let AUTHENTICATION_STATUS: AuthenticationStatus = 'unauthenticated';
 
   const authAPI = new AuthAPI(import.meta.env.PUBLIC_BACKEND);
   const accountAPI = new AccountAPI(import.meta.env.PUBLIC_BACKEND);
-
-  const config = getDefaultConfig({
-    appName: 'Degenerous DAO',
-    appIcon: `${assetsURL}/logo.png`,
-    appUrl: 'https://degenerousdao.com',
-    projectId: '0b8a3fac6220753a719b9aeceb8f19fb',
-    chains: [mainnet, base],
-    ssr: false, // If your dApp uses server side rendering (SSR)
-    pollingInterval: 12000, // How often (in ms) to poll for updates
-  });
 
   const authenticationAdapter = createAuthenticationAdapter({
     getNonce: async () => {
@@ -125,25 +142,14 @@ const Web3Provider = ({ linking, children }) => {
     },
   });
 
-  const queryClient = new QueryClient();
-
   return (
-    <WagmiProvider config={config}>
+    <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitAuthenticationProvider
           adapter={authenticationAdapter}
           status={AUTHENTICATION_STATUS}
         >
-          <RainbowKitProvider
-            modalSize="wide"
-            theme={darkTheme({
-              accentColor: 'rgb(51, 226, 230)',
-              accentColorForeground: 'rgb(51, 226, 230)',
-              borderRadius: 'large',
-              fontStack: 'rounded',
-              overlayBlur: 'large',
-            })}
-          >
+          <RainbowKitProvider modalSize="wide" theme={rkTheme}>
             {children}
           </RainbowKitProvider>
         </RainbowKitAuthenticationProvider>

@@ -20,7 +20,7 @@ const frequentlyAskedQuestions: {
         </li>
       </ul>
       <p>👉 <b>Need a referral code?</b> Join our <a href="http://degenerousdao.com/join">Discord</a> and check the <code>#ref-codes</code> channel to get one instantly.</p>
-    `
+    `,
   },
   {
     question: 'How do referral codes work?',
@@ -32,7 +32,7 @@ const frequentlyAskedQuestions: {
         Every referral helps grow the multiverse — and yes, <b>you can earn rewards</b> for sharing.
         To be eligible for <b>crypto-based rewards</b>, make sure to <b>connect a Web3 wallet to your Web2 account</b>.
       </p>
-    `
+    `,
   },
   {
     question: 'Do I need a crypto wallet?',
@@ -43,7 +43,7 @@ const frequentlyAskedQuestions: {
       <p>
         You can create a CoNexus account with just an email or Google login, but if you also connect a crypto wallet, you’ll be eligible for <b>Web3-specific rewards</b>, including future governance and creator tools.
       </p>
-    `
+    `,
   },
   {
     question: 'Is CoNexus free?',
@@ -54,7 +54,7 @@ const frequentlyAskedQuestions: {
       <p>
         <b>Our features</b> include access to a growing library of stories, referral codes, early customization tools, and creator functionality. Future monetization options will empower creators to earn without paywalls for players.
       </p>
-    `
+    `,
   },
   {
     question: 'What is DeGenerous DAO?',
@@ -62,7 +62,7 @@ const frequentlyAskedQuestions: {
       <p>
         DeGenerous DAO is a collective building media technology for the next generation of creators. We're focused on reimagining storytelling as something <b>interactive, social, and creator-owned</b>, starting with our core platform: <b>CoNexus</b>.
       </p>
-    `
+    `,
   },
   {
     question: 'What is CoNexus?',
@@ -73,7 +73,7 @@ const frequentlyAskedQuestions: {
       <p>
         It’s the first expression of our broader goal: building a <b>text-to-story engine</b> that will soon support text-to-novel, text-to-film, and beyond.
       </p>
-    `
+    `,
   },
   {
     question: 'How is CoNexus different from other storytelling tools?',
@@ -84,7 +84,7 @@ const frequentlyAskedQuestions: {
       <p>
         Every story is dynamic, customizable, and remixable — with branching outcomes, multimedia experiences, and the ability to evolve alongside communities.
       </p>
-    `
+    `,
   },
   {
     question: 'What does “text-to-story” mean?',
@@ -95,7 +95,7 @@ const frequentlyAskedQuestions: {
       <p>
         Right now, that means <b>text-to-CYOA</b> (choose your own adventure). With v2, it will include <b>text-to-novel, text-to-film</b>, and beyond.
       </p>
-    `
+    `,
   },
   {
     question: 'What can I do on CoNexus today?',
@@ -114,7 +114,7 @@ const frequentlyAskedQuestions: {
           Use and share referral codes to onboard new users and earn rewards
         </li>
       </ul>
-    `
+    `,
   },
   {
     question: 'What’s coming next?',
@@ -143,7 +143,7 @@ const frequentlyAskedQuestions: {
           Social pages for creators, communities, and fandoms
         </li>
       </ul>
-    `
+    `,
   },
 ];
 

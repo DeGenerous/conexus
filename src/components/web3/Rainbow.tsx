@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 
 import {
   createAuthenticationAdapter,
@@ -50,104 +50,112 @@ const Web3Provider = ({
   children: React.ReactNode;
   linking?: boolean;
 }) => {
-  let AUTHENTICATION_STATUS: AuthenticationStatus = 'unauthenticated';
+  const [authStatus, setAuthStatus] =
+    useState<AuthenticationStatus>('unauthenticated');
 
   const authAPI = new AuthAPI(import.meta.env.PUBLIC_BACKEND);
   const accountAPI = new AccountAPI(import.meta.env.PUBLIC_BACKEND);
 
-  const authenticationAdapter = createAuthenticationAdapter({
-    getNonce: async () => {
-      const { data, error } = await authAPI.web3Getnonce();
+  const authenticationAdapter = useMemo(
+    () =>
+      createAuthenticationAdapter({
+        getNonce: async () => {
+          const { data, error } = await authAPI.web3Getnonce();
 
-      if (!data) {
-        console.error('Failed to fetch nonce:', error);
-        throw new Error('Failed to fetch nonce');
-      }
+          if (!data) {
+            console.error('Failed to fetch nonce:', error);
+            throw new Error('Failed to fetch nonce');
+          }
 
-      AUTHENTICATION_STATUS = 'loading';
+          setAuthStatus('loading');
 
-      return data.nonce;
-    },
+          return data.nonce;
+        },
 
-    createMessage: ({ nonce, address, chainId }) => {
-      if (!nonce || !address || !chainId) {
-        console.error('Missing required parameters for createSiweMessage:', {
-          nonce,
-          address,
-          chainId,
-        });
-        throw new Error('Missing parameters for creating the message');
-      }
+        createMessage: ({ nonce, address, chainId }) => {
+          if (!nonce || !address || !chainId) {
+            console.error(
+              'Missing required parameters for createSiweMessage:',
+              {
+                nonce,
+                address,
+                chainId,
+              },
+            );
+            throw new Error('Missing parameters for creating the message');
+          }
 
-      try {
-        return createSiweMessage({
-          nonce,
-          address,
-          chainId,
-          statement:
-            "Sign this message to prove you're a Potential NFT holder. It will not cause a blockchain transaction, nor any gas fees.",
-          domain: window.location.host,
-          uri: window.location.origin,
-          version: '1',
-        });
-      } catch (error) {
-        console.error('Error creating SIWE message:', error);
-        throw error;
-      }
-    },
+          try {
+            return createSiweMessage({
+              nonce,
+              address,
+              chainId,
+              statement:
+                "Sign this message to prove you're a Potential NFT holder. It will not cause a blockchain transaction, nor any gas fees.",
+              domain: window.location.host,
+              uri: window.location.origin,
+              version: '1',
+            });
+          } catch (error) {
+            console.error('Error creating SIWE message:', error);
+            throw error;
+          }
+        },
 
-    verify: async ({ message, signature }) => {
-      let resp: APIResponse<{ user: User }>;
+        verify: async ({ message, signature }) => {
+          let resp: APIResponse<{ user: User }>;
 
-      if (linking) {
-        resp = await accountAPI.web3WalletLink({
-          message,
-          signature,
-        });
-      } else {
-        resp = await authAPI.web3WalletSignin({
-          message,
-          signature,
-        });
-      }
+          if (linking) {
+            resp = await accountAPI.web3WalletLink({
+              message,
+              signature,
+            });
+          } else {
+            resp = await authAPI.web3WalletSignin({
+              message,
+              signature,
+            });
+          }
 
-      const { data, error } = resp;
+          const { data, error } = resp;
 
-      if (!data) {
-        console.error('Failed to verify signature:', error?.details);
-        AUTHENTICATION_STATUS = 'unauthenticated';
-        return false;
-      }
+          if (!data) {
+            console.error('Failed to verify signature:', error?.details);
+            setAuthStatus('unauthenticated');
+            return false;
+          }
 
-      SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
+          SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
-      authenticated.set({ user: data.user, loggedIn: true });
+          authenticated.set({ user: data.user, loggedIn: true });
 
-      AUTHENTICATION_STATUS = 'authenticated';
+          setAuthStatus('authenticated');
 
-      return true;
-    },
+          return true;
+        },
 
-    signOut: async () => {
-      const { data, error } = await accountAPI.logout();
+        signOut: async () => {
+          const { data, error } = await accountAPI.logout();
 
-      if (!data) {
-        console.error('Failed to sign out:', error);
-        return;
-      }
+          if (!data) {
+            console.error('Failed to sign out:', error);
+            return;
+          }
 
-      authenticated.set({ user: null, loggedIn: false });
+          authenticated.set({ user: null, loggedIn: false });
 
-      AUTHENTICATION_STATUS = 'unauthenticated';
-    },
-  });
+          setAuthStatus('unauthenticated');
+        },
+      }),
+    [linking],
+  );
 
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitAuthenticationProvider
           adapter={authenticationAdapter}
-          status={AUTHENTICATION_STATUS}
+          status={authStatus}
         >
           <RainbowKitProvider modalSize="wide" theme={rkTheme}>
             {children}

@@ -98,14 +98,16 @@
   // Hide control bar for Mobiles
   function handleWrapperPointer(e: PointerEvent) {
     // Ignore taps that start on the control bar or any panel
-    if ((e.target as HTMLElement).closest(
-      'nav, section.step-controller, section.sound-controller,' +
-      'section.styling-controller, section.scale-controller'
-    )) {
+    if (
+      (e.target as HTMLElement).closest(
+        'nav, section.step-controller, section.sound-controller,' +
+          'section.styling-controller, section.scale-controller',
+      )
+    ) {
       return;
     }
 
-    if((e.target as HTMLElement).tagName === 'BUTTON') return;
+    if ((e.target as HTMLElement).tagName === 'BUTTON') return;
 
     // Close panel if one is open
     if (activeControlPanel) {

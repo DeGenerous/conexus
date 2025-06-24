@@ -81,6 +81,8 @@
     <p class="mobile-text-wrapper subheading pad-inline text-shad">
       {@html subheading}
     </p>
+  {:else}
+    <div class="empty-subheading"></div>
   {/if}
 
   <nav
@@ -299,6 +301,10 @@
       width: clamp(20rem, 95%, 80rem);
       margin-block: 1rem 2rem;
     }
+  }
+
+  .empty-subheading {
+    height: 1rem;
   }
 
   nav {

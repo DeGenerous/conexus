@@ -79,7 +79,19 @@
       if (cachedCategories) categories = cachedCategories;
       else await fetchCategories();
 
-      genres = await app.getGenres();
+      await app.getGenres().then((data) => {
+        function sortByName(a: Genre, b: Genre) {
+          if (a.name < b.name) {
+            return -1;
+          }
+          if (a.name > b.name) {
+            return 1;
+          }
+          return 0;
+        }
+
+        genres = data.sort(sortByName);
+      });
 
       // If no categories after 2 seconds, show "No categories found"
       setTimeout(() => {

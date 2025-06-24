@@ -19,6 +19,9 @@ type LayoutProps = {
   ogTitle?: string;
   description?: string;
   image?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  imageType?: string;
   url?: string;
   type?: string;
   disableIndexing?: boolean;
@@ -32,13 +35,21 @@ const {
   story,
   title = 'CoNexus | DeGenerous DAO',
   description = 'CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.',
-  image = '/favicon.ico',
+  image = '/og.jpeg',
+  imageWidth = 480,
+  imageHeight = 480,
+  imageType = 'image/jpeg',
   url = 'https://conexus.degenerousdao.com/',
   type = 'website',
 
   ogTitle,
   disableIndexing = false,
 } = Astro.props as LayoutProps;
+
+// Helper: always pass an absolute URL to crawlers
+const absoluteImageURL = image.startsWith('http')
+  ? image
+  : `${seoConfig.baseURL}${image}`;
 ---
 
 <html lang="en">
@@ -66,25 +77,26 @@ const {
         basic: {
           title: ogTitle || title,
           type,
-          image: image || seoConfig.image.url,
-          url: url || seoConfig.baseURL,
+          image: absoluteImageURL,
+          url,
         },
         image: {
-          width: seoConfig.image.width,
-          height: seoConfig.image.height,
+          width: imageWidth,
+          height: imageHeight,
+          type: imageType,
+          url: absoluteImageURL,
           alt: seoConfig.image.alt,
-          url: seoConfig.image.url,
-          type: seoConfig.image.type,
         },
         optional: {
           siteName: seoConfig.siteName,
-          description: seoConfig.description || description,
+          description: description,
         },
       }}
       twitter={{
         card: 'summary_large_image',
         site: seoConfig.twitter.site,
         creator: seoConfig.twitter.creator,
+        image: absoluteImageURL,
       }}
     />
 

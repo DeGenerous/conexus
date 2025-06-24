@@ -2,7 +2,7 @@
   import dreamData from '@constants/dream';
   import { tablePrompt } from '@stores/dream.svelte';
 
-  import Dropdown from './Dropdown.svelte';
+  import Dropdown from '../../../utils/Dropdown.svelte';
   import Slider from './Slider.svelte';
 
   const tenseHints = {

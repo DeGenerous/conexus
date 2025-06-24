@@ -1,0 +1,89 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import { visualNovels } from '@constants/blog';
+
+const meta = {
+  title: 'Blog | CoNexus',
+  nav: 'Blog',
+  arrow: '/learn/blog',
+  header: 'Best Visual Novels',
+  subheading:
+    'Looking for the best visual novels to play in 2025? Explore immersive, choice-driven stories across romance, mystery, fantasy, and more — available online and on all platforms.',
+  image: '/learn/blog/best-visual-novels.jpeg',
+  imageWidth: 1536,
+  imageHeight: 1024,
+};
+---
+
+<Layout {...meta}>
+  <header class="blog-title">
+    <img
+      src="/learn/blog/best-visual-novels.jpeg"
+      alt="Visual novels"
+      width="1536"
+      height="1024"
+    />
+    <h3>Best Visual Novels to Play in 2025</h3>
+  </header>
+
+  <article class="blog-page">
+    <p>
+      Visual novels blend storytelling, art, music, and interactivity into one
+      immersive experience. With roots in both traditional fiction and gaming,
+      they let players explore complex narratives while making choices that
+      influence character relationships, plot developments, and endings.
+    </p>
+    <p>
+      Whether you’re new to the genre or a longtime fan, 2025 offers a growing
+      library of visual novels that cover every theme — from romance and horror
+      to science fiction and psychological drama.
+    </p>
+    <hr />
+    <h5>
+      Here’s a curated list of some of the best visual novels to play right now:
+    </h5>
+    <ol class="cards-list">
+      {
+        visualNovels.map(
+          ({ name, bestFor, platform, pricing, description, url }) => {
+            return (
+              <a
+                class={name === 'CoNexus' ? 'card green-card' : 'card'}
+                href={url}
+              >
+                <h4>{name}</h4>
+                <span class="details">
+                  <p>
+                    Best for: <strong>{bestFor}</strong>
+                  </p>
+                  <p>
+                    Platform: <strong>{platform}</strong>
+                  </p>
+                  <p>
+                    Pricing: <strong>{pricing}</strong>
+                  </p>
+                </span>
+                <p>{description}</p>
+              </a>
+            );
+          }
+        )
+      }
+    </ol>
+    <hr />
+    <h5>Final Thoughts</h5>
+    <p>
+      The visual novel space continues to evolve with hybrid formats, player
+      customization, and stronger tools for creators. Whether you’re seeking a
+      complex sci-fi narrative or a personal romance you can shape, there’s
+      something out there for you.
+    </p>
+    <p>
+      And with platforms like CoNexus expanding what a visual novel can be —
+      adding AI, personalization, and live remixing — the future of this genre
+      is more dynamic, accessible, and creative than ever.
+    </p>
+    <p>Start reading, start playing, and see where your choices take you.</p>
+  </article>
+</Layout>

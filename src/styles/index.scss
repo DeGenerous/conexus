@@ -40,6 +40,11 @@
     serif-sans;
 }
 
+*::before,
+*::after {
+  color: inherit;
+}
+
 a,
 button,
 [role='button'],
@@ -74,8 +79,15 @@ textarea:disabled {
   opacity: 1 !important; // for iOS
 }
 
-ul {
+ul:not(.default-ul),
+ol:not(.default-ol) {
   list-style-type: none;
+}
+
+.default-ul,
+.default-ol {
+  text-align: left;
+  list-style-position: inside;
 }
 
 :where(h1, h2, h3, h4, h5, p) {
@@ -92,6 +104,17 @@ ul {
 :where(hr) {
   width: 100%;
   @include gray-border(0.25);
+}
+
+:where(code) {
+  font-family: monospace;
+  @include gray(0.1);
+}
+
+:where(b) {
+  font-weight: bold;
+  color: $white;
+  @include text-shadow;
 }
 
 /* GENERAL STYLING */
@@ -115,14 +138,11 @@ html {
   word-spacing: 0.2em;
   background-color: $dark-blue;
 
-  @include respond-up(small-desktop) {
-    background-color: black;
-  }
-
   @include cyan(0.85, 'text');
   @include font;
 
   @include respond-up('small-desktop') {
+    background-color: black;
     padding-block: 4rem 2rem;
   }
 
@@ -371,6 +391,180 @@ html {
 
         &.active {
           @include cyan(1, text);
+        }
+      }
+    }
+  }
+
+  // BLOG SECTION STYLING
+
+  .blog-pages {
+    @extend .flex;
+
+    a {
+      @extend .transparent-container;
+      width: 95%;
+      max-width: 80rem;
+
+      img {
+        border-radius: 0.5rem;
+      }
+
+      article {
+        @extend .flex;
+        align-items: flex-start;
+
+        h5 {
+          @include white-txt;
+        }
+
+        p {
+          @include white-txt(soft);
+        }
+      }
+
+      @include respond-up(tablet) {
+        flex-direction: row;
+
+        img {
+          width: 10rem;
+        }
+
+        article {
+          h5,
+          p {
+            text-align: left;
+          }
+        }
+      }
+
+      &:hover,
+      &:active,
+      &:focus {
+        text-decoration: none;
+        @include bright;
+        @include scale-up(soft);
+
+        article {
+          h5 {
+            @include cyan(1, text);
+          }
+
+          p {
+            @include cyan(0.75, text);
+          }
+        }
+      }
+    }
+  }
+
+  .blog-title {
+    @extend .container;
+    width: 95%;
+    max-width: 80rem;
+
+    img {
+      width: 100%;
+      border-radius: 0.5rem;
+      mask: radial-gradient(20px at 20px 20px, #0000 98%, #000) -20px -20px;
+    }
+
+    h3 {
+      background-clip: text;
+      color: transparent;
+      background-image: linear-gradient(to right, $deep-red, $blue);
+      filter: brightness(125%)
+        drop-shadow(0 0.25rem 0.25rem rgba(0, 0, 0, 0.75));
+      @include white-txt(0.5);
+    }
+
+    @include respond-up(tablet) {
+      flex-direction: row;
+      justify-content: space-between;
+
+      img {
+        max-width: 20rem;
+      }
+
+      h3 {
+        text-align: left;
+      }
+    }
+  }
+
+  .blog-page {
+    @extend .transparent-container;
+    width: 95%;
+    max-width: 80rem;
+    margin-top: 1rem;
+    @include white-txt;
+
+    h5 {
+      @include cyan(1, text);
+    }
+
+    .cards-list {
+      @extend .container;
+      width: 100%;
+      @include box-shadow(deep, inset);
+
+      .card {
+        @extend .gray-tile;
+        width: 100%;
+        padding: 1rem;
+        gap: 1rem;
+
+        &.green-card {
+          @extend .green-tile;
+          width: 100%;
+          padding: 1rem;
+          gap: 1rem;
+        }
+
+        h4 {
+          @include cyan(1, text);
+        }
+
+        .details {
+          @extend .container;
+          animation: none !important;
+          width: 100%;
+          align-items: flex-start;
+          @include white-txt(0.5);
+          @include dark-blue(0.75);
+          @include box-shadow(soft, inset);
+
+          p {
+            text-align: left;
+
+            strong {
+              @include white-txt;
+            }
+          }
+        }
+
+        &:hover,
+        &:active,
+        &:focus {
+          p {
+            @include cyan(1, text);
+          }
+
+          .details {
+            p,
+            p strong {
+              @include white-txt(1);
+            }
+          }
+        }
+      }
+
+      @include respond-up(small-desktop) {
+        flex-flow: row wrap;
+
+        .card,
+        .card.green-card {
+          width: 49%;
         }
       }
     }

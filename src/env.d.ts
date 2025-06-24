@@ -144,3 +144,18 @@ type FileContent = {
   hash: string;
   data: string;
 };
+
+type BlogPage = {
+  url: string;
+  title: string;
+  description: string;
+};
+
+type BlogPageCard = {
+  name: string;
+  bestFor: string;
+  platform: string;
+  pricing: string;
+  description: string;
+  url: string;
+};

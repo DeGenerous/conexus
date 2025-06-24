@@ -299,3 +299,39 @@
     transform: scale(0.9);
   }
 }
+
+.purple-tile {
+  @extend .tile;
+  @include purple;
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(&:disabled) {
+    @include purple(1, bg, bright);
+    @include dark-red(1, text);
+  }
+}
+
+.green-tile {
+  @extend .tile;
+  @include deep-green(0.85);
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(&:disabled) {
+    @include deep-green;
+    @include dark-green(1, text);
+  }
+}
+
+.gray-tile {
+  @extend .tile;
+  @include gray(0.25);
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(&:disabled) {
+    @include light-blue(0.5);
+    @include cyan(1, text);
+  }
+}

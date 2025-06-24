@@ -1,0 +1,20 @@
+---
+import Layout from '@layouts/Layout.astro';
+import Blog from '@components/learn/Blog.svelte';
+
+const meta = {
+  title: 'Blog | CoNexus',
+  nav: 'Blog',
+  arrow: '/learn',
+  header: 'Deeper Into the Dream',
+  subheading:
+    'Behind-the-scenes looks, design philosophy, updates, and experiments in storycraft.',
+  image: '/learn/blog.jpeg',
+  imageWidth: 1024,
+  imageHeight: 1024,
+};
+---
+
+<Layout {...meta}>
+  <Blog client:load />
+</Layout>

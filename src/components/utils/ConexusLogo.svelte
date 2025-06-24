@@ -165,7 +165,7 @@
   div {
     position: relative;
     width: 100%;
-    max-width: 15rem;
+    max-width: 13.5rem;
 
     @include respond-up(small-desktop) {
       margin: 3rem auto;

@@ -557,6 +557,10 @@ a11y-no-static-element-interactions-->
           <a href="mailto:support@degenerousdao.com">Support</a>
           <span style:color="#bebebe">|</span>
           <a href="http://degenerousdao.com/join">Discord</a>
+          <span style:color="#bebebe">|</span>
+          <a href="/learn/faq">FAQ</a>
+          <span style:color="#bebebe">|</span>
+          <a href="/learn/blog">Blog</a>
         </div>
       </section>
     {:else}

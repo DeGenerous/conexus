@@ -14,10 +14,18 @@ const meta = {
 ---
 
 <Layout {...meta}>
-  <h3>
-    Top Choose-Your-Own-Adventure Tools to Bring Your Story to Life (2025)
-  </h3>
-  <div class="blog-page">
+  <header class="blog-title">
+    <img
+      class="shad-behind"
+      src="/learn/blog/choose-your-own-adventure-tools.avif"
+      alt="Top tools"
+    />
+    <h3>
+      Top Choose-Your-Own-Adventure Tools to Bring Your Story to Life (2025)
+    </h3>
+  </header>
+
+  <article class="blog-page">
     <h5>
       Looking to Build an Interactive Story? These Tools Let You Create
       Branching Narratives Without Limits.
@@ -29,6 +37,7 @@ const meta = {
       sci-fi mystery, choose-your-own-adventure (CYOA) tools help bring those
       stories to life.
     </p>
+    <hr />
     <p>
       Below are some of the top platforms available in 2025 for designing
       branching narratives, including free no-code options and powerful engines
@@ -39,7 +48,10 @@ const meta = {
         topTools.map(
           ({ name, bestFor, platform, pricing, description, url }) => {
             return (
-              <a class="card" href={url}>
+              <a
+                class={name === 'CoNexus' ? 'card green-card' : 'card'}
+                href={url}
+              >
                 <h4>{name}</h4>
                 <span class="details">
                   <p>
@@ -59,6 +71,7 @@ const meta = {
         )
       }
     </ol>
+    <hr />
     <h5>Final Thoughts</h5>
     <p>Choosing the right CYOA tool depends on your goals.</p>
     <ul class="default-ul">
@@ -76,5 +89,5 @@ const meta = {
       The future of storytelling is interactive — and these tools are making it
       more accessible than ever.
     </p>
-  </div>
+  </article>
 </Layout>

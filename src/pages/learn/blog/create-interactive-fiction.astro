@@ -1,6 +1,8 @@
 ---
 import Layout from '@layouts/Layout.astro';
 
+import { interactiveFiction } from '@constants/blog';
+
 const meta = {
   title: 'Blog | CoNexus',
   nav: 'Blog',
@@ -12,5 +14,98 @@ const meta = {
 ---
 
 <Layout {...meta}>
-  <span></span>
+  <header class="blog-title">
+    <img
+      class="shad-behind"
+      src="/learn/blog/create-interactive-fiction.avif"
+      alt="Interactive fiction"
+    />
+    <h3>Create Interactive Fiction: Tools and Tips for Storytellers in 2025</h3>
+  </header>
+
+  <article class="blog-page">
+    <p>
+      Interactive fiction combines the art of storytelling with the engagement
+      of choice-driven gameplay. It allows readers to participate in the
+      narrative by making decisions that impact the plot, characters, and world
+      around them. Whether you’re an aspiring writer, game designer, or someone
+      with a story to tell, creating interactive fiction is more accessible than
+      ever in 2025.
+    </p>
+    <p>
+      This guide outlines the best tools and practical advice to help you build
+      immersive, branching stories — even if you’ve never coded before.
+    </p>
+    <hr />
+    <h5>Why Create Interactive Fiction?</h5>
+    <p>Interactive fiction gives you the chance to:</p>
+    <ul class="default-ul">
+      <li>Let readers shape the outcome of your story</li>
+      <li>Build nonlinear narratives with replayable paths</li>
+      <li>Deepen engagement through branching perspectives</li>
+      <li>
+        Explore alternate realities, moral dilemmas, and layered character arcs
+      </li>
+      <li>
+        Connect with readers through active participation rather than passive
+        consumption
+      </li>
+    </ul>
+    <p>
+      It’s a powerful format for anyone looking to explore new dimensions of
+      storytelling.
+    </p>
+    <hr />
+    <h5>Best Platforms to Create Interactive Fiction in 2025:</h5>
+    <ol class="cards-list">
+      {
+        interactiveFiction.map(
+          ({ name, bestFor, platform, pricing, description, url }) => {
+            return (
+              <a
+                class={name === 'CoNexus' ? 'card green-card' : 'card'}
+                href={url}
+              >
+                <h4>{name}</h4>
+                <span class="details">
+                  <p>
+                    Best for: <strong>{bestFor}</strong>
+                  </p>
+                  <p>
+                    Platform: <strong>{platform}</strong>
+                  </p>
+                  <p>
+                    Pricing: <strong>{pricing}</strong>
+                  </p>
+                </span>
+                <p>{description}</p>
+              </a>
+            );
+          }
+        )
+      }
+    </ol>
+    <hr />
+    <h5>Tips for Creating Strong Interactive Fiction</h5>
+    <ol class="default-ol">
+      <li>
+        If you want full creative control and scripting power, try Ink or
+        ChoiceScript.
+      </li>
+      <li>If you're focused on visual novels, go for RenPy.</li>
+      <li>
+        If you want a modern, no-code experience with built-in replayability,
+        AI-generated visuals, and flexible customization, explore CoNexus.
+      </li>
+    </ol>
+    <hr />
+    <h5>Final Thoughts</h5>
+    <p>
+      Creating interactive fiction doesn’t require a studio budget or technical
+      expertise anymore. With modern tools like CoNexus, Twine, and Ink, anyone
+      can build complex, emotionally resonant stories that give readers agency
+      and engagement.
+    </p>
+    <p>Start writing today — and let your audience shape what happens next.</p>
+  </article>
 </Layout>

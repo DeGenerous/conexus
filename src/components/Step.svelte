@@ -61,6 +61,9 @@
   let activeControlPanel: Nullable<StepController> = null;
   $: if (hiddenControls) activeControlPanel = null; // reset active control panel too
 
+  const DESKTOP_BREAKPOINT = 1024;
+  $: isDesktop = width >= DESKTOP_BREAKPOINT;
+
   const switchController = (controller: StepController) => {
     if (activeControlPanel == controller) {
       activeControlPanel = null;
@@ -73,8 +76,9 @@
     () => {},
   );
 
+  // Hide control bar for PC
   const hideControlsAfterDelay = () => {
-    if (width < 1024) return; // min width for PC
+    if (!isDesktop) return; // min width for PC
     clearTimeout(hiddenControlsTimeout);
     hiddenControlsTimeout = setTimeout(() => {
       hiddenControls = true;
@@ -90,6 +94,32 @@
   const cancelHide = () => {
     clearTimeout(hiddenControlsTimeout);
   };
+
+  // Hide control bar for Mobiles
+  function handleWrapperPointer(e: PointerEvent) {
+    // Ignore taps that start on the control bar or any panel
+    if ((e.target as HTMLElement).closest(
+      'nav, section.step-controller, section.sound-controller,' +
+      'section.styling-controller, section.scale-controller'
+    )) {
+      return;
+    }
+
+    if((e.target as HTMLElement).tagName === 'BUTTON') return;
+
+    // Close panel if one is open
+    if (activeControlPanel) {
+      activeControlPanel = null;
+      return;
+    }
+
+    if (isDesktop) return; // desktop keeps old logic
+
+    // Toggle the bar itself
+    hiddenControls = !hiddenControls;
+  }
+
+  // ZOOM
 
   const toggleZoom = () => {
     if (zoom === 1) zoom = 0.5;
@@ -269,7 +299,7 @@
     // SHOW HOW TO PLAY INSTRUCTIONS
 
     // min width for PC
-    if (width > 1024) {
+    if (isDesktop) {
       const dontShowInstructions = GetCache(GAME_INSTRUCTIONS_KEY);
       // Show instructions if no stored value
       if (!dontShowInstructions) {
@@ -282,6 +312,8 @@
             }),
           600,
         );
+      } else {
+        hideControlsAfterDelay();
       }
     }
   });
@@ -305,9 +337,7 @@ a11y_no_noninteractive_element_interactions -->
     style:font-weight={$customFont.bold ? 'bold' : 'normal'}
     style:font-style={$customFont.italic ? 'italic' : ''}
     style:color={$customFont.baseColor}
-    on:click={() => {
-      if (activeControlPanel) activeControlPanel = null;
-    }}
+    on:pointerdown={handleWrapperPointer}
   >
     <ImageDisplay
       {width}

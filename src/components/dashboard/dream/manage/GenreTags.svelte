@@ -22,7 +22,10 @@
 
   $effect(() => {
     if (topic && topic.genres && topic.genres.length)
-      genres = topic.genres.split(',').map((genre: string) => genre.trim());
+      genres = topic.genres
+        .split(',')
+        .map((genre: string) => genre.trim())
+        .sort();
   });
 
   $effect(() => {
@@ -42,12 +45,22 @@
 
   function handleAddGenre() {
     if (newGenre && !genres.includes(newGenre)) {
-      genres = [...genres, newGenre];
+      genres = [...genres, newGenre].sort();
 
       const genre = availableGenres.find((g) => g.name === newGenre);
       if (genre) handleGenreChange(genre.id, 'add');
     }
     newGenre = '';
+  }
+
+  function sortByName(a: Genre, b: Genre) {
+    if (a.name < b.name) {
+      return -1;
+    }
+    if (a.name > b.name) {
+      return 1;
+    }
+    return 0;
   }
 </script>
 
@@ -78,7 +91,9 @@
 <div class="add-genre flex-row">
   <select bind:value={newGenre}>
     <option value="" hidden disabled>Select</option>
-    {#each availableGenres.filter((g) => !genres.includes(g.name)) as genre}
+    {#each availableGenres
+      .filter((g) => !genres.includes(g.name))
+      .sort(sortByName) as genre}
       <option value={genre.name}>{genre.name}</option>
     {/each}
   </select>

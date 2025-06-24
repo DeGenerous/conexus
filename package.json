@@ -15,7 +15,6 @@
   },
   "overrides": {
     "wagmi": "2.14.16",
-    "@rainbow-me/rainbowkit/wagmi": "2.14.16",
     "@sveltejs/vite-plugin-svelte": "5.0.3"
   },
   "devDependencies": {

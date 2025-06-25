@@ -7,6 +7,8 @@ import Modal from '@components/utils/Modal.svelte';
 import Navigation from '@components/Navigation.svelte';
 import CookieBanner from '@components/utils/CookieBanner.svelte';
 
+import { assetsURL } from '@constants/media';
+
 import '@styles/index.scss';
 
 type LayoutProps = {
@@ -35,7 +37,7 @@ const {
   story,
   title = 'CoNexus | DeGenerous DAO',
   description = 'CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.',
-  image = '/og.jpeg',
+  image = `${assetsURL}/og.jpeg`,
   imageWidth = 480,
   imageHeight = 480,
   imageType = 'image/jpeg',

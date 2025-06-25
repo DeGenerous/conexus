@@ -2,6 +2,7 @@
 import Layout from '@layouts/Layout.astro';
 
 import { topTools } from '@constants/blog';
+import { blogURL } from '@constants/media';
 
 const meta = {
   title: 'Blog | CoNexus',
@@ -10,7 +11,7 @@ const meta = {
   header: 'Top Tools',
   subheading:
     'Looking for the best choose-your-own-adventure tools to build interactive stories in 2025? Explore free and advanced platforms for creating branching narratives, visual novels, and story games — with and without code.',
-  image: '/learn/blog/choose-your-own-adventure-tools.jpeg',
+  image: `${blogURL}/choose-your-own-adventure-tools.jpeg`,
   imageWidth: 1536,
   imageHeight: 1024,
 };
@@ -19,7 +20,7 @@ const meta = {
 <Layout {...meta}>
   <header class="blog-title">
     <img
-      src="/learn/blog/choose-your-own-adventure-tools.jpeg"
+      src=`${blogURL}/choose-your-own-adventure-tools.jpeg`
       alt="Top tools"
       width="1536"
       height="1024"

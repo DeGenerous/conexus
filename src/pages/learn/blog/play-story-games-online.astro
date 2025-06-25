@@ -2,6 +2,7 @@
 import Layout from '@layouts/Layout.astro';
 
 import { onlineGames } from '@constants/blog';
+import { blogURL } from '@constants/media';
 
 const meta = {
   title: 'Blog | CoNexus',
@@ -10,7 +11,7 @@ const meta = {
   header: 'Play Story Games',
   subheading:
     'Looking for the best places to play story games online? Explore interactive fiction, choice-based adventures, and AI-powered story platforms you can try instantly in 2025.',
-  image: '/learn/blog/play-story-games-online.jpeg',
+  image: `${blogURL}/play-story-games-online.jpeg`,
   imageWidth: 1536,
   imageHeight: 1024,
 };
@@ -19,7 +20,7 @@ const meta = {
 <Layout {...meta}>
   <header class="blog-title">
     <img
-      src="/learn/blog/play-story-games-online.jpeg"
+      src=`${blogURL}/play-story-games-online.jpeg`
       alt="Online games"
       width="1536"
       height="1024"

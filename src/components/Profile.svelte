@@ -482,7 +482,7 @@ a11y-no-static-element-interactions-->
             <button
               on:click={() => {
                 if (!user?.referred) {
-                  window.open('/referral', '_self');
+                  window.location.href = '/referral';
                 } else
                   account
                     .generateReferralCode()

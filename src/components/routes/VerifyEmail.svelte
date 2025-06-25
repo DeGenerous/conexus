@@ -32,5 +32,5 @@
     <h5>Please wait while we verify your email address.</h5>
     <h5>If you are not redirected, please click the button below.</h5>
   {/if}
-  <button onclick={() => window.open('/', '_self')}>Return home</button>
+  <button onclick={() => window.location.href = '/'}>Return home</button>
 </section>

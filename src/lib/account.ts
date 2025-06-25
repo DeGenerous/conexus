@@ -14,7 +14,6 @@ import { AccountAPI, AuthAPI } from '@service/routes';
 import {
   authenticated,
   referralCodes,
-  userCheck,
   accountError,
 } from '@stores/account.svelte';
 import { toastStore } from '@stores/toast.svelte';
@@ -45,8 +44,7 @@ export class Account {
 
     // Store user data in localStorage with timestamp
     SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
-
-    authenticated.set({ user: data.user, loggedIn: true });
+    window.location.reload();
   }
 
   async signup(signupData: ReferralSignUp): Promise<Nullable<void>> {
@@ -237,19 +235,15 @@ export class Account {
   /* Account API */
 
   async me(): Promise<void> {
-    userCheck.set(true);
-
     // Try getting user data from localStorage
     const cachedUser = GetCache<User>(USER_CACHE_KEY);
     if (cachedUser) {
       authenticated.set({ user: cachedUser, loggedIn: true });
-      userCheck.set(false);
       return;
     }
 
     // If no valid cached user, fetch from API
     const { data, error } = await this.accountAPI.me();
-    userCheck.set(false);
 
     if (!data) {
       if (error) {
@@ -319,9 +313,7 @@ export class Account {
 
     // clear
     ClearCache('full');
-
-    authenticated.set({ user: null, loggedIn: false });
-    window.open('/', '_self');
+    window.location.reload();
   }
 
   async selectMainWallet(wallet: string): Promise<void> {

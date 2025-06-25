@@ -6,6 +6,5 @@ export const authenticated = writable<{
 }>({ user: null, loggedIn: false });
 
 export const referralCodes = writable<ReferralCode[]>([]);
-export const userCheck = writable<boolean>(true);
 
 export const accountError = writable<AccountError>(null);

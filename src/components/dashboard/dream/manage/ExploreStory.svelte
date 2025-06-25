@@ -48,7 +48,7 @@
     const topic_ = await admin.fetchTopic(topic_name);
 
     if (!topic_) {
-      window.open('/dashboard/dream/manage/', '_self');
+      window.location.href = '/dashboard/dream/manage/';
       return;
     }
 
@@ -158,7 +158,7 @@
               const topic_ = await admin.fetchTopic(topic_name);
 
               if (!topic_) {
-                window.open('/dashboard/dream/manage/', '_self');
+                window.location.href = '/dashboard/dream/manage/';
                 return;
               }
 
@@ -210,7 +210,7 @@
               onclick={() => {
                 editingName = false;
                 admin.editTopicName(topic_name, storyName);
-                window.open(`/dashboard/dream/manage/${storyName}`, '_self');
+                window.location.href = `/dashboard/dream/manage/${storyName}`;
               }}
               disabled={topic_name == storyName}
             />
@@ -348,7 +348,7 @@
     onclick={() =>
       openModal(deleteStoryModal, `Delete story: ${topic_name}`, () => {
         admin.deleteStory(topic!.id);
-        window.open('/dashboard/dream/manage/', '_self');
+        window.location.href = '/dashboard/dream/manage/';
       })}
   >
     Delete Story

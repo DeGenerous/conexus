@@ -23,14 +23,14 @@
   import Characters from './create/Characters.svelte';
   import Scenario from './create/Scenario.svelte';
   import WritingStyle from './create/WritingStyle.svelte';
-  import { checkUserState } from '@utils/route-guard';
+  import { ensureAdmin } from '@utils/route-guard';
 
   let admin = new AdminApp();
 
   let promptFormat: 'Table' | 'Open' = $state('Table');
 
   $effect(() => {
-    checkUserState('/dashboard/dream/create', true);
+    if (!ensureAdmin(window.location.pathname)) return;
   });
 
   let validation = $derived(
@@ -57,7 +57,7 @@
     );
     const storyLink = `/dashboard/dream/manage/${$storyData.name}`;
     openModal(openStoryManage, 'Manage Story', () =>
-      window.open(storyLink, '_self'),
+    window.location.href = storyLink,
     );
     clearAllData();
   };

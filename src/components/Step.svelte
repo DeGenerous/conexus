@@ -427,7 +427,8 @@ a11y_no_noninteractive_element_interactions -->
         <button
           id="option-0"
           class="void-btn menu-option"
-          on:click={() => window.location.href = '/'}>Return to main menu</button
+          on:click={() => (window.location.href = '/')}
+          >Return to main menu</button
         >
       </div>
     {:else}

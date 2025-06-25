@@ -56,8 +56,10 @@
       generatePrompt($storyData, $promptSettings, promptData),
     );
     const storyLink = `/dashboard/dream/manage/${$storyData.name}`;
-    openModal(openStoryManage, 'Manage Story', () =>
-    window.location.href = storyLink,
+    openModal(
+      openStoryManage,
+      'Manage Story',
+      () => (window.location.href = storyLink),
     );
     clearAllData();
   };

@@ -15,7 +15,7 @@
   $effect(() => {
     isAdmin = userState('admin');
     loading = false;
-  })
+  });
 
   // JSON UPLOAD
 
@@ -77,82 +77,83 @@
 
 {#if loading}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
-{:else}
-  {#if isAdmin}
-    <section class="container fade-in">
-      <p class="text-glowing">Dream It. Create It. Bring It to Life.</p>
-      <a class="button-anchor button-glowing" href="/dashboard/dream/create">
-        Create
-      </a>
-      <p class="text-glowing">
-        Start a new story from an infinite well of possibilities.
-      </p>
+{:else if isAdmin}
+  <section class="container fade-in">
+    <p class="text-glowing">Dream It. Create It. Bring It to Life.</p>
+    <a class="button-anchor button-glowing" href="/dashboard/dream/create">
+      Create
+    </a>
+    <p class="text-glowing">
+      Start a new story from an infinite well of possibilities.
+    </p>
 
-      <hr />
+    <hr />
 
-      <p class="text-glowing">Add the finishing touches to your masterpiece.</p>
-      <a class="button-anchor button-glowing" href="/dashboard/dream/manage">
-        Manage
-      </a>
-      <p class="text-glowing">Upload media, refine, and perfect your vision.</p>
-    </section>
+    <p class="text-glowing">Add the finishing touches to your masterpiece.</p>
+    <a class="button-anchor button-glowing" href="/dashboard/dream/manage">
+      Manage
+    </a>
+    <p class="text-glowing">Upload media, refine, and perfect your vision.</p>
+  </section>
 
-    <div class="container fade-in">
-      <p class="transparent-white-txt">Import Story Object (DevTool)</p>
+  <div class="container fade-in">
+    <p class="transparent-white-txt">Import Story Object (DevTool)</p>
 
-      {#if importedFile}
-        <div class="flex-row pad-8 round-8 gap-8 transparent-gray-bg shad">
-          <h5>{importedFile.name}</h5>
-          <CloseSVG onclick={() => (importedFile = null)} voidBtn={true} />
-        </div>
-      {:else}
-        <div
-          class="dropzone"
-          class:dragover
-          {ondragover}
-          {ondragleave}
-          role="button"
-          tabindex="-1"
-        >
-          <label for="json-upload">📁 Drop files here or click to upload</label>
-          <input
-            id="json-upload"
-            type="file"
-            max="1"
-            accept="application/JSON"
-            onchange={(e) => handleFileUpload(e)}
-          />
-        </div>
-      {/if}
-
-      {#await admin.fetchCategories() then categories: CategoryView[]}
-        <div class="input-container">
-          <label for="category">Select Category</label>
-          {#if categories}
-            <select id="category" bind:value={categoryID}>
-              {#each categories as { id, name }}
-                <option value={id}>{name}</option>
-              {/each}
-            </select>
-          {/if}
-        </div>
-      {/await}
-
-      <button disabled={!importedFile} onclick={handleImportStory}>
-        Import story
-      </button>
-    </div>
-  {:else}
-    <section class="container fade-in">
-      <h4 class="text-glowing">The Creator’s Workshop</h4>
-      <hr />
-      <p class="text-glowing">
-        This space is where ideas are shaped, worlds are launched, and stories are brought to life. Only the appointed Storysmiths can shape tales in this hidden forge. But every legend begins somewhere — perhaps your time is coming soon.
-      </p>
-      <div class="flex-row flex-wrap">
-        <button disabled>Create</button>
-        <button disabled>Manage</button>
+    {#if importedFile}
+      <div class="flex-row pad-8 round-8 gap-8 transparent-gray-bg shad">
+        <h5>{importedFile.name}</h5>
+        <CloseSVG onclick={() => (importedFile = null)} voidBtn={true} />
       </div>
-    </section>
-  {/if}
+    {:else}
+      <div
+        class="dropzone"
+        class:dragover
+        {ondragover}
+        {ondragleave}
+        role="button"
+        tabindex="-1"
+      >
+        <label for="json-upload">📁 Drop files here or click to upload</label>
+        <input
+          id="json-upload"
+          type="file"
+          max="1"
+          accept="application/JSON"
+          onchange={(e) => handleFileUpload(e)}
+        />
+      </div>
+    {/if}
+
+    {#await admin.fetchCategories() then categories: CategoryView[]}
+      <div class="input-container">
+        <label for="category">Select Category</label>
+        {#if categories}
+          <select id="category" bind:value={categoryID}>
+            {#each categories as { id, name }}
+              <option value={id}>{name}</option>
+            {/each}
+          </select>
+        {/if}
+      </div>
+    {/await}
+
+    <button disabled={!importedFile} onclick={handleImportStory}>
+      Import story
+    </button>
+  </div>
+{:else}
+  <section class="container fade-in">
+    <h4 class="text-glowing">The Creator’s Workshop</h4>
+    <hr />
+    <p class="text-glowing">
+      This space is where ideas are shaped, worlds are launched, and stories are
+      brought to life. Only the appointed Storysmiths can shape tales in this
+      hidden forge. But every legend begins somewhere — perhaps your time is
+      coming soon.
+    </p>
+    <div class="flex-row flex-wrap">
+      <button disabled>Create</button>
+      <button disabled>Manage</button>
+    </div>
+  </section>
 {/if}

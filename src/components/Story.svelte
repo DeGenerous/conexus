@@ -204,11 +204,15 @@
                         referralWarning,
                         'Proceed',
                         () => (window.location.href = '/referral'),
-                      )
+                      );
                       return;
                     }
                     topic &&
-                    conexusGame.startGame(topic.name, topic.id, handleSetMedia);
+                      conexusGame.startGame(
+                        topic.name,
+                        topic.id,
+                        handleSetMedia,
+                      );
                   }}
                 >
                   PLAY NOW
@@ -243,7 +247,9 @@
                     />
                     <span class="flex">
                       <p>{convertDate(continuable.created!)}</p>
-                      <p class="story-id">{continuable.story_id.split('-')[0]}</p>
+                      <p class="story-id">
+                        {continuable.story_id.split('-')[0]}
+                      </p>
                     </span>
                     <PlaySVG
                       disabled={game.loading}

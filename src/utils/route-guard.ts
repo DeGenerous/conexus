@@ -9,9 +9,7 @@ function redirectTo(path: string) {
 }
 
 // Define route patterns
-const protectedRoutes = [
-  /^\/dashboard\/dream\/[^/]+$/,
-];
+const protectedRoutes = [/^\/dashboard\/dream\/[^/]+$/];
 
 // Helper function to match a route pattern
 const isRouteProtected = (path: string) =>
@@ -50,7 +48,9 @@ export function ensureAdmin(path: string): boolean {
 // USE IN onMount() / $effect() LIKE THIS:
 // if (!ensureAdmin(window.location.pathname)) return;
 
-export function userState(state: 'signed' | 'admin' | 'referred' = 'signed'): boolean {
+export function userState(
+  state: 'signed' | 'admin' | 'referred' = 'signed',
+): boolean {
   const user: Nullable<User> = getCurrentUser();
   if (!user) return false;
 

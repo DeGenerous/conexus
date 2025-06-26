@@ -397,14 +397,8 @@
 
           .buttons {
             justify-content: flex-end;
-
-            @include respond-up(small-desktop) {
-              flex-direction: row-reverse;
-            }
-
-            * {
-              flex: none;
-            }
+            flex-direction: row-reverse;
+            flex: none;
           }
         }
       }

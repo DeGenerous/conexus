@@ -1,11 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
   import {
-    modal,
-    showModal,
-    resetModal,
-    themeSettings,
     customThemes,
     customFont,
     customStyling,
@@ -21,15 +15,20 @@
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
 
-  export let closeDialog = () => {};
-  export let selectedTheme: Nullable<number> = null;
+  let {
+    closeDialog = () => {},
+    selectedTheme = $bindable(null),
+  }: {
+    closeDialog: () => void;
+    selectedTheme: Nullable<number>;
+  } = $props();
 
-  onMount(() => {
+  $effect(() => {
     const storedThemes = GetCache(THEMES_KEY) as CustomTheme[];
     if (storedThemes) $customThemes = $customThemes.concat(storedThemes);
   });
 
-  let newThemeName: string = 'CUSTOM THEME';
+  let newThemeName = $state<string>('CUSTOM THEME');
 
   // Set up current customization from the stored THEME-object
   const applyTheme = () => {
@@ -93,7 +92,7 @@
       class:standard
       class:selected={selectedTheme === index}
       class:applied={compareCurrentTheme($customThemes[index])}
-      on:click={() => {
+      onclick={() => {
         if (compareCurrentTheme($customThemes[index])) return;
         if (selectedTheme === index) selectedTheme = null;
         else selectedTheme = index;
@@ -143,7 +142,7 @@
   <hr />
 
   <button
-    on:click={applyTheme}
+    onclick={applyTheme}
     disabled={selectedTheme === null ||
       compareCurrentTheme($customThemes[selectedTheme!])}
   >

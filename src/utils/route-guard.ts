@@ -16,15 +16,15 @@ const isRouteProtected = (path: string) =>
   protectedRoutes.some((pattern) => pattern.test(path));
 
 // Get the user object
-function getCurrentUser(): Nullable<User> {
+export function getCurrentUser(): Nullable<User> {
   // 1. Try the reactive store
-  const { user } = get(authenticated);
+  const user = get(authenticated);
   if (user) return user;
 
   // 2. Fallback to cache; if found, rehydrate the store
   const cached = GetCache<User>(USER_CACHE_KEY);
   if (cached) {
-    authenticated.set({ user: cached, loggedIn: true });
+    authenticated.set(cached);
     return cached;
   }
 

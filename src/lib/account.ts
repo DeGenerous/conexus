@@ -62,7 +62,7 @@ export class Account {
     // Store user data in localStorage with timestamp
     SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
-    authenticated.set({ user: data.user, loggedIn: true });
+    authenticated.set(data.user);
   }
 
   async validateReferralCode(code: string): Promise<ReferralCode | null> {
@@ -238,7 +238,7 @@ export class Account {
     // Try getting user data from localStorage
     const cachedUser = GetCache<User>(USER_CACHE_KEY);
     if (cachedUser) {
-      authenticated.set({ user: cachedUser, loggedIn: true });
+      authenticated.set(cachedUser);
       return;
     }
 
@@ -258,7 +258,7 @@ export class Account {
     // Store user data in localStorage with timestamp
     SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
-    authenticated.set({ user: data.user, loggedIn: true });
+    authenticated.set(data.user);
   }
 
   static async getUser(): Promise<User | null> {
@@ -276,7 +276,7 @@ export class Account {
     // Store user data in localStorage with timestamp
     SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
-    authenticated.set({ user: data.user, loggedIn: true });
+    authenticated.set(data.user);
 
     return data.user;
   }
@@ -331,7 +331,7 @@ export class Account {
     // update user data
     SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
-    authenticated.set({ user: data.user, loggedIn: true });
+    authenticated.set(data.user);
   }
 
   async generateReferralCode(): Promise<void> {

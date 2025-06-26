@@ -127,7 +127,7 @@ const Web3Provider = ({
 
           SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
-          authenticated.set({ user: data.user, loggedIn: true });
+          authenticated.set(data.user);
 
           setAuthStatus('authenticated');
 
@@ -142,7 +142,7 @@ const Web3Provider = ({
             return;
           }
 
-          authenticated.set({ user: null, loggedIn: false });
+          authenticated.set(null);
 
           setAuthStatus('unauthenticated');
         },

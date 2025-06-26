@@ -5,7 +5,6 @@
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import { Account } from '@lib/account';
   import {
-    authenticated,
     referralCodes,
     accountError,
   } from '@stores/account.svelte';
@@ -23,6 +22,7 @@
   } from '@constants/regexp';
   import openModal from '@stores/modal.svelte';
   import { walletSwitchModal } from '@constants/modal';
+  import { getCurrentUser } from '@utils/route-guard';
 
   import ProfileSVG from '@components/icons/Profile.svelte';
   import DoorSVG from '@components/icons/Door.svelte';
@@ -42,7 +42,7 @@
   } else if (dialog) {
     dialog.classList.add('dialog-fade-out'); // animation before close
     setTimeout(() => dialog.close(), 300);
-    if (!isLogged) {
+    if (!user) {
       // Back to the LOGIN OPTIONS
       signUp = false;
       signInWithEmail = false;
@@ -132,20 +132,15 @@
   let account: Account = new Account();
 
   let user: Nullable<User>;
-  let isLogged: boolean;
 
   let subStatus: SubscriptionStatus | null = null;
 
-  authenticated.subscribe((value) => {
-    user = value.user;
-    isLogged = value.loggedIn;
-  });
-
   onMount(async () => {
     await account.me();
+    user = getCurrentUser();
   });
 
-  $: if (isLogged && account && user && user.email_confirmed) {
+  $: if (account && user && user.email_confirmed) {
     account.getReferralCodes();
     checkSubscription();
   }
@@ -217,7 +212,7 @@ a11y-no-static-element-interactions-->
 >
   <div on:click|stopPropagation>
     <header class="flex">
-      {#if isLogged}
+      {#if user}
         <DoorSVG
           state="outside"
           text="Sign out"
@@ -230,7 +225,7 @@ a11y-no-static-element-interactions-->
     </header>
 
     <!-- USER PROFILE -->
-    {#if isLogged && user}
+    {#if user}
       <section class="profile-window flex">
         <hr />
 

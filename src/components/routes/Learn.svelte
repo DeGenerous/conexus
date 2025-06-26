@@ -1,3 +1,7 @@
+<script>
+  import { learnURL } from '@constants/media';
+</script>
+
 <section class="container">
   <h5 class="text-glowing">
     Find quick answers to the most common questions about how to create, play,
@@ -6,13 +10,13 @@
 
   <div class="flex-row flex-wrap">
     <a class="tile purple-tile" href="/learn/faq">
-      <img src="/learn/faq.jpeg" alt="FAQ" />
+      <img src="{learnURL}/faq.jpeg" alt="FAQ" />
       <h5>FAQ</h5>
       <p class="pc-only">CoNexus Explained</p>
     </a>
 
     <a class="tile purple-tile" href="/learn/blog">
-      <img src="/learn/blog.jpeg" alt="Blog" />
+      <img src="{learnURL}/blog.jpeg" alt="Blog" />
       <h5>Blog</h5>
       <p class="pc-only">Beyond the Story</p>
     </a>

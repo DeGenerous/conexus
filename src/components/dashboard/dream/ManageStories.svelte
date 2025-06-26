@@ -3,7 +3,6 @@
 
   import { AdminApp } from '@lib/admin';
   import { CoNexusApp } from '@lib/view';
-  import { checkUserState } from '@utils/route-guard';
   import { SetCache, ALL_TOPICS_KEY, ALL_TOPICS_TTL } from '@constants/cache';
 
   import Categories from '@components/dashboard/dream/manage/Categories.svelte';
@@ -23,10 +22,6 @@
   const fetchClasses = async () => {
     classGates = await view.fetchClassGates();
   };
-
-  $effect(() => {
-    checkUserState('/dashboard/dream/manage', true);
-  });
 
   $effect(() => {
     view.getSections().then((data) => (sections = data));

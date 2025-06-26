@@ -2,6 +2,7 @@
 import Layout from '@layouts/Layout.astro';
 
 import { aiStories } from '@constants/blog';
+import { blogURL } from '@constants/media';
 
 const meta = {
   title: 'Blog | CoNexus',
@@ -10,7 +11,7 @@ const meta = {
   header: 'AI Stories',
   subheading:
     'Curious about AI-generated stories? Discover the best platforms for reading, playing, or creating AI-powered narratives in 2025 — from interactive adventures to personalized fiction.',
-  image: '/learn/blog/ai-stories.jpeg',
+  image: `${blogURL}/ai-stories.jpeg`,
   imageWidth: 1536,
   imageHeight: 1024,
 };
@@ -19,7 +20,7 @@ const meta = {
 <Layout {...meta}>
   <header class="blog-title">
     <img
-      src="/learn/blog/ai-stories.jpeg"
+      src=`${blogURL}/ai-stories.jpeg`
       alt="AI stories"
       width="1536"
       height="1024"

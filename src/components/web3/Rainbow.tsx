@@ -25,7 +25,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 const wagmiConfig = getDefaultConfig({
   appName: 'Degenerous DAO',
   appIcon: `${assetsURL}/logo.png`,
-  appUrl: 'https://degenerousdao.com', // prod
+  appUrl: 'https://conexus.degenerousdao.com', // prod
   // appUrl: 'http://localhost:4321', // dev
   projectId: '0b8a3fac6220753a719b9aeceb8f19fb',
   chains: [mainnet, base],
@@ -127,7 +127,7 @@ const Web3Provider = ({
 
           SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
-          authenticated.set({ user: data.user, loggedIn: true });
+          authenticated.set(data.user);
 
           setAuthStatus('authenticated');
 
@@ -142,7 +142,7 @@ const Web3Provider = ({
             return;
           }
 
-          authenticated.set({ user: null, loggedIn: false });
+          authenticated.set(null);
 
           setAuthStatus('unauthenticated');
         },

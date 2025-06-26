@@ -1,6 +1,7 @@
 ---
 import Layout from '@layouts/Layout.astro';
 import Blog from '@components/learn/Blog.svelte';
+import { learnURL } from '@constants/media';
 
 const meta = {
   title: 'Blog | CoNexus',
@@ -9,7 +10,7 @@ const meta = {
   header: 'Deeper Into the Dream',
   subheading:
     'Behind-the-scenes looks, design philosophy, updates, and experiments in storycraft.',
-  image: '/learn/blog.jpeg',
+  image: `${learnURL}/blog.jpeg`,
   imageWidth: 1024,
   imageHeight: 1024,
 };

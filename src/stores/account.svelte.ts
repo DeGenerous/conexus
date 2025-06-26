@@ -1,11 +1,7 @@
 import { writable } from 'svelte/store';
 
-export const authenticated = writable<{
-  user: Nullable<User>;
-  loggedIn: boolean;
-}>({ user: null, loggedIn: false });
+export const authenticated = writable<Nullable<User>>(null);
 
 export const referralCodes = writable<ReferralCode[]>([]);
-export const userCheck = writable<boolean>(true);
 
 export const accountError = writable<AccountError>(null);

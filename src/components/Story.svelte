@@ -3,6 +3,18 @@
   import { onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
 
+  import { serveUrl } from '@constants/media';
+  import { contractGetter } from '@constants/contracts';
+  import MediaManager from '@lib/media';
+  import { CoNexusGame } from '@lib/story';
+  import { story, game } from '@stores/conexus.svelte';
+  import { prevStory, nextStory } from '@stores/navigation.svelte';
+  import { GetCache, SECTION_CATEGORIES_KEY } from '@constants/cache';
+  import detectIOS from '@utils/ios-device';
+  import openModal, { showProfile } from '@stores/modal.svelte';
+  import { deleteUnfinishedModal, referralWarning } from '@constants/modal';
+  import { userState } from '@utils/route-guard';
+
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
   import Tts from '@components/music/Tts.svelte';
   import Step from '@components/Step.svelte';
@@ -10,23 +22,15 @@
   import PlaySVG from '@components/icons/Play.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
   import LockSVG from '@components/icons/Lock.svelte';
+  import DoorSVG from '@components/icons/Door.svelte';
   import Share from '@components/utils/Share.svelte';
-  import { serveUrl } from '@constants/media';
-  import { contractGetter } from '@constants/contracts';
-  import MediaManager from '@lib/media';
-  import { CoNexusGame } from '@lib/story';
-  import { story, game } from '@stores/conexus.svelte';
-  import { prevStory, nextStory } from '@stores/navigation.svelte';
-  import { checkUserState } from '@utils/route-guard';
-  import { GetCache, SECTION_CATEGORIES_KEY } from '@constants/cache';
-  import detectIOS from '@utils/ios-device';
-  import openModal from '@stores/modal.svelte';
-  import { deleteUnfinishedModal } from '@constants/modal';
 
   export let section: string;
   export let story_name: string;
 
   let scroll: number;
+  let isLogged: boolean = false;
+  let isReferred: boolean = false;
 
   const conexusGame: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
@@ -43,8 +47,8 @@
     activeStoryIndex <= 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
 
   onMount(async () => {
-    await checkUserState('/story');
-
+    isLogged = userState();
+    isReferred = userState('referred');
     // Get all topics in SECTION from the localStorage
     const storedTopics = GetCache<CategoryInSection[]>(
       SECTION_CATEGORIES_KEY(section),
@@ -182,59 +186,87 @@
                 <button disabled>LOADING</button>
               </span>
             {:else}
-              <button
-                class="button-glowing"
-                on:click={() =>
-                  topic &&
-                  conexusGame.startGame(topic.name, topic.id, handleSetMedia)}
-              >
-                PLAY NOW
-              </button>
+              {#if !isLogged}
+                <DoorSVG
+                  state="inside"
+                  text="play now"
+                  onclick={() => {
+                    $showProfile = true;
+                  }}
+                  glow={true}
+                />
+              {:else}
+                <button
+                  class="button-glowing"
+                  on:click={() => {
+                    if (!isReferred) {
+                      openModal(
+                        referralWarning,
+                        'Proceed',
+                        () => (window.location.href = '/referral'),
+                      );
+                      return;
+                    }
+                    topic &&
+                      conexusGame.startGame(
+                        topic.name,
+                        topic.id,
+                        handleSetMedia,
+                      );
+                  }}
+                >
+                  PLAY NOW
+                </button>
+              {/if}
               <Share />
             {/if}
           </span>
         </div>
       </section>
 
-      {#await conexusGame.storyContinuables(story_name!) then continuables: ContinuableStory[]}
-        {#if continuables.length > 0 && !noUnfinishedStoriesLeft}
-          <section
-            class="unfinished-stories transparent-container vert-scrollbar"
-          >
-            <h5 class="text-glowing">
-              Continue Shaping: {continuables.length - deletedStories.length}
-            </h5>
-            {#each continuables as continuable}
-              {#if !deletedStories.includes(continuable.story_id)}
-                <div class="flex-row pad-8 round" role="button" tabindex="0">
-                  <DeleteSVG
-                    disabled={game.loading}
-                    onclick={() =>
-                      openModal(
-                        deleteUnfinishedModal,
-                        `Delete story: ${continuable.category}`,
-                        () => DeleteStory(continuable.story_id),
-                      )}
-                  />
-                  <span class="flex">
-                    <p>{convertDate(continuable.created!)}</p>
-                    <p class="story-id">{continuable.story_id.split('-')[0]}</p>
-                  </span>
-                  <PlaySVG
-                    disabled={game.loading}
-                    onclick={() =>
-                      conexusGame.continueGame(continuable, handleSetMedia)}
-                  />
-                </div>
-              {/if}
-            {/each}
+      {#if isLogged}
+        {#await conexusGame.storyContinuables(story_name!) then continuables: ContinuableStory[]}
+          {#if continuables.length > 0 && !noUnfinishedStoriesLeft}
+            <section
+              class="unfinished-stories transparent-container vert-scrollbar"
+            >
+              <h5 class="text-glowing">
+                Continue Shaping: {continuables.length - deletedStories.length}
+              </h5>
+              {#each continuables as continuable}
+                {#if !deletedStories.includes(continuable.story_id)}
+                  <div class="flex-row pad-8 round" role="button" tabindex="0">
+                    <DeleteSVG
+                      disabled={game.loading}
+                      onclick={() =>
+                        openModal(
+                          deleteUnfinishedModal,
+                          `Delete story: ${continuable.category}`,
+                          () => DeleteStory(continuable.story_id),
+                        )}
+                    />
+                    <span class="flex">
+                      <p>{convertDate(continuable.created!)}</p>
+                      <p class="story-id">
+                        {continuable.story_id.split('-')[0]}
+                      </p>
+                    </span>
+                    <PlaySVG
+                      disabled={game.loading}
+                      onclick={() =>
+                        conexusGame.continueGame(continuable, handleSetMedia)}
+                    />
+                  </div>
+                {/if}
+              {/each}
+            </section>
+          {/if}
+        {:catch}
+          <section class="unfinished-stories transparent-container">
+            <p class="validation">Failed to fetch unfinished stories...</p>
           </section>
-        {/if}
-      {:catch}
-        <section class="unfinished-stories transparent-container">
-          <p class="validation">Failed to fetch unfinished stories...</p>
-        </section>
-      {/await}
+        {/await}
+      {/if}
     </div>
 
     {#if topic.nft_gate && topic.nft_gate.length > 0}
@@ -365,14 +397,8 @@
 
           .buttons {
             justify-content: flex-end;
-
-            @include respond-up(small-desktop) {
-              flex-direction: row-reverse;
-            }
-
-            * {
-              flex: none;
-            }
+            flex-direction: row-reverse;
+            flex: none;
           }
         }
       }

@@ -2,6 +2,7 @@
 import Layout from '@layouts/Layout.astro';
 
 import { visualNovels } from '@constants/blog';
+import { blogURL } from '@constants/media';
 
 const meta = {
   title: 'Blog | CoNexus',
@@ -10,7 +11,7 @@ const meta = {
   header: 'Best Visual Novels',
   subheading:
     'Looking for the best visual novels to play in 2025? Explore immersive, choice-driven stories across romance, mystery, fantasy, and more — available online and on all platforms.',
-  image: '/learn/blog/best-visual-novels.jpeg',
+  image: `${blogURL}/best-visual-novels.jpeg`,
   imageWidth: 1536,
   imageHeight: 1024,
 };
@@ -19,7 +20,7 @@ const meta = {
 <Layout {...meta}>
   <header class="blog-title">
     <img
-      src="/learn/blog/best-visual-novels.jpeg"
+      src=`${blogURL}/best-visual-novels.jpeg`
       alt="Visual novels"
       width="1536"
       height="1024"

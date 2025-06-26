@@ -1,80 +1,59 @@
 <script lang="ts">
-  import DoorSVG from '@components/icons/Door.svelte';
-  import { trailerURL } from '@constants/media';
-  import { authenticated, userCheck } from '@stores/account.svelte';
-  import { showProfile } from '@stores/modal.svelte';
+  import { CoNexusApp } from '@lib/view';
 
-  import Intro from './Intro.svelte';
+  import MenuTile from './utils/MenuTile.svelte';
 
-  let isLogged: boolean = false;
+  let app: CoNexusApp = new CoNexusApp();
 
-  authenticated.subscribe((value) => {
-    isLogged = value.loggedIn;
-  });
+  const menuText: string[] = [
+    'A new world of endless possibilities awaits you.',
+    'Infinitely unique. Never repeatable.',
+  ];
 </script>
 
-<!-- Logged In -->
+<section
+  class="flex blur pad round transparent-dark-bg shad-inset-glow fade-in dark-glowing"
+>
+  <h5>{menuText[0]}</h5>
 
-{#if $userCheck}
-  <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
-{:else if isLogged}
-  <Intro />
-{:else}
-  <DoorSVG
-    state="inside"
-    text="play now"
-    onclick={() => {
-      $showProfile = true;
-    }}
-    glow={true}
-  />
+  {#await app.getSections()}
+    <div class="flex-row">
+      {#each Array(3) as _}
+        <div class="loading-menu-tile">
+          <div class="loading-animation"></div>
+          <span class="loading-animation"></span>
+        </div>
+      {/each}
+    </div>
+  {:then sections}
+    <div class="flex-row">
+      {#each sections as section (section.id)}
+        <MenuTile {section} />
+      {/each}
+    </div>
+  {:catch error}
+    <p class="validation">Failed to fetch story sections...</p>
+    <p class="validation">Error: {error.message}</p>
+  {/await}
 
-  <video class="pc-video blur round fade-in shad" controls autoplay loop muted>
-    <source src={`${trailerURL}/CoNexusTrailer.webm`} type="video/webm" />
-    <source src={`${trailerURL}/CoNexusTrailer.mp4`} type="video/mp4" />
-    <track kind="captions" />
-  </video>
-
-  <video
-    class="mobile-video blur round fade-in shad"
-    controls
-    autoplay
-    loop
-    muted
-  >
-    <source src={`${trailerURL}/CoNexusTrailerMobile.webm`} type="video/webm" />
-    <source src={`${trailerURL}/CoNexusTrailerMobile.mp4`} type="video/mp4" />
-    <track kind="captions" />
-  </video>
-{/if}
+  <h5>{menuText[1]}</h5>
+</section>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  video {
-    display: none;
-    width: clamp(250px, 95%, 70rem);
+  section {
+    width: clamp(250px, 95%, 80rem);
 
-    &:hover {
-      @include box-glow;
+    & > div {
+      width: 100%;
+      flex-wrap: wrap;
     }
-  }
-
-  .mobile-video {
-    display: block;
-  }
-
-  .pc-video {
-    display: none;
   }
 
   @include respond-up(tablet) {
-    .mobile-video {
-      display: none;
-    }
-
-    .pc-video {
-      display: block;
+    section {
+      width: auto;
     }
   }
 </style>

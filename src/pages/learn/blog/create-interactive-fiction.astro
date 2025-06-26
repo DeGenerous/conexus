@@ -2,6 +2,7 @@
 import Layout from '@layouts/Layout.astro';
 
 import { interactiveFiction } from '@constants/blog';
+import { blogURL } from '@constants/media';
 
 const meta = {
   title: 'Blog | CoNexus',
@@ -10,7 +11,7 @@ const meta = {
   header: 'Create Interactive Fiction',
   subheading:
     'Want to create interactive fiction? Discover the best tools, platforms, and techniques to start building branching narratives and story games online in 2025 — no coding required.',
-  image: '/learn/blog/create-interactive-fiction.jpeg',
+  image: `${blogURL}/create-interactive-fiction.jpeg`,
   imageWidth: 1536,
   imageHeight: 1024,
 };
@@ -19,7 +20,7 @@ const meta = {
 <Layout {...meta}>
   <header class="blog-title">
     <img
-      src="/learn/blog/create-interactive-fiction.jpeg"
+      src=`${blogURL}/create-interactive-fiction.jpeg`
       alt="Interactive fiction"
       width="1536"
       height="1024"

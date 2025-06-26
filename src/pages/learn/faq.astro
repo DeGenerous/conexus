@@ -1,6 +1,7 @@
 ---
 import Layout from '@layouts/Layout.astro';
 import FAQ from '@components/learn/FAQ.svelte';
+import { learnURL } from '@constants/media';
 
 const meta = {
   title: 'FAQ | CoNexus',
@@ -8,7 +9,7 @@ const meta = {
   arrow: '/learn',
   header: 'CoNexus: Decoded',
   subheading: 'No multiverse too big. No question too small.',
-  image: '/learn/faq.jpeg',
+  image: `${learnURL}/faq.jpeg`,
   imageWidth: 1024,
   imageHeight: 1024,
 };

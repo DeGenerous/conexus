@@ -86,6 +86,7 @@ function saveImortantAndClearCache() {
   const customStyling = localStorage.getItem(STYLING_KEY);
   const customScale = localStorage.getItem(SCALE_KEY);
   const storyDrafts = localStorage.getItem(DRAFTS_KEY);
+  const user = localStorage.getItem(USER_CACHE_KEY); // save user object too
   // deleting all values
   localStorage.clear();
   // restoring saved values
@@ -100,6 +101,7 @@ function saveImortantAndClearCache() {
   if (customStyling) localStorage.setItem(STYLING_KEY, customStyling);
   if (customScale) localStorage.setItem(SCALE_KEY, customScale);
   if (storyDrafts) localStorage.setItem(DRAFTS_KEY, storyDrafts);
+  if (user) localStorage.setItem(USER_CACHE_KEY, user);
 }
 
 export const SetCache = <T>(key: string, value: T, ttl: number) => {

@@ -308,7 +308,7 @@ export class Account {
     }
 
     // clear
-    ClearCache('full');
+    ClearCache('auth');
     window.location.reload();
   }
 

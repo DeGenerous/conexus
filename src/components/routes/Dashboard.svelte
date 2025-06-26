@@ -7,9 +7,12 @@
   import { showProfile } from '@stores/modal.svelte';
   import openModal from '@stores/modal.svelte';
   import { referralActivationNotice } from '@constants/modal';
+  import { ClearCache } from '@constants/cache';
+  import { toastStore } from '@stores/toast.svelte';
 
   import DoorSVG from '@components/icons/Door.svelte';
   import CopySVG from '@components/icons/Copy.svelte';
+  import ResetSVG from '@components/icons/Reset.svelte';
 
   const account: Account = new Account();
 
@@ -158,6 +161,18 @@
         {/if}
       {/if}
     </section>
+
+    <ResetSVG
+      onclick={() => {
+        ClearCache('full');
+        toastStore.show(
+          'The cache has been reset. Fresh data will be fetched when needed.',
+          'info',
+        );
+        account.getReferralCodes();
+      }}
+      text="Clear Cache"
+    />
   {/if}
 {:else}
   <section class="container">

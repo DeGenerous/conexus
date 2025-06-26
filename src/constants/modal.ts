@@ -16,6 +16,11 @@ export const referralWarning = `
   <p>To play stories and build your world, you'll need a referral code. It’s not about keeping people out — it’s about inviting the right people in.</p>
 `;
 
+export const referralActivationNotice = `
+  <h4>Activate Your Account First</h4>
+  <p>Before you can invite others, you need to activate your own account with a referral code. You’re just one step away.</p>
+`;
+
 export const resetSettingsModal = (type: any) =>
   `<h4>Are you sure you want to reset ${type} settings?</h4>`;
 

@@ -130,16 +130,14 @@ export class Account {
 
     if (!data) {
       if (error) {
-        accountError.set({ subscribeNewsletter: error.message });
+        toastStore.show(error.message);
       } else {
-        accountError.set({
-          subscribeNewsletter: 'Error subscribing to newsletter',
-        });
+        toastStore.show('Error subscribing to newsletter');
       }
       return;
     }
 
-    // toastStore.show(data.message || 'Subscribed to newsletter', 'info');
+    toastStore.show(data.message || 'Subscribed to newsletter', 'info');
   }
 
   async unsubscribeNewsletter(): Promise<void> {
@@ -159,16 +157,14 @@ export class Account {
 
     if (!data) {
       if (error) {
-        accountError.set({ unsubscribeNewsletter: error.message });
+        toastStore.show(error.message);
       } else {
-        accountError.set({
-          unsubscribeNewsletter: 'Error unsubscribing from newsletter',
-        });
+        toastStore.show('Error unsubscribing from newsletter');
       }
       return;
     }
 
-    // toastStore.show(data.message || 'Unsubscribed from newsletter', 'info');
+    toastStore.show(data.message || 'Unsubscribed from newsletter', 'info');
   }
 
   async subscriptionStatus(): Promise<SubscriptionStatus> {
@@ -185,7 +181,7 @@ export class Account {
     if (!data) {
       if (error) {
         api_error(error);
-        accountError.set({ subscriptionStatus: error.message });
+        toastStore.show(error.message);
       } else {
         toastStore.show('Error getting subscription status', 'error');
       }
@@ -339,11 +335,9 @@ export class Account {
 
     if (!data) {
       if (error) {
-        accountError.set({ generateReferralCode: error.message });
+        toastStore.show(error.message);
       } else {
-        accountError.set({
-          generateReferralCode: 'Error generating referral codes',
-        });
+        toastStore.show('Error generating referral codes');
       }
       return;
     }

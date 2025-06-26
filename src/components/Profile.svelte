@@ -4,10 +4,7 @@
 
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import { Account } from '@lib/account';
-  import {
-    referralCodes,
-    accountError,
-  } from '@stores/account.svelte';
+  import { accountError } from '@stores/account.svelte';
   import { showProfile } from '@stores/modal.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';
   import {
@@ -29,7 +26,6 @@
   import EyeSVG from '@components/icons/Eye.svelte';
   import QuitSVG from '@components/icons/Quit.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
-  import CopySVG from '@components/icons/Copy.svelte';
   import StarSVG from '@components/icons/Star.svelte';
   import DiscordBtn from '@components/icons/Discord.svelte';
   import SaveSVG from './icons/Checkmark.svelte';
@@ -65,6 +61,44 @@
     }
     // Close dialog if already on LOGIN OPTIONS window
     $showProfile = false;
+  };
+
+  // SIGNED IN USER PROFILE
+
+  const account: Account = new Account();
+
+  let user: Nullable<User> = null;
+
+  onMount(async () => {
+    await account.me();
+    user = getCurrentUser();
+  });
+
+  // Change password
+  let editingPassword: boolean = false;
+  let editOldPassword: string = '';
+  let editPassword: string = '';
+  let editPasswordConfirm: string = '';
+
+  const saveChangedPassword = async (e: Event) => {
+    e.preventDefault();
+    $accountError = null as AccountError; // reset storage from any old errors
+    await account.changePassword({
+      old_password: editOldPassword,
+      new_password: editPassword,
+    });
+    if (!$accountError || !$accountError.changePassword)
+      editingPassword = false;
+    editPassword = '';
+    editPasswordConfirm = '';
+  };
+
+  // Select wallet address as the main one
+  const handleWalletSelect = async (address: string) => {
+    await account.selectMainWallet(address);
+    if ($accountError && $accountError.selectMainWallet) return;
+    // Reload the page to update the user object
+    location.reload();
   };
 
   // NON-SIGNED WINDOWS
@@ -125,76 +159,6 @@
       referral_code: referralCode,
       newsletter: newsletterSignup,
     });
-  };
-
-  // SIGNED IN USER PROFILE
-
-  let account: Account = new Account();
-
-  let user: Nullable<User>;
-
-  let subStatus: SubscriptionStatus | null = null;
-
-  onMount(async () => {
-    await account.me();
-    user = getCurrentUser();
-  });
-
-  $: if (account && user && user.email_confirmed) {
-    account.getReferralCodes();
-    checkSubscription();
-  }
-
-  // Change password
-  let editingPassword: boolean = false;
-  let editOldPassword: string = '';
-  let editPassword: string = '';
-  let editPasswordConfirm: string = '';
-
-  const saveChangedPassword = async (e: Event) => {
-    e.preventDefault();
-    $accountError = null as AccountError; // reset storage from any old errors
-    await account.changePassword({
-      old_password: editOldPassword,
-      new_password: editPassword,
-    });
-    if (!$accountError || !$accountError.changePassword)
-      editingPassword = false;
-    editPassword = '';
-    editPasswordConfirm = '';
-  };
-
-  // Select wallet address as the main one
-  const handleWalletSelect = async (address: string) => {
-    await account.selectMainWallet(address);
-    if ($accountError && $accountError.selectMainWallet) return;
-    // Reload the page to update the user object
-    location.reload();
-  };
-
-  let copySvgFocus: Nullable<string> = null;
-
-  const copyRefCode = (refCode: string) => {
-    let codeBtn = document.getElementById(refCode) as HTMLButtonElement;
-    navigator.clipboard.writeText(refCode);
-    codeBtn.classList.add('copied'); // animation
-    setTimeout(() => codeBtn.classList.remove('copied'), 600);
-  };
-
-  // Newsletter
-  const checkSubscription = async () => {
-    subStatus = await account.subscriptionStatus();
-  };
-
-  const dateToString = (date: Date) => {
-    const dateObject: Date = new Date(date);
-
-    const day: string = ('0' + dateObject.getDate()).slice(-2);
-    const month: string = ('0' + (dateObject.getMonth() + 1)).slice(-2);
-    const year: number = dateObject.getFullYear();
-
-    const fullDate: string = `${day}.${month}.${year}`;
-    return fullDate;
   };
 </script>
 
@@ -430,121 +394,6 @@ a11y-no-static-element-interactions-->
           </div>
         {/key}
 
-        {#if user?.email && user?.first_name && user?.email_confirmed}
-          <hr />
-
-          {#if $referralCodes != null}
-            {#if $referralCodes.filter((code) => code.is_used).length == 10}
-              <h4 class="text-glowing">You've unlocked all 10 referrals!</h4>
-              <p class="text-glowing">
-                Your early support won't go unnoticed. Stay tuned for updates.
-              </p>
-            {:else}
-              {#key $referralCodes}
-                <h4>Your referral codes</h4>
-                <ul class="referral-codes flex-row">
-                  {#each $referralCodes as code}
-                    <button
-                      class="ref-code void-btn flex-row pad-8 round-8 dark-txt"
-                      class:used-code={code.is_used}
-                      id={code.code}
-                      on:click={() => copyRefCode(code.code)}
-                      on:pointerover={() => (copySvgFocus = code.code)}
-                      on:focus={() => (copySvgFocus = code.code)}
-                      on:pointerout={() => (copySvgFocus = null)}
-                      on:blur={() => (copySvgFocus = null)}
-                      aria-label="Copy code {code.code}"
-                      tabindex={code.is_used ? -1 : 0}
-                    >
-                      <p
-                        class="pad-8 round-8 soft-white-txt transparent-dark-bg"
-                      >
-                        {code.code}
-                      </p>
-                      {#if !code.is_used}
-                        <CopySVG {copySvgFocus} data={code.code} />
-                      {/if}
-                    </button>
-                  {/each}
-                </ul>
-                <h4>
-                  Your referrals: {$referralCodes.filter((code) => code.is_used)
-                    .length} / 10
-                </h4>
-              {/key}
-            {/if}
-          {:else}
-            <button
-              on:click={() => {
-                if (!user?.referred) {
-                  window.location.href = '/referral';
-                } else
-                  account
-                    .generateReferralCode()
-                    .then(() => window.location.reload());
-              }}
-            >
-              Get referral codes
-            </button>
-
-            {#if $accountError && $accountError.generateReferralCode}
-              <p class="validation">{$accountError.generateReferralCode}</p>
-            {/if}
-          {/if}
-        {/if}
-
-        {#if user.email_confirmed}
-          {#if subStatus}
-            <hr />
-
-            {#if subStatus.is_active}
-              <h4>Newsletter Subscription</h4>
-
-              {#if subStatus.subscribed_at}
-                <h5
-                  class="subscription pad-8 round-8 transparent-gray-bg dark-txt shad"
-                >
-                  Active since: {dateToString(subStatus.subscribed_at.Time)}
-                </h5>
-              {/if}
-              <button
-                class="unsubscribe-button void-btn min-size-btn"
-                on:click={() => {
-                  account
-                    .unsubscribeNewsletter()
-                    .then(() => checkSubscription());
-                }}
-              >
-                Unsubscribe
-              </button>
-            {:else}
-              <div class="newsletter-subscription">
-                <h4>Subscribe to Newsletter:</h4>
-                <button
-                  class="green-btn"
-                  on:click={() => {
-                    account
-                      .subscribeNewsletter()
-                      .then(() => checkSubscription());
-                  }}
-                >
-                  Subscribe
-                </button>
-              </div>
-            {/if}
-          {/if}
-
-          {#if $accountError && $accountError.subscribeNewsletter}
-            <p class="validation">{$accountError.subscribeNewsletter}</p>
-          {/if}
-          {#if $accountError && $accountError.unsubscribeNewsletter}
-            <p class="validation">{$accountError.unsubscribeNewsletter}</p>
-          {/if}
-          {#if $accountError && $accountError.subscriptionStatus}
-            <p class="validation">{$accountError.subscriptionStatus}</p>
-          {/if}
-        {/if}
-
         <hr />
 
         <h4>Report bugs or ask for help</h4>
@@ -554,8 +403,6 @@ a11y-no-static-element-interactions-->
           <a href="http://degenerousdao.com/join">Discord</a>
           <span style:color="#bebebe">|</span>
           <a href="/learn/faq">FAQ</a>
-          <span style:color="#bebebe">|</span>
-          <a href="/learn/blog">Blog</a>
         </div>
       </section>
     {:else}
@@ -889,61 +736,6 @@ a11y-no-static-element-interactions-->
         @include respond-up(tablet) {
           width: auto;
         }
-      }
-    }
-
-    .referral-codes {
-      flex-wrap: wrap;
-
-      .ref-code {
-        width: 100%;
-        gap: 0.5rem;
-        background-color: $deep-green;
-        @include box-shadow;
-
-        &:hover:not(.used-code),
-        &:active:not(.used-code),
-        &:focus:not(.used-code) {
-          @include scale-up(soft);
-          @include bright;
-          @include box-shadow(deep);
-        }
-
-        p {
-          width: 100%;
-          @include box-shadow(soft, inset);
-        }
-
-        &.used-code {
-          cursor: not-allowed;
-          @include gray(0.25);
-
-          p {
-            @include white-txt(0.5);
-          }
-        }
-
-        @include respond-up(tablet) {
-          width: auto;
-        }
-      }
-    }
-
-    .subscription {
-      background-color: $deep-green;
-      @include white-txt;
-    }
-
-    .unsubscribe-button {
-      width: auto;
-      height: auto;
-      @include red(0.5, text);
-
-      &:hover,
-      &:active,
-      &:focus {
-        text-decoration: underline;
-        @include red(1, text);
       }
     }
   }

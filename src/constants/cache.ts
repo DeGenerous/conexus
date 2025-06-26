@@ -73,6 +73,35 @@ const viewKeys = [
   SECTION_CATEGORIES_KEY('Dischordian Saga'),
 ];
 
+function saveImortantAndClearCache() {
+   // saving important values
+   const cookieConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
+   const gameInstructions = localStorage.getItem(GAME_INSTRUCTIONS_KEY);
+   const musicVolume = localStorage.getItem(VOLUME_KEY('music'));
+   const voiceVolume = localStorage.getItem(VOLUME_KEY('voice'));
+   const ttsSpeed = localStorage.getItem(TTS_SPEED_KEY);
+   const customThemes = localStorage.getItem(THEMES_KEY);
+   const customFont = localStorage.getItem(FONT_KEY);
+   const customStyling = localStorage.getItem(STYLING_KEY);
+   const customScale = localStorage.getItem(SCALE_KEY);
+   const storyDrafts = localStorage.getItem(DRAFTS_KEY);
+   // deleting all values
+   localStorage.clear();
+   // restoring saved values
+   if (cookieConsent)
+     localStorage.setItem(COOKIE_CONSENT_KEY, cookieConsent);
+   if (gameInstructions)
+     localStorage.setItem(GAME_INSTRUCTIONS_KEY, gameInstructions);
+   if (musicVolume) localStorage.setItem(VOLUME_KEY('music'), musicVolume);
+   if (voiceVolume) localStorage.setItem(VOLUME_KEY('voice'), voiceVolume);
+   if (ttsSpeed) localStorage.setItem(TTS_SPEED_KEY, ttsSpeed);
+   if (customThemes) localStorage.setItem(THEMES_KEY, customThemes);
+   if (customFont) localStorage.setItem(FONT_KEY, customFont);
+   if (customStyling) localStorage.setItem(STYLING_KEY, customStyling);
+   if (customScale) localStorage.setItem(SCALE_KEY, customScale);
+   if (storyDrafts) localStorage.setItem(DRAFTS_KEY, storyDrafts);
+}
+
 export const SetCache = <T>(key: string, value: T, ttl: number) => {
   localStorage.setItem(
     key,
@@ -111,32 +140,7 @@ export const ClearCache = (
       removeCacheKeys(viewKeys);
       break;
     case 'full':
-      // saving important values
-      const cookieConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
-      const gameInstructions = localStorage.getItem(GAME_INSTRUCTIONS_KEY);
-      const musicVolume = localStorage.getItem(VOLUME_KEY('music'));
-      const voiceVolume = localStorage.getItem(VOLUME_KEY('voice'));
-      const ttsSpeed = localStorage.getItem(TTS_SPEED_KEY);
-      const customThemes = localStorage.getItem(THEMES_KEY);
-      const customFont = localStorage.getItem(FONT_KEY);
-      const customStyling = localStorage.getItem(STYLING_KEY);
-      const customScale = localStorage.getItem(SCALE_KEY);
-      const storyDrafts = localStorage.getItem(DRAFTS_KEY);
-      // deleting all values
-      localStorage.clear();
-      // restoring saved values
-      if (cookieConsent)
-        localStorage.setItem(COOKIE_CONSENT_KEY, cookieConsent);
-      if (gameInstructions)
-        localStorage.setItem(GAME_INSTRUCTIONS_KEY, gameInstructions);
-      if (musicVolume) localStorage.setItem(VOLUME_KEY('music'), musicVolume);
-      if (voiceVolume) localStorage.setItem(VOLUME_KEY('voice'), voiceVolume);
-      if (ttsSpeed) localStorage.setItem(TTS_SPEED_KEY, ttsSpeed);
-      if (customThemes) localStorage.setItem(THEMES_KEY, customThemes);
-      if (customFont) localStorage.setItem(FONT_KEY, customFont);
-      if (customStyling) localStorage.setItem(STYLING_KEY, customStyling);
-      if (customScale) localStorage.setItem(SCALE_KEY, customScale);
-      if (storyDrafts) localStorage.setItem(DRAFTS_KEY, storyDrafts);
+      saveImortantAndClearCache();
       break;
     default:
       localStorage.removeItem(key);

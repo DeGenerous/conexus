@@ -271,6 +271,13 @@ html {
     }
   }
 
+  .drag-handle {
+    cursor: grab;
+    user-select: none;
+    padding-inline: .25rem;
+    font-size: 1.25rem;
+  }
+
   .container {
     @extend .flex;
     @extend .blur;

@@ -59,6 +59,7 @@
   animation: transparent-glowing 10s ease-in-out infinite;
   scrollbar-width: thin;
   scrollbar-color: $transparent-cyan transparent;
+  outline: none !important;
 
   @include respond-up(tablet) {
     min-height: 22rem;

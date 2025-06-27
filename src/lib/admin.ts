@@ -434,7 +434,7 @@ export class AdminApp extends AdminAPI {
    * @param {number} order - The new order value for the topic.
    * @returns {Promise<void>} A promise that resolves when the operation is complete.
    */
-  async editTopicOrder(topic_id: number, order: number): Promise<void> {
+  async editTopicOrder(topic_id: number, order: number, showToast: boolean = true): Promise<void> {
     const { data, error } = await this.changeTopicsOrder(topic_id, order);
 
     if (!data) {
@@ -448,7 +448,7 @@ export class AdminApp extends AdminAPI {
 
     this.clearCache();
 
-    toastStore.show(data.message, 'info');
+    if (showToast) toastStore.show(data.message, 'info');
   }
 
   /**

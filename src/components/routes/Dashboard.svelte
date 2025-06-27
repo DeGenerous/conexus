@@ -66,7 +66,7 @@
 {:else if user}
   {#if user.email && user.first_name && user.email_confirmed}
     <!-- REFERRAL CODES -->
-    <section class="ref-codes-wrapper container">
+    <section class="ref-codes-wrapper container fade-in">
       {#if $referralCodes !== null}
         {#if $referralCodes.filter((code) => code.is_used).length == 10}
           <h4 class="text-glowing">🏆 You've unlocked all 10 referrals 🚀</h4>
@@ -127,7 +127,7 @@
 
   <!-- NEWSLETTER SUBSCRIPTION -->
   {#if user.email_confirmed}
-    <section class="newsletter container">
+    <section class="newsletter container fade-in">
       {#if subStatus}
         {#if subStatus.is_active}
           <h4>Newsletter Subscription</h4>

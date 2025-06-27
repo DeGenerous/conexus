@@ -3,7 +3,7 @@
   import Toast from './Toast.svelte';
 </script>
 
-<div class="flex pad-inline">
+<div class="flex">
   {#each $toastStore as { id, message, type, duration }}
     <Toast {message} {type} {duration} onClose={() => toastStore.close(id)} />
   {/each}
@@ -13,16 +13,20 @@
   @use '/src/styles/mixins' as *;
 
   div {
-    width: 100vw;
     position: fixed;
     top: 6rem;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 1000;
+    pointer-events: none;
+
+    width: max-content;
+    min-width: 12rem;
+    max-width: calc(100vw - 2rem);
 
     @include respond-up(small-desktop) {
       top: 3rem;
-      width: calc(100vw - 40%);
-      left: 20%;
+      max-width: calc(100vw - 40%);
     }
   }
 </style>

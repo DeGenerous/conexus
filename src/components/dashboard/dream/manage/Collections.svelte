@@ -4,20 +4,29 @@
   import { dndzone } from 'svelte-dnd-action';
 
   import { AdminApp } from '@lib/admin';
+  import { CoNexusApp } from '@lib/view';
   import { toastStore } from '@stores/toast.svelte';
+  import { SetCache, ALL_TOPICS_KEY, ALL_TOPICS_TTL } from '@constants/cache';
 
   import StoryList from '@components/dashboard/dream/manage/StoryList.svelte';
 
-  export let sections: Section[] = [];
-  export let collections: Collection[] = [];
-  export let fetchCollections = async () => {};
   export let selectInput = (event: Event) => {};
 
   let admin = new AdminApp();
+  let view = new CoNexusApp();
+
+  let sections: Section[] = [];
+  let collections: Collection[] = [];
 
   let debounceTimeout: NodeJS.Timeout;
 
   let items: any[] = [];
+
+  const fetchCollections = async () => {
+    collections = await admin.fetchCollections();
+    storeAllTopics(collections);
+    updateCollections();
+  };
 
   // Make a sortable id‑based copy
   const updateCollections = () => {
@@ -28,7 +37,11 @@
       );
   };
 
-  onMount(() => updateCollections());
+  onMount(async () => {
+    sections = await view.getSections();
+    await fetchCollections();
+    updateCollections();
+  });
 
   // Change order of every category based on position in array
   const persistOrder = () => {
@@ -52,64 +65,75 @@
       updateCollections();
     }, 1000);
   };
+
+  // Cahce all topics for switching between
+  const storeAllTopics = (collections: Collection[]) => {
+    const allTopics = collections.map((collection) => collection.topics).flat();
+    const topicNames = allTopics.map(({ topic_name }) => topic_name);
+    SetCache(ALL_TOPICS_KEY, topicNames.join(']['), ALL_TOPICS_TTL);
+  };
 </script>
 
-<section
-  class="flex"
-  use:dndzone={{ items, type: 'column' }}
-  on:consider={(e) => (items = e.detail.items)}
-  on:finalize={(e) => {
-    items = e.detail.items;
-    persistOrder();
-  }}
->
-  {#each items as c (c.id)}
-    <span class="collection-wrapper flex">
-      <div class="collection-header fade-in">
-        <h2>{c.category_name}: {c.topics.length}</h2>
+{#if !items.length}
+  <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
+{:else}
+  <section
+    class="flex"
+    use:dndzone={{ items, type: 'column' }}
+    on:consider={(e) => (items = e.detail.items)}
+    on:finalize={(e) => {
+      items = e.detail.items;
+      persistOrder();
+    }}
+  >
+    {#each items as c (c.id)}
+      <span class="collection-wrapper flex">
+        <div class="collection-header fade-in">
+          <h2>{c.category_name}: {c.topics.length}</h2>
 
-        <span class="controls container flex-row">
-          <div class="input-container">
-            <label for="category-order-{c.category_id}">Order</label>
-            <input
-              id="category-order-{c.category_id}"
-              type="number"
-              value={c.category_order}
-              on:click={selectInput}
-              on:input={(event) =>
-                handleChangeCategoryOrder(event, c.category_id)}
-            />
-          </div>
+          <span class="controls container flex-row">
+            <div class="input-container">
+              <label for="category-order-{c.category_id}">Order</label>
+              <input
+                id="category-order-{c.category_id}"
+                type="number"
+                value={c.category_order}
+                on:click={selectInput}
+                on:input={(event) =>
+                  handleChangeCategoryOrder(event, c.category_id)}
+              />
+            </div>
 
-          <div class="input-container">
-            <label for="section">Section</label>
-            {#if sections}
-              <select
-                id="section"
-                value={c.section_id}
-                on:change={(event) => {
-                  const target = event.target as HTMLSelectElement;
-                  if (target) {
-                    admin.changeCategorySection(
-                      parseInt(target.value),
-                      c.category_id,
-                    );
-                  }
-                }}
-              >
-                {#each sections as { id, name }}
-                  <option value={id}>{name}</option>
-                {/each}
-              </select>
-            {/if}
-          </div>
-        </span>
-      </div>
+            <div class="input-container">
+              <label for="section">Section</label>
+              {#if sections}
+                <select
+                  id="section"
+                  value={c.section_id}
+                  on:change={(event) => {
+                    const target = event.target as HTMLSelectElement;
+                    if (target) {
+                      admin.changeCategorySection(
+                        parseInt(target.value),
+                        c.category_id,
+                      );
+                    }
+                  }}
+                >
+                  {#each sections as { id, name }}
+                    <option value={id}>{name}</option>
+                  {/each}
+                </select>
+              {/if}
+            </div>
+          </span>
+        </div>
 
-      <StoryList topics={c.topics} {fetchCollections} {selectInput} />
-    </span>
-  {/each}
-</section>
+        <StoryList topics={c.topics} {fetchCollections} {selectInput} />
+      </span>
+    {/each}
+  </section>
+{/if}
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

@@ -49,10 +49,17 @@
     }, 1000);
   };
 
+  // Switch availability
   const switchAvailable = (available: string) => {
     if (available === 'available') return 'unavailable';
     else return 'available';
   };
+
+  const handleSwitchAvailable = async (id: number, key: string) => {
+    await admin.changeAvailability(id, switchAvailable(key));
+    await fetchCollections();
+    updateTopics();
+  }
 </script>
 
 <div
@@ -85,12 +92,7 @@
         use:tippy={{ content: 'Toggle visibility', animation: 'scale' }}
         class:green-btn={t.available === 'available'}
         class:red-btn={t.available === 'unavailable'}
-        on:click={(e) => {
-          e.preventDefault();
-          admin
-            .changeAvailability(t.topic_id, switchAvailable(t.available))
-            .then(() => fetchCollections().then(() => updateTopics()));
-        }}
+        on:click|preventDefault={() => handleSwitchAvailable(t.topic_id, t.available)}
       >
         {t.available}
       </button>

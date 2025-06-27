@@ -2,24 +2,14 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { CoNexusApp } from '@lib/view';
-
   import Collections from '@components/dashboard/dream/manage/Collections.svelte';
   import Categories from '@components/dashboard/dream/manage/Categories.svelte';
   import NFTGates from '@components/dashboard/dream/manage/NFTGates.svelte';
   import { ensureAdmin } from '@utils/route-guard';
 
-  onMount(() => ensureAdmin());
-
-  let view = new CoNexusApp();
+  onMount(ensureAdmin);
 
   let nav: 'collection' | 'categories' | 'nft-gates' = $state('collection');
-
-  let classGates = $state<ClassGate[]>([]);
-
-  const fetchClasses = async () => {
-    classGates = await view.fetchClassGates();
-  };
 
   const selectInput = (event: Event) => {
     event.preventDefault();
@@ -55,7 +45,7 @@
 {#if nav === 'collection'}
   <Collections {selectInput} />
 {:else if nav === 'nft-gates'}
-  <NFTGates {classGates} {fetchClasses} {selectInput} />
+  <NFTGates {selectInput} />
 {:else if nav === 'categories'}
   <Categories />
 {/if}

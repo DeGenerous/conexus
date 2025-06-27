@@ -1,23 +1,31 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import { AdminApp } from '@lib/admin';
+  import { CoNexusApp } from '@lib/view';
 
   import CloseSVG from '@components/icons/Close.svelte';
 
   let admin = new AdminApp();
+  let view = new CoNexusApp();
 
   let {
-    classGates = [],
-    fetchClasses,
     selectInput,
   }: {
-    classGates: ClassGate[];
-    fetchClasses: () => Promise<void>;
     selectInput: (event: Event) => void;
   } = $props();
+
+  let classGates = $state<ClassGate[]>([]);
 
   let newClassName = $state<string>('');
   let newClassRangeFrom = $state<number | undefined>(undefined);
   let newClassRangeTo = $state<number | undefined>(undefined);
+
+  const fetchClasses = async () => {
+    classGates = await view.fetchClassGates();
+  };
+
+  onMount(fetchClasses);
 
   async function handleDeleteClass(id: number) {
     admin.deleteClassGate(id).then(fetchClasses);

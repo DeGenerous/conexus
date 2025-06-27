@@ -28,7 +28,7 @@
   import Scenario from './create/Scenario.svelte';
   import WritingStyle from './create/WritingStyle.svelte';
 
-  onMount(() => ensureAdmin());
+  onMount(ensureAdmin);
 
   let admin = new AdminApp();
 

@@ -4,13 +4,7 @@
     customFont,
     customStyling,
   } from '@stores/modal.svelte';
-  import {
-    GetCache,
-    SetCache,
-    ClearCache,
-    ONE_YEAR_TTL,
-    THEMES_KEY,
-  } from '@constants/cache';
+  import { GetCache, SetCache, ClearCache, THEMES_KEY } from '@constants/cache';
 
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
@@ -78,7 +72,7 @@
     ClearCache(THEMES_KEY);
     if ($customThemes.length === 9) return; // we have 9 standard themes
 
-    SetCache(THEMES_KEY, $customThemes.slice(9), ONE_YEAR_TTL);
+    SetCache(THEMES_KEY, $customThemes.slice(9));
   };
 </script>
 

@@ -1,6 +1,7 @@
 <!-- 🔒 GATED FOR ADMINS -->
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
+  import { derived } from 'svelte/store';
 
   import countries from '@constants/countries.json';
   import dreamData from '@constants/dream';
@@ -16,19 +17,26 @@
   import openModal from '@stores/modal.svelte';
   import { resetDreamModal, openStoryManage } from '@constants/modal';
   import { ensureAdmin } from '@utils/route-guard';
-  import {
-    GetCache,
-    SetCache,
-    ONE_YEAR_TTL,
-    DRAFTS_KEY,
-  } from '@constants/cache';
+  import Drafts from '@utils/story-drafts';
+  import { GetCache, CURRENT_DRAFT_KEY } from '@constants/cache';
 
   import Slider from './create/Slider.svelte';
   import Characters from './create/Characters.svelte';
   import Scenario from './create/Scenario.svelte';
   import WritingStyle from './create/WritingStyle.svelte';
 
-  onMount(ensureAdmin);
+  onMount(async () => {
+    await ensureAdmin();
+
+    const id = GetCache(CURRENT_DRAFT_KEY) as string;
+    if (id) {
+      try {
+        Drafts.restore(id);
+      } catch (err) {
+        console.warn('Failed to restore draft:', err);
+      }
+    }
+  });
 
   let admin = new AdminApp();
 
@@ -42,13 +50,23 @@
       $storyData.category,
   );
 
-  // const saveDraft = () => {
-  //   const promptData: TablePrompt | string =
-  //     promptFormat === 'Table' ? $tablePrompt : $openPrompt;
-  //   console.log($storyData);
-  //   console.log($promptSettings);
-  //   console.log(promptData);
-  // }
+  // DRAFT AUTOSAVE
+
+  const fingerprint = derived(
+    [storyData, promptSettings, openPrompt, tablePrompt],
+    ([$s, $p, $o, $t]) => JSON.stringify([$s, $p, $o, $t]),
+  );
+
+  let timer: ReturnType<typeof setTimeout>;
+
+  const unsub = fingerprint.subscribe(() => {
+    clearTimeout(timer);
+    timer = setTimeout(() => Drafts.save(), 120000); // 2 minutes debounce
+  });
+
+  onDestroy(unsub);
+
+  // CREATE DREAM
 
   const generateStory = async () => {
     const promptData: TablePrompt | string =
@@ -372,7 +390,7 @@
   >
     Reset
   </button>
-  <!-- <button class="rose-btn blur" onclick={saveDraft}> Save a draft </button> -->
+  <button class="rose-btn blur" onclick={() => Drafts.save()}> Save a draft </button>
   <button class="green-btn blur" onclick={generateStory} disabled={!validation}>
     Create a DREAM
   </button>

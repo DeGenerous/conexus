@@ -53,10 +53,9 @@ export const VOLUME_KEY = (type: 'voice' | 'music'): string => `${type}_volume`;
 export const TTS_SPEED_KEY = 'tts_speed';
 
 // Story drafts (use 1 year TTL)
-export const DRAFTS_KEY = 'dream_drafts';
-// export const DRAFT_INDEX_KEY = 'draft-index';
-// export const DRAFT_KEY = (id: string) => `draft:${id}`;
-// export const CURRENT_DAFT_KEY = 'current-draft';
+export const DRAFTS_INDEX_KEY = 'draft_index'; // stringified DraftIndexEntry[]
+export const DRAFT_KEY = (id: string) => `draft:${id}`;
+export const CURRENT_DRAFT_KEY = 'current_draft'; // id of the open draft
 
 const authKeys = [
   USER_CACHE_KEY,
@@ -85,7 +84,6 @@ function saveImortantAndClearCache() {
   const customFont = localStorage.getItem(FONT_KEY);
   const customStyling = localStorage.getItem(STYLING_KEY);
   const customScale = localStorage.getItem(SCALE_KEY);
-  const storyDrafts = localStorage.getItem(DRAFTS_KEY);
   const user = localStorage.getItem(USER_CACHE_KEY); // save user object too
   // deleting all values
   localStorage.clear();
@@ -100,11 +98,14 @@ function saveImortantAndClearCache() {
   if (customFont) localStorage.setItem(FONT_KEY, customFont);
   if (customStyling) localStorage.setItem(STYLING_KEY, customStyling);
   if (customScale) localStorage.setItem(SCALE_KEY, customScale);
-  if (storyDrafts) localStorage.setItem(DRAFTS_KEY, storyDrafts);
   if (user) localStorage.setItem(USER_CACHE_KEY, user);
 }
 
-export const SetCache = <T>(key: string, value: T, ttl: number) => {
+export const SetCache = <T>(
+  key: string,
+  value: T,
+  ttl: number = 1000 * 60 * 60 * 24 * 365,
+) => {
   localStorage.setItem(
     key,
     JSON.stringify({

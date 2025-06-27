@@ -8,7 +8,6 @@
   import {
     GetCache,
     SetCache,
-    ONE_YEAR_TTL,
     GAME_INSTRUCTIONS_KEY,
     FONT_KEY,
     STYLING_KEY,
@@ -132,7 +131,7 @@
 
   const updateFont = (reset: Nullable<'reset'> = null) => {
     if (reset) $customFont = defaultFont;
-    SetCache(FONT_KEY, $customFont, ONE_YEAR_TTL);
+    SetCache(FONT_KEY, $customFont);
   };
 
   // update FONT in localStorage after every change
@@ -156,7 +155,7 @@
 
   const updateStyling = (reset: Nullable<'reset'> = null) => {
     if (reset) $customStyling = defaultStyling;
-    SetCache(STYLING_KEY, $customStyling, ONE_YEAR_TTL);
+    SetCache(STYLING_KEY, $customStyling);
   };
 
   // update STYLING in localStorage after every change
@@ -172,7 +171,7 @@
 
   const updateScale = (reset: Nullable<'reset'> = null) => {
     if (reset) customScale = defaultScale;
-    SetCache(SCALE_KEY, customScale, ONE_YEAR_TTL);
+    SetCache(SCALE_KEY, customScale);
   };
 
   // update SCALE in localStorage after every change
@@ -308,7 +307,7 @@
         setTimeout(
           () =>
             openModal(gameRulesModal, "Don't show again", () => {
-              SetCache(GAME_INSTRUCTIONS_KEY, 'dont_show', ONE_YEAR_TTL);
+              SetCache(GAME_INSTRUCTIONS_KEY, 'dont_show');
               // Hide control panel after 3s delay
               hideControlsAfterDelay();
             }),

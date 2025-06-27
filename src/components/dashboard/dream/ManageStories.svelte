@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { tippy } from 'svelte-tippy';
-
   import { AdminApp } from '@lib/admin';
   import { CoNexusApp } from '@lib/view';
   import { SetCache, ALL_TOPICS_KEY, ALL_TOPICS_TTL } from '@constants/cache';
 
   import Categories from '@components/dashboard/dream/manage/Categories.svelte';
   import NFTGates from '@components/dashboard/dream/manage/NFTGates.svelte';
+  import StoryList from '@components/dashboard/dream/manage/StoryList.svelte';
 
   let admin = new AdminApp();
   let view = new CoNexusApp();
@@ -17,7 +16,12 @@
   let collections = $state<Collection[]>([]);
   let classGates = $state<ClassGate[]>([]);
 
-  let availabilityKey = $state<string>('');
+  let debounceTimeout: NodeJS.Timeout;
+
+  const fetchCollections = async () => {
+    collections = await admin.fetchCollections();
+    storeAllTopics(collections);
+  }
 
   const fetchClasses = async () => {
     classGates = await view.fetchClassGates();
@@ -25,7 +29,7 @@
 
   $effect(() => {
     view.getSections().then((data) => (sections = data));
-    admin.fetchCollections().then((data) => (collections = data));
+    fetchCollections();
     fetchClasses();
   });
 
@@ -41,24 +45,6 @@
     SetCache(ALL_TOPICS_KEY, topicNames.join(']['), ALL_TOPICS_TTL);
   };
 
-  const switchAvailable = (available: string) => {
-    if (available === 'available') return 'unavailable';
-    else return 'available';
-  };
-
-  let debounceTimeout: NodeJS.Timeout;
-
-  const handleChangeOrder = (event: Event, topic_id: number) => {
-    clearTimeout(debounceTimeout);
-    const input = event.target as HTMLInputElement;
-    if (Number(input.value) < 0) input.value = '0';
-    if (Number(input.value) > 99) input.value = '99';
-    debounceTimeout = setTimeout(async () => {
-      if (input.value == '') input.value = '0';
-      await admin.editTopicOrder(topic_id, Number(input.value));
-    }, 1000);
-  };
-
   const handleChangeCategoryOrder = (event: Event, category_id: number) => {
     clearTimeout(debounceTimeout);
     const input = event.target as HTMLInputElement;
@@ -68,15 +54,6 @@
       if (input.value == '') input.value = '0';
       await admin.changeSectionCategoryOrder(category_id, Number(input.value));
     }, 1000);
-  };
-
-  const sortTopicsByOrder = (topics: CollectionTopic[]) => {
-    const sortedTopics = topics.sort((a, b) => {
-      if (a.order < b.order) return -1;
-      if (a.order > b.order) return 1;
-      return 0;
-    });
-    return sortedTopics;
   };
 </script>
 
@@ -105,11 +82,9 @@
 </nav>
 
 {#if nav === 'collection'}
-  {#key availabilityKey}
-    {#await admin.fetchCollections()}
+    {#if !collections.length}
       <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
-    {:then collections}
-      {storeAllTopics(collections)}
+    {:else}
       {#each collections as { category_id, category_name, category_order, section_id, topics }}
         <div class="collection-header fade-in">
           <h2>{category_name}: {topics.length}</h2>
@@ -152,39 +127,9 @@
           </span>
         </div>
 
-        <div class="tiles-collection fade-in">
-          {#each sortTopicsByOrder(topics) as { topic_name, order, available, topic_id }}
-            <a class="tile" href="/dashboard/dream/manage/{topic_name}">
-              <h4>{topic_name}</h4>
-              <div class="input-container">
-                <label for="story-order-{topic_id}">Order</label>
-                <input
-                  id="story-order-{topic_id}"
-                  type="number"
-                  value={order}
-                  onclick={selectInput}
-                  oninput={(event) => handleChangeOrder(event, topic_id)}
-                />
-              </div>
-              <button
-                use:tippy={{ content: 'Toggle visibility', animation: 'scale' }}
-                class:green-btn={available === 'available'}
-                class:red-btn={available === 'unavailable'}
-                onclick={(e) => {
-                  e.preventDefault();
-                  admin
-                    .changeAvailability(topic_id, switchAvailable(available))
-                    .then(() => (availabilityKey = available + topic_name));
-                }}
-              >
-                {available}
-              </button>
-            </a>
-          {/each}
-        </div>
+        <StoryList {topics} {fetchCollections} {selectInput} />
       {/each}
-    {/await}
-  {/key}
+    {/if}
 {:else if nav === 'nft-gates'}
   <NFTGates {classGates} {fetchClasses} {selectInput} />
 {:else if nav === 'categories'}
@@ -287,20 +232,6 @@
       .controls {
         width: auto;
         border-top-left-radius: 1rem;
-      }
-    }
-  }
-
-  .tiles-collection {
-    min-height: unset;
-
-    .tile {
-      padding-block: 1rem;
-      gap: 1rem;
-      justify-content: flex-end;
-
-      h4 {
-        height: 100%;
       }
     }
   }

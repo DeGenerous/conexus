@@ -1,33 +1,21 @@
 <script lang="ts">
-  import { AdminApp } from '@lib/admin';
   import { CoNexusApp } from '@lib/view';
-  import { SetCache, ALL_TOPICS_KEY, ALL_TOPICS_TTL } from '@constants/cache';
 
   import Collections from '@components/dashboard/dream/manage/Collections.svelte';
   import Categories from '@components/dashboard/dream/manage/Categories.svelte';
   import NFTGates from '@components/dashboard/dream/manage/NFTGates.svelte';
 
-  let admin = new AdminApp();
   let view = new CoNexusApp();
 
   let nav: 'collection' | 'categories' | 'nft-gates' = $state('collection');
 
-  let sections = $state<Section[]>([]);
-  let collections = $state<Collection[]>([]);
   let classGates = $state<ClassGate[]>([]);
-
-  const fetchCollections = async () => {
-    collections = await admin.fetchCollections();
-    storeAllTopics(collections);
-  };
 
   const fetchClasses = async () => {
     classGates = await view.fetchClassGates();
   };
 
   $effect(() => {
-    view.getSections().then((data) => (sections = data));
-    fetchCollections();
     fetchClasses();
   });
 
@@ -35,12 +23,6 @@
     event.preventDefault();
     const input = event.target as HTMLInputElement;
     input.select();
-  };
-
-  const storeAllTopics = (collections: Collection[]) => {
-    const allTopics = collections.map((collection) => collection.topics).flat();
-    const topicNames = allTopics.map(({ topic_name }) => topic_name);
-    SetCache(ALL_TOPICS_KEY, topicNames.join(']['), ALL_TOPICS_TTL);
   };
 </script>
 
@@ -69,11 +51,7 @@
 </nav>
 
 {#if nav === 'collection'}
-  {#if !collections.length}
-    <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
-  {:else}
-    <Collections {sections} {collections} {fetchCollections} {selectInput} />
-  {/if}
+  <Collections {selectInput} />
 {:else if nav === 'nft-gates'}
   <NFTGates {classGates} {fetchClasses} {selectInput} />
 {:else if nav === 'categories'}

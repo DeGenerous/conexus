@@ -8,11 +8,13 @@
   export let onClose = () => {};
 
   let fading: number;
+  let hide: boolean = false;
 
   const closeToast = () => {
     fading = Math.random();
     setTimeout(() => {
       if (onClose) onClose();
+      hide = true;
     }, 600);
   };
 
@@ -33,6 +35,7 @@
   class:error={type !== 'info'}
   class:fading-left={fading < 0.5}
   class:fading-right={fading >= 0.5}
+  class:hide
   on:click={closeToast}
 >
   <p>{@html message}</p>
@@ -42,8 +45,14 @@
   @use '/src/styles/mixins' as *;
 
   button {
+    pointer-events: auto;
+    max-width: 100%;
+    width: fit-content;
+    margin-inline: auto;  
+
     transition: all 0.6s ease-out;
     opacity: 1;
+    
     @include white-txt(1);
     @include box-shadow;
 
@@ -63,6 +72,10 @@
     &.fading-right {
       opacity: 0;
       transform: translate(200%, 50%) scaleY(0.5) skew(-15deg, 15deg);
+    }
+
+    &.hide {
+      display: none;
     }
 
     @starting-style {

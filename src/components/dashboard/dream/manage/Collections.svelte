@@ -30,7 +30,7 @@
 
   onMount(() => updateCollections());
 
-  // Change order of every topic based on position in array
+  // Change order of every category based on position in array
   const persistOrder = () => {
     items.forEach(async ({ category_id }, i) => {
       await admin.changeSectionCategoryOrder(category_id, i + 1, false);
@@ -39,6 +39,7 @@
     toastStore.show('All categories reordered successfully');
   };
 
+  // Change order of single category
   const handleChangeCategoryOrder = (event: Event, category_id: number) => {
     clearTimeout(debounceTimeout);
     const input = event.target as HTMLInputElement;
@@ -47,13 +48,15 @@
     debounceTimeout = setTimeout(async () => {
       if (input.value == '') input.value = '0';
       await admin.changeSectionCategoryOrder(category_id, Number(input.value));
+      await fetchCollections();
+      updateCollections();
     }, 1000);
   };
 </script>
 
 <section
   class="flex"
-  use:dndzone={{ items }}
+  use:dndzone={{ items, type: 'column' }}
   on:consider={(e) => (items = e.detail.items)}
   on:finalize={(e) => {
     items = e.detail.items;
@@ -131,7 +134,7 @@
   }
 
   .collection-wrapper {
-    width: 100vw;
+    outline: none !important;
   }
 
   .collection-header {

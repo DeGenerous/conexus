@@ -20,13 +20,11 @@
   // Make a sortable id‑based copy
   const updateTopics = () => {
     items = topics
-      .map(t => ({ ...t, id: t.topic_id }))
+      .map((t) => ({ ...t, id: t.topic_id }))
       .sort((a: CollectionTopic, b: CollectionTopic) => a.order - b.order);
-  }
+  };
 
-  onMount(() => {
-    updateTopics();
-  })
+  onMount(() => updateTopics());
 
   // Change order of every topic based on position in array
   const persistOrder = () => {
@@ -35,7 +33,7 @@
       items[i].order = i + 1;
     });
     toastStore.show('All topics reordered successfully');
-  }
+  };
 
   // Change order of single topic
   const handleChangeOrder = (event: Event, topic_id: number) => {
@@ -57,16 +55,21 @@
   };
 </script>
 
-<div class="tiles-collection"
+<div
+  class="tiles-collection"
   use:dndzone={{ items }}
-  on:consider={e => items = e.detail.items}
-  on:finalize={e => {
+  on:consider={(e) => (items = e.detail.items)}
+  on:finalize={(e) => {
     items = e.detail.items;
     persistOrder();
   }}
 >
   {#each items as t (t.id)}
-    <a class="tile" href="/dashboard/dream/manage/{t.topic_name}" draggable="false">
+    <a
+      class="tile"
+      href="/dashboard/dream/manage/{t.topic_name}"
+      draggable="false"
+    >
       <h4>{t.topic_name}</h4>
       <div class="input-container">
         <label for="story-order-{t.topic_id}">Order</label>
@@ -96,7 +99,12 @@
 </div>
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
+
+  input[type='number'] {
+    width: 5rem;
+    @include dark-blue(0.75);
+  }
 
   .input-container {
     @include respond-up(tablet) {
@@ -106,11 +114,6 @@
         position: static;
       }
     }
-  }
-
-  input[type='number'] {
-    width: 5rem;
-    @include dark-blue(0.75);
   }
 
   .tiles-collection {

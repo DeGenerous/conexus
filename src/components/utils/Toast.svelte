@@ -48,11 +48,11 @@
     pointer-events: auto;
     max-width: 100%;
     width: fit-content;
-    margin-inline: auto;  
+    margin-inline: auto;
 
     transition: all 0.6s ease-out;
     opacity: 1;
-    
+
     @include white-txt(1);
     @include box-shadow;
 

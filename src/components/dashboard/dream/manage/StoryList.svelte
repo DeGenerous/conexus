@@ -59,7 +59,7 @@
     await admin.changeAvailability(id, switchAvailable(key));
     await fetchCollections();
     updateTopics();
-  }
+  };
 </script>
 
 <div
@@ -92,7 +92,8 @@
         use:tippy={{ content: 'Toggle visibility', animation: 'scale' }}
         class:green-btn={t.available === 'available'}
         class:red-btn={t.available === 'unavailable'}
-        on:click|preventDefault={() => handleSwitchAvailable(t.topic_id, t.available)}
+        on:click|preventDefault={() =>
+          handleSwitchAvailable(t.topic_id, t.available)}
       >
         {t.available}
       </button>

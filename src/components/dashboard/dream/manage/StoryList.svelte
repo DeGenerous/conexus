@@ -57,7 +57,7 @@
 
 <div
   class="tiles-collection"
-  use:dndzone={{ items }}
+  use:dndzone={{ items, type: 'row' }}
   on:consider={(e) => (items = e.detail.items)}
   on:finalize={(e) => {
     items = e.detail.items;

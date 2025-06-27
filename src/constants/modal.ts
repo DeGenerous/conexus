@@ -21,6 +21,10 @@ export const referralActivationNotice = `
   <p>Before you can invite others, you need to activate your own account with a referral code. You’re just one step away.</p>
 `;
 
+export const refreshDataModal = `
+  <p>This will force a CoNexus reload, and remove old stored files - letting you the latest version of the platform with the newest content. It won't affect your local settings.</p>
+`;
+
 export const resetSettingsModal = (type: any) =>
   `<h4>Are you sure you want to reset ${type} settings?</h4>`;
 

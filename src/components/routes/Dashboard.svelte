@@ -6,7 +6,7 @@
   import { referralCodes } from '@stores/account.svelte';
   import { showProfile } from '@stores/modal.svelte';
   import openModal from '@stores/modal.svelte';
-  import { referralActivationNotice } from '@constants/modal';
+  import { referralActivationNotice, refreshDataModal } from '@constants/modal';
   import { ClearCache } from '@constants/cache';
   import { toastStore } from '@stores/toast.svelte';
 
@@ -22,8 +22,8 @@
   let loading = $state<boolean>(true);
   let copySvgFocus = $state<Nullable<string>>(null);
 
-  onMount(() => {
-    user = getCurrentUser();
+  onMount(async () => {
+    user = await getCurrentUser();
     if (account && user && user.email_confirmed) {
       account.getReferralCodes();
       checkSubscription();
@@ -55,9 +55,8 @@
 </script>
 
 <section class="transparent-container flex-row flex-wrap">
-  <h5>
-    Dive into platform knowledge, get answers fast, and follow the latest
-    updates:
+  <h5 class="learn-label">
+    Explore Platform Knowledge{#if !user}&nbsp(No Sign-In Needed){/if}
   </h5>
   <a class="button-anchor purple-btn" href="/learn"> Learn & Explore </a>
 </section>
@@ -164,14 +163,16 @@
 
     <ResetSVG
       onclick={() => {
-        ClearCache('full');
-        toastStore.show(
-          'The cache has been reset. Fresh data will be fetched when needed.',
-          'info',
-        );
-        account.getReferralCodes();
+        openModal(refreshDataModal, 'Refresh', () => {
+          ClearCache('full');
+          toastStore.show(
+            'The cache has been reset. Fresh data will be fetched when needed.',
+            'info',
+          );
+          account.getReferralCodes();
+        });
       }}
-      text="Clear Cache"
+      text="Refresh Data"
     />
   {/if}
 {:else}
@@ -190,6 +191,12 @@
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
+
+  .learn-label {
+    &::after {
+      content: ':';
+    }
+  }
 
   section {
     max-width: min(95%, 80rem);

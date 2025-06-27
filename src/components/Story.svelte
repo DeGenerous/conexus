@@ -47,8 +47,8 @@
     activeStoryIndex <= 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
 
   onMount(async () => {
-    isLogged = userState();
-    isReferred = userState('referred');
+    isLogged = await userState();
+    isReferred = await userState('referred');
     // Get all topics in SECTION from the localStorage
     const storedTopics = GetCache<CategoryInSection[]>(
       SECTION_CATEGORIES_KEY(section),

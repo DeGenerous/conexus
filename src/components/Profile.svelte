@@ -70,8 +70,7 @@
   let user: Nullable<User> = null;
 
   onMount(async () => {
-    await account.me();
-    user = getCurrentUser();
+    user = await getCurrentUser();
   });
 
   // Change password

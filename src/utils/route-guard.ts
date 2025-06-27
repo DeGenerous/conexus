@@ -1,5 +1,6 @@
 import { get } from 'svelte/store';
-import { GetCache, USER_CACHE_KEY } from '@constants/cache';
+
+import { Account } from '@lib/account';
 import { authenticated } from '@stores/account.svelte';
 
 function redirectTo(path: string) {
@@ -7,6 +8,8 @@ function redirectTo(path: string) {
     window.location.href = path;
   }
 }
+
+const account: Account = new Account();
 
 // Define route patterns
 const protectedRoutes = [/^\/dashboard\/dream\/[^/]+$/];
@@ -16,27 +19,20 @@ const isRouteProtected = (path: string) =>
   protectedRoutes.some((pattern) => pattern.test(path));
 
 // Get the user object
-export function getCurrentUser(): Nullable<User> {
-  // 1. Try the reactive store
+export async function getCurrentUser(): Promise<Nullable<User>> {
+  await account.me();
+
   const user = get(authenticated);
   if (user) return user;
 
-  // 2. Fallback to cache; if found, rehydrate the store
-  const cached = GetCache<User>(USER_CACHE_KEY);
-  if (cached) {
-    authenticated.set(cached);
-    return cached;
-  }
-
-  // 3. No user at all
   return null;
 }
 
-// Function to check if route is protected for Admins
-export function ensureAdmin(path: string): boolean {
+// Check if route is protected for Admins
+export async function ensureAdmin(path: string): Promise<boolean> {
   if (!isRouteProtected(path)) return true;
 
-  const user = getCurrentUser();
+  const user = await getCurrentUser();
   if (!user || user.role !== 'admin') {
     redirectTo('/');
     return false;
@@ -45,13 +41,11 @@ export function ensureAdmin(path: string): boolean {
   return true;
 }
 
-// USE IN onMount() / $effect() LIKE THIS:
-// if (!ensureAdmin(window.location.pathname)) return;
-
-export function userState(
+// Check user status
+export async function userState(
   state: 'signed' | 'admin' | 'referred' = 'signed',
-): boolean {
-  const user: Nullable<User> = getCurrentUser();
+): Promise<boolean> {
+  const user: Nullable<User> = await getCurrentUser();
   if (!user) return false;
 
   if (state === 'signed') return true;

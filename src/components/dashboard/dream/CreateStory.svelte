@@ -30,7 +30,7 @@
   let promptFormat: 'Table' | 'Open' = $state('Table');
 
   $effect(() => {
-    if (!ensureAdmin(window.location.pathname)) return;
+    ensureAdmin(window.location.pathname);
   });
 
   let validation = $derived(

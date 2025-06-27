@@ -1,9 +1,15 @@
+<!-- 🔒 GATED FOR ADMINS -->
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import { CoNexusApp } from '@lib/view';
 
   import Collections from '@components/dashboard/dream/manage/Collections.svelte';
   import Categories from '@components/dashboard/dream/manage/Categories.svelte';
   import NFTGates from '@components/dashboard/dream/manage/NFTGates.svelte';
+  import { ensureAdmin } from '@utils/route-guard';
+
+  onMount(() => ensureAdmin());
 
   let view = new CoNexusApp();
 
@@ -14,10 +20,6 @@
   const fetchClasses = async () => {
     classGates = await view.fetchClassGates();
   };
-
-  $effect(() => {
-    fetchClasses();
-  });
 
   const selectInput = (event: Event) => {
     event.preventDefault();

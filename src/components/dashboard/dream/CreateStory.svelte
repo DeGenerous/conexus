@@ -1,4 +1,7 @@
+<!-- 🔒 GATED FOR ADMINS -->
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import countries from '@constants/countries.json';
   import dreamData from '@constants/dream';
   import { AdminApp } from '@lib/admin';
@@ -12,6 +15,7 @@
   import generatePrompt from '@utils/prompt';
   import openModal from '@stores/modal.svelte';
   import { resetDreamModal, openStoryManage } from '@constants/modal';
+  import { ensureAdmin } from '@utils/route-guard';
   import {
     GetCache,
     SetCache,
@@ -23,15 +27,12 @@
   import Characters from './create/Characters.svelte';
   import Scenario from './create/Scenario.svelte';
   import WritingStyle from './create/WritingStyle.svelte';
-  import { ensureAdmin } from '@utils/route-guard';
+
+  onMount(() => ensureAdmin());
 
   let admin = new AdminApp();
 
   let promptFormat: 'Table' | 'Open' = $state('Table');
-
-  $effect(() => {
-    ensureAdmin(window.location.pathname);
-  });
 
   let validation = $derived(
     $storyData.name &&

@@ -3,20 +3,7 @@ import { get } from 'svelte/store';
 import { Account } from '@lib/account';
 import { authenticated } from '@stores/account.svelte';
 
-function redirectTo(path: string) {
-  if (typeof window !== 'undefined') {
-    window.location.href = path;
-  }
-}
-
 const account: Account = new Account();
-
-// Define route patterns
-const protectedRoutes = [/^\/dashboard\/dream\/[^/]+$/];
-
-// Helper function to match a route pattern
-const isRouteProtected = (path: string) =>
-  protectedRoutes.some((pattern) => pattern.test(path));
 
 // Get the user object
 export async function getCurrentUser(): Promise<Nullable<User>> {
@@ -28,17 +15,10 @@ export async function getCurrentUser(): Promise<Nullable<User>> {
   return null;
 }
 
-// Check if route is protected for Admins
-export async function ensureAdmin(path: string): Promise<boolean> {
-  if (!isRouteProtected(path)) return true;
-
-  const user = await getCurrentUser();
-  if (!user || user.role !== 'admin') {
-    redirectTo('/');
-    return false;
+function redirectTo(path: string) {
+  if (typeof window !== 'undefined') {
+    window.location.href = path;
   }
-
-  return true;
 }
 
 // Check user status
@@ -53,4 +33,11 @@ export async function userState(
   if (state === 'referred') return !!user.referred;
 
   return false;
+}
+
+// Check if route is protected for Admins
+export async function ensureAdmin(
+  path: string = '/dashboard/dream',
+): Promise<void> {
+  if (!(await userState('admin'))) redirectTo(path);
 }

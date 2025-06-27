@@ -1,3 +1,4 @@
+<!-- 🔒 GATED FOR ADMINS -->
 <script lang="ts">
   import { onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
@@ -7,6 +8,7 @@
   import openModal from '@stores/modal.svelte';
   import { deleteStoryModal } from '@constants/modal';
   import { prevStory, nextStory } from '@stores/navigation.svelte';
+  import { ensureAdmin } from '@utils/route-guard';
 
   import GenreTags from './GenreTags.svelte';
   import Media from './Media.svelte';
@@ -45,6 +47,8 @@
   );
 
   onMount(async () => {
+    await ensureAdmin();
+
     const topic_ = await admin.fetchTopic(topic_name);
 
     if (!topic_) {

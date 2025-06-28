@@ -1,7 +1,7 @@
 <script lang="ts">
   import { CoNexusApp } from '@lib/view';
 
-  import MenuTile from './utils/MenuTile.svelte';
+  import MenuTile from '@components/utils/MenuTile.svelte';
 
   let app: CoNexusApp = new CoNexusApp();
 

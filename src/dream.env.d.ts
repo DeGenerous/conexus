@@ -74,6 +74,7 @@ interface DraftPayload {
   title: string; // copy of storyData.name (or "Untitled")
   created: number; // epoch ms
   updated: number;
+  schema: const;
   data: {
     storyData: StoryData;
     promptSettings: PromptSettings;

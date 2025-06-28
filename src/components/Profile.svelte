@@ -28,7 +28,7 @@
   import CloseSVG from '@components/icons/Close.svelte';
   import StarSVG from '@components/icons/Star.svelte';
   import DiscordBtn from '@components/icons/Discord.svelte';
-  import SaveSVG from './icons/Checkmark.svelte';
+  import SaveSVG from '@components/icons/Checkmark.svelte';
 
   let dialog: HTMLDialogElement;
 

@@ -325,6 +325,18 @@
   }
 }
 
+.rose-tile {
+  @extend .tile;
+  @include rose(0.85);
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(&:disabled) {
+    @include rose;
+    @include dark-red(1, text);
+  }
+}
+
 .gray-tile {
   @extend .tile;
   @include gray(0.25);

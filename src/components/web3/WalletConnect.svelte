@@ -3,7 +3,7 @@
 
   import { showProfile } from '@stores/modal.svelte';
 
-  import RainbowConnect from './Rainbow';
+  import RainbowConnect from '@components/web3/Rainbow';
 
   let {
     linking = false,

@@ -23,6 +23,10 @@ import {
 export const showModal = writable<boolean>(false);
 export const showProfile = writable<boolean>(false);
 
+// DRAFTS MANAGER
+
+export const draftsManager = writable<boolean>(false);
+
 // THEME CUSTOMIZATION
 
 export const themeSettings = writable<boolean>(false);

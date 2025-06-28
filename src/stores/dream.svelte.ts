@@ -367,7 +367,10 @@ export const clearAllData = () => {
   });
 };
 
-// COLLECT ALL DATA FROM STORES
+// COLLECT ALL DATA FROM STORES (for drafts)
+
+export const currentDraft = writable<Nullable<DraftPayload>>(null);
+export const draftsIndex = writable<DraftIndexEntry[]>([]);
 
 export function collectState() {
   return {

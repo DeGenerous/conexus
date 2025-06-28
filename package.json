@@ -20,6 +20,7 @@
   "devDependencies": {
     "@astrojs/svelte": "7.0.10",
     "@sveltejs/vite-plugin-svelte": "5.0.3",
+    "@types/uuid": "^10.0.0",
     "@vite-pwa/astro": "^1.0.1",
     "astro": "^5.5.2",
     "sass-embedded": "^1.89.0",

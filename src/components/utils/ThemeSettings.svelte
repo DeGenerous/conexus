@@ -11,10 +11,8 @@
 
   let {
     closeDialog = () => {},
-    selectedTheme = $bindable(null),
   }: {
     closeDialog: () => void;
-    selectedTheme: Nullable<number>;
   } = $props();
 
   $effect(() => {
@@ -22,12 +20,14 @@
     if (storedThemes) $customThemes = $customThemes.concat(storedThemes);
   });
 
+  let selectedTheme = $state<Nullable<number>>(null);
   let newThemeName = $state<string>('CUSTOM THEME');
 
   // Set up current customization from the stored THEME-object
   const applyTheme = () => {
     $customFont = structuredClone($customThemes[selectedTheme!].font);
     $customStyling = structuredClone($customThemes[selectedTheme!].styling);
+    selectedTheme = null;
     closeDialog();
   };
 

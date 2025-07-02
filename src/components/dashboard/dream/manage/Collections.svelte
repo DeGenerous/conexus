@@ -25,7 +25,6 @@
 
   const fetchCollections = async () => {
     collections = await admin.fetchCollections();
-    storeAllTopics(collections);
     updateCollections();
     topicBuckets = Object.fromEntries(
       collections.map((c) => [
@@ -44,6 +43,7 @@
       .sort(
         (a: Collection, b: Collection) => a.category_order - b.category_order,
       );
+    storeAllTopics(items);
   };
 
   onMount(async () => {
@@ -77,7 +77,9 @@
 
   // Cahce all topics for switching between
   const storeAllTopics = (collections: Collection[]) => {
-    const allTopics = collections.map((collection) => collection.topics).flat();
+    const allTopics = collections
+      .map((collection) => collection.topics.sort((a, b) => a.order - b.order))
+      .flat();
     const topicNames = allTopics.map(({ topic_name }) => topic_name);
     SetCache(ALL_TOPICS_KEY, topicNames.join(']['), ALL_TOPICS_TTL);
   };

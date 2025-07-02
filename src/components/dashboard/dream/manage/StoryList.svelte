@@ -28,7 +28,6 @@
       if (input.value == '') input.value = '0';
       await admin.editTopicOrder(topic_id, Number(input.value));
       await fetchCollections();
-      // updateTopics();
     }, 1000);
   };
 
@@ -41,7 +40,6 @@
   const handleSwitchAvailable = async (id: number, key: string) => {
     await admin.changeAvailability(id, switchAvailable(key));
     await fetchCollections();
-    // updateTopics();
   };
 
   let busy = false;

@@ -90,8 +90,14 @@ const Web3Provider = ({
               nonce,
               address,
               chainId,
-              statement:
-                "Sign this message to prove you're a Potential NFT holder. It will not cause a blockchain transaction, nor any gas fees.",
+              statement: `
+                Welcome to CoNexus!\n\n
+                Click to sign in and accept the Terms of Service: https://degenerousdao.com/legal/terms-of-service\n
+                This request will not trigger a blockchain transaction or cost any gas fees.\n\n
+                Wallet address:\n
+                ${address}\n\n
+                Nonce: ${nonce}
+              `,
               domain: window.location.host,
               uri: window.location.origin,
               version: '1',

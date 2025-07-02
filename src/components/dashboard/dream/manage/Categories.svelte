@@ -23,13 +23,9 @@
   <div class="container">
     {#if categories.length > 0}
       {#each categories as { name }}
-        <span
-          class="category pad-8 pad-inline round-8 shad"
-          role="button"
-          tabindex="0"
-        >
-          <h5>{name}</h5>
-        </span>
+        <button class="category void-btn small-tile">
+          <p>{name}</p>
+        </button>
       {/each}
     {:else}
       <p class="validation">No categories found</p>
@@ -54,19 +50,11 @@
 
       .category {
         @include gray(0.25);
-        @include white-txt(soft);
 
         &:hover,
         &:active {
           @include cyan(1, text);
           @include light-blue(0.5);
-          @include scale-up(soft);
-          @include box-shadow(deep);
-        }
-
-        h5 {
-          color: inherit;
-          text-shadow: none;
         }
       }
     }

@@ -348,3 +348,54 @@
     @include cyan(1, text);
   }
 }
+
+// SMALL TILES
+
+.small-tile {
+  width: 100%;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  flex: none;
+
+  transition: all 0.3s ease-in-out;
+
+  // Fallback if no support
+  opacity: 1;
+  transform: none;
+  filter: none;
+
+  & > p {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    @include dark-blue(0.5);
+    @include box-shadow(soft, inset);
+  }
+
+  @include box-shadow;
+  @include white-txt(soft);
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(:disabled) {
+    @include white-txt;
+    @include scale-up(soft);
+    @include box-shadow(deep);
+  }
+
+  @include respond-up(tablet) {
+    width: auto;
+  }
+
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.975) skew(1deg, -1deg);
+    filter: brightness(125%) contrast(125%);
+  }
+}

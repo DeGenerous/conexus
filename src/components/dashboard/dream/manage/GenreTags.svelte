@@ -69,18 +69,14 @@
   <div class="container">
     {#if genres.length > 0}
       {#each genres as genre (genre)}
-        <span
-          class="genre flex-row gap-8 pad-8 round-8 shad"
-          role="button"
-          tabindex="0"
-        >
-          <h5>{genre}</h5>
+        <button class="genre void-btn small-tile">
+          <p>{genre}</p>
           <CloseSVG
             onclick={() => handleRemoveGenre(genre)}
             voidBtn={true}
             dark={true}
           />
-        </span>
+        </button>
       {/each}
     {:else}
       <p class="valigation">No genres selected</p>
@@ -108,22 +104,11 @@
     justify-content: center;
 
     .genre {
-      padding-left: 1rem;
       @include purple;
-      @include white-txt;
 
       &:hover,
       &:active {
-        @include dark-red(1, text);
         @include purple(1, bg, bright);
-        @include scale-up(soft);
-        @include box-shadow(deep);
-      }
-
-      h5 {
-        color: inherit;
-        text-shadow: none;
-        text-transform: uppercase;
       }
     }
   }

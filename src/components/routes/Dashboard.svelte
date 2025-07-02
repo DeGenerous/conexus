@@ -79,8 +79,7 @@
             <ul class="referral-codes flex-row">
               {#each $referralCodes as code}
                 <button
-                  class="ref-code void-btn flex-row pad-8 round-8 dark-txt fade-in"
-                  class:used-code={code.is_used}
+                  class="ref-code void-btn small-tile"
                   id={code.code}
                   onclick={() => copyRefCode(code.code)}
                   onpointerover={() => (copySvgFocus = code.code)}
@@ -89,10 +88,9 @@
                   onblur={() => (copySvgFocus = null)}
                   aria-label="Copy code {code.code}"
                   tabindex={code.is_used ? -1 : 0}
+                  disabled={code.is_used}
                 >
-                  <p class="pad-8 round-8 soft-white-txt transparent-dark-bg">
-                    {code.code}
-                  </p>
+                  <p>{code.code}</p>
                   {#if !code.is_used}
                     <CopySVG {copySvgFocus} data={code.code} />
                   {/if}
@@ -212,35 +210,25 @@
         flex-wrap: wrap;
 
         .ref-code {
-          width: 100%;
-          gap: 0.5rem;
-          background-color: $deep-green;
-          @include box-shadow;
-
-          &:hover:not(.used-code),
-          &:active:not(.used-code),
-          &:focus:not(.used-code) {
-            @include scale-up(soft);
-            @include bright;
-            @include box-shadow(deep);
-          }
+          @include deep-green;
 
           p {
-            width: 100%;
-            @include box-shadow(soft, inset);
+            @include dark-green(0.5);
           }
 
-          &.used-code {
+          &:hover:not(&:disabled),
+          &:active:not(&:disabled),
+          &:focus:not(&:disabled) {
+            @include bright;
+          }
+
+          &:disabled {
             cursor: not-allowed;
             @include gray(0.25);
 
             p {
               @include white-txt(0.5);
             }
-          }
-
-          @include respond-up(tablet) {
-            width: auto;
           }
         }
       }

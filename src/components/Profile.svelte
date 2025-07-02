@@ -355,7 +355,7 @@ a11y-no-static-element-interactions-->
                 <ul class="flex-row">
                   {#each user.wallets.filter((address) => !address.faux) as wallet, index}
                     <button
-                      class="wallet void-btn flex-row pad-8 round-8 blue-bg dark-txt"
+                      class="wallet void-btn small-tile"
                       on:click={() => {
                         if (wallet.wallet != user!.main_wallet)
                           openModal(
@@ -698,42 +698,28 @@ a11y-no-static-element-interactions-->
 
       .wallet {
         min-width: 14rem;
-        width: 100%;
-        justify-content: space-between;
-        gap: 0.5rem;
-        @include box-shadow;
+        @include blue;
 
         h4 {
-          color: inherit;
-        }
-
-        p {
-          width: 100%;
-          @include box-shadow(soft, inset);
+          @include dark-blue(1, text);
         }
 
         &:hover:not(&:disabled),
         &:active:not(&:disabled),
         &:focus:not(&:disabled) {
-          @include scale-up(soft);
           @include bright;
-          @include box-shadow(deep);
         }
 
         &:disabled {
           cursor: not-allowed;
           fill: $cyan;
           box-shadow: $shadow-plus-inset-glow;
-          @include cyan(1, text);
           @include blue(1, bg, bright);
 
-          p {
+          p,
+          h4 {
             color: $cyan;
           }
-        }
-
-        @include respond-up(tablet) {
-          width: auto;
         }
       }
     }

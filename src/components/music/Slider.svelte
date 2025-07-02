@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import {
     GetCache,
     SetCache,
@@ -20,7 +22,7 @@
   );
   let disabledInput = $derived<boolean>(sound[type].muted);
 
-  $effect(() => {
+  onMount(() => {
     const storedValue = GetCache<VolumeControl>(VOLUME_KEY(type));
     if (storedValue) {
       sound[type] = storedValue;

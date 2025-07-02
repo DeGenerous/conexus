@@ -434,6 +434,21 @@
   }
 }
 
+.small-rose-tile {
+  @extend .small-tile;
+  @include rose(0.85);
+
+  p {
+    @include dark-red(0.5);
+  }
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(:disabled) {
+    @include rose(1, bg, bright);
+  }
+}
+
 .small-green-tile {
   @extend .small-tile;
   @include deep-green;
@@ -446,5 +461,49 @@
   &:active:not(&:disabled),
   &:focus:not(:disabled) {
     @include bright;
+  }
+}
+
+// USAGE: &::after { content: 'Label'; }
+// ADDITIONAL CLASSES: &.selected / &.active
+.small-tile-addon {
+  position: relative;
+  margin-top: 0.5rem;
+
+  &.selected {
+    border-top-left-radius: 0;
+
+    p {
+      @include dark-green(0.5);
+    }
+  }
+
+  &.active {
+    border-top-left-radius: 0;
+    pointer-events: none;
+  }
+
+  &::after {
+    position: absolute;
+    top: -1rem;
+    left: 0;
+    padding-inline: 0.5rem;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    color: $dark-blue;
+    background-color: inherit;
+
+    transition: all 0.3s ease-in-out;
+
+    // Fallback if no support
+    opacity: 1;
+    transform: none;
+
+    @include font(caption);
+
+    @starting-style {
+      opacity: 0;
+      transform: translate(-50%, 50%) scale(0);
+    }
   }
 }

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import { AdminApp } from '@lib/admin';
 
   let admin = new AdminApp();
@@ -6,7 +8,7 @@
   let categories = $state<CategoryView[]>([]);
   let newCategoryName = $state<string>('');
 
-  $effect(() => {
+  onMount(() => {
     admin.fetchCategories().then((res) => (categories = res));
   });
 

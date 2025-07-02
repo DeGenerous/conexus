@@ -30,7 +30,7 @@
   const prevSectionIndex =
     activeSectionIndex == 0 ? sections.length - 1 : activeSectionIndex - 1;
 
-  // $effect(async () => {
+  // onMount(async () => {
   //   sections = await app
   //     .getSections()
   //     .then((data) => data.map(({ id, name }) => name));

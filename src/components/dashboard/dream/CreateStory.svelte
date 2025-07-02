@@ -50,8 +50,6 @@
 
   let timer: ReturnType<typeof setTimeout>;
 
-  $effect(() => console.log(timer));
-
   const unsub = fingerprint.subscribe(() => {
     clearTimeout(timer);
     timer = setTimeout(() => Drafts.save(), 300000); // 5 minutes debounce
@@ -86,15 +84,25 @@
     if (!$currentDraft?.updated) return;
 
     const now = Date.now();
-    const diffSec = Math.floor((now - $currentDraft.updated) / 1000);
+    const diffMs = now - $currentDraft.updated;
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHr = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHr / 24);
+    const diffMonth = Math.floor(diffDay / 30);
 
     if (diffSec < 2) {
       lastSavedAgo = 'just now';
     } else if (diffSec < 60) {
       lastSavedAgo = `${diffSec}s ago`;
-    } else {
-      const diffMin = Math.floor(diffSec / 60);
+    } else if (diffMin < 60) {
       lastSavedAgo = `${diffMin}m ago`;
+    } else if (diffHr < 24) {
+      lastSavedAgo = `${diffHr}h ago`;
+    } else if (diffDay < 30) {
+      lastSavedAgo = `${diffDay}d ago`;
+    } else {
+      lastSavedAgo = `${diffMonth}mo ago`;
     }
   };
 
@@ -492,6 +500,14 @@
       @include rose(1, text, bright);
       strong {
         @include white-txt(soft);
+      }
+    }
+
+    span {
+      width: 100%;
+
+      @include respond-up(tablet) {
+        width: auto;
       }
     }
   }

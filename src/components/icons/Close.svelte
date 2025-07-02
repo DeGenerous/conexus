@@ -32,6 +32,7 @@
   @use '/src/styles/mixins' as *;
 
   button {
+    pointer-events: auto !important;
     stroke: $red;
 
     &:active,

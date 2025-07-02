@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import {
     customThemes,
     customFont,
@@ -15,9 +17,11 @@
     closeDialog: () => void;
   } = $props();
 
-  $effect(() => {
-    const storedThemes = GetCache(THEMES_KEY) as CustomTheme[];
-    if (storedThemes) $customThemes = $customThemes.concat(storedThemes);
+  onMount(() => {
+    const storedThemes = GetCache(THEMES_KEY) as CustomTheme[] | null;
+    if (storedThemes && storedThemes.length) {
+      $customThemes = $customThemes.slice(0, 9).concat(storedThemes);
+    }
   });
 
   let selectedTheme = $state<Nullable<number>>(null);
@@ -78,24 +82,22 @@
 
 <h3>Theme Preferences</h3>
 <h5>Use the default look or create your own custom theme.</h5>
+
 <ul class="custom-themes transparent-container">
   {#each $customThemes as { name, standard }, index}
     <button
       id="theme-{index}"
-      class="theme-option void-btn flex-row pad-8 round-8 white-txt"
+      class="theme-option void-btn small-purple-tile small-tile-addon"
       class:standard
       class:selected={selectedTheme === index}
-      class:applied={compareCurrentTheme($customThemes[index])}
+      class:active={compareCurrentTheme($customThemes[index])}
       onclick={() => {
-        if (compareCurrentTheme($customThemes[index])) return;
         if (selectedTheme === index) selectedTheme = null;
         else selectedTheme = index;
       }}
     >
       <h4>{index + 1}</h4>
-      <p class="pad-8 round-8 transparent-dark-bg">
-        {name}
-      </p>
+      <p>{name}</p>
       {#if !standard}
         <CloseSVG
           voidBtn={true}
@@ -154,53 +156,28 @@
     flex-flow: row wrap;
 
     .theme-option {
-      position: relative;
-      width: 100%;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-      background-color: $purple;
-      @include box-shadow;
-
-      &:hover:not(.used-code),
-      &:active:not(.used-code),
-      &:focus:not(.used-code) {
-        @include scale-up(soft);
-        @include bright;
-        @include box-shadow(deep);
-      }
-
-      p {
-        width: 100%;
-        @include box-shadow(soft, inset);
+      h4 {
+        color: $dark-blue;
       }
 
       &.selected {
-        background-color: $deep-green;
-      }
-
-      &.applied {
-        background-color: $bright-purple;
-        border-top-left-radius: 0;
+        background-color: $deep-green !important;
 
         h4 {
-          color: $dark-blue;
-        }
-
-        p {
-          color: $cyan;
+          color: $dark-green;
         }
 
         &::after {
+          content: 'Selected';
+        }
+      }
+
+      &.active {
+        background-color: $bright-purple;
+        color: $cyan;
+
+        &::after {
           content: 'Applied';
-          position: absolute;
-          top: -1rem;
-          left: 0;
-          padding-inline: 0.5rem;
-          border-top-left-radius: 0.5rem;
-          border-top-right-radius: 0.5rem;
-          color: $dark-blue;
-          background-color: $bright-purple;
-          @include font(caption);
         }
       }
     }
@@ -211,10 +188,6 @@
 
     @include respond-up(tablet) {
       width: auto;
-
-      .theme-option {
-        width: auto;
-      }
     }
   }
 </style>

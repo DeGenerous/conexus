@@ -3,11 +3,15 @@
 
   import Drafts from '@utils/story-drafts';
 
+  import CloseSVG from '@components/icons/Close.svelte';
+
   let {
     closeDialog = () => {},
   }: {
     closeDialog: () => void;
   } = $props();
+
+  let selectedDraftID = $state<string>('');
 
   function restoreDraft(id: string) {
     Drafts.restore(id);
@@ -20,45 +24,106 @@
     if (!$currentDraft) return;
     if ($currentDraft.id == id) $currentDraft = null;
   }
+
+  // Calculate story creation date to show on DRAFT tile
+  const convertDate = (date: string | Date) => {
+    if (!date) return 'CORRUPTED';
+    date = new Date(date);
+
+    let minutes = String(date.getMinutes());
+    let hours = String(date.getHours());
+
+    let day = String(date.getDate());
+    let month = String(date.getMonth() + 1);
+    let year = String(date.getFullYear());
+
+    if (Number(minutes) < 10) minutes = '0' + minutes;
+    if (Number(hours) < 10) hours = '0' + hours;
+    if (Number(day) < 10) day = '0' + day;
+    if (Number(month) < 10) month = '0' + month;
+
+    return `${day}.${month}.${year.slice(2)} ${hours}:${minutes}`;
+  };
 </script>
 
+<h3>Story Draft Manager</h3>
+<h5>All of your in-progress stories live here. Nothing gets lost.</h5>
+
 {#if $draftsIndex.length}
-  <ul class="flex-row flex-wrap">
+  <ul class="drafts-wrapper transparent-container">
     {#each $draftsIndex as { id, title, updated }}
-      <div class="rose-tile" role="button" tabindex="0">
-        <h4>{title || 'Untitled'}</h4>
-        <h5>{new Date(updated).toLocaleString()}</h5>
-        <p>{id.split('-')[0]}</p>
-        <span class="flex-row flex-wrap round-12 pad-8 gap-8 shad-inset">
-          <button class="red-btn" onclick={() => deleteDraft(id)}>
-            Delete
-          </button>
-          <button class="green-btn" onclick={() => restoreDraft(id)}>
-            Restore
-          </button>
-        </span>
-      </div>
+      <button
+        class="draft void-btn small-rose-tile small-tile-addon"
+        class:selected={selectedDraftID == id}
+        class:active={$currentDraft && $currentDraft.id == id}
+        onclick={() => {
+          if (selectedDraftID == id) selectedDraftID = '';
+          else selectedDraftID = id;
+        }}
+      >
+        <p class="flex">
+          {convertDate(new Date(updated))}
+          <span>{id.split('-')[0]}</span>
+        </p>
+        <!-- <p>{id.split('-')[0]}</p> -->
+        <CloseSVG onclick={() => deleteDraft(id)} voidBtn={true} dark={true} />
+      </button>
     {/each}
   </ul>
+
+  <hr />
+
+  <button
+    onclick={() => restoreDraft(selectedDraftID)}
+    disabled={!selectedDraftID}
+  >
+    {selectedDraftID
+      ? 'Restore Draft: ' + selectedDraftID.split('-')[0]
+      : 'Restore Draft'}
+  </button>
 {:else}
-  <p class="validation">There is no drafts found</p>
+  <div class="transparent-container">
+    <p class="validation">There is no drafts found</p>
+  </div>
 {/if}
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  ul {
-    div {
+  .drafts-wrapper {
+    width: 100%;
+    flex-flow: row wrap;
+
+    .draft {
+      p {
+        gap: 0;
+
+        span {
+          opacity: 0.5;
+          @include font(caption);
+        }
+      }
+
+      &.selected {
+        background-color: $deep-green !important;
+
+        &::after {
+          content: 'Selected';
+        }
+      }
+
+      &.active {
+        background-color: $bright-rose;
+        color: $white;
+
+        &::after {
+          content: 'Active';
+        }
+      }
+    }
+
+    @include respond-up(tablet) {
       width: auto;
-      padding: 0.5rem;
-
-      h4 {
-        color: inherit;
-      }
-
-      span {
-        @include dark-red(0.5);
-      }
     }
   }
 </style>

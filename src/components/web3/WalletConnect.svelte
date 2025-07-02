@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import { createRoot } from 'react-dom/client';
 
   import { showProfile } from '@stores/modal.svelte';
@@ -13,7 +15,7 @@
     title?: string;
   } = $props();
 
-  $effect(() => {
+  onMount(() => {
     const reactRoot = document.getElementById('react-root');
     if (reactRoot) {
       const root = createRoot(reactRoot); // Create a root

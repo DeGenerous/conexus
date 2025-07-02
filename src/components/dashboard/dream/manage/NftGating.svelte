@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import { CoNexusApp } from '@lib/view';
   import { contractGetter } from '@constants/contracts';
 
@@ -28,10 +30,6 @@
   let newGating = $state('');
   let newClassGating = $state('');
 
-  $effect(() => {
-    fetchGates();
-  });
-
   const filterContracts = () =>
     availableContracts.filter(
       (contract) =>
@@ -41,6 +39,8 @@
   const fetchGates = async () => {
     topicGatings = await viewApp.fetchTopicGates(topic.id);
   };
+
+  onMount(fetchGates);
 
   async function handleRemoveGating(
     topicGatings: TopicNFTGate[],

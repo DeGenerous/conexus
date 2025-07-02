@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import { serveUrl } from '@constants/media';
   import { validateFiles } from '@utils/file-validation';
   import MediaManager from '@lib/media';
@@ -41,10 +43,6 @@
     audio: () => (audio ? 1 : 0),
   };
 
-  $effect(() => {
-    loadMedia();
-  });
-
   // Fetch stored media on load
   const loadMedia = async () => {
     try {
@@ -80,6 +78,8 @@
       isLoading = false;
     }
   };
+
+  onMount(loadMedia);
 
   // Handle file upload
   const handleFileUpload = async (e: Event, type: MediaType) => {

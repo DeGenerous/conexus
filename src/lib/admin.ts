@@ -468,6 +468,7 @@ export class AdminApp extends AdminAPI {
   async editTopicCategory(
     topic_id: number,
     category_id: number,
+    showToast: boolean = true,
   ): Promise<void> {
     const { data, error } = await this.changeTopicsCategory(
       topic_id,
@@ -485,7 +486,7 @@ export class AdminApp extends AdminAPI {
 
     this.clearCache();
 
-    toastStore.show(data.message, 'info');
+    if (showToast) toastStore.show(data.message, 'info');
   }
 
   /**

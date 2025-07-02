@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
   import { currentDraft, draftsIndex } from '@stores/dream.svelte';
 
   import Drafts from '@utils/story-drafts';
@@ -19,6 +17,8 @@
   function deleteDraft(id: string) {
     Drafts.delete(id);
     $draftsIndex = Drafts.list();
+    if (!$currentDraft) return;
+    if ($currentDraft.id == id) $currentDraft = null;
   }
 </script>
 

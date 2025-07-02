@@ -139,16 +139,24 @@
 <svelte:window {onkeydown} />
 
 <!-- DRAFTS -->
-{#if $currentDraft}
+{#if $currentDraft || $draftsIndex.length}
   <div class="drafts-wrapper fade-in container flex-row flex-wrap">
-    <h5>
-      📝 Working on draft: {$currentDraft.id.split('-')[0]}
-      <strong>
-        - Last saved: {lastSavedAgo}
-      </strong>
-    </h5>
+    {#if $currentDraft}
+      <h5>
+        📝 Working on draft: {$currentDraft.id.split('-')[0]}
+        <strong>
+          - Last saved: {lastSavedAgo}
+        </strong>
+      </h5>
+    {:else}
+      <h5>There is no draft selected</h5>
+    {/if}
     <span class="flex-row">
-      <SaveSVG onclick={saveDraft} />
+      {#if $currentDraft}
+        <SaveSVG onclick={saveDraft} />
+      {:else}
+        <button class="green-btn" onclick={saveDraft}>Create a draft</button>
+      {/if}
       <button class="rose-btn" onclick={openDraftsManager}>
         Manage Drafts
       </button>
@@ -460,7 +468,7 @@
     class="red-btn blur"
     onclick={() => openModal(resetDreamModal, 'Reset', clearAllData)}
   >
-    Reset
+    Reset Data
   </button>
   <button class="rose-btn blur" onclick={() => Drafts.create()}
     >Start New Draft</button

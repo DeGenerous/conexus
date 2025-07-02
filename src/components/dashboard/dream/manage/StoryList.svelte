@@ -1,6 +1,5 @@
 <!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { dndzone } from 'svelte-dnd-action';
   import { tippy } from 'svelte-tippy';
 
@@ -8,6 +7,7 @@
   import { toastStore } from '@stores/toast.svelte';
 
   export let topics: CollectionTopic[] = [];
+  export let catId: number; // ← receives category_id
   export let fetchCollections = async () => {};
   export let selectInput = (event: Event) => {};
 
@@ -16,24 +16,7 @@
   let debounceTimeout: NodeJS.Timeout;
 
   let items: any[] = [];
-
-  // Make a sortable id‑based copy
-  const updateTopics = () => {
-    items = topics
-      .map((t) => ({ ...t, id: t.topic_id }))
-      .sort((a: CollectionTopic, b: CollectionTopic) => a.order - b.order);
-  };
-
-  onMount(() => updateTopics());
-
-  // Change order of every topic based on position in array
-  const persistOrder = () => {
-    items.forEach(async ({ topic_id }, i) => {
-      await admin.editTopicOrder(topic_id, i + 1, false);
-      items[i].order = i + 1;
-    });
-    toastStore.show('All topics reordered successfully');
-  };
+  $: items = topics.map((t) => ({ ...t, id: t.topic_id }));
 
   // Change order of single topic
   const handleChangeOrder = (event: Event, topic_id: number) => {
@@ -45,7 +28,7 @@
       if (input.value == '') input.value = '0';
       await admin.editTopicOrder(topic_id, Number(input.value));
       await fetchCollections();
-      updateTopics();
+      // updateTopics();
     }, 1000);
   };
 
@@ -58,18 +41,51 @@
   const handleSwitchAvailable = async (id: number, key: string) => {
     await admin.changeAvailability(id, switchAvailable(key));
     await fetchCollections();
-    updateTopics();
+    // updateTopics();
   };
+
+  let busy = false;
+  async function handleFinalize(e: CustomEvent) {
+    if (busy) return;
+    busy = true;
+    try {
+      const { items: newItems, info } = e.detail;
+      const draggedId = info.id;
+      items = newItems;
+
+      const isDestination = newItems.some((t) => t.topic_id === draggedId);
+      if (!isDestination) return;
+
+      const movedHere = topics.every((t) => t.topic_id !== draggedId);
+      if (movedHere) await admin.editTopicCategory(draggedId, catId, false);
+
+      await Promise.all(
+        newItems.map((t, i) => admin.editTopicOrder(t.topic_id, i + 1, false)),
+      );
+
+      toastStore.show(
+        movedHere
+          ? 'Topic moved to new category and reordered successfully'
+          : 'All topics reordered successfully',
+      );
+      await fetchCollections();
+    } catch (err) {
+      console.error(err);
+      toastStore.show('Failed to save: ' + String(err), 'error');
+    } finally {
+      busy = false;
+    }
+  }
 </script>
 
 <div
   class="tiles-collection"
-  use:dndzone={{ items, type: 'row' }}
-  on:consider={(e) => (items = e.detail.items)}
-  on:finalize={(e) => {
-    items = e.detail.items;
-    persistOrder();
+  use:dndzone={{
+    items,
+    type: 'topic',
   }}
+  on:consider={(e) => (items = e.detail.items)}
+  on:finalize={handleFinalize}
 >
   {#each items as t (t.id)}
     <a

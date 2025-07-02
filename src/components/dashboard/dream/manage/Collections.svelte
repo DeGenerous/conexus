@@ -21,11 +21,20 @@
   let debounceTimeout: NodeJS.Timeout;
 
   let items: any[] = [];
+  let topicBuckets: Record<number, CollectionTopic[]> = {}; // id → list
 
   const fetchCollections = async () => {
     collections = await admin.fetchCollections();
     storeAllTopics(collections);
     updateCollections();
+    topicBuckets = Object.fromEntries(
+      collections.map((c) => [
+        c.category_id,
+        [...c.topics]
+          .sort((a, b) => a.order - b.order)
+          .map((t) => ({ ...t, id: t.topic_id })),
+      ]),
+    );
   };
 
   // Make a sortable id‑based copy
@@ -79,7 +88,10 @@
 {:else}
   <section
     class="flex"
-    use:dndzone={{ items, type: 'column' }}
+    use:dndzone={{
+      items,
+      type: 'category',
+    }}
     on:consider={(e) => (items = e.detail.items)}
     on:finalize={(e) => {
       items = e.detail.items;
@@ -129,7 +141,12 @@
           </span>
         </div>
 
-        <StoryList topics={c.topics} {fetchCollections} {selectInput} />
+        <StoryList
+          topics={topicBuckets[c.category_id]}
+          catId={c.category_id}
+          {fetchCollections}
+          {selectInput}
+        />
       </span>
     {/each}
   </section>

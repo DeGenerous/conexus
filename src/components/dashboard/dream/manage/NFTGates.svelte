@@ -71,7 +71,7 @@
     <div class="container">
       {#if classGates.length > 0}
         {#each classGates as { id, name, start_token_id, end_token_id }}
-          <button class="nft-class void-btn small-tile">
+          <button class="void-btn small-orange-tile">
             <p>{name}: {start_token_id} - {end_token_id}</p>
             <CloseSVG
               onclick={async () => await handleDeleteClass(id)}
@@ -145,19 +145,6 @@
       @include respond-up(tablet) {
         &.new-class {
           flex-wrap: nowrap;
-        }
-      }
-
-      .nft-class {
-        @include orange(0.85);
-
-        p {
-          @include dark-red(0.5);
-        }
-
-        &:hover,
-        &:active {
-          @include orange(1, bg, bright);
         }
       }
 

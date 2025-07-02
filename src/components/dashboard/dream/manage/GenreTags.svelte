@@ -69,7 +69,7 @@
   <div class="container">
     {#if genres.length > 0}
       {#each genres as genre (genre)}
-        <button class="genre void-btn small-tile">
+        <button class="void-btn small-purple-tile">
           <p>{genre}</p>
           <CloseSVG
             onclick={() => handleRemoveGenre(genre)}
@@ -102,15 +102,6 @@
   .container {
     flex-wrap: wrap;
     justify-content: center;
-
-    .genre {
-      @include purple;
-
-      &:hover,
-      &:active {
-        @include purple(1, bg, bright);
-      }
-    }
   }
 
   .add-genre {

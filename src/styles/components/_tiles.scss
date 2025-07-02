@@ -389,6 +389,14 @@
     @include box-shadow(deep);
   }
 
+  &:disabled {
+    @include gray(0.25);
+
+    p {
+      @include white-txt(0.5);
+    }
+  }
+
   @include respond-up(tablet) {
     width: auto;
   }
@@ -397,5 +405,46 @@
     opacity: 0;
     transform: scale(0.975) skew(1deg, -1deg);
     filter: brightness(125%) contrast(125%);
+  }
+}
+
+.small-purple-tile {
+  @extend .small-tile;
+  @include purple;
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(:disabled) {
+    @include purple(1, bg, bright);
+  }
+}
+
+.small-orange-tile {
+  @extend .small-tile;
+  @include orange(0.85);
+
+  p {
+    @include dark-red(0.5);
+  }
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(:disabled) {
+    @include orange(1, bg, bright);
+  }
+}
+
+.small-green-tile {
+  @extend .small-tile;
+  @include deep-green;
+
+  p {
+    @include dark-green(0.5);
+  }
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(:disabled) {
+    @include bright;
   }
 }

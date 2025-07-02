@@ -87,7 +87,7 @@
   <div class="container">
     {#if topicGatings.length > 0}
       {#each topicGatings as { contract_name, class_id }}
-        <button class="gating void-btn small-tile">
+        <button class="void-btn small-orange-tile">
           <p>
             {contractGetter(contract_name).name}
             {#if class_id}
@@ -149,19 +149,6 @@
   .container {
     flex-wrap: wrap;
     justify-content: center;
-
-    .gating {
-      @include orange(0.85);
-
-      p {
-        @include dark-red(0.5);
-      }
-
-      &:hover,
-      &:active {
-        @include orange(1, bg, bright);
-      }
-    }
 
     @include respond-up(tablet) {
       &.classes {

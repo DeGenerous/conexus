@@ -76,10 +76,10 @@
         {:else}
           {#key $referralCodes}
             <h4>Your referral codes</h4>
-            <ul class="referral-codes flex-row">
+            <ul class="flex-row flex-wrap">
               {#each $referralCodes as code}
                 <button
-                  class="ref-code void-btn small-tile"
+                  class="void-btn small-green-tile"
                   id={code.code}
                   onclick={() => copyRefCode(code.code)}
                   onpointerover={() => (copySvgFocus = code.code)}
@@ -205,33 +205,6 @@
 
     &.ref-codes-wrapper {
       width: auto;
-
-      .referral-codes {
-        flex-wrap: wrap;
-
-        .ref-code {
-          @include deep-green;
-
-          p {
-            @include dark-green(0.5);
-          }
-
-          &:hover:not(&:disabled),
-          &:active:not(&:disabled),
-          &:focus:not(&:disabled) {
-            @include bright;
-          }
-
-          &:disabled {
-            cursor: not-allowed;
-            @include gray(0.25);
-
-            p {
-              @include white-txt(0.5);
-            }
-          }
-        }
-      }
     }
 
     &.newsletter {

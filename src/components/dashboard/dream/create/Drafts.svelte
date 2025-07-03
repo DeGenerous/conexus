@@ -12,6 +12,7 @@
   } = $props();
 
   let selectedDraftID = $state<string>('');
+  let selectedDraftTitle = $state<string>('');
 
   function restoreDraft(id: string) {
     Drafts.restore(id);
@@ -59,6 +60,7 @@
         onclick={() => {
           if (selectedDraftID == id) selectedDraftID = '';
           else selectedDraftID = id;
+          selectedDraftTitle = title;
         }}
       >
         <p class="flex">
@@ -78,7 +80,7 @@
     disabled={!selectedDraftID}
   >
     {selectedDraftID
-      ? 'Restore Draft: ' + selectedDraftID.split('-')[0]
+      ? `Restore Draft: ${selectedDraftID.split('-')[0]} (${selectedDraftTitle})`
       : 'Restore Draft'}
   </button>
 {:else}

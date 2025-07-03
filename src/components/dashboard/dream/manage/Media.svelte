@@ -5,6 +5,8 @@
   import { validateFiles } from '@utils/file-validation';
   import MediaManager from '@lib/media';
   import { toastStore } from '@stores/toast.svelte';
+  import { toAvif } from '@utils/avif-convert';
+  import { MEDIA_RULES } from '@utils/file-validation';
 
   let { topic_id = $bindable() }: { topic_id: number } = $props();
 
@@ -81,38 +83,68 @@
 
   onMount(loadMedia);
 
+  /* true  ↦ we will try to convert client‑side
+    false ↦ upload as‑is                         */
+  function shouldConvertToAvif(slot: MediaType, file: File): boolean {
+    if (!file.type.startsWith('image/')) return false; // not an image
+    if (file.type === 'image/avif') return false; // already AVIF
+    // only our three image slots are convertible
+    return slot === 'description' || slot === 'tile' || slot === 'background';
+  }
+
   // Handle file upload
-  const handleFileUpload = async (e: Event, type: MediaType) => {
+  async function handleFileUpload(e: Event, slot: MediaType) {
     const input = e.target as HTMLInputElement;
     if (!input.files) return;
 
     try {
-      const slot = type;
-      const files = Array.from(input.files);
+      const files = [...input.files];
       const accepted = await validateFiles(slot, files, counters[slot]());
 
-      for (const file of accepted) {
-        const [result] = await mediaManager.uploadTopicMedia(
-          file,
+      for (const f of accepted) {
+        let upload = f;
+
+        if (shouldConvertToAvif(slot, f)) {
+          toastStore.show(`Converting ${f.name} to AVIF format…`);
+          try {
+            const avif = await toAvif(f);
+            if (avif.size > MEDIA_RULES[slot].maxBytes) {
+              throw new Error('Converted image is larger than 1.5 MiB');
+            }
+            upload = new File([avif], f.name.replace(/\.\w+$/, '.avif'), {
+              type: 'image/avif',
+            });
+          } catch (err) {
+            toastStore.show(String(err), 'error');
+            continue; // skip this file
+          }
+        }
+
+        const [id] = await mediaManager.uploadTopicMedia(
+          upload,
           topic_id,
           slot,
         );
-        if (!result || !result.length) return;
-        /* update local reactive vars exactly as before */
-        if (slot === 'background')
-          backgrounds = [...backgrounds, result].slice(0, 3);
-        else if (slot === 'description') description = result;
-        else if (slot === 'tile') tile = result;
-        else if (slot === 'video') video = result;
-        else if (slot === 'audio') audio = [...audio, result].slice(0, 3);
+        if (!id) continue;
+
+        /* ---------- refresh local state so the UI re‑renders ---------- */
+        if (slot === 'background') {
+          backgrounds = [...backgrounds, id].slice(0, 3);
+        } else if (slot === 'description') {
+          description = id;
+        } else if (slot === 'tile') {
+          tile = id;
+        } else if (slot === 'video') {
+          video = id;
+        } else if (slot === 'audio') {
+          audio = [...audio, id].slice(0, 3);
+        }
       }
-    } catch (err) {
-      toastStore.show(String(err), 'error');
     } finally {
       input.value = '';
       dragover = null;
     }
-  };
+  }
 
   const handleDelete = async (fileId: string, type: MediaType) => {
     try {
@@ -171,14 +203,14 @@
               📁 Drop image here or click to upload
               <br />
               <br />
-              ❗ Only &lt1.5MB AVIF files
+              ⚠️ Only &lt1.5MB
             </label>
             <input
               id="description-upload"
               type="file"
               max="1"
               size="1572864"
-              accept="image/avif"
+              accept="image/avif,image/jpeg,image/png,image/webp"
               onchange={(e) => handleFileUpload(e, 'description')}
             />
           </div>
@@ -216,14 +248,14 @@
               📁 Drop image here or click to upload
               <br />
               <br />
-              ❗ Only &lt1.5MB AVIF files
+              ⚠️ Only &lt1.5MB
             </label>
             <input
               id="tile-upload"
               type="file"
               max="1"
               size="1572864"
-              accept="image/avif"
+              accept="image/avif,image/jpeg,image/png,image/webp"
               onchange={(e) => handleFileUpload(e, 'tile')}
             />
           </div>
@@ -265,7 +297,7 @@
               📁 Drop video here or click to upload
               <br />
               <br />
-              ❗ Only &lt10MB MP4 files
+              ⚠️ Only &lt10MB MP4 files
             </label>
             <input
               id="video-upload"
@@ -311,7 +343,7 @@
                 📁 Drop image(s) here or click to upload
                 <br />
                 <br />
-                ❗ Only &lt1.5MB AVIF files
+                ⚠️ Only &lt1.5MB
                 <br />
                 <br />
                 Up to 3 files
@@ -319,10 +351,11 @@
               <input
                 id="bg-upload"
                 type="file"
-                max="1"
+                max="3"
                 size="1572864"
-                accept="image/avif"
+                accept="image/avif,image/jpeg,image/png,image/webp"
                 onchange={(e) => handleFileUpload(e, 'background')}
+                multiple
               />
             </div>
           {/if}
@@ -364,8 +397,9 @@
               tabindex="-1"
             >
               <label for="audio-upload">
-                📁 Drop audio file(s) here or click to upload<br /><br />
-                ❗ Only &lt6 MB MP3 files — up to 3 total
+                📁 Drop audio file(s) here or click to upload
+                <br /><br />
+                ⚠️ Only &lt6 MB MP3 files — up to 3 total
               </label>
               <input
                 id="audio-upload"

@@ -100,6 +100,9 @@ export default defineConfig({
         'conexus-test.degenerousdao.com',
       ],
     },
+    worker: {
+      format: 'es'
+    }
   },
   devToolbar: {
     enabled: false,

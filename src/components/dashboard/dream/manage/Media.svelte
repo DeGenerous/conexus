@@ -15,7 +15,7 @@
   let backgrounds = $state<string[]>([]);
   let description = $state<string | null>(null);
   let tile = $state<string | null>(null);
-  let audio = $state<string | null>(null);
+  let audio = $state<string[]>([]);
   let video = $state<string | null>(null);
 
   let tooMuchFiles = $state<boolean>(false);
@@ -40,7 +40,7 @@
     tile: () => (tile ? 1 : 0),
     background: () => backgrounds.length,
     video: () => (video ? 1 : 0),
-    audio: () => (audio ? 1 : 0),
+    audio: () => audio.length,
   };
 
   // Fetch stored media on load
@@ -71,7 +71,7 @@
       description = descData.length ? descData[0] : null;
       tile = tileData.length ? tileData[0] : null;
       video = videoData.length ? videoData[0] : null;
-      audio = audioData.length ? audioData[0] : null;
+      audio = [...audioData];
     } catch (error) {
       console.error('Failed to load media:', error);
     } finally {
@@ -97,13 +97,14 @@
           topic_id,
           slot,
         );
+        if (!result || !result.length) return;
         /* update local reactive vars exactly as before */
         if (slot === 'background')
           backgrounds = [...backgrounds, result].slice(0, 3);
         else if (slot === 'description') description = result;
         else if (slot === 'tile') tile = result;
         else if (slot === 'video') video = result;
-        else if (slot === 'audio') audio = result;
+        else if (slot === 'audio') audio = [...audio, result].slice(0, 3);
       }
     } catch (err) {
       toastStore.show(String(err), 'error');
@@ -124,7 +125,7 @@
       } else if (type === 'tile') {
         tile = null;
       } else if (type === 'audio') {
-        audio = null;
+        audio = audio.filter((a) => a !== fileId);
       } else if (type === 'video') {
         video = null;
       }
@@ -338,44 +339,46 @@
       <!-- Audio Upload -->
       <div class="media-section flex">
         <h4>Audio</h4>
-        {#if audio}
-          <span class="content audio-content" role="button" tabindex="0">
-            <audio controls>
-              <source src={serveUrl(audio)} type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
-            <button
-              class="red-btn"
-              onclick={() => handleDelete(audio ?? '', 'audio')}
+        <div class="content-wrapper">
+          {#each audio as track}
+            <span class="content audio-content" role="button" tabindex="0">
+              <audio controls>
+                <source src={serveUrl(track)} type="audio/mpeg" />
+              </audio>
+              <button
+                class="red-btn"
+                onclick={() => handleDelete(track, 'audio')}
+              >
+                Delete
+              </button>
+            </span>
+          {/each}
+
+          {#if audio.length < 3}
+            <div
+              class="dropzone audio-content"
+              class:dragover={dragover === 'audio'}
+              ondragover={() => ondragover('audio')}
+              {ondragleave}
+              role="button"
+              tabindex="-1"
             >
-              Delete
-            </button>
-          </span>
-        {:else}
-          <div
-            class="dropzone audio-content"
-            class:dragover={dragover === 'audio'}
-            ondragover={() => ondragover('audio')}
-            {ondragleave}
-            role="button"
-            tabindex="-1"
-          >
-            <label for="audio-upload">
-              📁 Drop audio here or click to upload
-              <br />
-              <br />
-              ❗ Only &lt6MB MP3 files
-            </label>
-            <input
-              id="audio-upload"
-              type="file"
-              max="1"
-              size="6291456"
-              accept="audio/mp3"
-              onchange={(e) => handleFileUpload(e, 'audio')}
-            />
-          </div>
-        {/if}
+              <label for="audio-upload">
+                📁 Drop audio file(s) here or click to upload<br /><br />
+                ❗ Only &lt6 MB MP3 files — up to 3 total
+              </label>
+              <input
+                id="audio-upload"
+                type="file"
+                max="3"
+                size="6291456"
+                accept="audio/mp3"
+                onchange={(e) => handleFileUpload(e, 'audio')}
+                multiple
+              />
+            </div>
+          {/if}
+        </div>
       </div>
     </div>
   </section>

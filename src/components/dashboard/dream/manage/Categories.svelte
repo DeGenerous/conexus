@@ -21,7 +21,7 @@
 </script>
 
 <section class="dream-container fade-in">
-  <h4>Categories</h4>
+  <h4>Categories: {categories.length}</h4>
   <div class="container">
     {#if categories.length > 0}
       {#each categories as { name }}

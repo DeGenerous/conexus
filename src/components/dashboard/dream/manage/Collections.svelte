@@ -23,6 +23,9 @@
   let items: any[] = [];
   let topicBuckets: Record<number, CollectionTopic[]> = {}; // id → list
 
+  const isCoarsePointer = (): boolean =>
+    matchMedia('(pointer: coarse)').matches;
+
   const fetchCollections = async () => {
     collections = await admin.fetchCollections();
     updateCollections();
@@ -93,6 +96,7 @@
     use:dndzone={{
       items,
       type: 'category',
+      dragDisabled: isCoarsePointer(),
     }}
     on:consider={(e) => (items = e.detail.items)}
     on:finalize={(e) => {
@@ -148,6 +152,7 @@
           catId={c.category_id}
           {fetchCollections}
           {selectInput}
+          {isCoarsePointer}
         />
       </span>
     {/each}

@@ -10,6 +10,7 @@
   export let catId: number; // ← receives category_id
   export let fetchCollections = async () => {};
   export let selectInput = (event: Event) => {};
+  export let isCoarsePointer: () => boolean;
 
   const admin = new AdminApp();
 
@@ -81,16 +82,13 @@
   use:dndzone={{
     items,
     type: 'topic',
+    dragDisabled: isCoarsePointer(),
   }}
   on:consider={(e) => (items = e.detail.items)}
   on:finalize={handleFinalize}
 >
   {#each items as t (t.id)}
-    <a
-      class="tile"
-      href="/dashboard/dream/manage/{t.topic_name}"
-      draggable="false"
-    >
+    <a class="tile" href="/dashboard/dream/manage/{t.topic_name}">
       <h4>{t.topic_name}</h4>
       <div class="input-container">
         <label for="story-order-{t.topic_id}">Order</label>

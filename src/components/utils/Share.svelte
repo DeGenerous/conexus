@@ -1,5 +1,7 @@
 <script lang="ts">
   import { tippy } from 'svelte-tippy';
+
+  import { toastStore } from '@stores/toast.svelte';
   import CopySVG from '@components/icons/Copy.svelte';
 
   let { disabled = false }: { disabled?: boolean } = $props();
@@ -20,6 +22,7 @@
         );
         copyBtn.classList.add('copied');
         setTimeout(() => copyBtn.classList.remove('copied'), 600);
+        toastStore.show('Copied — now share it with the world!');
         break;
       case 'discord':
         const shareUrlDiscord = `http://degenerousdao.com/join`;

@@ -36,6 +36,7 @@
     navigator.clipboard.writeText(refCode);
     codeBtn.classList.add('copied'); // animation
     setTimeout(() => codeBtn.classList.remove('copied'), 600);
+    toastStore.show('Copied to clipboard: ' + refCode);
   };
 
   const checkSubscription = async () => {

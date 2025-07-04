@@ -22,7 +22,7 @@ export const referralActivationNotice = `
 `;
 
 export const refreshDataModal = `
-  <p>This will force a CoNexus reload, and remove old stored files - letting you the latest version of the platform with the newest content. It won't affect your local settings.</p>
+  <p>This will force a CoNexus reload, and remove old stored files - letting you see the latest version of the platform with the newest content. It won't affect your local settings.</p>
 `;
 
 export const resetSettingsModal = (type: any) =>

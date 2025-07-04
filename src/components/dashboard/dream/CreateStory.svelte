@@ -62,6 +62,7 @@
   onMount(() => {
     const draftID = GetCache(CURRENT_DRAFT_KEY) as string;
     if (draftID) Drafts.restore(draftID);
+    else Drafts.create();
 
     // Last‑chance save on hard refresh
     window.addEventListener('beforeunload', saveDraft);

@@ -23,6 +23,7 @@ export default defineConfig({
         manifest,
         injectRegister: 'auto',
         workbox: {
+          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
           runtimeCaching: [
             {
               handler: 'NetworkOnly',

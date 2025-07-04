@@ -36,6 +36,7 @@
     navigator.clipboard.writeText(refCode);
     codeBtn.classList.add('copied'); // animation
     setTimeout(() => codeBtn.classList.remove('copied'), 600);
+    toastStore.show('Copied to clipboard: ' + refCode);
   };
 
   const checkSubscription = async () => {
@@ -66,7 +67,7 @@
 {:else if user}
   {#if user.email && user.first_name && user.email_confirmed}
     <!-- REFERRAL CODES -->
-    <section class="ref-codes-wrapper container">
+    <section class="ref-codes-wrapper container fade-in">
       {#if $referralCodes !== null}
         {#if $referralCodes.filter((code) => code.is_used).length == 10}
           <h4 class="text-glowing">🏆 You've unlocked all 10 referrals 🚀</h4>
@@ -76,11 +77,10 @@
         {:else}
           {#key $referralCodes}
             <h4>Your referral codes</h4>
-            <ul class="referral-codes flex-row">
+            <ul class="flex-row flex-wrap">
               {#each $referralCodes as code}
                 <button
-                  class="ref-code void-btn flex-row pad-8 round-8 dark-txt fade-in"
-                  class:used-code={code.is_used}
+                  class="void-btn small-green-tile"
                   id={code.code}
                   onclick={() => copyRefCode(code.code)}
                   onpointerover={() => (copySvgFocus = code.code)}
@@ -89,10 +89,9 @@
                   onblur={() => (copySvgFocus = null)}
                   aria-label="Copy code {code.code}"
                   tabindex={code.is_used ? -1 : 0}
+                  disabled={code.is_used}
                 >
-                  <p class="pad-8 round-8 soft-white-txt transparent-dark-bg">
-                    {code.code}
-                  </p>
+                  <p>{code.code}</p>
                   {#if !code.is_used}
                     <CopySVG {copySvgFocus} data={code.code} />
                   {/if}
@@ -127,7 +126,7 @@
 
   <!-- NEWSLETTER SUBSCRIPTION -->
   {#if user.email_confirmed}
-    <section class="newsletter container">
+    <section class="newsletter container fade-in">
       {#if subStatus}
         {#if subStatus.is_active}
           <h4>Newsletter Subscription</h4>
@@ -207,43 +206,6 @@
 
     &.ref-codes-wrapper {
       width: auto;
-
-      .referral-codes {
-        flex-wrap: wrap;
-
-        .ref-code {
-          width: 100%;
-          gap: 0.5rem;
-          background-color: $deep-green;
-          @include box-shadow;
-
-          &:hover:not(.used-code),
-          &:active:not(.used-code),
-          &:focus:not(.used-code) {
-            @include scale-up(soft);
-            @include bright;
-            @include box-shadow(deep);
-          }
-
-          p {
-            width: 100%;
-            @include box-shadow(soft, inset);
-          }
-
-          &.used-code {
-            cursor: not-allowed;
-            @include gray(0.25);
-
-            p {
-              @include white-txt(0.5);
-            }
-          }
-
-          @include respond-up(tablet) {
-            width: auto;
-          }
-        }
-      }
     }
 
     &.newsletter {

@@ -1,4 +1,8 @@
+<!-- 🔒 GATED FOR ADMINS -->
 <script lang="ts">
+  import { onMount, onDestroy } from 'svelte';
+  import { derived } from 'svelte/store';
+
   import countries from '@constants/countries.json';
   import dreamData from '@constants/dream';
   import { AdminApp } from '@lib/admin';
@@ -10,28 +14,24 @@
     clearAllData,
   } from '@stores/dream.svelte';
   import generatePrompt from '@utils/prompt';
-  import openModal from '@stores/modal.svelte';
+  import openModal, { showModal, draftsManager } from '@stores/modal.svelte';
   import { resetDreamModal, openStoryManage } from '@constants/modal';
-  import {
-    GetCache,
-    SetCache,
-    ONE_YEAR_TTL,
-    DRAFTS_KEY,
-  } from '@constants/cache';
-
-  import Slider from './create/Slider.svelte';
-  import Characters from './create/Characters.svelte';
-  import Scenario from './create/Scenario.svelte';
-  import WritingStyle from './create/WritingStyle.svelte';
   import { ensureAdmin } from '@utils/route-guard';
+  import Drafts from '@utils/story-drafts';
+  import { currentDraft, draftsIndex } from '@stores/dream.svelte';
+  import { GetCache, CURRENT_DRAFT_KEY } from '@constants/cache';
+
+  import Slider from '@components/dashboard/dream/create/Slider.svelte';
+  import Characters from '@components/dashboard/dream/create/Characters.svelte';
+  import Scenario from '@components/dashboard/dream/create/Scenario.svelte';
+  import WritingStyle from '@components/dashboard/dream/create/WritingStyle.svelte';
+  import SaveSVG from '@components/icons/Checkmark.svelte';
+
+  onMount(ensureAdmin);
 
   let admin = new AdminApp();
 
-  let promptFormat: 'Table' | 'Open' = $state('Table');
-
-  $effect(() => {
-    ensureAdmin(window.location.pathname);
-  });
+  let promptFormat: 'Table' | 'Open' = $state('Open');
 
   let validation = $derived(
     $storyData.name &&
@@ -41,13 +41,91 @@
       $storyData.category,
   );
 
-  // const saveDraft = () => {
-  //   const promptData: TablePrompt | string =
-  //     promptFormat === 'Table' ? $tablePrompt : $openPrompt;
-  //   console.log($storyData);
-  //   console.log($promptSettings);
-  //   console.log(promptData);
-  // }
+  // DRAFTS
+
+  const fingerprint = derived(
+    [storyData, promptSettings, openPrompt, tablePrompt],
+    ([$s, $p, $o, $t]) => JSON.stringify([$s, $p, $o, $t]),
+  );
+
+  let timer: ReturnType<typeof setTimeout>;
+
+  const unsub = fingerprint.subscribe(() => {
+    clearTimeout(timer);
+    timer = setTimeout(() => Drafts.save(), 300000); // 5 minutes debounce
+  });
+
+  onDestroy(unsub);
+
+  const saveDraft = () => Drafts.save();
+
+  onMount(() => {
+    const draftID = GetCache(CURRENT_DRAFT_KEY) as string;
+    if (draftID) Drafts.restore(draftID);
+
+    // Last‑chance save on hard refresh
+    window.addEventListener('beforeunload', saveDraft);
+    return () => window.removeEventListener('beforeunload', saveDraft);
+  });
+
+  // Save draft on <Control + 's'> or <Command + 's'>
+  const onkeydown = (event: KeyboardEvent) => {
+    const { key, ctrlKey, metaKey, repeat } = event;
+    if (repeat) return;
+    if (!ctrlKey && !metaKey) return;
+    event.preventDefault();
+    if (key === 's') saveDraft();
+  };
+
+  let lastSavedAgo = $state<string>('');
+
+  // Recompute "last saved" string
+  const updateLastSavedLabel = () => {
+    if (!$currentDraft?.updated) return;
+
+    const now = Date.now();
+    const diffMs = now - $currentDraft.updated;
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHr = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHr / 24);
+    const diffMonth = Math.floor(diffDay / 30);
+
+    if (diffSec < 2) {
+      lastSavedAgo = 'just now';
+    } else if (diffSec < 60) {
+      lastSavedAgo = `${diffSec}s ago`;
+    } else if (diffMin < 60) {
+      lastSavedAgo = `${diffMin}m ago`;
+    } else if (diffHr < 24) {
+      lastSavedAgo = `${diffHr}h ago`;
+    } else if (diffDay < 30) {
+      lastSavedAgo = `${diffDay}d ago`;
+    } else {
+      lastSavedAgo = `${diffMonth}mo ago`;
+    }
+  };
+
+  // Timer that updates the label every 60 seconds
+  let interval: ReturnType<typeof setInterval>;
+
+  onMount(() => {
+    updateLastSavedLabel(); // run immediately on load
+
+    interval = setInterval(() => {
+      updateLastSavedLabel();
+    }, 2000); // every 2 seconds
+
+    return () => clearInterval(interval); // cleanup on destroy
+  });
+
+  const openDraftsManager = () => {
+    $draftsIndex = Drafts.list();
+    $showModal = true;
+    $draftsManager = true;
+  };
+
+  // CREATE DREAM
 
   const generateStory = async () => {
     const promptData: TablePrompt | string =
@@ -61,9 +139,38 @@
       'Manage Story',
       () => (window.location.href = storyLink),
     );
+    Drafts.delete(GetCache(CURRENT_DRAFT_KEY)!);
     clearAllData();
   };
 </script>
+
+<svelte:window {onkeydown} />
+
+<!-- DRAFTS -->
+{#if $currentDraft || $draftsIndex.length}
+  <div class="drafts-wrapper fade-in container flex-row flex-wrap">
+    {#if $currentDraft}
+      <h5>
+        📝 Working on draft: {$currentDraft.id.split('-')[0]}
+        <strong>
+          - Last saved: {lastSavedAgo}
+        </strong>
+      </h5>
+    {:else}
+      <h5>There is no draft selected</h5>
+    {/if}
+    <span class="flex-row">
+      {#if $currentDraft}
+        <SaveSVG onclick={saveDraft} />
+      {:else}
+        <button class="green-btn" onclick={saveDraft}>Create a draft</button>
+      {/if}
+      <button class="rose-btn" onclick={openDraftsManager}>
+        Manage Drafts
+      </button>
+    </span>
+  </div>
+{/if}
 
 <!-- CATEGORY, TITLE, DESCRIPTION, IMAGE PROMPT -->
 <div class="dream-container">
@@ -369,9 +476,11 @@
     class="red-btn blur"
     onclick={() => openModal(resetDreamModal, 'Reset', clearAllData)}
   >
-    Reset
+    Reset Data
   </button>
-  <!-- <button class="rose-btn blur" onclick={saveDraft}> Save a draft </button> -->
+  <button class="rose-btn blur" onclick={() => Drafts.create()}
+    >Start New Draft</button
+  >
   <button class="green-btn blur" onclick={generateStory} disabled={!validation}>
     Create a DREAM
   </button>
@@ -379,6 +488,29 @@
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
+
+  .drafts-wrapper {
+    width: 95%;
+    max-width: 100rem;
+    justify-content: space-between;
+    animation: none;
+    @include rose(0.25);
+
+    h5 {
+      @include rose(1, text, bright);
+      strong {
+        @include white-txt(soft);
+      }
+    }
+
+    span {
+      width: 100%;
+
+      @include respond-up(tablet) {
+        width: auto;
+      }
+    }
+  }
 
   #blank {
     min-height: 25rem;

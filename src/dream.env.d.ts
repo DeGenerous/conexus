@@ -69,6 +69,22 @@ type CreatePrompt = {
   prompt: string;
 };
 
+interface DraftPayload {
+  id: string; // uuid v4
+  title: string; // copy of storyData.name (or "Untitled")
+  created: number; // epoch ms
+  updated: number;
+  schema: const;
+  data: {
+    storyData: StoryData;
+    promptSettings: PromptSettings;
+    openPrompt: string;
+    tablePrompt: TablePrompt;
+  };
+}
+
+type DraftIndexEntry = Pick<DraftPayload, 'id' | 'title' | 'updated'>;
+
 type ImageType = 'url' | 'base64';
 
 type ClassGate = {

@@ -1,4 +1,6 @@
 <script>
+  import { onMount } from 'svelte';
+
   import {
     GetCache,
     SetCache,
@@ -9,7 +11,7 @@
   let showBanner = $state(false);
   let analyticsEnabled = false;
 
-  $effect(() => {
+  onMount(() => {
     const cachedConsent = GetCache(COOKIE_CONSENT_KEY);
     if (!cachedConsent) {
       showBanner = true;

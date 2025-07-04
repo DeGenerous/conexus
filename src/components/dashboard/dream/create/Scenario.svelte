@@ -1,6 +1,6 @@
 <script lang="ts">
   import { tablePrompt } from '@stores/dream.svelte';
-  import Dropdown from '../../../utils/Dropdown.svelte';
+  import Dropdown from '@components/utils/Dropdown.svelte';
 
   let newWinningScenario: string = $state('');
   const addWinningScenario = () => {

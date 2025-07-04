@@ -271,6 +271,13 @@ html {
     }
   }
 
+  .drag-handle {
+    cursor: grab;
+    user-select: none;
+    padding-inline: 0.25rem;
+    font-size: 1.25rem;
+  }
+
   .container {
     @extend .flex;
     @extend .blur;
@@ -646,5 +653,12 @@ html {
       @include gray;
       @include dark-blue(1, text);
     }
+  }
+}
+
+// Prevent accidental navigation while dragging
+.dnd-dragging {
+  a.tile {
+    pointer-events: none;
   }
 }

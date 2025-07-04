@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 
 export const storyData = writable<StoryData>({
   name: '',
@@ -183,6 +183,8 @@ export const tablePrompt = writable<TablePrompt>({
   additionalData: '',
 });
 
+// RESET ALL DATA STORES
+
 export const clearAllData = () => {
   storyData.set({
     name: '',
@@ -364,3 +366,24 @@ export const clearAllData = () => {
     additionalData: '',
   });
 };
+
+// COLLECT ALL DATA FROM STORES (for drafts)
+
+export const currentDraft = writable<Nullable<DraftPayload>>(null);
+export const draftsIndex = writable<DraftIndexEntry[]>([]);
+
+export function collectState() {
+  return {
+    storyData: get(storyData),
+    promptSettings: get(promptSettings),
+    openPrompt: get(openPrompt),
+    tablePrompt: get(tablePrompt),
+  };
+}
+
+export function applyState(state: ReturnType<typeof collectState>) {
+  storyData.set(state.storyData);
+  promptSettings.set(state.promptSettings);
+  openPrompt.set(state.openPrompt);
+  tablePrompt.set(state.tablePrompt);
+}

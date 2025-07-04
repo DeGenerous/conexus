@@ -1,8 +1,9 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import {
     GetCache,
     SetCache,
-    ONE_YEAR_TTL,
     VOLUME_KEY,
     TTS_SPEED_KEY,
   } from '@constants/cache';
@@ -21,7 +22,7 @@
   );
   let disabledInput = $derived<boolean>(sound[type].muted);
 
-  $effect(() => {
+  onMount(() => {
     const storedValue = GetCache<VolumeControl>(VOLUME_KEY(type));
     if (storedValue) {
       sound[type] = storedValue;
@@ -33,7 +34,7 @@
 
   const mute = () => {
     sound[type].muted = !sound[type].muted;
-    SetCache(VOLUME_KEY(type), sound[type], ONE_YEAR_TTL);
+    SetCache(VOLUME_KEY(type), sound[type]);
   };
 
   // Toggle mute for both volumes with 'M' key
@@ -42,7 +43,7 @@
     if (event.key !== 'm') return;
     sound[type].muted = allMuted ? false : true;
     allMuted = !allMuted;
-    SetCache(VOLUME_KEY(type), sound[type], ONE_YEAR_TTL);
+    SetCache(VOLUME_KEY(type), sound[type]);
   };
 
   const update = () => {
@@ -51,7 +52,7 @@
       volume: inputValue,
       restart: false,
     };
-    SetCache(VOLUME_KEY(type), sound[type], ONE_YEAR_TTL);
+    SetCache(VOLUME_KEY(type), sound[type]);
   };
 
   const restart = () => {
@@ -61,7 +62,7 @@
   const adjustTtsSpeed = () => {
     const speedIndex = speed_values.indexOf(sound.tts_speed);
     sound.tts_speed = speed_values[(speedIndex + 1) % speed_values.length];
-    SetCache(TTS_SPEED_KEY, sound.tts_speed, ONE_YEAR_TTL);
+    SetCache(TTS_SPEED_KEY, sound.tts_speed);
   };
 </script>
 

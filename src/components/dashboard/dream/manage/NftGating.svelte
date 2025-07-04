@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import { CoNexusApp } from '@lib/view';
   import { contractGetter } from '@constants/contracts';
 
@@ -28,10 +30,6 @@
   let newGating = $state('');
   let newClassGating = $state('');
 
-  $effect(() => {
-    fetchGates();
-  });
-
   const filterContracts = () =>
     availableContracts.filter(
       (contract) =>
@@ -41,6 +39,8 @@
   const fetchGates = async () => {
     topicGatings = await viewApp.fetchTopicGates(topic.id);
   };
+
+  onMount(fetchGates);
 
   async function handleRemoveGating(
     topicGatings: TopicNFTGate[],
@@ -87,25 +87,21 @@
   <div class="container">
     {#if topicGatings.length > 0}
       {#each topicGatings as { contract_name, class_id }}
-        <span
-          class="gating flex-row gap-8 pad-8 round-8 shad"
-          role="button"
-          tabindex="0"
-        >
-          <h5>
+        <button class="void-btn small-orange-tile">
+          <p>
             {contractGetter(contract_name).name}
             {#if class_id}
               {#await viewApp.fetchClassGate(class_id) then classGate}
                 ({classGate?.name})
               {/await}
             {/if}
-          </h5>
+          </p>
           <CloseSVG
             onclick={() => handleRemoveGating(topicGatings, contract_name)}
             voidBtn={true}
             dark={true}
           />
-        </span>
+        </button>
       {/each}
     {:else}
       <p class="validation">No NFT restriction selected</p>
@@ -153,26 +149,6 @@
   .container {
     flex-wrap: wrap;
     justify-content: center;
-
-    .gating {
-      padding-left: 1rem;
-      @include dark-red(0.85, text);
-      @include orange(0.85);
-
-      &:hover,
-      &:active {
-        @include dark-red(1, text);
-        @include orange;
-        @include scale-up(soft);
-        @include box-shadow(deep);
-      }
-
-      h5 {
-        color: inherit;
-        text-shadow: none;
-        text-transform: uppercase;
-      }
-    }
 
     @include respond-up(tablet) {
       &.classes {

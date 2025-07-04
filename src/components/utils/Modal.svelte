@@ -4,14 +4,14 @@
     modal,
     showModal,
     resetModal,
+    draftsManager,
     themeSettings,
   } from '@stores/modal.svelte';
 
-  import ThemeSettings from './ThemeSettings.svelte';
+  import Drafts from '@components/dashboard/dream/create/Drafts.svelte';
+  import ThemeSettings from '@components/utils/ThemeSettings.svelte';
 
   let dialog: HTMLDialogElement;
-
-  let selectedTheme: Nullable<number> = null;
 
   $: if (dialog && $showModal) {
     dialog.classList.remove('dialog-fade-out');
@@ -23,8 +23,8 @@
   const closeDialog = () => {
     dialog.classList.add('dialog-fade-out'); // animation before close
     $showModal = false;
-    $themeSettings = false;
-    selectedTheme = null;
+    if ($draftsManager) $draftsManager = false;
+    if ($themeSettings) $themeSettings = false;
     resetModal();
     setTimeout(() => dialog?.close(), 300);
   };
@@ -42,9 +42,14 @@
     <!-- DYNAMIC CONTENT PROVIDED BY openModal() FUNCTION -->
     {@html modal.content}
 
+    <!-- DRAFTS MANGER -->
+    {#if $draftsManager}
+      <Drafts {closeDialog} />
+    {/if}
+
     <!-- CUSTOM THEMES WINDOW -->
     {#if $themeSettings}
-      <ThemeSettings {closeDialog} bind:selectedTheme />
+      <ThemeSettings {closeDialog} />
     {/if}
 
     <span class="flex">

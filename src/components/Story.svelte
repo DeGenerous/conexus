@@ -235,7 +235,7 @@
               </h5>
               {#each continuables as continuable}
                 {#if !deletedStories.includes(continuable.story_id)}
-                  <div class="flex-row pad-8 round" role="button" tabindex="0">
+                  <div class="small-tile" role="button" tabindex="0">
                     <DeleteSVG
                       disabled={game.loading}
                       onclick={() =>
@@ -421,17 +421,13 @@
       div {
         width: 100%;
         justify-content: space-between;
-        flex: none;
-        @include white-txt(soft);
+        border-radius: 1rem;
         @include cyan(0.2);
-        @include box-shadow;
 
         &:hover,
         &:active {
           @include cyan(1, text);
           @include light-blue(0.5);
-          @include scale-up(soft);
-          @include box-shadow(deep);
         }
 
         span {

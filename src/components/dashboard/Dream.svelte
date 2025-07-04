@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import { userState } from '@utils/route-guard';
   import { AdminApp } from '@lib/admin';
   import { toastStore } from '@stores/toast.svelte';
@@ -12,8 +14,8 @@
   let loading = $state<boolean>(true);
   let isAdmin = $state<boolean>(false);
 
-  $effect(() => {
-    isAdmin = userState('admin');
+  onMount(async () => {
+    isAdmin = await userState('admin');
     loading = false;
   });
 

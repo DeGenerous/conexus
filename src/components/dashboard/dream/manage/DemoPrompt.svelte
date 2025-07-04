@@ -1,7 +1,10 @@
+<!-- 🔒 GATED FOR ADMINS -->
 <script lang="ts">
   import { onMount } from 'svelte';
+
   import { AdminApp } from '@lib/admin';
   import { CoNexusGame } from '@lib/story';
+  import { ensureAdmin } from '@utils/route-guard';
 
   import LoadingSVG from '@components/icons/Loading.svelte';
   import SelectorSVG from '@components/icons/Selector.svelte';
@@ -18,15 +21,15 @@
   let demoStarted: boolean = $state(false);
   let focusedOption: Nullable<number> = $state(null);
 
-  $effect(() => {
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      promptId = urlParams.get('demoID');
-      topic_name = urlParams.get('demoName');
+  onMount(async () => {
+    await ensureAdmin();
 
-      if (!promptId) {
-        window.history.back();
-      }
+    const urlParams = new URLSearchParams(window.location.search);
+    promptId = urlParams.get('demoID');
+    topic_name = urlParams.get('demoName');
+
+    if (!promptId) {
+      window.history.back();
     }
   });
 

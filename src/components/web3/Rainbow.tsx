@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import {
   createAuthenticationAdapter,
@@ -36,25 +36,29 @@ const wagmiConfig = getDefaultConfig({
 const queryClient = new QueryClient();
 
 const rkTheme = darkTheme({
-  accentColor: 'rgb(51, 226, 230)',
-  accentColorForeground: 'rgb(51, 226, 230)',
+  accentColor: 'rgb(51, 226, 230)',
+  accentColorForeground: 'rgb(51, 226, 230)',
   borderRadius: 'large',
   fontStack: 'rounded',
   overlayBlur: 'large',
 });
 
-const Web3Provider = ({
-  children,
-  linking,
-}: {
-  children: React.ReactNode;
+interface Web3Props {
   linking?: boolean;
-}) => {
-  const [authStatus, setAuthStatus] =
-    useState<AuthenticationStatus>('unauthenticated');
+  children: React.ReactNode;
+}
 
-  const authAPI = new AuthAPI(import.meta.env.PUBLIC_BACKEND);
-  const accountAPI = new AccountAPI(import.meta.env.PUBLIC_BACKEND);
+const Web3Provider: React.FC<Web3Props> = ({ linking = false, children }) => {
+  let AUTHENTICATION_STATUS: AuthenticationStatus = 'unauthenticated';
+
+  const authAPI = useMemo(
+    () => new AuthAPI(import.meta.env.PUBLIC_BACKEND),
+    [],
+  );
+  const accountAPI = useMemo(
+    () => new AccountAPI(import.meta.env.PUBLIC_BACKEND),
+    [],
+  );
 
   const authenticationAdapter = useMemo(
     () =>
@@ -67,7 +71,7 @@ const Web3Provider = ({
             throw new Error('Failed to fetch nonce');
           }
 
-          setAuthStatus('loading');
+          AUTHENTICATION_STATUS = 'loading';
 
           return data.nonce;
         },
@@ -91,7 +95,7 @@ const Web3Provider = ({
               address,
               chainId,
               statement:
-                "Sign this message to prove you're a Potential NFT holder. It will not cause a blockchain transaction, nor any gas fees.",
+                'Welcome to CoNexus! Click to sign in and accept the Terms of Service: https://degenerousdao.com/legal/terms-of-service',
               domain: window.location.host,
               uri: window.location.origin,
               version: '1',
@@ -121,7 +125,7 @@ const Web3Provider = ({
 
           if (!data) {
             console.error('Failed to verify signature:', error?.details);
-            setAuthStatus('unauthenticated');
+            AUTHENTICATION_STATUS = 'unauthenticated';
             return false;
           }
 
@@ -129,7 +133,9 @@ const Web3Provider = ({
 
           authenticated.set(data.user);
 
-          setAuthStatus('authenticated');
+          AUTHENTICATION_STATUS = 'authenticated';
+
+          window.location.reload();
 
           return true;
         },
@@ -144,7 +150,7 @@ const Web3Provider = ({
 
           authenticated.set(null);
 
-          setAuthStatus('unauthenticated');
+          AUTHENTICATION_STATUS = 'unauthenticated';
         },
       }),
     [linking],
@@ -155,7 +161,7 @@ const Web3Provider = ({
       <QueryClientProvider client={queryClient}>
         <RainbowKitAuthenticationProvider
           adapter={authenticationAdapter}
-          status={authStatus}
+          status={AUTHENTICATION_STATUS}
         >
           <RainbowKitProvider modalSize="wide" theme={rkTheme}>
             {children}

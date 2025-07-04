@@ -1,23 +1,31 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import { AdminApp } from '@lib/admin';
+  import { CoNexusApp } from '@lib/view';
 
   import CloseSVG from '@components/icons/Close.svelte';
 
   let admin = new AdminApp();
+  let view = new CoNexusApp();
 
   let {
-    classGates = [],
-    fetchClasses,
     selectInput,
   }: {
-    classGates: ClassGate[];
-    fetchClasses: () => Promise<void>;
     selectInput: (event: Event) => void;
   } = $props();
+
+  let classGates = $state<ClassGate[]>([]);
 
   let newClassName = $state<string>('');
   let newClassRangeFrom = $state<number | undefined>(undefined);
   let newClassRangeTo = $state<number | undefined>(undefined);
+
+  const fetchClasses = async () => {
+    classGates = await view.fetchClassGates();
+  };
+
+  onMount(fetchClasses);
 
   async function handleDeleteClass(id: number) {
     admin.deleteClassGate(id).then(fetchClasses);
@@ -63,18 +71,14 @@
     <div class="container">
       {#if classGates.length > 0}
         {#each classGates as { id, name, start_token_id, end_token_id }}
-          <span
-            class="nft-class flex-row gap-8 pad-8 round-8 shad"
-            role="button"
-            tabindex="0"
-          >
-            <h5>{name}: {start_token_id} - {end_token_id}</h5>
+          <button class="void-btn small-orange-tile">
+            <p>{name}: {start_token_id} - {end_token_id}</p>
             <CloseSVG
               onclick={async () => await handleDeleteClass(id)}
               voidBtn={true}
               dark={true}
             />
-          </span>
+          </button>
         {/each}
       {:else}
         <p class="validation">There is no Classes for Potentials yet</p>
@@ -141,25 +145,6 @@
       @include respond-up(tablet) {
         &.new-class {
           flex-wrap: nowrap;
-        }
-      }
-
-      .nft-class {
-        padding-left: 1rem;
-        @include dark-red(0.85, text);
-        @include orange(0.85);
-
-        &:hover,
-        &:active {
-          @include dark-red(1, text);
-          @include orange;
-          @include scale-up(soft);
-          @include box-shadow(deep);
-        }
-
-        h5 {
-          color: inherit;
-          text-shadow: none;
         }
       }
 

@@ -12,7 +12,7 @@ import { toastStore } from '@stores/toast.svelte';
 import { availableGenres } from '@stores/view.svelte';
 import contracts from '@constants/contracts';
 
-export class CoNexusApp extends ViewAPI {
+class CoNexusApp extends ViewAPI {
   private static instance: CoNexusApp;
   // Constructor
   constructor() {
@@ -228,3 +228,5 @@ export class CoNexusApp extends ViewAPI {
     return data;
   }
 }
+
+export default CoNexusApp;

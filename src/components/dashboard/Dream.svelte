@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
 
   import { userState } from '@utils/route-guard';
-  import { AdminApp } from '@lib/admin';
+  import AdminApp from '@lib/admin';
   import { toastStore } from '@stores/toast.svelte';
 
   import CloseSVG from '@components/icons/Close.svelte';

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { AdminApp } from '@lib/admin';
+  import AdminApp from '@lib/admin';
 
   let admin = new AdminApp();
 

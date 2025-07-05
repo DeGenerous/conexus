@@ -9,7 +9,7 @@ import { api_error } from '@errors/index';
 import { AdminAPI } from '@service/routes';
 import { toastStore } from '@stores/toast.svelte';
 
-export class AdminApp extends AdminAPI {
+class AdminApp extends AdminAPI {
   // Constructor
   constructor() {
     super(import.meta.env.PUBLIC_BACKEND);
@@ -692,3 +692,5 @@ export class AdminApp extends AdminAPI {
     ClearCache('view');
   }
 }
+
+export default AdminApp;

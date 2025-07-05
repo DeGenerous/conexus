@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
 
-import { Account } from '@lib/account';
+import Account from '@lib/account';
 import { authenticated } from '@stores/account.svelte';
 
 const account: Account = new Account();

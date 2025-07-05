@@ -6,7 +6,7 @@
   import { serveUrl } from '@constants/media';
   import { contractGetter } from '@constants/contracts';
   import MediaManager from '@lib/media';
-  import { CoNexusGame } from '@lib/story';
+  import CoNexusGame from '@lib/story';
   import { story, game } from '@stores/conexus.svelte';
   import { prevStory, nextStory } from '@stores/navigation.svelte';
   import { GetCache, SECTION_CATEGORIES_KEY } from '@constants/cache';
@@ -39,6 +39,22 @@
     await media.setBackgroundImage(topic_id);
     await media.playBackgroundMusic(topic_id);
   };
+
+  let activeTopic: Nullable<TopicThumbnail> = null;
+
+  const restartGame = () => {
+    game.background_image = null;
+    game.background_music = null;
+    $story = null;
+    setTimeout(() => {
+      activeTopic &&
+        conexusGame.startGame(
+          activeTopic.name,
+          activeTopic.id,
+          handleSetMedia,
+        );
+    })
+  }
 
   // Switching between NEIGHBOUR stories
   let categoryTopics: TopicInSection[] = [];
@@ -207,6 +223,7 @@
                       );
                       return;
                     }
+                    activeTopic = topic;
                     topic &&
                       conexusGame.startGame(
                         topic.name,
@@ -253,8 +270,10 @@
                     </span>
                     <PlaySVG
                       disabled={game.loading}
-                      onclick={() =>
-                        conexusGame.continueGame(continuable, handleSetMedia)}
+                      onclick={() => {
+                        activeTopic = topic;
+                        conexusGame.continueGame(continuable, handleSetMedia);
+                      }}
                     />
                   </div>
                 {/if}
@@ -327,7 +346,7 @@
   {/if}
   <Tts />
 
-  <Step {story_name} />
+  <Step {story_name} {restartGame} />
 {/if}
 
 <style lang="scss">

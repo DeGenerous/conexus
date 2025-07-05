@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { Account } from '@lib/account';
+  import Account from '@lib/account';
   import { getCurrentUser } from '@utils/route-guard';
   import { referralCodes } from '@stores/account.svelte';
   import { showProfile } from '@stores/modal.svelte';

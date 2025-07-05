@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { CoNexusApp } from '@lib/view';
+  import CoNexusApp from '@lib/view';
 
   import MenuTile from '@components/utils/MenuTile.svelte';
 

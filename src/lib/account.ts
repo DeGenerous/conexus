@@ -18,7 +18,7 @@ import {
 } from '@stores/account.svelte';
 import { toastStore } from '@stores/toast.svelte';
 
-export class Account {
+class Account {
   private accountAPI: AccountAPI;
   private authAPI: AuthAPI;
 
@@ -385,3 +385,5 @@ export class Account {
     toastStore.show(data.message || 'Referral code used successfully', 'info');
   }
 }
+
+export default Account;

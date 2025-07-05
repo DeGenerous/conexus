@@ -2,8 +2,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { AdminApp } from '@lib/admin';
-  import { CoNexusGame } from '@lib/story';
+  import AdminApp from '@lib/admin';
+  import CoNexusGame from '@lib/story';
   import { ensureAdmin } from '@utils/route-guard';
 
   import LoadingSVG from '@components/icons/Loading.svelte';

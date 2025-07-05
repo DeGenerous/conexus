@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { CoNexusApp } from '@lib/view';
+  import CoNexusApp from '@lib/view';
   import { availableGenres } from '@stores/view.svelte';
 
   import CloseSVG from '@components/icons/Close.svelte';

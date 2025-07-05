@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { CoNexusApp } from '@lib/view';
+  import CoNexusApp from '@lib/view';
   import { contractGetter } from '@constants/contracts';
 
   import CloseSVG from '@components/icons/Close.svelte';

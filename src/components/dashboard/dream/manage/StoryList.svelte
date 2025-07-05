@@ -3,7 +3,7 @@
   import { dndzone } from 'svelte-dnd-action';
   import { tippy } from 'svelte-tippy';
 
-  import { AdminApp } from '@lib/admin';
+  import AdminApp from '@lib/admin';
   import { toastStore } from '@stores/toast.svelte';
 
   export let topics: CollectionTopic[] = [];

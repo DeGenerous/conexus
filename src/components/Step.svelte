@@ -44,6 +44,7 @@
   import ResetSVG from '@components/icons/Reset.svelte';
 
   export let story_name: string;
+  export let restartGame: () => void;
 
   let width: number;
   let height: number;
@@ -380,7 +381,7 @@ a11y_no_noninteractive_element_interactions -->
         style:color={$customFont.accentColor}
         style:zoom
       >
-        Story Summary
+        {story_name.trim()} Story Summary
       </h4>
 
       <article
@@ -425,6 +426,12 @@ a11y_no_noninteractive_element_interactions -->
       >
         <button
           id="option-0"
+          class="void-btn menu-option"
+          on:click={restartGame}
+          >Start a new story</button
+        >
+        <button
+          id="option-1"
           class="void-btn menu-option"
           on:click={() => (window.location.href = '/')}
           >Return to main menu</button

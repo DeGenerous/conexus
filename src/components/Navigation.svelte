@@ -1,5 +1,5 @@
 <script lang="ts">
-  // import { CoNexusApp } from '@lib/view';
+  // import CoNexusApp from '@lib/view';
   import { prevStory, nextStory } from '@stores/navigation.svelte';
   import { story } from '@stores/conexus.svelte';
   import { trailerURL } from '@constants/media';

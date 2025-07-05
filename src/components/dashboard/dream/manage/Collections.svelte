@@ -3,8 +3,8 @@
   import { onMount } from 'svelte';
   import { dndzone } from 'svelte-dnd-action';
 
-  import { AdminApp } from '@lib/admin';
-  import { CoNexusApp } from '@lib/view';
+  import AdminApp from '@lib/admin';
+  import CoNexusApp from '@lib/view';
   import { toastStore } from '@stores/toast.svelte';
   import { SetCache, ALL_TOPICS_KEY, ALL_TOPICS_TTL } from '@constants/cache';
 

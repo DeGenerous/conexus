@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Account } from '@lib/account';
+  import Account from '@lib/account';
   import { regexpEmail } from '@constants/regexp';
 
   const acct: Account = new Account();

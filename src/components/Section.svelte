@@ -2,7 +2,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { CoNexusApp } from '@lib/view';
+  import CoNexusApp from '@lib/view';
   import {
     SetCache,
     GetCache,

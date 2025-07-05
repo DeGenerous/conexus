@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
 
   import WalletConnect from '@components/web3/WalletConnect.svelte';
-  import { Account } from '@lib/account';
+  import Account from '@lib/account';
   import { accountError } from '@stores/account.svelte';
   import { showProfile } from '@stores/modal.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';

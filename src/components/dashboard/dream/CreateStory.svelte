@@ -5,7 +5,7 @@
 
   import countries from '@constants/countries.json';
   import dreamData from '@constants/dream';
-  import { AdminApp } from '@lib/admin';
+  import AdminApp from '@lib/admin';
   import {
     storyData,
     promptSettings,

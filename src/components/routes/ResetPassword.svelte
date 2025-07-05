@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Account } from '@lib/account';
+  import Account from '@lib/account';
   import EyeSVG from '@components/icons/Eye.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';
   import {

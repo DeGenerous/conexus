@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
 
-  import { AdminApp } from '@lib/admin';
+  import AdminApp from '@lib/admin';
   import { GetCache, ALL_TOPICS_KEY } from '@constants/cache';
   import openModal from '@stores/modal.svelte';
   import { deleteStoryModal } from '@constants/modal';

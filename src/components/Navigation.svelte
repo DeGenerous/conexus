@@ -10,6 +10,7 @@
 
   import BackArrow from '@components/icons/BackArrow.svelte';
   import PlaySVG from '@components/icons/Play.svelte';
+  import CloseSVG from '@components/icons/Close.svelte';
 
   let {
     header = '',
@@ -76,11 +77,14 @@
   </header>
 
   {#if showIntro}
-    <video class="blur round fade-in shad" controls autoplay loop muted>
-      <source src={`${trailerURL}/CoNexusTrailer.webm`} type="video/webm" />
-      <source src={`${trailerURL}/CoNexusTrailer.mp4`} type="video/mp4" />
-      <track kind="captions" />
-    </video>
+    <div class="video-wrapper container fade-in">
+      <video class="round" controls autoplay loop muted>
+        <source src={`${trailerURL}/CoNexusTrailer.webm`} type="video/webm" />
+        <source src={`${trailerURL}/CoNexusTrailer.mp4`} type="video/mp4" />
+        <track kind="captions" />
+      </video>
+      <CloseSVG onclick={() => (showIntro = false)} hider={true} />
+    </div>
   {:else if subheading}
     <p class="mobile-text-wrapper subheading pad-inline text-shad">
       {@html subheading}
@@ -321,16 +325,18 @@
     height: 1rem;
   }
 
-  video {
+  .video-wrapper {
+    position: relative;
     width: clamp(250px, 95%, 70rem);
-    margin: 1rem auto;
+    margin-block: 1rem;
+    padding: 0;
 
     @include respond-up(small-desktop) {
       margin-block: 1rem 2rem;
     }
 
-    &:hover {
-      @include box-glow;
+    video {
+      width: 100%;
     }
   }
 

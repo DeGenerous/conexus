@@ -102,14 +102,14 @@
 
 .menu-tile {
   width: calc(50% - 0.5rem);
-  height: 15rem;
+  height: 17.5rem;
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem;
-  border-radius: 2rem;
+  border-radius: 1.5rem;
   box-shadow: $soft-shadow-plus-inset-glow;
   @include navy(0.75);
   @include cyan(0.75, text);
@@ -131,8 +131,8 @@
   }
 
   img {
-    height: 11.5rem;
-    border-radius: 1.5rem;
+    height: 14.2rem;
+    border-radius: 1rem;
     aspect-ratio: 1 / 1;
     @include cyan(0.1);
     @include box-glow(outset, 0.25);

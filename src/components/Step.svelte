@@ -365,7 +365,9 @@ a11y_no_noninteractive_element_interactions -->
     {/if}
 
     <article
-      style:max-width={width >= 1440 ? `${customScale.paragraphWidth}%` : ''}
+      style:max-width={width >= DESKTOP_BREAKPOINT
+        ? `${customScale.paragraphWidth}%`
+        : ''}
       style:width="{100 * zoom}%"
       style:zoom
     >
@@ -386,7 +388,9 @@ a11y_no_noninteractive_element_interactions -->
       </h4>
 
       <article
-        style:max-width={width >= 1440 ? `${customScale.paragraphWidth}%` : ''}
+        style:max-width={width >= DESKTOP_BREAKPOINT
+          ? `${customScale.paragraphWidth}%`
+          : ''}
         style:zoom
       >
         {step.summary}
@@ -405,7 +409,7 @@ a11y_no_noninteractive_element_interactions -->
 
       {#if step.trait_description}
         <article
-          style:max-width={width >= 1440
+          style:max-width={width >= DESKTOP_BREAKPOINT
             ? `${customScale.paragraphWidth}%`
             : ''}
           style:zoom
@@ -421,8 +425,10 @@ a11y_no_noninteractive_element_interactions -->
         style:font-style={$customFont.italic ? 'italic' : ''}
         style:color={$customFont.accentColor}
         style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
-        style:max-width={width >= 1440 ? `${customScale.optionsWidth}%` : ''}
-        style:width="{width >= 1440 ? 100 * zoom : 95}%"
+        style:max-width={width >= DESKTOP_BREAKPOINT
+          ? `${customScale.optionsWidth}%`
+          : ''}
+        style:width="{width >= DESKTOP_BREAKPOINT ? 100 * zoom : 95}%"
         style:zoom
       >
         <button
@@ -445,8 +451,10 @@ a11y_no_noninteractive_element_interactions -->
         class:transparent-container={$customStyling.optionsContainer}
         style:color={$customFont.accentColor}
         style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
-        style:max-width={width >= 1440 ? `${customScale.optionsWidth}%` : ''}
-        style:width="{width >= 1440 ? 100 * zoom : 95}%"
+        style:max-width={width >= DESKTOP_BREAKPOINT
+          ? `${customScale.optionsWidth}%`
+          : ''}
+        style:width="{width >= DESKTOP_BREAKPOINT ? 100 * zoom : 95}%"
         style:zoom
       >
         {#each step.options as option, i}
@@ -927,7 +935,7 @@ a11y_no_noninteractive_element_interactions -->
         width: clamp(250px, 95%, 70rem);
       }
 
-      @include respond-up(large-desktop) {
+      @include respond-up(small-desktop) {
         width: 100%;
       }
     }
@@ -935,7 +943,7 @@ a11y_no_noninteractive_element_interactions -->
     .options {
       align-items: flex-start;
 
-      @include respond-up(large-desktop) {
+      @include respond-up(small-desktop) {
         width: 100%;
       }
 
@@ -1030,7 +1038,7 @@ a11y_no_noninteractive_element_interactions -->
           &.scale-icon {
             display: none;
 
-            @include respond-up(large-desktop) {
+            @include respond-up(small-desktop) {
               display: flex;
             }
           }

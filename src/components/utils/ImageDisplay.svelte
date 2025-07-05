@@ -112,7 +112,7 @@
       }
     }
 
-    @include respond-up(large-desktop) {
+    @include respond-up(small-desktop) {
       width: 100%;
       height: unset;
 

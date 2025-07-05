@@ -56,6 +56,17 @@
       if (!isDestination) return;
 
       const movedHere = topics.every((t) => t.topic_id !== draggedId);
+
+      const orderChanged = newItems.some(
+        (t, i) => t.topic_id !== (topics[i] && topics[i].topic_id),
+      );
+
+      // Dont reorder if order didnt change
+      if (!movedHere && !orderChanged) {
+        busy = false;
+        return;
+      }
+
       if (movedHere) await admin.editTopicCategory(draggedId, catId, false);
 
       await Promise.all(

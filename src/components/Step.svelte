@@ -32,6 +32,7 @@
 
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
+  import Share from './utils/Share.svelte';
 
   import SelectorSVG from '@components/icons/Selector.svelte';
   import QuitSVG from '@components/icons/Quit.svelte';
@@ -436,6 +437,7 @@ a11y_no_noninteractive_element_interactions -->
           >Return to main menu</button
         >
       </div>
+      <Share container={true} />
     {:else}
       <div
         class="flex options wide-container {$customFont.accentSize}-font"
@@ -485,11 +487,6 @@ a11y_no_noninteractive_element_interactions -->
             {option}
           </button>
         {/each}
-        <button
-          id="option-0"
-          class="void-btn menu-option"
-          on:click={restartGame}>Start a new story</button
-        >
       </div>
     {/if}
 

@@ -2,11 +2,14 @@
   // import { CoNexusApp } from '@lib/view';
   import { prevStory, nextStory } from '@stores/navigation.svelte';
   import { story } from '@stores/conexus.svelte';
+  import { trailerURL } from '@constants/media';
 
-  import BackArrow from '@components/icons/BackArrow.svelte';
   import Profile from '@components/Profile.svelte';
   import ConexusLogo from '@components/utils/ConexusLogo.svelte';
   import Background from '@components/utils/Background.svelte';
+
+  import BackArrow from '@components/icons/BackArrow.svelte';
+  import PlaySVG from '@components/icons/Play.svelte';
 
   let {
     header = '',
@@ -24,6 +27,7 @@
 
   // let app: CoNexusApp = new CoNexusApp();
 
+  let showIntro = $state<boolean>(false);
   let sections: string[] = ['Community Picks', 'Collabs', 'Dischordian Saga'];
 
   const activeSectionIndex = sections.indexOf(activeTab);
@@ -71,9 +75,26 @@
     <Profile />
   </header>
 
-  {#if subheading}
+  {#if showIntro}
+    <video class="blur round fade-in shad" controls autoplay loop muted>
+      <source src={`${trailerURL}/CoNexusTrailer.webm`} type="video/webm" />
+      <source src={`${trailerURL}/CoNexusTrailer.mp4`} type="video/mp4" />
+      <track kind="captions" />
+    </video>
+  {:else if subheading}
     <p class="mobile-text-wrapper subheading pad-inline text-shad">
       {@html subheading}
+      {#if header === 'CoNexus'}
+        <span class="intro-wrapper flex">
+          <PlaySVG
+            onclick={() => (showIntro = true)}
+            text="Watch 30-sec Intro"
+            voidBtn={false}
+            glowing={true}
+            color="white"
+          />
+        </span>
+      {/if}
     </p>
   {:else}
     <div class="empty-subheading"></div>
@@ -282,8 +303,13 @@
   }
 
   .subheading {
-    margin: 2rem auto;
+    margin: 1rem auto;
     @include text-shadow;
+
+    .intro-wrapper {
+      width: 100%;
+      padding-top: 1rem;
+    }
 
     @include respond-up(small-desktop) {
       width: clamp(20rem, 95%, 80rem);
@@ -293,6 +319,19 @@
 
   .empty-subheading {
     height: 1rem;
+  }
+
+  video {
+    width: clamp(250px, 95%, 70rem);
+    margin: 1rem auto;
+
+    @include respond-up(small-desktop) {
+      margin-block: 1rem 2rem;
+    }
+
+    &:hover {
+      @include box-glow;
+    }
   }
 
   nav {
@@ -381,7 +420,7 @@
       a {
         width: 100%;
         flex-flow: row;
-        padding: 0.5rem 1rem;
+        padding: 0.75rem 1rem;
         gap: 0.5rem;
         opacity: 1;
         @include light-blue(1, text);
@@ -423,7 +462,7 @@
         }
 
         svg {
-          height: 1rem;
+          height: 1.25rem;
           width: auto;
           fill: $light-blue;
           stroke: $light-blue;
@@ -431,7 +470,7 @@
 
         p {
           color: inherit;
-          @include font(small);
+          @include font(body);
 
           // Fallback if no support
           opacity: 1;

@@ -101,8 +101,8 @@
 // MENU TILE
 
 .menu-tile {
-  width: 100%;
-  max-width: 20rem;
+  width: calc(50% - 0.5rem);
+  height: 15rem;
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;
@@ -114,13 +114,8 @@
   @include navy(0.75);
   @include cyan(0.75, text);
 
-  @include respond-up(tablet) {
-    width: 28vw;
-    max-width: 400px;
-  }
-
-  @include respond-up(quad-hd) {
-    max-width: 16vw;
+  &.big-menu-tile {
+    width: 100%;
   }
 
   &:hover:not(.loading-menu-tile),
@@ -136,6 +131,7 @@
   }
 
   img {
+    height: 11.5rem;
     border-radius: 1.5rem;
     aspect-ratio: 1 / 1;
     @include cyan(0.1);
@@ -144,6 +140,24 @@
 
   h4 {
     color: inherit;
+  }
+
+  @include respond-up(tablet) {
+    width: 28vw;
+    max-width: 400px;
+    height: auto;
+
+    &.big-menu-tile {
+      width: 28vw;
+    }
+
+    img {
+      height: auto;
+    }
+  }
+
+  @include respond-up(quad-hd) {
+    max-width: 16vw;
   }
 }
 

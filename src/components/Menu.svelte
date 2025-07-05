@@ -48,12 +48,17 @@
     & > div {
       width: 100%;
       flex-wrap: wrap;
+      padding-inline: 0;
     }
   }
 
   @include respond-up(tablet) {
     section {
       width: auto;
+
+      & > div {
+        padding-inline: 1rem;
+      }
     }
   }
 </style>

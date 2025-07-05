@@ -2,16 +2,29 @@
   let {
     onclick = () => {},
     disabled = false,
+    text = '',
+    voidBtn = true,
+    glowing = false,
+    color = 'green',
   }: {
     onclick: () => void;
-    disabled: boolean;
+    disabled?: boolean;
+    text?: string;
+    voidBtn?: boolean;
+    glowing?: boolean;
+    color?: string;
   } = $props();
 
   let svgFocus = $state<boolean>(false);
 </script>
 
 <button
-  class="void-btn flex"
+  class="flex-row"
+  class:void-btn={voidBtn}
+  class:blur={!voidBtn}
+  class:button-glowing={glowing}
+  class:green={color === 'green'}
+  class:white={color === 'white'}
   {onclick}
   onpointerover={() => {
     if (!disabled) svgFocus = true;
@@ -35,19 +48,15 @@
     />
     <circle r={svgFocus ? '0' : '90'} opacity={svgFocus ? '0' : '1'} />
   </svg>
+  {text}
 </button>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
   button {
-    width: 2rem;
+    width: auto;
     fill: none;
-    stroke: $green;
-
-    svg > polygon {
-      fill: $green;
-    }
 
     &:hover:not(&:disabled),
     &:active:not(&:disabled),
@@ -62,6 +71,32 @@
 
       svg > polygon {
         fill: $dark-blue;
+      }
+    }
+
+    &.green {
+      stroke: $green;
+
+      svg > polygon {
+        fill: $green;
+      }
+    }
+
+    &.white {
+      stroke: $soft-white;
+
+      svg > polygon {
+        fill: $soft-white;
+      }
+
+      &:hover:not(&:disabled),
+      &:active:not(&:disabled),
+      &:focus:not(&:disabled) {
+        stroke: $cyan;
+
+        svg > polygon {
+          fill: $cyan;
+        }
       }
     }
   }

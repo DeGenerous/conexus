@@ -500,6 +500,7 @@ a11y-no-static-element-interactions-->
               <img src="/icons/email.png" alt="Google" />
               <p>Sign up with email</p>
             </button>
+            <p class="transparent-white-txt">It's completely free!</p>
           {/if}
         {:else}
           <!-- SIGN-UP window -->

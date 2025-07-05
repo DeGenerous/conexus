@@ -48,13 +48,9 @@
     $story = null;
     setTimeout(() => {
       activeTopic &&
-        conexusGame.startGame(
-          activeTopic.name,
-          activeTopic.id,
-          handleSetMedia,
-        );
-    })
-  }
+        conexusGame.startGame(activeTopic.name, activeTopic.id, handleSetMedia);
+    });
+  };
 
   // Switching between NEIGHBOUR stories
   let categoryTopics: TopicInSection[] = [];

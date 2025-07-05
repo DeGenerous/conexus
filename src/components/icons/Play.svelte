@@ -67,10 +67,10 @@
 
     &:disabled {
       opacity: 0.5;
-      stroke: $dark-blue;
+      stroke: $dark-blue !important;
 
       svg > polygon {
-        fill: $dark-blue;
+        fill: $dark-blue !important;
       }
     }
 

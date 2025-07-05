@@ -1,17 +1,5 @@
 <script lang="ts">
   import { game } from '@stores/conexus.svelte';
-
-  $effect(() => {
-    document.onfullscreenchange = () => {
-      if (game.fullscreen !== !!document.fullscreenElement)
-        game.fullscreen = !!document.fullscreenElement;
-    };
-  });
-
-  $effect(() => {
-    if (game.fullscreen) document.documentElement.requestFullscreen();
-    else if (document.fullscreenElement) document.exitFullscreen();
-  });
 </script>
 
 <button

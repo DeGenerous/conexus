@@ -1,7 +1,7 @@
 <script lang="ts">
   // import CoNexusApp from '@lib/view';
   import { prevStory, nextStory } from '@stores/navigation.svelte';
-  import { story } from '@stores/conexus.svelte';
+  import { story, game } from '@stores/conexus.svelte';
   import { trailerURL } from '@constants/media';
 
   import Profile from '@components/Profile.svelte';
@@ -50,7 +50,28 @@
     if (!sections.includes(activeTab)) return null;
     return `/sections/${sections[(activeSectionIndex + 1) % sections.length]}`;
   };
+
+  // FULLSCREEN
+
+  $effect(() => {
+    document.onfullscreenchange = () => {
+      if (game.fullscreen !== !!document.fullscreenElement)
+        game.fullscreen = !!document.fullscreenElement;
+    };
+  });
+
+  $effect(() => {
+    if (game.fullscreen) document.documentElement.requestFullscreen();
+    else if (document.fullscreenElement) document.exitFullscreen();
+  });
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.repeat) return;
+    if (event.key === 'f') game.fullscreen = !game.fullscreen;
+  };
 </script>
+
+<svelte:window on:keydown={handleKeyDown} />
 
 {#if $story === null && storyName !== 'Maintenance'}
   <header

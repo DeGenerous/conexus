@@ -427,8 +427,7 @@ a11y_no_noninteractive_element_interactions -->
         <button
           id="option-0"
           class="void-btn menu-option"
-          on:click={restartGame}
-          >Start a new story</button
+          on:click={restartGame}>Start a new story</button
         >
         <button
           id="option-1"
@@ -486,6 +485,11 @@ a11y_no_noninteractive_element_interactions -->
             {option}
           </button>
         {/each}
+        <button
+          id="option-0"
+          class="void-btn menu-option"
+          on:click={restartGame}>Start a new story</button
+        >
       </div>
     {/if}
 

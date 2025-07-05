@@ -75,14 +75,25 @@
 
   <hr />
 
-  <button
-    onclick={() => restoreDraft(selectedDraftID)}
-    disabled={!selectedDraftID}
-  >
-    {selectedDraftID
-      ? `Restore Draft: ${selectedDraftID.split('-')[0]} (${selectedDraftTitle})`
-      : 'Restore Draft'}
-  </button>
+  <span class="buttons flex">
+    <button
+      class="rose-btn blur"
+      onclick={() => {
+        Drafts.create();
+        $draftsIndex = Drafts.list();
+      }}
+    >
+      Create New
+    </button>
+    <button
+      onclick={() => restoreDraft(selectedDraftID)}
+      disabled={!selectedDraftID}
+    >
+      {selectedDraftID
+        ? `Restore Draft: ${selectedDraftID.split('-')[0]} (${selectedDraftTitle})`
+        : 'Restore Draft'}
+    </button>
+  </span>
 {:else}
   <div class="transparent-container">
     <p class="validation">There is no drafts found</p>
@@ -123,9 +134,25 @@
         }
       }
     }
+  }
 
-    @include respond-up(tablet) {
+  .buttons {
+    width: 100%;
+    flex-direction: column-reverse;
+
+    button {
+      width: inherit;
+    }
+  }
+
+  @include respond-up(tablet) {
+    .drafts-wrapper {
       width: auto;
+    }
+
+    .buttons {
+      width: auto;
+      flex-flow: row wrap;
     }
   }
 </style>

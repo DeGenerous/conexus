@@ -13,8 +13,10 @@
   $effect(() => {
     acct.confirmEmail(token).then((res) => {
       if (res === true) {
-        ClearCache('auth');
-        window.location.href = '/';
+        setTimeout(() => {
+          ClearCache('auth');
+          window.location.href = '/';
+        }, 1000);
       } else failed = true;
     });
   });

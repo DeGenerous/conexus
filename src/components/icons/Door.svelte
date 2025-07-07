@@ -19,6 +19,14 @@
   class:button-glowing={glow}
   type="button"
   {onclick}
+  onpointerover={() => {
+    if (!glow) return;
+    document.getElementById('profile-icon')?.classList.add('profile-hover');
+  }}
+  onpointerout={() => {
+    if (!glow) return;
+    document.getElementById('profile-icon')?.classList.remove('profile-hover');
+  }}
   {disabled}
 >
   {#if state === 'outside'}

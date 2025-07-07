@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Account } from '@lib/account';
+  import Account from '@lib/account';
   import { toastStore } from '@stores/toast.svelte';
   import { ClearCache } from '@constants/cache';
 

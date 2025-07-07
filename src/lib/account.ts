@@ -14,12 +14,11 @@ import { AccountAPI, AuthAPI } from '@service/routes';
 import {
   authenticated,
   referralCodes,
-  userCheck,
   accountError,
 } from '@stores/account.svelte';
 import { toastStore } from '@stores/toast.svelte';
 
-export class Account {
+class Account {
   private accountAPI: AccountAPI;
   private authAPI: AuthAPI;
 
@@ -45,8 +44,7 @@ export class Account {
 
     // Store user data in localStorage with timestamp
     SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
-
-    authenticated.set({ user: data.user, loggedIn: true });
+    window.location.reload();
   }
 
   async signup(signupData: ReferralSignUp): Promise<Nullable<void>> {
@@ -64,7 +62,7 @@ export class Account {
     // Store user data in localStorage with timestamp
     SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
-    authenticated.set({ user: data.user, loggedIn: true });
+    authenticated.set(data.user);
   }
 
   async validateReferralCode(code: string): Promise<ReferralCode | null> {
@@ -132,16 +130,14 @@ export class Account {
 
     if (!data) {
       if (error) {
-        accountError.set({ subscribeNewsletter: error.message });
+        toastStore.show(error.message);
       } else {
-        accountError.set({
-          subscribeNewsletter: 'Error subscribing to newsletter',
-        });
+        toastStore.show('Error subscribing to newsletter');
       }
       return;
     }
 
-    // toastStore.show(data.message || 'Subscribed to newsletter', 'info');
+    toastStore.show(data.message || 'Subscribed to newsletter', 'info');
   }
 
   async unsubscribeNewsletter(): Promise<void> {
@@ -161,16 +157,14 @@ export class Account {
 
     if (!data) {
       if (error) {
-        accountError.set({ unsubscribeNewsletter: error.message });
+        toastStore.show(error.message);
       } else {
-        accountError.set({
-          unsubscribeNewsletter: 'Error unsubscribing from newsletter',
-        });
+        toastStore.show('Error unsubscribing from newsletter');
       }
       return;
     }
 
-    // toastStore.show(data.message || 'Unsubscribed from newsletter', 'info');
+    toastStore.show(data.message || 'Unsubscribed from newsletter', 'info');
   }
 
   async subscriptionStatus(): Promise<SubscriptionStatus> {
@@ -187,7 +181,7 @@ export class Account {
     if (!data) {
       if (error) {
         api_error(error);
-        accountError.set({ subscriptionStatus: error.message });
+        toastStore.show(error.message);
       } else {
         toastStore.show('Error getting subscription status', 'error');
       }
@@ -237,19 +231,15 @@ export class Account {
   /* Account API */
 
   async me(): Promise<void> {
-    userCheck.set(true);
-
     // Try getting user data from localStorage
     const cachedUser = GetCache<User>(USER_CACHE_KEY);
     if (cachedUser) {
-      authenticated.set({ user: cachedUser, loggedIn: true });
-      userCheck.set(false);
+      authenticated.set(cachedUser);
       return;
     }
 
     // If no valid cached user, fetch from API
     const { data, error } = await this.accountAPI.me();
-    userCheck.set(false);
 
     if (!data) {
       if (error) {
@@ -264,7 +254,7 @@ export class Account {
     // Store user data in localStorage with timestamp
     SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
-    authenticated.set({ user: data.user, loggedIn: true });
+    authenticated.set(data.user);
   }
 
   static async getUser(): Promise<User | null> {
@@ -282,7 +272,7 @@ export class Account {
     // Store user data in localStorage with timestamp
     SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
-    authenticated.set({ user: data.user, loggedIn: true });
+    authenticated.set(data.user);
 
     return data.user;
   }
@@ -318,10 +308,8 @@ export class Account {
     }
 
     // clear
-    ClearCache('full');
-
-    authenticated.set({ user: null, loggedIn: false });
-    window.open('/', '_self');
+    ClearCache('auth');
+    window.location.reload();
   }
 
   async selectMainWallet(wallet: string): Promise<void> {
@@ -339,7 +327,7 @@ export class Account {
     // update user data
     SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
-    authenticated.set({ user: data.user, loggedIn: true });
+    authenticated.set(data.user);
   }
 
   async generateReferralCode(): Promise<void> {
@@ -347,11 +335,9 @@ export class Account {
 
     if (!data) {
       if (error) {
-        accountError.set({ generateReferralCode: error.message });
+        toastStore.show(error.message);
       } else {
-        accountError.set({
-          generateReferralCode: 'Error generating referral codes',
-        });
+        toastStore.show('Error generating referral codes');
       }
       return;
     }
@@ -399,3 +385,5 @@ export class Account {
     toastStore.show(data.message || 'Referral code used successfully', 'info');
   }
 }
+
+export default Account;

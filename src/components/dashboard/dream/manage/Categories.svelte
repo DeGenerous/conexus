@@ -1,12 +1,14 @@
 <script lang="ts">
-  import { AdminApp } from '@lib/admin';
+  import { onMount } from 'svelte';
+
+  import AdminApp from '@lib/admin';
 
   let admin = new AdminApp();
 
   let categories = $state<CategoryView[]>([]);
   let newCategoryName = $state<string>('');
 
-  $effect(() => {
+  onMount(() => {
     admin.fetchCategories().then((res) => (categories = res));
   });
 
@@ -19,17 +21,13 @@
 </script>
 
 <section class="dream-container fade-in">
-  <h4>Categories</h4>
+  <h4>Categories: {categories.length}</h4>
   <div class="container">
     {#if categories.length > 0}
       {#each categories as { name }}
-        <span
-          class="category pad-8 pad-inline round-8 shad"
-          role="button"
-          tabindex="0"
-        >
-          <h5>{name}</h5>
-        </span>
+        <button class="category void-btn small-tile">
+          <p>{name}</p>
+        </button>
       {/each}
     {:else}
       <p class="validation">No categories found</p>
@@ -54,19 +52,11 @@
 
       .category {
         @include gray(0.25);
-        @include white-txt(soft);
 
         &:hover,
         &:active {
           @include cyan(1, text);
           @include light-blue(0.5);
-          @include scale-up(soft);
-          @include box-shadow(deep);
-        }
-
-        h5 {
-          color: inherit;
-          text-shadow: none;
         }
       }
     }

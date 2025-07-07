@@ -3,10 +3,12 @@
     onclick = () => {},
     voidBtn = false,
     dark = false,
+    hider = false,
   }: {
     onclick: any;
     voidBtn?: boolean;
     dark?: boolean;
+    hider?: boolean;
   } = $props();
 </script>
 
@@ -14,6 +16,8 @@
   class="flex"
   class:void-btn={voidBtn}
   class:dark
+  class:hider
+  class:blur={hider}
   {onclick}
   aria-label="Close"
 >
@@ -32,6 +36,7 @@
   @use '/src/styles/mixins' as *;
 
   button {
+    pointer-events: auto !important;
     stroke: $red;
 
     &:active,
@@ -53,6 +58,15 @@
       &:focus {
         stroke: $red;
       }
+    }
+
+    &.hider {
+      position: absolute;
+      z-index: 10;
+      right: 0;
+      top: 0;
+      border-radius: 0 1rem 0 1rem;
+      border-color: transparent;
     }
   }
 </style>

@@ -1,6 +1,19 @@
-// import { Account } from '@lib/account';
-import { GetCache, USER_CACHE_KEY } from '@constants/cache';
+import { get } from 'svelte/store';
+
+import Account from '@lib/account';
 import { authenticated } from '@stores/account.svelte';
+
+const account: Account = new Account();
+
+// Get the user object
+export async function getCurrentUser(): Promise<Nullable<User>> {
+  await account.me();
+
+  const user = get(authenticated);
+  if (user) return user;
+
+  return null;
+}
 
 function redirectTo(path: string) {
   if (typeof window !== 'undefined') {
@@ -8,58 +21,23 @@ function redirectTo(path: string) {
   }
 }
 
-// Define route patterns
-const excludedRoutes = [/^\/referral$/];
-const protectedRoutes = [
-  /^\/story(\/.*)?$/,
-  /^\/dashboard(\/.*)?$/,
-  /^\/[^/]+$/,
-];
-const verifiedRoutes = [/^\/story(\/.*)?$/, /^\/[^/]+$/];
+// Check user status
+export async function userState(
+  state: 'signed' | 'admin' | 'referred' = 'signed',
+): Promise<boolean> {
+  const user: Nullable<User> = await getCurrentUser();
+  if (!user) return false;
 
-// Helper function to match a route pattern
-const isRouteMatched = (path: string, patterns: RegExp[]) =>
-  patterns.some((pattern) => pattern.test(path));
+  if (state === 'signed') return true;
+  if (state === 'admin') return user.role === 'admin';
+  if (state === 'referred') return !!user.referred;
 
-// Function to check user state
-export async function checkUserState(
-  path: string,
-  checkAdmin: boolean = false,
+  return false;
+}
+
+// Check if route is protected for Admins
+export async function ensureAdmin(
+  path: string = '/dashboard/dream',
 ): Promise<void> {
-  // Skip checks for excluded routes
-  if (isRouteMatched(path, excludedRoutes)) {
-    return;
-  }
-
-  if (isRouteMatched(path, protectedRoutes)) {
-    // get user from store if not in store try from cache
-    let user: Nullable<User>;
-
-    authenticated.subscribe((value) => {
-      user = value.user;
-    });
-
-    if (!user) {
-      const cache = GetCache<User>(USER_CACHE_KEY);
-      if (cache) {
-        user = cache as User;
-        authenticated.set({ user, loggedIn: true });
-      }
-
-      if (!user) {
-        redirectTo('/');
-        return;
-      }
-    }
-
-    if (checkAdmin && user.role !== 'admin') {
-      redirectTo('/');
-      return;
-    }
-
-    if (isRouteMatched(path, verifiedRoutes) && !user.referred) {
-      redirectTo('/referral');
-      return;
-    }
-  }
+  if (!(await userState('admin'))) redirectTo(path);
 }

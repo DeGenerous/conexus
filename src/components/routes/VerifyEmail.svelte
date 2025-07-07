@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Account } from '@lib/account';
+  import Account from '@lib/account';
   import { ClearCache } from '@constants/cache';
 
   import LoadingSVG from '@components/icons/Loading.svelte';
@@ -13,8 +13,10 @@
   $effect(() => {
     acct.confirmEmail(token).then((res) => {
       if (res === true) {
-        ClearCache('auth');
-        window.location.href = '/';
+        setTimeout(() => {
+          ClearCache('auth');
+          window.location.href = '/';
+        }, 1000);
       } else failed = true;
     });
   });
@@ -32,5 +34,5 @@
     <h5>Please wait while we verify your email address.</h5>
     <h5>If you are not redirected, please click the button below.</h5>
   {/if}
-  <button onclick={() => window.open('/', '_self')}>Return home</button>
+  <button onclick={() => (window.location.href = '/')}>Return home</button>
 </section>

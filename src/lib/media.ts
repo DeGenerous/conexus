@@ -112,9 +112,10 @@ class MediaManager {
   async playBackgroundMusic(topic_id: number): Promise<void> {
     let queue: string[] = JSON.parse(localStorage.getItem('queue') ?? '[]');
 
-    const audio = await this.fetchMedia(topic_id, 'audio');
-    if (audio.length > 0) {
-      game.background_music = serveUrl(audio[0]);
+    const audios = await this.fetchMedia(topic_id, 'audio');
+    if (audios.length > 0) {
+      let randomAudio = audios[Math.floor(Math.random() * audios.length)];
+      game.background_music = serveUrl(randomAudio);
       return;
     }
 

@@ -1,8 +1,16 @@
 <script lang="ts">
   import { tippy } from 'svelte-tippy';
+
+  import { toastStore } from '@stores/toast.svelte';
   import CopySVG from '@components/icons/Copy.svelte';
 
-  let { disabled = false }: { disabled?: boolean } = $props();
+  let {
+    disabled = false,
+    container = false,
+  }: {
+    disabled?: boolean;
+    container?: boolean;
+  } = $props();
 
   let copySvgFocus = $state<Nullable<string | boolean>>(null);
   let copyBtn: HTMLButtonElement;
@@ -20,9 +28,10 @@
         );
         copyBtn.classList.add('copied');
         setTimeout(() => copyBtn.classList.remove('copied'), 600);
+        toastStore.show('Copied — now share it with the world!');
         break;
       case 'discord':
-        const shareUrlDiscord = `https://discord.gg/349FgMSUK8`;
+        const shareUrlDiscord = `http://degenerousdao.com/join`;
         await navigator.clipboard.writeText(window.location.href);
         window.open(shareUrlDiscord, '_blank');
         break;
@@ -38,8 +47,14 @@
   };
 </script>
 
-<div class="share flex-row gap-8">
-  <p class="transparent-white-txt">SHARE:</p>
+<div class="share flex-row gap-8" class:container>
+  <p class="transparent-white-txt">
+    {#if container}
+      Share This Story:
+    {:else}
+      SHARE:
+    {/if}
+  </p>
 
   <span
     class="flex-row pad-inline round-8 shad"
@@ -124,6 +139,26 @@
         &:disabled {
           opacity: 0.25;
         }
+      }
+    }
+
+    &.container {
+      width: 95%;
+      padding: 0.5rem 1rem;
+
+      p {
+        @include white-txt;
+        @include font(body);
+      }
+
+      span {
+        box-shadow: none;
+        background-color: transparent;
+        animation: none;
+      }
+
+      @include respond-up(tablet) {
+        width: auto;
       }
     }
   }

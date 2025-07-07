@@ -1,0 +1,95 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import { aiStories } from '@constants/blog';
+import { blogURL } from '@constants/media';
+
+const meta = {
+  title: 'Blog | CoNexus',
+  nav: 'Blog',
+  arrow: '/learn/blog',
+  header: 'AI Stories',
+  subheading:
+    'Curious about AI-generated stories? Discover the best platforms for reading, playing, or creating AI-powered narratives in 2025 — from interactive adventures to personalized fiction.',
+  image: `${blogURL}/ai-stories.jpeg`,
+  imageWidth: 1536,
+  imageHeight: 1024,
+};
+---
+
+<Layout {...meta}>
+  <header class="blog-title">
+    <img
+      src=`${blogURL}/ai-stories.jpeg`
+      alt="AI stories"
+      width="1536"
+      height="1024"
+    />
+    <h3>Best Platforms to Explore AI Stories in 2025</h3>
+  </header>
+
+  <article class="blog-page">
+    <p>
+      AI-generated stories are redefining how we experience narrative. While
+      many platforms focus on single-pass generation or isolated prompts, others
+      are pushing the medium forward — combining interactivity, personalization,
+      and worldbuilding at scale.
+    </p>
+    <p>
+      Here’s a look at the leading AI storytelling platforms in 2025 — and how
+      they compare.
+    </p>
+    <ol class="cards-list">
+      {
+        aiStories.map(
+          ({ name, bestFor, platform, pricing, description, url }) => {
+            return (
+              <a
+                class={name === 'CoNexus' ? 'card green-card' : 'card'}
+                href={url}
+              >
+                <h4>{name}</h4>
+                <span class="details">
+                  <p>
+                    Best for: <strong>{bestFor}</strong>
+                  </p>
+                  <p>
+                    Platform: <strong>{platform}</strong>
+                  </p>
+                  <p>
+                    Pricing: <strong>{pricing}</strong>
+                  </p>
+                </span>
+                <p>{description}</p>
+              </a>
+            );
+          }
+        )
+      }
+    </ol>
+    <hr />
+    <h5>What Makes CoNexus Stand Out?</h5>
+    <p>
+      Most AI tools treat storytelling like output — one request, one result.
+      CoNexus treats it like a system — where every decision branches the world
+      forward, where structure and surprise coexist, and where players,
+      creators, and communities can all engage meaningfully.
+    </p>
+    <p>
+      If you're looking for the future of narrative — not just AI text — CoNexus
+      is the platform to explore.
+    </p>
+    <hr />
+    <h5>Final Thoughts</h5>
+    <p>
+      From sandbox generation to writing assistance, there are many ways to use
+      AI in storytelling. But if you’re looking for a platform that delivers
+      structured, interactive, and immersive story experiences — with room to
+      customize, create, and play — CoNexus stands in a category of its own.
+    </p>
+    <p>
+      Try an AI story today and experience what storytelling looks like when it
+      evolves with you
+    </p>
+  </article>
+</Layout>

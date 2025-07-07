@@ -1,16 +1,18 @@
+<!-- 🔒 GATED FOR ADMINS -->
 <script lang="ts">
   import { onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
 
-  import { AdminApp } from '@lib/admin';
+  import AdminApp from '@lib/admin';
   import { GetCache, ALL_TOPICS_KEY } from '@constants/cache';
   import openModal from '@stores/modal.svelte';
   import { deleteStoryModal } from '@constants/modal';
   import { prevStory, nextStory } from '@stores/navigation.svelte';
+  import { ensureAdmin } from '@utils/route-guard';
 
-  import GenreTags from './GenreTags.svelte';
-  import Media from './Media.svelte';
-  import NftGating from './NftGating.svelte';
+  import GenreTags from '@components/dashboard/dream/manage/GenreTags.svelte';
+  import Media from '@components/dashboard/dream/manage/Media.svelte';
+  import NftGating from '@components/dashboard/dream/manage/NftGating.svelte';
   import EditSVG from '@components/icons/Edit.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
@@ -45,10 +47,12 @@
   );
 
   onMount(async () => {
+    await ensureAdmin();
+
     const topic_ = await admin.fetchTopic(topic_name);
 
     if (!topic_) {
-      window.open('/dashboard/dream/manage/', '_self');
+      window.location.href = '/dashboard/dream/manage/';
       return;
     }
 
@@ -158,7 +162,7 @@
               const topic_ = await admin.fetchTopic(topic_name);
 
               if (!topic_) {
-                window.open('/dashboard/dream/manage/', '_self');
+                window.location.href = '/dashboard/dream/manage/';
                 return;
               }
 
@@ -210,7 +214,7 @@
               onclick={() => {
                 editingName = false;
                 admin.editTopicName(topic_name, storyName);
-                window.open(`/dashboard/dream/manage/${storyName}`, '_self');
+                window.location.href = `/dashboard/dream/manage/${storyName}`;
               }}
               disabled={topic_name == storyName}
             />
@@ -348,7 +352,7 @@
     onclick={() =>
       openModal(deleteStoryModal, `Delete story: ${topic_name}`, () => {
         admin.deleteStory(topic!.id);
-        window.open('/dashboard/dream/manage/', '_self');
+        window.location.href = '/dashboard/dream/manage/';
       })}
   >
     Delete Story

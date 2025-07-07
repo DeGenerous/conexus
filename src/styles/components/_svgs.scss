@@ -16,7 +16,7 @@ button svg {
 
 .copied {
   p {
-    @include green(1, text);
+    color: $green !important;
   }
 
   svg {

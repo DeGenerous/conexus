@@ -2,8 +2,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { CoNexusApp } from '@lib/view';
-  import { checkUserState } from '@utils/route-guard';
+  import CoNexusApp from '@lib/view';
   import {
     SetCache,
     GetCache,
@@ -65,8 +64,6 @@
 
   onMount(async () => {
     try {
-      await checkUserState(`/${section}`);
-
       const sections = await app.getSections();
       if (!sections.some(({ name }) => name === section)) {
         window.location.href = '/404';
@@ -79,7 +76,19 @@
       if (cachedCategories) categories = cachedCategories;
       else await fetchCategories();
 
-      genres = await app.getGenres();
+      await app.getGenres().then((data) => {
+        function sortByName(a: Genre, b: Genre) {
+          if (a.name < b.name) {
+            return -1;
+          }
+          if (a.name > b.name) {
+            return 1;
+          }
+          return 0;
+        }
+
+        genres = data.sort(sortByName);
+      });
 
       // If no categories after 2 seconds, show "No categories found"
       setTimeout(() => {
@@ -88,7 +97,7 @@
         }
       }, 2000);
     } catch (error) {
-      console.error('Error in onMount:', error);
+      console.error('Error on mount:', error);
     }
   });
 

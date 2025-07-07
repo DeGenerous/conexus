@@ -8,7 +8,6 @@
   import {
     GetCache,
     SetCache,
-    ONE_YEAR_TTL,
     GAME_INSTRUCTIONS_KEY,
     FONT_KEY,
     STYLING_KEY,
@@ -33,6 +32,7 @@
 
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
+  import Share from './utils/Share.svelte';
 
   import SelectorSVG from '@components/icons/Selector.svelte';
   import QuitSVG from '@components/icons/Quit.svelte';
@@ -45,6 +45,7 @@
   import ResetSVG from '@components/icons/Reset.svelte';
 
   export let story_name: string;
+  export let restartGame: () => void;
 
   let width: number;
   let height: number;
@@ -61,6 +62,9 @@
   let activeControlPanel: Nullable<StepController> = null;
   $: if (hiddenControls) activeControlPanel = null; // reset active control panel too
 
+  const DESKTOP_BREAKPOINT = 1024;
+  $: isDesktop = width >= DESKTOP_BREAKPOINT;
+
   const switchController = (controller: StepController) => {
     if (activeControlPanel == controller) {
       activeControlPanel = null;
@@ -73,8 +77,9 @@
     () => {},
   );
 
+  // Hide control bar for PC
   const hideControlsAfterDelay = () => {
-    if (width < 1024) return; // min width for PC
+    if (!isDesktop) return; // min width for PC
     clearTimeout(hiddenControlsTimeout);
     hiddenControlsTimeout = setTimeout(() => {
       hiddenControls = true;
@@ -91,6 +96,34 @@
     clearTimeout(hiddenControlsTimeout);
   };
 
+  // Hide control bar for Mobiles
+  function handleWrapperPointer(e: PointerEvent) {
+    // Ignore taps that start on the control bar or any panel
+    if (
+      (e.target as HTMLElement).closest(
+        'nav, section.step-controller, section.sound-controller,' +
+          'section.styling-controller, section.scale-controller',
+      )
+    ) {
+      return;
+    }
+
+    if ((e.target as HTMLElement).tagName === 'BUTTON') return;
+
+    // Close panel if one is open
+    if (activeControlPanel) {
+      activeControlPanel = null;
+      return;
+    }
+
+    if (isDesktop) return; // desktop keeps old logic
+
+    // Toggle the bar itself
+    hiddenControls = !hiddenControls;
+  }
+
+  // ZOOM
+
   const toggleZoom = () => {
     if (zoom === 1) zoom = 0.5;
     else zoom = 1;
@@ -100,7 +133,7 @@
 
   const updateFont = (reset: Nullable<'reset'> = null) => {
     if (reset) $customFont = defaultFont;
-    SetCache(FONT_KEY, $customFont, ONE_YEAR_TTL);
+    SetCache(FONT_KEY, $customFont);
   };
 
   // update FONT in localStorage after every change
@@ -124,7 +157,7 @@
 
   const updateStyling = (reset: Nullable<'reset'> = null) => {
     if (reset) $customStyling = defaultStyling;
-    SetCache(STYLING_KEY, $customStyling, ONE_YEAR_TTL);
+    SetCache(STYLING_KEY, $customStyling);
   };
 
   // update STYLING in localStorage after every change
@@ -140,7 +173,7 @@
 
   const updateScale = (reset: Nullable<'reset'> = null) => {
     if (reset) customScale = defaultScale;
-    SetCache(SCALE_KEY, customScale, ONE_YEAR_TTL);
+    SetCache(SCALE_KEY, customScale);
   };
 
   // update SCALE in localStorage after every change
@@ -269,19 +302,21 @@
     // SHOW HOW TO PLAY INSTRUCTIONS
 
     // min width for PC
-    if (width > 1024) {
+    if (isDesktop) {
       const dontShowInstructions = GetCache(GAME_INSTRUCTIONS_KEY);
       // Show instructions if no stored value
       if (!dontShowInstructions) {
         setTimeout(
           () =>
             openModal(gameRulesModal, "Don't show again", () => {
-              SetCache(GAME_INSTRUCTIONS_KEY, 'dont_show', ONE_YEAR_TTL);
+              SetCache(GAME_INSTRUCTIONS_KEY, 'dont_show');
               // Hide control panel after 3s delay
               hideControlsAfterDelay();
             }),
           600,
         );
+      } else {
+        hideControlsAfterDelay();
       }
     }
   });
@@ -305,9 +340,7 @@ a11y_no_noninteractive_element_interactions -->
     style:font-weight={$customFont.bold ? 'bold' : 'normal'}
     style:font-style={$customFont.italic ? 'italic' : ''}
     style:color={$customFont.baseColor}
-    on:click={() => {
-      if (activeControlPanel) activeControlPanel = null;
-    }}
+    on:pointerdown={handleWrapperPointer}
   >
     <ImageDisplay
       {width}
@@ -332,7 +365,9 @@ a11y_no_noninteractive_element_interactions -->
     {/if}
 
     <article
-      style:max-width={width >= 1440 ? `${customScale.paragraphWidth}%` : ''}
+      style:max-width={width >= DESKTOP_BREAKPOINT
+        ? `${customScale.paragraphWidth}%`
+        : ''}
       style:width="{100 * zoom}%"
       style:zoom
     >
@@ -349,11 +384,13 @@ a11y_no_noninteractive_element_interactions -->
         style:color={$customFont.accentColor}
         style:zoom
       >
-        Story Summary
+        {story_name.trim()} Story Summary
       </h4>
 
       <article
-        style:max-width={width >= 1440 ? `${customScale.paragraphWidth}%` : ''}
+        style:max-width={width >= DESKTOP_BREAKPOINT
+          ? `${customScale.paragraphWidth}%`
+          : ''}
         style:zoom
       >
         {step.summary}
@@ -372,7 +409,7 @@ a11y_no_noninteractive_element_interactions -->
 
       {#if step.trait_description}
         <article
-          style:max-width={width >= 1440
+          style:max-width={width >= DESKTOP_BREAKPOINT
             ? `${customScale.paragraphWidth}%`
             : ''}
           style:zoom
@@ -388,16 +425,25 @@ a11y_no_noninteractive_element_interactions -->
         style:font-style={$customFont.italic ? 'italic' : ''}
         style:color={$customFont.accentColor}
         style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
-        style:max-width={width >= 1440 ? `${customScale.optionsWidth}%` : ''}
-        style:width="{width >= 1440 ? 100 * zoom : 95}%"
+        style:max-width={width >= DESKTOP_BREAKPOINT
+          ? `${customScale.optionsWidth}%`
+          : ''}
+        style:width="{width >= DESKTOP_BREAKPOINT ? 100 * zoom : 95}%"
         style:zoom
       >
         <button
           id="option-0"
           class="void-btn menu-option"
-          on:click={() => window.open('/', '_self')}>Return to main menu</button
+          on:click={restartGame}>Start a new story</button
+        >
+        <button
+          id="option-1"
+          class="void-btn menu-option"
+          on:click={() => (window.location.href = '/')}
+          >Return to main menu</button
         >
       </div>
+      <Share container={true} />
     {:else}
       <div
         class="flex options wide-container {$customFont.accentSize}-font"
@@ -405,8 +451,10 @@ a11y_no_noninteractive_element_interactions -->
         class:transparent-container={$customStyling.optionsContainer}
         style:color={$customFont.accentColor}
         style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
-        style:max-width={width >= 1440 ? `${customScale.optionsWidth}%` : ''}
-        style:width="{width >= 1440 ? 100 * zoom : 95}%"
+        style:max-width={width >= DESKTOP_BREAKPOINT
+          ? `${customScale.optionsWidth}%`
+          : ''}
+        style:width="{width >= DESKTOP_BREAKPOINT ? 100 * zoom : 95}%"
         style:zoom
       >
         {#each step.options as option, i}
@@ -754,7 +802,9 @@ a11y_no_noninteractive_element_interactions -->
       on:click|stopPropagation
     >
       {#if zoom !== 1}
-        <p class="zoom-hint validation green-txt">Zoomed-out mode active - perfect for screenshots 🖼️</p>
+        <p class="zoom-hint validation green-txt">
+          Zoomed-out mode active - perfect for screenshots 🖼️
+        </p>
       {/if}
       <div class="image-scale transparent-container">
         <span class="flex-row">
@@ -885,7 +935,7 @@ a11y_no_noninteractive_element_interactions -->
         width: clamp(250px, 95%, 70rem);
       }
 
-      @include respond-up(large-desktop) {
+      @include respond-up(small-desktop) {
         width: 100%;
       }
     }
@@ -893,7 +943,7 @@ a11y_no_noninteractive_element_interactions -->
     .options {
       align-items: flex-start;
 
-      @include respond-up(large-desktop) {
+      @include respond-up(small-desktop) {
         width: 100%;
       }
 
@@ -988,7 +1038,7 @@ a11y_no_noninteractive_element_interactions -->
           &.scale-icon {
             display: none;
 
-            @include respond-up(large-desktop) {
+            @include respond-up(small-desktop) {
               display: flex;
             }
           }

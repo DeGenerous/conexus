@@ -1,0 +1,20 @@
+---
+import Layout from '@layouts/Layout.astro';
+import FAQ from '@components/learn/FAQ.svelte';
+import { learnURL } from '@constants/media';
+
+const meta = {
+  title: 'FAQ | CoNexus',
+  nav: 'FAQ',
+  arrow: '/learn',
+  header: 'CoNexus: Decoded',
+  subheading: 'No multiverse too big. No question too small.',
+  image: `${learnURL}/faq.jpeg`,
+  imageWidth: 1024,
+  imageHeight: 1024,
+};
+---
+
+<Layout {...meta}>
+  <FAQ client:load />
+</Layout>

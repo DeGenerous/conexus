@@ -2,8 +2,8 @@
   import dreamData from '@constants/dream';
   import { tablePrompt } from '@stores/dream.svelte';
 
-  import Dropdown from './Dropdown.svelte';
-  import Slider from './Slider.svelte';
+  import Dropdown from '@components/utils/Dropdown.svelte';
+  import Slider from '@components/dashboard/dream/create/Slider.svelte';
 
   const tenseHints = {
     past: 'Tells the story as if it already happened, allowing reflection and depth. Great for epic tales and classic adventures.',

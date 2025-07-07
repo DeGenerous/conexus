@@ -4,6 +4,7 @@
 
 <button
   class="top-right-icon void-btn flex fade-in"
+  id="profile-icon"
   aria-label="Profile"
   {onclick}
 >
@@ -39,6 +40,15 @@
     &:active,
     &:focus {
       fill: $cyan;
+
+      #profile-svg-mask g {
+        transform: scale(1.1);
+      }
+    }
+
+    &:global(.profile-hover) {
+      fill: $bright-purple;
+      @include scale;
 
       #profile-svg-mask g {
         transform: scale(1.1);

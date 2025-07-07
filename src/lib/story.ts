@@ -1,14 +1,12 @@
 import { ERROR_REQUIRED_TOKEN, ERROR_OUT_OF_CREDITS } from '@constants/error';
 import { api_error } from '@errors/index';
-import { Account } from '@lib/account';
+import Account from '@lib/account';
 import { GameAPI } from '@service/routes';
 import { story, game } from '@stores/conexus.svelte';
 import { toastStore } from '@stores/toast.svelte';
 import openModal from '@stores/modal.svelte';
 
-export let storyTitle: string;
-
-export class CoNexusGame extends GameAPI {
+class CoNexusGame extends GameAPI {
   // Properties
   private static instance: CoNexusGame;
 
@@ -115,10 +113,10 @@ export class CoNexusGame extends GameAPI {
       return;
     }
 
+    game.loading = false;
+
     // refresh user
     await Account.getUser();
-
-    storyTitle = story_name;
 
     await setMedia(topic_id);
 
@@ -144,8 +142,6 @@ export class CoNexusGame extends GameAPI {
       game.loading = false;
       return;
     }
-
-    storyTitle = continuable.category;
 
     // Set background image and music
     await setMedia(continuable.topic_id);
@@ -342,3 +338,5 @@ export class CoNexusGame extends GameAPI {
     await Promise.all([this.#generateImage(), this.#textToSpeech()]);
   }
 }
+
+export default CoNexusGame;

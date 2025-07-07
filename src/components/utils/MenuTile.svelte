@@ -11,7 +11,12 @@
   const blankPicture: string = '/blank.avif'; // temp
 </script>
 
-<a class="menu-tile" id={section.name} href="/sections/{section.name}">
+<a
+  class="menu-tile"
+  class:big-menu-tile={section.name === 'Community Picks'}
+  id={section.name}
+  href="/sections/{section.name}"
+>
   <img
     src={sectionImage ?? blankPicture}
     alt={section.name}

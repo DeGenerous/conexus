@@ -1,0 +1,106 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import { onlineGames } from '@constants/blog';
+import { blogURL } from '@constants/media';
+
+const meta = {
+  title: 'Blog | CoNexus',
+  nav: 'Blog',
+  arrow: '/learn/blog',
+  header: 'Play Story Games',
+  subheading:
+    'Looking for the best places to play story games online? Explore interactive fiction, choice-based adventures, and AI-powered story platforms you can try instantly in 2025.',
+  image: `${blogURL}/play-story-games-online.jpeg`,
+  imageWidth: 1536,
+  imageHeight: 1024,
+};
+---
+
+<Layout {...meta}>
+  <header class="blog-title">
+    <img
+      src=`${blogURL}/play-story-games-online.jpeg`
+      alt="Online games"
+      width="1536"
+      height="1024"
+    />
+    <h3>
+      Play Story Games Online: The Best Ways to Experience Interactive
+      Narratives in 2025
+    </h3>
+  </header>
+
+  <article class="blog-page">
+    <p>
+      The way we engage with stories is changing. As audiences seek more
+      immersive and personalized experiences, interactive story games have
+      emerged as a compelling alternative to passive content. Whether you're
+      into fantasy, sci-fi, romance, horror, or something in between, story
+      games let you become part of the narrative — making choices that shape the
+      outcome.
+    </p>
+    <hr />
+    <p>
+      If you're looking to play story games online in 2025, you're in luck.
+      There are more platforms than ever offering rich, branching stories that
+      you can experience directly in your browser or mobile device.
+    </p>
+    <ol class="cards-list">
+      {
+        onlineGames.map(
+          ({ name, bestFor, platform, pricing, description, url }) => {
+            return (
+              <a
+                class={name === 'CoNexus' ? 'card green-card' : 'card'}
+                href={url}
+              >
+                <h4>{name}</h4>
+                <span class="details">
+                  <p>
+                    Best for: <strong>{bestFor}</strong>
+                  </p>
+                  <p>
+                    Platform: <strong>{platform}</strong>
+                  </p>
+                  <p>
+                    Pricing: <strong>{pricing}</strong>
+                  </p>
+                </span>
+                <p>{description}</p>
+              </a>
+            );
+          }
+        )
+      }
+    </ol>
+    <hr />
+    <h5>Why Play Story Games Online?</h5>
+    <p>
+      Unlike passive media, story games offer dynamic experiences. They let
+      players:
+    </p>
+    <ul class="default-ul">
+      <li>Influence the direction of the story</li>
+      <li>Explore multiple outcomes</li>
+      <li>Engage emotionally with characters</li>
+      <li>Revisit stories with new perspectives</li>
+      <li>Share choices and experiences with friends</li>
+    </ul>
+    <p>
+      In 2025, platforms like CoNexus are pushing the boundaries of what's
+      possible — combining interactivity, personalization, and social
+      storytelling in one place.
+    </p>
+    <hr />
+    <h5>Final Thoughts</h5>
+    <p>
+      Whether you want a simple choice-based story or a deep narrative universe
+      that evolves with each decision, story games online offer something for
+      everyone. With new technologies making it easier to create and play these
+      experiences, the future of storytelling is more interactive, inclusive,
+      and accessible than ever.
+    </p>
+    <p>Try a story game today — and see where your choices take you.</p>
+  </article>
+</Layout>

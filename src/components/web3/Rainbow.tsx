@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {
   createAuthenticationAdapter,
@@ -22,128 +22,148 @@ import { AccountAPI, AuthAPI } from '@service/routes';
 
 import '@rainbow-me/rainbowkit/styles.css';
 
-const Web3Provider = ({ linking, children }) => {
+const wagmiConfig = getDefaultConfig({
+  appName: 'Degenerous DAO',
+  appIcon: `${assetsURL}/logo.png`,
+  appUrl: 'https://conexus.degenerousdao.com', // prod
+  // appUrl: 'http://localhost:4321', // dev
+  projectId: '0b8a3fac6220753a719b9aeceb8f19fb',
+  chains: [mainnet, base],
+  ssr: false, // If your dApp uses server side rendering (SSR)
+  pollingInterval: 12000, // How often (in ms) to poll for updates
+});
+
+const queryClient = new QueryClient();
+
+const rkTheme = darkTheme({
+  accentColor: 'rgb(51, 226, 230)',
+  accentColorForeground: 'rgb(51, 226, 230)',
+  borderRadius: 'large',
+  fontStack: 'rounded',
+  overlayBlur: 'large',
+});
+
+interface Web3Props {
+  linking?: boolean;
+  children: React.ReactNode;
+}
+
+const Web3Provider: React.FC<Web3Props> = ({ linking = false, children }) => {
   let AUTHENTICATION_STATUS: AuthenticationStatus = 'unauthenticated';
 
-  const authAPI = new AuthAPI(import.meta.env.PUBLIC_BACKEND);
-  const accountAPI = new AccountAPI(import.meta.env.PUBLIC_BACKEND);
+  const authAPI = useMemo(
+    () => new AuthAPI(import.meta.env.PUBLIC_BACKEND),
+    [],
+  );
+  const accountAPI = useMemo(
+    () => new AccountAPI(import.meta.env.PUBLIC_BACKEND),
+    [],
+  );
 
-  const config = getDefaultConfig({
-    appName: 'Degenerous DAO',
-    appIcon: `${assetsURL}/logo.png`,
-    appUrl: 'https://degenerousdao.com',
-    projectId: '0b8a3fac6220753a719b9aeceb8f19fb',
-    chains: [mainnet, base],
-    ssr: false, // If your dApp uses server side rendering (SSR)
-    pollingInterval: 12000, // How often (in ms) to poll for updates
-  });
+  const authenticationAdapter = useMemo(
+    () =>
+      createAuthenticationAdapter({
+        getNonce: async () => {
+          const { data, error } = await authAPI.web3Getnonce();
 
-  const authenticationAdapter = createAuthenticationAdapter({
-    getNonce: async () => {
-      const { data, error } = await authAPI.web3Getnonce();
+          if (!data) {
+            console.error('Failed to fetch nonce:', error);
+            throw new Error('Failed to fetch nonce');
+          }
 
-      if (!data) {
-        console.error('Failed to fetch nonce:', error);
-        throw new Error('Failed to fetch nonce');
-      }
+          AUTHENTICATION_STATUS = 'loading';
 
-      AUTHENTICATION_STATUS = 'loading';
+          return data.nonce;
+        },
 
-      return data.nonce;
-    },
+        createMessage: ({ nonce, address, chainId }) => {
+          if (!nonce || !address || !chainId) {
+            console.error(
+              'Missing required parameters for createSiweMessage:',
+              {
+                nonce,
+                address,
+                chainId,
+              },
+            );
+            throw new Error('Missing parameters for creating the message');
+          }
 
-    createMessage: ({ nonce, address, chainId }) => {
-      if (!nonce || !address || !chainId) {
-        console.error('Missing required parameters for createSiweMessage:', {
-          nonce,
-          address,
-          chainId,
-        });
-        throw new Error('Missing parameters for creating the message');
-      }
+          try {
+            return createSiweMessage({
+              nonce,
+              address,
+              chainId,
+              statement:
+                'Welcome to CoNexus! Click to sign in and accept the Terms of Service: https://degenerousdao.com/legal/terms-of-service',
+              domain: window.location.host,
+              uri: window.location.origin,
+              version: '1',
+            });
+          } catch (error) {
+            console.error('Error creating SIWE message:', error);
+            throw error;
+          }
+        },
 
-      try {
-        return createSiweMessage({
-          nonce,
-          address,
-          chainId,
-          statement:
-            "Sign this message to prove you're a Potential NFT holder. It will not cause a blockchain transaction, nor any gas fees.",
-          domain: window.location.host,
-          uri: window.location.origin,
-          version: '1',
-        });
-      } catch (error) {
-        console.error('Error creating SIWE message:', error);
-        throw error;
-      }
-    },
+        verify: async ({ message, signature }) => {
+          let resp: APIResponse<{ user: User }>;
 
-    verify: async ({ message, signature }) => {
-      let resp: APIResponse<{ user: User }>;
+          if (linking) {
+            resp = await accountAPI.web3WalletLink({
+              message,
+              signature,
+            });
+          } else {
+            resp = await authAPI.web3WalletSignin({
+              message,
+              signature,
+            });
+          }
 
-      if (linking) {
-        resp = await accountAPI.web3WalletLink({
-          message,
-          signature,
-        });
-      } else {
-        resp = await authAPI.web3WalletSignin({
-          message,
-          signature,
-        });
-      }
+          const { data, error } = resp;
 
-      const { data, error } = resp;
+          if (!data) {
+            console.error('Failed to verify signature:', error?.details);
+            AUTHENTICATION_STATUS = 'unauthenticated';
+            return false;
+          }
 
-      if (!data) {
-        console.error('Failed to verify signature:', error?.details);
-        AUTHENTICATION_STATUS = 'unauthenticated';
-        return false;
-      }
+          SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
 
-      SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
+          authenticated.set(data.user);
 
-      authenticated.set({ user: data.user, loggedIn: true });
+          AUTHENTICATION_STATUS = 'authenticated';
 
-      AUTHENTICATION_STATUS = 'authenticated';
+          window.location.reload();
 
-      return true;
-    },
+          return true;
+        },
 
-    signOut: async () => {
-      const { data, error } = await accountAPI.logout();
+        signOut: async () => {
+          const { data, error } = await accountAPI.logout();
 
-      if (!data) {
-        console.error('Failed to sign out:', error);
-        return;
-      }
+          if (!data) {
+            console.error('Failed to sign out:', error);
+            return;
+          }
 
-      authenticated.set({ user: null, loggedIn: false });
+          authenticated.set(null);
 
-      AUTHENTICATION_STATUS = 'unauthenticated';
-    },
-  });
-
-  const queryClient = new QueryClient();
+          AUTHENTICATION_STATUS = 'unauthenticated';
+        },
+      }),
+    [linking],
+  );
 
   return (
-    <WagmiProvider config={config}>
+    <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitAuthenticationProvider
           adapter={authenticationAdapter}
           status={AUTHENTICATION_STATUS}
         >
-          <RainbowKitProvider
-            modalSize="wide"
-            theme={darkTheme({
-              accentColor: 'rgb(51, 226, 230)',
-              accentColorForeground: 'rgb(51, 226, 230)',
-              borderRadius: 'large',
-              fontStack: 'rounded',
-              overlayBlur: 'large',
-            })}
-          >
+          <RainbowKitProvider modalSize="wide" theme={rkTheme}>
             {children}
           </RainbowKitProvider>
         </RainbowKitAuthenticationProvider>

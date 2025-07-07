@@ -5,7 +5,7 @@
 // TEXT CLASSES (-txt): (soft / transparent) white, green, red
 
 $white: rgb(255, 255, 255); // @mixin: white-txt (color:)
-$soft-white: rgba(255, 255, 255, 0.9);
+$soft-white: rgba(255, 255, 255, 0.75);
 $transparent-white: rgba(255, 255, 255, 0.5);
 $beige: rgb(250, 238, 209); // no mixin
 

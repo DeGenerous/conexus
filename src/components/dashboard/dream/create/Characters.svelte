@@ -2,8 +2,8 @@
   import dreamData from '@constants/dream';
   import { tablePrompt } from '@stores/dream.svelte';
 
-  import Dropdown from './Dropdown.svelte';
-  import NewCharacter from './NewCharacter.svelte';
+  import Dropdown from '@components/utils/Dropdown.svelte';
+  import NewCharacter from '@components/dashboard/dream/create/NewCharacter.svelte';
 
   // ADD NEW SIDE CHARACTER
 

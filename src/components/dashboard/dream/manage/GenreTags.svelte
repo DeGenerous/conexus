@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { CoNexusApp } from '@lib/view';
+  import CoNexusApp from '@lib/view';
   import { availableGenres } from '@stores/view.svelte';
 
   import CloseSVG from '@components/icons/Close.svelte';
@@ -22,7 +22,10 @@
 
   $effect(() => {
     if (topic && topic.genres && topic.genres.length)
-      genres = topic.genres.split(',').map((genre: string) => genre.trim());
+      genres = topic.genres
+        .split(',')
+        .map((genre: string) => genre.trim())
+        .sort();
   });
 
   $effect(() => {
@@ -42,12 +45,22 @@
 
   function handleAddGenre() {
     if (newGenre && !genres.includes(newGenre)) {
-      genres = [...genres, newGenre];
+      genres = [...genres, newGenre].sort();
 
       const genre = availableGenres.find((g) => g.name === newGenre);
       if (genre) handleGenreChange(genre.id, 'add');
     }
     newGenre = '';
+  }
+
+  function sortByName(a: Genre, b: Genre) {
+    if (a.name < b.name) {
+      return -1;
+    }
+    if (a.name > b.name) {
+      return 1;
+    }
+    return 0;
   }
 </script>
 
@@ -56,18 +69,14 @@
   <div class="container">
     {#if genres.length > 0}
       {#each genres as genre (genre)}
-        <span
-          class="genre flex-row gap-8 pad-8 round-8 shad"
-          role="button"
-          tabindex="0"
-        >
-          <h5>{genre}</h5>
+        <button class="void-btn small-purple-tile">
+          <p>{genre}</p>
           <CloseSVG
             onclick={() => handleRemoveGenre(genre)}
             voidBtn={true}
             dark={true}
           />
-        </span>
+        </button>
       {/each}
     {:else}
       <p class="valigation">No genres selected</p>
@@ -78,7 +87,9 @@
 <div class="add-genre flex-row">
   <select bind:value={newGenre}>
     <option value="" hidden disabled>Select</option>
-    {#each availableGenres.filter((g) => !genres.includes(g.name)) as genre}
+    {#each availableGenres
+      .filter((g) => !genres.includes(g.name))
+      .sort(sortByName) as genre}
       <option value={genre.name}>{genre.name}</option>
     {/each}
   </select>
@@ -91,26 +102,6 @@
   .container {
     flex-wrap: wrap;
     justify-content: center;
-
-    .genre {
-      padding-left: 1rem;
-      @include purple;
-      @include white-txt;
-
-      &:hover,
-      &:active {
-        @include dark-red(1, text);
-        @include purple(1, bg, bright);
-        @include scale-up(soft);
-        @include box-shadow(deep);
-      }
-
-      h5 {
-        color: inherit;
-        text-shadow: none;
-        text-transform: uppercase;
-      }
-    }
   }
 
   .add-genre {

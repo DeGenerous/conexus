@@ -80,10 +80,6 @@ type AccountError = {
   signup?: Nullable<string>;
   validateReferralCode?: Nullable<string>;
   googleSignin?: Nullable<string>;
-  subscribeNewsletter?: Nullable<string>;
-  unsubscribeNewsletter?: Nullable<string>;
-  subscriptionStatus?: Nullable<string>;
   changePassword?: Nullable<string>;
   selectMainWallet?: Nullable<string>;
-  generateReferralCode?: Nullable<string>;
 } | null;

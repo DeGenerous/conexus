@@ -20,19 +20,20 @@ export const SECTION_CACHE_TTL = 1000 * 60 * 60 * 24; // 1 day
 export const CATEGORY_CACHE_KEY = 'categories';
 export const CATEGORY_CACHE_TTL = 1000 * 60 * 60 * 24; // 1 day
 
+// Cache subscription status & referral codes
+export const SUBSCRIPTIONSTATUS_CACHE_KEY = 'subscription_status';
+export const SUBSCRIPTIONSTATUS_CACHE_TTL = 1000 * 60 * 15; // 15 minutes
+
+export const REFERRAL_CODES_CACHE_KEY = 'referral_codes';
+export const REFERRAL_CODES_CACHE_TTL = 1000 * 60 * 15; // 15 minutes
+
 // CACHE ALL DATA TO PLAY 1 HOUR WITHOUT UNNECESSARY REQUESTS:
-// 1) user + subscription status + 10 referral codes
+// 1) user object
 // 2) all CATEGORIES inside SECTION (separate for every SECTION)
 // 3) all TOPICS inside CATEGORY (separate for every CATEGORY)
 
 export const USER_CACHE_KEY = 'user';
 export const USER_CACHE_TTL = 1000 * 60 * 60 * 1; // 1 hour
-
-export const SUBSCRIPTIONSTATUS_CACHE_KEY = 'subscription_status';
-export const SUBSCRIPTIONSTATUS_CACHE_TTL = 1000 * 60 * 60 * 1; // 1 hour
-
-export const REFERRAL_CODES_CACHE_KEY = 'referral_codes';
-export const REFERRAL_CODES_CACHE_TTL = 1000 * 60 * 60 * 1; // 1 hour
 
 export const SECTION_CATEGORIES_KEY = (section: string): string =>
   `section_categories[${section}]`;
@@ -52,10 +53,9 @@ export const VOLUME_KEY = (type: 'voice' | 'music'): string => `${type}_volume`;
 export const TTS_SPEED_KEY = 'tts_speed';
 
 // Story drafts (use 1 year TTL)
-export const DRAFTS_KEY = 'dream_drafts';
-// export const DRAFT_INDEX_KEY = 'draft-index';
-// export const DRAFT_KEY = (id: string) => `draft:${id}`;
-// export const CURRENT_DAFT_KEY = 'current-draft';
+export const DRAFTS_INDEX_KEY = 'draft_index'; // stringified DraftIndexEntry[]
+export const DRAFT_KEY = (id: string) => `draft:${id}`;
+export const CURRENT_DRAFT_KEY = 'current_draft'; // id of the open draft
 
 const authKeys = [
   USER_CACHE_KEY,
@@ -73,7 +73,39 @@ const viewKeys = [
   SECTION_CATEGORIES_KEY('Dischordian Saga'),
 ];
 
-export const SetCache = <T>(key: string, value: T, ttl: number) => {
+function saveImortantAndClearCache() {
+  // saving important values
+  const cookieConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
+  const gameInstructions = localStorage.getItem(GAME_INSTRUCTIONS_KEY);
+  const musicVolume = localStorage.getItem(VOLUME_KEY('music'));
+  const voiceVolume = localStorage.getItem(VOLUME_KEY('voice'));
+  const ttsSpeed = localStorage.getItem(TTS_SPEED_KEY);
+  const customThemes = localStorage.getItem(THEMES_KEY);
+  const customFont = localStorage.getItem(FONT_KEY);
+  const customStyling = localStorage.getItem(STYLING_KEY);
+  const customScale = localStorage.getItem(SCALE_KEY);
+  const user = localStorage.getItem(USER_CACHE_KEY); // save user object too
+  // deleting all values
+  localStorage.clear();
+  // restoring saved values
+  if (cookieConsent) localStorage.setItem(COOKIE_CONSENT_KEY, cookieConsent);
+  if (gameInstructions)
+    localStorage.setItem(GAME_INSTRUCTIONS_KEY, gameInstructions);
+  if (musicVolume) localStorage.setItem(VOLUME_KEY('music'), musicVolume);
+  if (voiceVolume) localStorage.setItem(VOLUME_KEY('voice'), voiceVolume);
+  if (ttsSpeed) localStorage.setItem(TTS_SPEED_KEY, ttsSpeed);
+  if (customThemes) localStorage.setItem(THEMES_KEY, customThemes);
+  if (customFont) localStorage.setItem(FONT_KEY, customFont);
+  if (customStyling) localStorage.setItem(STYLING_KEY, customStyling);
+  if (customScale) localStorage.setItem(SCALE_KEY, customScale);
+  if (user) localStorage.setItem(USER_CACHE_KEY, user);
+}
+
+export const SetCache = <T>(
+  key: string,
+  value: T,
+  ttl: number = 1000 * 60 * 60 * 24 * 365,
+) => {
   localStorage.setItem(
     key,
     JSON.stringify({
@@ -111,32 +143,7 @@ export const ClearCache = (
       removeCacheKeys(viewKeys);
       break;
     case 'full':
-      // saving important values
-      const cookieConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
-      const gameInstructions = localStorage.getItem(GAME_INSTRUCTIONS_KEY);
-      const musicVolume = localStorage.getItem(VOLUME_KEY('music'));
-      const voiceVolume = localStorage.getItem(VOLUME_KEY('voice'));
-      const ttsSpeed = localStorage.getItem(TTS_SPEED_KEY);
-      const customThemes = localStorage.getItem(THEMES_KEY);
-      const customFont = localStorage.getItem(FONT_KEY);
-      const customStyling = localStorage.getItem(STYLING_KEY);
-      const customScale = localStorage.getItem(SCALE_KEY);
-      const storyDrafts = localStorage.getItem(DRAFTS_KEY);
-      // deleting all values
-      localStorage.clear();
-      // restoring saved values
-      if (cookieConsent)
-        localStorage.setItem(COOKIE_CONSENT_KEY, cookieConsent);
-      if (gameInstructions)
-        localStorage.setItem(GAME_INSTRUCTIONS_KEY, gameInstructions);
-      if (musicVolume) localStorage.setItem(VOLUME_KEY('music'), musicVolume);
-      if (voiceVolume) localStorage.setItem(VOLUME_KEY('voice'), voiceVolume);
-      if (ttsSpeed) localStorage.setItem(TTS_SPEED_KEY, ttsSpeed);
-      if (customThemes) localStorage.setItem(THEMES_KEY, customThemes);
-      if (customFont) localStorage.setItem(FONT_KEY, customFont);
-      if (customStyling) localStorage.setItem(STYLING_KEY, customStyling);
-      if (customScale) localStorage.setItem(SCALE_KEY, customScale);
-      if (storyDrafts) localStorage.setItem(DRAFTS_KEY, storyDrafts);
+      saveImortantAndClearCache();
       break;
     default:
       localStorage.removeItem(key);

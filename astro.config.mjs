@@ -23,6 +23,7 @@ export default defineConfig({
         manifest,
         injectRegister: 'auto',
         workbox: {
+          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
           runtimeCaching: [
             {
               handler: 'NetworkOnly',
@@ -99,6 +100,9 @@ export default defineConfig({
         'conexus.degenerousdao.com',
         'conexus-test.degenerousdao.com',
       ],
+    },
+    worker: {
+      format: 'es',
     },
   },
   devToolbar: {

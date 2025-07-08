@@ -65,6 +65,19 @@
 {#if loading}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {:else if user}
+  <section class="omnihub transparent-container flex-row flex-wrap">
+    <span class="opaque-container">
+      <p class="text-glowing">
+        Track what you’ve earned. Decide who you become. OmniHub holds the keys.
+      </p>
+      <a class="button-anchor button-glowing" href="/omnihub">
+        Enter the OmniHub
+      </a>
+      <p class="text-glowing">The archive of action. The forge of identity.</p>
+    </span>
+    <img src="/omnihub/quarchon.avif" alt="Potential - Quarchon" />
+  </section>
+
   {#if user.email && user.first_name && user.email_confirmed}
     <!-- REFERRAL CODES -->
     <section class="ref-codes-wrapper container fade-in">
@@ -202,6 +215,36 @@
 
     @include respond-up(small-desktop) {
       width: auto;
+    }
+
+    &.omnihub {
+      padding-bottom: 0;
+      background-image: url('/omnihub/anchor-bg.avif');
+      background-position: bottom;
+      background-size: contain;
+
+      span {
+        width: 100%;
+      }
+
+      img {
+        width: 20rem;
+      }
+
+      @include respond-up(small-desktop) {
+        span {
+          width: auto;
+        }
+      }
+
+      @include respond-up(large-desktop) {
+        margin-inline: 0;
+        padding-top: 2rem;
+
+        span {
+          margin-bottom: 1rem;
+        }
+      }
     }
 
     &.ref-codes-wrapper {

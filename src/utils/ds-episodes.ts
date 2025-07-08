@@ -1,0 +1,125 @@
+import { get } from 'svelte/store';
+
+import contract from '@lib/contract';
+import {
+  selectedPotential,
+  episodes,
+  loadingStatus,
+} from '@stores/omnihub.svelte';
+
+const fetchEpisodes = async (): Promise<StoryNode[][]> => {
+  loadingStatus.set('Loading Dischordian Saga Episodes...');
+  episodes.set([]);
+  let nftNumber: number = get(selectedPotential);
+  console.log('Selected Potential: ' + nftNumber);
+
+  // Season 1 episodes
+  const s1Nodes: StoryNode[] = [];
+  const s1Count = await (await contract('v1')).getStoryNodesCount();
+  for (let i = 0; i < s1Count; i++) {
+    loadingStatus.set(`Loading Season 1 Episode ${i + 1}...`);
+    console.log('Fetching Episode ' + (i + 1).toString());
+    let ipfs_uri = await (await contract('v1')).storyNodeMetadata(i);
+    if (ipfs_uri === 'ipfs://QmYutAynNJwoE88LxthGdA2iH8n2CGJygz8ZkoA1WACsNg') {
+      ipfs_uri = 'ipfs://QmP2c7vULMkbaChCkUiQ6PDsHLBt3WcSEYax4SSvugbZb1';
+    }
+    const slicedURI = ipfs_uri.match('ipfs://') ? ipfs_uri.slice(7) : ipfs_uri;
+    try {
+      console.log('ipfs URI: https://gateway.pinata.cloud/ipfs/' + slicedURI);
+      const json = await fetch(
+        `https://gateway.pinata.cloud/ipfs/${slicedURI}`,
+      );
+      s1Nodes.push(await json.json());
+    } catch (error) {
+      console.error(error);
+      console.log('ipfs URI: https://ipfs.io/ipfs/' + slicedURI);
+      const json = await fetch(`https://ipfs.io/ipfs/${slicedURI}`);
+      s1Nodes.push(await json.json());
+    }
+    const { endTimestamp } = await (await contract('v1')).storyNodes(i);
+    s1Nodes[s1Nodes.length - 1].endTimestamp = Number(endTimestamp);
+    s1Nodes[s1Nodes.length - 1].ended =
+      Number(endTimestamp) * 1000 < new Date().getTime();
+    s1Nodes[s1Nodes.length - 1].title = s1Nodes[s1Nodes.length - 1].title
+      ?.replace('The Dischordian Saga: ', '')
+      .split(' - Episode ')[0];
+    s1Nodes[s1Nodes.length - 1].votes_options.map((opt: { option: string }) => {
+      if (opt.option[2] == ' ') opt.option = opt.option.slice(2);
+    });
+    s1Nodes[s1Nodes.length - 1].season = 1;
+    s1Nodes[s1Nodes.length - 1].episode = s1Nodes.length;
+    const vote = await getVote(1, s1Nodes.length - 1, nftNumber);
+    if (vote > 0) s1Nodes[s1Nodes.length - 1].vote = vote;
+  }
+
+  // Season 2 episodes
+  const s2Nodes: StoryNode[] = [];
+  const s2Count = await (await contract()).getStoryNodesCount();
+  for (let i = 0; i < s2Count; i++) {
+    loadingStatus.set(`Loading Season 2 Episode ${i + 1}...`);
+    console.log('Fetching Episode ' + (i + 1).toString());
+    let ipfs_uri = await (await contract()).storyNodeMetadata(i);
+    const slicedURI = ipfs_uri.match('ipfs://') ? ipfs_uri.slice(7) : ipfs_uri;
+    try {
+      console.log('ipfs URI: https://gateway.pinata.cloud/ipfs/' + slicedURI);
+      const json = await fetch(
+        `https://gateway.pinata.cloud/ipfs/${slicedURI}`,
+      );
+      s2Nodes.push(await json.json());
+    } catch (error) {
+      console.error(error);
+      console.log('ipfs URI: https://ipfs.io/ipfs/' + slicedURI);
+      const json = await fetch(`https://ipfs.io/ipfs/${slicedURI}`);
+      s2Nodes.push(await json.json());
+    }
+    const { endTimestamp } = await (await contract()).storyNodes(i);
+    s2Nodes[s2Nodes.length - 1].endTimestamp = Number(endTimestamp);
+    s2Nodes[s2Nodes.length - 1].ended =
+      Number(endTimestamp) * 1000 < new Date().getTime();
+    s2Nodes[s2Nodes.length - 1].votes_options.map((opt: { option: string }) => {
+      if (opt.option[2] == ' ') opt.option = opt.option.slice(2);
+    });
+    s2Nodes[s2Nodes.length - 1].episode = s2Nodes.length;
+    const vote = await getVote(2, s2Nodes.length - 1, nftNumber);
+    if (vote > 0) s2Nodes[s2Nodes.length - 1].vote = vote;
+  }
+
+  const nodes: StoryNode[][] = [s1Nodes, s2Nodes];
+  return nodes;
+};
+
+const getVote = async (
+  season: number = 1,
+  episode: number = 1,
+  nft: number,
+) => {
+  const contractVersion = season === 1 ? 'v1' : 'v2';
+  const vote = await (
+    await contract(contractVersion)
+  ).getVoteOptionId(episode, nft);
+  console.log('Voted: ' + vote);
+  return Number(vote);
+};
+
+export const getVotingHistory = async () => {
+  try {
+    await fetchEpisodes()
+      .then((votes) =>
+        votes.map((season) => season.filter((episode) => episode.vote)),
+      )
+      .then((filteredVotes) => {
+        const memories = filteredVotes.map((season) =>
+          season.map((episode, index) => {
+            episode.memory = index + 1;
+            return episode;
+          }),
+        );
+        console.log(memories);
+        episodes.set(memories);
+      });
+    loadingStatus.set(null);
+  } catch (error) {
+    loadingStatus.set('Failed to check voting history, please try again...');
+    throw new Error('Failed to fetch votes');
+  }
+};

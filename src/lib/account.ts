@@ -304,10 +304,11 @@ class Account {
       } else {
         toastStore.show('Error signing out', 'error');
       }
+      ClearCache('auth'); // clear cache anyway
       return;
     }
 
-    // clear
+    // clear user from cache
     ClearCache('auth');
     window.location.reload();
   }

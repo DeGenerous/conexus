@@ -27,6 +27,10 @@ export const SUBSCRIPTIONSTATUS_CACHE_TTL = 1000 * 60 * 15; // 15 minutes
 export const REFERRAL_CODES_CACHE_KEY = 'referral_codes';
 export const REFERRAL_CODES_CACHE_TTL = 1000 * 60 * 15; // 15 minutes
 
+// Cache fetched Potentials
+export const POTENTIALS_CACHE_KEY = 'potentials';
+export const POTENTIALS_CACHE_TTL = 1000 * 60 * 15; // 15 minutes
+
 // CACHE ALL DATA TO PLAY 1 HOUR WITHOUT UNNECESSARY REQUESTS:
 // 1) user object
 // 2) all CATEGORIES inside SECTION (separate for every SECTION)
@@ -73,7 +77,7 @@ const viewKeys = [
   SECTION_CATEGORIES_KEY('Dischordian Saga'),
 ];
 
-function saveImortantAndClearCache() {
+function saveImportantAndClearCache() {
   // saving important values
   const cookieConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
   const gameInstructions = localStorage.getItem(GAME_INSTRUCTIONS_KEY);
@@ -143,7 +147,7 @@ export const ClearCache = (
       removeCacheKeys(viewKeys);
       break;
     case 'full':
-      saveImortantAndClearCache();
+      saveImportantAndClearCache();
       break;
     default:
       localStorage.removeItem(key);

@@ -2,6 +2,12 @@ import { get } from 'svelte/store';
 
 import { getCurrentUser } from './route-guard';
 import {
+  GetCache,
+  SetCache,
+  POTENTIALS_CACHE_KEY,
+  POTENTIALS_CACHE_TTL,
+} from '@constants/cache';
+import {
   type NFT,
   nftTile,
   potentials,
@@ -35,20 +41,32 @@ const getUserNFTs = async () => {
 };
 
 const getNFTs = async () => {
-  const nftNumbers: number[] = await getUserNFTs();
-
-  const metadata: any = [];
   let NFTs: NFT[] = [];
   let totalPower: number = 0;
-  for (let i in nftNumbers) {
-    const response = await fetch(
-      `https://api.degenerousdao.com/nft/data/${nftNumbers[i]}`,
-    );
-    metadata[i] = await response.json();
-    const potential = new nftTile(metadata, Number(i));
-    NFTs.push(potential);
-    totalPower += Number(potential.level);
+
+  const cachedPotentials = GetCache(POTENTIALS_CACHE_KEY) as NFT[];
+  if (cachedPotentials) {
+    NFTs = cachedPotentials;
+    cachedPotentials.map((nft) => {
+      totalPower += Number(nft.level);
+    });
+  } else {
+    const metadata: any = [];
+    const nftNumbers: number[] = await getUserNFTs();
+
+    for (let i in nftNumbers) {
+      const response = await fetch(
+        `https://api.degenerousdao.com/nft/data/${nftNumbers[i]}`,
+      );
+      metadata[i] = await response.json();
+      const potential = new nftTile(metadata, Number(i));
+      NFTs.push(potential);
+      totalPower += Number(potential.level);
+    }
+
+    SetCache(POTENTIALS_CACHE_KEY, NFTs, POTENTIALS_CACHE_TTL);
   }
+
   potentials.set(NFTs);
   potentialsPower.set(totalPower);
   console.log(get(potentials));

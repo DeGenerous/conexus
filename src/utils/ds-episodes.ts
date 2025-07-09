@@ -1,16 +1,13 @@
-import { get } from 'svelte/store';
-
 import contract from '@lib/contract';
-import {
-  selectedPotential,
-  episodes,
-  loadingStatus,
-} from '@stores/omnihub.svelte';
+import { GetCache, SELECTED_POTENTIAL_KEY } from '@constants/cache';
+import { type NFT, episodes, loadingStatus } from '@stores/omnihub.svelte';
 
 const fetchEpisodes = async (): Promise<StoryNode[][]> => {
   loadingStatus.set('Loading Dischordian Saga Episodes...');
   episodes.set([]);
-  let nftNumber: number = get(selectedPotential);
+
+  const cachedPotential = GetCache<NFT>(SELECTED_POTENTIAL_KEY);
+  let nftNumber: number = Number(cachedPotential?.id);
   console.log('Selected Potential: ' + nftNumber);
 
   // Season 1 episodes

@@ -1,9 +1,10 @@
 <script lang="ts">
   import {
-    potentials,
-    potentialsPower,
-    selectedPotential,
-  } from '@stores/omnihub.svelte';
+    SetCache,
+    SELECTED_POTENTIAL_KEY,
+    SELECTED_POTENTIAL_TTL,
+  } from '@constants/cache';
+  import { potentials, potentialsPower } from '@stores/omnihub.svelte';
 </script>
 
 <span class="collection-wrapper flex">
@@ -13,11 +14,16 @@
 
   <div class="tiles-collection">
     {#if $potentials.length}
-      {#each $potentials as { image, name }}
-        <span class="nft gray-tile" role="button" tabindex="0">
-          <img src={image} alt={name} />
+      {#each $potentials as nft}
+        <a
+          class="nft gray-tile"
+          href="/omnihub/portrait"
+          onclick={() =>
+            SetCache(SELECTED_POTENTIAL_KEY, nft, SELECTED_POTENTIAL_TTL)}
+        >
+          <img src={nft.image} alt={nft.name} />
           <h5>{name}</h5>
-        </span>
+        </a>
       {/each}
     {:else}
       {#each Array(5) as _}

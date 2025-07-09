@@ -18,7 +18,7 @@
   } = $props();
 
   onMount(() => {
-    const storedThemes = GetCache(THEMES_KEY) as CustomTheme[] | null;
+    const storedThemes = GetCache<Nullable<CustomTheme[]>>(THEMES_KEY);
     if (storedThemes && storedThemes.length) {
       $customThemes = $customThemes.slice(0, 9).concat(storedThemes);
     }

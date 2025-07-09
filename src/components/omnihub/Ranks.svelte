@@ -22,9 +22,9 @@
         </tr>
       </thead>
       <tbody>
-        {#each ranks as { rank, value }}
-          <tr class="rank transition" class:active-rank={rank === $userRank}>
-            <td>{rank}</td>
+        {#each ranks as { name, value }}
+          <tr class="rank transition" class:active-rank={name === $userRank}>
+            <td>{name}</td>
             <td class="number">{value}</td>
           </tr>
         {/each}

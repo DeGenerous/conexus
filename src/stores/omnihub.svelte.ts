@@ -21,7 +21,7 @@ export const potentials = writable<Array<NFT>>([]);
 export const potentialsPower = writable<number>(0);
 export const userRank = writable<Nullable<string>>(null);
 
-export const selectedPotential = writable<number>(115);
+export const selectedPotential = writable<Nullable<NFT>>(null);
 
 export const episodes = writable<StoryNode[][]>([]);
 export const loadingStatus = writable<Nullable<string>>(null);

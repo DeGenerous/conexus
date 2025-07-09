@@ -175,3 +175,8 @@ type StoryNode = {
   episode?: number;
   memory?: number;
 };
+
+type Attribute = {
+  name: string;
+  value: number;
+};

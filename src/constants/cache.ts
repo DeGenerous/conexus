@@ -31,6 +31,9 @@ export const REFERRAL_CODES_CACHE_TTL = 1000 * 60 * 15; // 15 minutes
 export const POTENTIALS_CACHE_KEY = 'potentials';
 export const POTENTIALS_CACHE_TTL = 1000 * 60 * 15; // 15 minutes
 
+export const SELECTED_POTENTIAL_KEY = 'selected_potential';
+export const SELECTED_POTENTIAL_TTL = 1000 * 60 * 15; // 15 minutes
+
 // CACHE ALL DATA TO PLAY 1 HOUR WITHOUT UNNECESSARY REQUESTS:
 // 1) user object
 // 2) all CATEGORIES inside SECTION (separate for every SECTION)

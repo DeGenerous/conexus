@@ -44,7 +44,7 @@ const getNFTs = async () => {
   let NFTs: NFT[] = [];
   let totalPower: number = 0;
 
-  const cachedPotentials = GetCache(POTENTIALS_CACHE_KEY) as NFT[];
+  const cachedPotentials = GetCache<NFT[]>(POTENTIALS_CACHE_KEY);
   if (cachedPotentials) {
     NFTs = cachedPotentials;
     cachedPotentials.map((nft) => {

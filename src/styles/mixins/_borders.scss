@@ -18,6 +18,10 @@
   border: 1px solid rgba(1, 0, 32, $opacity);
 }
 
+@mixin orange-border($opacity: 1) {
+  border: 1px solid rgba(255, 140, 0, $opacity);
+}
+
 @mixin green-border($opacity: 1) {
   border: 1px solid rgba(0, 185, 55, $opacity) !important;
 }

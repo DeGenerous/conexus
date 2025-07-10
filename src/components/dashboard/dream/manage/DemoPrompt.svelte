@@ -128,7 +128,7 @@
   @use '/src/styles/mixins' as *;
 
   .dream-container {
-    width: auto;
+    @include auto-width;
 
     .container {
       width: auto;
@@ -145,8 +145,6 @@
   }
 
   .demo-step {
-    max-width: min(95%, 100rem);
-
     .text {
       text-align: left;
       white-space: pre-wrap;

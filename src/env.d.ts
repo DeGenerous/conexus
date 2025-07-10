@@ -180,3 +180,10 @@ type Attribute = {
   name: string;
   value: number;
 };
+
+type OnchainAttribute = {
+  label: string;
+  type: 'string';
+  trait_type: string;
+  value: string;
+};

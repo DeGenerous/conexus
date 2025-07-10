@@ -32,7 +32,7 @@
     </table>
   {:else}
     <div class="container flex-row fade-in">
-      <h4 class="text-glowing">Your rank:</h4>
+      <h4>Your rank:</h4>
       <button class="orange-btn" onclick={() => (showTable = true)}>
         {$userRank}
       </button>
@@ -44,8 +44,7 @@
   @use '/src/styles/mixins' as *;
 
   .container {
-    width: auto;
-    max-width: min(95%, 80rem);
+    @include auto-width;
   }
 
   table {

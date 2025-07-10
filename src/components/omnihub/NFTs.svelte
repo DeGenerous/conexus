@@ -22,7 +22,7 @@
             SetCache(SELECTED_POTENTIAL_KEY, nft, SELECTED_POTENTIAL_TTL)}
         >
           <img src={nft.image} alt={nft.name} />
-          <h5>{name}</h5>
+          <h5>{nft.name}</h5>
         </a>
       {/each}
     {:else}

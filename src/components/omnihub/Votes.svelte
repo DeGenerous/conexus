@@ -30,13 +30,13 @@
     </ul>
   {/each}
 {:else if $loadingStatus}
-  <span class="flex-row">
+  <div class="container flex-row">
     <LoadingSVG />
-    <h4 class="text-glowing">{$loadingStatus}</h4>
-  </span>
+    <h5 class="text-glowing">{$loadingStatus}</h5>
+  </div>
 {:else}
   <button class="button-glowing blur" onclick={getVotingHistory}>
-    Fetch Votes
+    Check Voting History
   </button>
 {/if}
 
@@ -44,7 +44,6 @@
   @use '/src/styles/mixins' as *;
 
   .episodes {
-    width: auto;
-    max-width: min(95%, 80rem);
+    @include auto-width;
   }
 </style>

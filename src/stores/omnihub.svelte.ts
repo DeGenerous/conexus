@@ -7,7 +7,7 @@ export class nftTile {
   level: string;
   attributes: Object[];
   constructor(data: any, i: number) {
-    this.id = i;
+    this.id = data[i].name.replace(/^\D+/g, '');
     this.name = data[i].name;
     this.image = data[i].image;
     this.level = data[i].attributes[2].value;

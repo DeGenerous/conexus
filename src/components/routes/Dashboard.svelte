@@ -66,7 +66,7 @@
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {:else if user}
   <section class="omnihub transparent-container flex-row flex-wrap">
-    <span class="opaque-container">
+    <span class="opaque-container fade-in">
       <p class="text-glowing">
         Track what you’ve earned. Decide who you become. OmniHub holds the keys.
       </p>
@@ -75,7 +75,11 @@
       </a>
       <p class="text-glowing">The archive of action. The forge of identity.</p>
     </span>
-    <img src="/omnihub/quarchon.avif" alt="Potential - Quarchon" />
+    <img
+      class="fade-in"
+      src="/omnihub/quarchon.avif"
+      alt="Potential - Quarchon"
+    />
   </section>
 
   {#if user.email && user.first_name && user.email_confirmed}
@@ -211,7 +215,7 @@
   }
 
   section {
-    max-width: min(95%, 80rem);
+    @include auto-width;
 
     @include respond-up(small-desktop) {
       width: auto;

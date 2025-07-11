@@ -18,6 +18,7 @@
 
   let user: Nullable<User> = $state(null);
   let subStatus = $state<Nullable<SubscriptionStatus>>(null);
+  let noWalletDetected = $state<boolean>(false);
 
   let loading = $state<boolean>(true);
   let copySvgFocus = $state<Nullable<string>>(null);
@@ -28,6 +29,14 @@
       account.getReferralCodes();
       checkSubscription();
     }
+
+    // Show 'Connect Wallet' preview if there is no wallets connected
+    const { wallets } = user!;
+    const allWallets = wallets
+      ?.filter((wallet) => !wallet.faux)
+      .map(({ wallet }) => wallet);
+    if (!allWallets?.length) noWalletDetected = true;
+
     loading = false;
   });
 
@@ -67,13 +76,26 @@
 {:else if user}
   <section class="omnihub transparent-container flex-row flex-wrap">
     <span class="opaque-container fade-in">
-      <p class="text-glowing">
-        Track what you’ve earned. Decide who you become. OmniHub holds the keys.
-      </p>
-      <a class="button-anchor button-glowing" href="/omnihub">
-        Enter the OmniHub
-      </a>
-      <p class="text-glowing">The archive of action. The forge of identity.</p>
+      {#if noWalletDetected}
+        <h5>
+          Connect a wallet to activate OmniHub and access your assets, identity,
+          and tools.
+        </h5>
+        <button class="button-glowing" onclick={() => ($showProfile = true)}>
+          Reveal Profile Gate
+        </button>
+      {:else}
+        <p class="text-glowing">
+          Track what you’ve earned. Decide who you become. OmniHub holds the
+          keys.
+        </p>
+        <a class="button-anchor button-glowing" href="/omnihub">
+          Enter the OmniHub
+        </a>
+        <p class="text-glowing">
+          The archive of action. The forge of identity.
+        </p>
+      {/if}
     </span>
     <img
       class="fade-in"

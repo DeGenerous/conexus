@@ -16,19 +16,22 @@ import {
 } from '@stores/omnihub.svelte';
 import getRankByPotentials from '@constants/ranks';
 
-const getNftNumbers = async (wallet: string) => {
+const getNftNumbers = async (wallet: string): Promise<number[]> => {
   const json = await fetch(`https://api.degenerousdao.com/nft/owner/${wallet}`);
   const data = await json.json();
   const nftNumbers = data.ownedNfts?.map((nft: any) => +nft.tokenId);
   return nftNumbers;
 };
 
-const getUserNFTs = async () => {
+const getUserNFTs = async (): Promise<number[]> => {
   const user = await getCurrentUser();
   const { wallets } = user!;
   const allWallets = wallets
     ?.filter((wallet) => !wallet.faux)
     .map(({ wallet }) => wallet);
+
+  // Prevent further steps if there is no NFTs
+  if (!allWallets?.length) return [];
 
   const nftNumbers: number[] = (
     await Promise.all(allWallets!.map((wallet) => getNftNumbers(wallet)))
@@ -40,7 +43,8 @@ const getUserNFTs = async () => {
   return nftNumbers;
 };
 
-const getNFTs = async () => {
+// Returns TRUE if there is any NFTs detected, - FALSE otherwise
+const getNFTs = async (): Promise<boolean> => {
   let NFTs: NFT[] = [];
   let totalPower: number = 0;
 
@@ -53,6 +57,9 @@ const getNFTs = async () => {
   } else {
     const metadata: any = [];
     const nftNumbers: number[] = await getUserNFTs();
+
+    // Prevent further steps if there is no NFTs
+    if (!nftNumbers.length) return false;
 
     for (let i in nftNumbers) {
       const response = await fetch(
@@ -67,11 +74,16 @@ const getNFTs = async () => {
     SetCache(POTENTIALS_CACHE_KEY, NFTs, POTENTIALS_CACHE_TTL);
   }
 
-  potentials.set(NFTs);
-  potentialsPower.set(totalPower);
-  console.log(get(potentials));
+  if (NFTs.length) {
+    potentials.set(NFTs);
+    potentialsPower.set(totalPower);
+    userRank.set(getRankByPotentials(NFTs.length));
 
-  userRank.set(getRankByPotentials(NFTs.length));
+    console.log(get(potentials));
+    return true;
+  }
+
+  return false;
 };
 
 export default getNFTs;

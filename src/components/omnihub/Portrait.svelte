@@ -66,6 +66,7 @@
         <a
           class="button-anchor"
           href="https://magiceden.io/collections/ethereum/0xfa511d5c4cce10321e6e86793cc083213c36278e"
+          target="_blank"
         >
           <img src="/icons/magiceden.png" alt="Magic Eden marketplace" />
           Magic Eden
@@ -73,6 +74,7 @@
         <a
           class="button-anchor"
           href="https://opensea.io/item/ethereum/0xfa511d5c4cce10321e6e86793cc083213c36278e/{potential.id}"
+          target="_blank"
         >
           <img src="/icons/opensea.png" alt="OpenSea marketplace" />
           OpenSea

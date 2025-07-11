@@ -364,6 +364,22 @@
   }
 }
 
+.potential-tile {
+  @extend .tile;
+  @include purple(0.25);
+
+  img {
+    @include dark-border;
+  }
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(&:disabled) {
+    background-color: $royal-purple;
+    @include orange(1, text, bright);
+  }
+}
+
 // SMALL TILES
 
 .small-tile {

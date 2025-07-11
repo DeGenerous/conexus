@@ -14,15 +14,18 @@
     <div class="governance-hub">
       <img src="/omnihub/governance-hub.avif" alt="Galactic Governance Hub" />
 
-      <p class="flex text-glowing">
+      <p class="flex soft-white-txt">
         Chronicle the past. Shape what comes next. This is the seat of
         story-shaping power — where legends aren’t read, they’re written.
       </p>
 
       <span class="flex">
-        <p class="text-glowing">
-          Dischordian Saga votes: {$episodes.flat().length} / {$totalEpisodes}
-        </p>
+        <h5 class="text-glowing">
+          Dischordian Saga votes:
+          <strong>
+            {$episodes.flat().length} / {$totalEpisodes}
+          </strong>
+        </h5>
         <a
           class="button-anchor button-glowing blur"
           href="https://governance.degenerousdao.com/"
@@ -35,28 +38,35 @@
 
     <hr />
 
-    {#each $episodes as season, index}
-      <h3 class="text-glowing">⟡ Season {index + 1} ⟡</h3>
-      <ul class="flex">
-        {#each season as episode}
-          <hr class="mobile-only" />
-          <li class="flex">
-            <span class="flex">
-              <h5>Memory {episode.memory}</h5>
-              <h5>"{episode.title}"</h5>
-              <p>Season {episode.season} - Episode {episode.episode}</p>
-            </span>
-            <ol class="container default-ol">
-              {#each episode.votes_options as { option }, i}
-                <li class:selected-option={episode.vote == i + 1}>
-                  {option}
-                </li>
-              {/each}
-            </ol>
-          </li>
-        {/each}
-      </ul>
-    {/each}
+    {#if $episodes.flat().length}
+      {#each $episodes as season, index}
+        {#if season.length}
+          <h3 class="text-glowing">⟡ Season {index + 1} ⟡</h3>
+          <ul class="flex">
+            {#each season as episode}
+              <hr class="mobile-only" />
+              <li class="flex">
+                <span class="flex">
+                  <h5>Memory {episode.memory}</h5>
+                  <h5>"{episode.title}"</h5>
+                  <p>Season {episode.season} - Episode {episode.episode}</p>
+                </span>
+                <ol class="container default-ol">
+                  {#each episode.votes_options as { option }, i}
+                    <li class:text-glowing={episode.vote == i + 1}>
+                      {option}
+                    </li>
+                  {/each}
+                </ol>
+              </li>
+            {/each}
+          </ul>
+        {/if}
+      {/each}
+    {:else}
+      <h5>A silent node in the fabric of fate. No votes recorded.</h5>
+      <h5>This Potential awaits its moment to influence the path.</h5>
+    {/if}
   {:else if $loadingStatus}
     <span class="flex-row">
       <LoadingSVG />
@@ -94,6 +104,14 @@
         z-index: 10;
       }
 
+      span {
+        h5 {
+          strong {
+            @include bright;
+          }
+        }
+      }
+
       @include respond-up(tablet) {
         & > p {
           top: 15%;
@@ -127,10 +145,6 @@
 
           li {
             @include white-txt(0.5);
-
-            &.selected-option {
-              @include purple(1, text, bright);
-            }
           }
         }
 

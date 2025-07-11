@@ -8,7 +8,7 @@ import {
 } from '@stores/omnihub.svelte';
 
 const fetchEpisodes = async (): Promise<StoryNode[][]> => {
-  loadingStatus.set('Loading Dischordian Saga Episodes...');
+  loadingStatus.set('Loading Season 1 Episode 1...');
   episodes.set([]);
 
   const cachedPotential = GetCache<NFT>(SELECTED_POTENTIAL_KEY);

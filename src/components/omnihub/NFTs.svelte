@@ -38,7 +38,7 @@
       {#if $potentials.length}
         {#each $potentials as nft}
           <a
-            class="nft gray-tile"
+            class="potential-tile"
             href="/omnihub/portrait"
             onclick={() =>
               SetCache(SELECTED_POTENTIAL_KEY, nft, SELECTED_POTENTIAL_TTL)}
@@ -49,7 +49,7 @@
         {/each}
       {:else}
         {#each Array(5) as _}
-          <div class="loading-tile gray-tile">
+          <div class="loading-tile potential-tile">
             <div class="loading-animation"></div>
             <span class="loading-animation"></span>
           </div>
@@ -109,33 +109,37 @@
     border-radius: 0;
     justify-content: space-between;
     margin-bottom: -1rem;
+    animation: none;
+    background-color: $royal-purple;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     @include box-glow(inset, 0.25);
 
     div {
+      h4 {
+        @include orange(1, text);
+      }
+
       span {
         height: 2.5rem;
         min-width: 2.5rem;
         border-radius: 1rem;
         @include orange(1, text);
-        @include orange-border;
-        @include box-shadow(0 0 0.25rem $orange);
         @include dark-red(0.75);
+        @include box-shadow(soft, inset);
         @include font(h4);
       }
     }
 
     @include respond-up(tablet) {
       padding: 0;
-      animation: none;
       box-shadow: none;
-      -webkit-backdrop-filter: none;
-      backdrop-filter: none;
+      background-color: transparent;
 
       div {
-        padding: 1rem 1.5rem;
-        animation: dark-glowing 15s linear infinite;
-        -webkit-backdrop-filter: blur(1rem);
-        backdrop-filter: blur(1rem);
+        padding: 0.5rem 1.5rem;
+        animation: none;
+        background-color: $royal-purple;
         @include box-glow(inset, 0.25);
 
         &:first-of-type {
@@ -151,14 +155,6 @@
             display: inline;
           }
         }
-      }
-    }
-  }
-
-  .tiles-collection {
-    .nft {
-      img {
-        @include dark-border;
       }
     }
   }

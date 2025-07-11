@@ -2,7 +2,7 @@ import {
   GetCache,
   SetCache,
   ClearCache,
-  CATEGORY_CACHE_KEY,
+  CATEGORIES_KEY,
   TTL_DAY,
 } from '@constants/cache';
 import { api_error } from '@errors/index';
@@ -54,7 +54,7 @@ class AdminApp extends AdminAPI {
    * @returns {Promise<CategoryView[]>} A promise that resolves to an array of `CategoryView` objects.
    */
   async fetchCategories(): Promise<CategoryView[]> {
-    const cached = GetCache<CategoryView[]>(CATEGORY_CACHE_KEY);
+    const cached = GetCache<CategoryView[]>(CATEGORIES_KEY);
     if (cached) {
       return cached;
     }
@@ -70,7 +70,7 @@ class AdminApp extends AdminAPI {
       return [];
     }
 
-    SetCache(CATEGORY_CACHE_KEY, data, TTL_DAY);
+    SetCache(CATEGORIES_KEY, data, TTL_DAY);
 
     return data;
   }
@@ -313,7 +313,7 @@ class AdminApp extends AdminAPI {
       return -1;
     }
 
-    ClearCache(CATEGORY_CACHE_KEY);
+    ClearCache(CATEGORIES_KEY);
 
     toastStore.show(`Created new category - ID: ${data}`, 'info');
 

@@ -1,7 +1,7 @@
 import {
-  GENRE_CACHE_KEY,
+  GENRES_KEY,
   TTL_MONTH,
-  SECTION_CACHE_KEY,
+  SECTIONS_KEY,
   TTL_DAY,
   GetCache,
   SetCache,
@@ -28,7 +28,7 @@ class CoNexusApp extends ViewAPI {
 
   async getSections(): Promise<Section[]> {
     // Return cached data if valid
-    const cachedData = GetCache<Section[]>(SECTION_CACHE_KEY);
+    const cachedData = GetCache<Section[]>(SECTIONS_KEY);
     if (cachedData) {
       return cachedData;
     }
@@ -46,13 +46,13 @@ class CoNexusApp extends ViewAPI {
     }
 
     // Store in localStorage
-    SetCache(SECTION_CACHE_KEY, data, TTL_DAY);
+    SetCache(SECTIONS_KEY, data, TTL_DAY);
 
     return data;
   }
 
   async getGenres(): Promise<Genre[]> {
-    const cachedData = GetCache<Genre[]>(GENRE_CACHE_KEY);
+    const cachedData = GetCache<Genre[]>(GENRES_KEY);
     if (cachedData) {
       return cachedData;
     }
@@ -69,7 +69,7 @@ class CoNexusApp extends ViewAPI {
       return [];
     }
 
-    SetCache(GENRE_CACHE_KEY, data, TTL_MONTH);
+    SetCache(GENRES_KEY, data, TTL_MONTH);
 
     availableGenres.splice(0, availableGenres.length, ...data); // Update state
 

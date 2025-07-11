@@ -31,7 +31,7 @@ export const CURRENT_DRAFT_KEY = 'current_draft'; // id of the open draft
 
 export const COOKIE_CONSENT_KEY = 'cookie_consent';
 
-export const GENRE_CACHE_KEY = 'genres';
+export const GENRES_KEY = 'genres';
 
 /* -------------------------------------------------------------------- */
 // 1 DAY
@@ -41,10 +41,10 @@ export const GENRE_CACHE_KEY = 'genres';
 export const ALL_TOPICS_KEY = 'all_topics';
 
 // Cache all sections
-export const SECTION_CACHE_KEY = 'sections';
+export const SECTIONS_KEY = 'sections';
 
 // Cache all categories from all sections together
-export const CATEGORY_CACHE_KEY = 'categories';
+export const CATEGORIES_KEY = 'categories';
 
 /* -------------------------------------------------------------------- */
 // 1 HOUR
@@ -55,7 +55,7 @@ export const CATEGORY_CACHE_KEY = 'categories';
 // 2) all CATEGORIES inside SECTION (separate for every SECTION)
 // 3) all TOPICS inside CATEGORY (separate for every CATEGORY)
 
-export const USER_CACHE_KEY = 'user';
+export const USER_KEY = 'user';
 
 export const SECTION_CATEGORIES_KEY = (section: string): string =>
   `section_categories[${section}]`;
@@ -68,30 +68,36 @@ export const CATEGORY_TOPICS_KEY = (category: string): string =>
 /* -------------------------------------------------------------------- */
 
 // Cache subscription status & referral codes
-export const SUBSCRIPTIONSTATUS_CACHE_KEY = 'subscription_status';
-export const REFERRAL_CODES_CACHE_KEY = 'referral_codes';
+export const SUBSCRIPTION_STATUS_KEY = 'subscription_status';
+export const REFERRAL_CODES_KEY = 'referral_codes';
 
 // Cache OmniHub data
-export const POTENTIALS_CACHE_KEY = 'potentials';
+export const POTENTIALS_KEY = 'potentials';
 export const SELECTED_POTENTIAL_KEY = 'selected_potential';
 
 /* -------------------------------------------------------------------- */
 
-const authKeys = [
-  USER_CACHE_KEY,
-  SUBSCRIPTIONSTATUS_CACHE_KEY,
-  REFERRAL_CODES_CACHE_KEY,
-];
+const authKeys = [USER_KEY, SUBSCRIPTION_STATUS_KEY, REFERRAL_CODES_KEY];
 
 const viewKeys = [
-  SECTION_CACHE_KEY,
-  CATEGORY_CACHE_KEY,
-  GENRE_CACHE_KEY,
+  SECTIONS_KEY,
+  CATEGORIES_KEY,
+  GENRES_KEY,
   ALL_TOPICS_KEY,
   SECTION_CATEGORIES_KEY('Community Picks'),
   SECTION_CATEGORIES_KEY('Collabs'),
   SECTION_CATEGORIES_KEY('Dischordian Saga'),
 ];
+
+function getAllDrafts() {
+  const draftsIndex = GetCache<DraftIndexEntry[]>(DRAFTS_INDEX_KEY);
+  if (!draftsIndex) return;
+  return draftsIndex.map(({ id }) => GetCache<DraftPayload>(DRAFT_KEY(id))!);
+}
+
+function restoreAllDrafts(drafts: DraftPayload[]) {
+  drafts.map((draft: DraftPayload) => SetCache(DRAFT_KEY(draft.id), draft));
+}
 
 function saveImportantAndClearCache() {
   // saving important values
@@ -104,7 +110,10 @@ function saveImportantAndClearCache() {
   const customFont = localStorage.getItem(FONT_KEY);
   const customStyling = localStorage.getItem(STYLING_KEY);
   const customScale = localStorage.getItem(SCALE_KEY);
-  const user = localStorage.getItem(USER_CACHE_KEY); // save user object too
+  const draftsIndex = localStorage.getItem(DRAFTS_INDEX_KEY);
+  const currentDraft = localStorage.getItem(CURRENT_DRAFT_KEY);
+  const allDrafts = getAllDrafts();
+  const user = localStorage.getItem(USER_KEY); // save user object too
   // deleting all values
   localStorage.clear();
   // restoring saved values
@@ -118,7 +127,10 @@ function saveImportantAndClearCache() {
   if (customFont) localStorage.setItem(FONT_KEY, customFont);
   if (customStyling) localStorage.setItem(STYLING_KEY, customStyling);
   if (customScale) localStorage.setItem(SCALE_KEY, customScale);
-  if (user) localStorage.setItem(USER_CACHE_KEY, user);
+  if (draftsIndex) localStorage.setItem(DRAFTS_INDEX_KEY, draftsIndex);
+  if (currentDraft) localStorage.setItem(CURRENT_DRAFT_KEY, currentDraft);
+  if (allDrafts?.length) restoreAllDrafts(allDrafts);
+  if (user) localStorage.setItem(USER_KEY, user);
 }
 
 export const SetCache = <T>(key: string, value: T, ttl: number = TTL_YEAR) => {

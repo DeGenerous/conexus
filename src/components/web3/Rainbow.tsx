@@ -15,7 +15,7 @@ import { createSiweMessage } from 'viem/siwe';
 import { WagmiProvider } from 'wagmi';
 import { mainnet, base } from 'wagmi/chains';
 
-import { SetCache, USER_CACHE_KEY, TTL_HOUR } from '@constants/cache';
+import { SetCache, USER_KEY, TTL_HOUR } from '@constants/cache';
 import { assetsURL } from '@constants/media';
 import { authenticated } from '@stores/account.svelte';
 import { AccountAPI, AuthAPI } from '@service/routes';
@@ -129,7 +129,7 @@ const Web3Provider: React.FC<Web3Props> = ({ linking = false, children }) => {
             return false;
           }
 
-          SetCache(USER_CACHE_KEY, data.user, TTL_HOUR);
+          SetCache(USER_KEY, data.user, TTL_HOUR);
 
           authenticated.set(data.user);
 

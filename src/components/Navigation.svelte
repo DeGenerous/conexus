@@ -67,6 +67,7 @@
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.repeat) return;
+    if (document.activeElement?.tagName !== 'BODY') return;
     if (event.key === 'f') game.fullscreen = !game.fullscreen;
   };
 </script>

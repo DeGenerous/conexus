@@ -4,7 +4,7 @@ import { getCurrentUser } from './route-guard';
 import {
   GetCache,
   SetCache,
-  POTENTIALS_CACHE_KEY,
+  POTENTIALS_KEY,
   TTL_SHORT,
 } from '@constants/cache';
 import {
@@ -48,7 +48,7 @@ const getNFTs = async (): Promise<boolean> => {
   let NFTs: NFT[] = [];
   let totalPower: number = 0;
 
-  const cachedPotentials = GetCache<NFT[]>(POTENTIALS_CACHE_KEY);
+  const cachedPotentials = GetCache<NFT[]>(POTENTIALS_KEY);
   if (cachedPotentials) {
     NFTs = cachedPotentials;
     cachedPotentials.map((nft) => {
@@ -71,7 +71,7 @@ const getNFTs = async (): Promise<boolean> => {
       totalPower += Number(potential.level);
     }
 
-    SetCache(POTENTIALS_CACHE_KEY, NFTs, TTL_SHORT);
+    SetCache(POTENTIALS_KEY, NFTs, TTL_SHORT);
   }
 
   if (NFTs.length) {

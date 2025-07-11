@@ -5,7 +5,7 @@
     GetCache,
     SetCache,
     COOKIE_CONSENT_KEY,
-    COOKIE_CONSENT_TTL,
+    TTL_MONTH,
   } from '@constants/cache';
 
   let showBanner = $state(false);
@@ -24,11 +24,7 @@
   function acceptCookies(fullConsent) {
     analyticsEnabled = fullConsent;
 
-    SetCache(
-      COOKIE_CONSENT_KEY,
-      fullConsent ? 'full' : 'essential',
-      COOKIE_CONSENT_TTL,
-    );
+    SetCache(COOKIE_CONSENT_KEY, fullConsent ? 'full' : 'essential', TTL_MONTH);
 
     if (fullConsent) {
       loadAnalytics();

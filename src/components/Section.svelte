@@ -7,7 +7,7 @@
     SetCache,
     GetCache,
     SECTION_CATEGORIES_KEY,
-    SECTION_CATEGORIES_TTL,
+    TTL_HOUR,
   } from '@constants/cache';
 
   import Category from '@components/Category.svelte';
@@ -51,7 +51,7 @@
             cat.topics = orderedTopics;
             return cat;
           }),
-          SECTION_CATEGORIES_TTL,
+          TTL_HOUR,
         );
         loading = false;
       }, 600); // Simulate loading delay

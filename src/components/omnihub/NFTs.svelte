@@ -4,7 +4,7 @@
   import {
     SetCache,
     SELECTED_POTENTIAL_KEY,
-    SELECTED_POTENTIAL_TTL,
+    TTL_SHORT,
   } from '@constants/cache';
   import getNFTs from '@utils/potentials';
   import { potentials, potentialsPower } from '@stores/omnihub.svelte';
@@ -40,8 +40,7 @@
           <a
             class="potential-tile"
             href="/omnihub/portrait"
-            onclick={() =>
-              SetCache(SELECTED_POTENTIAL_KEY, nft, SELECTED_POTENTIAL_TTL)}
+            onclick={() => SetCache(SELECTED_POTENTIAL_KEY, nft, TTL_SHORT)}
           >
             <img src={nft.image} alt={nft.name} />
             <h5>{nft.name}</h5>

@@ -5,7 +5,7 @@ import {
   GetCache,
   SetCache,
   POTENTIALS_CACHE_KEY,
-  POTENTIALS_CACHE_TTL,
+  TTL_SHORT,
 } from '@constants/cache';
 import {
   type NFT,
@@ -71,7 +71,7 @@ const getNFTs = async (): Promise<boolean> => {
       totalPower += Number(potential.level);
     }
 
-    SetCache(POTENTIALS_CACHE_KEY, NFTs, POTENTIALS_CACHE_TTL);
+    SetCache(POTENTIALS_CACHE_KEY, NFTs, TTL_SHORT);
   }
 
   if (NFTs.length) {

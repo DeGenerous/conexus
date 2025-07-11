@@ -1,8 +1,8 @@
 import {
   GENRE_CACHE_KEY,
-  GENRE_CACHE_TTL,
+  TTL_MONTH,
   SECTION_CACHE_KEY,
-  SECTION_CACHE_TTL,
+  TTL_DAY,
   GetCache,
   SetCache,
 } from '@constants/cache';
@@ -46,7 +46,7 @@ class CoNexusApp extends ViewAPI {
     }
 
     // Store in localStorage
-    SetCache(SECTION_CACHE_KEY, data, SECTION_CACHE_TTL);
+    SetCache(SECTION_CACHE_KEY, data, TTL_DAY);
 
     return data;
   }
@@ -69,7 +69,7 @@ class CoNexusApp extends ViewAPI {
       return [];
     }
 
-    SetCache(GENRE_CACHE_KEY, data, GENRE_CACHE_TTL);
+    SetCache(GENRE_CACHE_KEY, data, TTL_MONTH);
 
     availableGenres.splice(0, availableGenres.length, ...data); // Update state
 

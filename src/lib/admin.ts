@@ -3,7 +3,7 @@ import {
   SetCache,
   ClearCache,
   CATEGORY_CACHE_KEY,
-  CATEGORY_CACHE_TTL,
+  TTL_DAY,
 } from '@constants/cache';
 import { api_error } from '@errors/index';
 import { AdminAPI } from '@service/routes';
@@ -70,7 +70,7 @@ class AdminApp extends AdminAPI {
       return [];
     }
 
-    SetCache(CATEGORY_CACHE_KEY, data, CATEGORY_CACHE_TTL);
+    SetCache(CATEGORY_CACHE_KEY, data, TTL_DAY);
 
     return data;
   }

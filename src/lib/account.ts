@@ -1,10 +1,9 @@
 import {
   USER_CACHE_KEY,
-  USER_CACHE_TTL,
+  TTL_HOUR,
   REFERRAL_CODES_CACHE_KEY,
-  REFERRAL_CODES_CACHE_TTL,
+  TTL_SHORT,
   SUBSCRIPTIONSTATUS_CACHE_KEY,
-  SUBSCRIPTIONSTATUS_CACHE_TTL,
   ClearCache,
   GetCache,
   SetCache,
@@ -43,7 +42,7 @@ class Account {
     }
 
     // Store user data in localStorage with timestamp
-    SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
+    SetCache(USER_CACHE_KEY, data.user, TTL_HOUR);
     window.location.reload();
   }
 
@@ -60,7 +59,7 @@ class Account {
     }
 
     // Store user data in localStorage with timestamp
-    SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
+    SetCache(USER_CACHE_KEY, data.user, TTL_HOUR);
 
     authenticated.set(data.user);
   }
@@ -124,7 +123,7 @@ class Account {
       SetCache<SubscriptionStatus>(
         SUBSCRIPTIONSTATUS_CACHE_KEY,
         cachedData,
-        SUBSCRIPTIONSTATUS_CACHE_TTL,
+        TTL_SHORT,
       );
     }
 
@@ -151,7 +150,7 @@ class Account {
       SetCache<SubscriptionStatus>(
         SUBSCRIPTIONSTATUS_CACHE_KEY,
         cachedData,
-        SUBSCRIPTIONSTATUS_CACHE_TTL,
+        TTL_SHORT,
       );
     }
 
@@ -189,7 +188,7 @@ class Account {
     }
 
     // Store in localStorage with expiry timestamp
-    SetCache(SUBSCRIPTIONSTATUS_CACHE_KEY, data, SUBSCRIPTIONSTATUS_CACHE_TTL);
+    SetCache(SUBSCRIPTIONSTATUS_CACHE_KEY, data, TTL_SHORT);
 
     return data;
   }
@@ -252,7 +251,7 @@ class Account {
     }
 
     // Store user data in localStorage with timestamp
-    SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
+    SetCache(USER_CACHE_KEY, data.user, TTL_HOUR);
 
     authenticated.set(data.user);
   }
@@ -270,7 +269,7 @@ class Account {
     }
 
     // Store user data in localStorage with timestamp
-    SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
+    SetCache(USER_CACHE_KEY, data.user, TTL_HOUR);
 
     authenticated.set(data.user);
 
@@ -326,7 +325,7 @@ class Account {
     }
 
     // update user data
-    SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
+    SetCache(USER_CACHE_KEY, data.user, TTL_HOUR);
 
     authenticated.set(data.user);
   }
@@ -366,7 +365,7 @@ class Account {
     }
 
     // Store in localStorage with expiry timestamp
-    SetCache(REFERRAL_CODES_CACHE_KEY, data.codes, REFERRAL_CODES_CACHE_TTL);
+    SetCache(REFERRAL_CODES_CACHE_KEY, data.codes, TTL_SHORT);
 
     referralCodes.set(data.codes);
   }

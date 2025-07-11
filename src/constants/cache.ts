@@ -1,56 +1,17 @@
-export const ONE_YEAR_TTL = 1000 * 60 * 60 * 24 * 365; // 1 year
+export const TTL_SHORT = 1000 * 60 * 15; // 15 minutes
+export const TTL_MEDIUM = 1000 * 60 * 30; // 30 minutes
+export const TTL_HOUR = 1000 * 60 * 60; // 1 hour
+export const TTL_DAY = TTL_HOUR * 24; // 1 day
+export const TTL_MONTH = TTL_DAY * 30; // 1 month
+export const TTL_YEAR = TTL_DAY * 365; // 1 year
+
+/* -------------------------------------------------------------------- */
+// 1 YEAR
+/* -------------------------------------------------------------------- */
 
 export const IOS_KEY = 'ios_device'; // to hide some unsupported UI
 
-export const COOKIE_CONSENT_KEY = 'cookie_consent';
-export const COOKIE_CONSENT_TTL = 1000 * 60 * 60 * 24 * 30; // 1 month
-
-export const GENRE_CACHE_KEY = 'genres';
-export const GENRE_CACHE_TTL = 1000 * 60 * 60 * 24 * 30; // 1 month
-
-// Cache all topics for /dashboard/manage to switch between them with arrows
-export const ALL_TOPICS_KEY = 'all_topics';
-export const ALL_TOPICS_TTL = 1000 * 60 * 60 * 24; // 1 day
-
-// Cache all sections
-export const SECTION_CACHE_KEY = 'sections';
-export const SECTION_CACHE_TTL = 1000 * 60 * 60 * 24; // 1 day
-
-// Cache all categories from all sections together
-export const CATEGORY_CACHE_KEY = 'categories';
-export const CATEGORY_CACHE_TTL = 1000 * 60 * 60 * 24; // 1 day
-
-// Cache subscription status & referral codes
-export const SUBSCRIPTIONSTATUS_CACHE_KEY = 'subscription_status';
-export const SUBSCRIPTIONSTATUS_CACHE_TTL = 1000 * 60 * 15; // 15 minutes
-
-export const REFERRAL_CODES_CACHE_KEY = 'referral_codes';
-export const REFERRAL_CODES_CACHE_TTL = 1000 * 60 * 15; // 15 minutes
-
-// Cache fetched Potentials
-export const POTENTIALS_CACHE_KEY = 'potentials';
-export const POTENTIALS_CACHE_TTL = 1000 * 60 * 15; // 15 minutes
-
-export const SELECTED_POTENTIAL_KEY = 'selected_potential';
-export const SELECTED_POTENTIAL_TTL = 1000 * 60 * 15; // 15 minutes
-
-// CACHE ALL DATA TO PLAY 1 HOUR WITHOUT UNNECESSARY REQUESTS:
-// 1) user object
-// 2) all CATEGORIES inside SECTION (separate for every SECTION)
-// 3) all TOPICS inside CATEGORY (separate for every CATEGORY)
-
-export const USER_CACHE_KEY = 'user';
-export const USER_CACHE_TTL = 1000 * 60 * 60 * 1; // 1 hour
-
-export const SECTION_CATEGORIES_KEY = (section: string): string =>
-  `section_categories[${section}]`;
-export const SECTION_CATEGORIES_TTL = 1000 * 60 * 60 * 1; // 1 hour
-
-export const CATEGORY_TOPICS_KEY = (category: string): string =>
-  `category_topics[${category}]`;
-export const CATEGORY_TOPICS_TTL = 1000 * 60 * 60 * 1; // 1 hour
-
-// Step customization (use 1 year TTL)
+// Step customization
 export const GAME_INSTRUCTIONS_KEY = 'show_instructions';
 export const THEMES_KEY = 'themes';
 export const FONT_KEY = 'font';
@@ -63,6 +24,58 @@ export const TTS_SPEED_KEY = 'tts_speed';
 export const DRAFTS_INDEX_KEY = 'draft_index'; // stringified DraftIndexEntry[]
 export const DRAFT_KEY = (id: string) => `draft:${id}`;
 export const CURRENT_DRAFT_KEY = 'current_draft'; // id of the open draft
+
+/* -------------------------------------------------------------------- */
+// 1 MONTH
+/* -------------------------------------------------------------------- */
+
+export const COOKIE_CONSENT_KEY = 'cookie_consent';
+
+export const GENRE_CACHE_KEY = 'genres';
+
+/* -------------------------------------------------------------------- */
+// 1 DAY
+/* -------------------------------------------------------------------- */
+
+// Cache all topics for /dashboard/manage to switch between them with arrows
+export const ALL_TOPICS_KEY = 'all_topics';
+
+// Cache all sections
+export const SECTION_CACHE_KEY = 'sections';
+
+// Cache all categories from all sections together
+export const CATEGORY_CACHE_KEY = 'categories';
+
+/* -------------------------------------------------------------------- */
+// 1 HOUR
+/* -------------------------------------------------------------------- */
+
+// CACHE ALL DATA TO PLAY 1 HOUR WITHOUT UNNECESSARY REQUESTS:
+// 1) user object
+// 2) all CATEGORIES inside SECTION (separate for every SECTION)
+// 3) all TOPICS inside CATEGORY (separate for every CATEGORY)
+
+export const USER_CACHE_KEY = 'user';
+
+export const SECTION_CATEGORIES_KEY = (section: string): string =>
+  `section_categories[${section}]`;
+
+export const CATEGORY_TOPICS_KEY = (category: string): string =>
+  `category_topics[${category}]`;
+
+/* -------------------------------------------------------------------- */
+// 15 MINUTES
+/* -------------------------------------------------------------------- */
+
+// Cache subscription status & referral codes
+export const SUBSCRIPTIONSTATUS_CACHE_KEY = 'subscription_status';
+export const REFERRAL_CODES_CACHE_KEY = 'referral_codes';
+
+// Cache OmniHub data
+export const POTENTIALS_CACHE_KEY = 'potentials';
+export const SELECTED_POTENTIAL_KEY = 'selected_potential';
+
+/* -------------------------------------------------------------------- */
 
 const authKeys = [
   USER_CACHE_KEY,
@@ -108,11 +121,7 @@ function saveImportantAndClearCache() {
   if (user) localStorage.setItem(USER_CACHE_KEY, user);
 }
 
-export const SetCache = <T>(
-  key: string,
-  value: T,
-  ttl: number = 1000 * 60 * 60 * 24 * 365,
-) => {
+export const SetCache = <T>(key: string, value: T, ttl: number = TTL_YEAR) => {
   localStorage.setItem(
     key,
     JSON.stringify({

@@ -61,7 +61,7 @@
         </ul>
       </div>
 
-      <span class="flex-row">
+      <span class="transparent-container">
         <h5>View on Marketplace:</h5>
         <a
           class="button-anchor"
@@ -138,7 +138,7 @@
           height: 2.5rem;
           min-width: 2.5rem;
           border-radius: 1rem;
-          @include orange(1, text, bright);
+          @include orange(1, text);
           @include dark-red(0.75);
           @include font(h4);
         }
@@ -210,6 +210,12 @@
       }
 
       & > span {
+        width: 100%;
+        @include box-shadow(soft, inset);
+
+        @include respond-up(tablet) {
+          flex-direction: row;
+        }
       }
     }
   }

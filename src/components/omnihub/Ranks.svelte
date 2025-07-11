@@ -33,7 +33,18 @@
   {:else}
     <div class="container flex-row fade-in">
       <h4>Your rank:</h4>
-      <button class="orange-btn" onclick={() => (showTable = true)}>
+      <button
+        class="orange-btn"
+        onclick={() => {
+          showTable = true;
+          setTimeout(() =>
+            window.scrollTo({
+              top: window.innerHeight,
+              behavior: 'smooth',
+            }),
+          );
+        }}
+      >
         {$userRank}
       </button>
     </div>
@@ -61,10 +72,14 @@
 
     th,
     td {
-      padding: 0.5rem 1.5rem;
+      padding-block: 0.5rem;
       border-width: 2px !important;
       cursor: default;
       @include dark-border;
+
+      @include respond-up(tablet) {
+        padding: 0.5rem 1.5rem;
+      }
     }
 
     th {
@@ -84,16 +99,23 @@
     }
 
     td {
-      width: 100%;
       padding: 0.5rem 1.5rem;
       border-left: none;
       border-bottom: none;
       @include font(h5);
 
       &.number {
-        width: auto;
+        width: 100%;
         border-right: none !important;
         @include font(h4);
+      }
+
+      @include respond-up(tablet) {
+        width: 100%;
+
+        &.number {
+          width: auto;
+        }
       }
     }
 

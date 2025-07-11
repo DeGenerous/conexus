@@ -100,7 +100,7 @@
   <Votes />
 {:else}
   <div class="container fade-in">
-    <h5>No Potential found. Go back and choose one.</h5>
+    <h5>No Potential found. Head back to choose one.</h5>
     <a class="button-anchor" href="/omnihub"> Go Back </a>
     <h5>Re-sync with a Potential to unlock the Portrait Core.</h5>
   </div>
@@ -213,7 +213,7 @@
 
       & > span {
         width: 100%;
-        @include box-shadow(soft, inset);
+        @include box-shadow(deep, inset);
 
         @include respond-up(tablet) {
           flex-direction: row;

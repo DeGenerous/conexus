@@ -621,6 +621,14 @@ html {
   }
 }
 
+.mobile-only {
+  display: block;
+
+  @include respond-up(tablet) {
+    display: none;
+  }
+}
+
 // For screen readers
 .sr-only {
   clip: rect(1px, 1px, 1px, 1px);

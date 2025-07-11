@@ -1,6 +1,11 @@
 import contract from '@lib/contract';
 import { GetCache, SELECTED_POTENTIAL_KEY } from '@constants/cache';
-import { type NFT, episodes, loadingStatus } from '@stores/omnihub.svelte';
+import {
+  type NFT,
+  episodes,
+  totalEpisodes,
+  loadingStatus,
+} from '@stores/omnihub.svelte';
 
 const fetchEpisodes = async (): Promise<StoryNode[][]> => {
   loadingStatus.set('Loading Dischordian Saga Episodes...');
@@ -82,6 +87,7 @@ const fetchEpisodes = async (): Promise<StoryNode[][]> => {
   }
 
   const nodes: StoryNode[][] = [s1Nodes, s2Nodes];
+  totalEpisodes.set(s1Count + s2Count);
   return nodes;
 };
 
@@ -94,7 +100,6 @@ const getVote = async (
   const vote = await (
     await contract(contractVersion)
   ).getVoteOptionId(episode, nft);
-  console.log('Voted: ' + vote);
   return Number(vote);
 };
 
@@ -105,12 +110,19 @@ export const getVotingHistory = async () => {
         votes.map((season) => season.filter((episode) => episode.vote)),
       )
       .then((filteredVotes) => {
-        const memories = filteredVotes.map((season) =>
-          season.map((episode, index) => {
-            episode.memory = index + 1;
-            return episode;
-          }),
-        );
+        // Assign global memory index
+        const flatEpisodes = filteredVotes.flat();
+        flatEpisodes.map((episode, index) => {
+          episode.memory = index + 1;
+        });
+
+        // Re-group episodes back into the same season structure
+        let offset = 0;
+        const memories = filteredVotes.map((season) => {
+          const updatedSeason = season.map(() => flatEpisodes[offset++]);
+          return updatedSeason;
+        });
+
         console.log(memories);
         episodes.set(memories);
       });

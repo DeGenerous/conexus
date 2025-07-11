@@ -24,4 +24,5 @@ export const userRank = writable<Nullable<string>>(null);
 export const selectedPotential = writable<Nullable<NFT>>(null);
 
 export const episodes = writable<StoryNode[][]>([]);
+export const totalEpisodes = writable<number>(0);
 export const loadingStatus = writable<Nullable<string>>(null);

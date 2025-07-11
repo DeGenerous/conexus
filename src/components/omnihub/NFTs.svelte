@@ -10,6 +10,8 @@
   import { potentials, potentialsPower } from '@stores/omnihub.svelte';
   import { showProfile } from '@stores/modal.svelte';
 
+  import Ranks from '@components/omnihub/Ranks.svelte';
+
   let nftsDetected = $state<boolean>(true);
 
   onMount(async () => {
@@ -55,6 +57,8 @@
       {/if}
     </div>
   </span>
+
+  <Ranks />
 {:else}
   <section class="container">
     <p class="validation">No Potentials Detected Across Connected Wallets</p>
@@ -114,6 +118,7 @@
         border-radius: 1rem;
         @include orange(1, text);
         @include orange-border;
+        @include box-shadow(0 0 0.25rem $orange);
         @include dark-red(0.75);
         @include font(h4);
       }

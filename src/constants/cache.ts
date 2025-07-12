@@ -6,10 +6,12 @@ export const TTL_MONTH = TTL_DAY * 30; // 1 month
 export const TTL_YEAR = TTL_DAY * 365; // 1 year
 
 /* -------------------------------------------------------------------- */
-// 1 YEAR
+// 1 YEAR - default value for SetCache()
 /* -------------------------------------------------------------------- */
 
 export const IOS_KEY = 'ios_device'; // to hide some unsupported UI
+
+export const ONBOARDING_KEY = 'onboarded';
 
 // Step customization
 export const GAME_INSTRUCTIONS_KEY = 'show_instructions';
@@ -20,7 +22,7 @@ export const SCALE_KEY = 'scale';
 export const VOLUME_KEY = (type: 'voice' | 'music'): string => `${type}_volume`;
 export const TTS_SPEED_KEY = 'tts_speed';
 
-// Story drafts (use 1 year TTL)
+// Story drafts
 export const DRAFTS_INDEX_KEY = 'draft_index'; // stringified DraftIndexEntry[]
 export const DRAFT_KEY = (id: string) => `draft:${id}`;
 export const CURRENT_DRAFT_KEY = 'current_draft'; // id of the open draft

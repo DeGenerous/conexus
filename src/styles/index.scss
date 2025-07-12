@@ -670,3 +670,9 @@ html {
     pointer-events: none;
   }
 }
+
+// Prevent scroll
+.no-scroll {
+  overflow: hidden;
+  overscroll-behavior: none; // iOS/Android: blocks pull‑to‑refresh bounce
+}

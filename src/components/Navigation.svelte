@@ -1,16 +1,22 @@
 <script lang="ts">
+  import tippy, { type Instance } from 'tippy.js';
+
   // import CoNexusApp from '@lib/view';
   import { prevStory, nextStory } from '@stores/navigation.svelte';
   import { story, game } from '@stores/conexus.svelte';
   import { trailerURL } from '@constants/media';
+  import { GetCache, SetCache, ONBOARDING_KEY } from '@constants/cache';
+  import { highlightCommunityPicks } from '@stores/navigation.svelte';
 
   import Profile from '@components/Profile.svelte';
   import ConexusLogo from '@components/utils/ConexusLogo.svelte';
   import Background from '@components/utils/Background.svelte';
+  import Onboarding from '@components/utils/Onboarding.svelte';
 
   import BackArrow from '@components/icons/BackArrow.svelte';
   import PlaySVG from '@components/icons/Play.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
+  import { onMount } from 'svelte';
 
   let {
     header = '',
@@ -29,6 +35,7 @@
   // let app: CoNexusApp = new CoNexusApp();
 
   let showIntro = $state<boolean>(false);
+  let onboarding = $state<boolean>(false);
   let sections: string[] = ['Community Picks', 'Collabs', 'Dischordian Saga'];
 
   const activeSectionIndex = sections.indexOf(activeTab);
@@ -65,14 +72,64 @@
     else if (document.fullscreenElement) document.exitFullscreen();
   });
 
-  const handleKeyDown = (event: KeyboardEvent) => {
+  const onkeydown = (event: KeyboardEvent) => {
     if (event.repeat) return;
     if (document.activeElement?.tagName !== 'BODY') return;
     if (event.key === 'f') game.fullscreen = !game.fullscreen;
   };
+
+  // ONBOARDING
+
+  const onscroll = (event: Event) => {
+    if (onboarding) event.preventDefault();
+  };
+
+  let tippyInstance: Instance;
+  const startOnboarding = () =>
+    setTimeout(() => {
+      const isOnboarded = GetCache(ONBOARDING_KEY);
+      if (isOnboarded) return;
+
+      onboarding = true;
+
+      // Show the tooltip
+      const intro = document.getElementById('intro') as HTMLSpanElement;
+
+      tippyInstance = tippy(intro, {
+        content: 'Meet CoNexus in 30 seconds',
+        trigger: 'manual',
+        placement: 'bottom',
+        hideOnClick: false,
+      });
+
+      tippyInstance.show();
+
+      // Disable scroll
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+      setTimeout(() => document.documentElement.classList.add('no-scroll'));
+    });
+
+  const finishOnboarding = () => {
+    SetCache(ONBOARDING_KEY, true);
+    onboarding = false;
+
+    // Update the store to apply highlighted styling
+    $highlightCommunityPicks = true;
+
+    // Destroy the tooltip
+    tippyInstance.destroy();
+
+    // Enable scroll
+    document.documentElement.classList.remove('no-scroll');
+  };
+
+  onMount(startOnboarding);
 </script>
 
-<svelte:window on:keydown={handleKeyDown} />
+<svelte:window {onkeydown} {onscroll} />
 
 {#if $story === null && storyName !== 'Maintenance'}
   <header
@@ -91,7 +148,7 @@
       </a>
     {/if}
 
-    {#if header === 'CoNexus'}<ConexusLogo />{/if}
+    {#if header === 'CoNexus'}<ConexusLogo {onboarding} />{/if}
 
     <h1 class:sr-only={header === 'CoNexus'}>{header}</h1>
 
@@ -108,12 +165,18 @@
       <CloseSVG onclick={() => (showIntro = false)} hider={true} />
     </div>
   {:else if subheading}
-    <p class="mobile-text-wrapper subheading pad-inline text-shad">
+    <p
+      class="mobile-text-wrapper subheading pad-inline text-shad"
+      class:onboarding
+    >
       {@html subheading}
       {#if header === 'CoNexus'}
-        <span class="intro-wrapper flex">
+        <span class="intro-wrapper flex" id="intro">
           <PlaySVG
-            onclick={() => (showIntro = true)}
+            onclick={() => {
+              showIntro = true;
+              if (onboarding) finishOnboarding();
+            }}
             text="Watch 30-sec Intro"
             voidBtn={false}
             glowing={true}
@@ -124,6 +187,10 @@
     </p>
   {:else}
     <div class="empty-subheading"></div>
+  {/if}
+
+  {#if onboarding && header === 'CoNexus'}
+    <Onboarding />
   {/if}
 
   <nav
@@ -329,12 +396,17 @@
   }
 
   .subheading {
+    position: relative;
     margin: 1rem auto;
     @include text-shadow;
 
     .intro-wrapper {
       width: 100%;
       padding-top: 1rem;
+    }
+
+    &.onboarding {
+      z-index: 1000;
     }
 
     @include respond-up(small-desktop) {

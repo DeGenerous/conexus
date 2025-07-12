@@ -119,6 +119,11 @@
     width: 100%;
   }
 
+  &.highlighted-menu-tile {
+    @include deep-green;
+    @include dark-green(1, text);
+  }
+
   &:hover:not(.loading-menu-tile),
   &:active:not(.loading-menu-tile),
   &:focus:not(.loading-menu-tile) {
@@ -168,10 +173,14 @@
 
   div {
     width: 100%;
-    border-radius: 1.5rem;
-    aspect-ratio: 1 / 1;
+    height: 100%;
+    border-radius: 1rem;
     cursor: inherit;
     @include cyan(0.1);
+
+    @include respond-up(tablet) {
+      aspect-ratio: 1/1;
+    }
   }
 
   span {

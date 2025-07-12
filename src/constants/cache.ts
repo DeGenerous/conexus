@@ -11,10 +11,10 @@ export const TTL_YEAR = TTL_DAY * 365; // 1 year
 
 export const IOS_KEY = 'ios_device'; // to hide some unsupported UI
 
+export const GAME_INSTRUCTIONS_KEY = 'show_instructions';
 export const ONBOARDING_KEY = 'onboarded';
 
 // Step customization
-export const GAME_INSTRUCTIONS_KEY = 'show_instructions';
 export const THEMES_KEY = 'themes';
 export const FONT_KEY = 'font';
 export const STYLING_KEY = 'styling';
@@ -105,6 +105,7 @@ function saveImportantAndClearCache() {
   // saving important values
   const cookieConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
   const gameInstructions = localStorage.getItem(GAME_INSTRUCTIONS_KEY);
+  const onboarded = localStorage.getItem(ONBOARDING_KEY);
   const musicVolume = localStorage.getItem(VOLUME_KEY('music'));
   const voiceVolume = localStorage.getItem(VOLUME_KEY('voice'));
   const ttsSpeed = localStorage.getItem(TTS_SPEED_KEY);
@@ -122,6 +123,7 @@ function saveImportantAndClearCache() {
   if (cookieConsent) localStorage.setItem(COOKIE_CONSENT_KEY, cookieConsent);
   if (gameInstructions)
     localStorage.setItem(GAME_INSTRUCTIONS_KEY, gameInstructions);
+  if (onboarded) localStorage.setItem(ONBOARDING_KEY, onboarded);
   if (musicVolume) localStorage.setItem(VOLUME_KEY('music'), musicVolume);
   if (voiceVolume) localStorage.setItem(VOLUME_KEY('voice'), voiceVolume);
   if (ttsSpeed) localStorage.setItem(TTS_SPEED_KEY, ttsSpeed);

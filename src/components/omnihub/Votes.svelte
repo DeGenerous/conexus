@@ -85,7 +85,7 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  section {
+  .transparent-container {
     @include auto-width;
 
     .governance-hub {

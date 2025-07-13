@@ -60,7 +60,7 @@
   const saveDraft = () => Drafts.save();
 
   onMount(() => {
-    const draftID = GetCache(CURRENT_DRAFT_KEY) as string;
+    const draftID = GetCache<string>(CURRENT_DRAFT_KEY);
     if (draftID) Drafts.restore(draftID);
     else Drafts.create();
 

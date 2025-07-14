@@ -30,12 +30,14 @@
       checkSubscription();
     }
 
-    // Show 'Connect Wallet' preview if there is no wallets connected
-    const { wallets } = user!;
-    const allWallets = wallets
-      ?.filter((wallet) => !wallet.faux)
-      .map(({ wallet }) => wallet);
-    if (!allWallets?.length) noWalletDetected = true;
+    if (user) {
+      // Show 'Connect Wallet' preview if there is no wallets connected
+      const { wallets } = user;
+      const allWallets = wallets
+        ?.filter((wallet) => !wallet.faux)
+        .map(({ wallet }) => wallet);
+      if (!allWallets?.length) noWalletDetected = true;
+    }
 
     loading = false;
   });

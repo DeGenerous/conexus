@@ -1,7 +1,7 @@
 import { writable, derived } from 'svelte/store';
 
 function createNavContext() {
-  const { subscribe, set, update } = writable<Nullable<NavContext>>(null);
+  const { subscribe, set } = writable<Nullable<NavContext>>(null);
 
   /** Call this from each page/layout when it loads */
   function setContext(ctx: NavContext) {

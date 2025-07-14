@@ -37,8 +37,7 @@ const getUserNFTs = async (): Promise<number[]> => {
     await Promise.all(allWallets!.map((wallet) => getNftNumbers(wallet)))
   )
     .filter((numbers) => numbers.length)
-    .flat()
-    .sort();
+    .flat();
 
   return nftNumbers;
 };

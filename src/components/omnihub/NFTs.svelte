@@ -7,12 +7,29 @@
     TTL_SHORT,
   } from '@constants/cache';
   import getNFTs from '@utils/potentials';
-  import { potentials, potentialsPower } from '@stores/omnihub.svelte';
+  import {
+    type NFT,
+    potentials,
+    potentialsPower,
+  } from '@stores/omnihub.svelte';
   import { showProfile } from '@stores/modal.svelte';
 
   import Ranks from '@components/omnihub/Ranks.svelte';
+  import FilterSVG from '@components/icons/Filter.svelte';
 
   let nftsDetected = $state<boolean>(true);
+
+  let sorting = $state<'id' | 'level'>('level');
+
+  const sortedPotentials = () => {
+    return structuredClone($potentials).sort((a: NFT, b: NFT) => {
+      if (sorting === 'id') {
+        return Number(a.id) - Number(b.id);
+      } else {
+        return Number(b.level) - Number(a.level);
+      }
+    });
+  };
 
   onMount(async () => {
     nftsDetected = await getNFTs();
@@ -22,21 +39,31 @@
 {#if nftsDetected}
   <span class="collection-wrapper flex">
     <div class="collection-header container">
-      <div class="flex-row gap-8 text-glowing">
+      <div class="flex-row gap-8">
         <h4>Potentials:</h4>
         <span class="flex pad-8">{$potentials.length}</span>
       </div>
-      <div class="flex-row gap-8 text-glowing">
+
+      <div class="flex-row gap-8">
         <h4>
           <strong class="pc-only">Total&nbsp;</strong>Power:
         </h4>
         <span class="flex pad-8">{$potentialsPower}</span>
       </div>
+
+      <span class="flex-row">
+        <select bind:value={sorting}>
+          <option value="id" selected={sorting === 'id'}> Sort by ID </option>
+          <option value="level" selected={sorting === 'level'}>
+            Sort by Level
+          </option>
+        </select>
+      </span>
     </div>
 
     <div class="tiles-collection">
       {#if $potentials.length}
-        {#each $potentials as nft}
+        {#each sortedPotentials() as nft}
           <a
             class="potential-tile"
             href="/omnihub/portrait"
@@ -106,13 +133,13 @@
     width: 100%;
     margin-inline: 0;
     border-radius: 0;
+    flex-flow: row wrap;
     justify-content: space-between;
     margin-bottom: -1rem;
     animation: none;
     background-color: $royal-purple;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
-    @include box-glow(inset, 0.25);
 
     div {
       h4 {
@@ -130,25 +157,23 @@
       }
     }
 
+    & > span {
+      width: 100%;
+
+      select {
+        @include orange-border;
+        @include orange(1, text);
+        @include dark-red(0.75);
+        @include box-shadow(soft, inset);
+      }
+    }
+
     @include respond-up(tablet) {
-      padding: 0;
-      box-shadow: none;
-      background-color: transparent;
+      & > span {
+        width: auto;
+      }
 
       div {
-        padding: 0.5rem 1.5rem;
-        animation: none;
-        background-color: $royal-purple;
-        @include box-glow(inset, 0.25);
-
-        &:first-of-type {
-          border-top-right-radius: 1rem;
-        }
-
-        &:last-of-type {
-          border-top-left-radius: 1rem;
-        }
-
         h4 {
           strong {
             display: inline;

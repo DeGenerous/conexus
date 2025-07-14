@@ -1,7 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { GetCache, SELECTED_POTENTIAL_KEY } from '@constants/cache';
+  import {
+    GetCache,
+    SetCache,
+    POTENTIALS_KEY,
+    SELECTED_POTENTIAL_KEY,
+  } from '@constants/cache';
+  import { navContext } from '@stores/navigation.svelte';
   import { type NFT } from '@stores/omnihub.svelte';
   import { attributes } from '@constants/attributes';
 
@@ -18,8 +24,23 @@
 
   onMount(() => {
     potential = GetCache<NFT>(SELECTED_POTENTIAL_KEY);
-    loading = false;
+    const allPotentials = GetCache<NFT[]>(POTENTIALS_KEY) || [];
+
+    const index = allPotentials.findIndex((p) => p.id === potential?.id);
+
+    navContext.setContext({
+      items: allPotentials.map((p) => ({
+        name: `#${p.id}`,
+        action() {
+          SetCache(SELECTED_POTENTIAL_KEY, p);
+          window.location.reload();
+        },
+      })),
+      index,
+    });
+
     console.log(potential);
+    loading = false;
   });
 </script>
 

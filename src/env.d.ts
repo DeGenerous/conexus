@@ -187,3 +187,14 @@ type OnchainAttribute = {
   trait_type: string;
   value: string;
 };
+
+type NavItem = {
+  name: string;
+  link?: string;
+  action?: () => void;
+};
+
+type NavContext = {
+  items: NavItem[];
+  index: number;
+};

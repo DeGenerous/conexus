@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import { v4 as uuid } from 'uuid';
 
   import {
     GetCache,
@@ -7,6 +8,7 @@
     COOKIE_CONSENT_KEY,
     TTL_MONTH,
   } from '@constants/cache';
+  import { tempUserID } from '@stores/account.svelte';
 
   let showBanner = $state(false);
   let analyticsEnabled = false;
@@ -23,6 +25,9 @@
 
   function acceptCookies(fullConsent) {
     analyticsEnabled = fullConsent;
+
+    // Set up the temporary ID for the Agent
+    // $tempUserID = uuid();
 
     SetCache(COOKIE_CONSENT_KEY, fullConsent ? 'full' : 'essential', TTL_MONTH);
 

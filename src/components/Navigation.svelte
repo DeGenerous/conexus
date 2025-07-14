@@ -148,7 +148,7 @@
       </a>
     {/if}
 
-    {#if header === 'CoNexus'}<ConexusLogo {onboarding} />{/if}
+    {#if header === 'CoNexus'}<ConexusLogo />{/if}
 
     <h1 class:sr-only={header === 'CoNexus'}>{header}</h1>
 

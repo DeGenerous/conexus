@@ -1,8 +1,4 @@
-<script lang="ts">
-  let { onboarding = false }: { onboarding: boolean } = $props();
-</script>
-
-<div class="flex" class:onboarding>
+<div class="flex">
   <picture class="flex">
     <source srcset="title.avif" type="image/avif" />
     <img src="title.png" alt="CoNexus" draggable="false" />
@@ -170,10 +166,6 @@
     position: relative;
     width: 100%;
     max-width: 13.5rem;
-
-    &.onboarding {
-      z-index: 1000;
-    }
 
     @include respond-up(small-desktop) {
       margin: 3rem auto;

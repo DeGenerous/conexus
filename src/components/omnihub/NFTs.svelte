@@ -28,7 +28,7 @@
       </div>
       <div class="flex-row gap-8 text-glowing">
         <h4>
-          <strong class="pc-only">Total</strong>Power:
+          <strong class="pc-only">Total&nbsp;</strong>Power:
         </h4>
         <span class="flex pad-8">{$potentialsPower}</span>
       </div>

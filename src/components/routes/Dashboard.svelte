@@ -82,7 +82,7 @@
           and tools.
         </h5>
         <button class="button-glowing" onclick={() => ($showProfile = true)}>
-          Reveal Profile Gate
+          Open Your Profile
         </button>
       {:else}
         <p class="text-glowing">

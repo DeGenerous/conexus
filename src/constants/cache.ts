@@ -79,7 +79,13 @@ export const SELECTED_POTENTIAL_KEY = 'selected_potential';
 
 /* -------------------------------------------------------------------- */
 
-const authKeys = [USER_KEY, SUBSCRIPTION_STATUS_KEY, REFERRAL_CODES_KEY];
+const authKeys = [
+  USER_KEY,
+  SUBSCRIPTION_STATUS_KEY,
+  REFERRAL_CODES_KEY,
+  POTENTIALS_KEY,
+  SELECTED_POTENTIAL_KEY
+];
 
 const viewKeys = [
   SECTIONS_KEY,

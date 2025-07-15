@@ -15,7 +15,7 @@
               class="orange-btn mar-auto"
               onclick={() => (showTable = false)}
             >
-              Collapse Ranks
+              Hide Ranks
             </button>
           </th>
           <th>Potentials</th>

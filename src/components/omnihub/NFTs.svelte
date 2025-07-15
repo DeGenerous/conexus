@@ -51,14 +51,16 @@
         <span class="flex pad-8">{$potentialsPower}</span>
       </div>
 
-      <span class="flex-row">
-        <select bind:value={sorting}>
-          <option value="id" selected={sorting === 'id'}> Sort by ID </option>
-          <option value="level" selected={sorting === 'level'}>
-            Sort by Level
-          </option>
-        </select>
-      </span>
+      {#if $potentials.length > 4}
+        <span class="flex-row">
+          <select bind:value={sorting}>
+            <option value="id" selected={sorting === 'id'}> Sort by ID </option>
+            <option value="level" selected={sorting === 'level'}>
+              Sort by Level
+            </option>
+          </select>
+        </span>
+      {/if}
     </div>
 
     <div class="tiles-collection">

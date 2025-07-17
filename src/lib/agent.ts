@@ -30,9 +30,9 @@ class AgentGame extends AgentAPI {
 
   // Start New Game
   async startGame(
-    story_id: number,
+    story_id: string,
     temp_user_id: string,
-    setMedia: (topic_id: number) => Promise<void>,
+    setMedia: (topic_id: string) => Promise<void>,
   ): Promise<void> {
     //TODO: change all story_name to topic_id
     game.loading = true;

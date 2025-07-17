@@ -6,9 +6,9 @@
     GetCache,
     SetCache,
     COOKIE_CONSENT_KEY,
+    TEMP_USER_KEY,
     TTL_MONTH,
   } from '@constants/cache';
-  import { tempUserID } from '@stores/account.svelte';
 
   let showBanner = $state(false);
   let analyticsEnabled = false;
@@ -27,8 +27,9 @@
     analyticsEnabled = fullConsent;
 
     // Set up the temporary ID for the Agent
-    // $tempUserID = uuid();
+    const tempUserId = uuid();
 
+    SetCache(TEMP_USER_KEY, tempUserId, TTL_MONTH);
     SetCache(COOKIE_CONSENT_KEY, fullConsent ? 'full' : 'essential', TTL_MONTH);
 
     if (fullConsent) {

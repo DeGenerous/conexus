@@ -16,7 +16,7 @@ type AuthWallet = {
 };
 
 type User = {
-  ID?: string;
+  id?: string;
   oauth_id?: string;
   email_confirmed?: boolean;
   referral_count?: number;

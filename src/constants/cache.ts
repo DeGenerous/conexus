@@ -33,6 +33,8 @@ export const CURRENT_DRAFT_KEY = 'current_draft'; // id of the open draft
 
 export const COOKIE_CONSENT_KEY = 'cookie_consent';
 
+export const TEMP_USER_KEY = 'temp_user'; // used for agent games
+
 export const GENRES_KEY = 'genres';
 
 /* -------------------------------------------------------------------- */
@@ -110,6 +112,7 @@ function restoreAllDrafts(drafts: DraftPayload[]) {
 function saveImportantAndClearCache() {
   // saving important values
   const cookieConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
+  const tempUserId = localStorage.getItem(TEMP_USER_KEY);
   const gameInstructions = localStorage.getItem(GAME_INSTRUCTIONS_KEY);
   const onboarded = localStorage.getItem(ONBOARDING_KEY);
   const musicVolume = localStorage.getItem(VOLUME_KEY('music'));
@@ -127,6 +130,7 @@ function saveImportantAndClearCache() {
   localStorage.clear();
   // restoring saved values
   if (cookieConsent) localStorage.setItem(COOKIE_CONSENT_KEY, cookieConsent);
+  if (tempUserId) localStorage.setItem(TEMP_USER_KEY, tempUserId);
   if (gameInstructions)
     localStorage.setItem(GAME_INSTRUCTIONS_KEY, gameInstructions);
   if (onboarded) localStorage.setItem(ONBOARDING_KEY, onboarded);

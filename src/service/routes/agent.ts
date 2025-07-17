@@ -10,7 +10,7 @@ export default class AgentAPI extends Fetcher {
    * @param temp_user_id - The temporary user ID for the agent.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
-  async start(story_id: number, temp_user_id: string) {
+  async start(story_id: string, temp_user_id: string) {
     return this.request<GameData>('/agent/start-new-story', {
       method: 'POST',
       body: JSON.stringify({ story_id, temp_user_id }),

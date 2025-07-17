@@ -1,26 +1,19 @@
 ---
 import Layout from '@layouts/Layout.astro';
-import Section from '@components/Section.svelte';
+import AgentStory from '@components/AgentStory.svelte';
 // import { mediaURL } from '@constants/media';
 
-const { section } = Astro.params;
-
-// const sectionImage = section?.split(' ').join('').split('%20').join('');
-const sectionName = section?.replace(/%20/g, ' ');
+const { story_id } = Astro.params;
 
 const meta = {
-  title: `${sectionName} | CoNexus`,
-  // image: `${mediaURL}/conexus-sections/${sectionImage?.toLocaleLowerCase()}.avif`,
-  imageType: 'image/avif',
-  url: `https://conexus.degenerousdao.com/${section}`,
-  header: section,
-  nav: section,
+  title: `PAC | CoNexus`,
+  nav: 'PAC',
   arrow: '/',
 };
 ---
 
 <Layout {...meta}>
   <main>
-    <Section {section} client:load />
+    <AgentStory {story_id} client:load />
   </main>
 </Layout>

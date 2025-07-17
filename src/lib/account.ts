@@ -378,6 +378,129 @@ class Account {
 
     toastStore.show(data.message || 'Referral code used successfully', 'info');
   }
+
+  async bookmarkTopic(topic_id: number): Promise<void> {
+    const { data, error } = await this.accountAPI.bookmarkTopic(topic_id);
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error bookmarking topic', 'error');
+      }
+      return;
+    }
+
+    toastStore.show(data.message || 'Topic bookmarked successfully', 'info');
+  }
+
+  async unbookmarkTopic(topic_id: number): Promise<void> {
+    const { data, error } = await this.accountAPI.unbookmarkTopic(topic_id);
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error unbookmarking topic', 'error');
+      }
+      return;
+    }
+
+    toastStore.show(data.message || 'Topic unbookmarked successfully', 'info');
+  }
+
+  async getBookmarkedTopics(): Promise<Bookmark[]> {
+    const cachedData = GetCache<Bookmark[]>('bookmarked_topics');
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // If no cached data, fetch from API
+    const { data, error } = await this.accountAPI.getBookmarkedTopics();
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error getting bookmarked topics', 'error');
+      }
+      return [];
+    }
+
+    // Store in localStorage with expiry timestamp
+    SetCache('bookmarked_topics', data.topics, TTL_SHORT);
+
+    return data.topics;
+  }
+
+  async addTag(name: string, description: string): Promise<void> {
+    const { data, error } = await this.accountAPI.addTag({ name, description });
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error adding tag', 'error');
+      }
+      return;
+    }
+
+    toastStore.show(data.message || 'Tag added successfully', 'info');
+  }
+
+  async getTags(): Promise<Tag[]> {
+    const cachedData = GetCache<Tag[]>('bookmark_tags');
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // If no cached data, fetch from API
+    const { data, error } = await this.accountAPI.getTags();
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error getting tags', 'error');
+      }
+      return [];
+    }
+
+    // Store in localStorage with expiry timestamp
+    SetCache('bookmark_tags', data.tags, TTL_SHORT);
+
+    return data.tags;
+  }
+
+  async removeTag(tag_id: number): Promise<void> {
+    const { data, error } = await this.accountAPI.removeTag(tag_id);
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error removing tag', 'error');
+      }
+      return;
+    }
+
+    toastStore.show(data.message || 'Tag removed successfully', 'info');
+  }
+
+  async getBookmarkedTopicsByTag(tag_id: number): Promise<Bookmark[]> {
+    const { data, error } = await this.accountAPI.getBookmarksByTag(tag_id);
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error getting bookmarked topics by tag', 'error');
+      }
+      return [];
+    }
+
+    return data.bookmarks;
+  }
 }
 
 export default Account;

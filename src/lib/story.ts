@@ -3,8 +3,8 @@ import { api_error } from '@errors/index';
 import Account from '@lib/account';
 import { GameAPI } from '@service/routes';
 import { story, game } from '@stores/conexus.svelte';
-import { toastStore } from '@stores/toast.svelte';
 import openModal from '@stores/modal.svelte';
+import { toastStore } from '@stores/toast.svelte';
 
 class CoNexusGame extends GameAPI {
   // Properties

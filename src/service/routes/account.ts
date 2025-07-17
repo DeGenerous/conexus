@@ -134,4 +134,77 @@ export default class AccountAPI extends Fetcher {
       '/account/get-referral-codes',
     );
   }
+
+  /**
+   * Bookmark a topic for the user.
+   * @param topic_id - The ID of the topic to bookmark.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error
+   */
+  async bookmarkTopic(topic_id: number) {
+    return this.request<APISTDResposne>(`/account/bookmark-topic/${topic_id}`);
+  }
+
+  /**
+   * Unbookmark a topic for the user.
+   * @param topic_id - The ID of the topic to unbookmark.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error
+   */
+  async unbookmarkTopic(topic_id: number) {
+    return this.request<APISTDResposne>(
+      `/account/unbookmark-topic/${topic_id}`,
+      {
+        method: 'DELETE',
+      }
+    );
+  }
+
+  /**
+   * Get the user's bookmarked topics.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error
+   */
+  async getBookmarkedTopics() {
+    return this.request<{ topics: Bookmark[] }>('/account/get-bookmarked-topics');
+  }
+
+  /**
+   * Get the user's tags.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error
+   */
+  async getTags() {
+    return this.request<{ tags: Tag[] }>('/account/get-bookmark-tags');
+  }
+
+  /**
+   * Add a new tag for the user.
+   * @param name - The name of the tag to add.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error
+   */
+  async addTag(tag: Tag) {
+    return this.request<APISTDResposne>('/account/add-bookmark-tag', {
+      method: 'POST',
+      body: JSON.stringify(tag),
+    });
+  }
+
+  /**
+   * Remove a tag for the user.
+   * @param tag_id - The ID of the tag to remove.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error
+   */
+  async removeTag(tag_id: number) {
+    return this.request<APISTDResposne>(`/account/remove-bookmark-tag/${tag_id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  /**
+   * Get Bookmarks by Tag
+   * @param tag_id - The ID of the tag to filter bookmarks.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error
+   */
+  async getBookmarksByTag(tag_id: number) {
+    return this.request<{ bookmarks: Bookmark[] }>(
+      `/account/get-bookmarks-by-tag/${tag_id}`
+    );
+  }
 }

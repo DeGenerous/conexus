@@ -83,3 +83,18 @@ type AccountError = {
   changePassword?: Nullable<string>;
   selectMainWallet?: Nullable<string>;
 } | null;
+
+type Bookmark = {
+  ID?: number;
+  user_id: number;
+  topic_id: number;
+  created_at?: string;
+};
+
+type Tag = {
+  ID?: number;
+  user_id?: number;
+  name: string;
+  description: string;
+  created_at?: string;
+};

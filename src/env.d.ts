@@ -53,6 +53,7 @@ type CategoryView = {
 
 type StepData = {
   step: number;
+  step_id?: string;
   title?: string;
   story: string;
   end: boolean;

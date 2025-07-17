@@ -23,7 +23,7 @@
   let { story_id }: { story_id: string } = $props();
 
   let user: Nullable<User> = $state(null);
-  let tempUserId: Nullable<string> = $state(null);
+  let tempUserId: string | null = $state(null);
 
   const agentGame: AgentGame = new AgentGame();
   const media: MediaManager = new MediaManager();
@@ -37,9 +37,9 @@
     tempUserId = GetCache<string>(TEMP_USER_KEY);
     user = await getCurrentUser();
 
-    console.log(tempUserId);
+    console.log('Temp user id', tempUserId);
 
-    if (user) {
+    if (user && user.id) {
       tempUserId = user.id;
       SetCache(TEMP_USER_KEY, tempUserId, TTL_MONTH);
     }
@@ -68,7 +68,9 @@
             <button
               class:button-glowing={tempUserId}
               onclick={() => {
-                agentGame.startGame(story_id, tempUserId!, handleSetMedia);
+                if (tempUserId) {
+                  agentGame.startGame(story_id, tempUserId, handleSetMedia);
+                }
               }}
               disabled={!tempUserId}
             >

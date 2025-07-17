@@ -451,6 +451,21 @@ class Account {
     toastStore.show(data.message || 'Tag added successfully', 'info');
   }
 
+  async deleteTag(tag_id: number): Promise<void> {
+    const { data, error } = await this.accountAPI.deleteTag(tag_id);
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error deleting tag', 'error');
+      }
+      return;
+    }
+
+    toastStore.show(data.message || 'Tag deleted successfully', 'info');
+  }
+
   async getTags(): Promise<Tag[]> {
     const cachedData = GetCache<Tag[]>(BOOKMARK_TAGS_KEY);
     if (cachedData) {
@@ -476,8 +491,29 @@ class Account {
     return data.tags;
   }
 
-  async removeTag(tag_id: number): Promise<void> {
-    const { data, error } = await this.accountAPI.removeTag(tag_id);
+  async bookmarkTag(bookmark_id: number, tag_id: number): Promise<void> {
+    const { data, error } = await this.accountAPI.bookmarkTag(
+      bookmark_id,
+      tag_id,
+    );
+
+    if (!data) {
+      if (error) {
+        api_error(error);
+      } else {
+        toastStore.show('Error bookmarking tag', 'error');
+      }
+      return;
+    }
+
+    toastStore.show(data.message || 'Tag bookmarked successfully', 'info');
+  }
+
+  async removeTag(bookmark_id: number, tag_id: number): Promise<void> {
+    const { data, error } = await this.accountAPI.removeTag(
+      bookmark_id,
+      tag_id,
+    );
 
     if (!data) {
       if (error) {

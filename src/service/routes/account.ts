@@ -169,33 +169,56 @@ export default class AccountAPI extends Fetcher {
   }
 
   /**
-   * Get the user's tags.
-   * @returns A promise that resolves to an APIResponse containing the response data or an error
-   */
-  async getTags() {
-    return this.request<{ tags: Tag[] }>('/account/get-bookmark-tags');
-  }
-
-  /**
    * Add a new tag for the user.
    * @param name - The name of the tag to add.
    * @returns A promise that resolves to an APIResponse containing the response data or an error
    */
   async addTag(tag: Tag) {
-    return this.request<APISTDResposne>('/account/add-bookmark-tag', {
+    return this.request<APISTDResposne>('/account/add-tag', {
       method: 'POST',
       body: JSON.stringify(tag),
     });
   }
 
   /**
+   * Get the user's tags.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error
+   */
+  async getTags() {
+    return this.request<{ tags: Tag[] }>('/account/get-tags');
+  }
+
+  /**
+   * Delete a tag for the user.
+   * @param tag_id - The ID of the tag to delete.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error
+   */
+  async deleteTag(tag_id: number) {
+    return this.request<APISTDResposne>(`/account/delete-tag/${tag_id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  /** Bookmark a tag for the user.
+   * @param bookmark_id - The ID of the bookmark to associate with the tag.
+   * @param tag_id - The ID of the tag to bookmark.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error
+   */
+  async bookmarkTag(bookmark_id: number, tag_id: number) {
+    return this.request<APISTDResposne>(
+      `/account/bookmark-tag/${bookmark_id}/${tag_id}`,
+    );
+  }
+
+  /**
    * Remove a tag for the user.
+   * @param bookmark_id - The ID of the bookmark associated with the tag.
    * @param tag_id - The ID of the tag to remove.
    * @returns A promise that resolves to an APIResponse containing the response data or an error
    */
-  async removeTag(tag_id: number) {
+  async removeTag(bookmark_id: number, tag_id: number) {
     return this.request<APISTDResposne>(
-      `/account/remove-bookmark-tag/${tag_id}`,
+      `/account/remove-bookmark-tag/${bookmark_id}/${tag_id}`,
       {
         method: 'DELETE',
       },

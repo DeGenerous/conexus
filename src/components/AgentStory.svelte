@@ -9,7 +9,7 @@
     SetCache,
     GetCache,
     TEMP_USER_KEY,
-    TTL_MONTH
+    TTL_MONTH,
   } from '@constants/cache';
   import detectIOS from '@utils/ios-device';
   import { getCurrentUser } from '@utils/route-guard';
@@ -37,7 +37,7 @@
     tempUserId = GetCache<string>(TEMP_USER_KEY);
     user = await getCurrentUser();
 
-    console.log(tempUserId)
+    console.log(tempUserId);
 
     if (user) {
       tempUserId = user.id;
@@ -48,10 +48,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $agentStory === null}
-  <div
-    class="story-wrapper flex"
-    style:cursor={game.loading ? 'progress' : ''}
-  >
+  <div class="story-wrapper flex" style:cursor={game.loading ? 'progress' : ''}>
     <section class="story container">
       <img
         class="round-8 transparent-glowing"
@@ -71,11 +68,7 @@
             <button
               class:button-glowing={tempUserId}
               onclick={() => {
-                agentGame.startGame(
-                  story_id,
-                  tempUserId!,
-                  handleSetMedia,
-                );
+                agentGame.startGame(story_id, tempUserId!, handleSetMedia);
               }}
               disabled={!tempUserId}
             >

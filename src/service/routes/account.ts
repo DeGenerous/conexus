@@ -154,7 +154,7 @@ export default class AccountAPI extends Fetcher {
       `/account/unbookmark-topic/${topic_id}`,
       {
         method: 'DELETE',
-      }
+      },
     );
   }
 
@@ -163,7 +163,9 @@ export default class AccountAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error
    */
   async getBookmarkedTopics() {
-    return this.request<{ topics: Bookmark[] }>('/account/get-bookmarked-topics');
+    return this.request<{ topics: Bookmark[] }>(
+      '/account/get-bookmarked-topics',
+    );
   }
 
   /**
@@ -192,9 +194,12 @@ export default class AccountAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error
    */
   async removeTag(tag_id: number) {
-    return this.request<APISTDResposne>(`/account/remove-bookmark-tag/${tag_id}`, {
-      method: 'DELETE',
-    });
+    return this.request<APISTDResposne>(
+      `/account/remove-bookmark-tag/${tag_id}`,
+      {
+        method: 'DELETE',
+      },
+    );
   }
 
   /**
@@ -204,7 +209,7 @@ export default class AccountAPI extends Fetcher {
    */
   async getBookmarksByTag(tag_id: number) {
     return this.request<{ bookmarks: Bookmark[] }>(
-      `/account/get-bookmarks-by-tag/${tag_id}`
+      `/account/get-bookmarks-by-tag/${tag_id}`,
     );
   }
 }

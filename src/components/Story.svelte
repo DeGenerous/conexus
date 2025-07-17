@@ -5,6 +5,7 @@
 
   import { serveUrl } from '@constants/media';
   import { contractGetter } from '@constants/contracts';
+  import Account from '@lib/account';
   import MediaManager from '@lib/media';
   import CoNexusGame from '@lib/story';
   import { story, game } from '@stores/conexus.svelte';
@@ -18,12 +19,13 @@
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
   import Tts from '@components/music/Tts.svelte';
   import Step from '@components/Step.svelte';
+  import Share from '@components/utils/Share.svelte';
   import DeleteSVG from '@components/icons/Delete.svelte';
   import PlaySVG from '@components/icons/Play.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
   import LockSVG from '@components/icons/Lock.svelte';
   import DoorSVG from '@components/icons/Door.svelte';
-  import Share from '@components/utils/Share.svelte';
+  import BookmarkSVG from '@components/icons/Bookmark.svelte';
 
   export let section: string;
   export let story_name: string;
@@ -32,6 +34,7 @@
   let isLogged: boolean = false;
   let isReferred: boolean = false;
 
+  const account: Account = new Account();
   const conexusGame: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
 
@@ -50,6 +53,21 @@
       activeTopic &&
         conexusGame.startGame(activeTopic.name, activeTopic.id, handleSetMedia);
     });
+  };
+
+  // BOOKMARKS
+
+  let bookmarks: Bookmark[] = [];
+  let isBookmarked: boolean = false;
+
+  const handleBookmark = (topic_id: number) => {
+    if (isBookmarked) {
+      account.bookmarkTopic(topic_id);
+      isBookmarked = true;
+    } else {
+      account.unbookmarkTopic(topic_id);
+      isBookmarked = false;
+    }
   };
 
   onMount(async () => {
@@ -72,6 +90,14 @@
           (topic) => topic.topic_name === story_name,
         ),
       });
+    }
+
+    if (isLogged) {
+      bookmarks = await account.getBookmarkedTopics();
+      // if (bookmarks.length)
+      //   isBookmarked = bookmarks.some(
+      //     (bookmark) => bookmark.topic_id === story_id,
+      //   );
     }
   });
 
@@ -141,6 +167,12 @@
       style:cursor={game.loading ? 'progress' : ''}
     >
       <section class="story container">
+        {#if isLogged}
+          <BookmarkSVG
+            onclick={() => handleBookmark(topic.id)}
+            active={isBookmarked}
+          />
+        {/if}
         {#if topic?.video_file_id}
           <video
             class="round-8 transparent-glowing"

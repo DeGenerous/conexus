@@ -1,12 +1,15 @@
 import {
-  USER_KEY,
-  TTL_HOUR,
-  REFERRAL_CODES_KEY,
-  TTL_SHORT,
-  SUBSCRIPTION_STATUS_KEY,
-  ClearCache,
-  GetCache,
   SetCache,
+  GetCache,
+  ClearCache,
+  USER_KEY,
+  REFERRAL_CODES_KEY,
+  SUBSCRIPTION_STATUS_KEY,
+  BOOKMARKS_KEY,
+  BOOKMARK_TAGS_KEY,
+  TTL_SHORT,
+  TTL_HOUR,
+  TTL_DAY,
 } from '@constants/cache';
 import { api_error } from '@errors/index';
 import { AccountAPI, AuthAPI } from '@service/routes';
@@ -410,7 +413,7 @@ class Account {
   }
 
   async getBookmarkedTopics(): Promise<Bookmark[]> {
-    const cachedData = GetCache<Bookmark[]>('bookmarked_topics');
+    const cachedData = GetCache<Bookmark[]>(BOOKMARKS_KEY);
     if (cachedData) {
       return cachedData;
     }
@@ -428,7 +431,7 @@ class Account {
     }
 
     // Store in localStorage with expiry timestamp
-    SetCache('bookmarked_topics', data.topics, TTL_SHORT);
+    SetCache(BOOKMARKS_KEY, data.topics, TTL_DAY);
 
     return data.topics;
   }
@@ -449,7 +452,7 @@ class Account {
   }
 
   async getTags(): Promise<Tag[]> {
-    const cachedData = GetCache<Tag[]>('bookmark_tags');
+    const cachedData = GetCache<Tag[]>(BOOKMARK_TAGS_KEY);
     if (cachedData) {
       return cachedData;
     }
@@ -465,9 +468,10 @@ class Account {
       }
       return [];
     }
+    2;
 
     // Store in localStorage with expiry timestamp
-    SetCache('bookmark_tags', data.tags, TTL_SHORT);
+    SetCache(BOOKMARK_TAGS_KEY, data.tags, TTL_DAY);
 
     return data.tags;
   }

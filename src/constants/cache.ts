@@ -50,6 +50,10 @@ export const SECTIONS_KEY = 'sections';
 // Cache all categories from all sections together
 export const CATEGORIES_KEY = 'categories';
 
+// Cache all bookmarks
+export const BOOKMARKS_KEY = 'bookmarks';
+export const BOOKMARK_TAGS_KEY = 'bookmark_tags';
+
 /* -------------------------------------------------------------------- */
 // 1 HOUR
 /* -------------------------------------------------------------------- */

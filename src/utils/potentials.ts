@@ -1,4 +1,4 @@
-import { get } from 'svelte/store';
+// import { get } from 'svelte/store';
 
 import { getCurrentUser } from './route-guard';
 import {

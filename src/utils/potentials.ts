@@ -78,7 +78,7 @@ const getNFTs = async (): Promise<boolean> => {
     potentialsPower.set(totalPower);
     userRank.set(getRankByPotentials(NFTs.length));
 
-    console.log(get(potentials));
+    // console.log(get(potentials));
     return true;
   }
 

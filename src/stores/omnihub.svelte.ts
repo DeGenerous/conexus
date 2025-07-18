@@ -15,7 +15,7 @@ export class nftTile {
   }
 }
 
-export interface NFT extends nftTile {}
+export type NFT = nftTile;
 
 export const potentials = writable<Array<NFT>>([]);
 export const potentialsPower = writable<number>(0);

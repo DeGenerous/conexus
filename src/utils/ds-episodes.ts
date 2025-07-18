@@ -13,28 +13,28 @@ const fetchEpisodes = async (): Promise<StoryNode[][]> => {
 
   const cachedPotential = GetCache<NFT>(SELECTED_POTENTIAL_KEY);
   let nftNumber: number = Number(cachedPotential?.id);
-  console.log('Selected Potential: ' + nftNumber);
+  // console.log('Selected Potential: ' + nftNumber);
 
   // Season 1 episodes
   const s1Nodes: StoryNode[] = [];
   const s1Count = await (await contract('v1')).getStoryNodesCount();
   for (let i = 0; i < s1Count; i++) {
     loadingStatus.set(`Loading Season 1 Episode ${i + 1}...`);
-    console.log('Fetching Episode ' + (i + 1).toString());
+    // console.log('Fetching Episode ' + (i + 1).toString());
     let ipfs_uri = await (await contract('v1')).storyNodeMetadata(i);
     if (ipfs_uri === 'ipfs://QmYutAynNJwoE88LxthGdA2iH8n2CGJygz8ZkoA1WACsNg') {
       ipfs_uri = 'ipfs://QmP2c7vULMkbaChCkUiQ6PDsHLBt3WcSEYax4SSvugbZb1';
     }
     const slicedURI = ipfs_uri.match('ipfs://') ? ipfs_uri.slice(7) : ipfs_uri;
     try {
-      console.log('ipfs URI: https://gateway.pinata.cloud/ipfs/' + slicedURI);
+      // console.log('ipfs URI: https://gateway.pinata.cloud/ipfs/' + slicedURI);
       const json = await fetch(
         `https://gateway.pinata.cloud/ipfs/${slicedURI}`,
       );
       s1Nodes.push(await json.json());
     } catch (error) {
       console.error(error);
-      console.log('ipfs URI: https://ipfs.io/ipfs/' + slicedURI);
+      // console.log('ipfs URI: https://ipfs.io/ipfs/' + slicedURI);
       const json = await fetch(`https://ipfs.io/ipfs/${slicedURI}`);
       s1Nodes.push(await json.json());
     }
@@ -59,18 +59,18 @@ const fetchEpisodes = async (): Promise<StoryNode[][]> => {
   const s2Count = await (await contract()).getStoryNodesCount();
   for (let i = 0; i < s2Count; i++) {
     loadingStatus.set(`Loading Season 2 Episode ${i + 1}...`);
-    console.log('Fetching Episode ' + (i + 1).toString());
+    // console.log('Fetching Episode ' + (i + 1).toString());
     let ipfs_uri = await (await contract()).storyNodeMetadata(i);
     const slicedURI = ipfs_uri.match('ipfs://') ? ipfs_uri.slice(7) : ipfs_uri;
     try {
-      console.log('ipfs URI: https://gateway.pinata.cloud/ipfs/' + slicedURI);
+      // console.log('ipfs URI: https://gateway.pinata.cloud/ipfs/' + slicedURI);
       const json = await fetch(
         `https://gateway.pinata.cloud/ipfs/${slicedURI}`,
       );
       s2Nodes.push(await json.json());
     } catch (error) {
       console.error(error);
-      console.log('ipfs URI: https://ipfs.io/ipfs/' + slicedURI);
+      // console.log('ipfs URI: https://ipfs.io/ipfs/' + slicedURI);
       const json = await fetch(`https://ipfs.io/ipfs/${slicedURI}`);
       s2Nodes.push(await json.json());
     }
@@ -123,7 +123,7 @@ export const getVotingHistory = async () => {
           return updatedSeason;
         });
 
-        console.log(memories);
+        // console.log(memories);
         episodes.set(memories);
       });
     loadingStatus.set(null);

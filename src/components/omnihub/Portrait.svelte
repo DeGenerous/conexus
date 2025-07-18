@@ -39,7 +39,7 @@
       index,
     });
 
-    console.log(potential);
+    // console.log(potential);
     loading = false;
   });
 </script>

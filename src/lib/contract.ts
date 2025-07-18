@@ -36,7 +36,7 @@ let abi = abi_v1;
 
 const contract = async (version: 'v1' | 'v2' = 'v2'): Promise<any> => {
   const provider = new JsonRpcProvider(
-    `https://base-mainnet.g.alchemy.com/v2/${import.meta.env.ALCHEMY_API_KEY}`,
+    `https://base-mainnet.g.alchemy.com/v2/${import.meta.env.PUBLIC_ALCHEMY_API_KEY}`,
   );
 
   if (version === 'v1' && CONTRACT_ADDRESS !== v1) {

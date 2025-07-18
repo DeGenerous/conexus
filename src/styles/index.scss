@@ -621,6 +621,14 @@ html {
   }
 }
 
+.mobile-only {
+  display: block;
+
+  @include respond-up(tablet) {
+    display: none;
+  }
+}
+
 // For screen readers
 .sr-only {
   clip: rect(1px, 1px, 1px, 1px);
@@ -661,4 +669,10 @@ html {
   a.tile {
     pointer-events: none;
   }
+}
+
+// Prevent scroll
+.no-scroll {
+  overflow: hidden;
+  overscroll-behavior: none; // iOS/Android: blocks pull‑to‑refresh bounce
 }

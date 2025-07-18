@@ -1,12 +1,18 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+  import tippy, { type Instance } from 'tippy.js';
+
   // import CoNexusApp from '@lib/view';
-  import { prevStory, nextStory } from '@stores/navigation.svelte';
+  import { navContext, prevItem, nextItem } from '@stores/navigation.svelte';
   import { story, game } from '@stores/conexus.svelte';
   import { trailerURL } from '@constants/media';
+  import { GetCache, SetCache, ONBOARDING_KEY } from '@constants/cache';
+  import { highlightCommunityPicks } from '@stores/navigation.svelte';
 
   import Profile from '@components/Profile.svelte';
   import ConexusLogo from '@components/utils/ConexusLogo.svelte';
   import Background from '@components/utils/Background.svelte';
+  import Onboarding from '@components/utils/Onboarding.svelte';
 
   import BackArrow from '@components/icons/BackArrow.svelte';
   import PlaySVG from '@components/icons/Play.svelte';
@@ -29,11 +35,17 @@
   // let app: CoNexusApp = new CoNexusApp();
 
   let showIntro = $state<boolean>(false);
+  let onboarding = $state<boolean>(false);
   let sections: string[] = ['Community Picks', 'Collabs', 'Dischordian Saga'];
 
-  const activeSectionIndex = sections.indexOf(activeTab);
-  const prevSectionIndex =
-    activeSectionIndex == 0 ? sections.length - 1 : activeSectionIndex - 1;
+  const navigateTo = (item: Nullable<NavItem>) => {
+    if (!item) return;
+    if (item.link) {
+      window.location.href = item.link; // or `location.href = item.link`
+    } else if (item.action) {
+      item.action();
+    }
+  };
 
   // onMount(async () => {
   //   sections = await app
@@ -41,15 +53,14 @@
   //     .then((data) => data.map(({ id, name }) => name));
   // });
 
-  const prevSectionLink = (): Nullable<string> => {
-    if (!sections.includes(activeTab)) return null;
-    return `/sections/${sections[prevSectionIndex]}`;
-  };
-
-  const nextSectionLink = (): Nullable<string> => {
-    if (!sections.includes(activeTab)) return null;
-    return `/sections/${sections[(activeSectionIndex + 1) % sections.length]}`;
-  };
+  $effect(() => {
+    if (sections.includes(activeTab)) {
+      navContext.setContext({
+        items: sections.map((name) => ({ name, link: `/sections/${name}` })),
+        index: sections.indexOf(activeTab),
+      });
+    }
+  });
 
   // FULLSCREEN
 
@@ -65,13 +76,64 @@
     else if (document.fullscreenElement) document.exitFullscreen();
   });
 
-  const handleKeyDown = (event: KeyboardEvent) => {
+  const onkeydown = (event: KeyboardEvent) => {
     if (event.repeat) return;
+    if (document.activeElement?.tagName !== 'BODY') return;
     if (event.key === 'f') game.fullscreen = !game.fullscreen;
   };
+
+  // ONBOARDING
+
+  const onscroll = (event: Event) => {
+    if (onboarding) event.preventDefault();
+  };
+
+  let tippyInstance: Instance;
+  const startOnboarding = () =>
+    setTimeout(() => {
+      const isOnboarded = GetCache(ONBOARDING_KEY);
+      if (isOnboarded) return;
+
+      onboarding = true;
+
+      // Show the tooltip
+      const intro = document.getElementById('intro') as HTMLSpanElement;
+
+      tippyInstance = tippy(intro, {
+        content: 'Meet CoNexus in 30 seconds',
+        trigger: 'manual',
+        placement: 'bottom',
+        hideOnClick: false,
+      });
+
+      tippyInstance.show();
+
+      // Disable scroll
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+      setTimeout(() => document.documentElement.classList.add('no-scroll'));
+    });
+
+  const finishOnboarding = () => {
+    SetCache(ONBOARDING_KEY, true);
+    onboarding = false;
+
+    // Update the store to apply highlighted styling
+    $highlightCommunityPicks = true;
+
+    // Destroy the tooltip
+    tippyInstance.destroy();
+
+    // Enable scroll
+    document.documentElement.classList.remove('no-scroll');
+  };
+
+  onMount(startOnboarding);
 </script>
 
-<svelte:window on:keydown={handleKeyDown} />
+<svelte:window {onkeydown} {onscroll} />
 
 {#if $story === null && storyName !== 'Maintenance'}
   <header
@@ -107,12 +169,18 @@
       <CloseSVG onclick={() => (showIntro = false)} hider={true} />
     </div>
   {:else if subheading}
-    <p class="mobile-text-wrapper subheading pad-inline text-shad">
+    <p
+      class="mobile-text-wrapper subheading pad-inline text-shad"
+      class:onboarding
+    >
       {@html subheading}
       {#if header === 'CoNexus'}
-        <span class="intro-wrapper flex">
+        <span class="intro-wrapper flex" id="intro">
           <PlaySVG
-            onclick={() => (showIntro = true)}
+            onclick={() => {
+              showIntro = true;
+              if (onboarding) finishOnboarding();
+            }}
             text="Watch 30-sec Intro"
             voidBtn={false}
             glowing={true}
@@ -125,16 +193,19 @@
     <div class="empty-subheading"></div>
   {/if}
 
+  {#if onboarding && header === 'CoNexus'}
+    <Onboarding />
+  {/if}
+
   <nav
     class="flex-row blur transition semi-transparent-dark-bg shad-behind dark-glowing-opaque"
   >
     <!-- PREVIOUS SECTION -->
-    <a
-      class="fade-in"
-      class:inactive={(!sections.includes(activeTab) && !storyName) ||
-        (storyName && !prevStory.link)}
-      href={storyName ? prevStory.link : prevSectionLink()}
-      target="_self"
+    <button
+      class="void-btn fade-in"
+      class:inactive={!$prevItem}
+      onclick={() => navigateTo($prevItem)}
+      disabled={!$prevItem}
       draggable="false"
     >
       <svg
@@ -150,14 +221,8 @@
         />
         <rect x="-30" y="-25" width="100" height="50" rx="5" />
       </svg>
-      <p>
-        {#if sections.includes(activeTab) && !storyName}
-          {sections[prevSectionIndex]}
-        {:else if storyName}
-          {prevStory.name}
-        {/if}
-      </p>
-    </a>
+      <p>{$prevItem?.name}</p>
+    </button>
 
     <!-- Dashboard -->
     <a
@@ -261,12 +326,11 @@
     </a>
 
     <!-- NEXT SECTION -->
-    <a
-      class="fade-in"
-      class:inactive={(!sections.includes(activeTab) && !storyName) ||
-        (storyName && !nextStory.link)}
-      href={storyName ? nextStory.link : nextSectionLink()}
-      target="_self"
+    <button
+      class="void-btn fade-in"
+      class:inactive={!$nextItem}
+      onclick={() => navigateTo($nextItem)}
+      disabled={!$nextItem}
       draggable="false"
     >
       <svg
@@ -283,14 +347,8 @@
         />
         <rect x="-30" y="-25" width="100" height="50" rx="5" />
       </svg>
-      <p>
-        {#if sections.includes(activeTab) && !storyName}
-          {sections[(activeSectionIndex + 1) % sections.length]}
-        {:else if storyName}
-          {nextStory.name}
-        {/if}
-      </p>
-    </a>
+      <p>{$nextItem?.name}</p>
+    </button>
   </nav>
 {/if}
 
@@ -328,12 +386,17 @@
   }
 
   .subheading {
+    position: relative;
     margin: 1rem auto;
     @include text-shadow;
 
     .intro-wrapper {
       width: 100%;
       padding-top: 1rem;
+    }
+
+    &.onboarding {
+      z-index: 1000;
     }
 
     @include respond-up(small-desktop) {
@@ -369,7 +432,8 @@
     gap: 0;
     z-index: 100;
 
-    a {
+    a,
+    button {
       width: 100%;
       display: flex;
       flex-flow: column nowrap;
@@ -381,30 +445,8 @@
       stroke: $white;
       @include white-txt;
 
-      &:first-of-type {
-        padding-left: 0.5rem;
-      }
-
-      &:last-of-type {
-        padding-right: 0.5rem;
-      }
-
       svg {
         width: 2rem;
-      }
-
-      &.active {
-        opacity: 1;
-        @include cyan(1, text);
-
-        svg {
-          fill: $cyan;
-          stroke: $cyan;
-        }
-      }
-
-      &.inactive {
-        opacity: 0.2;
       }
 
       p {
@@ -419,6 +461,33 @@
           max-width: 7rem;
           text-transform: none;
         }
+      }
+    }
+
+    a {
+      &.active {
+        opacity: 1;
+        @include cyan(1, text);
+
+        svg {
+          fill: $cyan;
+          stroke: $cyan;
+        }
+      }
+    }
+
+    button {
+      &:first-of-type {
+        padding-left: 0.5rem;
+      }
+
+      &:last-of-type {
+        padding-right: 0.5rem;
+      }
+
+      &.inactive {
+        opacity: 0.2;
+        cursor: not-allowed;
       }
     }
 
@@ -444,24 +513,14 @@
         transform: translate(-50%, -100%);
       }
 
-      a {
+      a,
+      button {
         width: 100%;
         flex-flow: row;
         padding: 0.75rem 1rem;
         gap: 0.5rem;
         opacity: 1;
         @include light-blue(1, text);
-
-        &:first-of-type {
-          border-bottom-left-radius: inherit;
-          padding-left: 2rem;
-        }
-
-        &:last-of-type {
-          border-bottom-right-radius: inherit;
-          padding-right: 2rem;
-          flex-direction: row-reverse;
-        }
 
         &:hover:not(&.inactive),
         &:active:not(&.inactive),
@@ -474,18 +533,6 @@
             fill: $cyan;
             stroke: $cyan;
           }
-        }
-
-        &.active {
-          background-image: radial-gradient(
-            ellipse at center top,
-            rgba(51, 226, 230, 0.1),
-            rgba(51, 226, 230, 0)
-          );
-        }
-
-        &.inactive {
-          cursor: not-allowed;
         }
 
         svg {
@@ -505,6 +552,29 @@
           @starting-style {
             opacity: 0;
           }
+        }
+      }
+
+      a {
+        &.active {
+          background-image: radial-gradient(
+            ellipse at center top,
+            rgba(51, 226, 230, 0.1),
+            rgba(51, 226, 230, 0)
+          );
+        }
+      }
+
+      button {
+        &:first-of-type {
+          border-bottom-left-radius: inherit;
+          padding-left: 2rem;
+        }
+
+        &:last-of-type {
+          border-bottom-right-radius: inherit;
+          padding-right: 2rem;
+          flex-direction: row-reverse;
         }
       }
     }

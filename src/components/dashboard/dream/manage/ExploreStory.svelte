@@ -7,7 +7,7 @@
   import { GetCache, ALL_TOPICS_KEY } from '@constants/cache';
   import openModal from '@stores/modal.svelte';
   import { deleteStoryModal } from '@constants/modal';
-  import { prevStory, nextStory } from '@stores/navigation.svelte';
+  import { navContext } from '@stores/navigation.svelte';
   import { ensureAdmin } from '@utils/route-guard';
 
   import GenreTags from '@components/dashboard/dream/manage/GenreTags.svelte';
@@ -79,16 +79,13 @@
 
     const storedTopics: Nullable<string> = GetCache(ALL_TOPICS_KEY);
     if (storedTopics) {
-      categoryTopics = storedTopics.split('][');
-      activeStoryIndex = categoryTopics?.indexOf(topic.name);
-
-      prevStory.link = `/dashboard/dream/manage/${categoryTopics[prevStoryIndex]}`;
-      prevStory.name = categoryTopics[prevStoryIndex];
-      nextStory.link = `/dashboard/dream/manage/${
-        categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
-      }`;
-      nextStory.name =
-        categoryTopics[(activeStoryIndex + 1) % categoryTopics.length];
+      navContext.setContext({
+        items: storedTopics.split('][').map((name) => ({
+          name,
+          link: `/dashboard/dream/manage/${name}`,
+        })),
+        index: storedTopics.split('][').indexOf(topic.name),
+      });
     }
   });
 

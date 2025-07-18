@@ -7,7 +7,7 @@
     SetCache,
     GetCache,
     CATEGORY_TOPICS_KEY,
-    CATEGORY_TOPICS_TTL,
+    TTL_HOUR,
   } from '@constants/cache';
 
   import StoryTile from '@components/utils/StoryTile.svelte';
@@ -55,7 +55,7 @@
     if (response && response.length > 0) {
       topics = [...topics, ...response];
       total += response.length;
-      SetCache(CATEGORY_TOPICS_KEY(category.name), topics, CATEGORY_TOPICS_TTL);
+      SetCache(CATEGORY_TOPICS_KEY(category.name), topics, TTL_HOUR);
     }
 
     // Stop fetching when we've loaded all topics

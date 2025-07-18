@@ -6,7 +6,7 @@
   import AdminApp from '@lib/admin';
   import CoNexusApp from '@lib/view';
   import { toastStore } from '@stores/toast.svelte';
-  import { SetCache, ALL_TOPICS_KEY, ALL_TOPICS_TTL } from '@constants/cache';
+  import { SetCache, ALL_TOPICS_KEY, TTL_DAY } from '@constants/cache';
 
   import StoryList from '@components/dashboard/dream/manage/StoryList.svelte';
 
@@ -84,7 +84,7 @@
       .map((collection) => collection.topics.sort((a, b) => a.order - b.order))
       .flat();
     const topicNames = allTopics.map(({ topic_name }) => topic_name);
-    SetCache(ALL_TOPICS_KEY, topicNames.join(']['), ALL_TOPICS_TTL);
+    SetCache(ALL_TOPICS_KEY, topicNames.join(']['), TTL_DAY);
   };
 </script>
 

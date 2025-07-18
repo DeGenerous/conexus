@@ -8,7 +8,7 @@
   import MediaManager from '@lib/media';
   import CoNexusGame from '@lib/story';
   import { story, game } from '@stores/conexus.svelte';
-  import { prevStory, nextStory } from '@stores/navigation.svelte';
+  import { navContext } from '@stores/navigation.svelte';
   import { GetCache, SECTION_CATEGORIES_KEY } from '@constants/cache';
   import detectIOS from '@utils/ios-device';
   import openModal, { showProfile } from '@stores/modal.svelte';
@@ -52,15 +52,10 @@
     });
   };
 
-  // Switching between NEIGHBOUR stories
-  let categoryTopics: TopicInSection[] = [];
-  let activeStoryIndex: number = 0;
-  $: prevStoryIndex =
-    activeStoryIndex <= 0 ? categoryTopics.length - 1 : activeStoryIndex - 1;
-
   onMount(async () => {
     isLogged = await userState();
     isReferred = await userState('referred');
+
     // Get all topics in SECTION from the localStorage
     const storedTopics = GetCache<CategoryInSection[]>(
       SECTION_CATEGORIES_KEY(section),
@@ -68,33 +63,15 @@
       ?.map((category: CategoryInSection) => category.topics)
       .flat();
     if (storedTopics) {
-      categoryTopics = storedTopics;
-      // Get array of STORY NAMES to display on button
-      const categoryTopicNames: string[] = categoryTopics!.map(
-        (story) => story.topic_name,
-      );
-      // Find index of selected story to get PREV & NEXT story index
-      activeStoryIndex = categoryTopicNames?.indexOf(story_name);
-
-      if (!categoryTopics.length) return;
-      // Update index value during mount
-      prevStoryIndex =
-        activeStoryIndex <= 0
-          ? categoryTopics.length - 1
-          : activeStoryIndex - 1;
-      // Set up routes for switching between stories
-      prevStory.link = `/sections/${section}/${categoryTopics[prevStoryIndex].topic_name}?id=${
-        categoryTopics[prevStoryIndex].topic_id
-      }`;
-      prevStory.name = categoryTopics[prevStoryIndex].topic_name;
-      nextStory.link = `/sections/${section}/${
-        categoryTopics[(activeStoryIndex + 1) % categoryTopics.length]
-          .topic_name
-      }?id=${categoryTopics[(activeStoryIndex + 1) % categoryTopics.length].topic_id}`;
-      nextStory.name =
-        categoryTopics[
-          (activeStoryIndex + 1) % categoryTopics.length
-        ].topic_name;
+      navContext.setContext({
+        items: storedTopics.map(({ topic_name, topic_order }) => ({
+          name: topic_name,
+          link: `/sections/${section}/${topic_name}?id=${topic_order}`,
+        })),
+        index: storedTopics.findIndex(
+          (topic) => topic.topic_name === story_name,
+        ),
+      });
     }
   });
 

@@ -1,10 +1,9 @@
 import {
-  USER_CACHE_KEY,
-  USER_CACHE_TTL,
-  REFERRAL_CODES_CACHE_KEY,
-  REFERRAL_CODES_CACHE_TTL,
-  SUBSCRIPTIONSTATUS_CACHE_KEY,
-  SUBSCRIPTIONSTATUS_CACHE_TTL,
+  USER_KEY,
+  TTL_HOUR,
+  REFERRAL_CODES_KEY,
+  TTL_SHORT,
+  SUBSCRIPTION_STATUS_KEY,
   ClearCache,
   GetCache,
   SetCache,
@@ -43,7 +42,7 @@ class Account {
     }
 
     // Store user data in localStorage with timestamp
-    SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
+    SetCache(USER_KEY, data.user, TTL_HOUR);
     window.location.reload();
   }
 
@@ -60,7 +59,7 @@ class Account {
     }
 
     // Store user data in localStorage with timestamp
-    SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
+    SetCache(USER_KEY, data.user, TTL_HOUR);
 
     authenticated.set(data.user);
   }
@@ -116,15 +115,13 @@ class Account {
   async subscribeNewsletter(): Promise<void> {
     const { data, error } = await this.accountAPI.subscribeNewsletter();
 
-    const cachedData = GetCache<SubscriptionStatus>(
-      SUBSCRIPTIONSTATUS_CACHE_KEY,
-    );
+    const cachedData = GetCache<SubscriptionStatus>(SUBSCRIPTION_STATUS_KEY);
     if (cachedData) {
       cachedData.is_active = true;
       SetCache<SubscriptionStatus>(
-        SUBSCRIPTIONSTATUS_CACHE_KEY,
+        SUBSCRIPTION_STATUS_KEY,
         cachedData,
-        SUBSCRIPTIONSTATUS_CACHE_TTL,
+        TTL_SHORT,
       );
     }
 
@@ -143,15 +140,13 @@ class Account {
   async unsubscribeNewsletter(): Promise<void> {
     const { data, error } = await this.accountAPI.unsubscribeNewsletter();
 
-    const cachedData = GetCache<SubscriptionStatus>(
-      SUBSCRIPTIONSTATUS_CACHE_KEY,
-    );
+    const cachedData = GetCache<SubscriptionStatus>(SUBSCRIPTION_STATUS_KEY);
     if (cachedData) {
       cachedData.is_active = false;
       SetCache<SubscriptionStatus>(
-        SUBSCRIPTIONSTATUS_CACHE_KEY,
+        SUBSCRIPTION_STATUS_KEY,
         cachedData,
-        SUBSCRIPTIONSTATUS_CACHE_TTL,
+        TTL_SHORT,
       );
     }
 
@@ -168,9 +163,7 @@ class Account {
   }
 
   async subscriptionStatus(): Promise<SubscriptionStatus> {
-    const cachedData = GetCache<SubscriptionStatus>(
-      SUBSCRIPTIONSTATUS_CACHE_KEY,
-    );
+    const cachedData = GetCache<SubscriptionStatus>(SUBSCRIPTION_STATUS_KEY);
     if (cachedData) {
       return cachedData;
     }
@@ -189,7 +182,7 @@ class Account {
     }
 
     // Store in localStorage with expiry timestamp
-    SetCache(SUBSCRIPTIONSTATUS_CACHE_KEY, data, SUBSCRIPTIONSTATUS_CACHE_TTL);
+    SetCache(SUBSCRIPTION_STATUS_KEY, data, TTL_SHORT);
 
     return data;
   }
@@ -232,7 +225,7 @@ class Account {
 
   async me(): Promise<void> {
     // Try getting user data from localStorage
-    const cachedUser = GetCache<User>(USER_CACHE_KEY);
+    const cachedUser = GetCache<User>(USER_KEY);
     if (cachedUser) {
       authenticated.set(cachedUser);
       return;
@@ -252,7 +245,7 @@ class Account {
     }
 
     // Store user data in localStorage with timestamp
-    SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
+    SetCache(USER_KEY, data.user, TTL_HOUR);
 
     authenticated.set(data.user);
   }
@@ -270,7 +263,7 @@ class Account {
     }
 
     // Store user data in localStorage with timestamp
-    SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
+    SetCache(USER_KEY, data.user, TTL_HOUR);
 
     authenticated.set(data.user);
 
@@ -304,10 +297,11 @@ class Account {
       } else {
         toastStore.show('Error signing out', 'error');
       }
+      ClearCache('auth'); // clear cache anyway
       return;
     }
 
-    // clear
+    // clear user from cache
     ClearCache('auth');
     window.location.reload();
   }
@@ -325,7 +319,7 @@ class Account {
     }
 
     // update user data
-    SetCache(USER_CACHE_KEY, data.user, USER_CACHE_TTL);
+    SetCache(USER_KEY, data.user, TTL_HOUR);
 
     authenticated.set(data.user);
   }
@@ -346,7 +340,7 @@ class Account {
   }
 
   async getReferralCodes(): Promise<void> {
-    const cachedData = GetCache<ReferralCode[]>(REFERRAL_CODES_CACHE_KEY);
+    const cachedData = GetCache<ReferralCode[]>(REFERRAL_CODES_KEY);
     if (cachedData) {
       referralCodes.set(cachedData);
       return;
@@ -365,7 +359,7 @@ class Account {
     }
 
     // Store in localStorage with expiry timestamp
-    SetCache(REFERRAL_CODES_CACHE_KEY, data.codes, REFERRAL_CODES_CACHE_TTL);
+    SetCache(REFERRAL_CODES_KEY, data.codes, TTL_SHORT);
 
     referralCodes.set(data.codes);
   }

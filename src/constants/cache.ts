@@ -1,50 +1,20 @@
-export const ONE_YEAR_TTL = 1000 * 60 * 60 * 24 * 365; // 1 year
+export const TTL_SHORT = 1000 * 60 * 15; // 15 minutes
+export const TTL_MEDIUM = 1000 * 60 * 30; // 30 minutes
+export const TTL_HOUR = 1000 * 60 * 60; // 1 hour
+export const TTL_DAY = TTL_HOUR * 24; // 1 day
+export const TTL_MONTH = TTL_DAY * 30; // 1 month
+export const TTL_YEAR = TTL_DAY * 365; // 1 year
+
+/* -------------------------------------------------------------------- */
+// 1 YEAR - default value for SetCache()
+/* -------------------------------------------------------------------- */
 
 export const IOS_KEY = 'ios_device'; // to hide some unsupported UI
 
-export const COOKIE_CONSENT_KEY = 'cookie_consent';
-export const COOKIE_CONSENT_TTL = 1000 * 60 * 60 * 24 * 30; // 1 month
-
-export const GENRE_CACHE_KEY = 'genres';
-export const GENRE_CACHE_TTL = 1000 * 60 * 60 * 24 * 30; // 1 month
-
-// Cache all topics for /dashboard/manage to switch between them with arrows
-export const ALL_TOPICS_KEY = 'all_topics';
-export const ALL_TOPICS_TTL = 1000 * 60 * 60 * 24; // 1 day
-
-// Cache all sections
-export const SECTION_CACHE_KEY = 'sections';
-export const SECTION_CACHE_TTL = 1000 * 60 * 60 * 24; // 1 day
-
-// Cache all categories from all sections together
-export const CATEGORY_CACHE_KEY = 'categories';
-export const CATEGORY_CACHE_TTL = 1000 * 60 * 60 * 24; // 1 day
-
-// Cache subscription status & referral codes
-export const SUBSCRIPTIONSTATUS_CACHE_KEY = 'subscription_status';
-export const SUBSCRIPTIONSTATUS_CACHE_TTL = 1000 * 60 * 15; // 15 minutes
-
-export const REFERRAL_CODES_CACHE_KEY = 'referral_codes';
-export const REFERRAL_CODES_CACHE_TTL = 1000 * 60 * 15; // 15 minutes
-
-// CACHE ALL DATA TO PLAY 1 HOUR WITHOUT UNNECESSARY REQUESTS:
-// 1) user object
-// 2) all CATEGORIES inside SECTION (separate for every SECTION)
-// 3) all TOPICS inside CATEGORY (separate for every CATEGORY)
-
-export const USER_CACHE_KEY = 'user';
-export const USER_CACHE_TTL = 1000 * 60 * 60 * 1; // 1 hour
-
-export const SECTION_CATEGORIES_KEY = (section: string): string =>
-  `section_categories[${section}]`;
-export const SECTION_CATEGORIES_TTL = 1000 * 60 * 60 * 1; // 1 hour
-
-export const CATEGORY_TOPICS_KEY = (category: string): string =>
-  `category_topics[${category}]`;
-export const CATEGORY_TOPICS_TTL = 1000 * 60 * 60 * 1; // 1 hour
-
-// Step customization (use 1 year TTL)
 export const GAME_INSTRUCTIONS_KEY = 'show_instructions';
+export const ONBOARDING_KEY = 'onboarded';
+
+// Step customization
 export const THEMES_KEY = 'themes';
 export const FONT_KEY = 'font';
 export const STYLING_KEY = 'styling';
@@ -52,31 +22,96 @@ export const SCALE_KEY = 'scale';
 export const VOLUME_KEY = (type: 'voice' | 'music'): string => `${type}_volume`;
 export const TTS_SPEED_KEY = 'tts_speed';
 
-// Story drafts (use 1 year TTL)
+// Story drafts
 export const DRAFTS_INDEX_KEY = 'draft_index'; // stringified DraftIndexEntry[]
 export const DRAFT_KEY = (id: string) => `draft:${id}`;
 export const CURRENT_DRAFT_KEY = 'current_draft'; // id of the open draft
 
+/* -------------------------------------------------------------------- */
+// 1 MONTH
+/* -------------------------------------------------------------------- */
+
+export const COOKIE_CONSENT_KEY = 'cookie_consent';
+
+export const GENRES_KEY = 'genres';
+
+/* -------------------------------------------------------------------- */
+// 1 DAY
+/* -------------------------------------------------------------------- */
+
+// Cache all topics for /dashboard/manage to switch between them with arrows
+export const ALL_TOPICS_KEY = 'all_topics';
+
+// Cache all sections
+export const SECTIONS_KEY = 'sections';
+
+// Cache all categories from all sections together
+export const CATEGORIES_KEY = 'categories';
+
+/* -------------------------------------------------------------------- */
+// 1 HOUR
+/* -------------------------------------------------------------------- */
+
+// CACHE ALL DATA TO PLAY 1 HOUR WITHOUT UNNECESSARY REQUESTS:
+// 1) user object
+// 2) all CATEGORIES inside SECTION (separate for every SECTION)
+// 3) all TOPICS inside CATEGORY (separate for every CATEGORY)
+
+export const USER_KEY = 'user';
+
+export const SECTION_CATEGORIES_KEY = (section: string): string =>
+  `section_categories[${section}]`;
+
+export const CATEGORY_TOPICS_KEY = (category: string): string =>
+  `category_topics[${category}]`;
+
+/* -------------------------------------------------------------------- */
+// 15 MINUTES
+/* -------------------------------------------------------------------- */
+
+// Cache subscription status & referral codes
+export const SUBSCRIPTION_STATUS_KEY = 'subscription_status';
+export const REFERRAL_CODES_KEY = 'referral_codes';
+
+// Cache OmniHub data
+export const POTENTIALS_KEY = 'potentials';
+export const SELECTED_POTENTIAL_KEY = 'selected_potential';
+
+/* -------------------------------------------------------------------- */
+
 const authKeys = [
-  USER_CACHE_KEY,
-  SUBSCRIPTIONSTATUS_CACHE_KEY,
-  REFERRAL_CODES_CACHE_KEY,
+  USER_KEY,
+  SUBSCRIPTION_STATUS_KEY,
+  REFERRAL_CODES_KEY,
+  POTENTIALS_KEY,
+  SELECTED_POTENTIAL_KEY
 ];
 
 const viewKeys = [
-  SECTION_CACHE_KEY,
-  CATEGORY_CACHE_KEY,
-  GENRE_CACHE_KEY,
+  SECTIONS_KEY,
+  CATEGORIES_KEY,
+  GENRES_KEY,
   ALL_TOPICS_KEY,
   SECTION_CATEGORIES_KEY('Community Picks'),
   SECTION_CATEGORIES_KEY('Collabs'),
   SECTION_CATEGORIES_KEY('Dischordian Saga'),
 ];
 
-function saveImortantAndClearCache() {
+function getAllDrafts() {
+  const draftsIndex = GetCache<DraftIndexEntry[]>(DRAFTS_INDEX_KEY);
+  if (!draftsIndex) return;
+  return draftsIndex.map(({ id }) => GetCache<DraftPayload>(DRAFT_KEY(id))!);
+}
+
+function restoreAllDrafts(drafts: DraftPayload[]) {
+  drafts.map((draft: DraftPayload) => SetCache(DRAFT_KEY(draft.id), draft));
+}
+
+function saveImportantAndClearCache() {
   // saving important values
   const cookieConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
   const gameInstructions = localStorage.getItem(GAME_INSTRUCTIONS_KEY);
+  const onboarded = localStorage.getItem(ONBOARDING_KEY);
   const musicVolume = localStorage.getItem(VOLUME_KEY('music'));
   const voiceVolume = localStorage.getItem(VOLUME_KEY('voice'));
   const ttsSpeed = localStorage.getItem(TTS_SPEED_KEY);
@@ -84,13 +119,17 @@ function saveImortantAndClearCache() {
   const customFont = localStorage.getItem(FONT_KEY);
   const customStyling = localStorage.getItem(STYLING_KEY);
   const customScale = localStorage.getItem(SCALE_KEY);
-  const user = localStorage.getItem(USER_CACHE_KEY); // save user object too
+  const draftsIndex = localStorage.getItem(DRAFTS_INDEX_KEY);
+  const currentDraft = localStorage.getItem(CURRENT_DRAFT_KEY);
+  const allDrafts = getAllDrafts();
+  const user = localStorage.getItem(USER_KEY); // save user object too
   // deleting all values
   localStorage.clear();
   // restoring saved values
   if (cookieConsent) localStorage.setItem(COOKIE_CONSENT_KEY, cookieConsent);
   if (gameInstructions)
     localStorage.setItem(GAME_INSTRUCTIONS_KEY, gameInstructions);
+  if (onboarded) localStorage.setItem(ONBOARDING_KEY, onboarded);
   if (musicVolume) localStorage.setItem(VOLUME_KEY('music'), musicVolume);
   if (voiceVolume) localStorage.setItem(VOLUME_KEY('voice'), voiceVolume);
   if (ttsSpeed) localStorage.setItem(TTS_SPEED_KEY, ttsSpeed);
@@ -98,14 +137,13 @@ function saveImortantAndClearCache() {
   if (customFont) localStorage.setItem(FONT_KEY, customFont);
   if (customStyling) localStorage.setItem(STYLING_KEY, customStyling);
   if (customScale) localStorage.setItem(SCALE_KEY, customScale);
-  if (user) localStorage.setItem(USER_CACHE_KEY, user);
+  if (draftsIndex) localStorage.setItem(DRAFTS_INDEX_KEY, draftsIndex);
+  if (currentDraft) localStorage.setItem(CURRENT_DRAFT_KEY, currentDraft);
+  if (allDrafts?.length) restoreAllDrafts(allDrafts);
+  if (user) localStorage.setItem(USER_KEY, user);
 }
 
-export const SetCache = <T>(
-  key: string,
-  value: T,
-  ttl: number = 1000 * 60 * 60 * 24 * 365,
-) => {
+export const SetCache = <T>(key: string, value: T, ttl: number = TTL_YEAR) => {
   localStorage.setItem(
     key,
     JSON.stringify({
@@ -143,7 +181,7 @@ export const ClearCache = (
       removeCacheKeys(viewKeys);
       break;
     case 'full':
-      saveImortantAndClearCache();
+      saveImportantAndClearCache();
       break;
     default:
       localStorage.removeItem(key);

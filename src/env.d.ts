@@ -159,3 +159,42 @@ type BlogPageCard = {
   description: string;
   url: string;
 };
+
+type StoryNode = {
+  season?: number;
+  title: string | undefined;
+  description: string;
+  video_url: string;
+  endTimestamp: number;
+  ended: boolean;
+  votes_options: {
+    option: string;
+    class?: string;
+  }[];
+  vote?: number;
+  episode?: number;
+  memory?: number;
+};
+
+type Attribute = {
+  name: string;
+  value: number;
+};
+
+type OnchainAttribute = {
+  label: string;
+  type: 'string';
+  trait_type: string;
+  value: string;
+};
+
+type NavItem = {
+  name: string;
+  link?: string;
+  action?: () => void;
+};
+
+type NavContext = {
+  items: NavItem[];
+  index: number;
+};

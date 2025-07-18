@@ -57,7 +57,7 @@ const Drafts = {
     if (typeof window === 'undefined') return;
 
     id ||= GetCache(CURRENT_DRAFT_KEY) || this.create();
-    const draft = structuredClone(GetCache(DRAFT_KEY(id!)) as DraftPayload);
+    const draft = structuredClone(GetCache<DraftPayload>(DRAFT_KEY(id!)));
     if (!draft) return toastStore.show(`Save unknown draft`, 'error');
 
     draft.data = collectState();
@@ -78,7 +78,7 @@ const Drafts = {
   },
 
   restore(id: string) {
-    const draft = GetCache(DRAFT_KEY(id)) as DraftPayload;
+    const draft = GetCache<DraftPayload>(DRAFT_KEY(id));
     if (!draft) return toastStore.show('Draft not found', 'error');
 
     if (draft.schema !== SCHEMA_VERSION)

@@ -48,6 +48,7 @@
   backdrop-filter: blur(1rem);
   width: 100vw;
   height: auto;
+  min-height: 15rem;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
@@ -118,6 +119,11 @@
     width: 100%;
   }
 
+  &.highlighted-menu-tile {
+    @include deep-green;
+    @include dark-green(1, text);
+  }
+
   &:hover:not(.loading-menu-tile),
   &:active:not(.loading-menu-tile),
   &:focus:not(.loading-menu-tile) {
@@ -167,10 +173,14 @@
 
   div {
     width: 100%;
-    border-radius: 1.5rem;
-    aspect-ratio: 1 / 1;
+    height: 100%;
+    border-radius: 1rem;
     cursor: inherit;
     @include cyan(0.1);
+
+    @include respond-up(tablet) {
+      aspect-ratio: 1/1;
+    }
   }
 
   span {
@@ -360,6 +370,22 @@
   &:focus:not(&:disabled) {
     @include light-blue(0.5);
     @include cyan(1, text);
+  }
+}
+
+.potential-tile {
+  @extend .tile;
+  @include purple(0.25);
+
+  img {
+    @include dark-border;
+  }
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus:not(&:disabled) {
+    background-color: $royal-purple;
+    @include orange(1, text, bright);
   }
 }
 

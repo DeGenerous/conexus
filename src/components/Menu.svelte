@@ -18,8 +18,8 @@
 
   {#await app.getSections()}
     <div class="flex-row">
-      {#each Array(3) as _}
-        <div class="loading-menu-tile">
+      {#each Array(3) as _, index}
+        <div class="loading-menu-tile" class:big-menu-tile={index === 0}>
           <div class="loading-animation"></div>
           <span class="loading-animation"></span>
         </div>

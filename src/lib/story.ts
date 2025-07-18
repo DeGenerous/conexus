@@ -185,6 +185,8 @@ class CoNexusGame extends GameAPI {
     }
 
     console.log('step is loaded');
+    console.log('incoming step ID: ', this.step_data.id);
+    console.log('returned step ID: ', data.id);
     console.log(this);
 
     this.step_data = data;
@@ -330,6 +332,8 @@ class CoNexusGame extends GameAPI {
     this.maxStep = Math.max(this.maxStep, data.step);
 
     console.log('set step data');
+    console.log('incoming step ID: ', this.step_data.id);
+    console.log('returned step ID: ', data.id);
     console.log(this);
 
     story.set(this);

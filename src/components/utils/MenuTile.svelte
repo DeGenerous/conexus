@@ -1,5 +1,8 @@
 <script lang="ts">
+  import tippy, { type Instance } from 'tippy.js';
+
   import { mediaURL } from '@constants/media';
+  import { highlightCommunityPicks } from '@stores/navigation.svelte';
 
   let { section }: { section: Section } = $props();
 
@@ -9,11 +12,27 @@
   const sectionImage: string = `${mediaURL}/conexus-sections/${imageName.toLocaleLowerCase()}.avif`;
 
   const blankPicture: string = '/blank.avif'; // temp
+
+  $effect(() => {
+    if (section.name === 'Community Picks' && $highlightCommunityPicks) {
+      const instance = tippy(
+        document.querySelector('.highlighted-menu-tile')!,
+        {
+          content: 'Check out 100+ stories from 18 different genres',
+          trigger: 'manual',
+          hideOnClick: false,
+        },
+      );
+      instance.show();
+    }
+  });
 </script>
 
 <a
   class="menu-tile"
   class:big-menu-tile={section.name === 'Community Picks'}
+  class:highlighted-menu-tile={section.name === 'Community Picks' &&
+    $highlightCommunityPicks}
   id={section.name}
   href="/sections/{section.name}"
 >

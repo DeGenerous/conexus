@@ -60,12 +60,12 @@ const getNFTs = async (): Promise<boolean> => {
     // Prevent further steps if there is no NFTs
     if (!nftNumbers.length) return false;
 
-    for (let i in nftNumbers) {
+    for (let i = 0; i < nftNumbers.length; i++) {
       const response = await fetch(
         `https://api.degenerousdao.com/nft/data/${nftNumbers[i]}`,
       );
       metadata[i] = await response.json();
-      const potential = new nftTile(metadata, Number(i));
+      const potential = new nftTile(metadata, i);
       NFTs.push(potential);
       totalPower += Number(potential.level);
     }

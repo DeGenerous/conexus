@@ -95,7 +95,7 @@ type Section = {
 };
 
 type Genre = {
-  id: number;
+  id?: number;
   name: string;
   description?: string;
 };

@@ -1,10 +1,10 @@
 import Fetcher from '@service/fetcher';
 
-export default class ViewAPI extends Fetcher {
+export default class AdminAPI extends Fetcher {
   protected group: string = '/admin';
 
   protected metricsGroup: string = `${this.group}/metrics`;
-  
+
   protected countGroup: string = `${this.metricsGroup}/count`;
   protected growthGroup: string = `${this.metricsGroup}/growth`;
   protected topNGroup: string = `${this.metricsGroup}/top-n`;
@@ -28,13 +28,10 @@ export default class ViewAPI extends Fetcher {
    * @returns A promise that resolves to the success status of the operation.
    */
   async changeRole(account_id: string, new_role_id: string) {
-    return this.request<{ success: boolean }>(
-      `${this.group}/accounts/change-role`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify({ role_id: new_role_id }),
-      },
-    );
+    return this.request(`${this.group}/accounts/change-role`, {
+      method: 'PATCH',
+      body: JSON.stringify({ account_id, new_role_id }),
+    });
   }
 
   /**
@@ -43,13 +40,10 @@ export default class ViewAPI extends Fetcher {
    * @returns A promise that resolves to the success status of the operation.
    */
   async disableAccount(account_id: string) {
-    return this.request<{ success: boolean }>(
-      `${this.group}/accounts/disable`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify({ account_id }),
-      },
-    );
+    return this.request(`${this.group}/accounts/disable`, {
+      method: 'PATCH',
+      body: JSON.stringify({ account_id }),
+    });
   }
 
   /**
@@ -103,7 +97,7 @@ export default class ViewAPI extends Fetcher {
    * @param request The contract data to create.
    * @returns A promise that resolves to the created Contract object.
    */
-  async createCContract(request: Contract) {
+  async createContract(request: Contract) {
     return this.request(`${this.group}/contracts`, {
       method: 'POST',
       body: JSON.stringify(request),
@@ -165,24 +159,129 @@ export default class ViewAPI extends Fetcher {
     });
   }
 
+  /* COUNT */
+
+  /**
+   * Retrieves the count of accounts.
+   * @param request The request data for the account count.
+   * @returns A promise that resolves to the account count.
+   */
   async accountCount(request: AccountMetricFilter) {
     return this.request<number>(`${this.countGroup}/account`, {
-        method: 'POST',
-        body: JSON.stringify(request)
-    })
-  }
-  
-  async walletCount(request: WalletMetricFilter) {
-    return this.request<number>(`${this.countGroup}/wallet`, {
-        method: 'POST',
-        body: JSON.stringify(request)
-    })
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
   }
 
+  /**
+   * Retrieves the count of wallets.
+   * @param request The request data for the wallet count.
+   * @returns A promise that resolves to the wallet count.
+   */
+  async walletCount(request: WalletMetricFilter) {
+    return this.request<number>(`${this.countGroup}/wallet`, {
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
+  }
+
+  /**
+   * Retrieves the count of topics.
+   * @param request The request data for the topic count.
+   * @returns A promise that resolves to the topic count.
+   */
   async topicCount(request: TopicMetricFilter) {
     return this.request<number>(`${this.countGroup}/topic`, {
-        method: 'POST',
-        body: JSON.stringify(request)
-    })
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
+  }
+
+  /**
+   * Retrieves the count of stories.
+   * @param request The request data for the story count.
+   * @returns A promise that resolves to the story count.
+   */
+  async storyCount(request: StoryMetricFilter) {
+    return this.request<number>(`${this.countGroup}/story`, {
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
+  }
+
+  /* GROWTH */
+
+  /**
+   * Retrieves the growth metrics for accounts.
+   * @param request The request data for the account growth metrics.
+   * @returns A promise that resolves to the account growth metrics.
+   */
+  async accountGrowth(request: AccountMetricFilter) {
+    return this.request<number>(`${this.growthGroup}/account`, {
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
+  }
+
+  /**
+   * Retrieves the growth metrics for wallets.
+   * @param request The request data for the wallet growth metrics.
+   * @returns A promise that resolves to the wallet growth metrics.
+   */
+  async walletGrowth(request: WalletMetricFilter) {
+    return this.request<number>(`${this.growthGroup}/wallet`, {
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
+  }
+
+  /**
+   * Retrieves the growth metrics for topics.
+   * @param request The request data for the topic growth metrics.
+   * @returns A promise that resolves to the topic growth metrics.
+   */
+  async topicGrowth(request: TopicMetricFilter) {
+    return this.request<number>(`${this.growthGroup}/topic`, {
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
+  }
+
+  /**
+   * Retrieves the growth metrics for stories.
+   * @param request The request data for the story growth metrics.
+   * @returns A promise that resolves to the story growth metrics.
+   */
+  async storyGrowth(request: StoryMetricFilter) {
+    return this.request<number>(`${this.growthGroup}/story`, {
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
+  }
+
+  /* TOP N */
+
+  /**
+   * Retrieves the top N active accounts.
+   * @param request The request data for the top N accounts.
+   * @returns A promise that resolves to the top N active accounts.
+   */
+  async accountTopN(request: AccountMetricFilter) {
+    return this.request<number>(`${this.topNGroup}/active-accounts`, {
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
+  }
+
+  /**
+   * Retrieves the top N played topics.
+   * @param request The request data for the top N topics.
+   * @returns A promise that resolves to the top N played topics.
+   */
+  async topicTopN(request: TopicMetricFilter) {
+    return this.request<number>(`${this.topNGroup}/played-topics`, {
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
   }
 }

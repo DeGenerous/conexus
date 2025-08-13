@@ -9,233 +9,21 @@ import {
   SetCache,
 } from '@constants/cache';
 import { api_error } from '@errors/index';
-import { AccountAPI, AuthAPI } from '@service/routes';
-import {
-  authenticated,
-  referralCodes,
-  accountError,
-} from '@stores/account.svelte';
+import AccountAPI from '@service/routesv2/account';
+import { authenticated, referralCodes } from '@stores/account.svelte';
 import { toastStore } from '@stores/toast.svelte';
 
 class Account {
   private accountAPI: AccountAPI;
-  private authAPI: AuthAPI;
 
   constructor() {
     this.accountAPI = new AccountAPI(import.meta.env.PUBLIC_BACKEND);
-    this.authAPI = new AuthAPI(import.meta.env.PUBLIC_BACKEND);
   }
 
-  async signin(signinData: SignIn): Promise<void> {
-    const { status, message, data } = await this.authAPI.signin(
-      signinData.email,
-      signinData.password,
-    );
-
-    switch (status) {
-      case 'error':
-        accountError.set({ signin: message });
-        return;
-      case 'success':
-        SetCache(USER_KEY, data, TTL_HOUR);
-        window.location.reload();
-        return;
-      default:
-        accountError.set({ signin: 'Unknown error occurred' });
-        return;
-    }
-
-    // if (!data) {
-    //   if (error) {
-    //     accountError.set({ signin: error.message });
-    //   } else {
-    //     accountError.set({ signin: 'Error signing in' });
-    //   }
-    //   return;
-    // }
-
-    // Store user data in localStorage with timestamp
-    // SetCache(USER_KEY, data.user, TTL_HOUR);
-    // window.location.reload();
-  }
-
-  async signup(signupData: ReferralSignUp): Promise<Nullable<void>> {
-    const { data, error } = await this.authAPI.signup(signupData);
-
-    if (!data) {
-      if (error) {
-        accountError.set({ signup: error.message });
-      } else {
-        accountError.set({ signup: 'Error signing up' });
-      }
-      return null;
-    }
-
-    // Store user data in localStorage with timestamp
-    SetCache(USER_KEY, data.user, TTL_HOUR);
-
-    authenticated.set(data.user);
-  }
-
-  async validateReferralCode(code: string): Promise<ReferralCode | null> {
-    const { data, error } = await this.authAPI.validateReferralCode(code);
-
-    if (!data) {
-      if (error) {
-        accountError.set({ validateReferralCode: error.message });
-      } else {
-        accountError.set({
-          validateReferralCode: 'Error validating referral code',
-        });
-      }
-      return null;
-    }
-
-    return data.referral;
-  }
-
-  async googleSignin(): Promise<void> {
-    const { data, error } = await this.authAPI.googleSignin();
-
-    if (!data) {
-      if (error) {
-        accountError.set({ googleSignin: error.message });
-      } else {
-        accountError.set({ googleSignin: 'Error signing in with google' });
-      }
-      return;
-    }
-
-    window.location.href = data.url;
-  }
-
-  async confirmEmail(token: string): Promise<boolean> {
-    const { data, error } = await this.accountAPI.confirmEmail(token);
-
-    if (!data) {
-      if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error confirming email', 'error');
-      }
-      return false;
-    }
-
-    toastStore.show(data.message || 'Email confirmed successfully', 'info');
-    return true;
-  }
-
-  async subscribeNewsletter(): Promise<void> {
-    const { data, error } = await this.accountAPI.subscribeNewsletter();
-
-    const cachedData = GetCache<SubscriptionStatus>(SUBSCRIPTION_STATUS_KEY);
-    if (cachedData) {
-      cachedData.is_active = true;
-      SetCache<SubscriptionStatus>(
-        SUBSCRIPTION_STATUS_KEY,
-        cachedData,
-        TTL_SHORT,
-      );
-    }
-
-    if (!data) {
-      if (error) {
-        toastStore.show(error.message);
-      } else {
-        toastStore.show('Error subscribing to newsletter');
-      }
-      return;
-    }
-
-    toastStore.show(data.message || 'Subscribed to newsletter', 'info');
-  }
-
-  async unsubscribeNewsletter(): Promise<void> {
-    const { data, error } = await this.accountAPI.unsubscribeNewsletter();
-
-    const cachedData = GetCache<SubscriptionStatus>(SUBSCRIPTION_STATUS_KEY);
-    if (cachedData) {
-      cachedData.is_active = false;
-      SetCache<SubscriptionStatus>(
-        SUBSCRIPTION_STATUS_KEY,
-        cachedData,
-        TTL_SHORT,
-      );
-    }
-
-    if (!data) {
-      if (error) {
-        toastStore.show(error.message);
-      } else {
-        toastStore.show('Error unsubscribing from newsletter');
-      }
-      return;
-    }
-
-    toastStore.show(data.message || 'Unsubscribed from newsletter', 'info');
-  }
-
-  async subscriptionStatus(): Promise<SubscriptionStatus> {
-    const cachedData = GetCache<SubscriptionStatus>(SUBSCRIPTION_STATUS_KEY);
-    if (cachedData) {
-      return cachedData;
-    }
-
-    // Fetch fresh data
-    const { data, error } = await this.accountAPI.subscriptionStatus();
-
-    if (!data) {
-      if (error) {
-        api_error(error);
-        toastStore.show(error.message);
-      } else {
-        toastStore.show('Error getting subscription status', 'error');
-      }
-      return { is_active: false, subscribed_at: null, unsubscribed_at: null };
-    }
-
-    // Store in localStorage with expiry timestamp
-    SetCache(SUBSCRIPTION_STATUS_KEY, data, TTL_SHORT);
-
-    return data;
-  }
-
-  async forgotPassword(email: string): Promise<void> {
-    const { data, error } = await this.authAPI.forgotPassword(email);
-
-    if (!data) {
-      if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error sending forgot passowrd', 'error');
-      }
-      return;
-    }
-
-    toastStore.show(data.message || 'Password reset email sent', 'info');
-  }
-
-  async resetPassword(resetData: ResetPassword): Promise<void> {
-    const { data, error } = await this.authAPI.resetPassword(
-      resetData.email,
-      resetData.token,
-      resetData.password,
-    );
-
-    if (!data) {
-      if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error resetting password', 'error');
-      }
-      return;
-    }
-
-    toastStore.show(data.message || 'Password reset successfully', 'info');
-  }
-
-  /* Account API */
-
+  /**
+   * Fetch the current user's information.
+   * @returns {Promise<void>}
+   */
   async me(): Promise<void> {
     // Try getting user data from localStorage
     const cachedUser = GetCache<User>(USER_KEY);
@@ -245,113 +33,169 @@ class Account {
     }
 
     // If no valid cached user, fetch from API
-    const { data, error } = await this.accountAPI.me();
+    const { status, message, data } = await this.accountAPI.me();
 
-    if (!data) {
-      if (error) {
-        api_error(error, false);
-      } else {
-        toastStore.show('Error getting current user', 'error');
-      }
-      ClearCache('auth');
-      return;
+    switch (status) {
+      case 'error':
+        api_error(message, false);
+        break;
+      case 'success':
+        if (!data) {
+          toastStore.show('Error getting current user', 'error');
+          ClearCache('auth');
+          return;
+        }
+        SetCache(USER_KEY, data, TTL_HOUR);
+        authenticated.set(data);
+        break;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
     }
-
-    // Store user data in localStorage with timestamp
-    SetCache(USER_KEY, data.user, TTL_HOUR);
-
-    authenticated.set(data.user);
   }
 
+  /**
+   * Fetch the current user's information.
+   * @returns {Promise<User | null>}
+   */
   static async getUser(): Promise<User | null> {
     const accountAPI = new AccountAPI(import.meta.env.PUBLIC_BACKEND);
-    const { data, error } = await accountAPI.me();
+    const { status, message, data } = await accountAPI.me();
+
+    if (status === 'error') {
+      api_error(message);
+      return null;
+    }
 
     if (!data) {
-      if (error) {
-        api_error(error);
-      }
       ClearCache('auth');
       return null;
     }
 
     // Store user data in localStorage with timestamp
-    SetCache(USER_KEY, data.user, TTL_HOUR);
+    SetCache(USER_KEY, data, TTL_HOUR);
 
-    authenticated.set(data.user);
+    authenticated.set(data);
 
-    return data.user;
+    return data;
   }
 
-  async changePassword(changePasswrodData: ChangePassword): Promise<void> {
-    const { data, error } = await this.accountAPI.changePassword(
-      changePasswrodData.old_password,
-      changePasswrodData.new_password,
+  /**
+   * Confirm the user's email address.
+   * @param token The confirmation token.
+   * @returns {Promise<boolean>} True if the email was confirmed, false otherwise.
+   */
+  async confirmEmail(token: string): Promise<boolean> {
+    const { status, message } = await this.accountAPI.confirmEmail(token);
+
+    switch (status) {
+      case 'error':
+        api_error(message);
+        return false;
+      case 'success':
+        toastStore.show(message || 'Email confirmed successfully', 'info');
+        return true;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
+        return false;
+    }
+  }
+
+  /**
+   * Change the user's password.
+   * @param changePasswordData The new password data.
+   */
+  async changePassword(changePasswordData: ChangePassword): Promise<void> {
+    const { status, message } = await this.accountAPI.changePassword(
+      changePasswordData.old_password,
+      changePasswordData.new_password,
     );
 
-    if (!data) {
-      if (error) {
-        accountError.set({ changePassword: error.message });
-      } else {
-        accountError.set({ changePassword: 'Error changing password' });
-      }
-      return;
+    switch (status) {
+      case 'error':
+        api_error(message);
+        break;
+      case 'success':
+        toastStore.show(message || 'Password changed successfully', 'info');
+        break;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
     }
-
-    // toastStore.show(data.message || 'Password changed successfully', 'info');
   }
 
-  async signout(): Promise<void> {
-    const { data, error } = await this.accountAPI.logout();
+  /**
+   * Change the user's username.
+   * @param username The new username.
+   */
+  async changeUsername(username: string): Promise<void> {
+    const { status, message } = await this.accountAPI.changeUsername(username);
 
-    if (!data) {
-      if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error signing out', 'error');
-      }
-      ClearCache('auth'); // clear cache anyway
-      return;
+    switch (status) {
+      case 'error':
+        api_error(message);
+        break;
+      case 'success':
+        toastStore.show(message || 'Username changed successfully', 'info');
+        break;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
     }
-
-    // clear user from cache
-    ClearCache('auth');
-    window.location.reload();
   }
 
-  async selectMainWallet(wallet: string): Promise<void> {
-    const { data, error } = await this.accountAPI.web3SelectWallet(wallet);
+  /**
+   * Change the user's avatar.
+   * @param imageURL The URL of the new avatar image.
+   * @param avatarFile The new avatar image file.
+   */
+  async changeAvatar(imageURL?: string, avatarFile?: File): Promise<void> {
+    const { status, message } = await this.accountAPI.changeAvatar(
+      imageURL,
+      avatarFile,
+    );
 
-    if (!data) {
-      if (error) {
-        accountError.set({ selectMainWallet: error.message });
-      } else {
-        accountError.set({ selectMainWallet: 'Error changing wallet' });
-      }
-      return;
+    switch (status) {
+      case 'error':
+        api_error(message);
+        break;
+      case 'success':
+        toastStore.show(message || 'Avatar changed successfully', 'info');
+        break;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
     }
-
-    // update user data
-    SetCache(USER_KEY, data.user, TTL_HOUR);
-
-    authenticated.set(data.user);
   }
 
-  async generateReferralCode(): Promise<void> {
-    const { data, error } = await this.accountAPI.createReferralCodes();
+  /**
+   * Generate a new referral code.
+   * @returns {Promise<string | null>}
+   */
+  async generateReferralCode(): Promise<string | null> {
+    const { status, message, data } =
+      await this.accountAPI.createReferralCodes();
 
-    if (!data) {
-      if (error) {
-        toastStore.show(error.message);
-      } else {
-        toastStore.show('Error generating referral codes');
-      }
-      return;
+    switch (status) {
+      case 'error':
+        api_error(message);
+        return null;
+      case 'success':
+        if (!data) {
+          toastStore.show('Error generating referral codes', 'error');
+          return null;
+        }
+        toastStore.show(
+          message || 'Referral codes generated successfully',
+          'info',
+        );
+        return data;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
+        return null;
     }
-
-    referralCodes.set(data.codes);
   }
 
+  /**
+   * Get the user's referral codes.
+   * @returns {Promise<void>}
+   */
   async getReferralCodes(): Promise<void> {
     const cachedData = GetCache<ReferralCode[]>(REFERRAL_CODES_KEY);
     if (cachedData) {
@@ -360,36 +204,396 @@ class Account {
     }
 
     // Fetch fresh data
-    const { data, error } = await this.accountAPI.getReferralCodes();
+    const { status, message, data } = await this.accountAPI.getReferralCodes();
 
-    if (!data) {
-      if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error getting referral codes', 'error');
-      }
-      return;
+    switch (status) {
+      case 'error':
+        api_error(message);
+        return;
+      case 'success':
+        if (!data) {
+          toastStore.show('Error getting referral codes', 'error');
+          return;
+        }
+        referralCodes.set(data);
+        SetCache(REFERRAL_CODES_KEY, data, TTL_SHORT);
+        break;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
     }
-
-    // Store in localStorage with expiry timestamp
-    SetCache(REFERRAL_CODES_KEY, data.codes, TTL_SHORT);
-
-    referralCodes.set(data.codes);
   }
 
+  /**
+   * Use a referral code.
+   * @param code The referral code to use.
+   * @returns {Promise<void>}
+   */
   async useReferralCode(code: string): Promise<void> {
-    const { data, error } = await this.accountAPI.useReferralCode(code);
+    const { status, message } = await this.accountAPI.useReferralCode(code);
 
-    if (!data) {
-      if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error using referral code', 'error');
-      }
-      return;
+    switch (status) {
+      case 'error':
+        api_error(message);
+        return;
+      case 'success':
+        toastStore.show(message || 'Referral code used successfully', 'info');
+        break;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
+    }
+  }
+
+  /**
+   * Subscribe the user to the newsletter.
+   * @param email The email address to subscribe.
+   */
+  async subscribeNewsletter(email: string): Promise<void> {
+    const { status, message } =
+      await this.accountAPI.subscribeNewsletter(email);
+
+    switch (status) {
+      case 'error':
+        api_error(message);
+        break;
+      case 'success':
+        toastStore.show(message || 'Subscribed to newsletter', 'info');
+        SetCache(SUBSCRIPTION_STATUS_KEY, true, TTL_SHORT);
+        break;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
+    }
+  }
+
+  /**
+   * Unsubscribe the user from the newsletter.
+   * @param email The email address to unsubscribe.
+   */
+  async unsubscribeNewsletter(email: string): Promise<void> {
+    const { status, message } =
+      await this.accountAPI.unsubscribeNewsletter(email);
+
+    switch (status) {
+      case 'error':
+        api_error(message);
+        break;
+      case 'success':
+        toastStore.show(message || 'Unsubscribed from newsletter', 'info');
+        SetCache(SUBSCRIPTION_STATUS_KEY, false, TTL_SHORT);
+        break;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
+    }
+  }
+
+  /**
+   * Get the user's subscription status.
+   * @param email The email address to check.
+   * @returns {Promise<boolean>}
+   */
+  async subscriptionStatus(email: string): Promise<boolean> {
+    const cachedData = GetCache<boolean>(SUBSCRIPTION_STATUS_KEY);
+    if (cachedData) {
+      return cachedData;
     }
 
-    toastStore.show(data.message || 'Referral code used successfully', 'info');
+    // Fetch fresh data
+    const { status, message, data } = await this.accountAPI.isSubscribed(email);
+
+    switch (status) {
+      case 'error':
+        api_error(message);
+        toastStore.show(message);
+        return false;
+      case 'success':
+        if (!data) {
+          toastStore.show('Error getting subscription status', 'error');
+          return false;
+        }
+        // Store in localStorage with expiry timestamp
+        SetCache(SUBSCRIPTION_STATUS_KEY, data, TTL_SHORT);
+        return data;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
+        return false;
+    }
+  }
+
+  /**
+   * Create a new bookmark folder.
+   * @param name The name of the folder to create.
+   */
+  async createBookmarkFolder(name: string): Promise<void> {
+    const { status, message } =
+      await this.accountAPI.createBookmarkFolder(name);
+
+    switch (status) {
+      case 'error':
+        api_error(message);
+      case 'success':
+        toastStore.show(
+          message || 'Bookmark folder created successfully',
+          'info',
+        );
+      default:
+        toastStore.show('Unknown error occurred', 'error');
+    }
+  }
+
+  /**
+   * Get the user's bookmark folders.
+   * @returns {Promise<BookmarkFolder[] | null>}
+   */
+  async getBookmarkFolders(): Promise<BookmarkFolder[] | null> {
+    const { status, message, data } =
+      await this.accountAPI.getBookmarkFolders();
+
+    switch (status) {
+      case 'error':
+        api_error(message);
+        return null;
+      case 'success':
+        if (!data) {
+          toastStore.show('Error getting bookmark folders', 'error');
+          return null;
+        }
+        toastStore.show(
+          message || 'Bookmark folders retrieved successfully',
+          'info',
+        );
+        return data;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
+        return null;
+    }
+  }
+
+  /**
+   * Get the topics in a bookmark folder.
+   * @param folderId The ID of the folder to retrieve topics from.
+   * @returns {Promise<DashboardTopic[] | null>}
+   */
+  async getBookmarkFolderTopic(
+    folderId: string,
+  ): Promise<DashboardTopic[] | null> {
+    const { status, message, data } =
+      await this.accountAPI.getBookmarkFolderTopic(folderId);
+
+    switch (status) {
+      case 'error':
+        api_error(message);
+        return null;
+      case 'success':
+        if (!data) {
+          toastStore.show('Error getting bookmark folder topics', 'error');
+          return null;
+        }
+        toastStore.show(
+          message || 'Bookmark folder topics retrieved successfully',
+          'info',
+        );
+        return data;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
+        return null;
+    }
+  }
+
+  /**
+   * Create a new bookmark tag.
+   * @param name The name of the tag to create.
+   */
+  async createBookmarkTag(name: string): Promise<void> {
+    const { status, message } = await this.accountAPI.createBookmarkTag(name);
+
+    switch (status) {
+      case 'error':
+        api_error(message);
+        break;
+      case 'success':
+        toastStore.show(message || 'Bookmark tag created successfully', 'info');
+        break;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
+    }
+  }
+
+  /**
+   * Get the user's bookmark tags.
+   * @returns {Promise<BookmarkTag[] | null>}
+   */
+  async getBookmarkTags(): Promise<BookmarkTag[] | null> {
+    const { status, message, data } = await this.accountAPI.getBookmarkTags();
+
+    switch (status) {
+      case 'error':
+        api_error(message);
+        return null;
+      case 'success':
+        if (!data) {
+          toastStore.show('Error getting bookmark tags', 'error');
+          return null;
+        }
+        toastStore.show(
+          message || 'Bookmark tags retrieved successfully',
+          'info',
+        );
+        return data;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
+        return null;
+    }
+  }
+
+  /**
+   * Get the topics in a bookmark tag.
+   * @param tagID The ID of the tag to retrieve topics from.
+   * @returns {Promise<DashboardTopic[] | null>}
+   */
+  async getBookmarkTagsTopic(tagID: string): Promise<DashboardTopic[] | null> {
+    const { status, message, data } =
+      await this.accountAPI.getBookmarkTagTopics(tagID);
+
+    switch (status) {
+      case 'error':
+        api_error(message);
+        return null;
+      case 'success':
+        if (!data) {
+          toastStore.show('Error getting bookmark folder topics', 'error');
+          return null;
+        }
+        toastStore.show(
+          message || 'Bookmark folder topics retrieved successfully',
+          'info',
+        );
+        return data;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
+        return null;
+    }
+  }
+
+  /**
+   * Bookmark a topic.
+   * @param body The bookmark data to create.
+   */
+  async bookmarkTopic(body: Bookmark): Promise<void> {
+    const { status, message } = await this.accountAPI.bookmarkTopic(body);
+
+    switch (status) {
+      case 'error':
+        api_error(message);
+        break;
+      case 'success':
+        toastStore.show(message || 'Topic bookmarked successfully', 'info');
+        break;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
+    }
+  }
+
+  /**
+   * Get a bookmark by its ID.
+   * @param bookmarkId The ID of the bookmark to retrieve.
+   * @returns {Promise<Bookmark | null>}
+   */
+  async getBookmark(bookmarkId: string): Promise<Bookmark | null> {
+    const { status, message, data } =
+      await this.accountAPI.getBookmark(bookmarkId);
+
+    switch (status) {
+      case 'error':
+        api_error(message);
+        return null;
+      case 'success':
+        if (!data) {
+          toastStore.show('Error getting bookmark', 'error');
+          return null;
+        }
+        toastStore.show(message || 'Bookmark retrieved successfully', 'info');
+        return data;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
+        return null;
+    }
+  }
+
+  /**
+   * Update a bookmark.
+   * @param bookmarkId The ID of the bookmark to update.
+   * @param updatedData The updated bookmark data.
+   */
+  async updateBookmark(
+    bookmarkId: string,
+    updatedData: Partial<Bookmark>,
+  ): Promise<void> {
+    const { status, message } = await this.accountAPI.updateBookmark(
+      bookmarkId,
+      updatedData,
+    );
+
+    switch (status) {
+      case 'error':
+        api_error(message);
+        break;
+      case 'success':
+        toastStore.show(message || 'Bookmark updated successfully', 'info');
+        break;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
+    }
+  }
+
+  /**
+   * Delete a bookmark.
+   * @param bookmarkId The ID of the bookmark to delete.
+   */
+  async deleteBookmark(bookmarkId: string): Promise<void> {
+    const { status, message } =
+      await this.accountAPI.deleteBookmark(bookmarkId);
+
+    switch (status) {
+      case 'error':
+        api_error(message);
+        break;
+      case 'success':
+        toastStore.show(message || 'Bookmark deleted successfully', 'info');
+        break;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
+    }
+  }
+
+  /**
+   * Get user stories.
+   * @param ended Whether the stories have ended.
+   * @param date_range The date range to filter stories.
+   * @returns {Promise<DashboardTopic[] | null>}
+   */
+  async getUserStories(
+    ended: boolean,
+    date_range: DateRange,
+  ): Promise<DashboardTopic[] | null> {
+    const { status, message, data } = await this.accountAPI.getStories({
+      ended,
+      date_range,
+    });
+
+    switch (status) {
+      case 'error':
+        api_error(message);
+        return null;
+      case 'success':
+        if (!data) {
+          toastStore.show('Error getting stories', 'error');
+          return null;
+        }
+        toastStore.show(message || 'Stories retrieved successfully', 'info');
+        return data;
+      default:
+        toastStore.show('Unknown error occurred', 'error');
+        return null;
+    }
   }
 }
 

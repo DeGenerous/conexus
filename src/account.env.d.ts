@@ -84,3 +84,24 @@ type AccountError = {
   changePassword?: Nullable<string>;
   selectMainWallet?: Nullable<string>;
 } | null;
+
+/* V2 */
+
+type DateRange =
+  | '1 DAY'
+  | '2 DAYS'
+  | '5 DAYS'
+  | '10 DAYS'
+  | '1 WEEK'
+  | '1 MONTH';
+
+type UserStoriesFilter = {
+  ended: boolean;
+  date_range: DateRange;
+};
+
+type DashboardTopic = {
+  topic_id: string;
+  name: string;
+  tile_file_url?: string;
+};

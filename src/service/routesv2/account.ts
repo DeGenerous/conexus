@@ -1,4 +1,4 @@
-import Fetcher from '@service/fetcher';
+import Fetcher from '../fetcher';
 
 /**
  * An API class for handling account requests.

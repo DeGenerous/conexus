@@ -1,4 +1,4 @@
-import Fetcher from '@service/fetcher';
+import Fetcher from '../fetcher';
 
 /**
  * StoryAPI provides methods for interacting with story-related endpoints.

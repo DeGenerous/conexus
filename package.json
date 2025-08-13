@@ -24,7 +24,8 @@
     "@vite-pwa/astro": "^1.0.1",
     "astro": "^5.5.2",
     "sass-embedded": "^1.89.0",
-    "svelte": "5.27.0"
+    "svelte": "5.27.0",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

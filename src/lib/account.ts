@@ -370,13 +370,13 @@ class Account {
   /**
    * Get the topics in a bookmark folder.
    * @param folderId The ID of the folder to retrieve topics from.
-   * @returns {Promise<DashboardTopic[] | null>}
+   * @returns {Promise<Bookmark[] | null>}
    */
   async getBookmarkFolderTopic(
     folderId: string,
-  ): Promise<DashboardTopic[] | null> {
+  ): Promise<Bookmark[] | null> {
     const { status, message, data } =
-      await this.accountAPI.getBookmarkFolderTopic(folderId);
+      await this.accountAPI.getFolderBookmarks(folderId);
 
     switch (status) {
       case 'error':
@@ -447,11 +447,11 @@ class Account {
   /**
    * Get the topics in a bookmark tag.
    * @param tagID The ID of the tag to retrieve topics from.
-   * @returns {Promise<DashboardTopic[] | null>}
+   * @returns {Promise<Bookmark[] | null>}
    */
-  async getBookmarkTagsTopic(tagID: string): Promise<DashboardTopic[] | null> {
+  async getBookmarkTagsTopic(tagID: string): Promise<Bookmark[] | null> {
     const { status, message, data } =
-      await this.accountAPI.getBookmarkTagTopics(tagID);
+      await this.accountAPI.getTagBookmarks(tagID);
 
     switch (status) {
       case 'error':

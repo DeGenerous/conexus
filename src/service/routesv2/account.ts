@@ -175,8 +175,8 @@ export default class AccountAPI extends Fetcher {
    * @param folderId - The ID of the bookmark folder to retrieve.
    * @returns A promise that resolves to the dashboard topics information or an error.
    */
-  async getBookmarkFolderTopic(folderId: string) {
-    return this.request<DashboardTopic[]>(
+  async getFolderBookmarks(folderId: string) {
+    return this.request<Bookmark[]>(
       `${this.group}/get-bookmark-folder-topics/${folderId}`,
     );
   }
@@ -206,8 +206,8 @@ export default class AccountAPI extends Fetcher {
    * @param tagId - The ID of the bookmark tag to retrieve.
    * @returns A promise that resolves to the dashboard topics  or an error.
    */
-  async getBookmarkTagTopics(tagId: string) {
-    return this.request<DashboardTopic[]>(`${this.group}/get-bookmark-tag-topics/${tagId}`);
+  async getTagBookmarks(tagId: string) {
+    return this.request<Bookmark[]>(`${this.group}/get-bookmark-tag-topics/${tagId}`);
   }
 
   /**

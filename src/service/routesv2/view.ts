@@ -33,6 +33,14 @@ export default class ViewAPI extends Fetcher {
   }
 
   /**
+   * Retrieves a list of roles.
+   * @returns A promise that resolves to an array of TenantRole objects.
+   */
+  async getRoles() {
+    return this.request<TenantRole[]>(`${this.adminGroup}/roles`);
+  }
+
+  /**
    * Retrieves a list of topics within a specific section.
    * @param section_id The ID of the section.
    * @param page The page number to retrieve.

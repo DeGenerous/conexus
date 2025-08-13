@@ -1,0 +1,157 @@
+import Fetcher from '@service/fetcher';
+
+export default class TopicAPI extends Fetcher {
+  protected topicGroup: string = '/topic';
+
+  /**
+   * Create a new topic
+   * @param request The topic request data
+   * @returns The created topic ID
+   */
+  async new(request: TopicRequest) {
+    return this.request<string>(`${this.topicGroup}/new`, {
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
+  }
+
+  /**
+   * Get the topic manager data
+   * @param topic_id The ID of the topic
+   * @returns The topic manager data
+   */
+  async topicManager(topic_id: string) {
+    return this.request<TopicManager>(`${this.topicGroup}/manager/${topic_id}`);
+  }
+
+  /**
+   * Add a category to a topic
+   * @param topic_id The ID of the topic
+   * @param category_id The ID of the category
+   * @param sort_order The sort order of the category
+   * @returns The added category data
+   */
+  async addCategory(
+    topic_id: string,
+    category_id: string,
+    sort_order?: number,
+  ) {
+    return this.request(`${this.topicGroup}/add-category`, {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, category_id, sort_order }),
+    });
+  }
+
+  async changeCategorySortOrder(
+    topic_id: string,
+    category_id: string,
+    sort_order: number,
+  ) {
+    return this.request(`${this.topicGroup}/change-sortorder`, {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, category_id, sort_order }),
+    });
+  }
+
+  /**
+   * Remove a category from a topic
+   * @param topic_id The ID of the topic
+   * @param category_id The ID of the category
+   * @returns The removed category data
+   */
+  async removeCategory(topic_id: string, category_id: string) {
+    return this.request(`${this.topicGroup}/remove-category`, {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, category_id }),
+    });
+  }
+
+  /**
+   * Add a genre to a topic
+   * @param topic_id The ID of the topic
+   * @param genre_id The ID of the genre
+   * @returns The added genre data
+   */
+  async addGenre(topic_id: string, genre_id: string) {
+    return this.request(`${this.topicGroup}/add-genre`, {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, genre_id }),
+    });
+  }
+
+  /**
+   * Remove a genre from a topic
+   * @param topic_id The ID of the topic
+   * @param genre_id The ID of the genre
+   * @returns The removed genre data
+   */
+  async removeGenre(topic_id: string, genre_id: string) {
+    return this.request(`${this.topicGroup}/remove-genre`, {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, genre_id }),
+    });
+  }
+
+  /**
+   * Add a gate to a topic
+   * @param topic_id The ID of the topic
+   * @param gate_id The ID of the gate
+   * @returns The added gate data
+   */
+  async addGate(topic_id: string, gate_id: string) {
+    return this.request(`${this.topicGroup}/add-gate`, {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, gate_id }),
+    });
+  }
+
+  /**
+   * Remove a gate from a topic
+   * @param topic_id The ID of the topic
+   * @param gate_id The ID of the gate
+   * @returns The removed gate data
+   */
+  async removeGate(topic_id: string, gate_id: string) {
+    return this.request(`${this.topicGroup}/remove-gate`, {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, gate_id }),
+    });
+  }
+
+  /**
+   * Upload a file to a topic
+   * @param topic_id The ID of the topic
+   * @param media_type The type of media being uploaded
+   * @param file The file to upload
+   * @returns The response from the upload request
+   */
+  async uploadFile(topic_id: number, media_type: MediaType, file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('topic_id', topic_id.toString() || '');
+    formData.append('media_type', media_type);
+
+    return this.request<string[]>(`${this.topicGroup}/upload-media`, {
+      method: 'POST',
+      body: formData,
+    });
+  }
+
+  /**
+   * Delete a media file from a topic
+   * @param topic_id The ID of the topic
+   * @param file_id The ID of the file
+   * @param media_type The type of media being deleted
+   * @returns The response from the delete request
+   */
+  async deleteMediaFile(
+    topic_id: number,
+    file_id: string,
+    media_type: MediaType,
+  ) {
+    return this.request(`${this.topicGroup}/delete-media`, {
+      method: 'DELETE',
+      body: JSON.stringify({ topic_id, file_id, media_type }),
+    });
+  }
+}

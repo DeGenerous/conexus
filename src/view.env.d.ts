@@ -51,3 +51,59 @@ type TopicInCategory = {
 } & TopicView;
 
 type TopicSortOrder = 'name' | 'category';
+
+/* V2 */
+type TokenGate = {
+  min_amount: number;
+};
+
+type ClassGate = {
+  class_name: string;
+  token_id_min: number;
+  token_id_max: number;
+};
+
+type TopicGates =
+  | ({
+      gate_id: string;
+      contract_name: string;
+      contract_symbol: string;
+      purchase_link: string;
+      gate_type: 'token' | 'class';
+    } & TokenGate)
+  | ClassGate;
+
+type CategoryTopics = {
+  id: string;
+  name: string;
+  sort_order: number;
+  genres?: string[];
+  available: boolean;
+  tile_file_url?: string;
+  topic_gates?: TopicGates[];
+};
+
+type SectionCategoryTopics = {
+  id: string;
+  name: string;
+  sort_order: number;
+  topic_count: number;
+  topics?: CategoryTopics[];
+};
+
+type UnfinishedStory = {
+  story_id: string;
+  created_at: string;
+};
+
+type TopicPage = {
+  id: number;
+  name: string;
+  genres?: string;
+  description?: string;
+  description_file_url?: string;
+  video_file_url?: string;
+  audio_file_url?: string;
+  topic_gates?: TopicGates[];
+  unfinished_stories?: UnfinishedStory[];
+};

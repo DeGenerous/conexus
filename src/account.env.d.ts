@@ -6,27 +6,29 @@ type SignUp = {
   last_name: string;
   email: string;
   password: string;
-  role: Roles | string;
+  role_id: string;
 };
 
 type AuthWallet = {
+  id?: string;
   wallet: string;
   faux: boolean;
   main: boolean;
 };
 
 type User = {
-  ID?: string;
-  oauth_id?: string;
-  email_confirmed?: boolean;
-  referral_count?: number;
-  referred: boolean;
-  wallets?: AuthWallet[];
-  main_wallet?: string;
-  faux?: boolean;
+  id?: string;
+  tenant_id?: string;
   email_confirmed?: boolean;
   is_oauth?: boolean;
-  available?: Available;
+  referred: boolean;
+  referral_code?: string;
+  credits: number;
+  username?: string;
+  avatar_url?: string;
+  main_wallet?: string;
+  faux?: boolean;
+  wallets?: AuthWallet[];
 } & SignUp;
 
 type SignIn = {
@@ -37,11 +39,10 @@ type SignIn = {
 type Roles = 'admin' | 'user' | 'artist';
 
 type ReferralCode = {
-  ID: number;
+  id: number;
   code: string;
-  user_id: number;
-  is_used: boolean;
-  used_by: number;
+  usage_count: number;
+  max_usage: number;
   created_at: string;
   updated_at: string;
 };

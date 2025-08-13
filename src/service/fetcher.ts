@@ -74,14 +74,26 @@ export default class Fetcher {
       if (responseType === 'json' && isJson) {
         responseData = await response.json();
       } else if (responseType === 'blob') {
-        responseData = { data: (await response.blob()) as T };
+        responseData = {
+          status: 'success',
+          message: 'Blob fetched successfully',
+          data: (await response.blob()) as T,
+        };
       } else {
-        responseData = { data: (await response.text()) as unknown as T };
+        responseData = {
+          status: 'success',
+          message: 'Text fetched successfully',
+          data: (await response.text()) as unknown as T,
+        };
       }
 
       return responseData;
     } catch (error) {
-      return { error: { message: (error as Error).message, details: error } };
+      return {
+        status: 'error',
+        message: (error as Error).message,
+        error: { details: String(error) },
+      };
     }
   }
 
@@ -115,9 +127,17 @@ export default class Fetcher {
         if (responseType === 'json' && isJson) {
           responseData = await response.json();
         } else if (responseType === 'blob') {
-          responseData = { data: (await response.blob()) as T };
+          responseData = {
+            status: 'success',
+            message: 'Blob fetched successfully',
+            data: (await response.blob()) as T,
+          };
         } else {
-          responseData = { data: (await response.text()) as unknown as T };
+          responseData = {
+            status: 'success',
+            message: 'Text fetched successfully',
+            data: (await response.text()) as unknown as T,
+          };
         }
 
         return responseData;
@@ -144,10 +164,18 @@ export default class Fetcher {
           );
         }
 
-        return { error: error as Error };
+        return {
+          status: 'error',
+          message: (error as Error).message,
+          error: { details: String(error) },
+        };
       }
     }
 
-    return { error: new Error('Max retries exceeded') };
+    return {
+      status: 'error',
+      message: 'Something went wrong',
+      error: { details: 'Max retries exceeded' },
+    };
   }
 }

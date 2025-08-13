@@ -14,11 +14,12 @@ type APISTDResposne = {
 };
 
 type APIError = {
-  message: string; // User-facing error message
   details?: string; // Developer debug info (optional)
 };
 
 type APIResponse<T> = {
+  status: 'success' | 'error';
+  message: string;
   data?: T;
   error?: APIError;
 };
@@ -89,12 +90,13 @@ type Web3Signin = {
 type Section = {
   id: number;
   name: string;
-  tile_image?: string;
+  description?: string;
 };
 
 type Genre = {
   id: number;
   name: string;
+  description?: string;
 };
 
 type StoryNavigation = {

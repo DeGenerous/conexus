@@ -122,6 +122,10 @@ export default class ViewAPI extends Fetcher {
    * @returns A promise that resolves to a Blob representing the media content.
    */
   async serveMedia(file_id: string) {
-    return this.request<Blob>(`${this.topicGroup}/serve-media/${file_id}`);
+    return this.request<Blob>(
+      `${this.topicGroup}/serve-media/${file_id}`,
+      {},
+      'blob',
+    );
   }
 }

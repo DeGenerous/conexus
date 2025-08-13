@@ -15,7 +15,7 @@ import Fetcher from '@service/fetcher';
  * - Checking newsletter subscription status
  * - Logging out the current user
  *
- * Each method returns a Promise resolving to an APIResponse containing the relevant data or error.
+ * Each method returns a Promise resolving to type APIResponse containing the relevant data or error.
  */
 export default class AccountAPI extends Fetcher {
   protected group: string = '/account';

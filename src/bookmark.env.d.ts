@@ -6,7 +6,7 @@ type Bookmark = {
   topic_id: string;
   note?: string;
   sort_order?: number;
-};
+} & DashboardTopic;
 
 type BookmarkTag = {
     name: string;

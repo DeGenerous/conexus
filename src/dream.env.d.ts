@@ -88,11 +88,11 @@ type DraftIndexEntry = Pick<DraftPayload, 'id' | 'title' | 'updated'>;
 type ImageType = 'url' | 'base64';
 
 type ClassGate = {
-  id: number;
-  name: string;
-  start_token_id: number;
-  end_token_id: number;
-  created_at: Date;
+  id?: number;
+  class_name?: string;
+  token_id_min?: number;
+  token_id_max?: number;
+  created_at?: Date;
 };
 
 type SupportedContracts =

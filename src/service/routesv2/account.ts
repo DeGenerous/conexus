@@ -94,9 +94,7 @@ export default class AccountAPI extends Fetcher {
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
   async createReferralCodes() {
-    return this.request<{ codes: ReferralCode[] }>(
-      `${this.group}/new-referral-code`,
-    );
+    return this.request<string>(`${this.group}/new-referral-code`);
   }
 
   /**
@@ -172,14 +170,14 @@ export default class AccountAPI extends Fetcher {
   }
 
   /**
-   * Get Bookmark Folder
+   * Get Bookmark Folder Topics
    *
    * @param folderId - The ID of the bookmark folder to retrieve.
-   * @returns A promise that resolves to the bookmark folder's information or an error.
+   * @returns A promise that resolves to the dashboard topics information or an error.
    */
-  async getBookmarkFolder(folderId: string) {
-    return this.request<BookmarkFolder>(
-      `${this.group}/get-bookmark-folder/${folderId}`,
+  async getBookmarkFolderTopic(folderId: string) {
+    return this.request<DashboardTopic[]>(
+      `${this.group}/get-bookmark-folder-topics/${folderId}`,
     );
   }
 
@@ -203,13 +201,13 @@ export default class AccountAPI extends Fetcher {
   }
 
   /**
-   * Get Bookmark Tag
+   * Get Bookmark Tag Topics
    *
    * @param tagId - The ID of the bookmark tag to retrieve.
-   * @returns A promise that resolves to the bookmark tag's information or an error.
+   * @returns A promise that resolves to the dashboard topics  or an error.
    */
-  async getBookmarkTag(tagId: string) {
-    return this.request<BookmarkTag>(`${this.group}/get-bookmark-tag/${tagId}`);
+  async getBookmarkTagTopics(tagId: string) {
+    return this.request<DashboardTopic[]>(`${this.group}/get-bookmark-tag-topics/${tagId}`);
   }
 
   /**
@@ -271,11 +269,14 @@ export default class AccountAPI extends Fetcher {
   }
 
   /**
-   * Logs out the current user by making a request to the `/auth/logout` endpoint.
-   *
-   * @returns A promise that resolves with the response from the logout request.
+   * Get User Stories
+   * @param request - The request object containing filter criteria.
+   * @returns A promise that resolves to an array of user stories or an error.
    */
-  async logout() {
-    return this.request(`/auth/logout`);
+  async getStories(request: UserStoriesFilter) {
+    return this.request<DashboardTopic[]>(`${this.group}/stories`, {
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
   }
 }

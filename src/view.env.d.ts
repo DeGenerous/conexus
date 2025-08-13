@@ -54,13 +54,13 @@ type TopicSortOrder = 'name' | 'category';
 
 /* V2 */
 type TokenGate = {
-  min_amount: number;
+  min_amount?: number;
 };
 
 type ClassGate = {
-  class_name: string;
-  token_id_min: number;
-  token_id_max: number;
+  class_name?: string;
+  token_id_min?: number;
+  token_id_max?: number;
 };
 
 type TopicGates =

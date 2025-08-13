@@ -64,14 +64,12 @@ type Contract = {
   updated_at?: string;
 };
 
-type Gate =
-  | ({
-      id: string;
-      name: string;
-      contract_id: string;
-      type: 'token' | 'class';
-    } & TokenGate)
-  | ClassGate;
+type Gate = {
+  id?: string;
+  name: string;
+  contract_id: string;
+  type: 'token' | 'class';
+} & (TokenGate | ClassGate);
 
 // Metric Filters
 
@@ -92,7 +90,6 @@ type WalletMetricFilter = {
 } & BaseMetricFilter;
 
 type TopicMetricFilter = {
-  category_id?: string;
   available?: boolean;
   visibility?: string;
 } & BaseMetricFilter;

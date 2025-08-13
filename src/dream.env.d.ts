@@ -119,3 +119,67 @@ type ContractGate = {
 
 type TopicNFTGateWithContract = {} & TopicNFTGate & ContractGate;
 interface TopicNFTGateWithContract extends TopicNFTGate, ContractGate {}
+
+/* V2 */
+
+type TopicRequest = {
+  name: string;
+  description: string;
+  category_id: string;
+  available: boolean;
+  visibility: string;
+  prompt: string;
+  image_prompt: string;
+  settings: PromptSettings;
+};
+
+type TopicFull = {
+  id: string;
+  name: string;
+  description: string;
+  available: boolean;
+  visibility: string;
+  media_folder_id: string;
+};
+
+type TopicPrompt = {
+  id: string;
+  prompt: string;
+  image_prompt: string;
+};
+
+type TopicCategory = {
+  id: string;
+  name: string;
+  sort_order: number;
+};
+
+type Gate =
+  | ({
+      id: string;
+      name: string;
+      contract_id: string;
+      type: 'token' | 'class';
+    } & TokenGate)
+  | ClassGate;
+
+type TopicGenre = {
+  id: string;
+  name: string;
+};
+
+type TopicMediaFile = {
+  id: string;
+  file_id: string;
+  media_type: MediaType;
+};
+
+type TopicManager = {
+  Topic: TopicFull;
+  TopicPrompt: TopicPrompt;
+  TopicPromptSettings: PromptSettings;
+  Categories: TopicCategory[];
+  Gates: Gate[];
+  Genres: TopicGenre[];
+  MediaFiles: TopicMediaFile[];
+};

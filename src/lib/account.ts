@@ -27,23 +27,36 @@ class Account {
   }
 
   async signin(signinData: SignIn): Promise<void> {
-    const { data, error } = await this.authAPI.signin(
+    const { status, message, data } = await this.authAPI.signin(
       signinData.email,
       signinData.password,
     );
 
-    if (!data) {
-      if (error) {
-        accountError.set({ signin: error.message });
-      } else {
-        accountError.set({ signin: 'Error signing in' });
-      }
-      return;
+    switch (status) {
+      case 'error':
+        accountError.set({ signin: message });
+        return;
+      case 'success':
+        SetCache(USER_KEY, data, TTL_HOUR);
+        window.location.reload();
+        return;
+      default:
+        accountError.set({ signin: 'Unknown error occurred' });
+        return;
     }
 
+    // if (!data) {
+    //   if (error) {
+    //     accountError.set({ signin: error.message });
+    //   } else {
+    //     accountError.set({ signin: 'Error signing in' });
+    //   }
+    //   return;
+    // }
+
     // Store user data in localStorage with timestamp
-    SetCache(USER_KEY, data.user, TTL_HOUR);
-    window.location.reload();
+    // SetCache(USER_KEY, data.user, TTL_HOUR);
+    // window.location.reload();
   }
 
   async signup(signupData: ReferralSignUp): Promise<Nullable<void>> {

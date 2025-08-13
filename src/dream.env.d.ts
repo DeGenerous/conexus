@@ -70,17 +70,17 @@ type CreatePrompt = {
 };
 
 interface DraftPayload {
-  id: string; // uuid v4
+  id?: string; // uuid v4
   title: string; // copy of storyData.name (or "Untitled")
-  created: number; // epoch ms
-  updated: number;
-  schema: const;
+  schema?: const;
   data: {
     storyData: StoryData;
     promptSettings: PromptSettings;
     openPrompt: string;
     tablePrompt: TablePrompt;
   };
+  created_at: string; // epoch ms
+  updated_at: string; // epoch ms
 }
 
 type DraftIndexEntry = Pick<DraftPayload, 'id' | 'title' | 'updated'>;
@@ -153,15 +153,6 @@ type TopicCategory = {
   name: string;
   sort_order: number;
 };
-
-type Gate =
-  | ({
-      id: string;
-      name: string;
-      contract_id: string;
-      type: 'token' | 'class';
-    } & TokenGate)
-  | ClassGate;
 
 type TopicGenre = {
   id: string;

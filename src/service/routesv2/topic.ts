@@ -23,6 +23,7 @@ import Fetcher from '@service/fetcher';
  */
 export default class TopicAPI extends Fetcher {
   protected group: string = '/topic';
+  protected draftGroup: string = `${this.group}/drafts`;
 
   /**
    * Create a new topic
@@ -173,6 +174,76 @@ export default class TopicAPI extends Fetcher {
     return this.request(`${this.group}/delete-media`, {
       method: 'DELETE',
       body: JSON.stringify({ topic_id, file_id, media_type }),
+    });
+  }
+
+  /**
+   * Create a new draft
+   * @param request The draft payload
+   * @returns The created draft
+   */
+  async newDraft(request: DraftPayload) {
+    return this.request<string>(this.draftGroup, {
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
+  }
+
+  /**
+   * Get a draft by ID
+   * @param draft_id The ID of the draft
+   * @returns The draft data
+   */
+  async getDraft(draft_id: string) {
+    return this.request<DraftPayload>(`${this.draftGroup}/${draft_id}`, {
+      method: 'GET',
+    });
+  }
+
+  /**
+   * Get all drafts
+   * @returns An array of draft data
+   */
+  async getDrafts() {
+    return this.request<DraftPayload[]>(this.draftGroup, {
+      method: 'GET',
+    });
+  }
+
+  /**
+   * Search drafts
+   * @param query The search query
+   * @param page The page number
+   * @param page_size The number of items per page
+   * @returns An array of draft data
+   */
+  async searchDrafts(query: string, page: number, page_size: number) {
+    return this.request<DraftPayload[]>(
+      `${this.draftGroup}/search?query=${query}&page=${page}&page_size=${page_size}`,
+    );
+  }
+
+  /**
+   * Update a draft by ID
+   * @param draft_id The ID of the draft
+   * @param request The updated draft payload
+   * @returns The updated draft data
+   */
+  async updateDraft(draft_id: string, request: DraftPayload) {
+    return this.request(`${this.draftGroup}/${draft_id}`, {
+      method: 'PUT',
+      body: JSON.stringify(request),
+    });
+  }
+
+  /**
+   * Delete a draft by ID
+   * @param draft_id The ID of the draft
+   * @returns The deleted draft data
+   */
+  async deleteDraft(draft_id: string) {
+    return this.request(`${this.draftGroup}/${draft_id}`, {
+      method: 'DELETE',
     });
   }
 }

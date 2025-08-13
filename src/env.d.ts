@@ -54,16 +54,17 @@ type CategoryView = {
 
 type StepData = {
   step: number;
+  step_id: string;
   title?: string;
   story: string;
-  end: boolean;
+  ended: boolean;
+  options?: string[];
+  choice?: number;
   summary: string;
   trait: string;
   trait_description?: string;
-  options: string[];
   image?: string;
   image_type?: ImageType;
-  choice?: number;
   tts?: Blob;
 };
 

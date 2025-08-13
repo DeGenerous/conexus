@@ -1,7 +1,28 @@
 import Fetcher from '@service/fetcher';
 
+/**
+ * The API class for handling topic-related requests
+ */
+/**
+ * TopicAPI provides methods for interacting with topics-related endpoints.
+ *
+ * This class extends the Fetcher base class to provide a set of methods for
+ * managing topics, including creating, updating, and deleting topics.
+ * - Create a new topic
+ * - Get the topic manager data
+ * - Add a category to a topic
+ * - Remove a category from a topic
+ * - Add a genre to a topic
+ * - Remove a genre from a topic
+ * - Add a gate to a topic
+ * - Remove a gate from a topic
+ * - Upload a file to a topic
+ * - Delete a file from a topic
+ *
+ * Each method returns a Promise resolving to type APIResponse containing the relevant data or error.
+ */
 export default class TopicAPI extends Fetcher {
-  protected topicGroup: string = '/topic';
+  protected group: string = '/topic';
 
   /**
    * Create a new topic
@@ -9,7 +30,7 @@ export default class TopicAPI extends Fetcher {
    * @returns The created topic ID
    */
   async new(request: TopicRequest) {
-    return this.request<string>(`${this.topicGroup}/new`, {
+    return this.request<string>(`${this.group}/new`, {
       method: 'POST',
       body: JSON.stringify(request),
     });
@@ -21,7 +42,7 @@ export default class TopicAPI extends Fetcher {
    * @returns The topic manager data
    */
   async topicManager(topic_id: string) {
-    return this.request<TopicManager>(`${this.topicGroup}/manager/${topic_id}`);
+    return this.request<TopicManager>(`${this.group}/manager/${topic_id}`);
   }
 
   /**
@@ -36,7 +57,7 @@ export default class TopicAPI extends Fetcher {
     category_id: string,
     sort_order?: number,
   ) {
-    return this.request(`${this.topicGroup}/add-category`, {
+    return this.request(`${this.group}/add-category`, {
       method: 'PATCH',
       body: JSON.stringify({ topic_id, category_id, sort_order }),
     });
@@ -47,7 +68,7 @@ export default class TopicAPI extends Fetcher {
     category_id: string,
     sort_order: number,
   ) {
-    return this.request(`${this.topicGroup}/change-sortorder`, {
+    return this.request(`${this.group}/change-sortorder`, {
       method: 'PATCH',
       body: JSON.stringify({ topic_id, category_id, sort_order }),
     });
@@ -60,7 +81,7 @@ export default class TopicAPI extends Fetcher {
    * @returns The removed category data
    */
   async removeCategory(topic_id: string, category_id: string) {
-    return this.request(`${this.topicGroup}/remove-category`, {
+    return this.request(`${this.group}/remove-category`, {
       method: 'PATCH',
       body: JSON.stringify({ topic_id, category_id }),
     });
@@ -73,7 +94,7 @@ export default class TopicAPI extends Fetcher {
    * @returns The added genre data
    */
   async addGenre(topic_id: string, genre_id: string) {
-    return this.request(`${this.topicGroup}/add-genre`, {
+    return this.request(`${this.group}/add-genre`, {
       method: 'PATCH',
       body: JSON.stringify({ topic_id, genre_id }),
     });
@@ -86,7 +107,7 @@ export default class TopicAPI extends Fetcher {
    * @returns The removed genre data
    */
   async removeGenre(topic_id: string, genre_id: string) {
-    return this.request(`${this.topicGroup}/remove-genre`, {
+    return this.request(`${this.group}/remove-genre`, {
       method: 'PATCH',
       body: JSON.stringify({ topic_id, genre_id }),
     });
@@ -99,7 +120,7 @@ export default class TopicAPI extends Fetcher {
    * @returns The added gate data
    */
   async addGate(topic_id: string, gate_id: string) {
-    return this.request(`${this.topicGroup}/add-gate`, {
+    return this.request(`${this.group}/add-gate`, {
       method: 'PATCH',
       body: JSON.stringify({ topic_id, gate_id }),
     });
@@ -112,7 +133,7 @@ export default class TopicAPI extends Fetcher {
    * @returns The removed gate data
    */
   async removeGate(topic_id: string, gate_id: string) {
-    return this.request(`${this.topicGroup}/remove-gate`, {
+    return this.request(`${this.group}/remove-gate`, {
       method: 'PATCH',
       body: JSON.stringify({ topic_id, gate_id }),
     });
@@ -131,7 +152,7 @@ export default class TopicAPI extends Fetcher {
     formData.append('topic_id', topic_id.toString() || '');
     formData.append('media_type', media_type);
 
-    return this.request<string[]>(`${this.topicGroup}/upload-media`, {
+    return this.request<string[]>(`${this.group}/upload-media`, {
       method: 'POST',
       body: formData,
     });
@@ -149,7 +170,7 @@ export default class TopicAPI extends Fetcher {
     file_id: string,
     media_type: MediaType,
   ) {
-    return this.request(`${this.topicGroup}/delete-media`, {
+    return this.request(`${this.group}/delete-media`, {
       method: 'DELETE',
       body: JSON.stringify({ topic_id, file_id, media_type }),
     });

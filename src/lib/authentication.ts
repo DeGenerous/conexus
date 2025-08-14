@@ -1,6 +1,6 @@
 import { USER_KEY, TTL_HOUR, SetCache } from '@constants/cache';
 import { api_error } from '@errors/index';
-import AuthenticationAPI from '@service/routesv2/authentication';
+import AuthenticationAPI from '@service/router/authentication';
 import { authenticated, accountError } from '@stores/account.svelte';
 import { toastStore } from '@stores/toast.svelte';
 

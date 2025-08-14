@@ -1,4 +1,4 @@
-import AuthenticationAPI from './authentication';
+import AuthenticationAPI from '../authentication';
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 

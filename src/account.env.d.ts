@@ -39,7 +39,7 @@ type SignIn = {
 type Roles = 'admin' | 'user' | 'artist';
 
 type ReferralCode = {
-  id: number;
+  id: string;
   code: string;
   usage_count: number;
   max_usage: number;

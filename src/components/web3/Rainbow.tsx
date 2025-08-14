@@ -18,7 +18,7 @@ import { mainnet, base } from 'wagmi/chains';
 import { SetCache, USER_KEY, TTL_HOUR } from '@constants/cache';
 import { assetsURL } from '@constants/media';
 import { authenticated } from '@stores/account.svelte';
-import AuthenticationAPI from '@service/routesv2/authentication';
+import AuthenticationAPI from '@service/router/authentication';
 
 import '@rainbow-me/rainbowkit/styles.css';
 

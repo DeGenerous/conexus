@@ -6,7 +6,7 @@ import {
   TTL_DAY,
 } from '@constants/cache';
 import { api_error } from '@errors/index';
-import AdminAPI from '@service/routesv2/admin';
+import AdminAPI from '@service/router/admin';
 import { toastStore } from '@stores/toast.svelte';
 
 class AdminApp {

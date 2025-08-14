@@ -1,4 +1,4 @@
-import AdminAPI from './admin';
+import AdminAPI from '../admin';
 
 import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
 

@@ -2,6 +2,7 @@
 /// <reference types="astro/client" />
 
 type Bookmark = {
+  id?: string;
   bookmark_folder_id: string;
   topic_id: string;
   note?: string;
@@ -9,9 +10,10 @@ type Bookmark = {
 } & DashboardTopic;
 
 type BookmarkTag = {
-    name: string;
-}
+  id?: string;
+  name: string;
+};
 
 type BookmarkFolder = {
-    sort_order?: number;
+  sort_order?: number;
 } & BookmarkTag;

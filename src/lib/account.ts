@@ -9,7 +9,7 @@ import {
   SetCache,
 } from '@constants/cache';
 import { api_error } from '@errors/index';
-import AccountAPI from '@service/routesv2/account';
+import AccountAPI from '@service/router/account';
 import { authenticated, referralCodes } from '@stores/account.svelte';
 import { toastStore } from '@stores/toast.svelte';
 
@@ -372,9 +372,7 @@ class Account {
    * @param folderId The ID of the folder to retrieve topics from.
    * @returns {Promise<Bookmark[] | null>}
    */
-  async getBookmarkFolderTopic(
-    folderId: string,
-  ): Promise<Bookmark[] | null> {
+  async getBookmarkFolderTopic(folderId: string): Promise<Bookmark[] | null> {
     const { status, message, data } =
       await this.accountAPI.getFolderBookmarks(folderId);
 

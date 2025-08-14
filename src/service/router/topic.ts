@@ -1,4 +1,4 @@
-import Fetcher from '@service/fetcher';
+import Fetcher from '../fetcher';
 
 /**
  * The API class for handling topic-related requests
@@ -147,7 +147,7 @@ export default class TopicAPI extends Fetcher {
    * @param file The file to upload
    * @returns The response from the upload request
    */
-  async uploadFile(topic_id: number, media_type: MediaType, file: File) {
+  async uploadFile(topic_id: string, media_type: MediaType, file: File) {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('topic_id', topic_id.toString() || '');
@@ -167,7 +167,7 @@ export default class TopicAPI extends Fetcher {
    * @returns The response from the delete request
    */
   async deleteMediaFile(
-    topic_id: number,
+    topic_id: string,
     file_id: string,
     media_type: MediaType,
   ) {

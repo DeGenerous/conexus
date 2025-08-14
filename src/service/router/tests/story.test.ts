@@ -1,9 +1,7 @@
-import StoryAPI from './story';
+import StoryAPI from '../story';
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
-type GameData = { id: string; name: string };
-type StorySettingSelector = string;
 
 const mockRequest = vi.fn();
 
@@ -21,10 +19,10 @@ describe('StoryAPI', () => {
 
     it('calls start with correct params', async () => {
         const mockResponse = { story: { id: '1', name: 'Test' }, task_id: 'task1' };
-        (api.request as jest.Mock).mockResolvedValue(mockResponse);
+        (mockRequest).mockResolvedValue(mockResponse);
 
         const topic_id = 'topic1';
-        const settings: StorySettingSelector = 'custom';
+        const settings: StorySettingSelector = 'account';
         const result = await api.start(topic_id, settings);
 
         expect(api.request).toHaveBeenCalledWith(
@@ -39,7 +37,7 @@ describe('StoryAPI', () => {
 
     it('calls delete with correct params', async () => {
         const mockResponse = { success: true };
-        (api.request as jest.Mock).mockResolvedValue(mockResponse);
+        (mockRequest).mockResolvedValue(mockResponse);
 
         const story_id = 'story1';
         const result = await api.delete(story_id);
@@ -53,7 +51,7 @@ describe('StoryAPI', () => {
 
     it('calls restoreCredit with correct params', async () => {
         const mockResponse = { credit: 1 };
-        (api.request as jest.Mock).mockResolvedValue(mockResponse);
+        (mockRequest).mockResolvedValue(mockResponse);
 
         const result = await api.restoreCredit();
 
@@ -63,7 +61,7 @@ describe('StoryAPI', () => {
 
     it('calls continue with correct params', async () => {
         const mockResponse = { story: { id: '2', name: 'Continue' }, task_id: 'task2' };
-        (api.request as jest.Mock).mockResolvedValue(mockResponse);
+        (mockRequest).mockResolvedValue(mockResponse);
 
         const story_id = 'story2';
         const result = await api.continue(story_id);
@@ -80,7 +78,7 @@ describe('StoryAPI', () => {
 
     it('calls respond with correct params', async () => {
         const mockResponse = { story: { id: '3', name: 'Respond' }, task_id: 'task3' };
-        (api.request as jest.Mock).mockResolvedValue(mockResponse);
+        (mockRequest).mockResolvedValue(mockResponse);
 
         const story_id = 'story3';
         const choice = 1;
@@ -98,7 +96,7 @@ describe('StoryAPI', () => {
 
     it('calls tts with correct params and blob response type', async () => {
         const mockBlob = new Blob(['audio']);
-        (api.request as jest.Mock).mockResolvedValue(mockBlob);
+        (mockRequest).mockResolvedValue(mockBlob);
 
         const story_id = 'story4';
         const result = await api.tts(story_id);
@@ -116,7 +114,7 @@ describe('StoryAPI', () => {
 
     it('calls step with correct params', async () => {
         const mockResponse = { story: { id: '4', name: 'Step' }, task_id: 'task4' };
-        (api.request as jest.Mock).mockResolvedValue(mockResponse);
+        (mockRequest).mockResolvedValue(mockResponse);
 
         const story_id = 'story4';
         const step_id = 'step1';
@@ -134,7 +132,7 @@ describe('StoryAPI', () => {
 
     it('calls imageStatus with correct params', async () => {
         const mockResponse = { status: 'pending' };
-        (api.request as jest.Mock).mockResolvedValue(mockResponse);
+        (mockRequest).mockResolvedValue(mockResponse);
 
         const story_id = 'story5';
         const task_id = 'task5';

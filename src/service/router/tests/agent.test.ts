@@ -1,4 +1,4 @@
-import AgentAPI from './agent';
+import AgentAPI from '../agent';
 
 import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
 

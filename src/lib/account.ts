@@ -14,10 +14,10 @@ import { authenticated, referralCodes } from '@stores/account.svelte';
 import { toastStore } from '@stores/toast.svelte';
 
 class Account {
-  protected accountAPI: AccountAPI;
+  protected api: AccountAPI;
 
   constructor() {
-    this.accountAPI = new AccountAPI(import.meta.env.PUBLIC_BACKEND);
+    this.api = new AccountAPI(import.meta.env.PUBLIC_BACKEND);
   }
 
   /**
@@ -33,7 +33,7 @@ class Account {
     }
 
     // If no valid cached user, fetch from API
-    const { status, message, data } = await this.accountAPI.me();
+    const { status, message, data } = await this.api.me();
 
     switch (status) {
       case 'error':
@@ -85,7 +85,7 @@ class Account {
    * @returns {Promise<boolean>} True if the email was confirmed, false otherwise.
    */
   async confirmEmail(token: string): Promise<boolean> {
-    const { status, message } = await this.accountAPI.confirmEmail(token);
+    const { status, message } = await this.api.confirmEmail(token);
 
     switch (status) {
       case 'error':
@@ -105,7 +105,7 @@ class Account {
    * @param changePasswordData The new password data.
    */
   async changePassword(changePasswordData: ChangePassword): Promise<void> {
-    const { status, message } = await this.accountAPI.changePassword(
+    const { status, message } = await this.api.changePassword(
       changePasswordData.old_password,
       changePasswordData.new_password,
     );
@@ -127,7 +127,7 @@ class Account {
    * @param username The new username.
    */
   async changeUsername(username: string): Promise<void> {
-    const { status, message } = await this.accountAPI.changeUsername(username);
+    const { status, message } = await this.api.changeUsername(username);
 
     switch (status) {
       case 'error':
@@ -147,7 +147,7 @@ class Account {
    * @param avatarFile The new avatar image file.
    */
   async changeAvatar(imageURL?: string, avatarFile?: File): Promise<void> {
-    const { status, message } = await this.accountAPI.changeAvatar(
+    const { status, message } = await this.api.changeAvatar(
       imageURL,
       avatarFile,
     );
@@ -170,7 +170,7 @@ class Account {
    */
   async generateReferralCode(): Promise<string | null> {
     const { status, message, data } =
-      await this.accountAPI.createReferralCodes();
+      await this.api.createReferralCodes();
 
     switch (status) {
       case 'error':
@@ -204,7 +204,7 @@ class Account {
     }
 
     // Fetch fresh data
-    const { status, message, data } = await this.accountAPI.getReferralCodes();
+    const { status, message, data } = await this.api.getReferralCodes();
 
     switch (status) {
       case 'error':
@@ -229,7 +229,7 @@ class Account {
    * @returns {Promise<void>}
    */
   async useReferralCode(code: string): Promise<void> {
-    const { status, message } = await this.accountAPI.useReferralCode(code);
+    const { status, message } = await this.api.useReferralCode(code);
 
     switch (status) {
       case 'error':
@@ -249,7 +249,7 @@ class Account {
    */
   async subscribeNewsletter(email: string): Promise<void> {
     const { status, message } =
-      await this.accountAPI.subscribeNewsletter(email);
+      await this.api.subscribeNewsletter(email);
 
     switch (status) {
       case 'error':
@@ -270,7 +270,7 @@ class Account {
    */
   async unsubscribeNewsletter(email: string): Promise<void> {
     const { status, message } =
-      await this.accountAPI.unsubscribeNewsletter(email);
+      await this.api.unsubscribeNewsletter(email);
 
     switch (status) {
       case 'error':
@@ -297,7 +297,7 @@ class Account {
     }
 
     // Fetch fresh data
-    const { status, message, data } = await this.accountAPI.isSubscribed(email);
+    const { status, message, data } = await this.api.isSubscribed(email);
 
     switch (status) {
       case 'error':
@@ -324,7 +324,7 @@ class Account {
    */
   async createBookmarkFolder(name: string): Promise<void> {
     const { status, message } =
-      await this.accountAPI.createBookmarkFolder(name);
+      await this.api.createBookmarkFolder(name);
 
     switch (status) {
       case 'error':
@@ -345,7 +345,7 @@ class Account {
    */
   async getBookmarkFolders(): Promise<BookmarkFolder[] | null> {
     const { status, message, data } =
-      await this.accountAPI.getBookmarkFolders();
+      await this.api.getBookmarkFolders();
 
     switch (status) {
       case 'error':
@@ -374,7 +374,7 @@ class Account {
    */
   async getBookmarkFolderTopic(folderId: string): Promise<Bookmark[] | null> {
     const { status, message, data } =
-      await this.accountAPI.getFolderBookmarks(folderId);
+      await this.api.getFolderBookmarks(folderId);
 
     switch (status) {
       case 'error':
@@ -401,7 +401,7 @@ class Account {
    * @param name The name of the tag to create.
    */
   async createBookmarkTag(name: string): Promise<void> {
-    const { status, message } = await this.accountAPI.createBookmarkTag(name);
+    const { status, message } = await this.api.createBookmarkTag(name);
 
     switch (status) {
       case 'error':
@@ -420,7 +420,7 @@ class Account {
    * @returns {Promise<BookmarkTag[] | null>}
    */
   async getBookmarkTags(): Promise<BookmarkTag[] | null> {
-    const { status, message, data } = await this.accountAPI.getBookmarkTags();
+    const { status, message, data } = await this.api.getBookmarkTags();
 
     switch (status) {
       case 'error':
@@ -449,7 +449,7 @@ class Account {
    */
   async getBookmarkTagsTopic(tagID: string): Promise<Bookmark[] | null> {
     const { status, message, data } =
-      await this.accountAPI.getTagBookmarks(tagID);
+      await this.api.getTagBookmarks(tagID);
 
     switch (status) {
       case 'error':
@@ -476,7 +476,7 @@ class Account {
    * @param body The bookmark data to create.
    */
   async bookmarkTopic(body: Bookmark): Promise<void> {
-    const { status, message } = await this.accountAPI.bookmarkTopic(body);
+    const { status, message } = await this.api.bookmarkTopic(body);
 
     switch (status) {
       case 'error':
@@ -497,7 +497,7 @@ class Account {
    */
   async getBookmark(bookmarkId: string): Promise<Bookmark | null> {
     const { status, message, data } =
-      await this.accountAPI.getBookmark(bookmarkId);
+      await this.api.getBookmark(bookmarkId);
 
     switch (status) {
       case 'error':
@@ -525,7 +525,7 @@ class Account {
     bookmarkId: string,
     updatedData: Partial<Bookmark>,
   ): Promise<void> {
-    const { status, message } = await this.accountAPI.updateBookmark(
+    const { status, message } = await this.api.updateBookmark(
       bookmarkId,
       updatedData,
     );
@@ -548,7 +548,7 @@ class Account {
    */
   async deleteBookmark(bookmarkId: string): Promise<void> {
     const { status, message } =
-      await this.accountAPI.deleteBookmark(bookmarkId);
+      await this.api.deleteBookmark(bookmarkId);
 
     switch (status) {
       case 'error':
@@ -570,11 +570,11 @@ class Account {
    */
   async getUserStories(
     ended: boolean,
-    date_range: DurationEnum,
+    duration: DurationEnum,
   ): Promise<DashboardTopic[] | null> {
-    const { status, message, data } = await this.accountAPI.getStories({
+    const { status, message, data } = await this.api.getStories({
       ended,
-      date_range,
+      duration,
     });
 
     switch (status) {

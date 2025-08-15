@@ -14,6 +14,8 @@ export const api_error = (error: string, display: boolean = true) => {
       // window.location.href = '/';
       return;
     }
-    toastStore.show(`Error: ${error}`, 'error');
+    toastStore.show(error || 'Unknown error occurred', 'error');
   }
+
+  // TODO: Send to sentry
 };

@@ -68,15 +68,29 @@ export default class ViewAPI extends Fetcher {
 
   /**
    * Retrieves a list of topics within a specific genre.
+   * @param section_id The ID of the section.
    * @param genre_id The ID of the genre.
    * @param page The page number to retrieve.
    * @param pageSize The number of topics per page.
    * @returns A promise that resolves to an array of Topic objects.
    */
-  async genreTopics(genre_id: string, page: number = 1, pageSize: number = 5) {
-    return this.request<TopicInCategory[]>(
-      `${this.topicGroup}/genre-topics/${genre_id}?page=${page}&page_size=${pageSize}`,
-    );
+  async genreTopics(
+    section_id: string,
+    genre_id: string,
+    page: number = 1,
+    pageSize: number = 5,
+    sort_order: TopicSortOrder = 'name',
+  ) {
+    return this.request<CategoryTopics[]>(`${this.topicGroup}/genre-topics`, {
+      method: 'POST',
+      body: JSON.stringify({
+        section_id,
+        genre_id,
+        page,
+        pageSize,
+        sort_order,
+      }),
+    });
   }
 
   /**

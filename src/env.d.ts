@@ -32,7 +32,7 @@ type VolumeControl = {
 
 type ContinuableStory = {
   story_id: string;
-  topic_id: number;
+  topic_id: string;
   category: string;
   created?: string;
 };

@@ -66,6 +66,15 @@ export default class Fetcher {
         credentials: 'include',
       });
 
+      if (response.status === 401) {
+        // Handle unauthorized access
+        return {
+          status: 'error',
+          message: 'Unauthorized access',
+          error: { details: 'Unauthorized access' },
+        };
+      }
+
       const contentType = response.headers.get('Content-Type');
       const isJson = contentType && contentType.includes('application/json');
 

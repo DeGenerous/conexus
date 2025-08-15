@@ -99,3 +99,7 @@ type StoryMetricFilter = {
   account_id?: string;
   ended?: boolean;
 } & BaseMetricFilter;
+
+type TopNMetricFilter = {
+  top_n: number;
+} & BaseMetricFilter;

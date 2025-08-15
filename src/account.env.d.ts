@@ -87,7 +87,7 @@ type AccountError = {
 
 /* V2 */
 
-type DateRange =
+type DurationEnum =
   | '1 DAY'
   | '2 DAYS'
   | '5 DAYS'
@@ -97,11 +97,11 @@ type DateRange =
 
 type UserStoriesFilter = {
   ended: boolean;
-  date_range: DateRange;
+  duration: DurationEnum;
 };
 
 type DashboardTopic = {
-  topic_id: string;
-  name: string;
+  topic_id?: string;
+  name?: string;
   tile_file_url?: string;
 };

@@ -176,7 +176,7 @@ describe('AccountAPI', () => {
   });
 
   it('calls getStories()', async () => {
-    const filter = { userId: 'u1' } as any;
+    const filter: UserStoriesFilter = { ended: false, duration: '1 DAY' };
     await api.getStories(filter);
     expect(api.request).toHaveBeenCalledWith('/account/stories', {
       method: 'POST',

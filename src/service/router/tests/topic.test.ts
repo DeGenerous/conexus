@@ -1,6 +1,6 @@
-import TopicAPI from '../topic';
-
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+
+import TopicAPI from '../topic';
 
 const mockRequest = vi.fn();
 
@@ -163,7 +163,7 @@ describe('TopicAPI', () => {
     expect(api.request).toHaveBeenCalledWith('/topic/delete-media', {
       method: 'DELETE',
       body: JSON.stringify({
-        topic_id: "tp1",
+        topic_id: 'tp1',
         file_id: 'file1',
         media_type: 'tile',
       }),

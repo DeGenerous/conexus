@@ -14,7 +14,7 @@ import { authenticated, referralCodes } from '@stores/account.svelte';
 import { toastStore } from '@stores/toast.svelte';
 
 class Account {
-  private accountAPI: AccountAPI;
+  protected accountAPI: AccountAPI;
 
   constructor() {
     this.accountAPI = new AccountAPI(import.meta.env.PUBLIC_BACKEND);
@@ -570,7 +570,7 @@ class Account {
    */
   async getUserStories(
     ended: boolean,
-    date_range: DateRange,
+    date_range: DurationEnum,
   ): Promise<DashboardTopic[] | null> {
     const { status, message, data } = await this.accountAPI.getStories({
       ended,

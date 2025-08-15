@@ -33,24 +33,15 @@ class Account {
     }
 
     // If no valid cached user, fetch from API
-    const { status, message, data } = await this.api.me();
+    const { message, data } = await this.api.me();
 
-    switch (status) {
-      case 'error':
-        api_error(message, false);
-        break;
-      case 'success':
-        if (!data) {
-          toastStore.show('Error getting current user', 'error');
-          ClearCache('auth');
-          return;
-        }
-        SetCache(USER_KEY, data, TTL_HOUR);
-        authenticated.set(data);
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (!data) {
+      api_error(message, false);
+      return;
     }
+
+    SetCache(USER_KEY, data, TTL_HOUR);
+    authenticated.set(data);
   }
 
   /**
@@ -59,21 +50,17 @@ class Account {
    */
   static async getUser(): Promise<User | null> {
     const accountAPI = new AccountAPI(import.meta.env.PUBLIC_BACKEND);
-    const { status, message, data } = await accountAPI.me();
 
-    if (status === 'error') {
-      api_error(message);
-      return null;
-    }
+    const { message, data } = await accountAPI.me();
 
     if (!data) {
       ClearCache('auth');
+      api_error(message);
       return null;
     }
 
     // Store user data in localStorage with timestamp
     SetCache(USER_KEY, data, TTL_HOUR);
-
     authenticated.set(data);
 
     return data;
@@ -87,17 +74,13 @@ class Account {
   async confirmEmail(token: string): Promise<boolean> {
     const { status, message } = await this.api.confirmEmail(token);
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        return false;
-      case 'success':
-        toastStore.show(message || 'Email confirmed successfully', 'info');
-        return true;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-        return false;
+    if (status === 'error') {
+      api_error(message);
+      return false;
     }
+
+    toastStore.show(message || 'Email confirmed successfully', 'info');
+    return true;
   }
 
   /**
@@ -110,16 +93,12 @@ class Account {
       changePasswordData.new_password,
     );
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        break;
-      case 'success':
-        toastStore.show(message || 'Password changed successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Password changed successfully', 'info');
   }
 
   /**
@@ -129,16 +108,12 @@ class Account {
   async changeUsername(username: string): Promise<void> {
     const { status, message } = await this.api.changeUsername(username);
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        break;
-      case 'success':
-        toastStore.show(message || 'Username changed successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Username changed successfully', 'info');
   }
 
   /**
@@ -152,16 +127,12 @@ class Account {
       avatarFile,
     );
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        break;
-      case 'success':
-        toastStore.show(message || 'Avatar changed successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Avatar changed successfully', 'info');
   }
 
   /**
@@ -169,27 +140,15 @@ class Account {
    * @returns {Promise<string | null>}
    */
   async generateReferralCode(): Promise<string | null> {
-    const { status, message, data } =
-      await this.api.createReferralCodes();
+    const { message, data } = await this.api.createReferralCodes();
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        return null;
-      case 'success':
-        if (!data) {
-          toastStore.show('Error generating referral codes', 'error');
-          return null;
-        }
-        toastStore.show(
-          message || 'Referral codes generated successfully',
-          'info',
-        );
-        return data;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-        return null;
+    if (!data) {
+      api_error(message);
+      return null;
     }
+
+    toastStore.show(message || 'Referral codes generated successfully', 'info');
+    return data;
   }
 
   /**
@@ -204,23 +163,15 @@ class Account {
     }
 
     // Fetch fresh data
-    const { status, message, data } = await this.api.getReferralCodes();
+    const { message, data } = await this.api.getReferralCodes();
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        return;
-      case 'success':
-        if (!data) {
-          toastStore.show('Error getting referral codes', 'error');
-          return;
-        }
-        referralCodes.set(data);
-        SetCache(REFERRAL_CODES_KEY, data, TTL_SHORT);
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (!data) {
+      api_error(message);
+      return;
     }
+
+    referralCodes.set(data);
+    SetCache(REFERRAL_CODES_KEY, data, TTL_SHORT);
   }
 
   /**
@@ -228,19 +179,16 @@ class Account {
    * @param code The referral code to use.
    * @returns {Promise<void>}
    */
-  async useReferralCode(code: string): Promise<void> {
+  async useReferralCode(code: string): Promise<boolean> {
     const { status, message } = await this.api.useReferralCode(code);
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        return;
-      case 'success':
-        toastStore.show(message || 'Referral code used successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return false;
     }
+
+    toastStore.show(message || 'Referral code used successfully', 'info');
+    return true;
   }
 
   /**
@@ -248,20 +196,15 @@ class Account {
    * @param email The email address to subscribe.
    */
   async subscribeNewsletter(email: string): Promise<void> {
-    const { status, message } =
-      await this.api.subscribeNewsletter(email);
+    const { status, message } = await this.api.subscribeNewsletter(email);
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        break;
-      case 'success':
-        toastStore.show(message || 'Subscribed to newsletter', 'info');
-        SetCache(SUBSCRIPTION_STATUS_KEY, true, TTL_SHORT);
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Subscribed to newsletter', 'info');
+    SetCache(SUBSCRIPTION_STATUS_KEY, true, TTL_SHORT);
   }
 
   /**
@@ -269,20 +212,15 @@ class Account {
    * @param email The email address to unsubscribe.
    */
   async unsubscribeNewsletter(email: string): Promise<void> {
-    const { status, message } =
-      await this.api.unsubscribeNewsletter(email);
+    const { status, message } = await this.api.unsubscribeNewsletter(email);
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        break;
-      case 'success':
-        toastStore.show(message || 'Unsubscribed from newsletter', 'info');
-        SetCache(SUBSCRIPTION_STATUS_KEY, false, TTL_SHORT);
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Unsubscribed from newsletter', 'info');
+    SetCache(SUBSCRIPTION_STATUS_KEY, false, TTL_SHORT);
   }
 
   /**
@@ -297,25 +235,15 @@ class Account {
     }
 
     // Fetch fresh data
-    const { status, message, data } = await this.api.isSubscribed(email);
+    const { message, data } = await this.api.isSubscribed(email);
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        toastStore.show(message);
-        return false;
-      case 'success':
-        if (!data) {
-          toastStore.show('Error getting subscription status', 'error');
-          return false;
-        }
-        // Store in localStorage with expiry timestamp
-        SetCache(SUBSCRIPTION_STATUS_KEY, data, TTL_SHORT);
-        return data;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-        return false;
+    if (!data) {
+      api_error(message);
+      return false;
     }
+
+    SetCache(SUBSCRIPTION_STATUS_KEY, data, TTL_SHORT);
+    return data;
   }
 
   /**
@@ -323,48 +251,33 @@ class Account {
    * @param name The name of the folder to create.
    */
   async createBookmarkFolder(name: string): Promise<void> {
-    const { status, message } =
-      await this.api.createBookmarkFolder(name);
+    const { status, message } = await this.api.createBookmarkFolder(name);
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-      case 'success':
-        toastStore.show(
-          message || 'Bookmark folder created successfully',
-          'info',
-        );
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Bookmark folder created successfully', 'info');
   }
 
   /**
    * Get the user's bookmark folders.
    * @returns {Promise<BookmarkFolder[] | null>}
    */
-  async getBookmarkFolders(): Promise<BookmarkFolder[] | null> {
-    const { status, message, data } =
-      await this.api.getBookmarkFolders();
+  async getBookmarkFolders(): Promise<BookmarkFolder[]> {
+    const { message, data } = await this.api.getBookmarkFolders();
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        return null;
-      case 'success':
-        if (!data) {
-          toastStore.show('Error getting bookmark folders', 'error');
-          return null;
-        }
-        toastStore.show(
-          message || 'Bookmark folders retrieved successfully',
-          'info',
-        );
-        return data;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-        return null;
+    if (!data) {
+      api_error(message);
+      return [];
     }
+
+    toastStore.show(
+      message || 'Bookmark folders retrieved successfully',
+      'info',
+    );
+    return data;
   }
 
   /**
@@ -372,28 +285,19 @@ class Account {
    * @param folderId The ID of the folder to retrieve topics from.
    * @returns {Promise<Bookmark[] | null>}
    */
-  async getBookmarkFolderTopic(folderId: string): Promise<Bookmark[] | null> {
-    const { status, message, data } =
-      await this.api.getFolderBookmarks(folderId);
+  async getBookmarkFolderTopic(folderId: string): Promise<Bookmark[]> {
+    const { message, data } = await this.api.getFolderBookmarks(folderId);
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        return null;
-      case 'success':
-        if (!data) {
-          toastStore.show('Error getting bookmark folder topics', 'error');
-          return null;
-        }
-        toastStore.show(
-          message || 'Bookmark folder topics retrieved successfully',
-          'info',
-        );
-        return data;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-        return null;
+    if (!data) {
+      api_error(message);
+      return [];
     }
+
+    toastStore.show(
+      message || 'Bookmark folder topics retrieved successfully',
+      'info',
+    );
+    return data;
   }
 
   /**
@@ -403,43 +307,28 @@ class Account {
   async createBookmarkTag(name: string): Promise<void> {
     const { status, message } = await this.api.createBookmarkTag(name);
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        break;
-      case 'success':
-        toastStore.show(message || 'Bookmark tag created successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Bookmark tag created successfully', 'info');
   }
 
   /**
    * Get the user's bookmark tags.
    * @returns {Promise<BookmarkTag[] | null>}
    */
-  async getBookmarkTags(): Promise<BookmarkTag[] | null> {
-    const { status, message, data } = await this.api.getBookmarkTags();
+  async getBookmarkTags(): Promise<BookmarkTag[]> {
+    const { message, data } = await this.api.getBookmarkTags();
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        return null;
-      case 'success':
-        if (!data) {
-          toastStore.show('Error getting bookmark tags', 'error');
-          return null;
-        }
-        toastStore.show(
-          message || 'Bookmark tags retrieved successfully',
-          'info',
-        );
-        return data;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-        return null;
+    if (!data) {
+      api_error(message);
+      return [];
     }
+    
+    toastStore.show(message || 'Bookmark tags retrieved successfully', 'info');
+    return data;
   }
 
   /**
@@ -448,27 +337,19 @@ class Account {
    * @returns {Promise<Bookmark[] | null>}
    */
   async getBookmarkTagsTopic(tagID: string): Promise<Bookmark[] | null> {
-    const { status, message, data } =
-      await this.api.getTagBookmarks(tagID);
+    const { message, data } = await this.api.getTagBookmarks(tagID);
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        return null;
-      case 'success':
-        if (!data) {
-          toastStore.show('Error getting bookmark folder topics', 'error');
-          return null;
-        }
-        toastStore.show(
-          message || 'Bookmark folder topics retrieved successfully',
-          'info',
-        );
-        return data;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-        return null;
+    if (!data) {
+      api_error(message);
+      return null;
     }
+
+    toastStore.show(
+      message || 'Bookmark folder topics retrieved successfully',
+      'info',
+    );
+
+    return data;
   }
 
   /**
@@ -478,16 +359,12 @@ class Account {
   async bookmarkTopic(body: Bookmark): Promise<void> {
     const { status, message } = await this.api.bookmarkTopic(body);
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        break;
-      case 'success':
-        toastStore.show(message || 'Topic bookmarked successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Topic bookmarked successfully', 'info');
   }
 
   /**
@@ -496,24 +373,15 @@ class Account {
    * @returns {Promise<Bookmark | null>}
    */
   async getBookmark(bookmarkId: string): Promise<Bookmark | null> {
-    const { status, message, data } =
-      await this.api.getBookmark(bookmarkId);
+    const { message, data } = await this.api.getBookmark(bookmarkId);
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        return null;
-      case 'success':
-        if (!data) {
-          toastStore.show('Error getting bookmark', 'error');
-          return null;
-        }
-        toastStore.show(message || 'Bookmark retrieved successfully', 'info');
-        return data;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-        return null;
+    if (!data) {
+      api_error(message);
+      return null;
     }
+
+    toastStore.show(message || 'Bookmark retrieved successfully', 'info');
+    return data;
   }
 
   /**
@@ -530,16 +398,12 @@ class Account {
       updatedData,
     );
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        break;
-      case 'success':
-        toastStore.show(message || 'Bookmark updated successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Bookmark updated successfully', 'info');
   }
 
   /**
@@ -547,19 +411,14 @@ class Account {
    * @param bookmarkId The ID of the bookmark to delete.
    */
   async deleteBookmark(bookmarkId: string): Promise<void> {
-    const { status, message } =
-      await this.api.deleteBookmark(bookmarkId);
+    const { status, message } = await this.api.deleteBookmark(bookmarkId);
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        break;
-      case 'success':
-        toastStore.show(message || 'Bookmark deleted successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Bookmark deleted successfully', 'info');
   }
 
   /**
@@ -572,26 +431,18 @@ class Account {
     ended: boolean,
     duration: DurationEnum,
   ): Promise<DashboardTopic[] | null> {
-    const { status, message, data } = await this.api.getStories({
+    const { message, data } = await this.api.getStories({
       ended,
       duration,
     });
 
-    switch (status) {
-      case 'error':
-        api_error(message);
-        return null;
-      case 'success':
-        if (!data) {
-          toastStore.show('Error getting stories', 'error');
-          return null;
-        }
-        toastStore.show(message || 'Stories retrieved successfully', 'info');
-        return data;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-        return null;
+    if (!data) {
+      api_error(message);
+      return null;
     }
+
+    toastStore.show(message || 'Stories retrieved successfully', 'info');
+    return data;
   }
 }
 

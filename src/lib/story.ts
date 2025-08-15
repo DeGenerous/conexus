@@ -6,9 +6,9 @@ import { story, game } from '@stores/conexus.svelte';
 import { toastStore } from '@stores/toast.svelte';
 import openModal from '@stores/modal.svelte';
 
-class CoNexusGame {
+export default class CoNexus {
   protected api: StoryAPI;
-  private static instance: CoNexusGame;
+  private static instance: CoNexus;
 
   step_data: GameData; // The data for the current step of the story.
   maxStep: number = 0; // The maximum step number of the story.
@@ -23,11 +23,11 @@ class CoNexusGame {
     }
   }
 
-  static getInstance(): CoNexusGame {
-    if (!CoNexusGame.instance) {
-      CoNexusGame.instance = new CoNexusGame();
+  static getInstance(): CoNexus {
+    if (!CoNexus.instance) {
+      CoNexus.instance = new CoNexus();
     }
-    return CoNexusGame.instance;
+    return CoNexus.instance;
   }
 
   /**
@@ -279,5 +279,3 @@ class CoNexusGame {
     await Promise.all([this.#textToSpeech()]);
   }
 }
-
-export default CoNexusGame;

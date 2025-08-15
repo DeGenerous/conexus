@@ -41,19 +41,6 @@ export default class ViewAPI extends Fetcher {
   }
 
   /**
-   * Retrieves a list of topics within a specific section.
-   * @param section_id The ID of the section.
-   * @param page The page number to retrieve.
-   * @param pageSize The number of topics per page.
-   * @returns A promise that resolves to an array of Topic objects.
-   */
-  async sectionTopics(section_id: string, page: number, pageSize: number) {
-    return this.request<SectionCategoryTopics[]>(
-      `${this.topicGroup}/section-categories/${section_id}?page=${page}&page_size=${pageSize}`,
-    );
-  }
-
-  /**
    * Retrieves a list of topics within a specific category.
    * @param category_id The ID of the category.
    * @param page The page number to retrieve.
@@ -67,30 +54,16 @@ export default class ViewAPI extends Fetcher {
   }
 
   /**
-   * Retrieves a list of topics within a specific genre.
+   * Retrieves a list of topics within a specific section.
    * @param section_id The ID of the section.
-   * @param genre_id The ID of the genre.
    * @param page The page number to retrieve.
    * @param pageSize The number of topics per page.
    * @returns A promise that resolves to an array of Topic objects.
    */
-  async genreTopics(
-    section_id: string,
-    genre_id: string,
-    page: number = 1,
-    pageSize: number = 5,
-    sort_order: TopicSortOrder = 'name',
-  ) {
-    return this.request<CategoryTopics[]>(`${this.topicGroup}/genre-topics`, {
-      method: 'POST',
-      body: JSON.stringify({
-        section_id,
-        genre_id,
-        page,
-        pageSize,
-        sort_order,
-      }),
-    });
+  async sectionTopics(section_id: string, page: number, pageSize: number) {
+    return this.request<SectionCategoryTopics[]>(
+      `${this.topicGroup}/section-topics/${section_id}?page=${page}&page_size=${pageSize}`,
+    );
   }
 
   /**
@@ -120,6 +93,77 @@ export default class ViewAPI extends Fetcher {
         page,
         pageSize,
         search_kind,
+      }),
+    });
+  }
+
+  /**
+   * Retrieves a list of topics for a creator.
+   * @param account_id The ID of the creator.
+   * @param page The page number to retrieve.
+   * @param pageSize The number of topics per page.
+   * @returns A promise that resolves to an array of Topic objects.
+   */
+  async creatorTopics(account_id: string, page: number, pageSize: number) {
+    return this.request<SectionCategoryTopics[]>(
+      `${this.topicGroup}/creator-topics/${account_id}?page=${page}&page_size=${pageSize}`,
+    );
+  }
+
+  /**
+   * Searches for topics within a specific section.
+   * @param account_id The ID of the creator.
+   * @param query The search query string.
+   * @param sort_order The sort order for the results.
+   * @param page The page number to retrieve.
+   * @param pageSize The number of topics per page.
+   * @param search_kind The kind of search to perform.
+   * @returns A promise that resolves to an array of Topic objects.
+   */
+  async searchCreatorForTopic(
+    account_id: string,
+    query: string,
+    sort_order: TopicSortOrder = 'name',
+    page: number = 1,
+    pageSize: number = 5,
+    search_kind: '1' | '2' = '2',
+  ) {
+    return this.request<CategoryTopics[]>(`${this.topicGroup}/search`, {
+      method: 'POST',
+      body: JSON.stringify({
+        account_id,
+        query,
+        sort_order,
+        page,
+        pageSize,
+        search_kind,
+      }),
+    });
+  }
+
+  /**
+   * Retrieves a list of topics within a specific genre.
+   * @param section_id The ID of the section.
+   * @param genre_id The ID of the genre.
+   * @param page The page number to retrieve.
+   * @param pageSize The number of topics per page.
+   * @returns A promise that resolves to an array of Topic objects.
+   */
+  async genreTopics(
+    section_id: string,
+    genre_id: string,
+    page: number = 1,
+    pageSize: number = 5,
+    sort_order: TopicSortOrder = 'name',
+  ) {
+    return this.request<CategoryTopics[]>(`${this.topicGroup}/genre-topics`, {
+      method: 'POST',
+      body: JSON.stringify({
+        section_id,
+        genre_id,
+        page,
+        pageSize,
+        sort_order,
       }),
     });
   }

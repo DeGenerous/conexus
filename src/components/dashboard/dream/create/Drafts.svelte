@@ -52,7 +52,7 @@
 
 {#if $draftsIndex.length}
   <ul class="drafts-wrapper transparent-container">
-    {#each $draftsIndex as { id, title, updated }}
+    {#each $draftsIndex as { id, title, updated_at }}
       <button
         class="draft void-btn small-rose-tile small-tile-addon"
         class:selected={selectedDraftID == id}
@@ -64,7 +64,7 @@
         }}
       >
         <p class="flex">
-          {convertDate(new Date(updated))}
+          {convertDate(new Date(updated_at))}
           <span>{id.split('-')[0]}</span>
         </p>
         <!-- <p>{id.split('-')[0]}</p> -->

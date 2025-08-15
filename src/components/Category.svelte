@@ -13,15 +13,15 @@
   import StoryTile from '@components/utils/StoryTile.svelte';
   import SortingSVG from '@components/icons/Sorting.svelte';
 
-  export let category: CategoryInSection | null = null;
+  export let category: SectionCategoryTopics | null = null;
   export let section: string = '';
 
   const view = new CoNexusApp();
 
-  let topics: TopicInCategory[] = [];
+  let topics: CategoryTopics[] = [];
 
   let isSorting: boolean = false;
-  let sortedTopics: TopicInCategory[] = [];
+  let sortedTopics: CategoryTopics[] = [];
 
   let pageSize: number = 10;
   let total: number = 0;
@@ -31,7 +31,7 @@
   const fetchTopics = async () => {
     if (!category || loading || isEndReached) return;
 
-    const cachedTopics = GetCache<TopicInCategory[]>(
+    const cachedTopics = GetCache<CategoryTopics[]>(
       CATEGORY_TOPICS_KEY(category.name),
     );
     if (cachedTopics) {
@@ -74,7 +74,7 @@
 
   // SORTING
 
-  function applySorting(data: TopicInCategory[]) {
+  function applySorting(data: CategoryTopics[]) {
     return isSorting ? sortByName(data) : sortByOrder(data);
   }
 
@@ -83,8 +83,8 @@
     else sortedTopics = sortByOrder(topics);
   };
 
-  function sortByName(data: TopicInCategory[]) {
-    return data.sort((a: TopicInCategory, b: TopicInCategory) => {
+  function sortByName(data: CategoryTopics[]) {
+    return data.sort((a: CategoryTopics, b: CategoryTopics) => {
       const firstTopic = a.name.toLowerCase().trim();
       const secondTopic = b.name.toLowerCase().trim();
       // Sorting all topics in the category alphabetically
@@ -94,10 +94,10 @@
     });
   }
 
-  function sortByOrder(data: TopicInCategory[]) {
-    return data.sort((a: TopicInCategory, b: TopicInCategory) => {
-      if (a.order < b.order) return -1;
-      if (a.order > b.order) return 1;
+  function sortByOrder(data: CategoryTopics[]) {
+    return data.sort((a: CategoryTopics, b: CategoryTopics) => {
+      if (a.sort_order < b.sort_order) return -1;
+      if (a.sort_order > b.sort_order) return 1;
       return 0;
     });
   }

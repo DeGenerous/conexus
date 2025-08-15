@@ -6,7 +6,7 @@ type SignUp = {
   last_name: string;
   email: string;
   password: string;
-  role_id: string;
+  referred: boolean;
 };
 
 type AuthWallet = {
@@ -21,9 +21,10 @@ type User = {
   tenant_id?: string;
   email_confirmed?: boolean;
   is_oauth?: boolean;
-  referred: boolean;
   referral_code?: string;
   credits: number;
+  role_id: string;
+  role?: Roles;
   username?: string;
   avatar_url?: string;
   main_wallet?: string;
@@ -36,7 +37,7 @@ type SignIn = {
   password: string;
 };
 
-type Roles = 'admin' | 'user' | 'artist';
+type Roles = 'Admin' | 'Guest' | 'Creator';
 
 type ReferralCode = {
   id: string;
@@ -48,7 +49,7 @@ type ReferralCode = {
 };
 
 type ReferralSignUp = {
-  user: User;
+  user: SignUp;
   referral_code: string;
   newsletter: boolean;
 };

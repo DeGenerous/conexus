@@ -139,8 +139,8 @@ export default class CoNexus {
    * @param step_id The ID of the step to load
    * @returns A promise that resolves when the step is loaded
    */
-  async loadStep(step_id: string): Promise<void> {
-    const { message, data } = await this.api.step(this.step_data.id, step_id);
+  async loadStep(step: number): Promise<void> {
+    const { message, data } = await this.api.step(this.step_data.id, step);
 
     if (!data) {
       api_error(message);

@@ -33,8 +33,6 @@ type VolumeControl = {
 type ContinuableStory = {
   story_id: string;
   topic_id: string;
-  category: string;
-  created?: string;
 };
 
 type Topic = {
@@ -60,7 +58,7 @@ type StepData = {
   title?: string;
   story: string;
   ended: boolean;
-  options?: string[];
+  options: string[];
   choice?: number;
   summary: string;
   trait: string;
@@ -97,7 +95,7 @@ type Section = {
 };
 
 type Genre = {
-  id?: number;
+  id?: string;
   name: string;
   description?: string;
 };

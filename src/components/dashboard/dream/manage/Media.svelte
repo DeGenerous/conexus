@@ -3,14 +3,23 @@
 
   import { serveUrl } from '@constants/media';
   import { validateFiles } from '@utils/file-validation';
-  import MediaManager from '@lib/media';
   import { toastStore } from '@stores/toast.svelte';
   import { toAvif } from '@utils/avif-convert';
   import { MEDIA_RULES } from '@utils/file-validation';
+  import { a } from 'vitest/dist/chunks/suite.d.FvehnV49.js';
 
-  let { topic_id = $bindable() }: { topic_id: number } = $props();
-
-  let mediaManager = new MediaManager();
+  let {
+    topic_media_files = $bindable(),
+    handleMediaUpload,
+    handleDeleteMedia,
+  }: {
+    topic_media_files: TopicMediaFile[];
+    handleMediaUpload: (media_type: MediaType, file: File) => Promise<string[]>;
+    handleDeleteMedia: (
+      file_id: string,
+      media_type: MediaType,
+    ) => Promise<void>;
+  } = $props();
 
   let isLoading = $state<boolean>(true);
 
@@ -47,38 +56,24 @@
 
   // Fetch stored media on load
   const loadMedia = async () => {
-    try {
-      const bgData = await mediaManager.fetchTopicMedia(
-        topic_id.toString(),
-        'background',
-      );
-      const descData = await mediaManager.fetchTopicMedia(
-        topic_id.toString(),
-        'description',
-      );
-      const tileData = await mediaManager.fetchTopicMedia(
-        topic_id.toString(),
-        'tile',
-      );
-      const audioData = await mediaManager.fetchTopicMedia(
-        topic_id.toString(),
-        'audio',
-      );
-      const videoData = await mediaManager.fetchTopicMedia(
-        topic_id.toString(),
-        'video',
-      );
+    for (const file of topic_media_files) {
+      const slot = typeToSlot[file.media_type];
+      if (!slot) continue; // skip unknown media types
 
-      backgrounds = [...bgData];
-      description = descData.length ? descData[0] : null;
-      tile = tileData.length ? tileData[0] : null;
-      video = videoData.length ? videoData[0] : null;
-      audio = [...audioData];
-    } catch (error) {
-      console.error('Failed to load media:', error);
-    } finally {
-      isLoading = false;
+      if (slot === 'background') {
+        backgrounds.push(file.file_id);
+      } else if (slot === 'description') {
+        description = file.file_id;
+      } else if (slot === 'tile') {
+        tile = file.file_id;
+      } else if (slot === 'video') {
+        video = file.file_id;
+      } else if (slot === 'audio') {
+        audio.push(file.file_id);
+      }
     }
+
+    isLoading = false;
   };
 
   onMount(loadMedia);
@@ -120,11 +115,7 @@
           }
         }
 
-        const [id] = await mediaManager.uploadTopicMedia(
-          upload,
-          topic_id,
-          slot,
-        );
+        const [id] = await handleMediaUpload(slot, upload);
         if (!id) continue;
 
         /* ---------- refresh local state so the UI re‑renders ---------- */
@@ -148,7 +139,11 @@
 
   const handleDelete = async (fileId: string, type: MediaType) => {
     try {
-      await mediaManager.deleteTopicMedia(topic_id, fileId, type);
+      await handleDeleteMedia(fileId, type);
+
+      topic_media_files = topic_media_files.filter(
+        (file) => file.id !== fileId,
+      );
 
       if (type === 'background') {
         backgrounds = backgrounds.filter((bg) => bg !== fileId);

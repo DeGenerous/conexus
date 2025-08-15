@@ -1,11 +1,13 @@
 <script lang="ts">
   import Account from '@lib/account';
+  import Authentication from '@lib/authentication';
   import { toastStore } from '@stores/toast.svelte';
   import { ClearCache } from '@constants/cache';
 
   import DiscordSVG from '@components/icons/Discord.svelte';
 
   let acct: Account = new Account();
+  let auth: Authentication = new Authentication();
 
   let code = $state<string>('');
   let referralCodeValid = $state<boolean>(false);
@@ -29,13 +31,9 @@
   };
 
   async function validateReferralCode() {
-    const referralObject: ReferralCode | null =
-      await acct.validateReferralCode(code);
-    if (referralObject) {
-      referralCodeValid = true;
-    } else {
-      referralCodeValid = false;
-    }
+    const validated = await auth.validateReferralCode(code);
+
+    return validated;
   }
 </script>
 
@@ -53,7 +51,7 @@
   />
 
   {#if code.length === 16}
-    {#await acct.validateReferralCode(code)}
+    {#await auth.validateReferralCode(code)}
       <p class="validation gray">Checking referral code...</p>
     {:then referralObject}
       {#if referralObject}

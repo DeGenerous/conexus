@@ -21,15 +21,21 @@ function redirectTo(path: string) {
   }
 }
 
+export async function getCurrentUserRole(): Promise<Roles | null> {
+  const user = await getCurrentUser();
+  return user && user.role !== undefined ? user.role : null;
+}
+
 // Check user status
 export async function userState(
-  state: 'signed' | 'admin' | 'referred' = 'signed',
+  state: 'signed' | 'admin' | 'creator' | 'referred' = 'signed',
 ): Promise<boolean> {
   const user: Nullable<User> = await getCurrentUser();
   if (!user) return false;
 
   if (state === 'signed') return true;
-  if (state === 'admin') return user.role === 'admin';
+  if (state === 'admin') return user.role === 'Admin';
+  if (state === 'creator') return user.role === 'Creator';
   if (state === 'referred') return !!user.referred;
 
   return false;

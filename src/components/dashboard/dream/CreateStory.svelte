@@ -3,9 +3,12 @@
   import { onMount, onDestroy } from 'svelte';
   import { derived } from 'svelte/store';
 
+  import { userState } from '@utils/route-guard';
+
   import countries from '@constants/countries.json';
   import dreamData from '@constants/dream';
-  import AdminApp from '@lib/admin';
+  import CategoryView from '@lib/category';
+  import Topic from '@lib/topics';
   import {
     storyData,
     promptSettings,
@@ -29,16 +32,20 @@
 
   onMount(ensureAdmin);
 
-  let admin = new AdminApp();
+  let category = new CategoryView();
+  let topic = new Topic();
 
   let promptFormat: 'Table' | 'Open' = $state('Open');
+
+  let isAdmin = $state<boolean>(false);
+  let isCreator = $state<boolean>(false);
 
   let validation = $derived(
     $storyData.name &&
       $storyData.description &&
       $storyData.description.length > 100 &&
       $storyData.imagePrompt.length <= 1400 &&
-      $storyData.category,
+      $storyData.category_id,
   );
 
   // DRAFTS
@@ -82,10 +89,10 @@
 
   // Recompute "last saved" string
   const updateLastSavedLabel = () => {
-    if (!$currentDraft?.updated) return;
+    if (!$currentDraft?.updated_at) return;
 
     const now = Date.now();
-    const diffMs = now - $currentDraft.updated;
+    const diffMs = now - Number($currentDraft.updated_at);
     const diffSec = Math.floor(diffMs / 1000);
     const diffMin = Math.floor(diffSec / 60);
     const diffHr = Math.floor(diffMin / 60);
@@ -120,6 +127,11 @@
     return () => clearInterval(interval); // cleanup on destroy
   });
 
+  onMount(async () => {
+    isAdmin = await userState('admin');
+    isCreator = await userState('creator');
+  });
+
   const openDraftsManager = () => {
     $draftsIndex = Drafts.list();
     $showModal = true;
@@ -131,7 +143,7 @@
   const generateStory = async () => {
     const promptData: TablePrompt | string =
       promptFormat === 'Table' ? $tablePrompt : $openPrompt;
-    await admin.createNewStory(
+    await topic.newTopic(
       generatePrompt($storyData, $promptSettings, promptData),
     );
     const storyLink = `/dashboard/dream/manage/${$storyData.name}`;
@@ -152,7 +164,7 @@
   <div class="drafts-wrapper fade-in container flex-row flex-wrap">
     {#if $currentDraft}
       <h5>
-        📝 Working on draft: {$currentDraft.id.split('-')[0]}
+        <!-- 📝 Working on draft: {$currentDraft.id.split('-')[0]} -->
         <strong>
           - Last saved: {lastSavedAgo}
         </strong>
@@ -179,11 +191,11 @@
     <label for="category">Select Category</label>
     <select
       id="category"
-      class:red-border={!$storyData.category}
-      bind:value={$storyData.category}
+      class:red-border={!$storyData.category_id}
+      bind:value={$storyData.category_id}
     >
       <option value={null} selected={true} disabled hidden>Select</option>
-      {#await admin.fetchCategories() then categories}
+      {#await isAdmin ? category.listAdminCategories('') : category.listCreatorCategories() then categories}
         {#each categories as { name, id }}
           <option value={id}>{name}</option>
         {/each}

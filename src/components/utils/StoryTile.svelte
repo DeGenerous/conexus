@@ -1,6 +1,5 @@
 <script lang="ts">
   import { blankImage, serveUrl } from '@constants/media';
-  import { contractGetter } from '@constants/contracts';
 
   import LockSVG from '@components/icons/Lock.svelte';
 
@@ -10,28 +9,26 @@
     loading = $bindable(),
   }: {
     section: string;
-    topic: Nullable<TopicInCategory>;
+    topic: Nullable<CategoryTopics>;
     loading: boolean;
   } = $props();
 
   const storyName: string = topic ? topic.name.trim() : '';
 
-  const listTopicGates = (topic: TopicInCategory) => {
-    const gates = topic.nft_gate
+  const listTopicGates = (topic: CategoryTopics) => {
+    const gates = topic.topic_gates
       ?.map((gate) => {
-        const name = gate.contract_name;
-        const className = gate.class_name;
-        const amount = gate.amount;
-
-        // Check for the right name from the contract Map
-        const convertedName = contractGetter(name).name;
-
-        if (amount && amount > 0) {
-          return `$${convertedName.toUpperCase()} (${amount})`;
-        } else if (className) {
-          return `${convertedName} (${className})`;
+        // Narrowing based on gate_type
+        if ('gate_type' in gate) {
+          if (gate.min_amount && gate.min_amount > 0) {
+            return `$${gate.contract_name} (${gate.min_amount})`;
+          }
+          return gate.contract_name;
         } else {
-          return convertedName;
+          if (gate.class_name) {
+            return `${gate.class_name} (${gate.class_name})`;
+          }
+          return gate.class_name;
         }
       })
       .join(', ');
@@ -48,19 +45,19 @@
 {:else if topic}
   <a
     class="tile"
-    class:gated-story={topic.nft_gate && topic.nft_gate.length > 0}
+    class:gated-story={topic.topic_gates && topic.topic_gates.length > 0}
     href="/sections/{section}/{topic.name}?id={topic.id}"
   >
     <img
       loading="lazy"
-      src={serveUrl(topic.tile_file_id) ?? blankImage}
+      src={serveUrl(topic.tile_file_url) ?? blankImage}
       alt={storyName}
       draggable="false"
       height="1024"
       width="1024"
     />
     <h5>{storyName}</h5>
-    {#if topic.nft_gate && topic.nft_gate.length > 0}
+    {#if topic.topic_gates && topic.topic_gates.length > 0}
       <div class="gatings">
         <LockSVG />
         <p>{listTopicGates(topic)}</p>

@@ -2,7 +2,7 @@ import { api_error } from '@errors/index';
 import CategoryAPI from '@service/router/category';
 import { toastStore } from '@stores/toast.svelte';
 
-export default class CategoryViw {
+export default class CategoryView {
   protected api: CategoryAPI;
 
   constructor() {

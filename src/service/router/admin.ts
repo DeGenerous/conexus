@@ -267,10 +267,10 @@ export default class AdminAPI extends Fetcher {
    * @param interval The time interval for the accounts.
    * @returns A promise that resolves to the top N active accounts.
    */
-  async accountTopN(n: number, interval: DateRange) {
+  async accountTopN(request: TopNMetricFilter) {
     return this.request<number>(`${this.topNGroup}/active-accounts`, {
       method: 'POST',
-      body: JSON.stringify({ n, interval }),
+      body: JSON.stringify(request),
     });
   }
 
@@ -280,10 +280,10 @@ export default class AdminAPI extends Fetcher {
    * @param interval The time interval for the topics.
    * @returns A promise that resolves to the top N played topics.
    */
-  async topicTopN(n: number, interval: DateRange) {
+  async topicTopN(request: TopNMetricFilter) {
     return this.request<number>(`${this.topNGroup}/played-topics`, {
       method: 'POST',
-      body: JSON.stringify({ n, interval }),
+      body: JSON.stringify(request),
     });
   }
 }

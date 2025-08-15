@@ -123,7 +123,7 @@ export default class StoryAPI extends Fetcher {
    * @returns The status of the image generation task or the generated image
    */
   async imageStatus(story_id: string, task_id: string) {
-    return this.request<Blob | { status: string }>(
+    return this.request<{ status: 'pending' | 'ready', url?: string }>(
       `${this.group}/image-status`,
       {
         method: 'POST',

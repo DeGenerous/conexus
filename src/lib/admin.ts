@@ -12,60 +12,37 @@ class AdminApp {
   async listAccounts(
     page: number,
     page_size: number,
-  ): Promise<{ user: Partial<User>[]; count: number } | null> {
-    const { status, message, data } = await this.api.listAccounts(
-      page,
-      page_size,
-    );
+  ): Promise<{ users: Partial<User>[]; count: number } | null> {
+    const { message, data } = await this.api.listAccounts(page, page_size);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        return null;
-      case 'success':
-        if (!data) {
-          toastStore.show('No accounts found', 'info');
-          return null;
-        }
-
-        return { user: data.accounts, count: data.count };
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-        return null;
+    if (!data) {
+      api_error(message);
+      return null;
     }
+
+    return { users: data.accounts, count: data.count };
   }
 
   async changeUserRole(account_id: string, new_role: string): Promise<void> {
     const { status, message } = await this.api.changeRole(account_id, new_role);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        break;
-      case 'success':
-        toastStore.show(message || 'User role updated successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'User role updated successfully', 'info');
   }
 
   async disableUserAccount(account_id: string): Promise<void> {
     const { status, message } = await this.api.disableAccount(account_id);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        break;
-      case 'success':
-        toastStore.show(
-          message || 'User account disabled successfully',
-          'info',
-        );
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'User account disabled successfully', 'info');
   }
 
   async createNewSection(name: string, description: string): Promise<void> {
@@ -74,32 +51,24 @@ class AdminApp {
       description,
     });
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        break;
-      case 'success':
-        toastStore.show(message || 'Section created successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Section created successfully', 'info');
   }
 
-  async deleteSection(sectionId: string): Promise<void> {
-    const { status, message } = await this.api.deleteSection(sectionId);
+  // async deleteSection(sectionId: string): Promise<void> {
+  //   const { status, message } = await this.api.deleteSection(sectionId);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        break;
-      case 'success':
-        toastStore.show(message || 'Section deleted successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-    }
-  }
+  //   if (status === 'error') {
+  //     api_error(message);
+  //     return;
+  //   }
+
+  //   toastStore.show(message || 'Section deleted successfully', 'info');
+  // }
 
   async createNewGenre(name: string, description: string): Promise<void> {
     const { status, message } = await this.api.createGenre({
@@ -107,61 +76,45 @@ class AdminApp {
       description,
     });
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        break;
-      case 'success':
-        toastStore.show(message || 'Genre created successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Genre created successfully', 'info');
   }
 
   async deleteGenre(genreId: string): Promise<void> {
     const { status, message } = await this.api.deleteGenre(genreId);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        break;
-      case 'success':
-        toastStore.show(message || 'Genre deleted successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Genre deleted successfully', 'info');
   }
 
   async createNewContract(body: Contract): Promise<void> {
     const { status, message } = await this.api.createContract(body);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        break;
-      case 'success':
-        toastStore.show(message || 'Contract created successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Contract created successfully', 'info');
   }
 
   async deleteContract(contractId: string): Promise<void> {
     const { status, message } = await this.api.deleteContract(contractId);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        break;
-      case 'success':
-        toastStore.show(message || 'Contract deleted successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Contract deleted successfully', 'info');
   }
 
   async createNewTokenGate(
@@ -177,16 +130,12 @@ class AdminApp {
     };
     const { status, message } = await this.api.createGate(tokenGate);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        break;
-      case 'success':
-        toastStore.show(message || 'Token gate created successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Token gate created successfully', 'info');
   }
 
   async createNewClassGate(
@@ -206,257 +155,116 @@ class AdminApp {
 
     const { status, message } = await this.api.createGate(classGate);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        break;
-      case 'success':
-        toastStore.show(message || 'Class gate created successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Class gate created successfully', 'info');
   }
 
   async deleteGate(gateId: string): Promise<void> {
     const { status, message } = await this.api.deleteGate(gateId);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        break;
-      case 'success':
-        toastStore.show(message || 'Gate deleted successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Gate deleted successfully', 'info');
   }
 
   async getGate(gateId: string): Promise<Gate | null> {
-    const { status, message, data } = await this.api.getGate(gateId);
+    const { message, data } = await this.api.getGate(gateId);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        break;
-      case 'success':
-        if (!data) {
-          toastStore.show('Gate not found', 'error');
-          return null;
-        }
-
-        return data;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (!data) {
+      api_error(message);
+      return null;
     }
 
-    return null;
+    return data;
   }
 
   async getAllGates(): Promise<Gate[]> {
-    const { status, message, data } = await this.api.getGates();
+    const { message, data } = await this.api.getGates();
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        return [];
-      case 'success':
-        return data || [];
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (!data) {
+      api_error(message);
+      return [];
     }
 
-    return [];
+    return data || [];
   }
 
   async fetchAccountCount(body: AccountMetricFilter): Promise<number> {
-    const { status, message, data } = await this.api.accountCount(body);
+    const { message, data } = await this.api.accountCount(body);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        return 0;
-      case 'success':
-        return data || 0;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-    }
-
-    return 0;
+    return this.#metricNumber(message, data);
   }
 
   async fetchWalletCount(body: WalletMetricFilter): Promise<number> {
-    const { status, message, data } = await this.api.walletCount(body);
+    const { message, data } = await this.api.walletCount(body);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        return 0;
-      case 'success':
-        return data || 0;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-    }
-
-    return 0;
+    return this.#metricNumber(message, data);
   }
 
   async fetchTopicCount(body: TopicMetricFilter): Promise<number> {
-    const { status, message, data } = await this.api.topicCount(body);
+    const { message, data } = await this.api.topicCount(body);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        return 0;
-      case 'success':
-        return data || 0;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-    }
-
-    return 0;
+    return this.#metricNumber(message, data);
   }
 
   async fetchStoryCount(body: StoryMetricFilter): Promise<number> {
-    const { status, message, data } = await this.api.storyCount(body);
+    const { message, data } = await this.api.storyCount(body);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        return 0;
-      case 'success':
-        return data || 0;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-    }
-
-    return 0;
+    return this.#metricNumber(message, data);
   }
 
   async fetchAccountGrowth(body: AccountMetricFilter): Promise<number> {
-    const { status, message, data } = await this.api.accountGrowth(body);
+    const { message, data } = await this.api.accountGrowth(body);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        return 0;
-      case 'success':
-        return data || 0;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-    }
-
-    return 0;
+    return this.#metricNumber(message, data);
   }
 
   async fetchWalletGrowth(body: WalletMetricFilter): Promise<number> {
-    const { status, message, data } = await this.api.walletGrowth(body);
+    const { message, data } = await this.api.walletGrowth(body);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        return 0;
-      case 'success':
-        return data || 0;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-    }
-
-    return 0;
+    return this.#metricNumber(message, data);
   }
 
   async fetchTopicGrowth(body: TopicMetricFilter): Promise<number> {
-    const { status, message, data } = await this.api.topicGrowth(body);
+    const { message, data } = await this.api.topicGrowth(body);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        return 0;
-      case 'success':
-        return data || 0;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-    }
-
-    return 0;
+    return this.#metricNumber(message, data);
   }
 
   async fetchStoryGrowth(body: StoryMetricFilter): Promise<number> {
-    const { status, message, data } = await this.api.storyGrowth(body);
+    const { message, data } = await this.api.storyGrowth(body);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        return 0;
-      case 'success':
-        return data || 0;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-    }
-
-    return 0;
+    return this.#metricNumber(message, data);
   }
 
   async fetchTopAccounts(body: TopNMetricFilter): Promise<number> {
-    const { status, message, data } = await this.api.accountTopN(body);
+    const { message, data } = await this.api.accountTopN(body);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        return 0;
-      case 'success':
-        return data || 0;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-    }
-
-    return 0;
+    return this.#metricNumber(message, data);
   }
 
   async fetchTopTopics(body: TopNMetricFilter): Promise<number> {
-    const { status, message, data } = await this.api.topicTopN(body);
+    const { message, data } = await this.api.topicTopN(body);
 
-    switch (status) {
-      case 'error':
-        toastStore.show(message, 'error');
-        return 0;
-      case 'success':
-        return data || 0;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
-    }
-
-    return 0;
+    return this.#metricNumber(message, data);
   }
 
-  // /**
-  //  * Fetches collections from the server.
-  //  *
-  //  * @returns {Promise<Collection[]>} A promise that resolves to an array of collections.
-  //  * If there is an error fetching the collections, it will handle the error by either
-  //  * showing an API error or displaying a toast notification with an error message.
-  //  */
-  // async fetchCollections(): Promise<Collection[]> {
-  //   const { data, error } = await this.collections();
+  /* HELPER */
 
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     } else {
-  //       toastStore.show('Error fetching view', 'error');
-  //     }
-  //     return [];
-  //   }
-
-  //   const orderedCollections = data.sort((a: Collection, b: Collection) => {
-  //     if (a.category_order < b.category_order) return -1;
-  //     if (a.category_order > b.category_order) return 1;
-  //     return 0;
-  //   });
-
-  //   return orderedCollections;
-  // }
+  #metricNumber(message: string, data: number | undefined): number {
+    if (!data) {
+      api_error(message);
+      return 0;
+    }
+    return data;
+  }
 }
 
 export default AdminApp;

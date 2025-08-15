@@ -43,8 +43,10 @@ type Topic = {
 };
 
 type Category = {
+  id?: string;
   name: string;
-  topics: Topic[];
+  description: string;
+  dashboard_sort_order: number;
 };
 
 type CategoryView = {

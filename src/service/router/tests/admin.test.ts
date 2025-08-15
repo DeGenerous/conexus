@@ -191,33 +191,33 @@ describe('AdminAPI', () => {
   });
 
   it('accountTopN calls correct endpoint and payload', async () => {
-    const n: number = 5;
-    const interval: DateRange = [
-      new Date('2023-01-01'),
-      new Date('2023-12-31'),
-    ];
-    await api.accountTopN(n, interval);
+    const filter: TopNMetricFilter = {
+      n: 5,
+      start_date: '2023-01-01',
+      end_date: '2023-12-31',
+    };
+    await api.accountTopN(filter);
     expect(mockRequest).toHaveBeenCalledWith(
       '/admin/metrics/top-n/active-accounts',
       {
         method: 'POST',
-        body: JSON.stringify({ n, interval }),
+        body: JSON.stringify(filter),
       },
     );
   });
 
   it('topicTopN calls correct endpoint and payload', async () => {
-    const n: number = 5;
-    const interval: DateRange = [
-      new Date('2023-01-01'),
-      new Date('2023-12-31'),
-    ];
-    await api.topicTopN(n, interval);
+    const filter: TopNMetricFilter = {
+      n: 5,
+      start_date: '2023-01-01',
+      end_date: '2023-12-31',
+    };
+    await api.topicTopN(filter);
     expect(mockRequest).toHaveBeenCalledWith(
       '/admin/metrics/top-n/played-topics',
       {
         method: 'POST',
-        body: JSON.stringify({ n, interval }),
+        body: JSON.stringify(filter),
       },
     );
   });

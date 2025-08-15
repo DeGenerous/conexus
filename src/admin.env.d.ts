@@ -101,5 +101,5 @@ type StoryMetricFilter = {
 } & BaseMetricFilter;
 
 type TopNMetricFilter = {
-  top_n: number;
+  n: number;
 } & BaseMetricFilter;

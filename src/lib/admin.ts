@@ -408,8 +408,11 @@ class AdminApp {
     return 0;
   }
 
-  async fetchTopAccounts(body: AccountMetricFilter): Promise<number> {
-    const { status, message, data } = await this.adminAPI.accountTopN(body);
+  async fetchTopAccounts(n: number, interval: DateRange): Promise<number> {
+    const { status, message, data } = await this.adminAPI.accountTopN(
+      n,
+      interval,
+    );
 
     switch (status) {
       case 'error':
@@ -424,8 +427,11 @@ class AdminApp {
     return 0;
   }
 
-  async fetchTopTopics(body: TopicMetricFilter): Promise<number> {
-    const { status, message, data } = await this.adminAPI.topicTopN(body);
+  async fetchTopTopics(n: number, interval: DateRange): Promise<number> {
+    const { status, message, data } = await this.adminAPI.topicTopN(
+      n,
+      interval,
+    );
 
     switch (status) {
       case 'error':

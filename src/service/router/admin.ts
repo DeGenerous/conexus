@@ -263,25 +263,27 @@ export default class AdminAPI extends Fetcher {
 
   /**
    * Retrieves the top N active accounts.
-   * @param request The request data for the top N accounts.
+   * @param n The number of accounts to retrieve.
+   * @param interval The time interval for the accounts.
    * @returns A promise that resolves to the top N active accounts.
    */
-  async accountTopN(request: AccountMetricFilter) {
+  async accountTopN(n: number, interval: DateRange) {
     return this.request<number>(`${this.topNGroup}/active-accounts`, {
       method: 'POST',
-      body: JSON.stringify(request),
+      body: JSON.stringify({ n, interval }),
     });
   }
 
   /**
    * Retrieves the top N played topics.
-   * @param request The request data for the top N topics.
+   * @param n The number of topics to retrieve.
+   * @param interval The time interval for the topics.
    * @returns A promise that resolves to the top N played topics.
    */
-  async topicTopN(request: TopicMetricFilter) {
+  async topicTopN(n: number, interval: DateRange) {
     return this.request<number>(`${this.topNGroup}/played-topics`, {
       method: 'POST',
-      body: JSON.stringify(request),
+      body: JSON.stringify({ n, interval }),
     });
   }
 }

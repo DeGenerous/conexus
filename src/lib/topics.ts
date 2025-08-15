@@ -2,65 +2,256 @@ import { api_error } from '@errors/index';
 import Account from '@lib/account';
 import TopicAPI from '@service/router/topic';
 import openModal from '@stores/modal.svelte';
+import { toastStore } from '@stores/toast.svelte';
 
-export default class Topic {
+export class CreatorTopic {
   protected api: TopicAPI;
 
   constructor() {
     this.api = new TopicAPI(import.meta.env.PUBLIC_BACKEND);
   }
 
-  // /**
-  //  * Fetches the NFT gates for a specific topic.
-  //  *
-  //  * @param topic_id - The ID of the topic to fetch gates for.
-  //  * @returns A promise that resolves to an array of TopicNFTGateWithContract objects.
-  //  */
-  // async fetchTopicGates(topic_id: number): Promise<TopicNFTGateWithContract[]> {
-  //   const { data, error } = await this.getTopicNFTGates(topic_id);
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     }
-  //     return [];
-  //   }
+  async newTopic(body: TopicRequest): Promise<string | null> {
+    const { message, data } = await this.api.new(body);
 
-  //   data.map((gate: TopicNFTGate) => {
-  //     const gateWithContract = gate as TopicNFTGateWithContract;
-  //     const gatingContract = contracts.get(gate.contract_name);
-  //     if (gatingContract) {
-  //       gateWithContract.name = gatingContract.name;
-  //       gateWithContract.link = gatingContract.link;
-  //       return gateWithContract;
-  //     }
-  //   });
+    if (!data) {
+      api_error(message);
+      return null;
+    }
 
-  //   return data;
-  // }
+    return data;
+  }
 
-  // async fetchClassGates(): Promise<ClassGate[]> {
-  //   const { data, error } = await this.getClassGates();
+  async saveNewTopicDraft(body: DraftPayload): Promise<string | null> {
+    const { message, data } = await this.api.newDraft(body);
 
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     }
-  //     return [];
-  //   }
+    if (!data) {
+      api_error(message);
+      return null;
+    }
 
-  //   return data;
-  // }
+    return data;
+  }
 
-  // async fetchClassGate(class_ID: number): Promise<ClassGate | null> {
-  //   const { data, error } = await this.getGateClass(class_ID);
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     }
-  //     return null;
-  //   }
-  //   return data;
-  // }
+  async getDrafts(): Promise<DraftPayload[]> {
+    const { message, data } = await this.api.getDrafts();
+
+    if (!data) {
+      api_error(message);
+      return [];
+    }
+
+    return data;
+  }
+
+  async getDraft(id: string): Promise<DraftPayload | null> {
+    const { message, data } = await this.api.getDraft(id);
+
+    if (!data) {
+      api_error(message);
+      return null;
+    }
+
+    return data;
+  }
+
+  async searchDraft(
+    query: string,
+    page: number,
+    page_size: number,
+  ): Promise<DraftPayload[] | null> {
+    const { message, data } = await this.api.searchDrafts(
+      query,
+      page,
+      page_size,
+    );
+
+    if (!data) {
+      api_error(message);
+      return null;
+    }
+
+    return data;
+  }
+
+  async updateDraft(id: string, body: DraftPayload): Promise<void> {
+    const { message, data } = await this.api.updateDraft(id, body);
+
+    if (!data) {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || `Draft ${id} updated successfully`, 'info');
+  }
+
+  async deleteDraft(id: string): Promise<void> {
+    const { message, data } = await this.api.deleteDraft(id);
+
+    if (!data) {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || `Draft ${id} deleted successfully`, 'info');
+  }
+
+  async getTopicManager(topic_id: string): Promise<TopicManager | null> {
+    const { message, data } = await this.api.topicManager(topic_id);
+
+    if (!data) {
+      api_error(message);
+      return null;
+    }
+
+    return data;
+  }
+
+  async addTopicToCategory(
+    topic_id: string,
+    category_id: string,
+    sort_order?: number,
+  ): Promise<void> {
+    const { message, data } = await this.api.addCategory(
+      topic_id,
+      category_id,
+      sort_order,
+    );
+
+    if (!data) {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || `Category added to topic ${topic_id}`, 'info');
+  }
+
+  async changeCategorySortOrder(
+    topic_id: string,
+    category_id: string,
+    sort_order: number,
+  ): Promise<void> {
+    const { message, data } = await this.api.changeCategorySortOrder(
+      topic_id,
+      category_id,
+      sort_order,
+    );
+
+    if (!data) {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(
+      message || `Category sort order changed for topic ${topic_id}`,
+      'info',
+    );
+  }
+
+  async removeTopicFromCategory(
+    topic_id: string,
+    category_id: string,
+  ): Promise<void> {
+    const { message, data } = await this.api.removeCategory(
+      topic_id,
+      category_id,
+    );
+
+    if (!data) {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(
+      message || `Category removed from topic ${topic_id}`,
+      'info',
+    );
+  }
+
+  async addGenreToTopic(topic_id: string, genre_id: string): Promise<void> {
+    const { message, data } = await this.api.addGenre(topic_id, genre_id);
+
+    if (!data) {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || `Genre added to topic ${topic_id}`, 'info');
+  }
+
+  async removeGenreFromTopic(
+    topic_id: string,
+    genre_id: string,
+  ): Promise<void> {
+    const { message, data } = await this.api.removeGenre(topic_id, genre_id);
+
+    if (!data) {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || `Genre removed from topic ${topic_id}`, 'info');
+  }
+
+  async addGateToTopic(topic_id: string, gate_id: string): Promise<void> {
+    const { message, data } = await this.api.addGate(topic_id, gate_id);
+
+    if (!data) {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || `Gate added to topic ${topic_id}`, 'info');
+  }
+
+  async removeGateFromTopic(topic_id: string, gate_id: string): Promise<void> {
+    const { message, data } = await this.api.removeGate(topic_id, gate_id);
+
+    if (!data) {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || `Gate removed from topic ${topic_id}`, 'info');
+  }
+
+  async uploadFileForTopic(
+    topic_id: string,
+    media_type: MediaType,
+    file: File,
+  ): Promise<void> {
+    const { message, data } = await this.api.uploadFile(
+      topic_id,
+      media_type,
+      file,
+    );
+
+    if (!data) {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || `File uploaded for topic ${topic_id}`, 'info');
+  }
+
+  async deleteFileFromTopic(
+    topic_id: string,
+    file_id: string,
+    media_type: MediaType,
+  ): Promise<void> {
+    const { message, data } = await this.api.deleteMediaFile(
+      topic_id,
+      file_id,
+      media_type,
+    );
+
+    if (!data) {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || `File deleted from topic ${topic_id}`, 'info');
+  }
 
   // /**
   //  * Fetches the list of categories.
@@ -417,293 +608,41 @@ export default class Topic {
   // }
 
   // /**
-  //  * Edits the name of a topic.
+  //  * Fetches collections from the server.
   //  *
-  //  * @param old_name - The current name of the topic.
-  //  * @param new_name - The new name to assign to the topic.
-  //  * @returns A promise that resolves when the topic name has been changed.
-  //  *
-  //  * @throws Will show an error message if the topic name change fails.
+  //  * @returns {Promise<Collection[]>} A promise that resolves to an array of collections.
+  //  * If there is an error fetching the collections, it will handle the error by either
+  //  * showing an API error or displaying a toast notification with an error message.
   //  */
-  // async editTopicName(old_name: string, new_name: string): Promise<void> {
-  //   const { data, error } = await this.changeTopicsName(old_name, new_name);
+  // async fetchCollections(): Promise<Collection[]> {
+  //   const { data, error } = await this.collections();
 
   //   if (!data) {
   //     if (error) {
   //       api_error(error);
   //     } else {
-  //       toastStore.show('Error changing topic name', 'error');
-  //     }
-  //     return;
-  //   }
-
-  //   this.clearCache();
-
-  //   toastStore.show(data.message, 'info');
-  // }
-
-  // /**
-  //  * Edits the order of a topic.
-  //  *
-  //  * This function changes the order of a topic by calling the `changeTopicsOrder` method
-  //  * with the provided `topic_id` and `order`. If the operation is successful, it displays
-  //  * a success message using `toastStore.show`. If there is an error, it handles the error
-  //  * by either calling `api_error` with the error message or displaying a generic error message.
-  //  *
-  //  * @param {number} topic_id - The ID of the topic to be reordered.
-  //  * @param {number} order - The new order value for the topic.
-  //  * @returns {Promise<void>} A promise that resolves when the operation is complete.
-  //  */
-  // async editTopicOrder(
-  //   topic_id: number,
-  //   order: number,
-  //   showToast: boolean = true,
-  // ): Promise<void> {
-  //   const { data, error } = await this.changeTopicsOrder(topic_id, order);
-
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     } else {
-  //       toastStore.show('Error changing topic order', 'error');
-  //     }
-  //     return;
-  //   }
-
-  //   this.clearCache();
-
-  //   if (showToast) toastStore.show(data.message, 'info');
-  // }
-
-  // /**
-  //  * Edits the category of a given topic by its ID.
-  //  *
-  //  * @param topic_id - The ID of the topic to be edited.
-  //  * @param category_id - The ID of the new category to assign to the topic.
-  //  * @returns A promise that resolves to void.
-  //  *
-  //  * @throws Will show an error message if the category change fails.
-  //  */
-  // async editTopicCategory(
-  //   topic_id: number,
-  //   category_id: number,
-  //   showToast: boolean = true,
-  // ): Promise<void> {
-  //   const { data, error } = await this.changeTopicsCategory(
-  //     topic_id,
-  //     category_id,
-  //   );
-
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     } else {
-  //       toastStore.show('Error changing topic category', 'error');
-  //     }
-  //     return;
-  //   }
-
-  //   this.clearCache();
-
-  //   if (showToast) toastStore.show(data.message, 'info');
-  // }
-
-  // /**
-  //  * Edits the description of a topic.
-  //  *
-  //  * @param {number} topic_id - The ID of the topic to edit.
-  //  * @param {string} description - The new description for the topic.
-  //  * @returns {Promise<void>} A promise that resolves when the description has been edited.
-  //  *
-  //  * @throws Will show an error toast if there is an error changing the topic description.
-  //  */
-  // async editTopicDescription(
-  //   topic_id: number,
-  //   description: string,
-  // ): Promise<void> {
-  //   const { data, error } = await this.changeTopicsDescription(
-  //     topic_id,
-  //     description,
-  //   );
-
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     } else {
-  //       toastStore.show('Error changing topic description', 'error');
-  //     }
-  //     return;
-  //   }
-
-  //   this.clearCache();
-
-  //   toastStore.show(data.message, 'info');
-  // }
-
-  // /**
-  //  * Adds a genre to a topic by their respective IDs.
-  //  *
-  //  * @param topic_id - The ID of the topic to which the genre will be added.
-  //  * @param genre_id - The ID of the genre to be added to the topic.
-  //  * @returns A promise that resolves to void.
-  //  *
-  //  * @throws Will show an error toast if the genre could not be added.
-  //  * @throws Will show an info toast with a success message if the genre was added successfully.
-  //  */
-  // async addGenre(topic_id: number, genre_id: number): Promise<void> {
-  //   const { data, error } = await this.addTopicGenre(topic_id, genre_id);
-
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     } else {
-  //       toastStore.show('Error adding genre', 'error');
-  //     }
-  //     return;
-  //   }
-
-  //   this.clearCache();
-
-  //   toastStore.show(data.message, 'info');
-  // }
-
-  // /**
-  //  * Removes a genre from a topic.
-  //  *
-  //  * @param {number} topic_id - The ID of the topic from which the genre will be removed.
-  //  * @param {number} genre_id - The ID of the genre to be removed.
-  //  * @returns {Promise<void>} A promise that resolves when the genre is removed.
-  //  *
-  //  * @throws Will show an error message if the genre could not be removed.
-  //  */
-  // async removeGenre(topic_id: number, genre_id: number): Promise<void> {
-  //   const { data, error } = await this.removeTopicGenre(topic_id, genre_id);
-
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     } else {
-  //       toastStore.show('Error removing genre', 'error');
-  //     }
-  //     return;
-  //   }
-
-  //   this.clearCache();
-
-  //   toastStore.show(data.message, 'info');
-  // }
-
-  // /**
-  //  * Gate a topic by its ID with an NFT.
-  //  *
-  //  * @param topic_id - The ID of the topic to remove the gate from.
-  //  * @param contract_name - The name of the contracts to remove the gate from.
-  //  * @param token_id - The ID of the tokens to remove the gate from.
-  //  * @returns A promise that resolves to void.
-  //  */
-  // async gateTopic(gate_obj: TopicNFTGate): Promise<void> {
-  //   const { data, error } = await this.gateTopicWithNFT(
-  //     gate_obj.topic_id,
-  //     gate_obj.contract_name,
-  //     gate_obj.class_id,
-  //     gate_obj.token_ids,
-  //   );
-
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     } else {
-  //       toastStore.show('Error gating topic', 'error');
-  //     }
-  //     return;
-  //   }
-
-  //   this.clearCache();
-
-  //   toastStore.show(data.message, 'info');
-  // }
-
-  // /**
-  //  * Removes the NFT gate from a topic.
-  //  *
-  //  * @param topic_id - The ID of the topic to remove the gate from.
-  //  * @param contract_name - The name of the contracts to remove the gate from.
-  //  * @param token_id - The ID of the tokens to remove the gate from.
-  //  * @returns A promise that resolves to void.
-  //  */
-  // async removeTopicGate(
-  //   topic_id: number,
-  //   contract_name: SupportedContracts,
-  //   token_ids?: number[],
-  // ): Promise<void> {
-  //   const contract_names = [contract_name];
-
-  //   const { data, error } = await this.removeTopicNFTGate(
-  //     topic_id,
-  //     contract_names,
-  //     token_ids,
-  //   );
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     } else {
-  //       toastStore.show('Error removing topic gate', 'error');
-  //     }
-  //     return;
-  //   }
-  //   this.clearCache();
-  //   toastStore.show(data.message, 'info');
-  // }
-
-  // /**
-  //  * Fetches the NFT gates for a specific topic.
-  //  *
-  //  * @param topic_id - The ID of the topic to fetch gates for.
-  //  * @returns A promise that resolves to an array of TopicNFTGate objects.
-  //  */
-  // async fetchTopicGates(topic_id: number): Promise<TopicNFTGate[]> {
-  //   const { data, error } = await this.getTopicNFTGates(topic_id);
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
+  //       toastStore.show('Error fetching view', 'error');
   //     }
   //     return [];
   //   }
-  //   return data;
+
+  //   const orderedCollections = data.sort((a: Collection, b: Collection) => {
+  //     if (a.category_order < b.category_order) return -1;
+  //     if (a.category_order > b.category_order) return 1;
+  //     return 0;
+  //   });
+
+  //   return orderedCollections;
   // }
+}
 
-  // async createNewClassGate(
-  //   name: string,
-  //   start_token_id: number,
-  //   end_token_id: number,
-  // ) {
-  //   const { data, error } = await this.createClassGate(
-  //     name,
-  //     start_token_id,
-  //     end_token_id,
-  //   );
+export class AdminTopic extends CreatorTopic {
+  protected api: TopicAPI;
 
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     }
-  //     return;
-  //   }
+  constructor() {
+    super();
+    this.api = new TopicAPI(import.meta.env.PUBLIC_BACKEND);
+  }
 
-  //   this.clearCache();
-
-  //   toastStore.show(data.message, 'info');
-  // }
-
-  // async deleteClassGate(class_ID: number): Promise<void> {
-  //   const { data, error } = await this.deleteClassGater(class_ID);
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     }
-  //     return;
-  //   }
-  //   this.clearCache();
-  //   toastStore.show(data.message, 'info');
-  // }
+  // Additional methods specific to admin topics can be added here.
 }

@@ -18,20 +18,14 @@ export default class Authentication {
    * Initiates Google Sign-In process.
    */
   async googleSignin(): Promise<void> {
-    const { status, message, data } = await this.authAPI.googleSignin();
+    const { message, data } = await this.authAPI.googleSignin();
 
-    switch (status) {
-      case 'error':
-        accountError.set({ googleSignin: message });
-        break;
-      case 'success':
-        if (!data) {
-          throw new Error('No data returned from Google Sign-In');
-        }
-        window.location.href = data;
-        break;
-      default:
-        accountError.set({ googleSignin: 'Unknown error occurred' });
+    if (!data) {
+      accountError.set({ googleSignin: message || 'Unknown error occurred' });
+      return;
+    } else {
+      window.location.href = data;
+      return;
     }
   }
 
@@ -46,18 +40,13 @@ export default class Authentication {
       signinData.password,
     );
 
-    switch (status) {
-      case 'error':
-        accountError.set({ signin: message });
-        return;
-      case 'success':
-        SetCache(USER_KEY, data, TTL_HOUR);
-        window.location.reload();
-        return;
-      default:
-        accountError.set({ signin: 'Unknown error occurred' });
-        return;
+    if (!data) {
+      accountError.set({ signin: message || 'Unknown error occurred' });
+      return;
     }
+
+    SetCache(USER_KEY, data, TTL_HOUR);
+    window.location.reload();
   }
 
   /**
@@ -65,21 +54,16 @@ export default class Authentication {
    * @param signupData - The user's sign-up information.
    * @returns A promise that resolves when the sign-up process is complete.
    */
-  async signup(signupData: ReferralSignUp): Promise<Nullable<void>> {
+  async signup(signupData: ReferralSignUp): Promise<void> {
     const { status, message, data } = await this.authAPI.signup(signupData);
 
-    switch (status) {
-      case 'error':
-        accountError.set({ signup: message });
-        return null;
-      case 'success':
-        SetCache(USER_KEY, data, TTL_HOUR);
-        authenticated.set(data);
-        return;
-      default:
-        accountError.set({ signup: 'Unknown error occurred' });
-        return null;
+    if (!data) {
+      accountError.set({ signup: message || 'Unknown error occurred' });
+      return;
     }
+
+    SetCache(USER_KEY, data, TTL_HOUR);
+    authenticated.set(data);
   }
 
   /**
@@ -90,16 +74,14 @@ export default class Authentication {
   async validateReferralCode(code: string): Promise<boolean> {
     const { status, message } = await this.authAPI.validateReferralCode(code);
 
-    switch (status) {
-      case 'error':
-        accountError.set({ validateReferralCode: message });
-        return false;
-      case 'success':
-        return true;
-      default:
-        accountError.set({ validateReferralCode: 'Unknown error occurred' });
-        return false;
+    if (status === 'error') {
+      accountError.set({
+        validateReferralCode: message || 'Unknown error occurred',
+      });
+      return false;
     }
+
+    return true;
   }
 
   /**
@@ -109,16 +91,12 @@ export default class Authentication {
   async forgotPassword(email: string): Promise<void> {
     const { status, message } = await this.authAPI.forgotPassword(email);
 
-    switch (status) {
-      case 'error':
-        api_error(message, true);
-        break;
-      case 'success':
-        toastStore.show(message || 'Password reset email sent', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Password reset email sent', 'info');
   }
 
   /**
@@ -132,16 +110,12 @@ export default class Authentication {
       resetData.password,
     );
 
-    switch (status) {
-      case 'error':
-        api_error(message, true);
-        break;
-      case 'success':
-        toastStore.show(message || 'Password reset successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Password reset successfully', 'info');
   }
 
   /**
@@ -150,15 +124,11 @@ export default class Authentication {
   async logout(): Promise<void> {
     const { status, message } = await this.authAPI.logout();
 
-    switch (status) {
-      case 'error':
-        api_error(message, true);
-        break;
-      case 'success':
-        toastStore.show(message || 'Logged out successfully', 'info');
-        break;
-      default:
-        toastStore.show('Unknown error occurred', 'error');
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    toastStore.show(message || 'Logged out successfully', 'info');
   }
 }

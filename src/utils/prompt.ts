@@ -11,7 +11,7 @@ function generatePrompt(
   props: StoryData,
   settings: PromptSettings,
   data: TablePrompt | string,
-): CreatePrompt {
+): TopicRequest {
   let imagePrompt: string = `Use ${settings.imageStyle} style.\n\n`;
 
   imagePrompt += props.imagePrompt;
@@ -250,12 +250,22 @@ function generatePrompt(
   const storySettings = setUpSettings();
   const storyPrompt = setUpPrompt();
 
-  const fullStory: CreatePrompt = {
-    topic: props.name.trim(),
+  // const fullStory: CreatePrompt = {
+  //   topic: props.name.trim(),
+  //   description: props.description,
+  //   image_prompt: imagePrompt,
+  //   category: props.category_id,
+  //   prompt: storySettings + storyPrompt,
+  // };
+  const fullStory: TopicRequest = {
+    name: props.name.trim(),
     description: props.description,
+    category_id: props.category_id,
+    available: true,
+    visibility: 'public',
+    prompt: storyPrompt,
     image_prompt: imagePrompt,
-    category: props.category!,
-    prompt: storySettings + storyPrompt,
+    settings: settings,
   };
 
   return fullStory;

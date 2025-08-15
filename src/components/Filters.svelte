@@ -8,7 +8,7 @@
 
   import SortingSVG from '@components/icons/Sorting.svelte';
 
-  export let categories: CategoryInSection[] = [];
+  export let categories: SectionCategoryTopics[] = [];
   export let section: string;
   export let genres: Genre[] = [];
   export let getTopics: (
@@ -17,10 +17,10 @@
     page?: number,
     pageSize?: number,
     sort_order?: TopicSortOrder,
-  ) => Promise<TopicInCategory[]>;
+  ) => Promise<CategoryTopics[]>;
 
-  let filteredTopics: TopicInCategory[] = [];
-  let sortedTopics: TopicInCategory[] = [];
+  let filteredTopics: CategoryTopics[] = [];
+  let sortedTopics: CategoryTopics[] = [];
 
   let searchField: string = ''; // search INPUT value
   let activeGenre: string; // genres SELECT value
@@ -133,7 +133,7 @@
 
   // SORTING
 
-  function applySorting(data: TopicInCategory[]) {
+  function applySorting(data: CategoryTopics[]) {
     return isSorting ? sortByName(data) : sortByOrder(data);
   }
 
@@ -142,8 +142,8 @@
     else sortedTopics = sortByOrder([...filteredTopics]);
   };
 
-  function sortByName(data: TopicInCategory[]) {
-    return data.sort((a: TopicInCategory, b: TopicInCategory) => {
+  function sortByName(data: CategoryTopics[]) {
+    return data.sort((a: CategoryTopics, b: CategoryTopics) => {
       const firstTopic = a.name.toLowerCase().trim();
       const secondTopic = b.name.toLowerCase().trim();
       // Sorting all topics in the category alphabetically
@@ -153,10 +153,10 @@
     });
   }
 
-  function sortByOrder(data: TopicInCategory[]) {
-    return data.sort((a: TopicInCategory, b: TopicInCategory) => {
-      if (a.order < b.order) return -1;
-      if (a.order > b.order) return 1;
+  function sortByOrder(data: CategoryTopics[]) {
+    return data.sort((a: CategoryTopics, b: CategoryTopics) => {
+      if (a.sort_order < b.sort_order) return -1;
+      if (a.sort_order > b.sort_order) return 1;
       return 0;
     });
   }

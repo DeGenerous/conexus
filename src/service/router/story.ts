@@ -106,12 +106,12 @@ export default class StoryAPI extends Fetcher {
    * @param step_id The ID of the step to load
    * @returns The step story data and image generation task ID
    */
-  async step(story_id: string, step_id: string) {
+  async step(story_id: string, step: number) {
     return this.request<{ story: GameData; task_id: string }>(
       `${this.group}/step`,
       {
         method: 'POST',
-        body: JSON.stringify({ story_id, step_id }),
+        body: JSON.stringify({ story_id, step }),
       },
     );
   }

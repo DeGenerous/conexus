@@ -17,7 +17,7 @@
   const account: Account = new Account();
 
   let user: Nullable<User> = $state(null);
-  let subStatus = $state<Nullable<SubscriptionStatus>>(null);
+  let subStatus = $state<Nullable<boolean>>(null);
   let noWalletDetected = $state<boolean>(false);
 
   let loading = $state<boolean>(true);
@@ -51,7 +51,8 @@
   };
 
   const checkSubscription = async () => {
-    subStatus = await account.subscriptionStatus();
+    if (!user?.email) return;
+    subStatus = await account.subscriptionStatus(user?.email);
   };
 
   const dateToString = (date: Date) => {
@@ -106,8 +107,8 @@
     />
   </section>
 
-  {#if user.email && user.first_name && user.email_confirmed}
-    <!-- REFERRAL CODES -->
+  <!-- REFERRAL CODES -->
+  <!-- {#if user.email && user.first_name && user.email_confirmed}
     <section class="ref-codes-wrapper container fade-in">
       {#if $referralCodes !== null}
         {#if $referralCodes.filter((code) => code.is_used).length == 10}
@@ -163,26 +164,29 @@
         </button>
       {/if}
     </section>
-  {/if}
+  {/if} -->
 
   <!-- NEWSLETTER SUBSCRIPTION -->
   {#if user.email_confirmed}
     <section class="newsletter container fade-in">
       {#if subStatus}
-        {#if subStatus.is_active}
+        {#if subStatus}
           <h4>Newsletter Subscription</h4>
 
-          {#if subStatus.subscribed_at}
+          <!-- {#if subStatus.subscribed_at}
             <h5
               class="subscription pad-8 round-8 transparent-gray-bg dark-txt shad fade-in"
             >
               Active since: {dateToString(subStatus.subscribed_at.Time)}
             </h5>
-          {/if}
+          {/if} -->
           <button
             class="unsubscribe-button void-btn min-size-btn"
             onclick={() => {
-              account.unsubscribeNewsletter().then(() => checkSubscription());
+              if (!user?.email) return;
+              account
+                .unsubscribeNewsletter(user?.email)
+                .then(() => checkSubscription());
             }}
           >
             Unsubscribe
@@ -192,7 +196,10 @@
           <button
             class="green-btn"
             onclick={() => {
-              account.subscribeNewsletter().then(() => checkSubscription());
+              if (!user?.email) return;
+              account
+                .subscribeNewsletter(user?.email)
+                .then(() => checkSubscription());
             }}
           >
             Subscribe

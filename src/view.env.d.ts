@@ -31,7 +31,7 @@ type NFTGate = {
 };
 
 type TopicView = {
-  id: number;
+  id: string;
   name: string;
   genres?: string;
   nft_gate?: NFTGate[];
@@ -97,7 +97,7 @@ type UnfinishedStory = {
 };
 
 type TopicPage = {
-  id: number;
+  id: string;
   name: string;
   genres?: string;
   description?: string;

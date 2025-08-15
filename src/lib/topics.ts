@@ -2,7 +2,7 @@ import { api_error } from '@errors/index';
 import TopicAPI from '@service/router/topic';
 import { toastStore } from '@stores/toast.svelte';
 
-export class Topic {
+export default class Topic {
   protected api: TopicAPI;
 
   constructor() {
@@ -217,7 +217,7 @@ export class Topic {
     topic_id: string,
     media_type: MediaType,
     file: File,
-  ): Promise<void> {
+  ): Promise<string[]> {
     const { message, data } = await this.api.uploadFile(
       topic_id,
       media_type,
@@ -226,10 +226,11 @@ export class Topic {
 
     if (!data) {
       api_error(message);
-      return;
+      return [];
     }
 
     toastStore.show(message || `File uploaded for topic ${topic_id}`, 'info');
+    return data;
   }
 
   async deleteFileFromTopic(

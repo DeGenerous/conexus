@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Account from '@lib/account';
+  import Authentication from '@lib/authentication';
   import EyeSVG from '@components/icons/Eye.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';
   import {
@@ -15,7 +15,7 @@
 
   let { token }: { token: string } = $props();
 
-  let acct: Account = new Account();
+  let auth: Authentication = new Authentication();
 
   let email = $state<string>('');
   let password = $state<string>('');
@@ -102,7 +102,7 @@
     type="submit"
     onclick={(event: Event) => {
       event.preventDefault();
-      acct.resetPassword({ email, password, token });
+      auth.resetPassword({ email, password, token });
     }}
     disabled={!validation}
   >

@@ -4,8 +4,7 @@
   import { tippy } from 'svelte-tippy';
 
   import { serveUrl } from '@constants/media';
-  import { contractGetter } from '@constants/contracts';
-  import MediaManager from '@lib/media';
+  import CoNexusApp from '@lib/view';
   import CoNexusGame from '@lib/story';
   import { story, game } from '@stores/conexus.svelte';
   import { navContext } from '@stores/navigation.svelte';
@@ -13,7 +12,7 @@
   import detectIOS from '@utils/ios-device';
   import openModal, { showProfile } from '@stores/modal.svelte';
   import { deleteUnfinishedModal, referralWarning } from '@constants/modal';
-  import { userState } from '@utils/route-guard';
+  import { userState, getCurrentUser } from '@utils/route-guard';
 
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
   import Tts from '@components/music/Tts.svelte';
@@ -27,35 +26,41 @@
 
   export let section: string;
   export let story_name: string;
+  export let topic_id: string;
 
   let scroll: number;
-  let isLogged: boolean = false;
+  let userID: string | undefined = undefined;
   let isReferred: boolean = false;
 
   let termsAccepted: boolean = false; // temp for terms modal
 
   const conexusGame: CoNexusGame = new CoNexusGame();
-  const media: MediaManager = new MediaManager();
+  const view: CoNexusApp = new CoNexusApp();
 
-  const handleSetMedia = async (topic_id: number) => {
-    await media.setBackgroundImage(topic_id);
-    await media.playBackgroundMusic(topic_id);
+  const handleSetMedia = async (topic_id: string) => {
+    const [image, audio] = await Promise.all([
+      view.setBackgroundImage(topic_id),
+      view.playBackgroundMusic(topic_id),
+    ]);
+
+    if (image) game.background_image = image;
+    if (audio) game.background_music = audio;
   };
 
-  let activeTopic: Nullable<TopicThumbnail> = null;
+  let activeTopic: Nullable<TopicView> = null;
 
   const restartGame = () => {
     game.background_image = null;
     game.background_music = null;
     $story = null;
     setTimeout(() => {
-      activeTopic &&
-        conexusGame.startGame(activeTopic.name, activeTopic.id, handleSetMedia);
+      activeTopic && conexusGame.start(activeTopic.id, 'topic', handleSetMedia);
     });
   };
 
   onMount(async () => {
-    isLogged = await userState();
+    const user = await getCurrentUser();
+    userID = user?.id;
     isReferred = await userState('referred');
 
     // Get all topics in SECTION from the localStorage
@@ -85,16 +90,16 @@
   let noUnfinishedStoriesLeft: boolean = false;
 
   async function DeleteStory(story_id: any) {
-    try {
-      await conexusGame.delete(story_id);
-      deletedStories[deletedStories.length] = story_id; // hide deleted story from user
-      await conexusGame.storyContinuables(story_name!).then((continuables) => {
-        // Hide CINTINUE SHAPING section if no unfinished stories left
-        if (continuables.length == 0) noUnfinishedStoriesLeft = true;
-      });
-    } catch (error) {
-      console.error('Failed to delete story: ' + error);
-    }
+    // try {
+    //   await conexusGame.delete(story_id);
+    //   deletedStories[deletedStories.length] = story_id; // hide deleted story from user
+    //   await conexusGame.storyContinuables(story_name!).then((continuables) => {
+    //     // Hide CINTINUE SHAPING section if no unfinished stories left
+    //     if (continuables.length == 0) noUnfinishedStoriesLeft = true;
+    //   });
+    // } catch (error) {
+    //   console.error('Failed to delete story: ' + error);
+    // }
   }
 
   // Calculate story creation date to show on CONTINUE button
@@ -122,7 +127,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $story === null}
-  {#await conexusGame.getTopic(section, story_name)}
+  {#await view.getTopicPage(topic_id, userID)}
     <div class="story-wrapper flex">
       <section class="story container">
         <span class="fake-img loading-animation round-8"></span>
@@ -139,72 +144,119 @@
         </div>
       </section>
     </div>
-  {:then topic: TopicThumbnail}
-    <div
-      class="story-wrapper flex"
-      style:cursor={game.loading ? 'progress' : ''}
-    >
-      <section class="story container">
-        {#if topic?.video_file_id}
-          <video
-            class="round-8 transparent-glowing"
-            controls
-            autoplay
-            loop
-            muted
-          >
-            <source src={serveUrl(topic?.video_file_id)} type="video/mp4" />
-            <track kind="captions" />
-          </video>
-        {:else}
-          <img
-            class="round-8 transparent-glowing"
-            src={serveUrl(topic?.description_file_id)}
-            alt={topic?.name}
-            draggable="false"
-            width="1024"
-          />
-        {/if}
-        <div class="flex">
-          {#if topic.genres}
-            <span class="genres round-8 pad-8 shad transparent-glowing">
-              <p class="text-glowing">{topic.genres.toUpperCase()}</p>
-            </span>
+  {:then topic: Nullable<TopicPage>}
+    {#if topic === null}
+      <div class="container">
+        <h4 class="red-txt">Story not found...</h4>
+        <p class="soft-white">The story you are looking for does not exist.</p>
+      </div>
+    {:else}
+      <div
+        class="story-wrapper flex"
+        style:cursor={game.loading ? 'progress' : ''}
+      >
+        <section class="story container">
+          {#if topic?.video_file_url}
+            <video
+              class="round-8 transparent-glowing"
+              controls
+              autoplay
+              loop
+              muted
+            >
+              <source src={serveUrl(topic?.video_file_url)} type="video/mp4" />
+              <track kind="captions" />
+            </video>
+          {:else}
+            <img
+              class="round-8 transparent-glowing"
+              src={serveUrl(topic?.description_file_url)}
+              alt={topic?.name}
+              draggable="false"
+              width="1024"
+            />
           {/if}
-
-          <span class="buttons flex-row flex-wrap">
-            {#if game.loading}
-              <span class="flex-row gap-8">
-                <LoadingSVG />
-                <button disabled>LOADING</button>
+          <div class="flex">
+            {#if topic.genres}
+              <span class="genres round-8 pad-8 shad transparent-glowing">
+                <p class="text-glowing">{topic.genres.toUpperCase()}</p>
               </span>
-            {:else}
-              {#if !isLogged}
-                <DoorSVG
-                  state="inside"
-                  text="play now"
-                  onclick={() => {
-                    $showProfile = true;
-                  }}
-                  glow={true}
-                />
+            {/if}
+
+            <span class="buttons flex-row flex-wrap">
+              {#if game.loading}
+                <span class="flex-row gap-8">
+                  <LoadingSVG />
+                  <button disabled>LOADING</button>
+                </span>
               {:else}
-                <button
-                  class="button-glowing"
-                  on:click={() => {
-                    if (!isReferred) {
+                {#if !userID}
+                  <DoorSVG
+                    state="inside"
+                    text="play now"
+                    onclick={() => {
+                      $showProfile = true;
+                    }}
+                    glow={true}
+                  />
+                {:else}
+                  <button
+                    class="button-glowing"
+                    on:click={() => {
+                      if (!isReferred) {
+                        openModal(
+                          referralWarning,
+                          'Proceed',
+                          () => (window.location.href = '/referral'),
+                        );
+                        return;
+                      }
+                      activeTopic = topic;
+                      topic &&
+                        conexusGame.start(topic.id, 'topic', handleSetMedia);
+                    }}
+                  >
+                    PLAY NOW
+                  </button>
+                {/if}
+                <Share />
+              {/if}
+            </span>
+          </div>
+        </section>
+
+        {#if topic.unfinished_stories && topic.unfinished_stories.length > 0}
+          <section
+            class="unfinished-stories transparent-container vert-scrollbar"
+          >
+            <h5 class="text-glowing">
+              Continue Shaping: {topic.unfinished_stories.length -
+                deletedStories.length}
+            </h5>
+            {#each topic.unfinished_stories as continuable}
+              {#if !deletedStories.includes(continuable.story_id)}
+                <div class="small-tile" role="button" tabindex="0">
+                  <DeleteSVG
+                    disabled={game.loading}
+                    onclick={() =>
                       openModal(
-                        referralWarning,
-                        'Proceed',
-                        () => (window.location.href = '/referral'),
-                      );
-                      return;
-                    }
-                    activeTopic = topic;
-                    topic &&
-                      conexusGame.startGame(
-                        topic.name,
-                        topic.id,
+                        deleteUnfinishedModal,
+                        `Delete story: ${story_name}`,
+                        () => DeleteStory(continuable.story_id),
+                      )}
+                  />
+                  <span class="flex">
+                    <p>{convertDate(continuable.created_at)}</p>
+                    <p class="story-id">
+                      {continuable.story_id.split('-')[0]}
+                    </p>
+                  </span>
+                  <PlaySVG
+                    disabled={game.loading}
+                    onclick={() => {
+                      activeTopic = topic;
+                      conexusGame.continue(
+                        { topic_id: topic.id, story_id: continuable.story_id },
                         handleSetMedia,
                       );
                   }}
@@ -262,29 +314,27 @@
           <section class="unfinished-stories transparent-container">
             <p class="validation">Failed to fetch unfinished stories...</p>
           </section>
-        {/await}
-      {/if}
-    </div>
+        {/if}
+      </div>
 
-    {#if topic.nft_gate && topic.nft_gate.length > 0}
-      <section
-        class="flex gating blur pad-8 gap-8 mar-auto round-12 shad wavy-mask-left-right"
-      >
-        <div class="flex-row">
-          <LockSVG />
-          <h5>Only available to holders of:</h5>
-        </div>
-        <span class="flex-row pad-8 pad-inline round-8">
-          {#each topic.nft_gate as { contract_name, class_name, amount }}
-            {#if contractGetter(contract_name)}
-              {#await Promise.resolve(contractGetter(contract_name)) then contract}
+      {#if topic.topic_gates && topic.topic_gates.length > 0}
+        <section
+          class="flex gating blur pad-8 gap-8 mar-auto round-12 shad wavy-mask-left-right"
+        >
+          <div class="flex-row">
+            <LockSVG />
+            <h5>Only available to holders of:</h5>
+          </div>
+          <span class="flex-row pad-8 pad-inline round-8">
+            {#each topic.topic_gates as gate}
+              {#if 'gate_type' in gate}
                 <a
-                  href={contract.link ||
+                  href={gate.purchase_link ||
                     'https://degenerousdao.gitbook.io/wiki'}
-                  class:inactive-link={!contract.link}
+                  class:inactive-link={!gate.purchase_link}
                   target="_blank"
                   on:click={(event) => {
-                    if (contract.link) return;
+                    if (gate.purchase_link) return;
                     if (
                       !confirm(
                         'This collection is no longer available. Would you like to explore the wiki for more details?',
@@ -294,24 +344,22 @@
                   }}
                   use:tippy={{ content: 'Check details', animation: 'scale' }}
                 >
-                  {#if amount && amount > 0}
-                    {amount} ${contract.name.toUpperCase()}
-                  {:else if class_name}
-                    {contract.name} ({class_name})
-                  {:else}
-                    {contract.name}
+                  {#if gate.min_amount && gate.min_amount > 0}
+                    {gate.min_amount} ${gate.contract_symbol.toUpperCase()}
                   {/if}
-                </a>
-              {/await}
-            {/if}
-          {/each}
-        </span>
-      </section>
-    {/if}
+                </a>``
+              {:else}
+                {gate.class_name}
+              {/if}
+            {/each}
+          </span>
+        </section>
+      {/if}
 
-    <p class="description transparent-container white-txt text-shad">
-      {topic.description}
-    </p>
+      <p class="description transparent-container white-txt text-shad">
+        {topic.description}
+      </p>
+    {/if}
   {:catch}
     <div class="container">
       <h4 class="red-txt">Failed to fetch story...</h4>

@@ -58,7 +58,7 @@ interface StoryData {
   name: string;
   description: string;
   imagePrompt: string;
-  category: Nullable<number>;
+  category_id: string;
 }
 
 type CreatePrompt = {
@@ -79,11 +79,11 @@ interface DraftPayload {
     openPrompt: string;
     tablePrompt: TablePrompt;
   };
-  created_at: string; // epoch ms
-  updated_at: string; // epoch ms
+  created_at: Date; // epoch ms
+  updated_at: Date; // epoch ms
 }
 
-type DraftIndexEntry = Pick<DraftPayload, 'id' | 'title' | 'updated'>;
+type DraftIndexEntry = Pick<DraftPayload, 'id' | 'title' | 'updated_at'>;
 
 type ImageType = 'url' | 'base64';
 
@@ -104,7 +104,7 @@ type SupportedContracts =
   | 'All';
 
 type TopicNFTGate = {
-  topic_id: number;
+  topic_id: string;
   contract_name: SupportedContracts;
   class_id?: number;
   token_ids?: number[];
@@ -133,12 +133,14 @@ type TopicRequest = {
   settings: PromptSettings;
 };
 
+type TopicVisibility = 'public' | 'private' | 'unlisted';
+
 type TopicFull = {
   id: string;
   name: string;
   description: string;
   available: boolean;
-  visibility: string;
+  visibility: TopicVisibility;
   media_folder_id: string;
 };
 
@@ -166,11 +168,11 @@ type TopicMediaFile = {
 };
 
 type TopicManager = {
-  Topic: TopicFull;
-  TopicPrompt: TopicPrompt;
-  TopicPromptSettings: PromptSettings;
-  Categories: TopicCategory[];
-  Gates: Gate[];
-  Genres: TopicGenre[];
-  MediaFiles: TopicMediaFile[];
+  topic: TopicFull;
+  topic_prompt: TopicPrompt;
+  topic_prompt_settings: PromptSettings;
+  categories: TopicCategory[];
+  gates: Gate[];
+  genres: TopicGenre[];
+  media_files: TopicMediaFile[];
 };

@@ -40,6 +40,9 @@ class Account {
       return;
     }
 
+    const roles = await this.#roles();
+    data.role = roles.find((r) => r.id === data.role_id)?.name || 'Guest';
+
     SetCache(USER_KEY, data, TTL_HOUR);
     authenticated.set(data);
   }
@@ -58,6 +61,16 @@ class Account {
       api_error(message);
       return null;
     }
+
+    const { message: roleMessage, data: roles } = await accountAPI.getRoles();
+
+    if (!roles) {
+      api_error(roleMessage);
+      data.role = 'Guest';
+      return data;
+    }
+
+    data.role = roles.find((r) => r.id === data.role_id)?.name || 'Guest';
 
     // Store user data in localStorage with timestamp
     SetCache(USER_KEY, data, TTL_HOUR);
@@ -326,7 +339,7 @@ class Account {
       api_error(message);
       return [];
     }
-    
+
     toastStore.show(message || 'Bookmark tags retrieved successfully', 'info');
     return data;
   }
@@ -442,6 +455,17 @@ class Account {
     }
 
     toastStore.show(message || 'Stories retrieved successfully', 'info');
+    return data;
+  }
+
+  async #roles(): Promise<TenantRole[]> {
+    const { message, data } = await this.api.getRoles();
+
+    if (!data) {
+      api_error(message);
+      return [];
+    }
+
     return data;
   }
 }

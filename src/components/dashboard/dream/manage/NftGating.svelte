@@ -1,107 +1,71 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import CoNexusApp from '@lib/view';
-  import { contractGetter } from '@constants/contracts';
-
   import CloseSVG from '@components/icons/Close.svelte';
 
   let {
-    topic,
+    topic_gates,
     handleGatingChange,
   }: {
-    topic: ViewTopic;
+    topic_gates: Gate[];
     handleGatingChange: (
-      topic_id: number,
-      contract_name: SupportedContracts,
+      gate_id: string,
       method: 'add' | 'remove',
-      class_id?: string,
     ) => Promise<void>;
   } = $props();
 
-  let viewApp = new CoNexusApp();
+  let allGates = $state<Gate[]>([]);
+  let newGateId = $state('');
 
-  let topicGatings = $state<TopicNFTGateWithContract[]>([]);
-  const availableContracts = $state<SupportedContracts[]>([
-    'Potential',
-    'Ark',
-    'Apes',
-  ]);
-  let newGating = $state('');
-  let newClassGating = $state('');
-
-  const filterContracts = () =>
-    availableContracts.filter(
-      (contract) =>
-        !topicGatings.map((gate) => gate.contract_name).includes(contract),
-    );
-
-  const fetchGates = async () => {
-    topicGatings = await viewApp.fetchTopicGates(topic.id);
-  };
+  const fetchGates = async () => {};
 
   onMount(fetchGates);
 
-  async function handleRemoveGating(
-    topicGatings: TopicNFTGate[],
-    gatingToRemove: string,
-  ) {
-    topicGatings.map(async (gate) => {
-      if (gate.contract_name === gatingToRemove)
-        await handleGatingChange(
-          gate.topic_id,
-          gate.contract_name,
-          'remove',
-        ).then(fetchGates);
-    });
-    topicGatings = topicGatings.filter(
-      (gating) => gating.contract_name !== gatingToRemove,
-    );
+  async function handleRemoveGating(gate_id?: string) {
+    if (!gate_id) return;
+
+    topic_gates = topic_gates.filter((gate) => gate.id !== gate_id);
+
+    const gateToRemove = allGates.find((g) => g.id === gate_id);
+    if (!gateToRemove || !gateToRemove.id) return;
+
+    await handleGatingChange(gateToRemove.id, 'remove');
   }
 
   async function handleAddGating() {
-    if (!newGating) return;
+    if (newGateId === '') return;
 
-    handleGatingChange(
-      topic.id,
-      newGating as SupportedContracts,
-      'add',
-      newClassGating,
-    ).then(fetchGates);
-
-    newGating = '';
-    newClassGating = '';
-  }
-
-  const setClassGating = (id: number) => {
-    if (newClassGating === id.toString()) {
-      newClassGating = '';
+    if (topic_gates.some((tg) => tg.id === newGateId)) {
       return;
     }
-    newClassGating = id.toString();
-  };
+
+    const newGate = allGates.find((g) => g.id === newGateId);
+
+    if (!newGate || !newGate.id) return;
+
+    handleGatingChange(newGate.id, 'add').then(fetchGates);
+
+    newGateId = '';
+  }
 </script>
 
 <div class="flex-row">
   <h4>Web3 Gating</h4>
   <div class="container">
-    {#if topicGatings.length > 0}
-      {#each topicGatings as { contract_name, class_id }}
-        <button class="void-btn small-orange-tile">
-          <p>
-            {contractGetter(contract_name).name}
-            {#if class_id}
-              {#await viewApp.fetchClassGate(class_id) then classGate}
-                ({classGate?.name})
-              {/await}
-            {/if}
-          </p>
-          <CloseSVG
-            onclick={() => handleRemoveGating(topicGatings, contract_name)}
-            voidBtn={true}
-            dark={true}
-          />
-        </button>
+    {#if topic_gates.length > 0}
+      {#each topic_gates as gate}
+        {#if 'type' in gate}
+          <button class="void-btn small-orange-tile">
+            <p>
+              {gate.name}
+            </p>
+            <CloseSVG
+              onclick={() => handleRemoveGating(gate.id)}
+              voidBtn={true}
+              dark={true}
+            />
+          </button>
+        {/if}
       {/each}
     {:else}
       <p class="validation">No NFT restriction selected</p>
@@ -110,38 +74,17 @@
 </div>
 
 <div class="add-gating flex-row">
-  <select bind:value={newGating} disabled={!filterContracts().length}>
+  <select bind:value={newGateId}>
     <option value="" hidden disabled>Select</option>
-    {#each filterContracts() as gating}
-      <option value={gating}>{contractGetter(gating).name}</option>
+    {#each allGates as gate}
+      <option value={gate.id}>{gate.name} type: {gate.type}</option>
     {/each}
   </select>
 
-  <button class="orange-btn" onclick={handleAddGating} disabled={!newGating}
+  <button class="orange-btn" onclick={handleAddGating} disabled={!newGateId}
     >Gate Story</button
   >
 </div>
-
-{#if newGating === 'Potential'}
-  <hr />
-
-  <h4>Select Class Restriction (Optional)</h4>
-  {#await viewApp.fetchClassGates() then classGating}
-    <div class="classes container">
-      {#if classGating.length > 0}
-        {#each classGating as { id, name }}
-          <button
-            class="void-btn dream-radio-btn"
-            class:active={newClassGating == id.toString()}
-            onclick={() => setClassGating(id)}
-          >
-            {name}
-          </button>
-        {/each}
-      {/if}
-    </div>
-  {/await}
-{/if}
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

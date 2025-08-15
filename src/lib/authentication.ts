@@ -8,17 +8,17 @@ import { toastStore } from '@stores/toast.svelte';
  * Handles user authentication and related actions.
  */
 export default class Authentication {
-  private authAPI: AuthenticationAPI;
+  private api: AuthenticationAPI;
 
   constructor() {
-    this.authAPI = new AuthenticationAPI(import.meta.env.PUBLIC_BACKEND);
+    this.api = new AuthenticationAPI(import.meta.env.PUBLIC_BACKEND);
   }
 
   /**
    * Initiates Google Sign-In process.
    */
   async googleSignin(): Promise<void> {
-    const { message, data } = await this.authAPI.googleSignin();
+    const { message, data } = await this.api.googleSignin();
 
     if (!data) {
       accountError.set({ googleSignin: message || 'Unknown error occurred' });
@@ -35,7 +35,7 @@ export default class Authentication {
    * @returns A promise that resolves when the sign-in process is complete.
    */
   async signin(signinData: SignIn): Promise<void> {
-    const { status, message, data } = await this.authAPI.signin(
+    const { message, data } = await this.api.signin(
       signinData.email,
       signinData.password,
     );
@@ -44,6 +44,9 @@ export default class Authentication {
       accountError.set({ signin: message || 'Unknown error occurred' });
       return;
     }
+
+    const roles = await this.#roles();
+    data.role = roles.find((r) => r.id === data.role_id)?.name || 'Guest';
 
     SetCache(USER_KEY, data, TTL_HOUR);
     window.location.reload();
@@ -55,12 +58,15 @@ export default class Authentication {
    * @returns A promise that resolves when the sign-up process is complete.
    */
   async signup(signupData: ReferralSignUp): Promise<void> {
-    const { status, message, data } = await this.authAPI.signup(signupData);
+    const { message, data } = await this.api.signup(signupData);
 
     if (!data) {
       accountError.set({ signup: message || 'Unknown error occurred' });
       return;
     }
+
+    const roles = await this.#roles();
+    data.role = roles.find((r) => r.id === data.role_id)?.name || 'Guest';
 
     SetCache(USER_KEY, data, TTL_HOUR);
     authenticated.set(data);
@@ -72,7 +78,7 @@ export default class Authentication {
    * @returns A promise that resolves to a boolean indicating whether the code is valid.
    */
   async validateReferralCode(code: string): Promise<boolean> {
-    const { status, message } = await this.authAPI.validateReferralCode(code);
+    const { status, message } = await this.api.validateReferralCode(code);
 
     if (status === 'error') {
       accountError.set({
@@ -89,7 +95,7 @@ export default class Authentication {
    * @param email - The email address of the user requesting the password reset.
    */
   async forgotPassword(email: string): Promise<void> {
-    const { status, message } = await this.authAPI.forgotPassword(email);
+    const { status, message } = await this.api.forgotPassword(email);
 
     if (status === 'error') {
       api_error(message);
@@ -104,7 +110,7 @@ export default class Authentication {
    * @param resetData - The data required to reset the password.
    */
   async resetPassword(resetData: ResetPassword): Promise<void> {
-    const { status, message } = await this.authAPI.resetPassword(
+    const { status, message } = await this.api.resetPassword(
       resetData.email,
       resetData.token,
       resetData.password,
@@ -122,7 +128,7 @@ export default class Authentication {
    * Logs the user out.
    */
   async logout(): Promise<void> {
-    const { status, message } = await this.authAPI.logout();
+    const { status, message } = await this.api.logout();
 
     if (status === 'error') {
       api_error(message);
@@ -130,5 +136,16 @@ export default class Authentication {
     }
 
     toastStore.show(message || 'Logged out successfully', 'info');
+  }
+
+  async #roles(): Promise<TenantRole[]> {
+    const { message, data } = await this.api.getRoles();
+
+    if (!data) {
+      api_error(message);
+      return [];
+    }
+
+    return data;
   }
 }

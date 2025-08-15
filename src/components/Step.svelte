@@ -212,7 +212,7 @@
       case 'ArrowLeft': {
         if (step.step !== 1) {
           // load PREV step and blur focused button if it is
-          $story?.loadGameStep(step.step - 1);
+          $story?.loadStep(step.step - 1);
           blurActiveBtn();
           activeOptionNumber = 0;
         } else return;
@@ -221,7 +221,7 @@
       case 'ArrowRight': {
         if (step.step !== $story?.maxStep) {
           // load NEXT step and blur focused button if it is
-          $story?.loadGameStep(step.step + 1);
+          $story?.loadStep(step.step + 1);
           blurActiveBtn();
           activeOptionNumber = 0;
         } else return;
@@ -231,7 +231,7 @@
         if (step.step !== $story?.maxStep || game.loading) return;
         event.preventDefault(); // prevent scroll
         // get PREV (TOP) option ID if step is not last
-        if ($story?.step_data?.end) activeOptionNumber = 0;
+        if ($story?.step_data?.ended) activeOptionNumber = 0;
         else if (activeOptionNumber !== 0) activeOptionNumber--;
         const activeOption = document.getElementById(
           `option-${activeOptionNumber}`,
@@ -243,7 +243,7 @@
         if (step.step !== $story?.maxStep || game.loading) return;
         event.preventDefault(); // prevent scroll
         // get NEXT (BOTTOM) option ID if step is not last
-        if ($story?.step_data?.end) activeOptionNumber = 0;
+        if ($story?.step_data?.ended) activeOptionNumber = 0;
         else if (activeOptionNumber !== step.options.length - 1)
           activeOptionNumber++;
         const activeOption = document.getElementById(
@@ -374,7 +374,7 @@ a11y_no_noninteractive_element_interactions -->
       {step.story}
     </article>
 
-    {#if $story?.step_data?.end}
+    {#if $story?.step_data?.ended}
       <hr />
 
       <h4
@@ -566,7 +566,7 @@ a11y_no_noninteractive_element_interactions -->
     >
       <div class="transparent-container flex-row">
         <SwitchSVG
-          onclick={() => $story?.loadGameStep(step.step - 1)}
+          onclick={() => $story?.loadStep(step.step - 1)}
           disabled={step.step === 1}
         />
         <span class="flex gap-8">
@@ -581,7 +581,7 @@ a11y_no_noninteractive_element_interactions -->
           </h5>
         </span>
         <SwitchSVG
-          onclick={() => $story?.loadGameStep(step.step + 1)}
+          onclick={() => $story?.loadStep(step.step + 1)}
           disabled={step.step === $story?.maxStep}
           right={true}
         />
@@ -590,7 +590,7 @@ a11y_no_noninteractive_element_interactions -->
         {#each Array($story!.maxStep) as _, index}
           <StepSVG
             text={String(index + 1)}
-            onclick={() => $story?.loadGameStep(index + 1)}
+            onclick={() => $story?.loadStep(index + 1)}
             active={step.step == index + 1}
           />
         {/each}

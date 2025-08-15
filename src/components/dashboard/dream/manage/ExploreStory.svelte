@@ -3,12 +3,14 @@
   import { onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
 
-  import AdminApp from '@lib/admin';
+  import { DASHBOARD_ROUTES } from '@constants/routes';
+  import TopicManagement from '@lib/topics';
+  import AppView from '@lib/view';
   import { GetCache, ALL_TOPICS_KEY } from '@constants/cache';
   import openModal from '@stores/modal.svelte';
   import { deleteStoryModal } from '@constants/modal';
   import { navContext } from '@stores/navigation.svelte';
-  import { ensureAdmin } from '@utils/route-guard';
+  import { userState } from '@utils/route-guard';
 
   import GenreTags from '@components/dashboard/dream/manage/GenreTags.svelte';
   import Media from '@components/dashboard/dream/manage/Media.svelte';
@@ -16,27 +18,45 @@
   import EditSVG from '@components/icons/Edit.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
+  import { derived } from 'svelte/store';
 
   let {
-    topic_name = 'story',
+    topic_id = '',
   }: {
-    topic_name: string;
+    topic_id: string;
   } = $props();
 
-  let admin = new AdminApp();
-  let topic = $state<ViewTopic>();
-  let categories = $state<CategoryView[]>([]);
+  let topicManager = new TopicManagement();
 
-  let storyName = $derived<string>(topic_name);
+  let isAdmin = $state<boolean>(false);
+  let isCreator = $state<boolean>(false);
 
+  let topic = $state<Nullable<TopicManager>>(null);
+
+  let topic_name = $derived<string>('Loading...');
   let topic_description = $state<string>('');
-  let storyDescription = $derived<string>(topic_description);
+  let topic_availability = $state<boolean>(false);
+  let topic_visibility = $state<TopicVisibility>('public');
 
+  let topic_prompt_id = $state<string>('');
   let topic_prompt = $state<string>('');
-  let storyPrompt = $derived<string>(topic_prompt);
-
   let topic_imagePrompt = $state<string>('');
-  let storyImagePrompt = $derived<string>(topic_imagePrompt);
+
+  let topic_categories = $state<TopicCategory[]>([]);
+  let topic_genres = $state<TopicGenre[]>([]);
+  let topic_gates = $state<Gate[]>([]);
+  let topic_media_files = $state<TopicMediaFile[]>([]);
+
+  let derivedTopicName = $derived<string>(topic_name);
+  let derivedTopicDescription = $derived<string>(topic_description);
+  let derivedTopicAvailability = $derived<boolean>(topic_availability);
+  let derivedTopicVisibility = $derived<TopicVisibility>(topic_visibility);
+  let derivedTopicPrompt = $derived<string>(topic_prompt);
+  let derivedTopicImagePrompt = $derived<string>(topic_imagePrompt);
+  let derivedTopicCategories = $derived<TopicCategory[]>(topic_categories);
+
+  let section_id = $state<string>(''); // TODO: Select Section to then select Categories
+  let categories = $state<Category[]>([]);
 
   let jsonBlob: Nullable<Blob> = null;
 
@@ -47,30 +67,42 @@
   );
 
   onMount(async () => {
-    await ensureAdmin();
+    isAdmin = await userState('admin');
+    isCreator = await userState('creator');
 
-    const topic_ = await admin.fetchTopic(topic_name);
-
-    if (!topic_) {
-      window.location.href = '/dashboard/dream/manage/';
+    if (!isAdmin && !isCreator) {
+      window.location.href = DASHBOARD_ROUTES.MANAGE;
       return;
     }
 
-    topic = topic_;
+    topic = await topicManager.getTopicManager(topic_id);
 
-    topic_description = topic.description;
-    topic_prompt = topic.prompt;
-    topic_imagePrompt = topic.image_prompt;
+    if (!topic || !topic.topic || !topic.topic_prompt || !topic.categories) {
+      window.location.href = DASHBOARD_ROUTES.MANAGE;
+      return;
+    }
 
-    categories = await admin.fetchCategories();
+    topic_name = topic.topic.name;
+    topic_description = topic.topic.description;
+    topic_availability = topic.topic.available;
+    topic_visibility = topic.topic.visibility;
+
+    topic_prompt_id = topic.topic_prompt.id;
+    topic_prompt = topic.topic_prompt.prompt;
+    topic_imagePrompt = topic.topic_prompt.image_prompt;
+
+    topic_categories = topic.categories;
+    topic_genres = topic.genres;
+    topic_gates = topic.gates;
 
     const exportObject = {
-      topic: topic.name,
-      description: topic.description,
-      prompt: topic.prompt,
-      image_prompt: topic.image_prompt,
-      genres: topic.genres,
-      category: topic.category_id,
+      topic: topic_name,
+      description: topic_description,
+      prompt_id: topic_prompt_id,
+      prompt: topic_prompt,
+      image_prompt: topic_imagePrompt,
+      genres: topic_genres,
+      categories: topic_categories,
     };
 
     jsonBlob = new Blob([JSON.stringify(exportObject)], {
@@ -80,11 +112,11 @@
     const storedTopics: Nullable<string> = GetCache(ALL_TOPICS_KEY);
     if (storedTopics) {
       navContext.setContext({
-        items: storedTopics.split('][').map((name) => ({
-          name,
-          link: `/dashboard/dream/manage/${name}`,
+        items: storedTopics.split('][').map((id) => ({
+          name: id,
+          link: `/dashboard/dream/manage/${id}`,
         })),
-        index: storedTopics.split('][').indexOf(topic.name),
+        index: storedTopics.split('][').indexOf(topic_id),
       });
     }
   });
@@ -94,40 +126,45 @@
   let editingPrompt = $state<boolean>(false);
   let editingImagePrompt = $state<boolean>(false);
 
-  async function handleGenreChange(genre_id: number, method: 'add' | 'remove') {
+  async function handleGenreChange(genre_id: string, method: 'add' | 'remove') {
     switch (method) {
       case 'add':
-        await admin.addGenre(topic!.id, genre_id);
+        await topicManager.addGenreToTopic(topic_id, genre_id);
         break;
       case 'remove':
-        await admin.removeGenre(topic!.id, genre_id);
+        await topicManager.removeGenreFromTopic(topic_id, genre_id);
         break;
     }
   }
 
-  async function handleGatingChange(
-    topic_id: number,
-    contract_name: SupportedContracts,
-    method: 'add' | 'remove',
-    class_id?: string,
-  ) {
+  async function handleGatingChange(gate_id: string, method: 'add' | 'remove') {
     switch (method) {
       case 'add':
-        await admin.gateTopic({
-          topic_id,
-          contract_name,
-          class_id: parseInt(class_id!),
-        });
+        await topicManager.addGateToTopic(topic_id, gate_id);
         break;
       case 'remove':
-        await admin.removeTopicGate(topic_id, contract_name);
+        await topicManager.removeGateFromTopic(topic_id, gate_id);
         break;
     }
   }
 
-  const switchAvailable = (available: string) => {
-    if (available === 'available') return 'unavailable';
-    else return 'available';
+  async function handleMediaUpload(media_type: MediaType, file: File) {
+    const fileIds = await topicManager.uploadFileForTopic(
+      topic_id,
+      media_type,
+      file,
+    );
+
+    return fileIds;
+  }
+
+  async function handleDeleteMedia(file_id: string, media_type: MediaType) {
+    await topicManager.deleteFileFromTopic(topic_id, file_id, media_type);
+  }
+
+  const switchAvailable = (available: boolean) => {
+    if (available) return false;
+    else return true;
   };
 
   const downloadTopicJson = () => {
@@ -142,30 +179,20 @@
   };
 </script>
 
-{#if !topic}
+{#if !topic || !topic.topic || !topic.topic_prompt || !topic.categories}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {:else}
   <!-- KEY BUTTONS -->
   {#key topic}
     <span class="flex-row flex-wrap">
       <button
-        class:green-btn={topic.available === 'available'}
-        class:red-btn={topic.available === 'unavailable'}
+        class:green-btn={topic_availability}
+        class:red-btn={!topic_availability}
         use:tippy={{ content: 'Toggle visibility', animation: 'scale' }}
-        onclick={() =>
-          admin
-            .changeAvailability(topic!.id, switchAvailable(topic!.available))
-            .then(async () => {
-              const topic_ = await admin.fetchTopic(topic_name);
-
-              if (!topic_) {
-                window.location.href = '/dashboard/dream/manage/';
-                return;
-              }
-
-              topic = topic_;
-            })}>{topic.available}</button
+        onclick={() => {}}
       >
+        {topic_availability}
+      </button>
       <button
         class="rose-btn"
         use:tippy={{ content: 'Download story file', animation: 'scale' }}
@@ -175,7 +202,7 @@
       </button>
       <a
         class="button-anchor purple-btn"
-        href={`/dashboard/dream/manage/demo?demoID=${topic.prompt_id}&demoName=${topic_name}`}
+        href={`/dashboard/dream/manage/demo?demoID=${topic_id}&demoName=${topic_name}`}
       >
         Play Demo
       </a>
@@ -192,16 +219,16 @@
             <CloseSVG
               onclick={() => {
                 editingName = false;
-                storyName = topic_name;
+                derivedTopicName = topic_name;
               }}
             />
           {/if}
           <div class="input-container">
             <label for="story-name">Story name</label>
             <input
-              bind:value={storyName}
+              bind:value={derivedTopicName}
               type="text"
-              size={storyName.length + 1}
+              size={derivedTopicName.length + 1}
               maxlength="50"
               disabled={!editingName}
             />
@@ -210,17 +237,17 @@
             <SaveSVG
               onclick={() => {
                 editingName = false;
-                admin.editTopicName(topic_name, storyName);
-                window.location.href = `/dashboard/dream/manage/${storyName}`;
+                // admin.editTopicName(_topic.name, storyName);
+                window.location.href = `${DASHBOARD_ROUTES.MANAGE}/${topic_id}`;
               }}
-              disabled={topic_name == storyName}
+              disabled={true}
             />
           {:else}
             <EditSVG bind:editing={editingName} />
           {/if}
         </div>
 
-        <div class="input-container">
+        <!-- <div class="input-container">
           <label for="category">Selected category</label>
           {#if categories}
             <select
@@ -237,19 +264,21 @@
               {/each}
             </select>
           {/if}
-        </div>
+        </div> -->
       </div>
     </div>
 
     <hr />
 
     <!-- GENRES -->
-    <GenreTags {topic} {handleGenreChange} />
+    <GenreTags {topic_genres} {handleGenreChange} />
 
     <hr />
 
     <!-- NFT RESTRICTIONS -->
-    <NftGating {topic} {handleGatingChange} />
+    {#if isAdmin}
+      <NftGating {topic_gates} {handleGatingChange} />
+    {/if}
 
     <hr />
 
@@ -263,9 +292,9 @@
             <SaveSVG
               onclick={() => {
                 editingDescription = false;
-                admin.editTopicDescription(topic!.id, storyDescription);
+                // admin.editTopicDescription(topic!.id, storyDescription);
               }}
-              disabled={topic_description == storyDescription}
+              disabled={topic_description == derivedTopicDescription}
             />
           {:else}
             <EditSVG bind:editing={editingDescription} />
@@ -277,7 +306,7 @@
         class="dream-input dream-textfield"
         placeholder="Describe the overall story, its key themes, and what kind of journey the main character will take. Is it an epic adventure, a gripping mystery, or a heartwarming romance? Keep it engaging and set the stage for the reader!"
         rows="5"
-        bind:value={storyDescription}
+        bind:value={derivedTopicDescription}
         disabled={!editingDescription}
       ></textarea>
     </div>
@@ -292,9 +321,9 @@
             <SaveSVG
               onclick={() => {
                 editingImagePrompt = false;
-                admin.editImagePrompt(topic!.id, storyImagePrompt);
+                // admin.editImagePrompt(topic!.id, storyImagePrompt);
               }}
-              disabled={topic_imagePrompt == storyImagePrompt}
+              disabled={topic_imagePrompt == derivedTopicImagePrompt}
             />
           {:else}
             <EditSVG bind:editing={editingImagePrompt} />
@@ -306,7 +335,7 @@
         class="dream-input dream-textfield"
         placeholder="E.g. A breathtaking cosmic landscape filled with swirling galaxies, ancient ruins, and a lone traveler standing at the edge of destiny."
         rows="5"
-        bind:value={storyImagePrompt}
+        bind:value={derivedTopicImagePrompt}
         disabled={!editingImagePrompt}
       ></textarea>
     </div>
@@ -322,9 +351,9 @@
             <SaveSVG
               onclick={() => {
                 editingPrompt = false;
-                admin.editPrompt(storyPrompt, topic!.id, topic!.prompt_id);
+                // admin.editPrompt(storyPrompt, topic!.id, topic!.prompt_id);
               }}
-              disabled={topic_prompt == storyPrompt}
+              disabled={topic_prompt == derivedTopicPrompt}
             />
           {:else}
             <EditSVG bind:editing={editingPrompt} />
@@ -335,20 +364,20 @@
         id="prompt"
         placeholder="Describe any scenario you want, and the AI will turn it into a story! Whether it's a thrilling mystery, an epic fantasy, or a hilarious adventure, your imagination sets the stage. You can be as detailed or vague as you like—every idea sparks a unique tale. E.g. Make a unique Sherlock Holmes story where during an investigation he ends up taking a new type of drug, deeply affecting him so he’ll lead a fight both versus himself and a serial killer."
         rows="5"
-        bind:value={storyPrompt}
+        bind:value={derivedTopicPrompt}
         disabled={!editingPrompt}
       ></textarea>
     </div>
   </section>
 
   <!-- MEDIA FILES -->
-  <Media bind:topic_id={topic.id} />
+  <Media bind:topic_media_files {handleMediaUpload} {handleDeleteMedia} />
 
   <button
     class="red-btn blur"
     onclick={() =>
-      openModal(deleteStoryModal, `Delete story: ${topic_name}`, () => {
-        admin.deleteStory(topic!.id);
+      openModal(deleteStoryModal, `Delete story: ${derivedTopicName}`, () => {
+        // topics.deleteStory(topic!.id);
         window.location.href = '/dashboard/dream/manage/';
       })}
   >

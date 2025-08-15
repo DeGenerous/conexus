@@ -4,6 +4,7 @@
 
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import Account from '@lib/account';
+  import Authentication from '@lib/authentication';
   import { accountError } from '@stores/account.svelte';
   import { showProfile } from '@stores/modal.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';
@@ -67,6 +68,7 @@
   // SIGNED IN USER PROFILE
 
   const account: Account = new Account();
+  const authentication: Authentication = new Authentication();
 
   let user: Nullable<User> = null;
 
@@ -94,12 +96,12 @@
   };
 
   // Select wallet address as the main one
-  const handleWalletSelect = async (address: string) => {
-    await account.selectMainWallet(address);
-    if ($accountError && $accountError.selectMainWallet) return;
-    // Reload the page to update the user object
-    location.reload();
-  };
+  // const handleWalletSelect = async (address: string) => {
+  //   await account.selectMainWallet(address);
+  //   if ($accountError && $accountError.selectMainWallet) return;
+  //   // Reload the page to update the user object
+  //   location.reload();
+  // };
 
   // NON-SIGNED WINDOWS
 
@@ -135,26 +137,21 @@
   $: if (referralCode.length < 16) referralCodeValid = false;
 
   async function validateReferralCode() {
-    const referralObject: ReferralCode | null =
-      await account.validateReferralCode(referralCode);
-    if (referralObject) {
-      referralCodeValid = true;
-    } else {
-      referralCodeValid = false;
-    }
+    const validated = await authentication.validateReferralCode(referralCode);
+
+    return validated;
   }
 
   // Sign up user with Email and Referral Code
   const referralSignup = async (event: Event) => {
     event.preventDefault(); // prevent page reload by form
-    await account.signup({
+    await authentication.signup({
       user: {
         first_name: first_name.trim(),
         last_name: last_name.trim(),
         email: email.trim(),
         password,
         referred: referralCodeValid,
-        role: 'user',
       },
       referral_code: referralCode,
       newsletter: newsletterSignup,
@@ -181,7 +178,7 @@ a11y-no-static-element-interactions-->
         <DoorSVG
           state="outside"
           text="Sign out"
-          onclick={() => account.signout()}
+          onclick={() => authentication.logout()}
         />
       {:else}
         <QuitSVG onclick={handleBackArrow} />
@@ -194,11 +191,11 @@ a11y-no-static-element-interactions-->
       <section class="profile-window flex">
         <hr />
 
-        {#if user.available}
+        {#if user.credits > 0}
           <p>
             Credits remaining this month:
             <strong>
-              {user.available.bonus}
+              {user.credits}
             </strong>
           </p>
         {:else}
@@ -363,7 +360,9 @@ a11y-no-static-element-interactions-->
                           openModal(
                             walletSwitchModal,
                             'Select wallet',
-                            () => handleWalletSelect(wallet.wallet),
+                            () => {
+                              // handleWalletSelect(wallet.wallet)
+                            },
                             'green-btn',
                           );
                       }}
@@ -449,7 +448,7 @@ a11y-no-static-element-interactions-->
                 text="Sign in"
                 disabled={!(loginMail && loginPassword)}
                 onclick={() =>
-                  account.signin({
+                  authentication.signin({
                     email: loginMail,
                     password: loginPassword,
                   })}
@@ -469,7 +468,7 @@ a11y-no-static-element-interactions-->
               <button
                 class="sign-button"
                 on:click={() => {
-                  account.googleSignin();
+                  authentication.googleSignin();
                 }}
               >
                 <img class="sign-icon" src="/icons/google.png" alt="Google" />

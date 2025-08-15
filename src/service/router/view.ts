@@ -33,21 +33,13 @@ export default class ViewAPI extends Fetcher {
   }
 
   /**
-   * Retrieves a list of roles.
-   * @returns A promise that resolves to an array of TenantRole objects.
-   */
-  async getRoles() {
-    return this.request<TenantRole[]>(`${this.adminGroup}/roles`);
-  }
-
-  /**
    * Retrieves a list of topics within a specific category.
    * @param category_id The ID of the category.
    * @param page The page number to retrieve.
    * @param pageSize The number of topics per page.
    * @returns A promise that resolves to an array of Topic objects.
    */
-  async categoryTopics(category_id: number, page: number, pageSize: number) {
+  async categoryTopics(category_id: string, page: number, pageSize: number) {
     return this.request<CategoryTopics[]>(
       `${this.topicGroup}/category-topics/${category_id}?page=${page}&page_size=${pageSize}`,
     );
@@ -174,12 +166,18 @@ export default class ViewAPI extends Fetcher {
    * @param account_id The ID of the account making the request.
    * @returns A promise that resolves to the TopicPage object.
    */
-  async topicView(topic_id: number, account_id?: string) {
+  async topicView(topic_id: string, account_id?: string) {
     return this.request<TopicPage>(`${this.topicGroup}/view/${topic_id}`, {
       headers: {
         'X-Requester-ID': account_id || '',
       },
     });
+  }
+
+  async getFile(topic_id: string, media_type: MediaType) {
+    return this.request<string[]>(
+      `${this.topicGroup}/get-media/${topic_id}?media_type=${media_type}`,
+    );
   }
 
   /**

@@ -2,8 +2,8 @@
 /// <reference types="astro/client" />
 
 type CollectionTopic = {
-  topic_id: number;
-  prompt_id: number;
+  topic_id: string;
+  prompt_id: string;
   topic_name: string;
   order: number;
   genres: string;
@@ -11,9 +11,9 @@ type CollectionTopic = {
 };
 
 type Collection = {
-  section_id: number;
+  section_id: string;
   section_name: string;
-  category_id: number;
+  category_id: string;
   category_name: string;
   category_order: number;
   topics: CollectionTopic[];
@@ -22,17 +22,17 @@ type Collection = {
 type MediaType = 'background' | 'description' | 'tile' | 'audio' | 'video';
 
 type ThumbnailTopic = {
-  id: number;
+  id: string;
   name: string;
   genres: string;
   description: string;
 };
 
 type ViewTopic = {
-  id: number;
-  category_id: number;
+  id: string;
+  category_id: string;
   image_prompt: string;
-  prompt_id: number;
+  prompt_id: string;
   prompt: string;
   media_folder_id?: string;
   available: string;
@@ -42,7 +42,7 @@ type ViewTopic = {
 
 type TenantRole = {
   id: string;
-  name: string;
+  name: Roles;
 };
 
 type Contract = {

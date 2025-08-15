@@ -2,20 +2,24 @@
   import { onMount } from 'svelte';
 
   import { userState } from '@utils/route-guard';
-  import AdminApp from '@lib/admin';
+  import Topic from '@lib/topics';
+  import CategoryView from '@lib/category';
   import { toastStore } from '@stores/toast.svelte';
 
   import CloseSVG from '@components/icons/Close.svelte';
 
-  let admin = new AdminApp();
+  let topic = new Topic();
+  let category = new CategoryView();
 
-  let categoryID: number = $state(1);
+  let categoryID: string = $state('');
 
   let loading = $state<boolean>(true);
   let isAdmin = $state<boolean>(false);
+  let isCreator = $state<boolean>(false);
 
   onMount(async () => {
     isAdmin = await userState('admin');
+    isCreator = await userState('creator');
     loading = false;
   });
 
@@ -50,8 +54,8 @@
 
   const handleImportStory = async () => {
     try {
-      const importedStory = (await parseJsonFile()) as CreatePrompt;
-      importedStory.category = categoryID;
+      const importedStory = (await parseJsonFile()) as TopicRequest;
+      importedStory.category_id = categoryID;
 
       function parseJsonFile(): Promise<unknown> {
         return new Promise((resolve, reject) => {
@@ -69,7 +73,7 @@
         });
       }
       isValidStory(importedStory);
-      await admin.createNewStory(importedStory);
+      await topic.newTopic(importedStory);
     } catch (error) {
       toastStore.show('You imported an invalid Story JSON', 'error');
     }
@@ -126,10 +130,12 @@
       </div>
     {/if}
 
-    {#await admin.fetchCategories() then categories: CategoryView[]}
+    <!-- TODO: Fetch sections -->
+
+    {#await isAdmin ? category.listAdminCategories('') : category.listCreatorCategories() then categories: Category[]}
       <div class="input-container">
         <label for="category">Select Category</label>
-        {#if categories}
+        {#if categories?.length}
           <select id="category" bind:value={categoryID}>
             {#each categories as { id, name }}
               <option value={id}>{name}</option>

@@ -6,6 +6,8 @@ import {
   GetCache,
   SetCache,
 } from '@constants/cache';
+import { serveUrl } from '@constants/media';
+import { tracks } from '@constants/tracks';
 import { api_error } from '@errors/index';
 import ViewAPI from '@service/router/view';
 import { availableGenres } from '@stores/view.svelte';
@@ -69,7 +71,7 @@ export default class AppView {
     return data;
   }
   async getCategoryTopics(
-    category_id: number,
+    category_id: string,
     page: number,
     pageSize: number,
   ): Promise<CategoryTopics[]> {
@@ -231,7 +233,7 @@ export default class AppView {
   }
 
   async getTopicPage(
-    topic_id: number,
+    topic_id: string,
     account_id?: string,
   ): Promise<TopicPage | null> {
     const { message, data } = await this.api.topicView(topic_id, account_id);
@@ -244,7 +246,21 @@ export default class AppView {
     return data;
   }
 
-  async getTopicMedia(file_id: string): Promise<Blob | null> {
+  async getMediaFile(
+    topic_id: string,
+    media_type: MediaType,
+  ): Promise<string[] | null> {
+    const { message, data } = await this.api.getFile(topic_id, media_type);
+
+    if (!data) {
+      api_error(message);
+      return null;
+    }
+
+    return data;
+  }
+
+  async serveTopicMedia(file_id: string): Promise<Blob | null> {
     const { message, data } = await this.api.serveMedia(file_id);
 
     if (!data) {
@@ -253,5 +269,50 @@ export default class AppView {
     }
 
     return data;
+  }
+
+  async setBackgroundImage(topic_id: string): Promise<string | null> {
+    const images = await this.getMediaFile(topic_id, 'background');
+    if (images && images.length > 0) {
+      let randomImage = images[Math.floor(Math.random() * images.length)];
+      return serveUrl(randomImage);
+    }
+
+    return null;
+  }
+
+  async playBackgroundMusic(topic_id: string): Promise<string | null> {
+    let queue: string[] = JSON.parse(localStorage.getItem('queue') ?? '[]');
+
+    const audios = await this.getMediaFile(topic_id, 'audio');
+    if (audios && audios.length > 0) {
+      let randomAudio = audios[Math.floor(Math.random() * audios.length)];
+      return serveUrl(randomAudio);
+    }
+
+    const shuffle = <T>(array: T[]): T[] => {
+      let currentIndex = array.length,
+        randomIndex: number;
+
+      while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        [array[currentIndex], array[randomIndex]] = [
+          array[randomIndex],
+          array[currentIndex],
+        ];
+      }
+
+      return array;
+    };
+
+    if (queue.length === 0) {
+      queue = shuffle([...tracks]);
+    }
+
+    localStorage.setItem('queue', JSON.stringify(queue));
+
+    return queue.pop() || null;
   }
 }

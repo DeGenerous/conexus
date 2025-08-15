@@ -1,31 +1,26 @@
 <script lang="ts">
-  import CoNexusApp from '@lib/view';
+  import AppView from '@lib/view';
   import { availableGenres } from '@stores/view.svelte';
 
   import CloseSVG from '@components/icons/Close.svelte';
 
-  let viewApp = new CoNexusApp();
+  let viewApp = new AppView();
 
   let {
-    topic,
+    topic_genres,
     handleGenreChange,
   }: {
-    topic: ViewTopic;
+    topic_genres: TopicGenre[];
     handleGenreChange: (
-      genreId: number,
+      genreId: string,
       method: 'add' | 'remove',
     ) => Promise<void>;
   } = $props();
 
-  let genres = $state<string[]>([]);
-  let newGenre = $state('');
+  let newGenreId = $state('');
 
   $effect(() => {
-    if (topic && topic.genres && topic.genres.length)
-      genres = topic.genres
-        .split(',')
-        .map((genre: string) => genre.trim())
-        .sort();
+    topic_genres = topic_genres.sort(sortByName);
   });
 
   $effect(() => {
@@ -36,21 +31,26 @@
     });
   });
 
-  async function handleRemoveGenre(genreToRemove: string) {
-    genres = genres.filter((genre) => genre !== genreToRemove);
+  async function handleRemoveGenre(genre_id: string) {
+    topic_genres = topic_genres.filter((genre) => genre.id !== genre_id);
 
-    const genre = availableGenres.find((g: Genre) => g.name === genreToRemove);
-    if (genre) await handleGenreChange(genre.id, 'remove');
+    const genre = availableGenres.find((g: Genre) => g.name === genre_id);
+    if (genre && genre.id) await handleGenreChange(genre.id, 'remove');
   }
 
-  function handleAddGenre() {
-    if (newGenre && !genres.includes(newGenre)) {
-      genres = [...genres, newGenre].sort();
+  async function handleAddGenre() {
+    if (newGenreId === '') return;
 
-      const genre = availableGenres.find((g) => g.name === newGenre);
-      if (genre) handleGenreChange(genre.id, 'add');
+    if (topic_genres.some((tg) => tg.id === newGenreId)) {
+      return;
     }
-    newGenre = '';
+
+    const newGenre = availableGenres.find((g) => g.id === newGenreId);
+    if (newGenre && newGenre.id !== undefined) {
+      await handleGenreChange(newGenre.id, 'add');
+    }
+
+    newGenreId = '';
   }
 
   function sortByName(a: Genre, b: Genre) {
@@ -67,12 +67,12 @@
 <div class="flex-row">
   <h4>Genres</h4>
   <div class="container">
-    {#if genres.length > 0}
-      {#each genres as genre (genre)}
+    {#if topic_genres.length > 0}
+      {#each topic_genres as genre (genre)}
         <button class="void-btn small-purple-tile">
-          <p>{genre}</p>
+          <p>{genre.name}</p>
           <CloseSVG
-            onclick={() => handleRemoveGenre(genre)}
+            onclick={() => handleRemoveGenre(genre.id)}
             voidBtn={true}
             dark={true}
           />
@@ -85,15 +85,15 @@
 </div>
 
 <div class="add-genre flex-row">
-  <select bind:value={newGenre}>
+  <select bind:value={newGenreId}>
     <option value="" hidden disabled>Select</option>
     {#each availableGenres
-      .filter((g) => !genres.includes(g.name))
+      .filter((g) => !topic_genres.some((tg) => tg.id === g.id))
       .sort(sortByName) as genre}
-      <option value={genre.name}>{genre.name}</option>
+      <option value={genre.id}>{genre.name}</option>
     {/each}
   </select>
-  <button onclick={handleAddGenre} disabled={!newGenre}>Add Genre</button>
+  <button onclick={handleAddGenre} disabled={!newGenreId}>Add Genre</button>
 </div>
 
 <style lang="scss">

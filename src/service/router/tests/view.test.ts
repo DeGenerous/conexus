@@ -66,7 +66,7 @@ describe('ViewAPI', () => {
 
   it('calls request with correct URL and default params for genreTopics', async () => {
     mockRequest.mockResolvedValue([]);
-    await api.genreTopics('genre1');
+    await api.genreTopics('section1', 'genre1');
     expect(mockRequest).toHaveBeenCalledWith(
       '/topic/genre-topics/genre1?page=1&page_size=5',
     );
@@ -74,7 +74,7 @@ describe('ViewAPI', () => {
 
   it('calls request with correct URL and custom params for genreTopics', async () => {
     mockRequest.mockResolvedValue([]);
-    await api.genreTopics('genre2', 3, 15);
+    await api.genreTopics('section1', 'genre2', 3, 15);
     expect(mockRequest).toHaveBeenCalledWith(
       '/topic/genre-topics/genre2?page=3&page_size=15',
     );

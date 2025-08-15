@@ -1,10 +1,8 @@
 import { api_error } from '@errors/index';
-import Account from '@lib/account';
 import TopicAPI from '@service/router/topic';
-import openModal from '@stores/modal.svelte';
 import { toastStore } from '@stores/toast.svelte';
 
-export class CreatorTopic {
+export class Topic {
   protected api: TopicAPI;
 
   constructor() {
@@ -254,81 +252,6 @@ export class CreatorTopic {
   }
 
   // /**
-  //  * Fetches the list of categories.
-  //  *
-  //  * This method asynchronously retrieves the categories by calling the `categories` method.
-  //  * If the data is successfully fetched, it returns an array of `CategoryView` objects.
-  //  * If there is an error during the fetch, it handles the error by either calling `api_error`
-  //  * with the error message or showing a toast notification with an error message.
-  //  *
-  //  * @returns {Promise<CategoryView[]>} A promise that resolves to an array of `CategoryView` objects.
-  //  */
-  // async fetchCategories(): Promise<CategoryView[]> {
-  //   const cached = GetCache<CategoryView[]>(CATEGORIES_KEY);
-  //   if (cached) {
-  //     return cached;
-  //   }
-
-  //   const { data, error } = await this.categories();
-
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     } else {
-  //       toastStore.show('Error fetching view', 'error');
-  //     }
-  //     return [];
-  //   }
-
-  //   SetCache(CATEGORIES_KEY, data, TTL_DAY);
-
-  //   return data;
-  // }
-
-  // /**
-  //  * Fetches a topic by its name.
-  //  *
-  //  * @param topic_name - The name of the topic to fetch.
-  //  * @returns A promise that resolves to a `ViewTopic` object if the topic is found, or `null` if not.
-  //  * @throws Will call `api_error` if there is an error fetching the topic.
-  //  */
-  // async fetchTopic(topic_name: string): Promise<ViewTopic | null> {
-  //   const { data, error } = await this.topic(topic_name);
-
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     }
-  //     return null;
-  //   }
-
-  //   return data;
-  // }
-
-  // /**
-  //  * Creates a new story based on the provided prompt.
-  //  *
-  //  * @param {CreatePrompt} prompt - The prompt data used to create the new story.
-  //  * @returns {Promise<void>} A promise that resolves when the story creation process is complete.
-  //  *
-  //  * @throws Will show an error toast if the story creation fails.
-  //  */
-  // async createNewStory(prompt: CreatePrompt): Promise<void> {
-  //   const { data, error } = await this.createNewPrompt(prompt);
-
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     }
-  //     toastStore.show('Error creating new story', 'error');
-  //   }
-
-  //   toastStore.show(`${prompt.topic} story created`, 'info');
-
-  //   return;
-  // }
-
-  // /**
   //  * Demos a story prompt by its prompt ID.
   //  *
   //  * @param prompt_id - The ID of the prompt to demo.
@@ -470,144 +393,6 @@ export class CreatorTopic {
   // }
 
   // /**
-  //  * Creates a new section with the given name.
-  //  *
-  //  * @param name - The name of the new section to be created.
-  //  * @returns A promise that resolves to the ID of the newly created section.
-  //  *          If an error occurs, it returns -1.
-  //  */
-  // async newSection(name: string): Promise<number> {
-  //   const { data, error } = await this.createNewSection(name);
-
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     } else {
-  //       toastStore.show('Error creating new section', 'error');
-  //     }
-  //     return -1;
-  //   }
-
-  //   return data;
-  // }
-
-  // // async editSection(section: Section) {
-  // //   const { data, error } = await this.editSectionData(section);
-
-  // //   if (!data) {
-  // //     if (error) {
-  // //       api_error(error);
-  // //     }
-  // //     return [];
-  // //   }
-
-  // //   return data;
-  // // }
-
-  // /**
-  //  * Creates a new category with the given name.
-  //  *
-  //  * @param name - The name of the new category.
-  //  * @returns A promise that resolves to the ID of the newly created category.
-  //  *          If an error occurs, it returns -1.
-  //  */
-  // async newCategory(name: string): Promise<number> {
-  //   const { data, error } = await this.createNewCategory(name);
-
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     } else {
-  //       toastStore.show('Error creating new category', 'error');
-  //     }
-  //     return -1;
-  //   }
-
-  //   ClearCache(CATEGORIES_KEY);
-
-  //   toastStore.show(`Created new category - ID: ${data}`, 'info');
-
-  //   return data;
-  // }
-
-  // // async editCategory(category: Category) {
-  // //   const { data, error } = await this.editCategoryData(category);
-
-  // //   if (!data) {
-  // //     if (error) {
-  // //       api_error(error);
-  // //     }
-  // //     return [];
-  // //   }
-
-  // //   return data;
-  // // }
-
-  // /**
-  //  * Changes the section a category belongs to for a given section and category.
-  //  *
-  //  * @param section_id - The ID of the section to change.
-  //  * @param category_id - The ID of the category to change to.
-  //  * @returns A promise that resolves to void.
-  //  *
-  //  * @throws Will show an error toast if the operation fails.
-  //  * @throws Will show an info toast with the success message if the operation succeeds.
-  //  */
-  // async changeCategorySection(
-  //   section_id: number,
-  //   category_id: number,
-  // ): Promise<void> {
-  //   const { data, error } = await this.changeTopicCategorySection(
-  //     section_id,
-  //     category_id,
-  //   );
-
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     } else {
-  //       toastStore.show('Error changing category section', 'error');
-  //     }
-  //     return;
-  //   }
-
-  //   this.clearCache();
-
-  //   toastStore.show(data.message, 'info');
-  // }
-
-  // /**
-  //  * Change category order in section.
-  //  *
-  //  * @param category_id - The ID of the category to change order.
-  //  * @param order - The new order value for the category.
-  //  * @returns A promise that resolves to void.
-  //  *
-  //  * @throws Will show an error toast if the operation fails.
-  //  * @throws Will show an info toast with the success message if the operation succeeds.
-  //  */
-  // async changeSectionCategoryOrder(
-  //   category_id: number,
-  //   order: number,
-  //   showToast: boolean = true,
-  // ): Promise<void> {
-  //   const { data, error } = await this.changeCategoryOrder(category_id, order);
-
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     } else {
-  //       toastStore.show('Error changing category order', 'error');
-  //     }
-  //     return;
-  //   }
-
-  //   this.clearCache();
-
-  //   if (showToast) toastStore.show(data.message, 'info');
-  // }
-
-  // /**
   //  * Fetches collections from the server.
   //  *
   //  * @returns {Promise<Collection[]>} A promise that resolves to an array of collections.
@@ -634,15 +419,4 @@ export class CreatorTopic {
 
   //   return orderedCollections;
   // }
-}
-
-export class AdminTopic extends CreatorTopic {
-  protected api: TopicAPI;
-
-  constructor() {
-    super();
-    this.api = new TopicAPI(import.meta.env.PUBLIC_BACKEND);
-  }
-
-  // Additional methods specific to admin topics can be added here.
 }

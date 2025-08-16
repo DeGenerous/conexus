@@ -244,16 +244,26 @@ class AdminApp {
     return this.#metricNumber(message, data);
   }
 
-  async fetchTopAccounts(body: TopNMetricFilter): Promise<number> {
-    const { message, data } = await this.api.accountTopN(body);
+  async fetchTopAccounts(body: TopNMetricFilter): Promise<TopNMetricResult> {
+    const { status, message, data } = await this.api.accountTopN(body);
 
-    return this.#metricNumber(message, data);
+    if (status === 'error') {
+      api_error(message);
+      return [];
+    }
+
+    return data || [];
   }
 
-  async fetchTopTopics(body: TopNMetricFilter): Promise<number> {
-    const { message, data } = await this.api.topicTopN(body);
+  async fetchTopTopics(body: TopNMetricFilter): Promise<TopNMetricResult> {
+    const { status, message, data } = await this.api.topicTopN(body);
 
-    return this.#metricNumber(message, data);
+    if (status === 'error') {
+      api_error(message);
+      return [];
+    }
+
+    return data || [];
   }
 
   /* HELPER */

@@ -6,7 +6,6 @@
   import { toastStore } from '@stores/toast.svelte';
   import { toAvif } from '@utils/avif-convert';
   import { MEDIA_RULES } from '@utils/file-validation';
-  import { a } from 'vitest/dist/chunks/suite.d.FvehnV49.js';
 
   let {
     topic_media_files = $bindable(),

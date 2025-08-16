@@ -74,7 +74,7 @@ export default class ViewAPI extends Fetcher {
     sort_order: TopicSortOrder = 'name',
     page: number = 1,
     pageSize: number = 5,
-    search_kind: '1' | '2' = '1',
+    search_kind: 1 | 2 = 1,
   ) {
     return this.request<CategoryTopics[]>(`${this.topicGroup}/search`, {
       method: 'POST',
@@ -118,7 +118,7 @@ export default class ViewAPI extends Fetcher {
     sort_order: TopicSortOrder = 'name',
     page: number = 1,
     pageSize: number = 5,
-    search_kind: '1' | '2' = '2',
+    search_kind: 1 | 2 = 2,
   ) {
     return this.request<CategoryTopics[]>(`${this.topicGroup}/search`, {
       method: 'POST',

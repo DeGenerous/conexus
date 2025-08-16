@@ -89,7 +89,7 @@ type Web3Signin = {
 };
 
 type Section = {
-  id?: number;
+  id?: string;
   name: string;
   description?: string;
 };

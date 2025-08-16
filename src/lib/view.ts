@@ -102,13 +102,13 @@ export default class AppView {
     page: number,
     pageSize: number,
   ): Promise<SectionCategoryTopics[]> {
-    const { message, data } = await this.api.sectionTopics(
+    const { status, message, data } = await this.api.sectionTopics(
       section_id,
       page,
       pageSize,
     );
 
-    if (!data) {
+    if (!data || status === 'error') {
       api_error(message);
       return [];
     }

@@ -25,9 +25,8 @@ import '@rainbow-me/rainbowkit/styles.css';
 const wagmiConfig = getDefaultConfig({
   appName: 'Degenerous DAO',
   appIcon: `${assetsURL}/logo.png`,
-  appUrl: 'https://conexus.degenerousdao.com', // prod
-  // appUrl: 'http://localhost:4321', // dev
-  projectId: '0b8a3fac6220753a719b9aeceb8f19fb',
+  appUrl: import.meta.env.PUBLIC_FRONTEND,
+  projectId: import.meta.env.PUBLIC_WAGMI_PROJECT_ID,
   chains: [mainnet, base],
   ssr: false, // If your dApp uses server side rendering (SSR)
   pollingInterval: 12000, // How often (in ms) to poll for updates

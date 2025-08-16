@@ -44,7 +44,7 @@
   import ZoomInSVG from '@components/icons/ZoomIn.svelte';
   import ResetSVG from '@components/icons/Reset.svelte';
 
-  export let story_name: string;
+  export let topic_name: string;
   export let restartGame: () => void;
 
   let width: number;
@@ -384,7 +384,7 @@ a11y_no_noninteractive_element_interactions -->
         style:color={$customFont.accentColor}
         style:zoom
       >
-        {story_name.trim()} Story Summary
+        {topic_name.trim()} Story Summary
       </h4>
 
       <article
@@ -508,7 +508,7 @@ a11y_no_noninteractive_element_interactions -->
     >
       <span class="flex-row">
         <QuitSVG onclick={() => window.location.reload()} voidBtn={true} />
-        <h5 class="title">{story_name.trim()}</h5>
+        <h5 class="title">{topic_name.trim()}</h5>
       </span>
       <div class="controls flex-row">
         <div class="scale-icon">
@@ -570,7 +570,7 @@ a11y_no_noninteractive_element_interactions -->
           disabled={step.step === 1}
         />
         <span class="flex gap-8">
-          <h5 class="title">{story_name.trim()}</h5>
+          <h5 class="title">{topic_name.trim()}</h5>
           <hr />
           <h5>
             {#if step.title}

@@ -99,7 +99,7 @@ type UnfinishedStory = {
 type TopicPage = {
   id: string;
   name: string;
-  genres?: string;
+  genres?: string[];
   description?: string;
   description_file_url?: string;
   video_file_url?: string;

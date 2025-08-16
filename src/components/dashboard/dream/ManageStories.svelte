@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
 
   import Collections from '@components/dashboard/dream/manage/Collections.svelte';
-  import Categories from '@components/dashboard/dream/manage/Categories.svelte';
+  import Categories from '@components/dashboard/dream/manage/CategoriesOld.svelte';
   import NFTGates from '@components/dashboard/dream/manage/NFTGates.svelte';
   import { ensureAdmin } from '@utils/route-guard';
 

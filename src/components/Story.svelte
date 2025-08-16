@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
 
-  import { serveUrl } from '@constants/media';
+  import { blankImage, serveUrl } from '@constants/media';
   import CoNexusApp from '@lib/view';
   import CoNexusGame from '@lib/story';
   import { story, game } from '@stores/conexus.svelte';
@@ -25,8 +25,8 @@
   import Share from '@components/utils/Share.svelte';
 
   export let section: string;
-  export let story_name: string;
   export let topic_id: string;
+  export let topic_name: string;
 
   let scroll: number;
   let userID: string | undefined = undefined;
@@ -47,7 +47,10 @@
     if (audio) game.background_music = audio;
   };
 
-  let activeTopic: Nullable<TopicView> = null;
+  let activeTopic: Nullable<TopicPage> = null;
+
+  let videoError = false;
+  let imageError = false;
 
   const restartGame = () => {
     game.background_image = null;
@@ -76,7 +79,7 @@
           link: `/sections/${section}/${topic_name}?id=${topic_order}`,
         })),
         index: storedTopics.findIndex(
-          (topic) => topic.topic_name === story_name,
+          (topic) => topic.topic_name === topic_name,
         ),
       });
     }
@@ -156,30 +159,36 @@
         style:cursor={game.loading ? 'progress' : ''}
       >
         <section class="story container">
-          {#if topic?.video_file_url}
+          {#if topic?.video_file_url && !videoError}
             <video
               class="round-8 transparent-glowing"
               controls
               autoplay
               loop
               muted
+              on:error={() => (videoError = true)}
             >
-              <source src={serveUrl(topic?.video_file_url)} type="video/mp4" />
+              <source src={serveUrl(topic.video_file_url)} type="video/mp4" />
               <track kind="captions" />
             </video>
           {:else}
             <img
               class="round-8 transparent-glowing"
-              src={serveUrl(topic?.description_file_url)}
-              alt={topic?.name}
+              src={imageError
+                ? blankImage
+                : serveUrl(topic?.description_file_url ?? blankImage)}
+              alt={topic?.name ?? 'Default image'}
               draggable="false"
               width="1024"
+              on:error={() => (imageError = true)}
             />
           {/if}
           <div class="flex">
-            {#if topic.genres}
+            {#if topic.genres && topic.genres.length > 0}
               <span class="genres round-8 pad-8 shad transparent-glowing">
-                <p class="text-glowing">{topic.genres.toUpperCase()}</p>
+                <p class="text-glowing">
+                  {topic.genres.join(', ').toUpperCase()}
+                </p>
               </span>
             {/if}
 
@@ -241,7 +250,7 @@
                     onclick={() =>
                       openModal(
                         deleteUnfinishedModal,
-                        `Delete story: ${story_name}`,
+                        `Delete story: ${topic_name}`,
                         () => DeleteStory(continuable.story_id),
                       )}
                   />
@@ -372,7 +381,7 @@
   {/if}
   <Tts />
 
-  <Step {story_name} {restartGame} />
+  <Step {topic_name} {restartGame} />
 {/if}
 
 <style lang="scss">

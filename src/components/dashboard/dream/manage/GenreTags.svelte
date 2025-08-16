@@ -45,10 +45,7 @@
       return;
     }
 
-    const newGenre = availableGenres.find((g) => g.id === newGenreId);
-    if (newGenre && newGenre.id !== undefined) {
-      await handleGenreChange(newGenre.id, 'add');
-    }
+    await handleGenreChange(newGenreId, 'add');
 
     newGenreId = '';
   }

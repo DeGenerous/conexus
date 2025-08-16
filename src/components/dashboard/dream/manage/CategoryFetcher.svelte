@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { type Snippet } from 'svelte';
 
   import CategoryView from '@lib/category';
   import AppView from '@lib/view';
@@ -8,22 +9,24 @@
     isAdmin,
     isCreator,
     selectedSectionId = $bindable(),
-    content,
-  }: {
+    fetchCategories = $bindable(),
+    Data,
+  } = $props<{
     isAdmin: boolean;
     isCreator: boolean;
     selectedSectionId: string;
-    content: (props: {
-      sections: Section[];
-      categories: Category[];
-      loadingSections: boolean;
-      loadingCategories: boolean;
-      errorSections: string;
-      errorCategories: string;
-      fetchSections: () => Promise<void>;
-      fetchCategories: () => Promise<void>;
-    }) => any;
-  } = $props();
+    fetchCategories?: () => Promise<void>;
+    Data: Snippet<
+      [
+        loadingSections: boolean,
+        errorSections: string,
+        sections: Section[],
+        loadingCategories: boolean,
+        errorCategories: string,
+        categories: Category[],
+      ]
+    >;
+  }>();
 
   let categoryView = new CategoryView();
   let appView = new AppView();
@@ -51,7 +54,7 @@
   }
 
   // Fetch categories for admins or creators
-  async function fetchCategories() {
+  async function fetchCategoriesBase() {
     loadingCategories = true;
     errorCategories = '';
     try {
@@ -65,37 +68,33 @@
     }
   }
 
+  fetchCategories = async () => {
+    if (isAdmin && selectedSectionId) {
+      await fetchCategoriesBase();
+    } else if (isCreator) {
+      await fetchCategoriesBase();
+    }
+  };
+
   // Initial load
   onMount(() => {
     if (isAdmin) fetchSections();
-    else if (isCreator) fetchCategories();
+    else if (isCreator) fetchCategoriesBase();
   });
 
   // When admin changes section, fetch categories
   $effect(() => {
-    if (isAdmin && selectedSectionId) fetchCategories();
+    if (isAdmin && selectedSectionId) fetchCategoriesBase();
   });
 </script>
 
-<!-- <slot
-  {sections}
-  {categories}
-  {loadingSections}
-  {loadingCategories}
-  {errorSections}
-  {errorCategories}
-  {selectedSectionId}
-  {fetchSections}
-  {fetchCategories}
-/> -->
-
-{@render content({
-  sections,
-  categories,
-  loadingSections,
-  loadingCategories,
-  errorSections,
-  errorCategories,
-  fetchSections,
-  fetchCategories,
-})}
+{#if Data}
+  {@render Data(
+    loadingSections,
+    errorSections,
+    sections,
+    loadingCategories,
+    errorCategories,
+    categories,
+  )}
+{/if}

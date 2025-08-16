@@ -1,14 +1,14 @@
 <script lang="ts">
   import DiscordBtn from '@components/icons/Discord.svelte';
 
-  let { section = '' }: { section: string } = $props();
+  let { section_name = '' }: { section_name: string } = $props();
 </script>
 
-{#if section == 'Community Picks' || section == 'Dischordian Saga'}
+{#if section_name == 'Community Picks' || section_name == 'Dischordian Saga'}
   <section
     class="flex pad mar-inline round blur shad-inset-glow transparent-glowing"
   >
-    {#if section == 'Community Picks'}
+    {#if section_name == 'Community Picks'}
       <div class="flex-row">
         <h5>Join the community:</h5>
         <DiscordBtn />

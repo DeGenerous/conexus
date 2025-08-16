@@ -5,7 +5,6 @@
 
   import { DASHBOARD_ROUTES } from '@constants/routes';
   import TopicManagement from '@lib/topics';
-  import AppView from '@lib/view';
   import { GetCache, ALL_TOPICS_KEY } from '@constants/cache';
   import openModal from '@stores/modal.svelte';
   import { deleteStoryModal } from '@constants/modal';
@@ -18,7 +17,7 @@
   import EditSVG from '@components/icons/Edit.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
-  import { derived } from 'svelte/store';
+  import ExploreCategory from './ExploreCategory.svelte';
 
   let {
     topic_id = '',
@@ -53,10 +52,6 @@
   let derivedTopicVisibility = $derived<TopicVisibility>(topic_visibility);
   let derivedTopicPrompt = $derived<string>(topic_prompt);
   let derivedTopicImagePrompt = $derived<string>(topic_imagePrompt);
-  let derivedTopicCategories = $derived<TopicCategory[]>(topic_categories);
-
-  let section_id = $state<string>(''); // TODO: Select Section to then select Categories
-  let categories = $state<Category[]>([]);
 
   let jsonBlob: Nullable<Blob> = null;
 
@@ -125,6 +120,20 @@
   let editingDescription = $state<boolean>(false);
   let editingPrompt = $state<boolean>(false);
   let editingImagePrompt = $state<boolean>(false);
+
+  async function handleCategoryChange(
+    categoryId: string,
+    method: 'add' | 'remove',
+  ) {
+    switch (method) {
+      case 'add':
+        await topicManager.addTopicToCategory(topic_id, categoryId);
+        break;
+      case 'remove':
+        await topicManager.removeTopicFromCategory(topic_id, categoryId);
+        break;
+    }
+  }
 
   async function handleGenreChange(genre_id: string, method: 'add' | 'remove') {
     switch (method) {
@@ -247,24 +256,12 @@
           {/if}
         </div>
 
-        <!-- <div class="input-container">
-          <label for="category">Selected category</label>
-          {#if categories}
-            <select
-              value={topic.category_id}
-              onchange={(event) => {
-                const target = event.target as HTMLSelectElement;
-                if (target) {
-                  admin.editTopicCategory(topic!.id, parseInt(target.value));
-                }
-              }}
-            >
-              {#each categories as { id, name }}
-                <option value={id}>{name}</option>
-              {/each}
-            </select>
-          {/if}
-        </div> -->
+        <ExploreCategory
+          {isAdmin}
+          {isCreator}
+          {topic_categories}
+          {handleCategoryChange}
+        />
       </div>
     </div>
 

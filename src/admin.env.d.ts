@@ -3,20 +3,23 @@
 
 type CollectionTopic = {
   topic_id: string;
-  prompt_id: string;
   topic_name: string;
   order: number;
-  genres: string;
-  available: string;
+  available: boolean;
+  visibility: TopicVisibility;
 };
 
-type Collection = {
-  section_id: string;
-  section_name: string;
+type CollectionCategory = {
   category_id: string;
   category_name: string;
   category_order: number;
   topics: CollectionTopic[];
+};
+
+type CollectionSection = {
+  section_id: string;
+  section_name: string;
+  categories: CollectionCategory[];
 };
 
 type MediaType = 'background' | 'description' | 'tile' | 'audio' | 'video';

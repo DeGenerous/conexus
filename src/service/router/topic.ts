@@ -38,6 +38,26 @@ export default class TopicAPI extends Fetcher {
   }
 
   /**
+   * Get the admin collection data
+   * @returns The admin collection data
+   */
+  async adminCollection(page: number = 1, pageSize: number = 10) {
+    return this.request<CollectionSection[]>(
+      `${this.group}/admin-collection?page=${page}&pageSize=${pageSize}`,
+    );
+  }
+
+  /**
+   * Get the creator collection data
+   * @returns The creator collection data
+   */
+  async creatorCollection(page: number = 1, pageSize: number = 10) {
+    return this.request<CollectionCategory[]>(
+      `${this.group}/creator-collection?page=${page}&pageSize=${pageSize}`,
+    );
+  }
+
+  /**
    * Get the topic manager data
    * @param topic_id The ID of the topic
    * @returns The topic manager data

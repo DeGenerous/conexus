@@ -4,7 +4,7 @@
   import CategoryView from '@lib/category';
   import { ensureCreator, userState } from '@utils/route-guard';
 
-  import CategoryFetcher from './CategoryFetcher.svelte';
+  import CategoryFetcher from '@components/dashboard/dream/manage/category/CategoryFetcher.svelte';
 
   let categoryView = new CategoryView();
 
@@ -67,10 +67,7 @@
 </script>
 
 <section class="dream-container fade-in">
-  <CategoryFetcher
-    bind:selectedSectionId
-    bind:fetchCategories
-  >
+  <CategoryFetcher bind:selectedSectionId bind:fetchCategories>
     {#snippet Data(
       loadingSections: boolean,
       errorSections: string,

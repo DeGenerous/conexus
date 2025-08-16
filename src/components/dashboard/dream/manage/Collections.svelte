@@ -1,94 +1,98 @@
 <!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { dndzone } from 'svelte-dnd-action';
+  import CollectionFetcher from "./collection/CollectionFetcher.svelte";
 
-  import AdminApp from '@lib/admin';
-  import CoNexusApp from '@lib/view';
-  import { toastStore } from '@stores/toast.svelte';
-  import { SetCache, ALL_TOPICS_KEY, TTL_DAY } from '@constants/cache';
+  // import { onMount } from 'svelte';
+  // import { dndzone } from 'svelte-dnd-action';
 
-  import StoryList from '@components/dashboard/dream/manage/StoryList.svelte';
+  // import { SetCache, ALL_TOPICS_KEY, TTL_DAY } from '@constants/cache';
+  // import AdminApp from '@lib/admin';
+  // import CoNexusApp from '@lib/view';
+  // import { toastStore } from '@stores/toast.svelte';
 
-  export let selectInput = (event: Event) => {};
+  // import StoryList from '@components/dashboard/dream/manage/collection/StoryList.svelte';
 
-  let admin = new AdminApp();
-  let view = new CoNexusApp();
+  // export let selectInput = (event: Event) => {};
 
-  let sections: Section[] = [];
-  let collections: Collection[] = [];
+  // let admin = new AdminApp();
+  // let view = new CoNexusApp();
 
-  let debounceTimeout: NodeJS.Timeout;
+  // let sections: Section[] = [];
+  // let collections: Collection[] = [];
 
-  let items: any[] = [];
-  let topicBuckets: Record<number, CollectionTopic[]> = {}; // id → list
+  // let debounceTimeout: NodeJS.Timeout;
 
-  const isCoarsePointer = (): boolean =>
-    matchMedia('(pointer: coarse)').matches;
+  // let items: any[] = [];
+  // let topicBuckets: Record<number, CollectionTopic[]> = {}; // id → list
 
-  const fetchCollections = async () => {
-    collections = await admin.fetchCollections();
-    updateCollections();
-    topicBuckets = Object.fromEntries(
-      collections.map((c) => [
-        c.category_id,
-        [...c.topics]
-          .sort((a, b) => a.order - b.order)
-          .map((t) => ({ ...t, id: t.topic_id })),
-      ]),
-    );
-  };
+  // const isCoarsePointer = (): boolean =>
+  //   matchMedia('(pointer: coarse)').matches;
 
-  // Make a sortable id‑based copy
-  const updateCollections = () => {
-    items = collections
-      .map((c) => ({ ...c, id: c.category_id }))
-      .sort(
-        (a: Collection, b: Collection) => a.category_order - b.category_order,
-      );
-    storeAllTopics(items);
-  };
+  // const fetchCollections = async () => {
+  //   collections = await admin.fetchCollections();
+  //   updateCollections();
+  //   topicBuckets = Object.fromEntries(
+  //     collections.map((c) => [
+  //       c.category_id,
+  //       [...c.topics]
+  //         .sort((a, b) => a.order - b.order)
+  //         .map((t) => ({ ...t, id: t.topic_id })),
+  //     ]),
+  //   );
+  // };
 
-  onMount(async () => {
-    sections = await view.getSections();
-    await fetchCollections();
-    updateCollections();
-  });
+  // // Make a sortable id‑based copy
+  // const updateCollections = () => {
+  //   items = collections
+  //     .map((c) => ({ ...c, id: c.category_id }))
+  //     .sort(
+  //       (a: Collection, b: Collection) => a.category_order - b.category_order,
+  //     );
+  //   storeAllTopics(items);
+  // };
 
-  // Change order of every category based on position in array
-  const persistOrder = () => {
-    items.forEach(async ({ category_id }, i) => {
-      await admin.changeSectionCategoryOrder(category_id, i + 1, false);
-      items[i].category_order = i + 1;
-    });
-    toastStore.show('All categories reordered successfully');
-  };
+  // onMount(async () => {
+  //   sections = await view.getSections();
+  //   await fetchCollections();
+  //   updateCollections();
+  // });
 
-  // Change order of single category
-  const handleChangeCategoryOrder = (event: Event, category_id: number) => {
-    clearTimeout(debounceTimeout);
-    const input = event.target as HTMLInputElement;
-    if (Number(input.value) < 0) input.value = '0';
-    if (Number(input.value) > 99) input.value = '99';
-    debounceTimeout = setTimeout(async () => {
-      if (input.value == '') input.value = '0';
-      await admin.changeSectionCategoryOrder(category_id, Number(input.value));
-      await fetchCollections();
-      updateCollections();
-    }, 1000);
-  };
+  // // Change order of every category based on position in array
+  // const persistOrder = () => {
+  //   items.forEach(async ({ category_id }, i) => {
+  //     await admin.changeSectionCategoryOrder(category_id, i + 1, false);
+  //     items[i].category_order = i + 1;
+  //   });
+  //   toastStore.show('All categories reordered successfully');
+  // };
 
-  // Cahce all topics for switching between
-  const storeAllTopics = (collections: Collection[]) => {
-    const allTopics = collections
-      .map((collection) => collection.topics.sort((a, b) => a.order - b.order))
-      .flat();
-    const topicNames = allTopics.map(({ topic_name }) => topic_name);
-    SetCache(ALL_TOPICS_KEY, topicNames.join(']['), TTL_DAY);
-  };
+  // // Change order of single category
+  // const handleChangeCategoryOrder = (event: Event, category_id: number) => {
+  //   clearTimeout(debounceTimeout);
+  //   const input = event.target as HTMLInputElement;
+  //   if (Number(input.value) < 0) input.value = '0';
+  //   if (Number(input.value) > 99) input.value = '99';
+  //   debounceTimeout = setTimeout(async () => {
+  //     if (input.value == '') input.value = '0';
+  //     await admin.changeSectionCategoryOrder(category_id, Number(input.value));
+  //     await fetchCollections();
+  //     updateCollections();
+  //   }, 1000);
+  // };
+
+  // // Cahce all topics for switching between
+  // const storeAllTopics = (collections: Collection[]) => {
+  //   const allTopics = collections
+  //     .map((collection) => collection.topics.sort((a, b) => a.order - b.order))
+  //     .flat();
+  //   const topicNames = allTopics.map(({ topic_name }) => topic_name);
+  //   SetCache(ALL_TOPICS_KEY, topicNames.join(']['), TTL_DAY);
+  // };
 </script>
 
-{#if !items.length}
+<CollectionFetcher />
+
+<!-- {#if !items.length}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {:else}
   <section
@@ -157,9 +161,9 @@
       </span>
     {/each}
   </section>
-{/if}
+{/if} -->
 
-<style lang="scss">
+<!-- <style lang="scss">
   @use '/src/styles/mixins' as *;
 
   input[type='number'] {
@@ -219,4 +223,4 @@
       }
     }
   }
-</style>
+</style> -->

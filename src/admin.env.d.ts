@@ -103,3 +103,9 @@ type StoryMetricFilter = {
 type TopNMetricFilter = {
   n: number;
 } & BaseMetricFilter;
+
+type TopNMetricResult = {
+  id: string;
+  name: string;
+  activity_count: number;
+}[];

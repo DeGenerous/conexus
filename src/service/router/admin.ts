@@ -268,7 +268,7 @@ export default class AdminAPI extends Fetcher {
    * @returns A promise that resolves to the top N active accounts.
    */
   async accountTopN(request: TopNMetricFilter) {
-    return this.request<number>(`${this.topNGroup}/active-accounts`, {
+    return this.request<TopNMetricResult>(`${this.topNGroup}/active-accounts`, {
       method: 'POST',
       body: JSON.stringify(request),
     });
@@ -281,7 +281,7 @@ export default class AdminAPI extends Fetcher {
    * @returns A promise that resolves to the top N played topics.
    */
   async topicTopN(request: TopNMetricFilter) {
-    return this.request<number>(`${this.topNGroup}/played-topics`, {
+    return this.request<TopNMetricResult>(`${this.topNGroup}/played-topics`, {
       method: 'POST',
       body: JSON.stringify(request),
     });

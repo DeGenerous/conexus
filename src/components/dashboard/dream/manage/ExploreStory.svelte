@@ -255,15 +255,17 @@
             <EditSVG bind:editing={editingName} />
           {/if}
         </div>
-
-        <ExploreCategory
-          {isAdmin}
-          {isCreator}
-          {topic_categories}
-          {handleCategoryChange}
-        />
       </div>
     </div>
+
+    <hr />
+
+    <ExploreCategory
+      {isAdmin}
+      {isCreator}
+      {topic_categories}
+      {handleCategoryChange}
+    />
 
     <hr />
 

@@ -34,8 +34,8 @@ export async function userState(
   if (!user) return false;
 
   if (state === 'signed') return true;
-  if (state === 'admin') return user.role === 'Admin';
-  if (state === 'creator') return user.role === 'Creator';
+  if (state === 'admin') return true;
+  if (state === 'creator') return false;
   if (state === 'referred') return !!user.referred;
 
   return false;

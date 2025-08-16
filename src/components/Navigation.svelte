@@ -3,11 +3,16 @@
   import tippy, { type Instance } from 'tippy.js';
 
   // import CoNexusApp from '@lib/view';
-  import { navContext, prevItem, nextItem } from '@stores/navigation.svelte';
-  import { story, game } from '@stores/conexus.svelte';
-  import { trailerURL } from '@constants/media';
   import { GetCache, SetCache, ONBOARDING_KEY } from '@constants/cache';
-  import { highlightCommunityPicks } from '@stores/navigation.svelte';
+  import { trailerURL } from '@constants/media';
+  import { DASHBOARD_ROUTES } from '@constants/routes';
+  import { story, game } from '@stores/conexus.svelte';
+  import {
+    highlightCommunityPicks,
+    navContext,
+    prevItem,
+    nextItem,
+  } from '@stores/navigation.svelte';
 
   import Profile from '@components/Profile.svelte';
   import ConexusLogo from '@components/utils/ConexusLogo.svelte';
@@ -228,7 +233,7 @@
     <a
       class="fade-in"
       class:active={activeTab === 'Dashboard'}
-      href="/dashboard"
+      href={DASHBOARD_ROUTES.HOME}
       target="_self"
       draggable="false"
     >
@@ -283,7 +288,7 @@
     <a
       class="fade-in"
       class:active={activeTab === 'Dream'}
-      href="/dashboard/dream"
+      href={DASHBOARD_ROUTES.DREAM}
       target="_self"
       draggable="false"
     >

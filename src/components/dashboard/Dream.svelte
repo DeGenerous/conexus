@@ -1,10 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { userState } from '@utils/route-guard';
+  import { DASHBOARD_ROUTES } from '@constants/routes';
   import Topic from '@lib/topics';
   import CategoryView from '@lib/category';
   import { toastStore } from '@stores/toast.svelte';
+  import { userState } from '@utils/route-guard';
 
   import CloseSVG from '@components/icons/Close.svelte';
 
@@ -86,7 +87,7 @@
 {:else if isAdmin || isCreator}
   <section class="container fade-in">
     <p class="text-glowing">Dream It. Create It. Bring It to Life.</p>
-    <a class="button-anchor button-glowing" href="/dashboard/dream/create">
+    <a class="button-anchor button-glowing" href={DASHBOARD_ROUTES.CREATE}>
       Create
     </a>
     <p class="text-glowing">
@@ -96,7 +97,7 @@
     <hr />
 
     <p class="text-glowing">Add the finishing touches to your masterpiece.</p>
-    <a class="button-anchor button-glowing" href="/dashboard/dream/manage">
+    <a class="button-anchor button-glowing" href={DASHBOARD_ROUTES.MANAGE}>
       Manage
     </a>
     <p class="text-glowing">Upload media, refine, and perfect your vision.</p>

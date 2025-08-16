@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CategoryFetcher from './CategoryFetcher.svelte';
+  import CategoryFetcher from '@components/dashboard/dream/manage/category/CategoryFetcher.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
 
   let { isAdmin, isCreator, topic_categories, handleCategoryChange } = $props<{

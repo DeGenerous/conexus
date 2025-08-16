@@ -9,7 +9,7 @@
   import SortingSVG from '@components/icons/Sorting.svelte';
 
   export let categories: SectionCategoryTopics[] = [];
-  export let section: string;
+  export let section_name: string;
   export let genres: Genre[] = [];
   export let getTopics: (
     text: string,
@@ -208,10 +208,10 @@
   <div class="tiles-collection filtered-tiles" on:scroll={handleScroll}>
     {#key sortedTopics}
       {#each sortedTopics as topic}
-        <StoryTile {section} bind:topic bind:loading={isSearching} />
+        <StoryTile {section_name} bind:topic bind:loading={isSearching} />
       {/each}
       {#if !isEndReached && isSearching}
-        <StoryTile {section} topic={null} loading={isSearching} />
+        <StoryTile {section_name} topic={null} loading={isSearching} />
       {/if}
     {/key}
   </div>

@@ -40,7 +40,7 @@ const meta = {
   title: `${sectionName} | CoNexus`,
   image: `${mediaURL}/conexus-sections/${sectionImage?.toLocaleLowerCase()}.avif`,
   imageType: 'image/avif',
-  url: `https://conexus.degenerousdao.com/${section}`,
+  url: `${import.meta.env.PUBLIC_FRONTEND}/${section}`,
   header: section,
   nav: section,
   arrow: '/',
@@ -50,6 +50,6 @@ const meta = {
 
 <Layout {...meta}>
   <main>
-    <Section {section} client:load />
+    <Section section_name={section} client:load />
   </main>
 </Layout>

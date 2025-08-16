@@ -14,7 +14,7 @@
   import SortingSVG from '@components/icons/Sorting.svelte';
 
   export let category: SectionCategoryTopics | null = null;
-  export let section: string = '';
+  export let section_name: string = '';
 
   const view = new CoNexusApp();
 
@@ -105,7 +105,7 @@
   // A.K.A. INTERSECTION OBSERVER
 
   const handleScroll = (event: Event) => {
-    if (!category || !section || loading || isEndReached) return;
+    if (!category || !section_name || loading || isEndReached) return;
 
     const target = event.target as HTMLElement;
     // Load next page if user scrolls to the end of collection
@@ -116,14 +116,14 @@
 </script>
 
 <div class="collection-header">
-  {#if !category || !section}
+  {#if !category || !section_name}
     <h2>Loading stories...</h2>
   {:else}
     <h2>{category.name}</h2>
   {/if}
   <SortingSVG
     sorting={isSorting}
-    disabled={!category || !section}
+    disabled={!category || !section_name}
     onclick={() => {
       isSorting = !isSorting;
       handleSorting();
@@ -133,7 +133,7 @@
 </div>
 
 <div class="tiles-collection" on:scroll={handleScroll}>
-  {#if !category || !section}
+  {#if !category || !section_name}
     {#each Array(Math.floor(Math.random() * 3) + 3) as _}
       <div class="loading-tile">
         <div class="loading-animation"></div>
@@ -143,7 +143,7 @@
   {:else}
     {#key sortedTopics}
       {#each sortedTopics as topic}
-        <StoryTile {section} bind:topic bind:loading />
+        <StoryTile {section_name} bind:topic bind:loading />
       {/each}
     {/key}
   {/if}

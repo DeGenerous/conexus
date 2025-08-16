@@ -15,7 +15,7 @@
   import SpotifyIframe from '@components/music/SpotifyIframe.svelte';
   import Links from '@components/utils/Links.svelte';
 
-  export let section: string;
+  export let section_name: string;
 
   let app: CoNexusApp = new CoNexusApp();
 
@@ -28,11 +28,11 @@
   let showNoCategoriesMessage: boolean = false;
 
   const fetchCategories = async () => {
-    if (!section || loading || allLoaded) return;
+    if (!section_name || loading || allLoaded) return;
     loading = true;
 
     const response = await app.getSectionCategoryTopics(
-      section,
+      section_name,
       categories.length + 1,
       pageSize,
     );
@@ -41,7 +41,7 @@
       setTimeout(() => {
         categories = [...categories, ...response];
         SetCache(
-          SECTION_CATEGORIES_KEY(section),
+          SECTION_CATEGORIES_KEY(section_name),
           categories.map((cat) => {
             const orderedTopics = cat.topics?.sort((a, b) => {
               if (a.sort_order > b.sort_order) return 1;
@@ -65,13 +65,13 @@
   onMount(async () => {
     try {
       const sections = await app.getSections();
-      if (!sections.some(({ name }) => name === section)) {
+      if (!sections.some(({ name }) => name === section_name)) {
         window.location.href = '/404';
         return;
       }
 
       const cachedCategories = GetCache<SectionCategoryTopics[]>(
-        SECTION_CATEGORIES_KEY(section),
+        SECTION_CATEGORIES_KEY(section_name),
       );
       if (cachedCategories) categories = cachedCategories;
       else await fetchCategories();
@@ -111,7 +111,7 @@
     switch (which) {
       case 'search':
         return await app.searchSectionCategories(
-          section,
+          section_name,
           text.replace(/[^a-zA-Z ]/g, ''),
           sort_order,
           page,
@@ -119,7 +119,7 @@
         );
       case 'genre':
         return await app.getGenreTopics(
-          section,
+          section_name,
           text,
           page,
           pageSize,
@@ -159,13 +159,13 @@
   $: if (categories.length > 0) setTimeout(observeLastCategory, 500);
 </script>
 
-<SearchAndGenre {section} {genres} {getTopics} {categories} />
+<SearchAndGenre {section_name} {genres} {getTopics} {categories} />
 
 <section class="flex" on:scroll={handleScroll}>
   {#if categories.length > 0}
     {#each categories as category (category.name)}
       <div class="category flex">
-        <Category {section} {category} />
+        <Category {section_name} {category} />
       </div>
     {/each}
 
@@ -175,7 +175,7 @@
   {:else if showNoCategoriesMessage}
     <h5>No categories found for this section.</h5>
   {:else}
-    <Category {section} category={null} />
+    <Category {section_name} category={null} />
   {/if}
 </section>
 
@@ -183,8 +183,8 @@
   <h5>Loading categories...</h5>
 {/if}
 
-{#if section === 'Dischordian Saga'}
+{#if section_name === 'Dischordian Saga'}
   <SpotifyIframe />
 {/if}
 
-<Links {section} />
+<Links {section_name} />

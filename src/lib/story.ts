@@ -140,6 +140,7 @@ export default class CoNexus {
    * @returns A promise that resolves when the step is loaded
    */
   async loadStep(step: number): Promise<void> {
+    game.loading = true;
     const { message, data } = await this.api.step(this.step_data.id, step);
 
     if (!data) {

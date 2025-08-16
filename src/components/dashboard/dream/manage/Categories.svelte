@@ -1,70 +1,23 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
-  import { userState } from '@utils/route-guard';
+  import CategoryFetcher from './CategoryFetcher.svelte';
   import CategoryView from '@lib/category';
-  import AppView from '@lib/view';
 
   let categoryView = new CategoryView();
-  let appView = new AppView();
 
-  let isAdmin = $state<boolean>(false);
-  let isCreator = $state<boolean>(false);
+  let isAdmin = true;
+  let isCreator = false;
 
   let selectedSectionId = $state('');
+
+  let fetchCategories = $state<() => Promise<void>>();
+
   let newCategoryName = $state<string>('');
   let newCategoryDescription = $state<string>('');
   let newCategorySortOrder = $state<number>(0);
 
-  let sections = $state<Section[]>([]);
-  let categories = $state<Category[]>([]);
-
-  let loadingSections = $state(false);
-  let loadingCategories = $state(false);
   let addingCategory = $state(false);
 
-  let errorSections = $state('');
-  let errorCategories = $state('');
   let errorAdd = $state('');
-
-  onMount(async () => {
-    isAdmin = await userState('admin');
-    isCreator = await userState('creator');
-
-    if (isAdmin) {
-      loadingSections = true;
-      try {
-        sections = await appView.getSections();
-      } catch {
-        errorSections = 'Failed to load sections';
-      } finally {
-        loadingSections = false;
-      }
-    } else if (isCreator) {
-      fetchCategories();
-    }
-  });
-
-  // Automatically fetch categories when admin changes section
-  $effect(() => {
-    if (isAdmin && selectedSectionId) {
-      fetchCategories();
-    }
-  });
-
-  async function fetchCategories() {
-    loadingCategories = true;
-    errorCategories = '';
-    try {
-      categories = isAdmin
-        ? await categoryView.listAdminCategories(selectedSectionId)
-        : await categoryView.listCreatorCategories();
-    } catch {
-      errorCategories = 'Failed to load categories';
-    } finally {
-      loadingCategories = false;
-    }
-  }
 
   async function addCategory() {
     if (!newCategoryName.trim()) return;
@@ -92,7 +45,8 @@
       }
 
       newCategoryName = '';
-      await fetchCategories(); // refresh list
+
+      if (fetchCategories) await fetchCategories(); // refresh list
     } catch {
       errorAdd = 'Failed to add category';
     } finally {
@@ -102,46 +56,62 @@
 </script>
 
 <section class="dream-container fade-in">
-  {#if isAdmin}
-    {#if loadingSections}
-      <p>Loading sections...</p>
-    {:else if errorSections}
-      <p class="validation">{errorSections}</p>
-    {:else}
-      <h4>Sections: {sections.length}</h4>
-      <div class="container">
-        {#if sections.length > 0}
-          <select bind:value={selectedSectionId}>
-            <option value="">Select a section</option>
-            {#each sections as { id, name }}
-              <option value={id}>{name}</option>
-            {/each}
-          </select>
+  <CategoryFetcher
+    {isAdmin}
+    {isCreator}
+    bind:selectedSectionId
+    bind:fetchCategories
+  >
+    {#snippet Data(
+      loadingSections: boolean,
+      errorSections: string,
+      sections: Section[],
+      loadingCategories: boolean,
+      errorCategories: string,
+      categories: Category[],
+    )}
+      {#if isAdmin}
+        {#if loadingSections}
+          <p>Loading sections...</p>
+        {:else if errorSections}
+          <p class="validation">{errorSections}</p>
         {:else}
-          <p class="validation">No sections found</p>
+          <h4>Sections: {sections.length}</h4>
+          <div class="container">
+            {#if sections.length > 0}
+              <select bind:value={selectedSectionId}>
+                <option value="">Select a section</option>
+                {#each sections as { id, name }}
+                  <option value={id}>{name}</option>
+                {/each}
+              </select>
+            {:else}
+              <p class="validation">No sections found</p>
+            {/if}
+          </div>
         {/if}
-      </div>
-    {/if}
-  {/if}
-
-  {#if loadingCategories}
-    <p>Loading categories...</p>
-  {:else if errorCategories}
-    <p class="validation">{errorCategories}</p>
-  {:else}
-    <h4>Categories: {categories.length}</h4>
-    <div class="container">
-      {#if categories.length > 0}
-        {#each categories as { name }}
-          <button class="category void-btn small-tile">
-            <p>{name}</p>
-          </button>
-        {/each}
-      {:else}
-        <p class="validation">No categories found</p>
       {/if}
-    </div>
-  {/if}
+
+      {#if loadingCategories}
+        <p>Loading categories...</p>
+      {:else if errorCategories}
+        <p class="validation">{errorCategories}</p>
+      {:else}
+        <h4>Categories: {categories.length}</h4>
+        <div class="container">
+          {#if categories.length > 0}
+            {#each categories as { name }}
+              <button class="category void-btn small-tile">
+                <p>{name}</p>
+              </button>
+            {/each}
+          {:else}
+            <p class="validation">No categories found</p>
+          {/if}
+        </div>
+      {/if}
+    {/snippet}
+  </CategoryFetcher>
 </section>
 
 <div class="new-category container">

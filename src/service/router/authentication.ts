@@ -102,7 +102,7 @@ export default class AuthenticationAPI extends Fetcher {
    * @returns A promise that resolves with the response from the logout request.
    */
   async logout() {
-    return this.request(`${this.group}/logout`);
+    return this.request(`${this.group}/signout`);
   }
 
   /**

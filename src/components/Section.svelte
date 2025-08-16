@@ -19,6 +19,7 @@
 
   let app: CoNexusApp = new CoNexusApp();
 
+  let currSectionId: string = '';
   let categories: SectionCategoryTopics[] = [];
   let genres: Genre[] = [];
 
@@ -65,10 +66,14 @@
   onMount(async () => {
     try {
       const sections = await app.getSections();
-      if (!sections.some(({ name }) => name === section_name)) {
+      const section = sections.find(({ name }) => name === section_name);
+
+      if (!section || !section.id) {
         window.location.href = '/404';
         return;
       }
+
+      currSectionId = section.id;
 
       const cachedCategories = GetCache<SectionCategoryTopics[]>(
         SECTION_CATEGORIES_KEY(section_name),
@@ -111,16 +116,20 @@
     switch (which) {
       case 'search':
         return await app.searchSectionCategories(
-          section_name,
+          currSectionId,
           text.replace(/[^a-zA-Z ]/g, ''),
           sort_order,
           page,
           pageSize,
         );
       case 'genre':
+        // get genre id by name
+        const genre = genres.find((g) => g.name === text);
+        if (!genre || !genre.id) return [];
+
         return await app.getGenreTopics(
-          section_name,
-          text,
+          currSectionId,
+          genre.id,
           page,
           pageSize,
           sort_order,

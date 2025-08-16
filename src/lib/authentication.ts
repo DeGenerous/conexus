@@ -1,4 +1,4 @@
-import { USER_KEY, TTL_HOUR, SetCache } from '@constants/cache';
+import { USER_KEY, TTL_HOUR, SetCache, ClearCache } from '@constants/cache';
 import { api_error } from '@errors/index';
 import AuthenticationAPI from '@service/router/authentication';
 import { authenticated, accountError } from '@stores/account.svelte';
@@ -134,6 +134,8 @@ export default class Authentication {
       api_error(message);
       return;
     }
+
+    ClearCache("auth");
 
     toastStore.show(message || 'Logged out successfully', 'info');
   }

@@ -132,7 +132,7 @@ export default class AppView {
     page: number = 1,
     pageSize: number = 5,
   ): Promise<CategoryTopics[]> {
-    const { message, data } = await this.api.searchSectionForTopic(
+    const { status, message, data } = await this.api.searchSectionForTopic(
       section_id,
       topic,
       sort_order,
@@ -140,8 +140,12 @@ export default class AppView {
       pageSize,
     );
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
+      return [];
+    }
+
+    if (!data) {
       return [];
     }
 
@@ -211,26 +215,26 @@ export default class AppView {
   }
 
   async getGenreTopics(
-    section: string,
-    genre: string,
+    section_id: string,
+    genre_id: string,
     page: number = 1,
     pageSize: number = 5,
     sort_order: TopicSortOrder = 'category',
   ): Promise<CategoryTopics[]> {
-    const { message, data } = await this.api.genreTopics(
-      section,
-      genre,
+    const { status, message, data } = await this.api.genreTopics(
+      section_id,
+      genre_id,
       page,
       pageSize,
       sort_order,
     );
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return [];
     }
 
-    return data;
+    return data || []
   }
 
   async getTopicPage(

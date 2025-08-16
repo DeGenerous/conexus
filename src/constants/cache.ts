@@ -24,7 +24,7 @@ export const TTS_SPEED_KEY = 'tts_speed';
 
 // Story drafts
 export const DRAFTS_INDEX_KEY = 'draft_index'; // stringified DraftIndexEntry[]
-export const DRAFT_KEY = (id: string) => `draft:${id}`;
+export const DRAFT_KEY = (id?: string) => `draft:${id}`;
 export const CURRENT_DRAFT_KEY = 'current_draft'; // id of the open draft
 
 /* -------------------------------------------------------------------- */

@@ -177,32 +177,38 @@
                 <ul>
                   {#each category.topics as topic, i}
                     <li
+                      class="tiles-collection"
                       draggable="true"
                       ondragstart={() => (draggedTopic = topic)}
                       ondragend={() => (draggedTopic = null)}
                     >
-                      <span>{topic.topic_name}</span>
-                      <button onclick={() => toggleAvailability(topic)}>
-                        {topic.available ? 'Disable' : 'Enable'}
-                      </button>
-                      <button onclick={() => toggleVisibility(topic)}>
-                        {topic.visibility === 'public'
-                          ? 'Make Private'
-                          : 'Make Public'}
-                      </button>
-                      <!-- reorder buttons -->
-                      {#if i > 0}
-                        <button
-                          onclick={() => reorder(category.topics, i, i - 1)}
-                          >↑</button
-                        >
-                      {/if}
-                      {#if i < category.topics.length - 1}
-                        <button
-                          onclick={() => reorder(category.topics, i, i + 1)}
-                          >↓</button
-                        >
-                      {/if}
+                      <a
+                        class="tile"
+                        href={DASHBOARD_ROUTES.EXPLORE(topic.topic_id)}
+                      >
+                        <span>{topic.topic_name}</span>
+                        <button onclick={() => toggleAvailability(topic)}>
+                          {topic.available ? 'Disable' : 'Enable'}
+                        </button>
+                        <button onclick={() => toggleVisibility(topic)}>
+                          {topic.visibility === 'public'
+                            ? 'Make Private'
+                            : 'Make Public'}
+                        </button>
+                        <!-- reorder buttons -->
+                        {#if i > 0}
+                          <button
+                            onclick={() => reorder(category.topics, i, i - 1)}
+                            >↑</button
+                          >
+                        {/if}
+                        {#if i < category.topics.length - 1}
+                          <button
+                            onclick={() => reorder(category.topics, i, i + 1)}
+                            >↓</button
+                          >
+                        {/if}
+                      </a>
                     </li>
                   {/each}
                 </ul>
@@ -242,30 +248,33 @@
           <ul>
             {#each category.topics as topic, i}
               <li
+                class="tiles-collection"
                 draggable="true"
                 ondragstart={() => (draggedTopic = topic)}
                 ondragend={() => (draggedTopic = null)}
               >
-                <span>{topic.topic_name}</span>
-                <button onclick={() => toggleAvailability(topic)}>
-                  {topic.available ? 'Disable' : 'Enable'}
-                </button>
-                <button onclick={() => toggleVisibility(topic)}>
-                  {topic.visibility === 'public'
-                    ? 'Make Private'
-                    : 'Make Public'}
-                </button>
-                <!-- reorder buttons -->
-                {#if i > 0}
-                  <button onclick={() => reorder(category.topics, i, i - 1)}
-                    >↑</button
-                  >
-                {/if}
-                {#if i < category.topics.length - 1}
-                  <button onclick={() => reorder(category.topics, i, i + 1)}
-                    >↓</button
-                  >
-                {/if}
+                <a class="tile" href={DASHBOARD_ROUTES.EXPLORE(topic.topic_id)}>
+                  <span>{topic.topic_name}</span>
+                  <button onclick={() => toggleAvailability(topic)}>
+                    {topic.available ? 'Disable' : 'Enable'}
+                  </button>
+                  <button onclick={() => toggleVisibility(topic)}>
+                    {topic.visibility === 'public'
+                      ? 'Make Private'
+                      : 'Make Public'}
+                  </button>
+                  <!-- reorder buttons -->
+                  {#if i > 0}
+                    <button onclick={() => reorder(category.topics, i, i - 1)}
+                      >↑</button
+                    >
+                  {/if}
+                  {#if i < category.topics.length - 1}
+                    <button onclick={() => reorder(category.topics, i, i + 1)}
+                      >↓</button
+                    >
+                  {/if}
+                </a>
               </li>
             {/each}
           </ul>
@@ -353,6 +362,19 @@
         padding: 0.25rem 0.75rem;
         border-radius: 0.3rem;
         font-size: 0.85rem;
+      }
+    }
+  }
+
+  .tiles-collection {
+    min-height: unset;
+
+    .tile {
+      padding-block: 1rem;
+      gap: 1rem;
+
+      h4 {
+        height: 100%;
       }
     }
   }

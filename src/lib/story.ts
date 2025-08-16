@@ -178,42 +178,34 @@ export default class CoNexus {
    * @returns A promise that resolves when the image status is generated
    */
   async #generateImageStatus(task_id: string): Promise<void> {
-    try {
-      const { status, message, data } = await this.api.imageStatus(
-        this.step_data.id,
-        task_id,
-      );
+    const { status, message, data } = await this.api.imageStatus(
+      this.step_data.id,
+      task_id,
+    );
 
-      if (!data || status === 'error') {
-        api_error(message);
-        return;
-      }
+    if (!data || status === 'error') {
+      api_error(message);
+      return;
+    }
 
-      // check data.status
-      if (data.status === 'pending') {
-        // Wait 5 seconds before retrying
-        await new Promise((resolve) => setTimeout(resolve, 10000));
-        await this.#generateImageStatus(task_id);
-        return;
-      }
+    // check data.status
+    if (data.status === 'pending') {
+      // Wait 5 seconds before retrying
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      await this.#generateImageStatus(task_id);
+      return;
+    }
 
-      if (data.status === 'ready') {
-        const url = `${import.meta.env.PUBLIC_BACKEND}${data.url}`
+    if (data.status === 'ready') {
+      const url = `${import.meta.env.PUBLIC_BACKEND}${data.url}`;
 
-        this.step_data.image = url;
-        this.step_data.image_type = 'url';
+      this.step_data.image = url;
+      this.step_data.image_type = 'url';
 
-        console.log('image status is generated (#generateImageStatus)');
+      console.log('image status is generated (#generateImageStatus)');
 
-        story.set(this);
-        return;
-      }
-
-      // this.#image();
-    } catch (error) {
-      // console.error('Error in #generateImageStatus:', error);
-      api_error(error, false);
-      // this.#image();
+      story.set(this);
+      return;
     }
   }
 
@@ -262,7 +254,7 @@ export default class CoNexus {
     await this.#setStepData(data.story, data.task_id);
 
     // Wait for image generation
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
 
     if (data.task_id !== '') {
       await this.#generateImageStatus(data.task_id);

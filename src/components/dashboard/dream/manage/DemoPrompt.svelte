@@ -4,7 +4,7 @@
 
   import AdminApp from '@lib/admin';
   import CoNexusGame from '@lib/story';
-  import { ensureAdmin } from '@utils/route-guard';
+  import { ensureCreator } from '@utils/route-guard';
 
   import LoadingSVG from '@components/icons/Loading.svelte';
   import SelectorSVG from '@components/icons/Selector.svelte';
@@ -22,7 +22,7 @@
   let focusedOption: Nullable<number> = $state(null);
 
   onMount(async () => {
-    await ensureAdmin();
+    await ensureCreator();
 
     const urlParams = new URLSearchParams(window.location.search);
     promptId = urlParams.get('demoID');

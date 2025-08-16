@@ -248,15 +248,15 @@ class Account {
     }
 
     // Fetch fresh data
-    const { message, data } = await this.api.isSubscribed(email);
+    const { status, message, data } = await this.api.isSubscribed(email);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return false;
     }
 
     SetCache(SUBSCRIPTION_STATUS_KEY, data, TTL_SHORT);
-    return data;
+    return data || false;
   }
 
   /**
@@ -279,9 +279,9 @@ class Account {
    * @returns {Promise<BookmarkFolder[] | null>}
    */
   async getBookmarkFolders(): Promise<BookmarkFolder[]> {
-    const { message, data } = await this.api.getBookmarkFolders();
+    const { status, message, data } = await this.api.getBookmarkFolders();
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return [];
     }
@@ -290,7 +290,7 @@ class Account {
       message || 'Bookmark folders retrieved successfully',
       'info',
     );
-    return data;
+    return data || [];
   }
 
   /**

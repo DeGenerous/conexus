@@ -47,3 +47,12 @@ export async function ensureAdmin(
 ): Promise<void> {
   if (!(await userState('admin'))) redirectTo(path);
 }
+
+export async function ensureCreator(path = '/dashboard/dream') {
+  const [isAdmin, isCreator] = await Promise.all([
+    userState('admin'),
+    userState('creator'),
+  ]);
+
+  if (!(isAdmin || isCreator)) redirectTo(path);
+}

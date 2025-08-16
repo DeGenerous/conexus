@@ -26,7 +26,7 @@
     if (image) {
       if (image_type === 'url') {
         imageSrc = image;
-        isLoading = true; // Ensure loader shows until image loads
+        isLoading = false; // False for URL
       } else {
         imageSrc = `data:image/png;base64,${image}`;
         isLoading = false; // Base64 images load instantly

@@ -3,11 +3,9 @@
   import { onMount } from 'svelte';
 
   import Collections from '@components/dashboard/dream/manage/Collections.svelte';
-  import Categories from '@components/dashboard/dream/manage/CategoriesOld.svelte';
+  import Categories from '@components/dashboard/dream/manage/Categories.svelte';
   import NFTGates from '@components/dashboard/dream/manage/NFTGates.svelte';
-  import { ensureAdmin } from '@utils/route-guard';
-
-  onMount(ensureAdmin);
+  import { ensureCreator, userState } from '@utils/route-guard';
 
   let nav: 'collection' | 'categories' | 'nft-gates' = $state('collection');
 
@@ -16,6 +14,16 @@
     const input = event.target as HTMLInputElement;
     input.select();
   };
+
+  let isAdmin = $state(false);
+  let isCreator = $state(false);
+
+  onMount(async () => {
+    ensureCreator();
+
+    isAdmin = await userState('admin');
+    isCreator = await userState('creator');
+  });
 </script>
 
 <nav class="flex-row">
@@ -33,13 +41,16 @@
   >
     Categories
   </button>
-  <button
-    class="void-btn blur"
-    class:selected={nav === 'nft-gates'}
-    onclick={() => (nav = 'nft-gates')}
-  >
-    NFT Gates
-  </button>
+
+  {#if isAdmin}
+    <button
+      class="void-btn blur"
+      class:selected={nav === 'nft-gates'}
+      onclick={() => (nav = 'nft-gates')}
+    >
+      NFT Gates
+    </button>
+  {/if}
 </nav>
 
 {#if nav === 'collection'}

@@ -3,11 +3,10 @@
   import { onMount, onDestroy } from 'svelte';
   import { derived } from 'svelte/store';
 
-  import { userState } from '@utils/route-guard';
-
+  import { GetCache, CURRENT_DRAFT_KEY } from '@constants/cache';
   import countries from '@constants/countries.json';
   import dreamData from '@constants/dream';
-  import CategoryView from '@lib/category';
+  import { resetDreamModal, openStoryManage } from '@constants/modal';
   import Topic from '@lib/topics';
   import {
     storyData,
@@ -15,30 +14,34 @@
     openPrompt,
     tablePrompt,
     clearAllData,
+    currentDraft,
+    draftsIndex,
   } from '@stores/dream.svelte';
-  import generatePrompt from '@utils/prompt';
   import openModal, { showModal, draftsManager } from '@stores/modal.svelte';
-  import { resetDreamModal, openStoryManage } from '@constants/modal';
-  import { ensureAdmin } from '@utils/route-guard';
+  import generatePrompt from '@utils/prompt';
+  import { ensureCreator, userState } from '@utils/route-guard';
   import Drafts from '@utils/story-drafts';
-  import { currentDraft, draftsIndex } from '@stores/dream.svelte';
-  import { GetCache, CURRENT_DRAFT_KEY } from '@constants/cache';
 
   import Slider from '@components/dashboard/dream/create/Slider.svelte';
   import Characters from '@components/dashboard/dream/create/Characters.svelte';
   import Scenario from '@components/dashboard/dream/create/Scenario.svelte';
   import WritingStyle from '@components/dashboard/dream/create/WritingStyle.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
+  import CategoryFetcher from './manage/CategoryFetcher.svelte';
 
-  onMount(ensureAdmin);
+  onMount(ensureCreator);
 
-  let category = new CategoryView();
   let topic = new Topic();
 
   let promptFormat: 'Table' | 'Open' = $state('Open');
 
   let isAdmin = $state<boolean>(false);
   let isCreator = $state<boolean>(false);
+
+  onMount(async () => {
+    isAdmin = await userState('admin');
+    isCreator = await userState('creator');
+  });
 
   let validation = $derived(
     $storyData.name &&
@@ -117,6 +120,8 @@
   // Timer that updates the label every 60 seconds
   let interval: ReturnType<typeof setInterval>;
 
+  let selectedSectionId = $state('');
+
   onMount(() => {
     updateLastSavedLabel(); // run immediately on load
 
@@ -125,11 +130,6 @@
     }, 2000); // every 2 seconds
 
     return () => clearInterval(interval); // cleanup on destroy
-  });
-
-  onMount(async () => {
-    isAdmin = await userState('admin');
-    isCreator = await userState('creator');
   });
 
   const openDraftsManager = () => {
@@ -187,8 +187,59 @@
 
 <!-- CATEGORY, TITLE, DESCRIPTION, IMAGE PROMPT -->
 <div class="dream-container">
-  <div class="input-container">
-    <label for="category">Select Category</label>
+  <CategoryFetcher bind:selectedSectionId>
+    {#snippet Data(
+      loadingSections: boolean,
+      errorSections: string,
+      sections: Section[],
+      loadingCategories: boolean,
+      errorCategories: string,
+      categories: Category[],
+    )}
+      {#if isAdmin}
+        {#if loadingSections}
+          <p>Loading sections...</p>
+        {:else if errorSections}
+          <p class="validation">{errorSections}</p>
+        {:else}
+          <div class="input-container">
+            <label for="sections">Sections</label>
+            {#if sections.length > 0}
+              <select id="sections" bind:value={selectedSectionId}>
+                <option value="">Select a section</option>
+                {#each sections as { id, name }}
+                  <option value={id}>{name}</option>
+                {/each}
+              </select>
+            {:else}
+              <p class="validation">No sections found</p>
+            {/if}
+          </div>
+        {/if}
+      {/if}
+
+      {#if loadingCategories}
+        <p>Loading categories...</p>
+      {:else if errorCategories}
+        <p class="validation">{errorCategories}</p>
+      {:else}
+        <div class="input-container">
+          <label for="category">Select Category</label>
+          <select
+            id="category"
+            class:red-border={!$storyData.category_id}
+            bind:value={$storyData.category_id}
+          >
+            <option value={null} selected={true} disabled hidden>Select</option>
+            {#each categories as { id, name }}
+              <option value={id}>{name}</option>
+            {/each}
+          </select>
+        </div>
+      {/if}
+    {/snippet}
+  </CategoryFetcher>
+  <!-- <label for="category">Select Category</label>
     <select
       id="category"
       class:red-border={!$storyData.category_id}
@@ -200,8 +251,7 @@
           <option value={id}>{name}</option>
         {/each}
       {/await}
-    </select>
-  </div>
+    </select> -->
 
   <hr />
 

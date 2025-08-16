@@ -37,7 +37,7 @@ type SignIn = {
   password: string;
 };
 
-type Roles = 'Admin' | 'Guest' | 'Creator';
+type Roles = 'Guest' | 'Player' | 'Creator' | 'Admin';
 
 type ReferralCode = {
   id: string;

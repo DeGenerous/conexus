@@ -4,16 +4,13 @@
 
   import CategoryView from '@lib/category';
   import AppView from '@lib/view';
+  import { userState } from '@utils/route-guard';
 
   let {
-    isAdmin,
-    isCreator,
     selectedSectionId = $bindable(),
     fetchCategories = $bindable(),
     Data,
   } = $props<{
-    isAdmin: boolean;
-    isCreator: boolean;
     selectedSectionId: string;
     fetchCategories?: () => Promise<void>;
     Data: Snippet<
@@ -27,6 +24,9 @@
       ]
     >;
   }>();
+
+  let isAdmin = $state<boolean>(false);
+  let isCreator = $state<boolean>(false);
 
   let categoryView = new CategoryView();
   let appView = new AppView();
@@ -77,9 +77,12 @@
   };
 
   // Initial load
-  onMount(() => {
-    if (isAdmin) fetchSections();
-    else if (isCreator) fetchCategoriesBase();
+  onMount(async () => {
+    isAdmin = await userState('admin');
+    isCreator = await userState('creator');
+
+    if (isAdmin) await fetchSections();
+    else if (isCreator) await fetchCategoriesBase();
   });
 
   // When admin changes section, fetch categories

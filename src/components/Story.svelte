@@ -93,16 +93,8 @@
   let noUnfinishedStoriesLeft: boolean = false;
 
   async function DeleteStory(story_id: any) {
-    // try {
-    //   await conexusGame.delete(story_id);
-    //   deletedStories[deletedStories.length] = story_id; // hide deleted story from user
-    //   await conexusGame.storyContinuables(story_name!).then((continuables) => {
-    //     // Hide CINTINUE SHAPING section if no unfinished stories left
-    //     if (continuables.length == 0) noUnfinishedStoriesLeft = true;
-    //   });
-    // } catch (error) {
-    //   console.error('Failed to delete story: ' + error);
-    // }
+    await conexusGame.delete(story_id);
+    deletedStories = deletedStories.filter((id) => id !== story_id);
   }
 
   // Calculate story creation date to show on CONTINUE button

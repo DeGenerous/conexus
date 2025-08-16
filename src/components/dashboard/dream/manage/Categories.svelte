@@ -1,11 +1,15 @@
 <script lang="ts">
-  import CategoryFetcher from './CategoryFetcher.svelte';
+  import { onMount } from 'svelte';
+
   import CategoryView from '@lib/category';
+  import { ensureCreator, userState } from '@utils/route-guard';
+
+  import CategoryFetcher from './CategoryFetcher.svelte';
 
   let categoryView = new CategoryView();
 
-  let isAdmin = true;
-  let isCreator = false;
+  let isAdmin = $state(false);
+  let isCreator = $state(false);
 
   let selectedSectionId = $state('');
 
@@ -53,12 +57,17 @@
       addingCategory = false;
     }
   }
+
+  onMount(async () => {
+    ensureCreator();
+
+    isAdmin = await userState('admin');
+    isCreator = await userState('creator');
+  });
 </script>
 
 <section class="dream-container fade-in">
   <CategoryFetcher
-    {isAdmin}
-    {isCreator}
     bind:selectedSectionId
     bind:fetchCategories
   >
@@ -114,17 +123,34 @@
   </CategoryFetcher>
 </section>
 
-<div class="new-category container">
-  <input bind:value={newCategoryName} placeholder="Enter New Category Name" />
-  <input
-    bind:value={newCategoryDescription}
-    placeholder="Enter New Category Description"
-  />
-  <input
-    type="number"
-    bind:value={newCategorySortOrder}
-    placeholder="Enter New Category Sort Order"
-  />
+<div class="container">
+  <div class="category-inputs">
+    <div>
+      <label for="new-category-name">New Category Name:</label>
+      <input
+        id="new-category-name"
+        bind:value={newCategoryName}
+        placeholder="Enter New Category Name"
+      />
+    </div>
+    <div>
+      <label for="new-category-description">New Category Description:</label>
+      <input
+        id="new-category-description"
+        bind:value={newCategoryDescription}
+        placeholder="Enter New Category Description"
+      />
+    </div>
+    <div>
+      <label for="new-category-sort-order">New Category Sort Order:</label>
+      <input
+        id="new-category-sort-order"
+        type="number"
+        bind:value={newCategorySortOrder}
+        placeholder="Enter New Category Sort Order"
+      />
+    </div>
+  </div>
   <button
     class="green-btn"
     onclick={addCategory}
@@ -158,7 +184,15 @@
     }
   }
 
-  .new-category {
+  .category-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    label {
+      font-weight: bold;
+    }
+
     input {
       width: 100%;
     }

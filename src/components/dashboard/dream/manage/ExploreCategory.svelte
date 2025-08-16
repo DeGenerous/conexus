@@ -59,7 +59,7 @@
 </div>
 
 <div>
-  <CategoryFetcher {isAdmin} {isCreator} bind:selectedSectionId>
+  <CategoryFetcher bind:selectedSectionId>
     {#snippet Data(
       loadingSections: boolean,
       errorSections: string,

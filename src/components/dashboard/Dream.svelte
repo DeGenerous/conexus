@@ -83,7 +83,7 @@
 
 {#if loading}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
-{:else if isAdmin}
+{:else if isAdmin || isCreator}
   <section class="container fade-in">
     <p class="text-glowing">Dream It. Create It. Bring It to Life.</p>
     <a class="button-anchor button-glowing" href="/dashboard/dream/create">

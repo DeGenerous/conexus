@@ -36,6 +36,7 @@ export default class AppView {
   async getSections(): Promise<Section[]> {
     const cachedData = GetCache<Section[]>(SECTIONS_KEY);
     if (cachedData) {
+      console.log('Using cached sections data', cachedData);
       return cachedData;
     }
 

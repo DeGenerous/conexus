@@ -14,12 +14,12 @@ export default class CoNexus {
   maxStep: number = 0; // The maximum step number of the story.
 
   // Constructor
-  constructor(data?: GameData) {
+  constructor(data?: GameData, task_id?: string) {
     this.api = new StoryAPI(import.meta.env.PUBLIC_BACKEND);
 
     this.step_data = {} as GameData;
     if (data) {
-      this.#setStepData(data); // ✅ Works now
+      this.#setStepData(data, task_id); // ✅ Works now
     }
   }
 
@@ -179,12 +179,12 @@ export default class CoNexus {
    */
   async #generateImageStatus(task_id: string): Promise<void> {
     try {
-      const { message, data } = await this.api.imageStatus(
+      const { status, message, data } = await this.api.imageStatus(
         this.step_data.id,
         task_id,
       );
 
-      if (!data) {
+      if (!data || status === 'error') {
         api_error(message);
         return;
       }
@@ -198,11 +198,12 @@ export default class CoNexus {
       }
 
       if (data.status === 'ready') {
-        this.step_data.image = `${import.meta.env.PUBLIC_BACKEND}/${data.url}`;
+        const url = `${import.meta.env.PUBLIC_BACKEND}${data.url}`
+
+        this.step_data.image = url;
         this.step_data.image_type = 'url';
 
         console.log('image status is generated (#generateImageStatus)');
-        console.log(this);
 
         story.set(this);
         return;
@@ -258,14 +259,17 @@ export default class CoNexus {
    */
   async #setStory(data: { story: GameData; task_id: string }): Promise<void> {
     // Set step data
-    await this.#setStepData(data.story);
+    await this.#setStepData(data.story, data.task_id);
 
     // Wait for image generation
     await new Promise((resolve) => setTimeout(resolve, 3000));
-    await this.#generateImageStatus(data.task_id);
+
+    if (data.task_id !== '') {
+      await this.#generateImageStatus(data.task_id);
+    }
   }
 
-  async #setStepData(data: GameData): Promise<void> {
+  async #setStepData(data: GameData, task_id?: string): Promise<void> {
     this.step_data = data;
     this.maxStep = Math.max(this.maxStep, data.step);
 
@@ -277,6 +281,8 @@ export default class CoNexus {
     story.set(this);
     game.loading = false;
 
-    await Promise.all([this.#textToSpeech()]);
+    if (task_id !== '') {
+      await Promise.all([this.#textToSpeech()]);
+    }
   }
 }

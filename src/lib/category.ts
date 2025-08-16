@@ -24,15 +24,15 @@ export default class CategoryView {
   }
 
   async listAdminCategories(section_id: string): Promise<Category[]> {
-    const { message, data: categories } =
+    const { status, message, data: categories } =
       await this.api.listAdminCategories(section_id);
 
-    if (!categories) {
+    if (status === 'error') {
       api_error(message);
       return [];
     }
 
-    return categories;
+    return categories || [];
   }
 
   async updateAdminCategory(
@@ -64,15 +64,15 @@ export default class CategoryView {
   }
 
   async listCreatorCategories(): Promise<Category[]> {
-    const { message, data: categories } =
+    const { status, message, data: categories } =
       await this.api.listCreatorCategories();
 
-    if (!categories) {
+    if (status === 'error') {
       api_error(message);
       return [];
     }
 
-    return categories;
+    return categories || [];
   }
 
   async updateCreatorCategory(

@@ -4,10 +4,13 @@
   import CategoryFetcher from '@components/dashboard/dream/manage/category/CategoryFetcher.svelte';
 
   import { isAdmin } from '@stores/account.svelte';
+  import { derived } from 'svelte/store';
 
   let categoryView = new CategoryView();
 
   let selectedSectionId = $state('');
+
+  let Admin = $isAdmin;
 
   let fetchCategories = $state<() => Promise<void>>();
 
@@ -26,7 +29,7 @@
     errorAdd = '';
 
     try {
-      if (isAdmin) {
+      if (Admin) {
         if (!selectedSectionId) {
           errorAdd = 'Please select a section first.';
           return;
@@ -65,7 +68,7 @@
       errorCategories: string,
       categories: Category[],
     )}
-      {#if isAdmin}
+      {#if Admin}
         {#if loadingSections}
           <p>Loading sections...</p>
         {:else if errorSections}

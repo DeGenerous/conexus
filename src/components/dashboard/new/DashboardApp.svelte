@@ -6,22 +6,29 @@
   import Sidebar from '@components/dashboard/new/Sidebar.svelte';
   import { userState, ensureCreator } from '@utils/route-guard';
 
-  import Dashboard from '../Dashboard.svelte';
+  import Dashboard from './Dashboard.svelte';
+  import { ProfileSettings, ProfileMetrics } from './Profile';
+  import {
+    DreamCreate,
+    DreamDraft,
+    DreamDemo,
+    DreamCollections,
+    DreamCategories,
+    DreamNFTGates,
+  } from './dreaming';
+  import {
+    AdminANalyticsDashboard,
+    AdminANalyticsReport,
+    AdminManagementUser,
+    AdminManagementRole,
+    AdminManagementSection,
+    AdminWeb3Contract,
+    AdminWeb3Gate,
+  } from './admin';
 
-  import ProfileSettings from '../Profile/Settings.svelte';
-  import ProfileMetrics from '../Profile/Metrics.svelte';
+  import OmniHub from './OmniHub.svelte';
 
-  import DreamCreate from '../dreaming/new/Create.svelte';
-  import DreamDraft from '../dreaming/new/Draft.svelte';
-  import DreamDemo from '../dreaming/new/Demo.svelte';
-
-  import DreamCollections from '../dreaming/manage/Collection.svelte';
-  import DreamCategories from '../dreaming/manage/Category.svelte';
-  import DreamNFTGates from '../dreaming/manage/NFTGate.svelte';
-
-  // import OmniHub from '../OmniHub.svelte';
-
-  import { DASHBOARD_LINKS, buildRoutes } from '../routes';
+  import { DASHBOARD_LINKS, buildRoutes } from './routes';
 
   let isAdmin = $state<boolean>(false);
   let isCreator = $state<boolean>(false);
@@ -58,7 +65,29 @@
       component: DreamNFTGates as unknown as typeof SvelteComponent,
     }),
 
-    //   '/dashboard/omnihub': wrap({ component: OmniHub }),
+    '/dashboard/web3/contracts': wrap({
+      component: AdminWeb3Contract as unknown as typeof SvelteComponent,
+    }),
+    '/dashboard/web3/gates': wrap({
+      component: AdminWeb3Gate as unknown as typeof SvelteComponent,
+    }),
+    '/dashboard/management/users': wrap({
+      component: AdminManagementUser as unknown as typeof SvelteComponent,
+    }),
+    '/dashboard/management/roles': wrap({
+      component: AdminManagementRole as unknown as typeof SvelteComponent,
+    }),
+    '/dashboard/management/sections': wrap({
+      component: AdminManagementSection as unknown as typeof SvelteComponent,
+    }),
+    '/dashboard/analytics/dashboard': wrap({
+      component: AdminANalyticsDashboard as unknown as typeof SvelteComponent,
+    }),
+    '/dashboard/analytics/reports': wrap({
+      component: AdminANalyticsReport as unknown as typeof SvelteComponent,
+    }),
+
+    '/dashboard/omnihub': wrap({ component: OmniHub }),
   };
 
   const routes = buildRoutes(DASHBOARD_LINKS, componentMap);

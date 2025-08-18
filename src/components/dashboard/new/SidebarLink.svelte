@@ -1,7 +1,7 @@
 <script lang="ts">
   import { link } from 'svelte-spa-router';
 
-  import SidebarLink from './SidebarLink.svelte';
+  import SidebarLink from '@components/dashboard/new/SidebarLink.svelte';
 
   let {
     isAdmin,

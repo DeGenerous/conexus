@@ -3,11 +3,13 @@
   import Router, { location, type WrappedComponent } from 'svelte-spa-router';
   import { wrap } from 'svelte-spa-router/wrap';
 
-  import Sidebar from '@components/dashboard/new/Sidebar.svelte';
   import { userState, ensureCreator } from '@utils/route-guard';
 
-  import Dashboard from './Dashboard.svelte';
-  import { ProfileSettings, ProfileMetrics } from './Profile';
+  import Dashboard from '@components/dashboard/new/Dashboard.svelte';
+  import {
+    ProfileSettings,
+    ProfileMetrics,
+  } from '@components/dashboard/new/Profile';
   import {
     DreamCreate,
     DreamDraft,
@@ -15,7 +17,7 @@
     DreamCollections,
     DreamCategories,
     DreamNFTGates,
-  } from './dreaming';
+  } from '@components/dashboard/new/dream';
   import {
     AdminANalyticsDashboard,
     AdminANalyticsReport,
@@ -24,11 +26,14 @@
     AdminManagementSection,
     AdminWeb3Contract,
     AdminWeb3Gate,
-  } from './admin';
+  } from '@components/dashboard/new/admin';
+  import OmniHub from '@components/dashboard/new/OmniHub.svelte';
 
-  import OmniHub from './OmniHub.svelte';
-
-  import { DASHBOARD_LINKS, buildRoutes } from './routes';
+  import {
+    DASHBOARD_LINKS,
+    buildRoutes,
+  } from '@components/dashboard/new/routes';
+  import Sidebar from '@components/dashboard/new/Sidebar.svelte';
 
   let isAdmin = $state<boolean>(false);
   let isCreator = $state<boolean>(false);

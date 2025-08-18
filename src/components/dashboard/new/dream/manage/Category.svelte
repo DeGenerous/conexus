@@ -4,7 +4,6 @@
   import CategoryFetcher from '@components/dashboard/dream/manage/category/CategoryFetcher.svelte';
 
   import { isAdmin } from '@stores/account.svelte';
-  import { derived } from 'svelte/store';
 
   let categoryView = new CategoryView();
 

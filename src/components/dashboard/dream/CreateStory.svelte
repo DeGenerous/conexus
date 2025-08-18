@@ -27,7 +27,7 @@
   import Scenario from '@components/dashboard/dream/create/Scenario.svelte';
   import WritingStyle from '@components/dashboard/dream/create/WritingStyle.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
-  import CategoryFetcher from './manage/CategoryFetcher.svelte';
+  import CategoryFetcher from '@components/dashboard/dream/manage/category/CategoryFetcher.svelte';
 
   onMount(ensureCreator);
 

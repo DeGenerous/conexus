@@ -5,9 +5,13 @@
   let {
     isAdmin,
     isCreator,
+    open,
+    close,
   }: {
     isAdmin: boolean;
     isCreator: boolean;
+    open: boolean;
+    close: () => void;
   } = $props();
 
   let expanded = $state<Set<string>>(new Set());
@@ -20,7 +24,20 @@
   }
 </script>
 
-<aside class="sidebar">
+{#if open}
+  <div
+    role="button"
+    class="backdrop"
+    aria-label="Close sidebar"
+    onclick={close}
+    onkeydown={(e) => {
+      if (e.key === 'Enter' || e.key === ' ') close();
+    }}
+    tabindex="0"
+  ></div>
+{/if}
+
+<aside class="sidebar {open ? 'open' : ''}">
   <h2 class="sidebar-title">Dashboard</h2>
   <nav>
     {#each DASHBOARD_LINKS as item}
@@ -54,6 +71,34 @@
       font-weight: bold;
       margin-bottom: 1rem;
       @include text-glow;
+    }
+  }
+
+  /* Default: visible */
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Small screens: slide in/out */
+  @media (max-width: 768px) {
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      transform: translateX(-100%);
+      z-index: 1500;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1400;
     }
   }
 </style>

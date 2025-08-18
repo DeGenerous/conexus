@@ -1,10 +1,14 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
-  import { userState } from '@utils/route-guard';
-
   import SidebarLink from './SidebarLink.svelte';
   import { DASHBOARD_LINKS } from '../routes';
+
+  let {
+    isAdmin,
+    isCreator,
+  }: {
+    isAdmin: boolean;
+    isCreator: boolean;
+  } = $props();
 
   let expanded = $state<Set<string>>(new Set());
   let activePath = $state<string>('');
@@ -14,14 +18,6 @@
     newSet.has(name) ? newSet.delete(name) : newSet.add(name);
     expanded = newSet;
   }
-
-  let isAdmin = $state<boolean>(false);
-  let isCreator = $state<boolean>(false);
-
-  onMount(async () => {
-    isAdmin = await userState('admin');
-    isCreator = await userState('creator');
-  });
 </script>
 
 <aside class="sidebar">

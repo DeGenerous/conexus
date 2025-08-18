@@ -32,18 +32,18 @@ const Drafts = {
     clearAllData();
 
     const id = uuid();
-    const when = Date.now();
+    const when = new Date();
     const draft: DraftPayload = {
       id,
       title: 'Untitled',
-      created: when,
-      updated: when,
+      created_at: when,
+      updated_at: when,
       schema: SCHEMA_VERSION,
       data: collectState(),
     };
 
     SetCache(DRAFT_KEY(id), draft);
-    writeIndex([...readIndex(), { id, title: draft.title, updated: when }]);
+    writeIndex([...readIndex(), { id, title: draft.title, updated_at: when }]);
     SetCache(CURRENT_DRAFT_KEY, id);
 
     currentDraft.set(draft);
@@ -61,7 +61,7 @@ const Drafts = {
     if (!draft) return toastStore.show(`Save unknown draft`, 'error');
 
     draft.data = collectState();
-    draft.updated = Date.now();
+    draft.updated_at = new Date();
     if (draft.data.storyData.name) draft.title = draft.data.storyData.name;
 
     SetCache(DRAFT_KEY(id!), draft);
@@ -70,7 +70,7 @@ const Drafts = {
     const list = readIndex();
     const entry = list.find((e) => e.id === id)!;
     entry.title = draft.data.storyData.name || 'Untitled';
-    entry.updated = draft.updated;
+    entry.updated_at = draft.updated_at;
     writeIndex(list);
 
     currentDraft.set(draft);
@@ -103,7 +103,9 @@ const Drafts = {
   },
 
   list(): DraftIndexEntry[] {
-    return readIndex().sort((a, b) => b.updated - a.updated);
+    return readIndex().sort(
+      (a, b) => b.updated_at.getTime() - a.updated_at.getTime(),
+    );
   },
 };
 

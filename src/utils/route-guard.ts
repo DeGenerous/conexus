@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 
 import Account from '@lib/account';
-import { authenticated } from '@stores/account.svelte';
+import { authenticated, isAdmin, isCreator } from '@stores/account.svelte';
 
 const account: Account = new Account();
 
@@ -49,10 +49,13 @@ export async function ensureAdmin(
 }
 
 export async function ensureCreator(path = '/dashboard/dream') {
-  const [isAdmin, isCreator] = await Promise.all([
+  const [_isAdmin, _isCreator] = await Promise.all([
     userState('admin'),
     userState('creator'),
   ]);
 
-  if (!(isAdmin || isCreator)) redirectTo(path);
+  isAdmin.set(_isAdmin);
+  isCreator.set(_isCreator);
+
+  if (!(_isAdmin || _isCreator)) redirectTo(path);
 }

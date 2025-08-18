@@ -1,17 +1,4 @@
-import Dashboard from './Dashboard.svelte';
-
-import ProfileSettings from './Profile/Settings.svelte';
-import ProfileMetrics from './Profile/Metrics.svelte';
-
-import DreamCreate from './dreaming/new/Create.svelte';
-import DreamDraft from './dreaming/new/Draft.svelte';
-import DreamDemo from './dreaming/new/Demo.svelte';
-
-import DreamCollections from './dreaming/manage/Collection.svelte';
-import DreamCategories from './dreaming/manage/Category.svelte';
-import DreamNFTGates from './dreaming/manage/NFTGate.svelte';
-
-// import OmniHub from './OmniHub.svelte';
+import type { WrappedComponent } from 'svelte-spa-router';
 
 export const DASHBOARD_LINKS: Linking[] = [
   {
@@ -52,23 +39,11 @@ export const DASHBOARD_LINKS: Linking[] = [
   },
 ];
 
-// A mapping of path -> component
-const componentMap: Record<string, any> = {
-  '/dashboard/profile/settings': ProfileSettings,
-  '/dashboard/profile/metrics': ProfileMetrics,
-
-  '/dashboard/dream/create': DreamCreate,
-  '/dashboard/dream/drafts': DreamDraft,
-  '/dashboard/dream/demo': DreamDemo,
-
-  '/dashboard/dream/manage/collections': DreamCollections,
-  '/dashboard/dream/manage/categories': DreamCategories,
-  '/dashboard/dream/manage/nft-gates': DreamNFTGates,
-  //   '/dashboard/omnihub': OmniHub,
-};
-
-export function buildRoutes(links: Linking[], map = componentMap) {
-  const routes: Record<string, any> = {};
+export function buildRoutes(
+  links: Linking[],
+  map: Record<string, WrappedComponent>,
+): Record<string, WrappedComponent> {
+  const routes: Record<string, WrappedComponent> = {};
 
   function traverse(items: Linking[]) {
     for (const item of items) {
@@ -82,9 +57,6 @@ export function buildRoutes(links: Linking[], map = componentMap) {
   }
 
   traverse(links);
-
-  // fallback
-  routes['*'] = Dashboard;
 
   return routes;
 }

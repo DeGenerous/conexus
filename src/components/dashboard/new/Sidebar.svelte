@@ -1,6 +1,6 @@
 <script lang="ts">
-  import SidebarLink from './SidebarLink.svelte';
-  import { DASHBOARD_LINKS } from './routes';
+  import SidebarLink from '@components/dashboard/new/SidebarLink.svelte';
+  import { DASHBOARD_LINKS } from '@components/dashboard/new/routes';
 
   let {
     isAdmin,

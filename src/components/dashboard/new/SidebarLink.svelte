@@ -37,8 +37,6 @@
       case 'admin':
         return isAdmin;
       case 'creator':
-        return isCreator;
-      case 'admin & creator':
         return isAdmin || isCreator;
       default:
         return false;

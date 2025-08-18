@@ -11,11 +11,11 @@ export const DASHBOARD_LINKS: Linking[] = [
   },
   {
     name: 'Dream',
-    intended: 'admin & creator',
+    intended: 'creator',
     children: [
       {
         name: 'New',
-        intended: 'admin & creator',
+        intended: 'creator',
         children: [
           { name: 'Create', path: '/dashboard/dream/create' },
           { name: 'Drafts', path: '/dashboard/dream/drafts' },
@@ -24,11 +24,42 @@ export const DASHBOARD_LINKS: Linking[] = [
       },
       {
         name: 'Manage',
-        intended: 'admin & creator',
+        intended: 'creator',
         children: [
           { name: 'Collections', path: '/dashboard/dream/manage/collections' },
           { name: 'Categories', path: '/dashboard/dream/manage/categories' },
           { name: 'NFT Gates', path: '/dashboard/dream/manage/nft-gates' },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'Admin',
+    intended: 'admin',
+    children: [
+      {
+        name: 'Web3',
+        intended: 'admin',
+        children: [
+          { name: 'Contracts', path: '/dashboard/web3/contracts' },
+          { name: 'Gates', path: '/dashboard/web3/gates' },
+        ],
+      },
+      {
+        name: 'User Management',
+        intended: 'admin',
+        children: [
+          { name: 'Users', path: '/dashboard/management/users' },
+          { name: 'Roles', path: '/dashboard/management/roles' },
+          { name: 'Sections', path: '/dashboard/management/sections' },
+        ],
+      },
+      {
+        name: 'Analytics',
+        intended: 'admin',
+        children: [
+          { name: 'Dashboard', path: '/dashboard/analytics/dashboard' },
+          { name: 'Reports', path: '/dashboard/analytics/reports' },
         ],
       },
     ],

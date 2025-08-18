@@ -1,15 +1,9 @@
-import { get } from 'svelte/store';
-
 import Account from '@lib/account';
-import { authenticated, isAdmin, isCreator } from '@stores/account.svelte';
-
-const account: Account = new Account();
+import { isAdmin, isCreator } from '@stores/account.svelte';
 
 // Get the user object
 export async function getCurrentUser(): Promise<Nullable<User>> {
-  await account.me();
-
-  const user = get(authenticated);
+  const user = await Account.getUser();
   if (user) return user;
 
   return null;
@@ -34,8 +28,8 @@ export async function userState(
   if (!user) return false;
 
   if (state === 'signed') return true;
-  if (state === 'admin') return true;
-  if (state === 'creator') return false;
+  if (state === 'admin') return user.role === 'Admin';
+  if (state === 'creator') return user.role === 'Creator';
   if (state === 'referred') return !!user.referred;
 
   return false;

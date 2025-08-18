@@ -209,7 +209,7 @@ type DashboardPathLink = {
   children?: never;
 };
 
-type DashboardParentLinkDisplay = 'all' | 'admin' | 'creator' | 'admin & creator';
+type DashboardParentLinkDisplay = 'all' | 'admin' | 'creator';
 
 // A "parent" link — has children, no path
 type DashboardParentLink = {

@@ -7,6 +7,9 @@
 
   const topicManager = new Topics();
 
+  let Admin = $isAdmin;
+  let Creator = $isCreator;
+
   let page = $state(1);
   let pageSize = $state(10);
 
@@ -14,9 +17,9 @@
   let creatorCollection = $state<CollectionCategory[]>([]);
 
   onMount(async () => {
-    if (isAdmin) {
+    if (Admin) {
       adminCollection = await topicManager.getAdminCollection(page, pageSize);
-    } else if (isCreator) {
+    } else if (Creator) {
       creatorCollection = await topicManager.getCreatorCollection(
         page,
         pageSize,
@@ -90,13 +93,13 @@
     targetCategory: CollectionCategory,
   ) {
     // Remove from old category
-    if (isAdmin) {
+    if (Admin) {
       for (const section of adminCollection) {
         for (const cat of section.categories) {
           cat.topics = cat.topics.filter((t) => t.topic_id !== topic.topic_id);
         }
       }
-    } else if (isCreator) {
+    } else if (Creator) {
       for (const cat of creatorCollection) {
         cat.topics = cat.topics.filter((t) => t.topic_id !== topic.topic_id);
       }
@@ -110,7 +113,7 @@
 </script>
 
 <section class="collection-container">
-  {#if isAdmin}
+  {#if Admin}
     {#each adminCollection as section}
       <div
         class="section"
@@ -214,7 +217,7 @@
     {/each}
   {/if}
 
-  {#if isCreator}
+  {#if Creator}
     {#each creatorCollection as category}
       <div
         class="category"

@@ -40,6 +40,12 @@
     isCreator = await userState('creator');
   });
 
+  let sidebarOpen = $state(false);
+
+  function toggleSidebar() {
+    sidebarOpen = !sidebarOpen;
+  }
+
   // A mapping of path -> component
   const componentMap: Record<string, WrappedComponent> = {
     '/dashboard/profile/settings': wrap({ component: ProfileSettings }),
@@ -97,7 +103,16 @@
 </script>
 
 <div class="dashboard-layout">
-  <Sidebar {isAdmin} {isCreator} />
+  <button class="hamburger" onclick={toggleSidebar} aria-label="Toggle sidebar">
+    ☰
+  </button>
+
+  <Sidebar
+    {isAdmin}
+    {isCreator}
+    open={sidebarOpen}
+    close={() => (sidebarOpen = false)}
+  />
 
   <main class="dashboard-main">
     <Router {routes} />
@@ -117,5 +132,24 @@
     flex: 1;
     padding: 1rem;
     overflow-y: auto;
+  }
+
+  .hamburger {
+    display: none;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    color: white;
+    cursor: pointer;
+    z-index: 2000;
+  }
+
+  @media (max-width: 768px) {
+    .hamburger {
+      display: block;
+    }
   }
 </style>

@@ -3,10 +3,7 @@ import { isAdmin, isCreator } from '@stores/account.svelte';
 
 // Get the user object
 export async function getCurrentUser(): Promise<Nullable<User>> {
-  const user = await Account.getUser();
-  if (user) return user;
-
-  return null;
+  return await Account.getUser();
 }
 
 function redirectTo(path: string) {

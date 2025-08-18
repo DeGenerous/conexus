@@ -1,5 +1,7 @@
 import type { WrappedComponent } from 'svelte-spa-router';
 
+export const DASHBOARD_PATH = '/dashboard';
+
 export const DASHBOARD_LINKS: Linking[] = [
   {
     name: 'Profile',

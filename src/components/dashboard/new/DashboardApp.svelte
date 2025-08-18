@@ -124,13 +124,13 @@
   </main>
 </div>
 
-<hr />
-/#{$location}
+<!-- <hr />
+/#{$location} -->
 
 <style>
   .dashboard-layout {
     display: flex;
-    height: 100vh;
+    height: 100%;
     width: 100%;
   }
   .dashboard-main {

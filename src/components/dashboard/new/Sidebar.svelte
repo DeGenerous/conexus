@@ -1,6 +1,11 @@
 <script lang="ts">
+  import { link } from 'svelte-spa-router';
+
   import SidebarLink from '@components/dashboard/new/SidebarLink.svelte';
-  import { DASHBOARD_LINKS } from '@components/dashboard/new/routes';
+  import {
+    DASHBOARD_PATH,
+    DASHBOARD_LINKS,
+  } from '@components/dashboard/new/routes';
 
   let {
     isAdmin,
@@ -38,7 +43,9 @@
 {/if}
 
 <aside class="sidebar {open ? 'open' : ''}">
-  <h2 class="sidebar-title">Dashboard</h2>
+  <a class="sidebar-title" href={DASHBOARD_PATH} use:link tabindex="0">
+    Dashboard
+  </a>
   <nav>
     {#each DASHBOARD_LINKS as item}
       <SidebarLink

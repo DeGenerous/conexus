@@ -34,12 +34,14 @@ export default class CoNexus {
    * Start a new game
    * @param topic_id  The ID of the topic to start the game for
    * @param storySettings The settings for the story
+   * @param mode The play mode for the story, either 'play_limited' or 'play_unlimited'
    * @param setMedia A function to set the media for the story
    * @returns {Promise<void>} A promise that resolves when the game is started
    */
   async start(
     topic_id: string,
     storySettings: StorySettingSelector,
+    mode: PlayMode = 'play_limited',
     setMedia: (topic_id: string) => Promise<void>,
   ): Promise<void> {
     game.loading = true;
@@ -47,6 +49,7 @@ export default class CoNexus {
     const { status, message, data } = await this.api.start(
       topic_id,
       storySettings,
+      mode,
     );
 
     if (!data) {

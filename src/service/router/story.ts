@@ -22,14 +22,19 @@ export default class StoryAPI extends Fetcher {
    * Start a new story
    * @param topic_id The ID of the topic
    * @param settings The settings for the story
+   * @param mode The play mode for the story, either 'play_limited' or 'play_unlimited'
    * @returns The story data and image generation task ID
    */
-  async start(topic_id: string, settings: StorySettingSelector = 'topic') {
+  async start(
+    topic_id: string,
+    settings: StorySettingSelector = 'topic',
+    mode: PlayMode = 'play_limited',
+  ) {
     return this.request<{ story: GameData; task_id: string }>(
       `${this.group}/start`,
       {
         method: 'POST',
-        body: JSON.stringify({ topic_id, settings }),
+        body: JSON.stringify({ topic_id, settings, mode }),
       },
     );
   }
@@ -123,7 +128,7 @@ export default class StoryAPI extends Fetcher {
    * @returns The status of the image generation task or the generated image
    */
   async imageStatus(story_id: string, task_id: string) {
-    return this.request<{ status: 'pending' | 'ready', url?: string }>(
+    return this.request<{ status: 'pending' | 'ready'; url?: string }>(
       `${this.group}/image-status`,
       {
         method: 'POST',

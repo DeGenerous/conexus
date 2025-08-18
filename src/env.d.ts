@@ -201,3 +201,23 @@ type NavContext = {
   items: NavItem[];
   index: number;
 };
+
+type DashboardPathLink = {
+  name: string;
+  path: string;
+  display?: () => boolean;
+  children?: never;
+};
+
+type DashboardParentLinkDisplay = 'all' | 'admin' | 'creator' | 'admin & creator';
+
+// A "parent" link — has children, no path
+type DashboardParentLink = {
+  name: string;
+  intended: DashboardParentLinkDisplay;
+  children: Linking[];
+  display?: () => boolean;
+  path?: never;
+};
+
+type Linking = DashboardPathLink | DashboardParentLink;

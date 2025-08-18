@@ -144,6 +144,8 @@
           </select>
         {/if}
       </div>
+    {:catch error}
+      <p class="error-message">Error loading categories: {error.message}</p>
     {/await}
 
     <button disabled={!importedFile} onclick={handleImportStory}>

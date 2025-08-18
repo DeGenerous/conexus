@@ -54,7 +54,8 @@
 </nav>
 
 {#if nav === 'collection'}
-  <Collections {selectInput} />
+  <Collections  />
+  <!-- <Collections {selectInput} /> -->
 {:else if nav === 'nft-gates'}
   <NFTGates {selectInput} />
 {:else if nav === 'categories'}

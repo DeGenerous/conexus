@@ -247,18 +247,15 @@
           </button>
 
           {#if expandedCategories.has(category.category_id)}
-            <ul>
+            <ul class="tiles-collection">
               {#each category.topics as topic, i}
                 <li
-                  class="tiles-collection"
+                  class="tile"
                   draggable="true"
                   ondragstart={() => (draggedTopic = topic)}
                   ondragend={() => (draggedTopic = null)}
                 >
-                  <a
-                    class="tile"
-                    href={DASHBOARD_ROUTES.EXPLORE(topic.topic_id)}
-                  >
+                  <a href={DASHBOARD_ROUTES.EXPLORE(topic.topic_id)}>
                     <span>{topic.topic_name}</span>
                     <button onclick={() => toggleAvailability(topic)}>
                       {topic.available ? 'Disable' : 'Enable'}
@@ -299,41 +296,51 @@
     outline: none !important;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
+    padding: 1rem;
   }
 
+  /* Section container */
   .section {
-    @extend .collection-wrapper !optional; // reuse wrapper styling
+    display: flex;
     flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
+  /* Section header */
   .section-toggle {
-    @extend .collection-header !optional;
-    cursor: pointer;
     background: transparent;
     border: none;
-    width: 100%;
     text-align: left;
+    width: 100%;
+    cursor: pointer;
+    padding: 0.5rem 0;
 
     h3 {
       margin: 0;
-      font-size: 1.25rem;
+      font-size: 1.3rem;
       font-weight: 600;
     }
   }
 
+  /* Categories stay stacked */
   .category {
-    @extend .collection-wrapper !optional;
     margin-left: 1rem;
     padding-left: 1rem;
-    border-left: 2px solid rgba(255, 255, 255, 0.1);
+    border-left: 2px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 
     .category-toggle {
-      @extend .collection-header !optional;
-      cursor: pointer;
       background: transparent;
       border: none;
-      width: 100%;
+      cursor: pointer;
+      text-align: left;
 
       h4 {
         margin: 0;
@@ -343,34 +350,86 @@
     }
   }
 
-  ul {
+  /* Topics container → horizontal scroll */
+  .category ul {
     list-style: none;
     padding: 0;
-    margin: 0.75rem 0 0;
+    margin: 0.5rem 0 0;
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    flex-direction: row;
+    gap: 1rem;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 
-    li {
-      @include box-glow(inset, 0.25);
-      border-radius: 0.5rem;
-      padding: 0.5rem 0.75rem;
+    /* Webkit scrollbar styling */
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+  }
+
+  /* Each topic tile */
+  .tiles-collection {
+    // flex: 0 0 auto; /* prevent shrinking */
+    // min-width: 200px;
+    // background: rgba(255, 255, 255, 0.05);
+    // border-radius: 0.5rem;
+    // padding: 0.75rem;
+    // display: flex;
+    // flex-direction: column;
+    // justify-content: space-between;
+    // gap: 0.5rem;
+
+    .tile {
+      color: white;
+      text-decoration: none;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.05);
+      flex-direction: column;
+      gap: 0.5rem;
 
       span {
-        flex-grow: 1;
+        font-weight: 500;
+        font-size: 1rem;
       }
 
       button {
-        @include box-glow(outset, 0.25);
-        margin-left: 0.5rem;
-        padding: 0.25rem 0.75rem;
-        border-radius: 0.3rem;
-        font-size: 0.85rem;
+        padding: 0.3rem 0.6rem;
+        border-radius: 0.4rem;
+        font-size: 0.8rem;
+        border: none;
+        cursor: pointer;
+        background: rgba(100, 181, 246, 0.15);
+        color: #90caf9;
+        transition: background 0.2s;
+
+        &:hover {
+          background: rgba(100, 181, 246, 0.3);
+        }
       }
+    }
+  }
+
+  /* Responsive tweaks */
+  @media (max-width: 768px) {
+    .collection-container {
+      gap: 1rem;
+      padding: 0.5rem;
+    }
+
+    .tiles-collection {
+      min-width: 150px;
+    }
+
+    .section-toggle h3 {
+      font-size: 1.1rem;
+    }
+
+    .category-toggle h4 {
+      font-size: 1rem;
     }
   }
 </style>

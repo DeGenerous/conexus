@@ -39,7 +39,7 @@
   let isCreator = $state<boolean>(false);
 
   onMount(async () => {
-    await ensureCreator();
+    // await ensureCreator();
 
     isAdmin = await userState('admin');
     isCreator = await userState('creator');
@@ -98,7 +98,9 @@
       component: AdminANalyticsReport as unknown as typeof SvelteComponent,
     }),
 
-    '/dashboard/omnihub': wrap({ component: OmniHub }),
+    '/dashboard/omnihub': wrap({
+      component: OmniHub as unknown as typeof SvelteComponent,
+    }),
   };
 
   const routes = buildRoutes(DASHBOARD_LINKS, componentMap);

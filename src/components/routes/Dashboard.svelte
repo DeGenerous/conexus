@@ -2,7 +2,6 @@
   import { onMount } from 'svelte';
 
   import Account from '@lib/account';
-  import { getCurrentUser } from '@utils/route-guard';
   import { referralCodes } from '@stores/account.svelte';
   import { showProfile } from '@stores/modal.svelte';
   import openModal from '@stores/modal.svelte';
@@ -24,7 +23,7 @@
   let copySvgFocus = $state<Nullable<string>>(null);
 
   onMount(async () => {
-    user = await getCurrentUser();
+    user = await Account.getUser();
     if (account && user && user.email_confirmed) {
       account.getReferralCodes();
       checkSubscription();

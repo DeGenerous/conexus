@@ -75,6 +75,15 @@ export default class Fetcher {
         };
       }
 
+      if (response.status >= 402) {
+        const errorMessage = await response.text();
+        return {
+          status: 'error',
+          message: errorMessage,
+          error: { details: errorMessage },
+        };
+      }
+
       const contentType = response.headers.get('Content-Type');
       const isJson = contentType && contentType.includes('application/json');
 

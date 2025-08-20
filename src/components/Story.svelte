@@ -55,7 +55,13 @@
     game.background_music = null;
     $story = null;
     setTimeout(() => {
-      activeTopic && conexusGame.start(activeTopic.id, 'topic', handleSetMedia);
+      activeTopic &&
+        conexusGame.start(
+          activeTopic.id,
+          'topic',
+          'play_limited',
+          handleSetMedia,
+        );
     });
   };
 
@@ -210,7 +216,12 @@
                       }
                       activeTopic = topic;
                       topic &&
-                        conexusGame.start(topic.id, 'topic', handleSetMedia);
+                        conexusGame.start(
+                          topic.id,
+                          'topic',
+                          'play_limited',
+                          handleSetMedia,
+                        );
                     }}
                   >
                     PLAY NOW

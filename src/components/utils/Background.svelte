@@ -12,13 +12,31 @@
   const cssURL = (imageLink: string): string => `url('${imageLink}')`;
 
   const setBG = (imageLink: Nullable<string>) => {
-    const formatted = imageLink
-      ? cssURL(imageLink)
+    const finalImageLink = imageLink
+      ? imageLink
       : width < 768
-        ? cssURL(mobileBG)
-        : cssURL(pcBG);
+        ? mobileBG
+        : pcBG;
 
-    lastBG = formatted;
+    // Use a temporary Image object to check for errors
+    const img = new Image();
+    img.src = finalImageLink;
+
+    img.onload = () => {
+      // If the image loads successfully, set the background
+      const formatted = cssURL(finalImageLink);
+      lastBG = formatted;
+    };
+
+    img.onerror = () => {
+      // If the image fails to load, use a fallback URL
+      const fallbackImageLink = width < 768 ? mobileBG : pcBG;
+      const formattedFallback = cssURL(fallbackImageLink);
+      lastBG = formattedFallback;
+      console.error(
+        `Failed to load image from ${finalImageLink}. Using fallback.`,
+      );
+    };
   };
 
   // Check stored BG value, set default if null

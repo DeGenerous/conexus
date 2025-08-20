@@ -7,7 +7,6 @@ import {
   SetCache,
 } from '@constants/cache';
 import { serveUrl } from '@constants/media';
-import { tracks } from '@constants/tracks';
 import { api_error } from '@errors/index';
 import ViewAPI from '@service/router/view';
 import { availableGenres } from '@stores/view.svelte';
@@ -234,7 +233,7 @@ export default class AppView {
       return [];
     }
 
-    return data || []
+    return data || [];
   }
 
   async getTopicPage(
@@ -245,10 +244,9 @@ export default class AppView {
 
     if (!data) {
       api_error(message);
-      return null;
     }
 
-    return data;
+    return data || null;
   }
 
   async getMediaFile(
@@ -270,10 +268,9 @@ export default class AppView {
 
     if (!data) {
       api_error(message);
-      return null;
     }
 
-    return data;
+    return data || null;
   }
 
   async setBackgroundImage(topic_id: string): Promise<string | null> {
@@ -287,37 +284,12 @@ export default class AppView {
   }
 
   async playBackgroundMusic(topic_id: string): Promise<string | null> {
-    let queue: string[] = JSON.parse(localStorage.getItem('queue') ?? '[]');
-
     const audios = await this.getMediaFile(topic_id, 'audio');
     if (audios && audios.length > 0) {
       let randomAudio = audios[Math.floor(Math.random() * audios.length)];
       return serveUrl(randomAudio);
     }
 
-    const shuffle = <T>(array: T[]): T[] => {
-      let currentIndex = array.length,
-        randomIndex: number;
-
-      while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-
-        [array[currentIndex], array[randomIndex]] = [
-          array[randomIndex],
-          array[currentIndex],
-        ];
-      }
-
-      return array;
-    };
-
-    if (queue.length === 0) {
-      queue = shuffle([...tracks]);
-    }
-
-    localStorage.setItem('queue', JSON.stringify(queue));
-
-    return queue.pop() || null;
+    return null;
   }
 }

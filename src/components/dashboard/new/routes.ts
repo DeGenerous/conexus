@@ -7,6 +7,7 @@ export const DASHBOARD_LINKS: Linking[] = [
     name: 'Profile',
     intended: 'all',
     children: [
+      { name: 'Overview', path: '/dashboard/profile/overview' },
       { name: 'Settings', path: '/dashboard/profile/settings' },
       { name: 'Metrics', path: '/dashboard/profile/metrics' },
     ],

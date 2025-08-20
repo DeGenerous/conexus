@@ -207,7 +207,9 @@ export default class AccountAPI extends Fetcher {
    * @returns A promise that resolves to the dashboard topics  or an error.
    */
   async getTagBookmarks(tagId: string) {
-    return this.request<Bookmark[]>(`${this.group}/get-bookmark-tag-topics/${tagId}`);
+    return this.request<Bookmark[]>(
+      `${this.group}/get-bookmark-tag-topics/${tagId}`,
+    );
   }
 
   /**
@@ -277,6 +279,20 @@ export default class AccountAPI extends Fetcher {
     return this.request<DashboardTopic[]>(`${this.group}/stories`, {
       method: 'POST',
       body: JSON.stringify(request),
+    });
+  }
+
+  async notificationInbox(page: number, pageSize: number) {
+    return this.request<{
+      notifications: AccountNotification[];
+      totalCount: number;
+      unreadCount: number;
+    }>(`${this.group}/notification/inbox?page=${page}&pageSize=${pageSize}`);
+  }
+
+  async markNotificationRead(id: string) {
+    return this.request(`${this.group}/notification/${id}/read`, {
+      method: 'POST',
     });
   }
 

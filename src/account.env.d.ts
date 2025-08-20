@@ -106,3 +106,15 @@ type DashboardTopic = {
   name?: string;
   tile_file_url?: string;
 };
+
+type AccountNotificationData = {
+  href?: string;
+};
+
+type AccountNotification = {
+  id: string;
+  title: string;
+  message: string;
+  data?: AccountNotificationData;
+  read_at: string | null;
+};

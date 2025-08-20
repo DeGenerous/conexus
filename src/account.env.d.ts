@@ -114,7 +114,7 @@ type AccountNotificationData = {
 type AccountNotification = {
   id: string;
   title: string;
-  message: string;
+  body: string;
   data?: AccountNotificationData;
   read_at: string | null;
 };

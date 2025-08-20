@@ -22,11 +22,12 @@ describe('StoryAPI', () => {
 
     const topic_id = 'topic1';
     const settings: StorySettingSelector = 'account';
-    const result = await api.start(topic_id, settings);
+    const mode: PlayMode = 'play_limited';
+    const result = await api.start(topic_id, settings, mode);
 
     expect(api.request).toHaveBeenCalledWith('/story/start', {
       method: 'POST',
-      body: JSON.stringify({ topic_id, settings }),
+      body: JSON.stringify({ topic_id, settings, mode }),
     });
     expect(result).toBe(mockResponse);
   });
@@ -112,12 +113,12 @@ describe('StoryAPI', () => {
     mockRequest.mockResolvedValue(mockResponse);
 
     const story_id = 'story4';
-    const step_id = 'step1';
-    const result = await api.step(story_id, step_id);
+    const step = 1;
+    const result = await api.step(story_id, step);
 
     expect(api.request).toHaveBeenCalledWith('/story/step', {
       method: 'POST',
-      body: JSON.stringify({ story_id, step_id }),
+      body: JSON.stringify({ story_id, step }),
     });
     expect(result).toBe(mockResponse);
   });

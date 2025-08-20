@@ -16,7 +16,7 @@
     {#each $notifications as n}
       <article class="notif {n.read_at ? '' : 'unread'}">
         <h5>{n.title}</h5>
-        <p>{n.message}</p>
+        <p>{n.body}</p>
         <div class="row">
           <a href={n.data?.href}>Open</a>
           {#if !n.read_at}<button

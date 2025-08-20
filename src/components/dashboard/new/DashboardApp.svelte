@@ -6,27 +6,9 @@
   import { userState, ensureCreator } from '@utils/route-guard';
 
   import Dashboard from '@components/dashboard/new/Dashboard.svelte';
-  import {
-    ProfileSettings,
-    ProfileMetrics,
-  } from '@components/dashboard/new/Profile';
-  import {
-    DreamCreate,
-    DreamDraft,
-    DreamDemo,
-    DreamCollections,
-    DreamCategories,
-    DreamNFTGates,
-  } from '@components/dashboard/new/dream';
-  import {
-    AdminANalyticsDashboard,
-    AdminANalyticsReport,
-    AdminManagementUser,
-    AdminManagementRole,
-    AdminManagementSection,
-    AdminWeb3Contract,
-    AdminWeb3Gate,
-  } from '@components/dashboard/new/admin';
+  import { profileRoutes } from '@components/dashboard/new/Profile';
+  import { dreamRoutes } from '@components/dashboard/new/dream';
+  import { adminRoutes } from '@components/dashboard/new/admin';
   import OmniHub from '@components/dashboard/new/OmniHub.svelte';
 
   import {
@@ -53,50 +35,9 @@
 
   // A mapping of path -> component
   const componentMap: Record<string, WrappedComponent> = {
-    '/dashboard/profile/settings': wrap({ component: ProfileSettings }),
-    '/dashboard/profile/metrics': wrap({ component: ProfileMetrics }),
-
-    '/dashboard/dream/create': wrap({
-      component: DreamCreate as unknown as typeof SvelteComponent,
-    }),
-    '/dashboard/dream/drafts': wrap({
-      component: DreamDraft as unknown as typeof SvelteComponent,
-    }),
-    '/dashboard/dream/demo': wrap({
-      component: DreamDemo as unknown as typeof SvelteComponent,
-    }),
-
-    '/dashboard/dream/manage/collections': wrap({
-      component: DreamCollections as unknown as typeof SvelteComponent,
-    }),
-    '/dashboard/dream/manage/categories': wrap({
-      component: DreamCategories as unknown as typeof SvelteComponent,
-    }),
-    '/dashboard/dream/manage/nft-gates': wrap({
-      component: DreamNFTGates as unknown as typeof SvelteComponent,
-    }),
-
-    '/dashboard/web3/contracts': wrap({
-      component: AdminWeb3Contract as unknown as typeof SvelteComponent,
-    }),
-    '/dashboard/web3/gates': wrap({
-      component: AdminWeb3Gate as unknown as typeof SvelteComponent,
-    }),
-    '/dashboard/management/users': wrap({
-      component: AdminManagementUser as unknown as typeof SvelteComponent,
-    }),
-    '/dashboard/management/roles': wrap({
-      component: AdminManagementRole as unknown as typeof SvelteComponent,
-    }),
-    '/dashboard/management/sections': wrap({
-      component: AdminManagementSection as unknown as typeof SvelteComponent,
-    }),
-    '/dashboard/analytics/dashboard': wrap({
-      component: AdminANalyticsDashboard as unknown as typeof SvelteComponent,
-    }),
-    '/dashboard/analytics/reports': wrap({
-      component: AdminANalyticsReport as unknown as typeof SvelteComponent,
-    }),
+    ...profileRoutes,
+    ...dreamRoutes,
+    ...adminRoutes,
 
     '/dashboard/omnihub': wrap({
       component: OmniHub as unknown as typeof SvelteComponent,

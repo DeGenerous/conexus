@@ -12,12 +12,15 @@ import { api_error } from '@errors/index';
 import AccountAPI from '@service/router/account';
 import { authenticated, referralCodes } from '@stores/account.svelte';
 import { toastStore } from '@stores/toast.svelte';
+import NotificationService from './notification';
 
 class Account {
   protected api: AccountAPI;
+  notification: NotificationService;
 
   constructor() {
     this.api = new AccountAPI(import.meta.env.PUBLIC_BACKEND);
+    this.notification = new NotificationService(this.api);
   }
 
   /**

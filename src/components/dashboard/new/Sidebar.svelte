@@ -58,6 +58,18 @@
       />
     {/each}
   </nav>
+  <div class="sidebar-footer">
+    <hr />
+
+    <h4>Report bugs or ask for help</h4>
+    <div class="flex-row">
+      <a href="mailto:support@degenerousdao.com">Support</a>
+      <span style:color="#bebebe">|</span>
+      <a href="http://degenerousdao.com/join">Discord</a>
+      <span style:color="#bebebe">|</span>
+      <a href="/learn/faq">FAQ</a>
+    </div>
+  </div>
 </aside>
 
 <style lang="scss">
@@ -78,6 +90,31 @@
       font-weight: bold;
       margin-bottom: 1rem;
       @include text-glow;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 1rem;
+      color: #bebebe;
+
+      h4 {
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+      }
+
+      a {
+        color: #ffffff;
+        text-decoration: none;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      .flex-row {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
     }
   }
 

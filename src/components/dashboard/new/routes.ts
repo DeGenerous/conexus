@@ -41,15 +41,7 @@ export const DASHBOARD_LINKS: Linking[] = [
     intended: 'admin',
     children: [
       {
-        name: 'Web3',
-        intended: 'admin',
-        children: [
-          { name: 'Contracts', path: '/dashboard/web3/contracts' },
-          { name: 'Gates', path: '/dashboard/web3/gates' },
-        ],
-      },
-      {
-        name: 'User Management',
+        name: 'Management',
         intended: 'admin',
         children: [
           { name: 'Users', path: '/dashboard/management/users' },
@@ -57,6 +49,15 @@ export const DASHBOARD_LINKS: Linking[] = [
           { name: 'Sections', path: '/dashboard/management/sections' },
         ],
       },
+      {
+        name: 'Web3',
+        intended: 'admin',
+        children: [
+          { name: 'Contracts', path: '/dashboard/web3/contracts' },
+          { name: 'Gates', path: '/dashboard/web3/gates' },
+        ],
+      },
+
       {
         name: 'Analytics',
         intended: 'admin',

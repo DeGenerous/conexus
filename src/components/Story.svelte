@@ -3,15 +3,16 @@
   import { onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
 
+  import { GetCache, SECTION_CATEGORIES_KEY } from '@constants/cache';
   import { blankImage, serveUrl } from '@constants/media';
-  import CoNexusApp from '@lib/view';
-  import CoNexusGame from '@lib/story';
-  import { story, game } from '@stores/conexus.svelte';
-  import { navContext } from '@stores/navigation.svelte';
-  import { GetCache, SECTION_CATEGORIES_KEY, TERMS_KEY } from '@constants/cache';
-  import detectIOS from '@utils/ios-device';
-  import openModal, { showProfile } from '@stores/modal.svelte';
   import { deleteUnfinishedModal, referralWarning } from '@constants/modal';
+  import { NAV_ROUTES }from '@constants/routes';
+  import CoNexusGame from '@lib/story';
+  import CoNexusApp from '@lib/view';
+  import { story, game } from '@stores/conexus.svelte';
+  import openModal, { showProfile } from '@stores/modal.svelte';
+  import { navContext } from '@stores/navigation.svelte';
+  import detectIOS from '@utils/ios-device';
   import { userState, getCurrentUser } from '@utils/route-guard';
 
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
@@ -341,8 +342,7 @@
             {#each topic.topic_gates as gate}
               {#if 'gate_type' in gate}
                 <a
-                  href={gate.purchase_link ||
-                    'https://degenerousdao.gitbook.io/wiki'}
+                  href={gate.purchase_link || NAV_ROUTES.WIKI}
                   class:inactive-link={!gate.purchase_link}
                   target="_blank"
                   on:click={(event) => {

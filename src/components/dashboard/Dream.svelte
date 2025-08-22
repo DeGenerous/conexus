@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { DASHBOARD_ROUTES } from '@constants/routes';
+  import { NAV_ROUTES }from '@constants/routes';
   import Topic from '@lib/topics';
   import CategoryView from '@lib/category';
   import { toastStore } from '@stores/toast.svelte';
@@ -87,7 +87,7 @@
 {:else if isAdmin || isCreator}
   <section class="container fade-in">
     <p class="text-glowing">Dream It. Create It. Bring It to Life.</p>
-    <a class="button-anchor button-glowing" href={DASHBOARD_ROUTES.CREATE}>
+    <a class="button-anchor button-glowing" href={NAV_ROUTES.CREATE}>
       Create
     </a>
     <p class="text-glowing">
@@ -97,7 +97,7 @@
     <hr />
 
     <p class="text-glowing">Add the finishing touches to your masterpiece.</p>
-    <a class="button-anchor button-glowing" href={DASHBOARD_ROUTES.MANAGE}>
+    <a class="button-anchor button-glowing" href={NAV_ROUTES.MANAGE}>
       Manage
     </a>
     <p class="text-glowing">Upload media, refine, and perfect your vision.</p>

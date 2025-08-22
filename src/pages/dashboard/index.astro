@@ -2,17 +2,19 @@
 import Layout from '@layouts/Layout.astro';
 
 import Dashboard from '@components/routes/Dashboard.svelte';
+import DashboardApp from '@components/dashboard/new/DashboardApp.svelte';
 
 const meta = {
-  header: 'Track Your Universe',
+  // header: 'Track Your Universe',
+  // subheading:
+  // 'Monitor plays, optimize engagement, and keep your best stories at the top.',
   nav: 'Dashboard',
-  subheading:
-    'Monitor plays, optimize engagement, and keep your best stories at the top.',
 };
 ---
 
 <Layout {...meta}>
   <main>
-    <Dashboard client:load />
+    <!-- <Dashboard client:load /> -->
+    <DashboardApp client:only="svelte" />
   </main>
 </Layout>

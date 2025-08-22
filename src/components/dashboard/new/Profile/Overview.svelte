@@ -22,11 +22,8 @@
   import { walletSwitchModal } from '@constants/modal';
   import { getCurrentUser } from '@utils/route-guard';
 
-  import ProfileSVG from '@components/icons/Profile.svelte';
   import DoorSVG from '@components/icons/Door.svelte';
   import EyeSVG from '@components/icons/Eye.svelte';
-  import QuitSVG from '@components/icons/Quit.svelte';
-  import CloseSVG from '@components/icons/Close.svelte';
   import StarSVG from '@components/icons/Star.svelte';
   import DiscordBtn from '@components/icons/Discord.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';

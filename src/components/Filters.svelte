@@ -2,7 +2,7 @@
 <script lang="ts">
   import { toastStore } from '@stores/toast.svelte';
 
-  import StoryTile from '@components/utils/StoryTile.svelte';
+  import TopicTile from '@components/utils/TopicTile.svelte';
   import GenreSelect from '@components/utils/GenreFilter.svelte';
   import SearchSection from '@components/utils/SearchFilter.svelte';
 
@@ -219,10 +219,10 @@
   <div class="tiles-collection filtered-tiles" onscroll={handleScroll}>
     {#key sortedTopics}
       {#each sortedTopics as topic, i}
-        <StoryTile {name} {intended} bind:topic={sortedTopics[i]} bind:loading={isSearching} />
+        <TopicTile {name} {intended} bind:topic={sortedTopics[i]} bind:loading={isSearching} />
       {/each}
       {#if !isEndReached && isSearching}
-        <StoryTile {name} {intended} topic={null} loading={isSearching} />
+        <TopicTile {name} {intended} topic={null} loading={isSearching} />
       {/if}
     {/key}
   </div>

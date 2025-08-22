@@ -10,7 +10,7 @@
     TTL_HOUR,
   } from '@constants/cache';
 
-  import StoryTile from '@components/utils/StoryTile.svelte';
+  import TopicTile from '@components/utils/TopicTile.svelte';
   import SortingSVG from '@components/icons/Sorting.svelte';
 
   let {
@@ -150,7 +150,7 @@
   {:else}
     {#key sortedTopics}
       {#each sortedTopics as topic, i}
-        <StoryTile
+        <TopicTile
           {name}
           {intended}
           bind:topic={sortedTopics[i]}

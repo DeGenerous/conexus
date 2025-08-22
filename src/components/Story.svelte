@@ -24,7 +24,7 @@
   import DoorSVG from '@components/icons/Door.svelte';
   import Share from '@components/utils/Share.svelte';
 
-  export let section: string;
+  export let section_name: string;
   export let topic_id: string;
   export let topic_name: string;
 
@@ -74,7 +74,7 @@
 
     // Get all topics in SECTION from the localStorage
     const storedTopics = GetCache<CategoryInSection[]>(
-      SECTION_CATEGORIES_KEY(section),
+      SECTION_CATEGORIES_KEY(section_name),
     )
       ?.map((category: CategoryInSection) => category.topics)
       .flat();
@@ -82,7 +82,7 @@
       navContext.setContext({
         items: storedTopics.map(({ topic_name, topic_order }) => ({
           name: topic_name,
-          link: `/sections/${section}/${topic_name}?id=${topic_order}`,
+          link: `/s/${section_name}/${topic_name}?id=${topic_order}`,
         })),
         index: storedTopics.findIndex(
           (topic) => topic.topic_name === topic_name,

@@ -46,9 +46,9 @@
   <a
     class="tile"
     class:gated-story={topic.topic_gates && topic.topic_gates.length > 0}
-    href="/sections/{section_name}/{topic.id}?title={topic.name}"
+    href="/s/{section_name}/{topic.id}?title={topic.name}"
   >
-    <!-- href="/sections/{section_name}/{topic.name}?id={topic.id}" -->
+    <!-- href="/s/{section_name}/{topic.name}?id={topic.id}" -->
     <img
       loading="lazy"
       src={serveUrl(topic.tile_file_url) ?? blankImage}

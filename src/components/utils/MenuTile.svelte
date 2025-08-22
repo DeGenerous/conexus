@@ -34,7 +34,7 @@
   class:highlighted-menu-tile={section.name === 'Community Picks' &&
     $highlightCommunityPicks}
   id={section.name}
-  href="/sections/{section.name}"
+  href="/s/{section.name}"
 >
   <img
     src={sectionImage ?? blankPicture}

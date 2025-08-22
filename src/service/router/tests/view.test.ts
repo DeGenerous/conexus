@@ -42,12 +42,6 @@ describe('ViewAPI', () => {
     });
   });
 
-  it('calls request with correct URL for getRoles', async () => {
-    mockRequest.mockResolvedValue([]);
-    await api.getRoles();
-    expect(mockRequest).toHaveBeenCalledWith('/admin/roles');
-  });
-
   it('calls request with correct URL for sectionTopics', async () => {
     mockRequest.mockResolvedValue([]);
     await api.sectionTopics('sec1', 2, 10);
@@ -58,7 +52,7 @@ describe('ViewAPI', () => {
 
   it('calls request with correct URL for categoryTopics', async () => {
     mockRequest.mockResolvedValue([]);
-    await api.categoryTopics(5, 1, 20);
+    await api.categoryTopics("5", 1, 20);
     expect(mockRequest).toHaveBeenCalledWith(
       '/topic/category-topics/5?page=1&page_size=20',
     );
@@ -98,7 +92,7 @@ describe('ViewAPI', () => {
 
   it('calls request with correct URL and body for searchSectionForTopic with custom params', async () => {
     mockRequest.mockResolvedValue([]);
-    await api.searchSectionForTopic('sec3', 'topic', 'name', 2, 10, '2');
+    await api.searchSectionForTopic('sec3', 'topic', 'name', 2, 10, 2);
     expect(mockRequest).toHaveBeenCalledWith('/topic/search', {
       method: 'POST',
       body: JSON.stringify({
@@ -114,7 +108,7 @@ describe('ViewAPI', () => {
 
   it('calls request with correct URL and header for topicView with account_id', async () => {
     mockRequest.mockResolvedValue({});
-    await api.topicView(42, 'acc123');
+    await api.topicView("42", 'acc123');
     expect(mockRequest).toHaveBeenCalledWith('/topic/view/42', {
       headers: {
         'X-Requester-ID': 'acc123',
@@ -124,7 +118,7 @@ describe('ViewAPI', () => {
 
   it('calls request with correct URL and header for topicView without account_id', async () => {
     mockRequest.mockResolvedValue({});
-    await api.topicView(99);
+    await api.topicView("99");
     expect(mockRequest).toHaveBeenCalledWith('/topic/view/99', {
       headers: {
         'X-Requester-ID': '',

@@ -61,7 +61,7 @@
   $effect(() => {
     if (sections.includes(activeTab)) {
       navContext.setContext({
-        items: sections.map((name) => ({ name, link: `/sections/${name}` })),
+        items: sections.map((name) => ({ name, link: `/s/${name}` })),
         index: sections.indexOf(activeTab),
       });
     }

@@ -3,15 +3,15 @@ import Section from '@components/Section.svelte';
 import { mediaURL } from '@constants/media';
 import Layout from '@layouts/Layout.astro';
 
-const { section } = Astro.params;
+const { section_name } = Astro.params;
 
-if (!section) {
+if (!section_name) {
   Astro.redirect('/');
 }
 
 let subheading: string = '';
 
-switch (section) {
+switch (section_name) {
   case 'Community Picks': {
     subheading = `Community Picks are stories that aren't bound to any project or genre but have been demanded, written, or voted in by the
     <a href="https://magiceden.io/collections/ethereum/0xfa511d5c4cce10321e6e86793cc083213c36278e" target="_blank">Potentials</a>
@@ -33,16 +33,16 @@ switch (section) {
   }
 }
 
-const sectionImage = section?.split(' ').join('').split('%20').join('');
-const sectionName = section?.replace(/%20/g, ' ');
+const sectionImage = section_name?.split(' ').join('').split('%20').join('');
+const sectionName = section_name?.replace(/%20/g, ' ');
 
 const meta = {
   title: `${sectionName} | CoNexus`,
   image: `${mediaURL}/conexus-sections/${sectionImage?.toLocaleLowerCase()}.avif`,
   imageType: 'image/avif',
-  url: `${import.meta.env.PUBLIC_FRONTEND}/${section}`,
-  header: section,
-  nav: section,
+  url: `${import.meta.env.PUBLIC_FRONTEND}/s/${section_name}`,
+  header: section_name,
+  nav: section_name,
   arrow: '/',
   subheading,
 };
@@ -50,6 +50,6 @@ const meta = {
 
 <Layout {...meta}>
   <main>
-    <Section section_name={section} client:load />
+    <Section section_name={section_name} client:load />
   </main>
 </Layout>

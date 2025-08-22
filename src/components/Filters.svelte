@@ -8,34 +8,43 @@
 
   import SortingSVG from '@components/icons/Sorting.svelte';
 
-  export let categories: SectionCategoryTopics[] = [];
-  export let section_name: string;
-  export let genres: Genre[] = [];
-  export let getTopics: (
-    text: string,
-    which: 'search' | 'genre',
-    page?: number,
-    pageSize?: number,
-    sort_order?: TopicSortOrder,
-  ) => Promise<CategoryTopics[]>;
+  let {
+    name,
+    intended,
+    categories,
+    genres,
+    getTopics,
+  }: {
+    name: string;
+    intended: 's' | 'c';
+    categories: SectionCategoryTopics[];
+    genres: Genre[];
+    getTopics: (
+      text: string,
+      which: 'search' | 'genre',
+      page?: number,
+      pageSize?: number,
+      sort_order?: TopicSortOrder,
+    ) => Promise<CategoryTopics[]>;
+  } = $props();
 
-  let filteredTopics: CategoryTopics[] = [];
-  let sortedTopics: CategoryTopics[] = [];
+  let filteredTopics = $state<CategoryTopics[]>([]);
+  let sortedTopics = $state<CategoryTopics[]>([]);
 
-  let searchField: string = ''; // search INPUT value
-  let activeGenre: string; // genres SELECT value
+  let searchField = $state<string>(''); // search INPUT value
+  let activeGenre = $state<string>(''); // genres SELECT value
 
-  let page: number = 1;
-  let pageSize: number = 10;
+  let page = $state<number>(1);
+  let pageSize = $state<number>(10);
 
-  let isSearching = false;
-  let isSorting = false;
-  let isEndReached = false; // no more topics to load if TRUE
+  let isSearching = $state<boolean>(false);
+  let isSorting = $state<boolean>(false);
+  let isEndReached = $state<boolean>(false); // no more topics to load if TRUE
 
   let activeMode: 'genre' | 'search' | null = null;
 
-  let search_sort_order: TopicSortOrder = 'name';
-  let genre_sort_order: TopicSortOrder = 'category';
+  let search_sort_order = $state<TopicSortOrder>('name');
+  let genre_sort_order = $state<TopicSortOrder>('category');
 
   let debounceTimeout: NodeJS.Timeout | null = null;
 
@@ -103,10 +112,12 @@
     isSorting = false;
   };
 
-  $: if (activeGenre) {
-    searchField = '';
-    resetAndFetch({ text: activeGenre, mode: 'genre' });
-  }
+  $effect(() => {
+    if (activeGenre) {
+      searchField = '';
+      resetAndFetch({ text: activeGenre, mode: 'genre' });
+    }
+  });
 
   // SEARCH
 
@@ -205,13 +216,13 @@
       hideForMobiles={true}
     />
   </div>
-  <div class="tiles-collection filtered-tiles" on:scroll={handleScroll}>
+  <div class="tiles-collection filtered-tiles" onscroll={handleScroll}>
     {#key sortedTopics}
-      {#each sortedTopics as topic}
-        <StoryTile {section_name} bind:topic bind:loading={isSearching} />
+      {#each sortedTopics as topic, i}
+        <StoryTile {name} {intended} bind:topic={sortedTopics[i]} bind:loading={isSearching} />
       {/each}
       {#if !isEndReached && isSearching}
-        <StoryTile {section_name} topic={null} loading={isSearching} />
+        <StoryTile {name} {intended} topic={null} loading={isSearching} />
       {/if}
     {/key}
   </div>

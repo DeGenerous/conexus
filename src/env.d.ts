@@ -94,6 +94,12 @@ type Section = {
   description?: string;
 };
 
+type Creator = {
+  id: string;
+  username: string;
+  avatar: string;
+}
+
 type Genre = {
   id?: string;
   name: string;

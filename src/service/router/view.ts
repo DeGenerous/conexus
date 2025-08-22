@@ -5,6 +5,24 @@ export default class ViewAPI extends Fetcher {
   protected topicGroup: string = '/topic';
 
   /**
+   * Retrieves a specific section by name.
+   * @param section_name The name of the section to retrieve.
+   * @returns A promise that resolves to the requested Section object.
+   */
+  async getSection(section_name: string) {
+    return this.request<Section>(`${this.adminGroup}/sections/${section_name}`);
+  }
+
+  /**
+   * Retrieves a specific creator by username.
+   * @param username The username of the creator to retrieve.
+   * @returns A promise that resolves to the requested Creator object.
+   */
+  async getCreator(username: string) {
+    return this.request<Creator>(`account/creators/${username}`);
+  }
+
+  /**
    * Retrieves a list of sections.
    * @returns A promise that resolves to an array of Section objects.
    */

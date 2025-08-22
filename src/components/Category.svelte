@@ -13,20 +13,27 @@
   import StoryTile from '@components/utils/StoryTile.svelte';
   import SortingSVG from '@components/icons/Sorting.svelte';
 
-  export let category: SectionCategoryTopics | null = null;
-  export let section_name: string = '';
+  let {
+    name,
+    intended,
+    category,
+  }: {
+    name: string;
+    intended: 's' | 'c'; // section or creator
+    category: SectionCategoryTopics | null;
+  } = $props();
 
   const view = new CoNexusApp();
 
-  let topics: CategoryTopics[] = [];
+  let topics = $state<CategoryTopics[]>([]);
 
-  let isSorting: boolean = false;
-  let sortedTopics: CategoryTopics[] = [];
+  let isSorting = $state<boolean>(false);
+  let sortedTopics = $state<CategoryTopics[]>([]);
 
-  let pageSize: number = 10;
-  let total: number = 0;
-  let loading: boolean = false;
-  let isEndReached: boolean = false;
+  let pageSize = $state<number>(10);
+  let total = $state<number>(0);
+  let loading = $state<boolean>(false);
+  let isEndReached = $state<boolean>(false);
 
   const fetchTopics = async () => {
     if (!category || loading || isEndReached) return;
@@ -105,7 +112,7 @@
   // A.K.A. INTERSECTION OBSERVER
 
   const handleScroll = (event: Event) => {
-    if (!category || !section_name || loading || isEndReached) return;
+    if (!category || !name || loading || isEndReached) return;
 
     const target = event.target as HTMLElement;
     // Load next page if user scrolls to the end of collection
@@ -116,14 +123,14 @@
 </script>
 
 <div class="collection-header">
-  {#if !category || !section_name}
+  {#if !category || !name}
     <h2>Loading stories...</h2>
   {:else}
     <h2>{category.name}</h2>
   {/if}
   <SortingSVG
     sorting={isSorting}
-    disabled={!category || !section_name}
+    disabled={!category || !name}
     onclick={() => {
       isSorting = !isSorting;
       handleSorting();
@@ -132,8 +139,8 @@
   />
 </div>
 
-<div class="tiles-collection" on:scroll={handleScroll}>
-  {#if !category || !section_name}
+<div class="tiles-collection" onscroll={handleScroll}>
+  {#if !category || !name}
     {#each Array(Math.floor(Math.random() * 3) + 3) as _}
       <div class="loading-tile">
         <div class="loading-animation"></div>
@@ -142,8 +149,13 @@
     {/each}
   {:else}
     {#key sortedTopics}
-      {#each sortedTopics as topic}
-        <StoryTile {section_name} bind:topic bind:loading />
+      {#each sortedTopics as topic, i}
+        <StoryTile
+          {name}
+          {intended}
+          bind:topic={sortedTopics[i]}
+          bind:loading
+        />
       {/each}
     {/key}
   {/if}

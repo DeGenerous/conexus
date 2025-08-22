@@ -29,6 +29,36 @@ export default class AppView {
   }
 
   /**
+   * Retrieves a specific section by name.
+   * @param section_name The name of the section to retrieve.
+   * @returns A promise that resolves to the requested Section object.
+   */
+  async getSection(section_name: string): Promise<Section | null> {
+    const { message, data } = await this.api.getSection(section_name);
+
+    if (!data) {
+      api_error(message);
+    }
+
+    return data || null;
+  }
+
+  /**
+   * Retrieves a specific creator by username.
+   * @param username The username of the creator to retrieve.
+   * @returns A promise that resolves to the requested Creator object.
+   */
+  async getCreator(username: string): Promise<Creator | null> {
+    const { message, data } = await this.api.getCreator(username);
+
+    if (!data) {
+      api_error(message);
+    }
+
+    return data || null;
+  }
+
+  /**
    * Get Sections
    * @returns {Promise<Section[]>} A list of sections for the tenant
    */
@@ -124,20 +154,43 @@ export default class AppView {
     return orderedSectionCategoriesTopics;
   }
 
-  async searchSectionCategories(
-    section_id: string,
+  async searchCategories(
+    id: string,
     topic: string,
     sort_order: TopicSortOrder = 'name',
     page: number = 1,
     pageSize: number = 5,
+    intended: 's' | 'c',
   ): Promise<CategoryTopics[]> {
-    const { status, message, data } = await this.api.searchSectionForTopic(
-      section_id,
-      topic,
-      sort_order,
-      page,
-      pageSize,
-    );
+    let response: APIResponse<CategoryTopics[]>;
+
+    switch (intended) {
+      case 's':
+        response = await this.api.searchSectionForTopic(
+          id,
+          topic,
+          sort_order,
+          page,
+          pageSize,
+        );
+        break;
+
+      case 'c':
+        response = await this.api.searchCreatorForTopic(
+          id,
+          topic,
+          sort_order,
+          page,
+          pageSize,
+        );
+        break;
+
+      default:
+        api_error('Invalid intended type');
+        return [];
+    }
+
+    const { status, message, data } = response;
 
     if (status === 'error') {
       api_error(message);
@@ -148,13 +201,7 @@ export default class AppView {
       return [];
     }
 
-    const orderedTopics = data.sort((a, b) => {
-      if (a.sort_order < b.sort_order) return -1;
-      if (a.sort_order > b.sort_order) return 1;
-      return 0;
-    });
-
-    return orderedTopics;
+    return data.sort((a, b) => a.sort_order - b.sort_order);
   }
 
   async getCreatorCategoryTopics(
@@ -184,41 +231,13 @@ export default class AppView {
     return orderedSectionCategoriesTopics;
   }
 
-  async searchCreatorCategories(
-    creator_id: string,
-    topic: string,
-    sort_order: TopicSortOrder = 'name',
-    page: number = 1,
-    pageSize: number = 5,
-  ): Promise<CategoryTopics[]> {
-    const { message, data } = await this.api.searchCreatorForTopic(
-      creator_id,
-      topic,
-      sort_order,
-      page,
-      pageSize,
-    );
-
-    if (!data) {
-      api_error(message);
-      return [];
-    }
-
-    const orderedTopics = data.sort((a, b) => {
-      if (a.sort_order < b.sort_order) return -1;
-      if (a.sort_order > b.sort_order) return 1;
-      return 0;
-    });
-
-    return orderedTopics;
-  }
-
   async getGenreTopics(
     section_id: string,
     genre_id: string,
     page: number = 1,
     pageSize: number = 5,
     sort_order: TopicSortOrder = 'category',
+    intended: 's' | 'c',
   ): Promise<CategoryTopics[]> {
     const { status, message, data } = await this.api.genreTopics(
       section_id,

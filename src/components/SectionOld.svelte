@@ -15,72 +15,45 @@
   import SpotifyIframe from '@components/music/SpotifyIframe.svelte';
   import Links from '@components/utils/Links.svelte';
 
-  let {
-    name,
-    intended,
-  }: {
-    name: string;
-    intended: 's' | 'c'; // section or creator
-  } = $props();
+  export let section_name: string;
 
   let app: CoNexusApp = new CoNexusApp();
 
-  let currExplorerId = $state<string>('');
+  let currSectionId: string = '';
+  let categories: SectionCategoryTopics[] = [];
+  let genres: Genre[] = [];
 
-  let categories = $state<SectionCategoryTopics[]>([]);
-  let genres = $state<Genre[]>([]);
-
-  let pageSize = $state<number>(1);
-  let loading = $state<boolean>(false);
-  let allLoaded = $state<boolean>(false); // Prevent further requests when empty response
-  let showNoCategoriesMessage = $state<boolean>(false);
+  let pageSize: number = 1;
+  let loading: boolean = false;
+  let allLoaded: boolean = false; // Prevent further requests when empty response
+  let showNoCategoriesMessage: boolean = false;
 
   const fetchCategories = async () => {
-    if (!name || loading || allLoaded) return;
+    if (!section_name || loading || allLoaded) return;
     loading = true;
 
-    let response: SectionCategoryTopics[] = [];
-
-    switch (intended) {
-      case 's':
-        response = await app.getSectionCategoryTopics(
-          name,
-          categories.length + 1,
-          pageSize,
-        );
-        break;
-      case 'c':
-        response = await app.getCreatorCategoryTopics(
-          name,
-          categories.length + 1,
-          pageSize,
-        );
-        break;
-      default:
-        console.error('Invalid intended type:', intended);
-        loading = false;
-        return;
-    }
+    const response = await app.getSectionCategoryTopics(
+      section_name,
+      categories.length + 1,
+      pageSize,
+    );
 
     if (response && response.length > 0) {
       setTimeout(() => {
         categories = [...categories, ...response];
-
-        if (intended === 's') {
-          SetCache(
-            SECTION_CATEGORIES_KEY(name),
-            categories.map((cat) => {
-              const orderedTopics = cat.topics?.sort((a, b) => {
-                if (a.sort_order > b.sort_order) return 1;
-                if (a.sort_order < b.sort_order) return -1;
-                return 0;
-              });
-              cat.topics = orderedTopics;
-              return cat;
-            }),
-            TTL_HOUR,
-          );
-        }
+        SetCache(
+          SECTION_CATEGORIES_KEY(section_name),
+          categories.map((cat) => {
+            const orderedTopics = cat.topics?.sort((a, b) => {
+              if (a.sort_order > b.sort_order) return 1;
+              if (a.sort_order < b.sort_order) return -1;
+              return 0;
+            });
+            cat.topics = orderedTopics;
+            return cat;
+          }),
+          TTL_HOUR,
+        );
         loading = false;
       }, 600); // Simulate loading delay
       showNoCategoriesMessage = false; // Hide message if categories are found
@@ -92,45 +65,42 @@
 
   onMount(async () => {
     try {
-      let explorer: Section | Creator | null = null;
+      const sections = await app.getSections();
+      const section = sections.find(({ name }) => name === section_name);
 
-      if (intended === 's') {
-        explorer = await app.getSection(name);
-      } else if (intended === 'c') {
-        explorer = await app.getCreator(name);
-      }
-
-      if (!explorer || !explorer.id) {
+      if (!section || !section.id) {
         window.location.href = '/404';
         return;
       }
 
-      currExplorerId = explorer.id;
+      currSectionId = section.id;
 
-      if (intended === 's') {
-        // Handle section-specific logic
-        const cachedCategories = GetCache<SectionCategoryTopics[]>(
-          SECTION_CATEGORIES_KEY(name),
-        );
+      const cachedCategories = GetCache<SectionCategoryTopics[]>(
+        SECTION_CATEGORIES_KEY(section_name),
+      );
+      if (cachedCategories) categories = cachedCategories;
+      else await fetchCategories();
 
-        if (cachedCategories) {
-          categories = cachedCategories;
-        } else {
-          await fetchCategories();
+      await app.getGenres().then((data) => {
+        function sortByName(a: Genre, b: Genre) {
+          if (a.name < b.name) {
+            return -1;
+          }
+          if (a.name > b.name) {
+            return 1;
+          }
+          return 0;
         }
 
-        const data = await app.getGenres();
-        genres = data.sort((a, b) => a.name.localeCompare(b.name));
+        genres = data.sort(sortByName);
+      });
 
-        // Fallback message if no categories found
-        setTimeout(() => {
-          if (categories.length === 0) {
-            showNoCategoriesMessage = true;
-          }
-        }, 2000);
-      }
-
-      // If intended === 'c', you can later add creator-specific setup here
+      // If no categories after 2 seconds, show "No categories found"
+      setTimeout(() => {
+        if (categories.length === 0) {
+          showNoCategoriesMessage = true;
+        }
+      }, 2000);
     } catch (error) {
       console.error('Error on mount:', error);
     }
@@ -145,13 +115,12 @@
   ) => {
     switch (which) {
       case 'search':
-        return await app.searchCategories(
-          currExplorerId,
+        return await app.searchSectionCategories(
+          currSectionId,
           text.replace(/[^a-zA-Z ]/g, ''),
           sort_order,
           page,
           pageSize,
-          intended,
         );
       case 'genre':
         // get genre id by name
@@ -159,12 +128,11 @@
         if (!genre || !genre.id) return [];
 
         return await app.getGenreTopics(
-          currExplorerId,
+          currSectionId,
           genre.id,
           page,
           pageSize,
           sort_order,
-          intended,
         );
     }
   };
@@ -197,18 +165,16 @@
   };
 
   // When 1 or more categories visible - observe the last one
-  $effect(() => {
-    if (categories.length > 0) setTimeout(observeLastCategory, 500);
-  });
+  $: if (categories.length > 0) setTimeout(observeLastCategory, 500);
 </script>
 
-<SearchAndGenre {name} {intended} {genres} {getTopics} {categories} />
+<SearchAndGenre {section_name} {genres} {getTopics} {categories} />
 
-<section class="flex" onscroll={handleScroll}>
+<section class="flex" on:scroll={handleScroll}>
   {#if categories.length > 0}
     {#each categories as category (category.name)}
       <div class="category flex">
-        <Category {name} {intended} {category} />
+        <Category {section_name} {category} />
       </div>
     {/each}
 
@@ -218,7 +184,7 @@
   {:else if showNoCategoriesMessage}
     <h5>No categories found for this section.</h5>
   {:else}
-    <Category {name} {intended} category={null} />
+    <Category {section_name} category={null} />
   {/if}
 </section>
 
@@ -226,8 +192,8 @@
   <h5>Loading categories...</h5>
 {/if}
 
-{#if intended === 's' && name === 'Dischordian Saga'}
+{#if section_name === 'Dischordian Saga'}
   <SpotifyIframe />
 {/if}
 
-<Links section_name={name} />
+<Links {section_name} />

@@ -4,11 +4,13 @@
   import LockSVG from '@components/icons/Lock.svelte';
 
   let {
-    section_name,
+    name,
+    intended,
     topic = $bindable(),
     loading = $bindable(),
   }: {
-    section_name: string;
+    name: string;
+    intended: 's' | 'c';
     topic: Nullable<CategoryTopics>;
     loading: boolean;
   } = $props();
@@ -46,9 +48,8 @@
   <a
     class="tile"
     class:gated-story={topic.topic_gates && topic.topic_gates.length > 0}
-    href="/s/{section_name}/{topic.id}?title={topic.name}"
+    href="/{intended}/{name}/{topic.id}?title={topic.name}"
   >
-    <!-- href="/s/{section_name}/{topic.name}?id={topic.id}" -->
     <img
       loading="lazy"
       src={serveUrl(topic.tile_file_url) ?? blankImage}

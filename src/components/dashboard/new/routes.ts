@@ -1,16 +1,19 @@
 import type { WrappedComponent } from 'svelte-spa-router';
 
+import { PROFILE_ROUTES } from './Profile';
+import { DREAM_ROUTES } from './dream';
+import { ADMIN_ROUTES } from './admin';
+
 export const DASHBOARD_PATH = '/dashboard';
 
 export const DASHBOARD_LINKS: Linking[] = [
   {
     name: 'Profile',
     intended: 'all',
-    children: [
-      { name: 'Overview', path: '/dashboard/profile/overview' },
-      { name: 'Settings', path: '/dashboard/profile/settings' },
-      { name: 'Metrics', path: '/dashboard/profile/metrics' },
-    ],
+    children: PROFILE_ROUTES.map((route) => ({
+      name: route.name,
+      path: route.path,
+    })),
   },
   {
     name: 'Dream',
@@ -19,20 +22,18 @@ export const DASHBOARD_LINKS: Linking[] = [
       {
         name: 'New',
         intended: 'creator',
-        children: [
-          { name: 'Create', path: '/dashboard/dream/create' },
-          { name: 'Drafts', path: '/dashboard/dream/drafts' },
-          { name: 'Demo', path: '/dashboard/dream/demo' },
-        ],
+        children: DREAM_ROUTES.NEW.map((route) => ({
+          name: route.name,
+          path: route.path,
+        })),
       },
       {
         name: 'Manage',
         intended: 'creator',
-        children: [
-          { name: 'Collections', path: '/dashboard/dream/manage/collections' },
-          { name: 'Categories', path: '/dashboard/dream/manage/categories' },
-          { name: 'NFT Gates', path: '/dashboard/dream/manage/nft-gates' },
-        ],
+        children: DREAM_ROUTES.MANAGE.map((route) => ({
+          name: route.name,
+          path: route.path,
+        })),
       },
     ],
   },
@@ -43,28 +44,27 @@ export const DASHBOARD_LINKS: Linking[] = [
       {
         name: 'Management',
         intended: 'admin',
-        children: [
-          { name: 'Users', path: '/dashboard/management/users' },
-          { name: 'Roles', path: '/dashboard/management/roles' },
-          { name: 'Sections', path: '/dashboard/management/sections' },
-        ],
+        children: ADMIN_ROUTES.MANAGEMENT.map((route) => ({
+          name: route.name,
+          path: route.path,
+        })),
       },
       {
         name: 'Web3',
         intended: 'admin',
-        children: [
-          { name: 'Contracts', path: '/dashboard/web3/contracts' },
-          { name: 'Gates', path: '/dashboard/web3/gates' },
-        ],
+        children: ADMIN_ROUTES.WEB3.map((route) => ({
+          name: route.name,
+          path: route.path,
+        })),
       },
 
       {
         name: 'Analytics',
         intended: 'admin',
-        children: [
-          { name: 'Dashboard', path: '/dashboard/analytics/dashboard' },
-          { name: 'Reports', path: '/dashboard/analytics/reports' },
-        ],
+        children: ADMIN_ROUTES.ANALYTICS.map((route) => ({
+          name: route.name,
+          path: route.path,
+        })),
       },
     ],
   },

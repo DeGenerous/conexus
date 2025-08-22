@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { DASHBOARD_ROUTES } from '@constants/routes';
+  import { NAV_ROUTES }from '@constants/routes';
   import Topics from '@lib/topics';
   import { isAdmin, isCreator } from '@stores/account.svelte';
 
@@ -182,7 +182,7 @@
                       >
                         <a
                           class="tile"
-                          href={DASHBOARD_ROUTES.EXPLORE(topic.topic_id)}
+                          href={NAV_ROUTES.EXPLORE(topic.topic_id)}
                         >
                           <span>{topic.topic_name}</span>
                           <button onclick={() => toggleAvailability(topic)}>
@@ -255,7 +255,7 @@
                   ondragstart={() => (draggedTopic = topic)}
                   ondragend={() => (draggedTopic = null)}
                 >
-                  <a href={DASHBOARD_ROUTES.EXPLORE(topic.topic_id)}>
+                  <a href={NAV_ROUTES.EXPLORE(topic.topic_id)}>
                     <span>{topic.topic_name}</span>
                     <button onclick={() => toggleAvailability(topic)}>
                       {topic.available ? 'Disable' : 'Enable'}

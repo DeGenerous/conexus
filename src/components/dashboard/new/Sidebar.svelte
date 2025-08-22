@@ -1,6 +1,7 @@
 <script lang="ts">
   import { link } from 'svelte-spa-router';
 
+  import { NAV_ROUTES }from '@constants/routes';
   import SidebarLink from '@components/dashboard/new/SidebarLink.svelte';
   import {
     DASHBOARD_PATH,
@@ -63,11 +64,11 @@
 
     <h4>Report bugs or ask for help</h4>
     <div class="flex-row">
-      <a href="mailto:support@degenerousdao.com">Support</a>
+      <a href={NAV_ROUTES.SUPPORT}>Support</a>
       <span style:color="#bebebe">|</span>
-      <a href="http://degenerousdao.com/join">Discord</a>
+      <a href={NAV_ROUTES.DISCORD}>Discord</a>
       <span style:color="#bebebe">|</span>
-      <a href="/learn/faq">FAQ</a>
+      <a href={NAV_ROUTES.FAQ}>FAQ</a>
     </div>
   </div>
 </aside>

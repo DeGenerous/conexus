@@ -1,3 +1,5 @@
+import { NAV_ROUTES }from './routes';
+
 const frequentlyAskedQuestions: {
   question: string;
   answer: string;
@@ -19,7 +21,7 @@ const frequentlyAskedQuestions: {
           <b>Email Sign-Up</b> – Slightly more setup, but gives you the most control and access. Also requires a referral code.
         </li>
       </ul>
-      <p>👉 <b>Need a referral code?</b> Join our <a href="http://degenerousdao.com/join">Discord</a> and check the <code>#ref-codes</code> channel to get one instantly.</p>
+      <p>👉 <b>Need a referral code?</b> Join our <a href=${NAV_ROUTES.DISCORD}>Discord</a> and check the <code>#ref-codes</code> channel to get one instantly.</p>
     `,
   },
   {

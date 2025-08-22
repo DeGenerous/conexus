@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
 
-  import { DASHBOARD_ROUTES } from '@constants/routes';
+  import { NAV_ROUTES }from '@constants/routes';
   import TopicManagement from '@lib/topics';
   import { GetCache, ALL_TOPICS_KEY } from '@constants/cache';
   import openModal from '@stores/modal.svelte';
@@ -66,14 +66,14 @@
     isCreator = await userState('creator');
 
     if (!isAdmin && !isCreator) {
-      window.location.href = DASHBOARD_ROUTES.MANAGE;
+      window.location.href = NAV_ROUTES.MANAGE;
       return;
     }
 
     topic = await topicManager.getTopicManager(topic_id);
 
     if (!topic || !topic.topic || !topic.topic_prompt || !topic.categories) {
-      window.location.href = DASHBOARD_ROUTES.MANAGE;
+      window.location.href = NAV_ROUTES.MANAGE;
       return;
     }
 
@@ -247,7 +247,7 @@
               onclick={() => {
                 editingName = false;
                 // admin.editTopicName(_topic.name, storyName);
-                window.location.href = `${DASHBOARD_ROUTES.MANAGE}/${topic_id}`;
+                window.location.href = `${NAV_ROUTES.MANAGE}/${topic_id}`;
               }}
               disabled={true}
             />

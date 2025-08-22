@@ -17,6 +17,7 @@ import { mainnet, base } from 'wagmi/chains';
 
 import { SetCache, USER_KEY, TTL_HOUR } from '@constants/cache';
 import { assetsURL } from '@constants/media';
+import { NAV_ROUTES }from '@constants/routes';
 import { authenticated } from '@stores/account.svelte';
 import AuthenticationAPI from '@service/router/authentication';
 
@@ -98,8 +99,7 @@ const Web3Provider: React.FC<Web3Props> = ({ linking = false, children }) => {
               nonce,
               address,
               chainId,
-              statement:
-                'Welcome to CoNexus! Click to sign in and accept the Terms of Service: https://degenerousdao.com/legal/terms-of-service',
+              statement: `Welcome to CoNexus! Click to sign in and accept the Terms of Service: ${NAV_ROUTES.TERMS}`,
               domain: window.location.host,
               uri: window.location.origin,
               version: '1',

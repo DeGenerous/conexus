@@ -5,7 +5,7 @@
   // import CoNexusApp from '@lib/view';
   import { GetCache, SetCache, ONBOARDING_KEY } from '@constants/cache';
   import { trailerURL } from '@constants/media';
-  import { DASHBOARD_ROUTES } from '@constants/routes';
+  import { NAV_ROUTES }from '@constants/routes';
   import { story, game } from '@stores/conexus.svelte';
   import {
     highlightCommunityPicks,
@@ -149,7 +149,7 @@
     {:else}
       <a
         class="top-left-icon flex fade-in"
-        href="https://degenerousdao.com/"
+        href={NAV_ROUTES.WEBSITE}
         target="_blank"
         aria-label="DeGenerous"
       >
@@ -233,7 +233,7 @@
     <a
       class="fade-in"
       class:active={activeTab === 'Dashboard'}
-      href={DASHBOARD_ROUTES.HOME}
+      href={NAV_ROUTES.HOME}
       target="_self"
       draggable="false"
     >
@@ -288,7 +288,7 @@
     <a
       class="fade-in"
       class:active={activeTab === 'Dream'}
-      href={DASHBOARD_ROUTES.DREAM}
+      href={NAV_ROUTES.DREAM}
       target="_self"
       draggable="false"
     >

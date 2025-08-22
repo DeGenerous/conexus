@@ -15,7 +15,7 @@
     loading: boolean;
   } = $props();
 
-  const storyName: string = topic ? topic.name.trim() : '';
+  const topicName: string = topic ? topic.name.trim() : '';
 
   const listTopicGates = (topic: CategoryTopics) => {
     const gates = topic.topic_gates
@@ -53,12 +53,12 @@
     <img
       loading="lazy"
       src={serveUrl(topic.tile_file_url) ?? blankImage}
-      alt={storyName}
+      alt={topicName}
       draggable="false"
       height="1024"
       width="1024"
     />
-    <h5>{storyName}</h5>
+    <h5>{topicName}</h5>
     {#if topic.topic_gates && topic.topic_gates.length > 0}
       <div class="gatings">
         <LockSVG />

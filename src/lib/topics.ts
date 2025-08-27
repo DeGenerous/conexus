@@ -20,6 +20,20 @@ export default class Topic {
     return data;
   }
 
+  async deleteStory(topic_id: string): Promise<void> {
+    const { status, message } = await this.api.delete(topic_id);
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(
+      message || `Story ${topic_id} deleted successfully`,
+      'info',
+    );
+  }
+
   async saveNewTopicDraft(body: DraftPayload): Promise<string | null> {
     const { message, data } = await this.api.newDraft(body);
 
@@ -412,31 +426,6 @@ export default class Topic {
 
   //     return;
   //   }
-
-  //   toastStore.show(data.message, 'info');
-  // }
-
-  // /**
-  //  * Deletes a topic by its ID.
-  //  *
-  //  * @param {number} topic_id - The ID of the topic which will be removed.
-  //  * @returns {Promise<void>} A promise that resolves when the topic is removed.
-  //  *
-  //  * @throws Will show an error message if the topic could not be removed.
-  //  */
-  // async deleteStory(topic_id: number): Promise<void> {
-  //   const { data, error } = await this.deleteTopic(topic_id);
-
-  //   if (!data) {
-  //     if (error) {
-  //       api_error(error);
-  //     } else {
-  //       toastStore.show('Error deleting story', 'error');
-  //     }
-  //     return;
-  //   }
-
-  //   this.clearCache();
 
   //   toastStore.show(data.message, 'info');
   // }

@@ -1,7 +1,7 @@
 <script lang="ts">
   import CategoryView from '@lib/category';
 
-  import CategoryFetcher from '@components/dashboard/dream/manage/category/CategoryFetcher.svelte';
+  import CategoryFetcher from '@components/dashboard/new/common/CategoryFetcher.svelte';
 
   import { isAdmin } from '@stores/account.svelte';
 
@@ -9,7 +9,11 @@
 
   let selectedSectionId = $state('');
 
-  let Admin = $isAdmin;
+  let Admin = $state(false);
+
+  $effect(() => {
+    Admin = $isAdmin;
+  });
 
   let fetchCategories = $state<() => Promise<void>>();
 

@@ -1,14 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { NAV_ROUTES }from '@constants/routes';
   import Topics from '@lib/topics';
-  import { isAdmin, isCreator } from '@stores/account.svelte';
+  import { ensureCreator } from '@utils/route-guard';
+
+  import CategoryBlock from './CollectionCategoryBlock.svelte';
 
   const topicManager = new Topics();
 
-  let Admin = $isAdmin;
-  let Creator = $isCreator;
+  let isAdmin = $state(false);
+  let isCreator = $state(false);
 
   let page = $state(1);
   let pageSize = $state(10);
@@ -17,9 +18,14 @@
   let creatorCollection = $state<CollectionCategory[]>([]);
 
   onMount(async () => {
-    if (Admin) {
+    const { isAdmin: is_admin, isCreator: is_creator } = await ensureCreator();
+
+    isAdmin = is_admin;
+    isCreator = is_creator;
+
+    if (isAdmin) {
       adminCollection = await topicManager.getAdminCollection(page, pageSize);
-    } else if (Creator) {
+    } else if (isCreator) {
       creatorCollection = await topicManager.getCreatorCollection(
         page,
         pageSize,
@@ -54,8 +60,8 @@
   }
 
   // drag state
-  let draggedCategory: CollectionCategory | null = null;
-  let draggedTopic: CollectionTopic | null = null;
+  let draggedCategory = $state<CollectionCategory | null>(null);
+  let draggedTopic = $state<CollectionTopic | null>(null);
 
   function toggleAvailability(topic: CollectionTopic) {
     topic.available = !topic.available;
@@ -93,13 +99,13 @@
     targetCategory: CollectionCategory,
   ) {
     // Remove from old category
-    if (Admin) {
+    if (isAdmin) {
       for (const section of adminCollection) {
         for (const cat of section.categories) {
           cat.topics = cat.topics.filter((t) => t.topic_id !== topic.topic_id);
         }
       }
-    } else if (Creator) {
+    } else if (isCreator) {
       for (const cat of creatorCollection) {
         cat.topics = cat.topics.filter((t) => t.topic_id !== topic.topic_id);
       }
@@ -113,7 +119,7 @@
 </script>
 
 <section class="collection-container">
-  {#if Admin}
+  {#if isAdmin}
     {#if adminCollection && adminCollection.length > 0}
       {#each adminCollection as section}
         <div
@@ -140,78 +146,17 @@
 
           {#if expandedSections.has(section.section_id)}
             {#each section.categories as category}
-              <div
-                class="category"
-                role="listitem"
-                draggable="true"
-                ondragstart={() => (draggedCategory = category)}
-                ondragend={() => (draggedCategory = null)}
-                ondragover={() => {}}
-                ondrop={() =>
-                  draggedTopic && moveTopicToCategory(draggedTopic, category)}
-              >
-                <button
-                  type="button"
-                  class="category-toggle"
-                  aria-expanded={expandedCategories.has(category.category_id)}
-                  onclick={() =>
-                    toggleExpandCategory(
-                      expandedCategories,
-                      category.category_id,
-                    )}
-                  onkeydown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      toggleExpandCategory(
-                        expandedCategories,
-                        category.category_id,
-                      );
-                    }
-                  }}
-                >
-                  <h4>{category.category_name}</h4>
-                </button>
-
-                {#if expandedCategories.has(category.category_id)}
-                  <ul>
-                    {#each category.topics as topic, i}
-                      <li
-                        class="tiles-collection"
-                        draggable="true"
-                        ondragstart={() => (draggedTopic = topic)}
-                        ondragend={() => (draggedTopic = null)}
-                      >
-                        <a
-                          class="tile"
-                          href={NAV_ROUTES.EXPLORE(topic.topic_id)}
-                        >
-                          <span>{topic.topic_name}</span>
-                          <button onclick={() => toggleAvailability(topic)}>
-                            {topic.available ? 'Disable' : 'Enable'}
-                          </button>
-                          <button onclick={() => toggleVisibility(topic)}>
-                            {topic.visibility === 'public'
-                              ? 'Make Private'
-                              : 'Make Public'}
-                          </button>
-                          <!-- reorder buttons -->
-                          {#if i > 0}
-                            <button
-                              onclick={() => reorder(category.topics, i, i - 1)}
-                              >↑</button
-                            >
-                          {/if}
-                          {#if i < category.topics.length - 1}
-                            <button
-                              onclick={() => reorder(category.topics, i, i + 1)}
-                              >↓</button
-                            >
-                          {/if}
-                        </a>
-                      </li>
-                    {/each}
-                  </ul>
-                {/if}
-              </div>
+              <CategoryBlock
+                {category}
+                {expandedCategories}
+                {toggleExpandCategory}
+                {draggedTopic}
+                setDraggedTopic={(t) => (draggedTopic = t)}
+                {moveTopicToCategory}
+                {toggleAvailability}
+                {toggleVisibility}
+                {reorder}
+              />
             {/each}
           {/if}
         </div>
@@ -221,67 +166,20 @@
     {/if}
   {/if}
 
-  {#if Creator}
+  {#if isCreator}
     {#if creatorCollection && creatorCollection.length > 0}
       {#each creatorCollection as category}
-        <div
-          class="category"
-          role="listitem"
-          ondragover={() => {}}
-          ondrop={() =>
-            draggedTopic && moveTopicToCategory(draggedTopic, category)}
-        >
-          <button
-            type="button"
-            class="category-toggle"
-            aria-expanded={expandedCategories.has(category.category_id)}
-            onclick={() =>
-              toggleExpandCategory(expandedCategories, category.category_id)}
-            onkeydown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                toggleExpandCategory(expandedCategories, category.category_id);
-              }
-            }}
-          >
-            <h4>{category.category_name}</h4>
-          </button>
-
-          {#if expandedCategories.has(category.category_id)}
-            <ul class="tiles-collection">
-              {#each category.topics as topic, i}
-                <li
-                  class="tile"
-                  draggable="true"
-                  ondragstart={() => (draggedTopic = topic)}
-                  ondragend={() => (draggedTopic = null)}
-                >
-                  <a href={NAV_ROUTES.EXPLORE(topic.topic_id)}>
-                    <span>{topic.topic_name}</span>
-                    <button onclick={() => toggleAvailability(topic)}>
-                      {topic.available ? 'Disable' : 'Enable'}
-                    </button>
-                    <button onclick={() => toggleVisibility(topic)}>
-                      {topic.visibility === 'public'
-                        ? 'Make Private'
-                        : 'Make Public'}
-                    </button>
-                    <!-- reorder buttons -->
-                    {#if i > 0}
-                      <button onclick={() => reorder(category.topics, i, i - 1)}
-                        >↑</button
-                      >
-                    {/if}
-                    {#if i < category.topics.length - 1}
-                      <button onclick={() => reorder(category.topics, i, i + 1)}
-                        >↓</button
-                      >
-                    {/if}
-                  </a>
-                </li>
-              {/each}
-            </ul>
-          {/if}
-        </div>
+        <CategoryBlock
+          {category}
+          {expandedCategories}
+          {toggleExpandCategory}
+          {draggedTopic}
+          setDraggedTopic={(t) => (draggedTopic = t)}
+          {moveTopicToCategory}
+          {toggleAvailability}
+          {toggleVisibility}
+          {reorder}
+        />
       {/each}
     {:else}
       <p class="validation">No categories found</p>
@@ -327,109 +225,14 @@
     }
   }
 
-  /* Categories stay stacked */
-  .category {
-    margin-left: 1rem;
-    padding-left: 1rem;
-    border-left: 2px solid rgba(255, 255, 255, 0.15);
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-
-    .category-toggle {
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      text-align: left;
-
-      h4 {
-        margin: 0;
-        font-size: 1.1rem;
-        font-weight: 500;
-      }
-    }
-  }
-
-  /* Topics container → horizontal scroll */
-  .category ul {
-    list-style: none;
-    padding: 0;
-    margin: 0.5rem 0 0;
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    overflow-x: auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-
-    /* Webkit scrollbar styling */
-    &::-webkit-scrollbar {
-      height: 8px;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
-    }
-  }
-
-  /* Each topic tile */
-  .tiles-collection {
-    // flex: 0 0 auto; /* prevent shrinking */
-    // min-width: 200px;
-    // background: rgba(255, 255, 255, 0.05);
-    // border-radius: 0.5rem;
-    // padding: 0.75rem;
-    // display: flex;
-    // flex-direction: column;
-    // justify-content: space-between;
-    // gap: 0.5rem;
-
-    .tile {
-      color: white;
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-
-      span {
-        font-weight: 500;
-        font-size: 1rem;
-      }
-
-      button {
-        padding: 0.3rem 0.6rem;
-        border-radius: 0.4rem;
-        font-size: 0.8rem;
-        border: none;
-        cursor: pointer;
-        background: rgba(100, 181, 246, 0.15);
-        color: #90caf9;
-        transition: background 0.2s;
-
-        &:hover {
-          background: rgba(100, 181, 246, 0.3);
-        }
-      }
-    }
-  }
-
-  /* Responsive tweaks */
   @media (max-width: 768px) {
     .collection-container {
       gap: 1rem;
       padding: 0.5rem;
     }
 
-    .tiles-collection {
-      min-width: 150px;
-    }
-
     .section-toggle h3 {
       font-size: 1.1rem;
-    }
-
-    .category-toggle h4 {
-      font-size: 1rem;
     }
   }
 </style>

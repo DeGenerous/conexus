@@ -1,4 +1,6 @@
 ---
+import { ClientRouter } from "astro:transitions";
+
 import { SEO } from 'astro-seo';
 import { seoConfig } from '../../utils/seoConfig';
 
@@ -54,7 +56,7 @@ const absoluteImageURL = image.startsWith('http')
   : `${seoConfig.baseURL}${image}`;
 ---
 
-<html lang="en">
+<html lang="en" transition:name="root" transition:animate="none">
   <head>
     <meta charset="utf-8" />
     <meta name="description" content={description} />
@@ -64,6 +66,8 @@ const absoluteImageURL = image.startsWith('http')
       name="robots"
       content={disableIndexing ? 'noindex, nofollow' : 'index, follow'}
     />
+
+    <ClientRouter />
 
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link type="text/plain" rel="author" href="/humans.txt" />

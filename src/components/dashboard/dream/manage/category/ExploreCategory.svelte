@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CategoryFetcher from '@components/dashboard/dream/manage/category/CategoryFetcher.svelte';
+  import CategoryFetcher from '@components/dashboard/new/common/CategoryFetcher.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
 
   let { isAdmin, isCreator, topic_categories, handleCategoryChange } = $props<{
@@ -39,7 +39,7 @@
 </script>
 
 <div class="flex-row">
-  <h4>Genres</h4>
+  <h4>Categories</h4>
   <div class="container">
     {#if topic_categories.length > 0}
       {#each topic_categories as category (category)}
@@ -95,14 +95,17 @@
       {:else if errorCategories}
         <p class="validation">{errorCategories}</p>
       {:else}
-        <h4>Categories: {categories.length}</h4>
-        <div class="container">
+        <div class="add-category flex-row">
           {#if categories.length > 0}
             <select bind:value={selectedCategoryId}>
+              <option value="" hidden disabled>Select</option>
               {#each categories.filter((c) => !topic_categories.some((tc: Category) => tc.id === c.id)) as { id, name }}
                 <option value={id}>{name}</option>
               {/each}
             </select>
+            <button onclick={handleAddCategory} disabled={!selectedCategoryId}
+              >Add Category</button
+            >
           {:else}
             <p class="validation">No categories found</p>
           {/if}
@@ -111,3 +114,16 @@
     {/snippet}
   </CategoryFetcher>
 </div>
+
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
+
+  .container {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .add-category {
+    justify-content: center;
+  }
+</style>

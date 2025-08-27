@@ -55,6 +55,12 @@ class Account {
    * @returns {Promise<User | null>}
    */
   static async getUser(): Promise<User | null> {
+    // Try getting user data from localStorage
+    const cachedUser = GetCache<User>(USER_KEY);
+    if (cachedUser) {
+      return cachedUser;
+    }
+
     const accountAPI = new AccountAPI(import.meta.env.PUBLIC_BACKEND);
 
     const { message, data } = await accountAPI.me();
@@ -76,7 +82,7 @@ class Account {
     data.role = roles.find((r) => r.id === data.role_id)?.name || 'Guest';
 
     // Store user data in localStorage with timestamp
-    SetCache(USER_KEY, data, TTL_HOUR);
+    SetCache(USER_KEY, data, TTL_SHORT);
     authenticated.set(data);
 
     return data;

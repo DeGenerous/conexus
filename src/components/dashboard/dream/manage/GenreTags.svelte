@@ -64,7 +64,7 @@
 <div class="flex-row">
   <h4>Genres</h4>
   <div class="container">
-    {#if topic_genres.length > 0}
+    {#if topic_genres && topic_genres.length > 0}
       {#each topic_genres as genre (genre)}
         <button class="void-btn small-purple-tile">
           <p>{genre.name}</p>

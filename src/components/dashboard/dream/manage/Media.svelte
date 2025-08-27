@@ -55,6 +55,8 @@
 
   // Fetch stored media on load
   const loadMedia = async () => {
+    if (!topic_media_files) return;
+
     for (const file of topic_media_files) {
       const slot = typeToSlot[file.media_type];
       if (!slot) continue; // skip unknown media types

@@ -38,6 +38,18 @@ export default class TopicAPI extends Fetcher {
   }
 
   /**
+   * Delete a topic
+   * @param topic_id The ID of the topic to delete
+   * @returns The response from the API
+   */
+  async delete(topic_id: string) {
+    return this.request(`${this.group}/delete`, {
+      method: 'DELETE',
+      body: JSON.stringify({ topic_id }),
+    });
+  }
+
+  /**
    * Get the admin collection data
    * @returns The admin collection data
    */

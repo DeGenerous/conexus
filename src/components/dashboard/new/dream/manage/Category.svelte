@@ -3,16 +3,18 @@
 
   import CategoryFetcher from '@components/dashboard/new/common/CategoryFetcher.svelte';
 
-  import { isAdmin } from '@stores/account.svelte';
+  import { ensureCreator } from '@utils/route-guard';
 
   let categoryView = new CategoryView();
 
   let selectedSectionId = $state('');
 
-  let Admin = $state(false);
+  let isAdmin = $state(false);
 
   $effect(() => {
-    Admin = $isAdmin;
+    ensureCreator().then(({ isAdmin: admin }) => {
+      isAdmin = admin;
+    });
   });
 
   let fetchCategories = $state<() => Promise<void>>();
@@ -32,7 +34,7 @@
     errorAdd = '';
 
     try {
-      if (Admin) {
+      if (isAdmin) {
         if (!selectedSectionId) {
           errorAdd = 'Please select a section first.';
           return;
@@ -71,7 +73,7 @@
       errorCategories: string,
       categories: Category[],
     )}
-      {#if Admin}
+      {#if isAdmin}
         {#if loadingSections}
           <p>Loading sections...</p>
         {:else if errorSections}

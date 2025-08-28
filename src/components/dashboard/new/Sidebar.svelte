@@ -85,6 +85,7 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    flex-shrink: 0;
 
     .sidebar-title {
       font-size: 1.25rem;
@@ -121,7 +122,7 @@
 
   /* Default: visible */
   .sidebar.open {
-    transform: translateX(0);
+    transform: none;
   }
 
   /* Small screens: slide in/out */
@@ -132,6 +133,7 @@
       left: 0;
       height: 100vh;
       transform: translateX(-100%);
+      transition: transform 0.3s ease;
       z-index: 1500;
     }
 

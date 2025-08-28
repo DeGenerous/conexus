@@ -13,13 +13,22 @@ type CollectionCategory = {
   category_id: string;
   category_name: string;
   category_order: number;
-  topics: CollectionTopic[];
+  topic_count: number;
+  topics?: CollectionTopic[];
+};
+
+type CollectionCreator = {
+  creator_id: string;
+  creator_name: string;
+  category_count: number;
+  categories?: CollectionCategory[];
 };
 
 type CollectionSection = {
   section_id: string;
   section_name: string;
-  categories: CollectionCategory[];
+  category_count: number;
+  categories?: CollectionCategory[];
 };
 
 type MediaType = 'background' | 'description' | 'tile' | 'audio' | 'video';

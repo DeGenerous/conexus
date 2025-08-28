@@ -3,7 +3,7 @@
   import Router, { location, type WrappedComponent } from 'svelte-spa-router';
   import { wrap } from 'svelte-spa-router/wrap';
 
-  import { userState, ensureCreator } from '@utils/route-guard';
+  import { userState } from '@utils/route-guard';
 
   import Dashboard from '@components/dashboard/new/Dashboard.svelte';
   import { profileRoutes } from '@components/dashboard/new/Profile';
@@ -17,11 +17,17 @@
   } from '@components/dashboard/new/routes';
   import Sidebar from '@components/dashboard/new/Sidebar.svelte';
 
+  let signedIn = $state(false);
   let isAdmin = $state<boolean>(false);
   let isCreator = $state<boolean>(false);
 
   onMount(async () => {
-    // await ensureCreator();
+    signedIn = await userState('signed');
+    if (!signedIn) {
+      window.location.href =
+        '/login?redirect=' + encodeURIComponent(window.location.pathname);
+      return;
+    }
 
     isAdmin = await userState('admin');
     isCreator = await userState('creator');
@@ -76,6 +82,7 @@
     height: 100%;
     width: 100%;
   }
+
   .dashboard-main {
     flex: 1;
     padding: 1rem;

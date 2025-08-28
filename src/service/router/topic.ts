@@ -50,24 +50,115 @@ export default class TopicAPI extends Fetcher {
   }
 
   /**
-   * Get the admin collection data
-   * @returns The admin collection data
+   * Get the section collection data
+   * @param page The page number
+   * @param pageSize The number of items per page
+   * @param refresh Whether to refresh the data
+   * @returns The section collection data
    */
-  async adminCollection(page: number = 1, pageSize: number = 10) {
+  async sectionCollection(
+    page: number = 1,
+    pageSize: number = 10,
+    refresh: boolean = false,
+  ) {
     return this.request<CollectionSection[]>(
-      `${this.group}/admin-collection?page=${page}&pageSize=${pageSize}`,
+      `${this.group}/collection-section?page=${page}&page_size=${pageSize}&refresh=${refresh}`,
     );
   }
 
   /**
    * Get the creator collection data
+   * @param page The page number
+   * @param pageSize The number of items per page
+   * @param refresh Whether to refresh the data
    * @returns The creator collection data
    */
-  async creatorCollection(page: number = 1, pageSize: number = 10) {
-    return this.request<CollectionCategory[]>(
-      `${this.group}/creator-collection?page=${page}&pageSize=${pageSize}`,
+  async creatorCollection(
+    page: number = 1,
+    pageSize: number = 10,
+    refresh: boolean = false,
+  ) {
+    return this.request<CollectionCreator[]>(
+      `${this.group}/collection-creator?page=${page}&page_size=${pageSize}&refresh=${refresh}`,
     );
   }
+
+  /**
+   * Get the section category collection data
+   * @param section_id The ID of the section
+   * @param page The page number
+   * @param pageSize The number of items per page
+   * @param refresh Whether to refresh the data
+   * @returns The section category collection data
+   */
+  async sectionCategoryCollection(
+    section_id: string,
+    page: number = 1,
+    pageSize: number = 10,
+    refresh: boolean = false,
+  ) {
+    return this.request<CollectionCategory[]>(
+      `${this.group}/collection-category/section/${section_id}?page=${page}&page_size=${pageSize}&refresh=${refresh}`,
+    );
+  }
+
+  /**
+   * Get the creator category collection data
+   * @param creator_id The ID of the creator
+   * @param page The page number
+   * @param pageSize The number of items per page
+   * @param refresh Whether to refresh the data
+   * @returns The creator category collection data
+   */
+  async creatorCategoryCollection(
+    creator_id: string,
+    page: number = 1,
+    pageSize: number = 10,
+    refresh: boolean = false,
+  ) {
+    return this.request<CollectionCategory[]>(
+      `${this.group}/collection-category/creator/${creator_id}?page=${page}&page_size=${pageSize}&refresh=${refresh}`,
+    );
+  }
+
+  /**
+   * Get the topic collection data
+   * @param category_id The ID of the category
+   * @param page The page number
+   * @param pageSize The number of items per page
+   * @param refresh Whether to refresh the data
+   * @returns The topic collection data
+   */
+  async topicCollection(
+    category_id: string,
+    page: number = 1,
+    pageSize: number = 10,
+    refresh: boolean = false,
+  ) {
+    return this.request<CollectionTopic[]>(
+      `${this.group}/collection-topic/${category_id}?page=${page}&page_size=${pageSize}&refresh=${refresh}`,
+    );
+  }
+
+  // /**
+  //  * Get the admin collection data
+  //  * @returns The admin collection data
+  //  */
+  // async adminCollection(page: number = 1, pageSize: number = 10) {
+  //   return this.request<CollectionSection[]>(
+  //     `${this.group}/admin-collection?page=${page}&pageSize=${pageSize}`,
+  //   );
+  // }
+
+  // /**
+  //  * Get the creator collection data
+  //  * @returns The creator collection data
+  //  */
+  // async creatorCollection(page: number = 1, pageSize: number = 10) {
+  //   return this.request<CollectionCategory[]>(
+  //     `${this.group}/creator-collection?page=${page}&pageSize=${pageSize}`,
+  //   );
+  // }
 
   /**
    * Get the topic manager data
@@ -96,7 +187,14 @@ export default class TopicAPI extends Fetcher {
     });
   }
 
-  async changeCategorySortOrder(
+  /**
+   * Change the sort order of a topic within a category
+   * @param topic_id The ID of the topic
+   * @param category_id The ID of the category
+   * @param sort_order The new sort order for the category
+   * @returns The response from the API
+   */
+  async changeTopicSortOrder(
     topic_id: string,
     category_id: string,
     sort_order: number,
@@ -169,6 +267,32 @@ export default class TopicAPI extends Fetcher {
     return this.request(`${this.group}/remove-gate`, {
       method: 'PATCH',
       body: JSON.stringify({ topic_id, gate_id }),
+    });
+  }
+
+  /**
+   * Change the availability of a topic
+   * @param topic_id The ID of the topic
+   * @param available Whether the topic is available
+   * @returns The response from the API
+   */
+  async changeAvailability(topic_id: string, available: boolean) {
+    return this.request(`${this.group}/change-availability`, {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, available }),
+    });
+  }
+
+  /**
+   * Change the visibility of a topic
+   * @param topic_id The ID of the topic
+   * @param visible Whether the topic is visible
+   * @returns The response from the API
+   */
+  async changeVisibility(topic_id: string, visible: 'public' | 'private') {
+    return this.request(`${this.group}/change-visibility`, {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, visible }),
     });
   }
 

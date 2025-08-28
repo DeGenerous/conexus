@@ -108,13 +108,15 @@ export default class Topic {
     toastStore.show(message || `Draft ${id} deleted successfully`, 'info');
   }
 
-  async getAdminCollection(
-    page: number,
-    pageSize: number,
+  async getSectionCollection(
+    page: number = 1,
+    pageSize: number = 10,
+    refresh: boolean = false,
   ): Promise<CollectionSection[]> {
-    const { status, message, data } = await this.api.adminCollection(
+    const { status, message, data } = await this.api.sectionCollection(
       page,
       pageSize,
+      refresh,
     );
 
     if (status === 'error') {
@@ -126,12 +128,77 @@ export default class Topic {
   }
 
   async getCreatorCollection(
-    page: number,
-    pageSize: number,
-  ): Promise<CollectionCategory[]> {
+    page: number = 1,
+    pageSize: number = 10,
+    refresh: boolean = false,
+  ): Promise<CollectionCreator[]> {
     const { status, message, data } = await this.api.creatorCollection(
       page,
       pageSize,
+      refresh,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      return [];
+    }
+
+    return data || [];
+  }
+
+  async getSectionCategoryCollection(
+    section_id: string,
+    page: number = 1,
+    pageSize: number = 10,
+    refresh: boolean = false,
+  ): Promise<CollectionCategory[]> {
+    const { status, message, data } = await this.api.sectionCategoryCollection(
+      section_id,
+      page,
+      pageSize,
+      refresh,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      return [];
+    }
+
+    return data || [];
+  }
+
+  async getCreatorCategoryCollection(
+    creator_id: string,
+    page: number = 1,
+    pageSize: number = 10,
+    refresh: boolean = false,
+  ): Promise<CollectionCategory[]> {
+    const { status, message, data } = await this.api.creatorCategoryCollection(
+      creator_id,
+      page,
+      pageSize,
+      refresh,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      return [];
+    }
+
+    return data || [];
+  }
+
+  async getTopicCollection(
+    category_id: string,
+    page: number = 1,
+    pageSize: number = 10,
+    refresh: boolean = false,
+  ): Promise<CollectionTopic[]> {
+    const { status, message, data } = await this.api.topicCollection(
+      category_id,
+      page,
+      pageSize,
+      refresh,
     );
 
     if (status === 'error') {
@@ -172,58 +239,12 @@ export default class Topic {
     toastStore.show(message || `Category added to topic ${topic_id}`, 'info');
   }
 
-  async updateTopic(
-    topic_id: string,
-    body: Partial<TopicRequest>,
-  ): Promise<void> {
-    // only name, description, availability and visibility can be updated
-    // check which fields are being updated
-    const allowedFields: (keyof TopicRequest)[] = [
-      'name',
-      'description',
-      'available',
-      'visibility',
-    ];
-    const isValidUpdate = Object.keys(body).every((key) =>
-      allowedFields.includes(key as keyof TopicRequest),
-    );
-
-    if (!isValidUpdate) {
-      toastStore.show(`Invalid fields in update`, 'error');
-      return;
-    }
-
-    // const { message, data } = await this.api.updateTopic(topic_id, body);
-
-    // if (!data) {
-    //   api_error(message);
-    //   return;
-    // }
-
-    toastStore.show(`Topic ${topic_id} updated successfully`, 'info');
-  }
-
-  async moveTopic(topic_id: string, category_id: string): Promise<void> {
-    await this.addTopicToCategory(topic_id, category_id);
-  }
-
-  async moveCategory(category_id: string, section_id: string): Promise<void> {
-    // const { message, data } = await this.api.moveCategory(category_id, section_id);
-
-    // if (!data) {
-    //   api_error(message);
-    //   return;
-    // }
-
-    toastStore.show(`Category moved to section ${section_id}`, 'info');
-  }
-
-  async changeTopicSortOrder(
+  async changeSortOrderInCategory(
     topic_id: string,
     category_id: string,
     sort_order: number,
   ): Promise<void> {
-    const { message, data } = await this.api.changeCategorySortOrder(
+    const { message, data } = await this.api.changeTopicSortOrder(
       topic_id,
       category_id,
       sort_order,
@@ -305,6 +326,89 @@ export default class Topic {
     }
 
     toastStore.show(message || `Gate removed from topic ${topic_id}`, 'info');
+  }
+
+  async changeAvailability(
+    topic_id: string,
+    available: boolean,
+  ): Promise<void> {
+    const { message, data } = await this.api.changeAvailability(
+      topic_id,
+      available,
+    );
+
+    if (!data) {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(
+      message || `Topic ${topic_id} availability changed`,
+      'info',
+    );
+  }
+
+  async changeVisibility(
+    topic_id: string,
+    visible: 'public' | 'private',
+  ): Promise<void> {
+    const { message, data } = await this.api.changeVisibility(
+      topic_id,
+      visible,
+    );
+
+    if (!data) {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || `Topic ${topic_id} visibility changed`, 'info');
+  }
+
+  async updateTopic(
+    topic_id: string,
+    body: Partial<TopicRequest>,
+  ): Promise<void> {
+    // only name, description, availability and visibility can be updated
+    // check which fields are being updated
+    const allowedFields: (keyof TopicRequest)[] = [
+      'name',
+      'description',
+      'available',
+      'visibility',
+    ];
+    const isValidUpdate = Object.keys(body).every((key) =>
+      allowedFields.includes(key as keyof TopicRequest),
+    );
+
+    if (!isValidUpdate) {
+      toastStore.show(`Invalid fields in update`, 'error');
+      return;
+    }
+
+    // const { message, data } = await this.api.updateTopic(topic_id, body);
+
+    // if (!data) {
+    //   api_error(message);
+    //   return;
+    // }
+
+    toastStore.show(`Topic ${topic_id} updated successfully`, 'info');
+  }
+
+  async moveTopic(topic_id: string, category_id: string): Promise<void> {
+    await this.addTopicToCategory(topic_id, category_id);
+  }
+
+  async moveCategory(category_id: string, section_id: string): Promise<void> {
+    // const { message, data } = await this.api.moveCategory(category_id, section_id);
+
+    // if (!data) {
+    //   api_error(message);
+    //   return;
+    // }
+
+    toastStore.show(`Category moved to section ${section_id}`, 'info');
   }
 
   async uploadFileForTopic(

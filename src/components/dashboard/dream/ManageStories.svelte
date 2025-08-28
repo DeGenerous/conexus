@@ -5,7 +5,7 @@
   import Collections from '@components/dashboard/dream/manage/Collections.svelte';
   import Categories from '@components/dashboard/dream/manage/Categories.svelte';
   import NFTGates from '@components/dashboard/dream/manage/NFTGates.svelte';
-  import { ensureCreator, userState } from '@utils/route-guard';
+  import { ensureCreator } from '@utils/route-guard';
 
   let nav: 'collection' | 'categories' | 'nft-gates' = $state('collection');
 
@@ -19,10 +19,10 @@
   let isCreator = $state(false);
 
   onMount(async () => {
-    ensureCreator();
+    const resp = await ensureCreator();
 
-    isAdmin = await userState('admin');
-    isCreator = await userState('creator');
+    isAdmin = resp.isAdmin;
+    isCreator = resp.isCreator;
   });
 </script>
 
@@ -54,7 +54,7 @@
 </nav>
 
 {#if nav === 'collection'}
-  <Collections  />
+  <Collections />
   <!-- <Collections {selectInput} /> -->
 {:else if nav === 'nft-gates'}
   <NFTGates {selectInput} />

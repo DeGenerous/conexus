@@ -7,7 +7,6 @@
   import dreamData from '@constants/dream';
   import { resetDreamModal, openStoryManage } from '@constants/modal';
   import Topic from '@lib/topics';
-  import { isAdmin } from '@stores/account.svelte';
   import {
     storyData,
     promptSettings,
@@ -29,8 +28,12 @@
   import SaveSVG from '@components/icons/Checkmark.svelte';
   import CategoryFetcher from '@components/dashboard/new/common/CategoryFetcher.svelte';
 
-  onMount(ensureCreator);
-  let Admin = $isAdmin;
+  let isAdmin = $state(false);
+
+  onMount(async () => {
+    const resp = await ensureCreator();
+    isAdmin = resp.isAdmin;
+  });
 
   let topic = new Topic();
 
@@ -189,7 +192,7 @@
       errorCategories: string,
       categories: Category[],
     )}
-      {#if Admin}
+      {#if isAdmin}
         {#if loadingSections}
           <p>Loading sections...</p>
         {:else if errorSections}

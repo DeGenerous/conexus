@@ -1,98 +1,94 @@
 <!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
-  import CollectionFetcher from "./collection/CollectionFetcher.svelte";
+  import { onMount } from 'svelte';
+  import { dndzone } from 'svelte-dnd-action';
 
-  // import { onMount } from 'svelte';
-  // import { dndzone } from 'svelte-dnd-action';
+  import { SetCache, ALL_TOPICS_KEY, TTL_DAY } from '@constants/cache';
+  import AdminApp from '@lib/admin';
+  import CoNexusApp from '@lib/view';
+  import { toastStore } from '@stores/toast.svelte';
 
-  // import { SetCache, ALL_TOPICS_KEY, TTL_DAY } from '@constants/cache';
-  // import AdminApp from '@lib/admin';
-  // import CoNexusApp from '@lib/view';
-  // import { toastStore } from '@stores/toast.svelte';
+  import StoryList from '@components/dashboard/dream/manage/collection/StoryList.svelte';
 
-  // import StoryList from '@components/dashboard/dream/manage/collection/StoryList.svelte';
+  export let selectInput = (event: Event) => {};
 
-  // export let selectInput = (event: Event) => {};
+  let admin = new AdminApp();
+  let view = new CoNexusApp();
 
-  // let admin = new AdminApp();
-  // let view = new CoNexusApp();
+  let sections: Section[] = [];
+  let collections: Collection[] = [];
 
-  // let sections: Section[] = [];
-  // let collections: Collection[] = [];
+  let debounceTimeout: NodeJS.Timeout;
 
-  // let debounceTimeout: NodeJS.Timeout;
+  let items: any[] = [];
+  let topicBuckets: Record<number, CollectionTopic[]> = {}; // id → list
 
-  // let items: any[] = [];
-  // let topicBuckets: Record<number, CollectionTopic[]> = {}; // id → list
+  const isCoarsePointer = (): boolean =>
+    matchMedia('(pointer: coarse)').matches;
 
-  // const isCoarsePointer = (): boolean =>
-  //   matchMedia('(pointer: coarse)').matches;
+  const fetchCollections = async () => {
+    collections = await admin.fetchCollections();
+    updateCollections();
+    topicBuckets = Object.fromEntries(
+      collections.map((c) => [
+        c.category_id,
+        [...c.topics]
+          .sort((a, b) => a.order - b.order)
+          .map((t) => ({ ...t, id: t.topic_id })),
+      ]),
+    );
+  };
 
-  // const fetchCollections = async () => {
-  //   collections = await admin.fetchCollections();
-  //   updateCollections();
-  //   topicBuckets = Object.fromEntries(
-  //     collections.map((c) => [
-  //       c.category_id,
-  //       [...c.topics]
-  //         .sort((a, b) => a.order - b.order)
-  //         .map((t) => ({ ...t, id: t.topic_id })),
-  //     ]),
-  //   );
-  // };
+  // Make a sortable id‑based copy
+  const updateCollections = () => {
+    items = collections
+      .map((c) => ({ ...c, id: c.category_id }))
+      .sort(
+        (a: Collection, b: Collection) => a.category_order - b.category_order,
+      );
+    storeAllTopics(items);
+  };
 
-  // // Make a sortable id‑based copy
-  // const updateCollections = () => {
-  //   items = collections
-  //     .map((c) => ({ ...c, id: c.category_id }))
-  //     .sort(
-  //       (a: Collection, b: Collection) => a.category_order - b.category_order,
-  //     );
-  //   storeAllTopics(items);
-  // };
+  onMount(async () => {
+    sections = await view.getSections();
+    await fetchCollections();
+    updateCollections();
+  });
 
-  // onMount(async () => {
-  //   sections = await view.getSections();
-  //   await fetchCollections();
-  //   updateCollections();
-  // });
+  // Change order of every category based on position in array
+  const persistOrder = () => {
+    items.forEach(async ({ category_id }, i) => {
+      await admin.changeSectionCategoryOrder(category_id, i + 1, false);
+      items[i].category_order = i + 1;
+    });
+    toastStore.show('All categories reordered successfully');
+  };
 
-  // // Change order of every category based on position in array
-  // const persistOrder = () => {
-  //   items.forEach(async ({ category_id }, i) => {
-  //     await admin.changeSectionCategoryOrder(category_id, i + 1, false);
-  //     items[i].category_order = i + 1;
-  //   });
-  //   toastStore.show('All categories reordered successfully');
-  // };
+  // Change order of single category
+  const handleChangeCategoryOrder = (event: Event, category_id: number) => {
+    clearTimeout(debounceTimeout);
+    const input = event.target as HTMLInputElement;
+    if (Number(input.value) < 0) input.value = '0';
+    if (Number(input.value) > 99) input.value = '99';
+    debounceTimeout = setTimeout(async () => {
+      if (input.value == '') input.value = '0';
+      await admin.changeSectionCategoryOrder(category_id, Number(input.value));
+      await fetchCollections();
+      updateCollections();
+    }, 1000);
+  };
 
-  // // Change order of single category
-  // const handleChangeCategoryOrder = (event: Event, category_id: number) => {
-  //   clearTimeout(debounceTimeout);
-  //   const input = event.target as HTMLInputElement;
-  //   if (Number(input.value) < 0) input.value = '0';
-  //   if (Number(input.value) > 99) input.value = '99';
-  //   debounceTimeout = setTimeout(async () => {
-  //     if (input.value == '') input.value = '0';
-  //     await admin.changeSectionCategoryOrder(category_id, Number(input.value));
-  //     await fetchCollections();
-  //     updateCollections();
-  //   }, 1000);
-  // };
-
-  // // Cahce all topics for switching between
-  // const storeAllTopics = (collections: Collection[]) => {
-  //   const allTopics = collections
-  //     .map((collection) => collection.topics.sort((a, b) => a.order - b.order))
-  //     .flat();
-  //   const topicNames = allTopics.map(({ topic_name }) => topic_name);
-  //   SetCache(ALL_TOPICS_KEY, topicNames.join(']['), TTL_DAY);
-  // };
+  // Cahce all topics for switching between
+  const storeAllTopics = (collections: Collection[]) => {
+    const allTopics = collections
+      .map((collection) => collection.topics.sort((a, b) => a.order - b.order))
+      .flat();
+    const topicNames = allTopics.map(({ topic_name }) => topic_name);
+    SetCache(ALL_TOPICS_KEY, topicNames.join(']['), TTL_DAY);
+  };
 </script>
 
-<CollectionFetcher />
-
-<!-- {#if !items.length}
+{#if !items.length}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {:else}
   <section
@@ -153,7 +149,7 @@
 
         <StoryList
           topics={topicBuckets[c.category_id]}
-          catId={c.category_id}
+          category_Id={c.category_id}
           {fetchCollections}
           {selectInput}
           {isCoarsePointer}
@@ -161,9 +157,9 @@
       </span>
     {/each}
   </section>
-{/if} -->
+{/if}
 
-<!-- <style lang="scss">
+<style lang="scss">
   @use '/src/styles/mixins' as *;
 
   input[type='number'] {
@@ -223,4 +219,4 @@
       }
     }
   }
-</style> -->
+</style>

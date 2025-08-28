@@ -138,8 +138,12 @@ export default class AppView {
       pageSize,
     );
 
-    if (!data || status === 'error') {
+    if (status === 'error') {
       api_error(message);
+      return [];
+    }
+
+    if (!data) {
       return [];
     }
 
@@ -209,14 +213,19 @@ export default class AppView {
     page: number,
     pageSize: number,
   ): Promise<SectionCategoryTopics[]> {
-    const { message, data } = await this.api.creatorTopics(
+    const { status, message, data } = await this.api.creatorTopics(
       creator_id,
       page,
       pageSize,
     );
 
-    if (!data) {
+    if (status === 'error') {
+      console.error('Error fetching creator categories:', message);
       api_error(message);
+      return [];
+    }
+
+    if (!data) {
       return [];
     }
 

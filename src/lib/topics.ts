@@ -20,7 +20,7 @@ export default class Topic {
     return data;
   }
 
-  async deleteStory(topic_id: string): Promise<void> {
+  async deleteTopic(topic_id: string): Promise<void> {
     const { status, message } = await this.api.delete(topic_id);
 
     if (status === 'error') {
@@ -329,9 +329,9 @@ export default class Topic {
   }
 
   async changeName(topic_id: string, new_name: string): Promise<void> {
-    const { message, data } = await this.api.changeName(topic_id, new_name);
+    const { status, message } = await this.api.changeName(topic_id, new_name);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return;
     }
@@ -343,12 +343,12 @@ export default class Topic {
     topic_id: string,
     new_description: string,
   ): Promise<void> {
-    const { message, data } = await this.api.changeDescription(
+    const { status, message } = await this.api.changeDescription(
       topic_id,
       new_description,
     );
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return;
     }
@@ -360,12 +360,12 @@ export default class Topic {
     topic_id: string,
     available: boolean,
   ): Promise<void> {
-    const { message, data } = await this.api.changeAvailability(
+    const { status, message } = await this.api.changeAvailability(
       topic_id,
       available,
     );
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return;
     }
@@ -380,12 +380,12 @@ export default class Topic {
     topic_id: string,
     visible: 'public' | 'private',
   ): Promise<void> {
-    const { message, data } = await this.api.changeVisibility(
+    const { status, message } = await this.api.changeVisibility(
       topic_id,
       visible,
     );
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return;
     }
@@ -393,35 +393,55 @@ export default class Topic {
     toastStore.show(message || `Topic ${topic_id} visibility changed`, 'info');
   }
 
-  async updateTopic(
-    topic_id: string,
-    body: Partial<TopicRequest>,
-  ): Promise<void> {
-    // only name, description, availability and visibility can be updated
-    // check which fields are being updated
-    const allowedFields: (keyof TopicRequest)[] = [
-      'name',
-      'description',
-      'available',
-      'visibility',
-    ];
-    const isValidUpdate = Object.keys(body).every((key) =>
-      allowedFields.includes(key as keyof TopicRequest),
-    );
+  async editPrompt(topic_id: string, prompt: string): Promise<void> {
+    const { status, message } = await this.api.editPrompt(topic_id, prompt);
 
-    if (!isValidUpdate) {
-      toastStore.show(`Invalid fields in update`, 'error');
+    if (status === 'error') {
+      api_error(message);
       return;
     }
 
-    // const { message, data } = await this.api.updateTopic(topic_id, body);
+    toastStore.show(
+      message || `Topic ${topic_id} updated successfully`,
+      'info',
+    );
+  }
 
-    // if (!data) {
-    //   api_error(message);
-    //   return;
-    // }
+  async editImagePrompt(topic_id: string, image_prompt: string): Promise<void> {
+    const { status, message } = await this.api.editImagePrompt(
+      topic_id,
+      image_prompt,
+    );
 
-    toastStore.show(`Topic ${topic_id} updated successfully`, 'info');
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(
+      message || `Topic ${topic_id} updated successfully`,
+      'info',
+    );
+  }
+
+  async editPromptSettings(
+    topic_id: string,
+    prompt_settings: PromptSettings,
+  ): Promise<void> {
+    const { status, message } = await this.api.editPromptSettings(
+      topic_id,
+      prompt_settings,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(
+      message || `Topic ${topic_id} updated successfully`,
+      'info',
+    );
   }
 
   async moveTopic(topic_id: string, category_id: string): Promise<void> {

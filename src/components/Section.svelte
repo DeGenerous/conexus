@@ -51,7 +51,7 @@
         break;
       case 'c':
         response = await app.getCreatorCategoryTopics(
-          name,
+          currExplorerId,
           categories.length + 1,
           pageSize,
         );
@@ -128,6 +128,10 @@
             showNoCategoriesMessage = true;
           }
         }, 2000);
+      }
+
+      if (intended === 'c') {
+        await fetchCategories();
       }
 
       // If intended === 'c', you can later add creator-specific setup here

@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
 
-  import { NAV_ROUTES }from '@constants/routes';
+  import { NAV_ROUTES } from '@constants/routes';
   import TopicManagement from '@lib/topics';
   import { GetCache, ALL_TOPICS_KEY } from '@constants/cache';
   import openModal from '@stores/modal.svelte';
@@ -89,6 +89,7 @@
     topic_categories = topic.categories;
     topic_genres = topic.genres;
     topic_gates = topic.gates;
+    topic_media_files = topic.media_files;
 
     const exportObject = {
       topic: topic_name,
@@ -246,8 +247,8 @@
             <SaveSVG
               onclick={() => {
                 editingName = false;
-                // admin.editTopicName(_topic.name, storyName);
-                window.location.href = `${NAV_ROUTES.MANAGE}/${topic_id}`;
+                topicManager.changeName(topic_id, derivedTopicName);
+                window.location.href = `${NAV_ROUTES.EXPLORE(topic_id)}`;
               }}
               disabled={true}
             />
@@ -291,7 +292,10 @@
             <SaveSVG
               onclick={() => {
                 editingDescription = false;
-                // admin.editTopicDescription(topic!.id, storyDescription);
+                topicManager.changeDescription(
+                  topic_id,
+                  derivedTopicDescription,
+                );
               }}
               disabled={topic_description == derivedTopicDescription}
             />
@@ -320,7 +324,7 @@
             <SaveSVG
               onclick={() => {
                 editingImagePrompt = false;
-                // admin.editImagePrompt(topic!.id, storyImagePrompt);
+                topicManager.editImagePrompt(topic_id, derivedTopicImagePrompt);
               }}
               disabled={topic_imagePrompt == derivedTopicImagePrompt}
             />
@@ -350,7 +354,7 @@
             <SaveSVG
               onclick={() => {
                 editingPrompt = false;
-                // admin.editPrompt(storyPrompt, topic!.id, topic!.prompt_id);
+                topicManager.editPrompt(topic_id, derivedTopicPrompt);
               }}
               disabled={topic_prompt == derivedTopicPrompt}
             />
@@ -376,7 +380,7 @@
     class="red-btn blur"
     onclick={() =>
       openModal(deleteStoryModal, `Delete story: ${derivedTopicName}`, () => {
-        // topics.deleteStory(topic!.id);
+        topicManager.deleteTopic(topic_id);
         window.location.href = '/dashboard/dream/manage/';
       })}
   >

@@ -33,6 +33,7 @@ export const DASHBOARD_LINKS: Linking[] = [
         children: DREAM_ROUTES.MANAGE.map((route) => ({
           name: route.name,
           path: route.path,
+          intended: route.intended ?? 'creator',
         })),
       },
     ],

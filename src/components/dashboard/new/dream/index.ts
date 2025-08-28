@@ -42,6 +42,7 @@ export const DREAM_ROUTES = {
       name: 'NFT Gates',
       path: '/dashboard/dream/manage/nft-gates',
       component: DreamNFTGates,
+      intended: 'admin',
     },
   ],
 };

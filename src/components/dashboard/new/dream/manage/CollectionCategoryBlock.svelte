@@ -1,32 +1,54 @@
 <script lang="ts">
   import { tippy } from 'svelte-tippy';
 
-  import Topics from '@lib/topics';
-
   import { NAV_ROUTES } from '@constants/routes';
+  import Topics from '@lib/topics';
 
   let {
     category,
-    expandedCategories,
-    toggleExpandCategory,
     topicManager,
     reorder,
   }: {
     category: CollectionCategory;
-    expandedCategories: Set<string>;
-    toggleExpandCategory: (
-      id: string,
-      categories: CollectionCategory[],
-    ) => void;
     topicManager: Topics;
     reorder: <T>(list: T[], from: number, to: number) => void;
   } = $props();
 
   let debounceTimeout: NodeJS.Timeout;
 
+  let workingCategory = $state<CollectionCategory>(category);
+
+  let expandedCategories = $state<Set<string>>(new Set());
+
   let draggedTopic = $state<CollectionTopic | null>(null);
+
   function setDraggedTopic(topic: CollectionTopic | null) {
     draggedTopic = topic;
+  }
+
+  async function fetchTopicCollection(
+    categoryId: string,
+    refresh: boolean = false,
+  ) {
+    workingCategory.topics = await topicManager.getTopicCollection(
+      categoryId,
+      1,
+      10,
+      refresh,
+    );
+  }
+
+  async function toggleExpandCategory(categoryId: string) {
+    const newSet = new Set(expandedCategories);
+    if (newSet.has(categoryId)) {
+      newSet.delete(categoryId);
+    } else {
+      newSet.add(categoryId);
+
+      // load topics if not already loaded
+      fetchTopicCollection(categoryId);
+    }
+    expandedCategories = newSet;
   }
 
   const selectInput = (event: Event) => {
@@ -68,19 +90,21 @@
         Number(input.value),
       );
 
-      // await fetchCollections();
+      await fetchTopicCollection(category_id, true);
     }, 1000);
   }
 
-  function toggleAvailability(topic_id: string, available: boolean) {
-    topicManager.changeAvailability(topic_id, available);
+  async function toggleAvailability(topic_id: string, available: boolean) {
+    await topicManager.changeAvailability(topic_id, available);
+    await fetchTopicCollection(workingCategory.category_id, true);
   }
 
-  function toggleVisibility(
+  async function toggleVisibility(
     topic_id: string,
     visibility: 'public' | 'private',
   ) {
-    topicManager.changeVisibility(topic_id, visibility);
+    await topicManager.changeVisibility(topic_id, visibility);
+    await fetchTopicCollection(workingCategory.category_id, true);
   }
 
   function moveTopicToCategory(
@@ -88,7 +112,7 @@
     targetCategory: CollectionCategory,
   ) {
     // Remove from old category
-    category.topics = (category.topics || []).filter(
+    workingCategory.topics = (workingCategory.topics || []).filter(
       (t) => t.topic_id !== topic.topic_id,
     );
 
@@ -107,60 +131,63 @@
   role="listitem"
   draggable="true"
   ondragover={() => {}}
-  ondrop={() => draggedTopic && moveTopicToCategory(draggedTopic, category)}
+  ondrop={() =>
+    draggedTopic && moveTopicToCategory(draggedTopic, workingCategory)}
 >
   <button
     type="button"
     class="category-toggle"
-    aria-expanded={expandedCategories.has(category.category_id)}
-    onclick={() => toggleExpandCategory(category.category_id, [category])}
+    aria-expanded={expandedCategories.has(workingCategory.category_id)}
+    onclick={() => toggleExpandCategory(workingCategory.category_id)}
     onkeydown={(e) => {
       if (e.key === 'Enter' || e.key === ' ') {
-        toggleExpandCategory(category.category_id, [category]);
+        toggleExpandCategory(workingCategory.category_id);
       }
     }}
   >
-    <h4>{category.category_name}</h4>
+    <h4>{workingCategory.category_name}</h4>
     <input
-      id="category-order-{category.category_id}"
+      id="category-order-{workingCategory.category_id}"
       type="number"
-      value={category.category_order}
+      value={workingCategory.category_order}
       onclick={selectInput}
       min="1"
       max="99"
       oninput={(event) =>
-        handleChangeCategoryOrder(event, category.category_id)}
+        handleChangeCategoryOrder(event, workingCategory.category_id)}
     />
   </button>
 
-  {#if expandedCategories.has(category.category_id)}
-    {#if category.topics && category.topics.length > 0}
+  {#if expandedCategories.has(workingCategory.category_id)}
+    {#if workingCategory.topics && workingCategory.topics.length > 0}
       <ul>
-        {#each category.topics as topic, i}
+        {#each workingCategory.topics as topic, i}
           <li
             draggable="true"
             ondragstart={() => setDraggedTopic(topic)}
             ondragend={() => setDraggedTopic(null)}
           >
-            <a class="tile" href={NAV_ROUTES.EXPLORE(topic.topic_id)}>
-              <span>{topic.topic_name}</span>
-              <div class="input-container">
-                <label for="story-order-{topic.topic_id}">Order</label>
-                <input
-                  id="story-order-{topic.topic_id}"
-                  type="number"
-                  value={topic.order}
-                  onclick={selectInput}
-                  min="1"
-                  max="99"
-                  oninput={(event) =>
-                    handleChangeTopicOrder(
-                      event,
-                      topic.topic_id,
-                      category.category_id,
-                    )}
-                />
-              </div>
+            <div class="tile">
+              <a href={NAV_ROUTES.EXPLORE(topic.topic_id)}>
+                <span>{topic.topic_name}</span>
+                <div class="input-container">
+                  <label for="story-order-{topic.topic_id}">Order</label>
+                  <input
+                    id="story-order-{topic.topic_id}"
+                    type="number"
+                    value={topic.order}
+                    onclick={selectInput}
+                    min="1"
+                    max="99"
+                    oninput={(event) =>
+                      handleChangeTopicOrder(
+                        event,
+                        topic.topic_id,
+                        workingCategory.category_id,
+                      )}
+                  />
+                </div>
+              </a>
               <div class="toggle-container">
                 <button
                   use:tippy={{
@@ -193,18 +220,20 @@
               {#if i > 0}
                 <button
                   class="reorder-left"
-                  onclick={() => reorder(category.topics ?? [], i, i - 1)}
+                  onclick={() =>
+                    reorder(workingCategory.topics ?? [], i, i - 1)}
                   >left</button
                 >
               {/if}
-              {#if i < category.topics.length - 1}
+              {#if i < workingCategory.topics.length - 1}
                 <button
                   class="reorder-right"
-                  onclick={() => reorder(category.topics ?? [], i, i + 1)}
+                  onclick={() =>
+                    reorder(workingCategory.topics ?? [], i, i + 1)}
                   >right</button
                 >
               {/if}
-            </a>
+            </div>
           </li>
         {/each}
       </ul>
@@ -237,12 +266,26 @@
     }
 
     ul {
-      list-style: none;
+      display: flex;
+      flex-wrap: wrap; // or nowrap if you want them in a row
+      gap: 1rem;
       padding: 0;
       margin: 0.5rem 0 0;
-      display: flex;
-      flex-direction: row;
-      gap: 1rem;
+      list-style: none;
+      max-width: 100%;
+      overflow: hidden; // ul itself won't scroll
+    }
+
+    li {
+      flex: 0 0 auto;
+      min-width: 200px;
+      max-width: 100%;
+      box-sizing: border-box;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+
+      /* Add scrolling to the li content itself */
       overflow-x: auto;
       scrollbar-width: thin;
       scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
@@ -254,17 +297,6 @@
         background: rgba(255, 255, 255, 0.2);
         border-radius: 4px;
       }
-    }
-
-    li {
-      flex: 0 0 auto; /* fixed-size tile in row */
-      min-width: 200px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 0.5rem;
-      padding: 0.75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
 
       .tile {
         color: white;
@@ -296,6 +328,7 @@
         .toggle-container {
           display: flex;
           gap: 0.5rem;
+          z-index: 100;
         }
 
         button {
@@ -325,101 +358,4 @@
       font-size: 1rem;
     }
   }
-
-  /* Categories stay stacked */
-  // .category {
-  //   margin-left: 1rem;
-  //   padding-left: 1rem;
-  //   border-left: 2px solid rgba(255, 255, 255, 0.15);
-  //   display: flex;
-  //   flex-direction: column;
-  //   gap: 0.75rem;
-
-  //   .category-toggle {
-  //     background: transparent;
-  //     border: none;
-  //     cursor: pointer;
-  //     text-align: left;
-
-  //     h4 {
-  //       margin: 0;
-  //       font-size: 1.1rem;
-  //       font-weight: 500;
-  //     }
-  //   }
-  // }
-
-  // /* Topics container → horizontal scroll */
-  // .category ul {
-  //   list-style: none;
-  //   padding: 0;
-  //   margin: 0.5rem 0 0;
-  //   display: flex;
-  //   flex-direction: row;
-  //   gap: 1rem;
-  //   overflow-x: auto;
-  //   scrollbar-width: thin;
-  //   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-
-  //   /* Webkit scrollbar styling */
-  //   &::-webkit-scrollbar {
-  //     height: 8px;
-  //   }
-  //   &::-webkit-scrollbar-thumb {
-  //     background: rgba(255, 255, 255, 0.2);
-  //     border-radius: 4px;
-  //   }
-  // }
-
-  // /* Each topic tile */
-  // .tiles-collection {
-  //   flex: 0 0 auto; /* prevent shrinking */
-  //   min-width: 200px;
-  //   background: rgba(255, 255, 255, 0.05);
-  //   border-radius: 0.5rem;
-  //   padding: 0.75rem;
-  //   display: flex;
-  //   flex-direction: column;
-  //   justify-content: space-between;
-  //   gap: 0.5rem;
-
-  //   .tile {
-  //     color: white;
-  //     text-decoration: none;
-  //     display: flex;
-  //     flex-direction: column;
-  //     gap: 0.5rem;
-
-  //     span {
-  //       font-weight: 500;
-  //       font-size: 1rem;
-  //     }
-
-  //     button {
-  //       padding: 0.3rem 0.6rem;
-  //       border-radius: 0.4rem;
-  //       font-size: 0.8rem;
-  //       border: none;
-  //       cursor: pointer;
-  //       background: rgba(100, 181, 246, 0.15);
-  //       color: #90caf9;
-  //       transition: background 0.2s;
-
-  //       &:hover {
-  //         background: rgba(100, 181, 246, 0.3);
-  //       }
-  //     }
-  //   }
-  // }
-
-  // /* Responsive tweaks */
-  // @media (max-width: 768px) {
-  //   .tiles-collection {
-  //     min-width: 150px;
-  //   }
-
-  //   .category-toggle h4 {
-  //     font-size: 1rem;
-  //   }
-  // }
 </style>

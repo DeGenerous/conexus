@@ -55,8 +55,6 @@
 
   // Fetch stored media on load
   const loadMedia = async () => {
-    if (!topic_media_files) return;
-
     for (const file of topic_media_files) {
       const slot = typeToSlot[file.media_type];
       if (!slot) continue; // skip unknown media types
@@ -143,7 +141,7 @@
       await handleDeleteMedia(fileId, type);
 
       topic_media_files = topic_media_files.filter(
-        (file) => file.id !== fileId,
+        (file) => file.file_id !== fileId,
       );
 
       if (type === 'background') {

@@ -323,6 +323,45 @@ export default class TopicAPI extends Fetcher {
   }
 
   /**
+   * Edit the prompt of a topic
+   * @param topic_id The ID of the topic
+   * @param new_prompt The new prompt for the topic
+   * @returns The response from the API
+   */
+  async editPrompt(topic_id: string, new_prompt: string) {
+    return this.request(`${this.group}/edit-prompt`, {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, new_prompt }),
+    });
+  }
+
+  /**
+   * Edit the image prompt of a topic
+   * @param topic_id The ID of the topic
+   * @param new_image_prompt The new image prompt for the topic
+   * @returns The response from the API
+   */
+  async editImagePrompt(topic_id: string, new_image_prompt: string) {
+    return this.request(`${this.group}/edit-image-prompt`, {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, new_image_prompt }),
+    });
+  }
+
+  /**
+   * Edit the prompt settings of a topic
+   * @param topic_id The ID of the topic
+   * @param settings The new prompt settings for the topic
+   * @returns The response from the API
+   */
+  async editPromptSettings(topic_id: string, settings: PromptSettings) {
+    return this.request(`${this.group}/edit-prompt-settings`, {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, settings }),
+    });
+  }
+
+  /**
    * Upload a file to a topic
    * @param topic_id The ID of the topic
    * @param media_type The type of media being uploaded

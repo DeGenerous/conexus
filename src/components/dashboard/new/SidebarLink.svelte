@@ -26,6 +26,22 @@
     }
 
     if ('path' in item) {
+      if (!item.path) {
+        return false;
+      }
+
+      if (item.intended !== undefined) {
+        // Leaf link → check intended audience
+        switch (item.intended) {
+          case 'admin':
+            return isAdmin;
+          case 'creator':
+            return isAdmin || isCreator;
+          default:
+            return true;
+        }
+      }
+
       // Leaf link → only check display (already handled above)
       return true;
     }

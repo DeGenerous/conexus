@@ -40,7 +40,6 @@
 
   let expandedSections = $state<Set<string>>(new Set());
   let expandedCreators = $state<Set<string>>(new Set());
-  let expandedCategories = $state<Set<string>>(new Set());
 
   async function toggleExpandSection(id: string) {
     const newSet = new Set(expandedSections);
@@ -80,25 +79,6 @@
       }
     }
     expandedCreators = newSet;
-  }
-
-  async function toggleExpandCategory(
-    id: string,
-    categories: CollectionCategory[],
-  ) {
-    const newSet = new Set(expandedCategories);
-    if (newSet.has(id)) {
-      newSet.delete(id);
-    } else {
-      newSet.add(id);
-
-      // load topics if not already loaded
-      const cat = categories.find((c) => c.category_id === id);
-      if (cat && !cat.topics) {
-        cat.topics = await topicManager.getTopicCollection(id, 1, pageSize);
-      }
-    }
-    expandedCategories = newSet;
   }
 
   // drag state
@@ -174,14 +154,7 @@
             {#if expandedCreators.has(creator.creator_id)}
               {#if creator.categories && creator.categories.length > 0}
                 {#each creator.categories as category}
-                  <CategoryBlock
-                    {category}
-                    {expandedCategories}
-                    toggleExpandCategory={(id) =>
-                      toggleExpandCategory(id, creator.categories ?? [])}
-                    {topicManager}
-                    {reorder}
-                  />
+                  <CategoryBlock {category} {topicManager} {reorder} />
                 {/each}
               {:else}
                 <p class="validation">No categories found</p>
@@ -218,14 +191,7 @@
           {#if expandedSections.has(section.section_id)}
             {#if section.categories && section.categories.length > 0}
               {#each section.categories as category}
-                <CategoryBlock
-                  {category}
-                  {expandedCategories}
-                  toggleExpandCategory={(id) =>
-                    toggleExpandCategory(id, section.categories ?? [])}
-                  {topicManager}
-                  {reorder}
-                />
+                <CategoryBlock {category} {topicManager} {reorder} />
               {/each}
             {:else}
               <p class="validation">No categories found</p>
@@ -241,14 +207,7 @@
   {#if isCreator}
     {#if creatorCategories && creatorCategories.length > 0}
       {#each creatorCategories as category}
-        <CategoryBlock
-          {category}
-          {expandedCategories}
-          toggleExpandCategory={(id) =>
-            toggleExpandCategory(id, creatorCategories)}
-          {topicManager}
-          {reorder}
-        />
+        <CategoryBlock {category} {topicManager} {reorder} />
       {/each}
     {:else}
       <p class="validation">No categories found</p>
@@ -259,18 +218,18 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .admin-select-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-  }
-
   .collection-container {
     outline: none !important;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
     padding: 1rem;
+  }
+
+  .admin-select-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
   }
 
   /* Section container */
@@ -289,7 +248,8 @@
     background: transparent;
     border: none;
     text-align: left;
-    width: 100vh;
+    /* REMOVE this: width: 100vh; */
+    width: 100%; // <- what you really want
     cursor: pointer;
     padding: 0.5rem 0;
 

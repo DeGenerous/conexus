@@ -210,6 +210,7 @@ type NavContext = {
 
 type DashboardPathLink = {
   name: string;
+  intended?: DashboardParentLinkDisplay;
   path: string;
   display?: () => boolean;
   children?: never;

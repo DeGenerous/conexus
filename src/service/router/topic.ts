@@ -271,28 +271,54 @@ export default class TopicAPI extends Fetcher {
   }
 
   /**
-   * Change the availability of a topic
+   * Change the name of a topic
    * @param topic_id The ID of the topic
-   * @param available Whether the topic is available
+   * @param new_name The new name for the topic
    * @returns The response from the API
    */
-  async changeAvailability(topic_id: string, available: boolean) {
+  async changeName(topic_id: string, new_name: string) {
+    return this.request(`${this.group}/change-name`, {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, new_name }),
+    });
+  }
+
+  /**
+   * Change the description of a topic
+   * @param topic_id The ID of the topic
+   * @param new_description The new description for the topic
+   * @returns The response from the API
+   */
+  async changeDescription(topic_id: string, new_description: string) {
+    return this.request(`${this.group}/change-description`, {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, new_description }),
+    });
+  }
+
+  /**
+   * Change the availability of a topic
+   * @param topic_id The ID of the topic
+   * @param availability Whether the topic is available
+   * @returns The response from the API
+   */
+  async changeAvailability(topic_id: string, availability: boolean) {
     return this.request(`${this.group}/change-availability`, {
       method: 'PATCH',
-      body: JSON.stringify({ topic_id, available }),
+      body: JSON.stringify({ topic_id, availability }),
     });
   }
 
   /**
    * Change the visibility of a topic
    * @param topic_id The ID of the topic
-   * @param visible Whether the topic is visible
+   * @param visibility Whether the topic is visible
    * @returns The response from the API
    */
-  async changeVisibility(topic_id: string, visible: 'public' | 'private') {
+  async changeVisibility(topic_id: string, visibility: 'public' | 'private') {
     return this.request(`${this.group}/change-visibility`, {
       method: 'PATCH',
-      body: JSON.stringify({ topic_id, visible }),
+      body: JSON.stringify({ topic_id, visibility }),
     });
   }
 

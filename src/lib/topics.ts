@@ -328,6 +328,34 @@ export default class Topic {
     toastStore.show(message || `Gate removed from topic ${topic_id}`, 'info');
   }
 
+  async changeName(topic_id: string, new_name: string): Promise<void> {
+    const { message, data } = await this.api.changeName(topic_id, new_name);
+
+    if (!data) {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || `Topic ${topic_id} name changed`, 'info');
+  }
+
+  async changeDescription(
+    topic_id: string,
+    new_description: string,
+  ): Promise<void> {
+    const { message, data } = await this.api.changeDescription(
+      topic_id,
+      new_description,
+    );
+
+    if (!data) {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || `Topic ${topic_id} description changed`, 'info');
+  }
+
   async changeAvailability(
     topic_id: string,
     available: boolean,

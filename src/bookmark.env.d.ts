@@ -3,7 +3,7 @@
 
 type Bookmark = {
   id?: string;
-  bookmark_folder_id: string;
+  bookmark_folder_id?: string;
   topic_id: string;
   note?: string;
   sort_order?: number;

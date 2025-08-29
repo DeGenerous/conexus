@@ -177,7 +177,7 @@ export default class AccountAPI extends Fetcher {
    */
   async getFolderBookmarks(folderId: string) {
     return this.request<Bookmark[]>(
-      `${this.group}/get-bookmark-folder-topics/${folderId}`,
+      `${this.group}/get-folder-bookmarks/${folderId}`,
     );
   }
 
@@ -208,7 +208,7 @@ export default class AccountAPI extends Fetcher {
    */
   async getTagBookmarks(tagId: string) {
     return this.request<Bookmark[]>(
-      `${this.group}/get-bookmark-tag-topics/${tagId}`,
+      `${this.group}/get-tag-bookmarks/${tagId}`,
     );
   }
 
@@ -242,6 +242,12 @@ export default class AccountAPI extends Fetcher {
    */
   async getBookmarks() {
     return this.request<Bookmark[]>(`${this.group}/get-bookmarks`);
+  }
+
+  async checkBookmark(topic_id: string) {
+    return this.request<Bookmark>(
+      `${this.group}/check-bookmark/${topic_id}`
+    );
   }
 
   /**

@@ -1,7 +1,8 @@
+import type { SvelteComponent } from 'svelte';
 import wrap from 'svelte-spa-router/wrap';
 
 import ProfileOverview from './Overview.svelte';
-import ProfileSettings from './Settings.svelte';
+import ProfileBookmarks from './Bookmark.svelte';
 import ProfileMetrics from './Metrics.svelte';
 
 export const PROFILE_ROUTES = [
@@ -11,9 +12,9 @@ export const PROFILE_ROUTES = [
     component: ProfileOverview,
   },
   {
-    name: 'Settings',
-    path: '/dashboard/profile/settings',
-    component: ProfileSettings,
+    name: 'Bookmarks',
+    path: '/dashboard/profile/bookmarks',
+    component: ProfileBookmarks,
   },
   {
     name: 'Metrics',
@@ -23,5 +24,8 @@ export const PROFILE_ROUTES = [
 ];
 
 export const profileRoutes = Object.fromEntries(
-  PROFILE_ROUTES.map((r) => [r.path, wrap({ component: r.component })]),
+  PROFILE_ROUTES.map((r) => [
+    r.path,
+    wrap({ component: r.component as unknown as typeof SvelteComponent }),
+  ]),
 );

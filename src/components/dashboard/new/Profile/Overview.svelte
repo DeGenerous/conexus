@@ -2,12 +2,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import WalletConnect from '@components/web3/WalletConnect.svelte';
-  import Account from '@lib/account';
-  import Authentication from '@lib/authentication';
-  import { accountError } from '@stores/account.svelte';
-  import { showProfile } from '@stores/modal.svelte';
-  import passwordVisible from '@stores/password-visibility.svelte';
+  import { walletSwitchModal } from '@constants/modal';
   import {
     regexpEmail,
     regexpPasswordValidation,
@@ -18,8 +13,11 @@
     regexpSpecialCharCheck,
     regexpRestrictedCharsCheck,
   } from '@constants/regexp';
-  import openModal from '@stores/modal.svelte';
-  import { walletSwitchModal } from '@constants/modal';
+  import Account from '@lib/account';
+  import Authentication from '@lib/authentication';
+  import { accountError } from '@stores/account.svelte';
+  import openModal, { showProfile } from '@stores/modal.svelte';
+  import passwordVisible from '@stores/password-visibility.svelte';
   import { getCurrentUser } from '@utils/route-guard';
 
   import DoorSVG from '@components/icons/Door.svelte';
@@ -27,6 +25,7 @@
   import StarSVG from '@components/icons/Star.svelte';
   import DiscordBtn from '@components/icons/Discord.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
+  import WalletConnect from '@components/web3/WalletConnect.svelte';
 
   const handleBackArrow = () => {
     if (signUp) {
@@ -140,7 +139,7 @@
 <!-- svelte-ignore
 a11y-click-events-have-key-events
 a11y-no-static-element-interactions-->
-<div>
+<div class="profile-overview">
   <!-- USER PROFILE -->
   {#if user}
     <section class="profile-window flex">
@@ -622,10 +621,20 @@ a11y-no-static-element-interactions-->
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  header {
-    flex-direction: row;
-    justify-content: space-between;
-    margin-bottom: 1rem;
+  .profile-overview {
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 0.5rem;
+    width: 100%;
+    align-items: center;
+
+    h2 {
+      @include dark-blue(1, text);
+    }
+
+    p {
+      @include gray(0.75, text);
+    }
   }
 
   /* USER PROFILE */

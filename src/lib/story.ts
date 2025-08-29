@@ -40,7 +40,7 @@ export default class CoNexus {
    */
   async start(
     topic_id: string,
-    storySettings: StorySettingSelector,
+    storySettings: StorySettingSelector = 'topic',
     mode: PlayMode = 'play_limited',
     setMedia: (topic_id: string) => Promise<void>,
   ): Promise<void> {

@@ -12,6 +12,7 @@ import { api_error } from '@errors/index';
 import AccountAPI from '@service/router/account';
 import { authenticated, referralCodes } from '@stores/account.svelte';
 import { toastStore } from '@stores/toast.svelte';
+
 import NotificationService from './notification';
 
 class Account {
@@ -295,10 +296,11 @@ class Account {
       return [];
     }
 
-    toastStore.show(
-      message || 'Bookmark folders retrieved successfully',
-      'info',
-    );
+    // toastStore.show(
+    //   message || 'Bookmark folders retrieved successfully',
+    //   'info',
+    // );
+
     return data || [];
   }
 
@@ -308,18 +310,20 @@ class Account {
    * @returns {Promise<Bookmark[] | null>}
    */
   async getBookmarkFolderTopic(folderId: string): Promise<Bookmark[]> {
-    const { message, data } = await this.api.getFolderBookmarks(folderId);
+    const { status, message, data } =
+      await this.api.getFolderBookmarks(folderId);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return [];
     }
 
-    toastStore.show(
-      message || 'Bookmark folder topics retrieved successfully',
-      'info',
-    );
-    return data;
+    // toastStore.show(
+    //   message || 'Bookmark folder topics retrieved successfully',
+    //   'info',
+    // );
+
+    return data || [];
   }
 
   /**
@@ -339,39 +343,40 @@ class Account {
 
   /**
    * Get the user's bookmark tags.
-   * @returns {Promise<BookmarkTag[] | null>}
+   * @returns {Promise<BookmarkTag[]>}
    */
   async getBookmarkTags(): Promise<BookmarkTag[]> {
-    const { message, data } = await this.api.getBookmarkTags();
+    const { status, message, data } = await this.api.getBookmarkTags();
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return [];
     }
 
-    toastStore.show(message || 'Bookmark tags retrieved successfully', 'info');
-    return data;
+    // toastStore.show(message || 'Bookmark tags retrieved successfully', 'info');
+
+    return data || [];
   }
 
   /**
    * Get the topics in a bookmark tag.
    * @param tagID The ID of the tag to retrieve topics from.
-   * @returns {Promise<Bookmark[] | null>}
+   * @returns {Promise<Bookmark[]>}
    */
-  async getBookmarkTagsTopic(tagID: string): Promise<Bookmark[] | null> {
-    const { message, data } = await this.api.getTagBookmarks(tagID);
+  async getBookmarkTagsTopic(tagID: string): Promise<Bookmark[]> {
+    const { status, message, data } = await this.api.getTagBookmarks(tagID);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
-      return null;
+      return [];
     }
 
-    toastStore.show(
-      message || 'Bookmark folder topics retrieved successfully',
-      'info',
-    );
+    // toastStore.show(
+    //   message || 'Bookmark folder topics retrieved successfully',
+    //   'info',
+    // );
 
-    return data;
+    return data || [];
   }
 
   /**
@@ -395,15 +400,36 @@ class Account {
    * @returns {Promise<Bookmark | null>}
    */
   async getBookmark(bookmarkId: string): Promise<Bookmark | null> {
-    const { message, data } = await this.api.getBookmark(bookmarkId);
+    const { status, message, data } = await this.api.getBookmark(bookmarkId);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return null;
     }
 
-    toastStore.show(message || 'Bookmark retrieved successfully', 'info');
-    return data;
+    return data || null;
+  }
+
+  async getBookmarks(): Promise<Bookmark[]> {
+    const { status, message, data } = await this.api.getBookmarks();
+
+    if (status === 'error') {
+      api_error(message);
+      return [];
+    }
+
+    return data || [];
+  }
+
+  async isTopicBookmarked(topic_id: string): Promise<Bookmark | null> {
+    const { status, message, data } = await this.api.checkBookmark(topic_id);
+
+    if (status === 'error') {
+      api_error(message);
+      return null;
+    }
+
+    return data || null;
   }
 
   /**

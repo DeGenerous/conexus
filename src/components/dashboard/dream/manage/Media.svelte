@@ -20,7 +20,7 @@
     ) => Promise<void>;
   } = $props();
 
-  let isLoading = $state<boolean>(true);
+  let isLoading = $state<boolean>(false);
 
   let backgrounds = $state<string[]>([]);
   let description = $state<string | null>(null);
@@ -55,6 +55,8 @@
 
   // Fetch stored media on load
   const loadMedia = async () => {
+    isLoading = true;
+    
     for (const file of topic_media_files) {
       const slot = typeToSlot[file.media_type];
       if (!slot) continue; // skip unknown media types

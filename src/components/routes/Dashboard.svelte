@@ -25,7 +25,7 @@
   onMount(async () => {
     user = await Account.getUser();
     if (account && user && user.email_confirmed) {
-      account.getReferralCodes();
+      account.getReferralCode();
       checkSubscription();
     }
 
@@ -215,7 +215,7 @@
             'The cache has been reset. Fresh data will be fetched when needed.',
             'info',
           );
-          account.getReferralCodes();
+          account.getReferralCode();
         });
       }}
       text="Refresh Data"

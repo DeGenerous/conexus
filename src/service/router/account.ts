@@ -23,13 +23,17 @@ export default class AccountAPI extends Fetcher {
   /**
    * Retrieves the current user's account information.
    *
+   * @param refresh - Optional flag to indicate if the request should refresh the user data.
    * @param token - Optional bearer token for authentication. If provided, it will be included in the request headers.
    * @returns A promise that resolves to the user's account information.
    */
-  async me(token?: string) {
-    return this.request<User>(`${this.group}/me`, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    });
+  async me(refresh: boolean = false, token?: string) {
+    return this.request<User>(
+      `${this.group}/me?${refresh ? 'refresh=true' : ''}`,
+      {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      },
+    );
   }
 
   /**
@@ -98,11 +102,11 @@ export default class AccountAPI extends Fetcher {
   }
 
   /**
-   * Get the user's referral codes.
+   * Get the user's referral code.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.
    * */
-  async getReferralCodes() {
-    return this.request<ReferralCode[]>(`${this.group}/get-referral-codes`);
+  async getReferralCode() {
+    return this.request<ReferralCode>(`${this.group}/get-referral-code`);
   }
 
   /**
@@ -207,9 +211,7 @@ export default class AccountAPI extends Fetcher {
    * @returns A promise that resolves to the dashboard topics  or an error.
    */
   async getTagBookmarks(tagId: string) {
-    return this.request<Bookmark[]>(
-      `${this.group}/get-tag-bookmarks/${tagId}`,
-    );
+    return this.request<Bookmark[]>(`${this.group}/get-tag-bookmarks/${tagId}`);
   }
 
   /**
@@ -245,9 +247,7 @@ export default class AccountAPI extends Fetcher {
   }
 
   async checkBookmark(topic_id: string) {
-    return this.request<Bookmark>(
-      `${this.group}/check-bookmark/${topic_id}`
-    );
+    return this.request<Bookmark>(`${this.group}/check-bookmark/${topic_id}`);
   }
 
   /**

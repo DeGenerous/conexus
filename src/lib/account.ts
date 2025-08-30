@@ -26,9 +26,10 @@ class Account {
 
   /**
    * Fetch the current user's information.
+   * @param refresh - Whether to refresh the user data from the server.
    * @returns {Promise<void>}
    */
-  async me(): Promise<void> {
+  async me(refresh: boolean = false): Promise<void> {
     // Try getting user data from localStorage
     const cachedUser = GetCache<User>(USER_KEY);
     if (cachedUser) {
@@ -37,7 +38,7 @@ class Account {
     }
 
     // If no valid cached user, fetch from API
-    const { message, data } = await this.api.me();
+    const { message, data } = await this.api.me(refresh);
 
     if (!data) {
       api_error(message, false);
@@ -53,9 +54,10 @@ class Account {
 
   /**
    * Fetch the current user's information.
+   * @param refresh - Whether to refresh the user data from the server.
    * @returns {Promise<User | null>}
    */
-  static async getUser(): Promise<User | null> {
+  static async getUser(refresh: boolean = false): Promise<User | null> {
     // Try getting user data from localStorage
     const cachedUser = GetCache<User>(USER_KEY);
     if (cachedUser) {
@@ -64,7 +66,7 @@ class Account {
 
     const accountAPI = new AccountAPI(import.meta.env.PUBLIC_BACKEND);
 
-    const { message, data } = await accountAPI.me();
+    const { message, data } = await accountAPI.me(refresh);
 
     if (!data) {
       ClearCache('auth');
@@ -178,15 +180,15 @@ class Account {
    * Get the user's referral codes.
    * @returns {Promise<void>}
    */
-  async getReferralCodes(): Promise<void> {
-    const cachedData = GetCache<ReferralCode[]>(REFERRAL_CODES_KEY);
+  async getReferralCode(): Promise<void> {
+    const cachedData = GetCache<ReferralCode>(REFERRAL_CODES_KEY);
     if (cachedData) {
       referralCodes.set(cachedData);
       return;
     }
 
     // Fetch fresh data
-    const { message, data } = await this.api.getReferralCodes();
+    const { message, data } = await this.api.getReferralCode();
 
     if (!data) {
       api_error(message);

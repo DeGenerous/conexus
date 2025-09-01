@@ -5,10 +5,12 @@
   import Topics from '@lib/topics';
 
   let {
+    isAdmin,
     category,
     topicManager,
     reorder,
   }: {
+    isAdmin: boolean;
     category: CollectionCategory;
     topicManager: Topics;
     reorder: <T>(list: T[], from: number, to: number) => void;
@@ -104,6 +106,11 @@
     visibility: 'public' | 'private',
   ) {
     await topicManager.changeVisibility(topic_id, visibility);
+    await fetchTopicCollection(workingCategory.category_id, true);
+  }
+
+  async function submitTopic(topic_id: string) {
+    await topicManager.submitTopic(topic_id);
     await fetchTopicCollection(workingCategory.category_id, true);
   }
 
@@ -203,19 +210,33 @@
                 </button>
                 <button
                   use:tippy={{
-                    content: 'Toggle visibility',
+                    content: 'Submit Topic for review',
                     animation: 'scale',
+                    theme: 'light',
                   }}
-                  onclick={() =>
-                    toggleVisibility(
-                      topic.topic_id,
-                      topic.visibility === 'public' ? 'private' : 'public',
-                    )}
+                  onclick={() => submitTopic(topic.topic_id)}
+                  disabled={topic.visibility === 'public'}
                 >
-                  {topic.visibility === 'public'
-                    ? 'Make Private'
-                    : 'Make Public'}
+                  Submit
                 </button>
+                {#if isAdmin}
+                  <button
+                    use:tippy={{
+                      content: 'Toggle visibility',
+                      animation: 'scale',
+                    }}
+                    onclick={() =>
+                      toggleVisibility(
+                        topic.topic_id,
+                        topic.visibility === 'public' ? 'private' : 'public',
+                      )}
+                    disabled={topic.available === false || !isAdmin}
+                  >
+                    {topic.visibility === 'public'
+                      ? 'Make Private'
+                      : 'Make Public'}
+                  </button>
+                {/if}
               </div>
               {#if i > 0}
                 <button

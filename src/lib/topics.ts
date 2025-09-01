@@ -20,6 +20,20 @@ export default class Topic {
     return data;
   }
 
+  async submitTopic(topic_id: string): Promise<void> {
+    const { status, message } = await this.api.submit(topic_id);
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(
+      message || `Story ${topic_id} submitted successfully`,
+      'info',
+    );
+  }
+
   async deleteTopic(topic_id: string): Promise<void> {
     const { status, message } = await this.api.delete(topic_id);
 

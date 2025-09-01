@@ -38,6 +38,15 @@ export default class TopicAPI extends Fetcher {
   }
 
   /**
+   * Submit a topic for review
+   * @param topic_id The ID of the topic to submit
+   * @returns The response from the API
+   */
+  async submit(topic_id: string) {
+    return this.request(`/govern/submit-topic/${topic_id}`);
+  }
+
+  /**
    * Delete a topic
    * @param topic_id The ID of the topic to delete
    * @returns The response from the API

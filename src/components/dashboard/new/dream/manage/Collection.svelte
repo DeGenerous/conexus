@@ -154,7 +154,7 @@
             {#if expandedCreators.has(creator.creator_id)}
               {#if creator.categories && creator.categories.length > 0}
                 {#each creator.categories as category}
-                  <CategoryBlock {category} {topicManager} {reorder} />
+                  <CategoryBlock {isAdmin} {category} {topicManager} {reorder} />
                 {/each}
               {:else}
                 <p class="validation">No categories found</p>
@@ -191,7 +191,7 @@
           {#if expandedSections.has(section.section_id)}
             {#if section.categories && section.categories.length > 0}
               {#each section.categories as category}
-                <CategoryBlock {category} {topicManager} {reorder} />
+                <CategoryBlock {isAdmin} {category} {topicManager} {reorder} />
               {/each}
             {:else}
               <p class="validation">No categories found</p>
@@ -207,7 +207,7 @@
   {#if isCreator}
     {#if creatorCategories && creatorCategories.length > 0}
       {#each creatorCategories as category}
-        <CategoryBlock {category} {topicManager} {reorder} />
+        <CategoryBlock {isAdmin} {category} {topicManager} {reorder} />
       {/each}
     {:else}
       <p class="validation">No categories found</p>

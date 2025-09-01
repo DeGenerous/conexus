@@ -118,3 +118,14 @@ type AccountNotification = {
   data?: AccountNotificationData;
   read_at: string | null;
 };
+
+type DisplayUser = {
+  account_id: string;
+  username: string;
+  avatar: string;
+}
+
+type CreatorTile = {
+  Genre: string[];
+  tile_file_url?: string;
+} & DisplayUser;

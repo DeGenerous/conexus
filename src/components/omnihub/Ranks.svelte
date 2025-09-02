@@ -1,11 +1,15 @@
 <script lang="ts">
-  import { userRank } from '@stores/omnihub.svelte';
   import { ranks } from '@constants/ranks';
 
+  let {
+    userRank,
+  }: {
+    userRank: Nullable<string>;
+  } = $props();
   let showTable = $state<boolean>(false);
 </script>
 
-{#if $userRank}
+{#if userRank}
   {#if showTable}
     <table class="ranks container fade-in">
       <thead>
@@ -23,7 +27,7 @@
       </thead>
       <tbody>
         {#each ranks as { name, value }}
-          <tr class="rank transition" class:active-rank={name === $userRank}>
+          <tr class="rank transition" class:active-rank={name === userRank}>
             <td>{name}</td>
             <td class="number">{value}</td>
           </tr>
@@ -45,7 +49,7 @@
           );
         }}
       >
-        {$userRank}
+        {userRank}
       </button>
     </div>
   {/if}

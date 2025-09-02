@@ -1,41 +1,56 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import Account from '@lib/account';
+  import Curation from '@lib/curation';
   import { showProfile } from '@stores/modal.svelte';
 
-  import DoorSVG from '@components/icons/Door.svelte';
+  import NFTSection from '@components/omnihub/NFTs.svelte';
 
-  let user: Nullable<User> = $state(null);
+  const curation = new Curation();
+
   let noWalletDetected = $state<boolean>(false);
 
   let loading = $state<boolean>(true);
 
+  let potentials = $state<Array<NFTTile>>([]);
+  let potentialsPower = $state<number>(0);
+  let userRank = $state<Nullable<string>>(null);
+
+  function nftToNFTTile(nfts: NFTs[]): Array<NFTTile> {
+    return nfts.map((nft) => ({
+      token_id: nft.normalized.token_id,
+      name: nft.raw.name,
+      image: nft.raw.image,
+      level: nft.raw.level,
+      attributes: nft.raw.attributes,
+    }));
+  }
+
   onMount(async () => {
-    user = await Account.getUser();
-    if (user) {
-      // Show 'Connect Wallet' preview if there is no wallets connected
-      const { wallets } = user;
-      const allWallets = wallets
-        ?.filter((wallet) => !wallet.faux)
-        .map(({ wallet }) => wallet);
-      if (!allWallets?.length) noWalletDetected = true;
+    const data = await curation.omnihub('00000000-0000-0000-0000-000000000001');
+
+    if (!data) {
+      loading = false;
+      noWalletDetected = true;
+      return;
     }
+
+    potentials = data.nfts ? nftToNFTTile(data.nfts) : [];
+    potentialsPower = data.total_level;
+    userRank = data.rank ? data.rank : null;
 
     loading = false;
   });
 </script>
 
 <section class="transparent-container flex-row flex-wrap">
-  <h5 class="learn-label">
-    Explore Platform Knowledge{#if !user}&nbsp(No Sign-In Needed){/if}
-  </h5>
+  <h5 class="learn-label">Explore Platform Knowledge</h5>
   <a class="button-anchor purple-btn" href="/learn"> Learn & Explore </a>
 </section>
 
 {#if loading}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
-{:else if user}
+{:else}
   <section class="omnihub transparent-container flex-row flex-wrap">
     <span class="opaque-container fade-in">
       {#if noWalletDetected}
@@ -47,34 +62,13 @@
           Open Your Profile
         </button>
       {:else}
-        <p class="text-glowing">
-          Track what you’ve earned. Decide who you become. OmniHub holds the
-          keys.
-        </p>
-        <a class="button-anchor button-glowing" href="/omnihub">
-          Enter the OmniHub
-        </a>
-        <p class="text-glowing">
-          The archive of action. The forge of identity.
-        </p>
+        <NFTSection {potentials} {potentialsPower} {userRank} />
       {/if}
     </span>
     <img
       class="fade-in"
       src="/omnihub/quarchon.avif"
       alt="Potential - Quarchon"
-    />
-  </section>
-{:else}
-  <section class="container">
-    <h4 class="text-glowing">This Part of the Realm Is Yours to Unlock</h4>
-    <DoorSVG
-      state="inside"
-      text="Sign in to view your dashboard"
-      onclick={() => {
-        $showProfile = true;
-      }}
-      glow={true}
     />
   </section>
 {/if}

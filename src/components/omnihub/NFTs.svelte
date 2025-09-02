@@ -6,34 +6,34 @@
     SELECTED_POTENTIAL_KEY,
     TTL_SHORT,
   } from '@constants/cache';
-  import getNFTs from '@utils/potentials';
-  import {
-    type NFT,
-    potentials,
-    potentialsPower,
-  } from '@stores/omnihub.svelte';
   import { showProfile } from '@stores/modal.svelte';
 
   import Ranks from '@components/omnihub/Ranks.svelte';
   import FilterSVG from '@components/icons/Filter.svelte';
+
+  let {
+    potentials,
+    potentialsPower,
+    userRank,
+  }: {
+    potentials: NFTTile[];
+    potentialsPower: number;
+    userRank: Nullable<string>;
+  } = $props();
 
   let nftsDetected = $state<boolean>(true);
 
   let sorting = $state<'id' | 'level'>('level');
 
   const sortedPotentials = () => {
-    return structuredClone($potentials).sort((a: NFT, b: NFT) => {
+    return potentials.sort((a: NFTTile, b: NFTTile) => {
       if (sorting === 'id') {
-        return Number(a.id) - Number(b.id);
+        return Number(a.token_id) - Number(b.token_id);
       } else {
         return Number(b.level) - Number(a.level);
       }
     });
   };
-
-  onMount(async () => {
-    nftsDetected = await getNFTs();
-  });
 </script>
 
 {#if nftsDetected}
@@ -41,17 +41,17 @@
     <div class="collection-header container">
       <div class="flex-row gap-8">
         <h4>Potentials:</h4>
-        <span class="flex pad-8">{$potentials.length}</span>
+        <span class="flex pad-8">{potentials.length}</span>
       </div>
 
       <div class="flex-row gap-8">
         <h4>
           <strong class="pc-only">Total&nbsp;</strong>Power:
         </h4>
-        <span class="flex pad-8">{$potentialsPower}</span>
+        <span class="flex pad-8">{potentialsPower}</span>
       </div>
 
-      {#if $potentials.length > 4}
+      {#if potentials.length > 4}
         <span class="flex-row">
           <select bind:value={sorting}>
             <option value="id" selected={sorting === 'id'}> Sort by ID </option>
@@ -64,8 +64,8 @@
     </div>
 
     <div class="tiles-collection">
-      {#if $potentials.length}
-        {#each sortedPotentials() as nft}
+      {#if potentials.length}
+        {#each potentials as nft}
           <a
             class="potential-tile"
             href="/omnihub/portrait"
@@ -86,7 +86,7 @@
     </div>
   </span>
 
-  <Ranks />
+  <Ranks {userRank} />
 {:else}
   <section class="container">
     <p class="validation">No Potentials Detected Across Connected Wallets</p>

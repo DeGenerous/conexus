@@ -64,3 +64,5 @@ class Curation {
     return true;
   }
 }
+
+export default Curation;

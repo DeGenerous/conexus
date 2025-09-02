@@ -196,29 +196,31 @@
                 </div>
               </a>
               <div class="toggle-container">
-                <button
-                  use:tippy={{
-                    content: 'Toggle availability',
-                    animation: 'scale',
-                  }}
-                  class:green-btn={topic.available === true}
-                  class:red-btn={topic.available === false}
-                  onclick={() =>
-                    toggleAvailability(topic.topic_id, !topic.available)}
-                >
-                  {topic.available ? 'Disable' : 'Enable'}
-                </button>
-                <button
-                  use:tippy={{
-                    content: 'Submit Topic for review',
-                    animation: 'scale',
-                    theme: 'light',
-                  }}
-                  onclick={() => submitTopic(topic.topic_id)}
-                  disabled={topic.visibility === 'public'}
-                >
-                  Submit
-                </button>
+                <div class="toggle-container-inner">
+                  <button
+                    use:tippy={{
+                      content: 'Toggle availability',
+                      animation: 'scale',
+                    }}
+                    class:green-btn={topic.available === true}
+                    class:red-btn={topic.available === false}
+                    onclick={() =>
+                      toggleAvailability(topic.topic_id, !topic.available)}
+                  >
+                    {topic.available ? 'Disable' : 'Enable'}
+                  </button>
+                  <button
+                    use:tippy={{
+                      content: 'Submit Topic for review',
+                      animation: 'scale',
+                      theme: 'light',
+                    }}
+                    onclick={() => submitTopic(topic.topic_id)}
+                    disabled={topic.visibility === 'public'}
+                  >
+                    {topic.visibility === 'public' ? 'Submitted' : 'Submit'}
+                  </button>
+                </div>
                 {#if isAdmin}
                   <button
                     use:tippy={{
@@ -238,22 +240,24 @@
                   </button>
                 {/if}
               </div>
-              {#if i > 0}
-                <button
-                  class="reorder-left"
-                  onclick={() =>
-                    reorder(workingCategory.topics ?? [], i, i - 1)}
-                  >left</button
-                >
-              {/if}
-              {#if i < workingCategory.topics.length - 1}
-                <button
-                  class="reorder-right"
-                  onclick={() =>
-                    reorder(workingCategory.topics ?? [], i, i + 1)}
-                  >right</button
-                >
-              {/if}
+              <div class="toggle-container-inner">
+                {#if i > 0}
+                  <button
+                    class="reorder-left"
+                    onclick={() =>
+                      reorder(workingCategory.topics ?? [], i, i - 1)}
+                    >left</button
+                  >
+                {/if}
+                {#if i < workingCategory.topics.length - 1}
+                  <button
+                    class="reorder-right"
+                    onclick={() =>
+                      reorder(workingCategory.topics ?? [], i, i + 1)}
+                    >right</button
+                  >
+                {/if}
+              </div>
             </div>
           </li>
         {/each}
@@ -348,8 +352,15 @@
 
         .toggle-container {
           display: flex;
+          flex-direction: column; /* stack children vertically */
           gap: 0.5rem;
           z-index: 100;
+        }
+
+        .toggle-container-inner {
+          display: flex;
+          flex-direction: row; /* ensure items inside go side by side */
+          gap: 0.5rem;
         }
 
         button {

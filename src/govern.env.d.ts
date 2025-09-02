@@ -2,7 +2,7 @@
 /// <reference types="astro/client" />
 
 type NFTTile = {
-  id: number;
+  token_id: number;
   name: string;
   image: string;
   level: string;

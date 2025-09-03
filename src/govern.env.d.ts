@@ -9,13 +9,13 @@ type NFTTile = {
   attributes: Object[];
 };
 
-type NFTs = {
+type BackendNFT = {
     normalized: NFTTile;
     raw: NFTTile;
 }
 
 type OmnihubData = {
-  nfts: NFTs[];
+  nfts: BackendNFT[];
   total_level: number;
   nft_count: number;
   rank?: string;

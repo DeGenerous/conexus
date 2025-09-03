@@ -16,12 +16,12 @@
   let potentialsPower = $state<number>(0);
   let userRank = $state<Nullable<string>>(null);
 
-  function nftToNFTTile(nfts: NFTs[]): Array<NFTTile> {
+  function nftToNFTTile(nfts: BackendNFT[]): Array<NFTTile> {
     return nfts.map((nft) => ({
       token_id: nft.normalized.token_id,
       name: nft.raw.name,
       image: nft.raw.image,
-      level: nft.raw.level,
+      level: nft.normalized.level,
       attributes: nft.raw.attributes,
     }));
   }

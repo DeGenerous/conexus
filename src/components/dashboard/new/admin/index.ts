@@ -15,41 +15,41 @@ export const ADMIN_ROUTES = {
   MANAGEMENT: [
     {
       name: 'Users',
-      path: '/dashboard/management/users',
+      path: '/admin/management/users',
       component: AdminManagementUser,
     },
     {
       name: 'Roles',
-      path: '/dashboard/management/roles',
+      path: '/admin/management/roles',
       component: AdminManagementRole,
     },
     {
       name: 'Sections',
-      path: '/dashboard/management/sections',
+      path: '/admin/management/sections',
       component: AdminManagementSection,
     },
   ],
   WEB3: [
     {
       name: 'Contracts',
-      path: '/dashboard/web3/contracts',
+      path: '/admin/web3/contracts',
       component: AdminWeb3Contract,
     },
     {
       name: 'Gates',
-      path: '/dashboard/web3/gates',
+      path: '/admin/web3/gates',
       component: AdminWeb3Gate,
     },
   ],
   ANALYTICS: [
     {
       name: 'Dashboard',
-      path: '/dashboard/analytics/dashboard',
+      path: '/admin/analytics',
       component: AdminANalyticsDashboard,
     },
     {
       name: 'Reports',
-      path: '/dashboard/analytics/reports',
+      path: '/admin/analytics/reports',
       component: AdminANalyticsReport,
     },
   ],

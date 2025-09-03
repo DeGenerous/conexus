@@ -1,8 +1,10 @@
 import type { WrappedComponent } from 'svelte-spa-router';
 
+import { dashboardHome } from './intro';
 import { PROFILE_ROUTES } from './Profile';
 import { DREAM_ROUTES } from './dream';
 import { ADMIN_ROUTES } from './admin';
+import { OMNIHUB } from './omnihub';
 
 export const DASHBOARD_PATH = '/dashboard';
 
@@ -69,10 +71,7 @@ export const DASHBOARD_LINKS: Linking[] = [
       },
     ],
   },
-  {
-    name: 'OmniHub',
-    path: '/dashboard/omnihub',
-  },
+  ...OMNIHUB,
 ];
 
 export function buildRoutes(
@@ -93,6 +92,9 @@ export function buildRoutes(
   }
 
   traverse(links);
+
+  // fallback
+  routes['*'] = dashboardHome;
 
   return routes;
 }

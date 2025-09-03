@@ -4,7 +4,7 @@
   import Curation from '@lib/curation';
   import { showProfile } from '@stores/modal.svelte';
 
-  import NFTSection from '@components/omnihub/NFTs.svelte';
+  import NFTSection from '@components/dashboard/new/omnihub/NFTs.svelte';
 
   const curation = new Curation();
 

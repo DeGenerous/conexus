@@ -1,6 +1,6 @@
 import type { WrappedComponent } from 'svelte-spa-router';
 
-import { dashboardHome } from './intro';
+import { home } from './home';
 import { PROFILE_ROUTES } from './Profile';
 import { DREAM_ROUTES } from './dream';
 import { ADMIN_ROUTES } from './admin';
@@ -94,7 +94,7 @@ export function buildRoutes(
   traverse(links);
 
   // fallback
-  routes['*'] = dashboardHome;
+  routes['*'] = home;
 
   return routes;
 }

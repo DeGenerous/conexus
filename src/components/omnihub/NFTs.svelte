@@ -8,6 +8,8 @@
   } from '@constants/cache';
   import { showProfile } from '@stores/modal.svelte';
 
+  import { nftTile } from '@stores/omnihub.svelte';
+
   import Ranks from '@components/omnihub/Ranks.svelte';
   import FilterSVG from '@components/icons/Filter.svelte';
 
@@ -16,7 +18,7 @@
     potentialsPower,
     userRank,
   }: {
-    potentials: NFTTile[];
+    potentials: nftTile[];
     potentialsPower: number;
     userRank: Nullable<string>;
   } = $props();
@@ -26,9 +28,9 @@
   let sorting = $state<'id' | 'level'>('level');
 
   const sortedPotentials = () => {
-    return potentials.sort((a: NFTTile, b: NFTTile) => {
+    return potentials.sort((a: nftTile, b: nftTile) => {
       if (sorting === 'id') {
-        return Number(a.token_id) - Number(b.token_id);
+        return Number(a.id) - Number(b.id);
       } else {
         return Number(b.level) - Number(a.level);
       }

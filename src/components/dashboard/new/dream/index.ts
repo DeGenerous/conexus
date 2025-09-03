@@ -13,34 +13,34 @@ export const DREAM_ROUTES = {
   NEW: [
     {
       name: 'Create',
-      path: '/dashboard/dream/create',
+      path: '/dream/create',
       component: DreamCreate,
     },
     {
       name: 'Drafts',
-      path: '/dashboard/dream/drafts',
+      path: '/dream/drafts',
       component: DreamDraft,
     },
     {
       name: 'Demo',
-      path: '/dashboard/dream/demo',
+      path: '/dream/demo',
       component: DreamDemo,
     },
   ],
   MANAGE: [
     {
       name: 'Collections',
-      path: '/dashboard/dream/manage/collections',
+      path: '/dream/manage/collections',
       component: DreamCollections,
     },
     {
       name: 'Categories',
-      path: '/dashboard/dream/manage/categories',
+      path: '/dream/manage/categories',
       component: DreamCategories,
     },
     {
       name: 'NFT Gates',
-      path: '/dashboard/dream/manage/nft-gates',
+      path: '/dream/manage/nft-gates',
       component: DreamNFTGates,
       intended: 'admin',
     },

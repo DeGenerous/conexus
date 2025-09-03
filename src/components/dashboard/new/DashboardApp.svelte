@@ -1,15 +1,13 @@
 <script lang="ts">
-  import { onMount, type SvelteComponent } from 'svelte';
+  import { onMount } from 'svelte';
   import Router, { location, type WrappedComponent } from 'svelte-spa-router';
-  import { wrap } from 'svelte-spa-router/wrap';
 
   import { userState } from '@utils/route-guard';
 
-  import Dashboard from '@components/dashboard/new/Dashboard.svelte';
   import { profileRoutes } from '@components/dashboard/new/Profile';
   import { dreamRoutes } from '@components/dashboard/new/dream';
   import { adminRoutes } from '@components/dashboard/new/admin';
-  import OmniHub from '@components/dashboard/new/OmniHub.svelte';
+  import { omnihubRoutes } from '@components/dashboard/new/omnihub';
 
   import {
     DASHBOARD_LINKS,
@@ -44,16 +42,10 @@
     ...profileRoutes,
     ...dreamRoutes,
     ...adminRoutes,
-
-    '/dashboard/omnihub': wrap({
-      component: OmniHub as unknown as typeof SvelteComponent,
-    }),
+    ...omnihubRoutes,
   };
 
   const routes = buildRoutes(DASHBOARD_LINKS, componentMap);
-
-  // fallback
-  routes['*'] = wrap({ component: Dashboard });
 </script>
 
 <div class="dashboard-layout">

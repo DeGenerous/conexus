@@ -8,17 +8,17 @@ import ProfileMetrics from './Metrics.svelte';
 export const PROFILE_ROUTES = [
   {
     name: 'Overview',
-    path: '/dashboard/profile/overview',
+    path: '/profile/overview',
     component: ProfileOverview,
   },
   {
     name: 'Bookmarks',
-    path: '/dashboard/profile/bookmarks',
+    path: '/profile/bookmarks',
     component: ProfileBookmarks,
   },
   {
     name: 'Metrics',
-    path: '/dashboard/profile/metrics',
+    path: '/profile/metrics',
     component: ProfileMetrics,
   },
 ];

@@ -5,6 +5,7 @@
   import { showProfile } from '@stores/modal.svelte';
 
   import NFTSection from '@components/dashboard/new/omnihub/NFTs.svelte';
+  import { normalizeMeta } from '@utils/potentials';
 
   const curation = new Curation();
 
@@ -12,11 +13,11 @@
 
   let loading = $state<boolean>(true);
 
-  let potentials = $state<Array<NFTTile>>([]);
+  let potentials = $state<Array<NFT>>([]);
   let potentialsPower = $state<number>(0);
   let userRank = $state<Nullable<string>>(null);
 
-  function nftToNFTTile(nfts: BackendNFT[]): Array<NFTTile> {
+  function nftTileToNFT(nfts: NFTTile[]): Array<NFT> {
     return nfts.map((nft) => ({
       token_id: nft.normalized.token_id,
       name: nft.raw.name,
@@ -35,9 +36,16 @@
       return;
     }
 
-    potentials = data.nfts ? nftToNFTTile(data.nfts) : [];
-    potentialsPower = data.total_level;
-    userRank = data.rank ? data.rank : null;
+    if ("nft" in data && data.nft) {
+      const potentialsMeta = normalizeMeta(data);
+      
+      potentials = data.nft.nfts ? nftTileToNFT(data.nft.nfts) : [];
+
+      if (potentialsMeta) {
+        potentialsPower = potentialsMeta.total_level ? potentialsMeta.total_level : 0;
+        userRank = potentialsMeta.rank ? potentialsMeta.rank : null;
+      }
+    }
 
     loading = false;
   });

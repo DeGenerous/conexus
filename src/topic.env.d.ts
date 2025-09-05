@@ -53,25 +53,29 @@ type TopicInCategory = {
 type TopicSortOrder = 'name' | 'category';
 
 /* V2 */
-type TokenGate = {
-  min_amount?: number;
-};
 
-type ClassGate = {
-  class_name?: string;
+type GateKind =
+  | 'erc20_token'
+  | 'erc721_token'
+  | 'erc1155_token'
+  | 'erc721_class'
+  | 'erc1155_class';
+
+type TopicGates = {
+  gate_id: string;
+  name: string;
+  gate_kind: GateKind;
+  collection_id?: string;
+  collection_name: string;
+  symbol: string;
+  purchase_link: string;
+
+  min_amount?: number;
+
   token_id_min?: number;
   token_id_max?: number;
+  specific_token_ids?: number[];
 };
-
-type TopicGates =
-  | ({
-      gate_id: string;
-      contract_name: string;
-      contract_symbol: string;
-      purchase_link: string;
-      gate_type: 'token' | 'class';
-    } & TokenGate)
-  | ClassGate;
 
 type CategoryTopics = {
   id: string;

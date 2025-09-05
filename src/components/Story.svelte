@@ -342,28 +342,58 @@
           </div>
           <span class="flex-row pad-8 pad-inline round-8">
             {#each topic.topic_gates as gate}
-              {#if 'gate_type' in gate}
+              {#if gate}
                 <a
                   href={gate.purchase_link || NAV_ROUTES.WIKI}
-                  class:inactive-link={!gate.purchase_link}
                   target="_blank"
+                  class="gate-link"
+                  class:inactive-link={!gate.purchase_link}
                   on:click={(event) => {
                     if (gate.purchase_link) return;
                     if (
                       !confirm(
                         'This collection is no longer available. Would you like to explore the wiki for more details?',
                       )
-                    )
+                    ) {
                       event.preventDefault();
+                    }
                   }}
                   use:tippy={{ content: 'Check details', animation: 'scale' }}
                 >
-                  {#if gate.min_amount && gate.min_amount > 0}
-                    {gate.min_amount} ${gate.contract_symbol.toUpperCase()}
+                  {#if gate.gate_kind === 'erc20_token'}
+                    {gate.min_amount ?? 0} {gate.collection_name?.toUpperCase()}
+                  {:else if gate.gate_kind === 'erc721_token'}
+                    {#if gate.specific_token_ids?.length}
+                      NFTs:
+                      {#each gate.specific_token_ids as id, i}
+                        <span class="nft-id"
+                          >#{id}{i < gate.specific_token_ids.length - 1
+                            ? ', '
+                            : ''}</span
+                        >
+                      {/each}
+                      <span class="erc721 glow">
+                        ({gate.name || gate.collection_name})
+                      </span>
+                    {:else}
+                      <span class="erc721 glow">
+                        {gate.name || gate.collection_name}
+                      </span>
+                    {/if}
+                  {:else if gate.gate_kind === 'erc1155_token'}
+                    {gate.min_amount ?? 1} × {gate.name || gate.collection_name}
+                  {:else if gate.gate_kind === 'erc721_class'}
+                    <span class="erc721 glow">
+                      {gate.name || gate.collection_name} (Class)
+                    </span>
+                  {:else if gate.gate_kind === 'erc1155_class'}
+                    <span class="erc1155 glow">
+                      {gate.name || gate.collection_name} (Class)
+                    </span>
+                  {:else}
+                    {gate.name || gate.collection_name || 'Unknown Gate'}
                   {/if}
-                </a>``
-              {:else}
-                {gate.class_name}
+                </a>
               {/if}
             {/each}
           </span>
@@ -588,5 +618,27 @@
   .description {
     margin-top: 1rem;
     width: clamp(250px, 95%, 90rem);
+  }
+
+  .gate-link {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+  }
+
+  .erc721.glow,
+  .erc1155.glow {
+    border: 1px solid #7f5af0; /* purple for NFT */
+    box-shadow: 0 0 6px #7f5af0;
+    border-radius: 0.375rem;
+    padding: 0.15rem 0.35rem;
+    margin-inline: 0.15rem;
+  }
+
+  .nft-id {
+    background: rgba(127, 90, 240, 0.15);
+    border-radius: 0.25rem;
+    padding: 0 0.25rem;
+    margin-inline: 0.15rem;
+    font-weight: 500;
   }
 </style>

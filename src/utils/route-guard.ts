@@ -26,10 +26,8 @@ export async function userState(state: UserState = 'signed'): Promise<boolean> {
 
   const checks: Record<UserState, () => boolean> = {
     signed: () => true,
-    admin: () => true,
+    admin: () => user.role === 'Admin',
     creator: () => user.role === 'Creator',
-    // admin: () => user.role === 'Admin',
-    // creator: () => user.role === 'Creator',
     referred: () => Boolean(user.referred),
   };
 

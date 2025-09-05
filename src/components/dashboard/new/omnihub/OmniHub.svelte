@@ -22,7 +22,7 @@
       token_id: nft.normalized.token_id,
       name: nft.raw.name,
       image: nft.raw.image,
-      level: nft.normalized.level,
+      level: nft.normalized.extra ? Number(nft.normalized.extra.level) : 0,
       attributes: nft.raw.attributes,
     }));
   }

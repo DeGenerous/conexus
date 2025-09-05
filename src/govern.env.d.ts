@@ -21,7 +21,7 @@ type NFT = {
   token_id: number;
   name: string;
   image: string;
-  level: string;
+  level: number;
   attributes: Object[];
 };
 

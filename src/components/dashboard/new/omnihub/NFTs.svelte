@@ -17,7 +17,7 @@
     potentialsPower,
     userRank,
   }: {
-    potentials: NFTTile[];
+    potentials: NFT[];
     potentialsPower: number;
     userRank: Nullable<string>;
   } = $props();
@@ -27,7 +27,7 @@
   let sorting = $state<'id' | 'level'>('level');
 
   const sortedPotentials = () => {
-    return potentials.sort((a: NFTTile, b: NFTTile) => {
+    return potentials.sort((a: NFT, b: NFT) => {
       if (sorting === 'id') {
         return Number(a.token_id) - Number(b.token_id);
       } else {

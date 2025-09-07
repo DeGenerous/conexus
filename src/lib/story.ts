@@ -1,7 +1,7 @@
 import { ERROR_REQUIRED_TOKEN, ERROR_OUT_OF_CREDITS } from '@constants/error';
 import { api_error } from '@errors/index';
 import Account from '@lib/account';
-import StoryAPI from '@service/router/story';
+import StoryAPI from '@service/v2/story';
 import { story, game } from '@stores/conexus.svelte';
 import { toastStore } from '@stores/toast.svelte';
 import openModal from '@stores/modal.svelte';

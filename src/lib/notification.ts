@@ -1,4 +1,4 @@
-import type AccountAPI from '@service/router/account';
+import type AccountAPI from '@service/v2/account';
 import { unread, notifications } from '@stores/notification.svelte';
 
 export default class NotificationService {

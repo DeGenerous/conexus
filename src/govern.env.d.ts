@@ -38,14 +38,22 @@ type NFTResponse = {
   nfts: NFTTile[];
 };
 
-type TokenBalance = {
-  token_id: number;
+type FungibleToken = {
+  wallet_address: string;
   balance: number;
+}
+
+type FungibleResponse = {
+  contract: string;
+  decimals: number;
+  symbol: string;
+  collection_name: string;
+  fungible: FungibleToken[];
 };
 
 type OmnihubData = {
   nft?: NFTResponse;
-  token?: TokenBalance;
+  fungible?: FungibleResponse;
 };
 
 type PotentialMeta = {

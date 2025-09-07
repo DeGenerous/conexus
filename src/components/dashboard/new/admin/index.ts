@@ -8,7 +8,7 @@ import AdminManagementUser from './management/User.svelte';
 import AdminManagementRole from './management/Role.svelte';
 import AdminManagementSection from './management/Section.svelte';
 
-import AdminWeb3Contract from './web3/Contract.svelte';
+import AdminWeb3Collection from './web3/Collection.svelte';
 import AdminWeb3Gate from './web3/Gate.svelte';
 
 export const ADMIN_ROUTES = {
@@ -31,9 +31,9 @@ export const ADMIN_ROUTES = {
   ],
   WEB3: [
     {
-      name: 'Contracts',
-      path: '/admin/web3/contracts',
-      component: AdminWeb3Contract,
+      name: 'Collections',
+      path: '/admin/web3/collections',
+      component: AdminWeb3Collection,
     },
     {
       name: 'Gates',

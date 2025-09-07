@@ -1,5 +1,5 @@
 import { api_error } from '@errors/index';
-import AdminAPI from '@service/router/admin';
+import AdminAPI from '@service/v2/admin';
 import { toastStore } from '@stores/toast.svelte';
 
 class AdminApp {

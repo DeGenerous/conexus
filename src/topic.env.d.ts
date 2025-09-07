@@ -54,13 +54,6 @@ type TopicSortOrder = 'name' | 'category';
 
 /* V2 */
 
-type GateKind =
-  | 'erc20_token'
-  | 'erc721_token'
-  | 'erc1155_token'
-  | 'erc721_class'
-  | 'erc1155_class';
-
 type TopicGates = {
   gate_id: string;
   name: string;

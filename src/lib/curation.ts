@@ -1,5 +1,5 @@
 import { api_error } from '@errors/index';
-import GovernAPI from '@service/router/govern';
+import GovernAPI from '@service/v2/govern';
 
 class Curation {
   protected api: GovernAPI;

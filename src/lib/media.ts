@@ -2,7 +2,7 @@
 
 import { serveUrl } from '@constants/media';
 import { tracks } from '@constants/tracks';
-import { MediaAPI } from '@service/routes';
+import { MediaAPI } from '@service/v1';
 import { toastStore } from '@stores/toast.svelte';
 import { game } from '@stores/conexus.svelte';
 

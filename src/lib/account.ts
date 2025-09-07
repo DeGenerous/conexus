@@ -9,7 +9,7 @@ import {
   SetCache,
 } from '@constants/cache';
 import { api_error } from '@errors/index';
-import AccountAPI from '@service/router/account';
+import AccountAPI from '@service/v2/account';
 import { authenticated, referralCodes } from '@stores/account.svelte';
 import { toastStore } from '@stores/toast.svelte';
 

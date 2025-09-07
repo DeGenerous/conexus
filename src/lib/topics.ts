@@ -1,5 +1,5 @@
 import { api_error } from '@errors/index';
-import TopicAPI from '@service/router/topic';
+import TopicAPI from '@service/v2/topic';
 import { toastStore } from '@stores/toast.svelte';
 
 export default class Topic {

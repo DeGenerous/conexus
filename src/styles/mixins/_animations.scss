@@ -186,6 +186,24 @@
   }
 }
 
+@keyframes scaling {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.01);
+  }
+  50% {
+    transform: scale(0.99);
+  }
+  75% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 // General definitions
 
 :global(.loading-animation) {
@@ -260,4 +278,8 @@
 
 :global(.pulse-animation) {
   animation: pulse-animation 6s ease-in-out infinite;
+}
+
+:global(.scaling) {
+  animation: scaling 15s ease-in-out infinite;
 }

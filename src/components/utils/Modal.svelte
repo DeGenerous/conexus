@@ -15,6 +15,8 @@
   import ThemeSettings from '@components/utils/ThemeSettings.svelte';
 
   let dialog: HTMLDialogElement;
+  
+  let termsAccepted: boolean = false;
 
   $: if (dialog && $showModal) {
     dialog.classList.remove('dialog-fade-out');
@@ -33,19 +35,24 @@
   };
 
   const checkTermsAccepted = () => {
-    const termsAccepted = GetCache<boolean>(TERMS_KEY);
+    termsAccepted = GetCache<boolean>(TERMS_KEY) || false;
     if (!termsAccepted) {
       $showModal = true;
       modal.content = `
         <h4>Terms of Service</h4>
         <p>
-          To use CoNexus, you must accept DGRS LABS’
+          To continue using CoNexus, you must review and accept the updated 
           <a href="https://test.degenerousdao.com/terms-of-service" target="_blank" rel="noopener noreferrer"
           >Terms of Service</a
           >.
         </p>
-        <p>The terms take effect on 12 September 2025.</p>
-        <p>By clicking <b>Accept</b>, you agree to the <b>Terms of Service</b>.</p>
+        <p>The updated Terms take effect on 12 September 2025.</p>
+        <p>
+          By clicking <b>Accept</b>, you acknowledge that you have read and agree to the <b>Terms of Service</b>.
+        </p>
+        <p>
+          If you do not agree, click <b>Decline</b> to exit the app.
+        </p>
       `;
       modal.button = 'Accept';
       modal.buttonClass = 'green-btn';
@@ -84,7 +91,11 @@
     <span class="flex">
       <!-- DEFAULT CLOSE BUTTON ON EVERY MODAL -->
       <button class="red-btn" on:click={() => ($showModal = false)}>
-        Close
+        {#if termsAccepted}
+          Close
+        {:else}
+          Decline
+        {/if}
       </button>
 
       <!-- SECOND OPTIONAL BUTTON IF NEEDED -->

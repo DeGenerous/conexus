@@ -9,7 +9,7 @@
   import CoNexusGame from '@lib/story';
   import { story, game } from '@stores/conexus.svelte';
   import { navContext } from '@stores/navigation.svelte';
-  import { GetCache, SECTION_CATEGORIES_KEY } from '@constants/cache';
+  import { GetCache, SECTION_CATEGORIES_KEY, TERMS_KEY } from '@constants/cache';
   import detectIOS from '@utils/ios-device';
   import openModal, { showProfile } from '@stores/modal.svelte';
   import { deleteUnfinishedModal, referralWarning } from '@constants/modal';
@@ -31,6 +31,8 @@
   let scroll: number;
   let isLogged: boolean = false;
   let isReferred: boolean = false;
+
+  let termsAccepted: boolean = false; // temp for terms modal
 
   const conexusGame: CoNexusGame = new CoNexusGame();
   const media: MediaManager = new MediaManager();
@@ -73,6 +75,8 @@
         ),
       });
     }
+
+    termsAccepted = GetCache<boolean>(TERMS_KEY) || false; // temp for terms modal
   });
 
   // CONTINUE SHAPING section
@@ -204,6 +208,7 @@
                         handleSetMedia,
                       );
                   }}
+                  disabled={!termsAccepted}
                 >
                   PLAY NOW
                 </button>
@@ -242,7 +247,7 @@
                       </p>
                     </span>
                     <PlaySVG
-                      disabled={game.loading}
+                      disabled={game.loading || !termsAccepted}
                       onclick={() => {
                         activeTopic = topic;
                         conexusGame.continueGame(continuable, handleSetMedia);

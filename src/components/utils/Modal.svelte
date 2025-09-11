@@ -1,5 +1,8 @@
 <!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
+  import { onMount } from 'svelte';
+  import { GetCache, SetCache, TERMS_KEY } from '@constants/cache';
+
   import {
     modal,
     showModal,
@@ -28,6 +31,32 @@
     resetModal();
     setTimeout(() => dialog?.close(), 300);
   };
+
+  const checkTermsAccepted = () => {
+    const termsAccepted = GetCache<boolean>(TERMS_KEY);
+    if (!termsAccepted) {
+      $showModal = true;
+      modal.content = `
+        <h4>Terms of Service</h4>
+        <p>
+          To use CoNexus, you must accept DGRS LABS’
+          <a href="https://test.degenerousdao.com/terms-of-service" target="_blank" rel="noopener noreferrer"
+          >Terms of Service</a
+          >.
+        </p>
+        <p>The terms take effect on 12 September 2025.</p>
+        <p>By clicking <b>Accept</b>, you agree to the <b>Terms of Service</b>.</p>
+      `;
+      modal.button = 'Accept';
+      modal.buttonClass = 'green-btn';
+      modal.buttonFunc = () => {
+        SetCache(TERMS_KEY, true);
+        window.location.reload();
+      }
+    }
+  };
+
+  onMount(checkTermsAccepted);
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y_no_static_element_interactions -->

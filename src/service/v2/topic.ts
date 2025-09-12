@@ -420,6 +420,23 @@ export default class TopicAPI extends Fetcher {
   }
 
   /**
+   * Draft a document by uploading a file
+   * @param file The file to be uploaded
+   * @param category_id The ID of the category to which the document belongs
+   * @returns The ID of the created draft
+   */
+  async draftDocument(file: File, category_id: string) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('category_id', category_id);
+
+    return this.request<string>(`${this.draftGroup}/draft-document`, {
+      method: 'POST',
+      body: formData,
+    });
+  }
+
+  /**
    * Get a draft by ID
    * @param draft_id The ID of the draft
    * @returns The draft data

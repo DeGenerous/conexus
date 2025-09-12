@@ -59,6 +59,17 @@ export default class Topic {
     return data;
   }
 
+  async processDraftDOcument(file: File, category_id: string): Promise<void> {
+    const { message, data } = await this.api.draftDocument(file, category_id);
+
+    if (!data) {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || `Document processed successfully`, 'info');
+  }
+
   async getDrafts(): Promise<DraftPayload[]> {
     const { message, data } = await this.api.getDrafts();
 

@@ -24,7 +24,7 @@ type User = {
   referral_code?: string;
   credits: number;
   role_id: string;
-  role?: Roles;
+  role_name?: DefaultRoles;
   username?: string;
   avatar_url?: string;
   main_wallet?: string;
@@ -37,7 +37,7 @@ type SignIn = {
   password: string;
 };
 
-type Roles = 'Guest' | 'Player' | 'Creator' | 'Admin';
+type DefaultRoles = 'Guest' | 'Player' | 'Creator' | 'Admin';
 
 type ReferralCode = {
   id: string;

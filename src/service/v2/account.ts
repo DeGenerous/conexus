@@ -301,12 +301,4 @@ export default class AccountAPI extends Fetcher {
       method: 'POST',
     });
   }
-
-  /**
-   * Retrieves a list of roles.
-   * @returns A promise that resolves to an array of TenantRole objects.
-   */
-  async getRoles() {
-    return this.request<TenantRole[]>(`/admin/roles`);
-  }
 }

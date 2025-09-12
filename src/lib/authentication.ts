@@ -45,9 +45,6 @@ export default class Authentication {
       return;
     }
 
-    const roles = await this.#roles();
-    data.role = roles.find((r) => r.id === data.role_id)?.name || 'Guest';
-
     SetCache(USER_KEY, data, TTL_HOUR);
     window.location.reload();
   }
@@ -64,9 +61,6 @@ export default class Authentication {
       accountError.set({ signup: message || 'Unknown error occurred' });
       return;
     }
-
-    const roles = await this.#roles();
-    data.role = roles.find((r) => r.id === data.role_id)?.name || 'Guest';
 
     SetCache(USER_KEY, data, TTL_HOUR);
     authenticated.set(data);
@@ -138,16 +132,5 @@ export default class Authentication {
     ClearCache("auth");
 
     toastStore.show(message || 'Logged out successfully', 'info');
-  }
-
-  async #roles(): Promise<TenantRole[]> {
-    const { message, data } = await this.api.getRoles();
-
-    if (!data) {
-      api_error(message);
-      return [];
-    }
-
-    return data;
   }
 }

@@ -481,6 +481,17 @@ class Account {
     toastStore.show(message || 'Stories retrieved successfully', 'info');
     return data;
   }
+
+  async streak(action: StreakAction): Promise<void> {
+    const { status, message } = await this.api.streak(action);
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || 'Streak updated successfully', 'info');
+  }
 }
 
 export default Account;

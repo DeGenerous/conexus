@@ -129,3 +129,5 @@ type CreatorTile = {
   Genre: string[];
   tile_file_url?: string;
 } & DisplayUser;
+
+type StreakAction = 'login' | 'play';

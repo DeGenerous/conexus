@@ -288,6 +288,19 @@ export default class AccountAPI extends Fetcher {
     });
   }
 
+  /**
+   * Streak Management
+   * @param action - The action to perform (login or play).
+   * @param restore - Optional flag to indicate if the streak should be restored.
+   * @returns A promise that resolves to the current streak count or an error.
+   */
+  async streak(action: StreakAction, restore: boolean = false) {
+    return this.request<number>(`${this.group}/streak`, {
+      method: 'POST',
+      body: JSON.stringify({ action, restore }),
+    });
+  }
+
   async notificationInbox(page: number, pageSize: number) {
     return this.request<{
       notifications: AccountNotification[];

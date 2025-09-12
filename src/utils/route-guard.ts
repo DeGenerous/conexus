@@ -12,9 +12,9 @@ function redirectTo(path: string) {
   }
 }
 
-export async function getCurrentUserRole(): Promise<Roles | null> {
+export async function getCurrentUserRole(): Promise<DefaultRoles | null> {
   const user = await getCurrentUser();
-  return user && user.role !== undefined ? user.role : null;
+  return user && user.role_name !== undefined ? user.role_name : null;
 }
 
 type UserState = 'signed' | 'admin' | 'creator' | 'referred';
@@ -26,8 +26,8 @@ export async function userState(state: UserState = 'signed'): Promise<boolean> {
 
   const checks: Record<UserState, () => boolean> = {
     signed: () => true,
-    admin: () => user.role === 'Admin',
-    creator: () => user.role === 'Creator',
+    admin: () => user.role_name === 'Admin',
+    creator: () => user.role_name === 'Creator',
     referred: () => Boolean(user.referred),
   };
 

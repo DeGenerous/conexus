@@ -104,12 +104,4 @@ export default class AuthenticationAPI extends Fetcher {
   async logout() {
     return this.request(`${this.group}/signout`);
   }
-
-  /**
-   * Retrieves a list of roles.
-   * @returns A promise that resolves to an array of TenantRole objects.
-   */
-  async getRoles() {
-    return this.request<TenantRole[]>(`/admin/roles`);
-  }
 }

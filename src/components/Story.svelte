@@ -3,7 +3,7 @@
   import { onMount, tick } from 'svelte';
   import { tippy } from 'svelte-tippy';
 
-  import { GetCache, SECTION_CATEGORIES_KEY } from '@constants/cache';
+  import { GetCache, SECTION_CATEGORIES_KEY, TERMS_KEY } from '@constants/cache';
   import { blankImage, serveUrl } from '@constants/media';
   import { deleteUnfinishedModal, referralWarning } from '@constants/modal';
   import { NAV_ROUTES } from '@constants/routes';

@@ -153,7 +153,7 @@
         href={NAV_ROUTES.WEBSITE}
         target="_blank"
         aria-label="DeGenerous"
-      >zw
+      >
         <img src="/logo.avif" alt="Logo" />
       </a>
     {/if}

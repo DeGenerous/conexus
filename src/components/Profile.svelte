@@ -21,6 +21,7 @@
   import openModal from '@stores/modal.svelte';
   import { walletSwitchModal } from '@constants/modal';
   import { getCurrentUser } from '@utils/route-guard';
+  import { GetCache, SetCache, TERMS_KEY } from '@constants/cache';
 
   import ProfileSVG from '@components/icons/Profile.svelte';
   import DoorSVG from '@components/icons/Door.svelte';
@@ -155,6 +156,7 @@
       referral_code: referralCode,
       newsletter: newsletterSignup,
     });
+    SetCache(TERMS_KEY, termsAccepted); // temp for terms modal
   };
 </script>
 
@@ -645,7 +647,7 @@ a11y-no-static-element-interactions-->
                 />
                 <label for="terms">
                   * I have read and agree to the <a
-                    href="https://docs.google.com/document/d/1fEemq6HVM_h8ZTbc_Fl_k3RvlPdjYd70TI1iloT5gXA/edit?usp=sharing"
+                    href="https://test.degenerousdao.com/terms-of-service"
                     target="_blank"
                   >
                     Terms of Service</a

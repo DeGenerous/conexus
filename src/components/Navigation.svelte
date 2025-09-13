@@ -22,6 +22,7 @@
   import BackArrow from '@components/icons/BackArrow.svelte';
   import PlaySVG from '@components/icons/Play.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
+  import LogoSVG from '@components/icons/Logo.svelte';
 
   let {
     header = '',

@@ -2,7 +2,7 @@
   "name": "conexus",
   "version": "1.3.0",
   "description": "CoNexus – A dynamic, interactive storytelling platform powered by AI and Web3.",
-  "author": "DeGenerous DAO",
+  "author": "DGRS LABS",
   "private": true,
   "type": "module",
   "scripts": {

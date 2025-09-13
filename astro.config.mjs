@@ -97,8 +97,8 @@ export default defineConfig({
             }
           : undefined,
       allowedHosts: [
-        'conexus.degenerousdao.com',
-        'conexus-test.degenerousdao.com',
+        'conexus.ink',
+        'test.conexus.ink',
       ],
     },
     worker: {

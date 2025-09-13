@@ -59,10 +59,10 @@ const frequentlyAskedQuestions: {
     `,
   },
   {
-    question: 'What is DeGenerous DAO?',
+    question: 'What is DGRS LABS?',
     answer: `
       <p>
-        DeGenerous DAO is a collective building media technology for the next generation of creators. We're focused on reimagining storytelling as something <b>interactive, social, and creator-owned</b>, starting with our core platform: <b>CoNexus</b>.
+        DGRS LABS is a collective building media technology for the next generation of creators. We're focused on reimagining storytelling as something <b>interactive, social, and creator-owned</b>, starting with our core platform: <b>CoNexus</b>.
       </p>
     `,
   },

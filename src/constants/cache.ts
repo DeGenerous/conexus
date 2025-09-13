@@ -35,6 +35,8 @@ export const COOKIE_CONSENT_KEY = 'cookie_consent';
 
 export const GENRES_KEY = 'genres';
 
+export const TERMS_KEY = 'terms_accepted'; // temp for terms modal
+
 /* -------------------------------------------------------------------- */
 // 1 DAY
 /* -------------------------------------------------------------------- */
@@ -123,6 +125,7 @@ function saveImportantAndClearCache() {
   const currentDraft = localStorage.getItem(CURRENT_DRAFT_KEY);
   const allDrafts = getAllDrafts();
   const user = localStorage.getItem(USER_KEY); // save user object too
+  const termsAccepted = localStorage.getItem(TERMS_KEY); // temp for terms modal
   // deleting all values
   localStorage.clear();
   // restoring saved values
@@ -141,6 +144,7 @@ function saveImportantAndClearCache() {
   if (currentDraft) localStorage.setItem(CURRENT_DRAFT_KEY, currentDraft);
   if (allDrafts?.length) restoreAllDrafts(allDrafts);
   if (user) localStorage.setItem(USER_KEY, user);
+  if (termsAccepted) localStorage.setItem(TERMS_KEY, termsAccepted); // temp
 }
 
 export const SetCache = <T>(key: string, value: T, ttl: number = TTL_YEAR) => {

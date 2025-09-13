@@ -267,26 +267,22 @@
                     </p>
                   </span>
                   <PlaySVG
-                    disabled={game.loading}
+                    disabled={game.loading || !termsAccepted}
                     onclick={() => {
                       activeTopic = topic;
                       conexusGame.continue(
                         { topic_id: topic.id, story_id: continuable.story_id },
                         handleSetMedia,
                       );
-                  }}
-                  disabled={!termsAccepted}
-                >
-                  PLAY NOW
-                </button>
+                    }}
+                  />
+                </div>
               {/if}
-              <Share />
-            {/if}
-          </span>
-        </div>
-      </section>
+            {/each}
+          </section>
+        {/if}
 
-      {#if isLogged}
+        <!-- {#if isLogged}
         {#await conexusGame.storyContinuables(story_name!) then continuables: ContinuableStory[]}
           {#if continuables.length > 0 && !noUnfinishedStoriesLeft}
             <section
@@ -330,79 +326,82 @@
             <p class="validation">Failed to fetch unfinished stories...</p>
           </section>
         {/if}
-      </div>
+      </div> -->
 
-      {#if topic.topic_gates && topic.topic_gates.length > 0}
-        <section
-          class="flex gating blur pad-8 gap-8 mar-auto round-12 shad wavy-mask-left-right"
-        >
-          <div class="flex-row">
-            <LockSVG />
-            <h5>Only available to holders of:</h5>
-          </div>
-          <span class="flex-row pad-8 pad-inline round-8">
-            {#each topic.topic_gates as gate}
-              {#if gate}
-                <a
-                  href={gate.purchase_link || NAV_ROUTES.WIKI}
-                  target="_blank"
-                  class="gate-link"
-                  class:inactive-link={!gate.purchase_link}
-                  on:click={(event) => {
-                    if (gate.purchase_link) return;
-                    if (
-                      !confirm(
-                        'This collection is no longer available. Would you like to explore the wiki for more details?',
-                      )
-                    ) {
-                      event.preventDefault();
-                    }
-                  }}
-                  use:tippy={{ content: 'Check details', animation: 'scale' }}
-                >
-                  {#if gate.gate_kind === 'erc20_token'}
-                    {gate.min_amount ?? 0} {gate.collection_name?.toUpperCase()}
-                  {:else if gate.gate_kind === 'erc721_token'}
-                    {#if gate.specific_token_ids?.length}
-                      NFTs:
-                      {#each gate.specific_token_ids as id, i}
-                        <span class="nft-id"
-                          >#{id}{i < gate.specific_token_ids.length - 1
-                            ? ', '
-                            : ''}</span
-                        >
-                      {/each}
+        {#if topic.topic_gates && topic.topic_gates.length > 0}
+          <section
+            class="flex gating blur pad-8 gap-8 mar-auto round-12 shad wavy-mask-left-right"
+          >
+            <div class="flex-row">
+              <LockSVG />
+              <h5>Only available to holders of:</h5>
+            </div>
+            <span class="flex-row pad-8 pad-inline round-8">
+              {#each topic.topic_gates as gate}
+                {#if gate}
+                  <a
+                    href={gate.purchase_link || NAV_ROUTES.WIKI}
+                    target="_blank"
+                    class="gate-link"
+                    class:inactive-link={!gate.purchase_link}
+                    on:click={(event) => {
+                      if (gate.purchase_link) return;
+                      if (
+                        !confirm(
+                          'This collection is no longer available. Would you like to explore the wiki for more details?',
+                        )
+                      ) {
+                        event.preventDefault();
+                      }
+                    }}
+                    use:tippy={{ content: 'Check details', animation: 'scale' }}
+                  >
+                    {#if gate.gate_kind === 'erc20_token'}
+                      {gate.min_amount ?? 0}
+                      {gate.collection_name?.toUpperCase()}
+                    {:else if gate.gate_kind === 'erc721_token'}
+                      {#if gate.specific_token_ids?.length}
+                        NFTs:
+                        {#each gate.specific_token_ids as id, i}
+                          <span class="nft-id"
+                            >#{id}{i < gate.specific_token_ids.length - 1
+                              ? ', '
+                              : ''}</span
+                          >
+                        {/each}
+                        <span class="erc721 glow">
+                          ({gate.name || gate.collection_name})
+                        </span>
+                      {:else}
+                        <span class="erc721 glow">
+                          {gate.name || gate.collection_name}
+                        </span>
+                      {/if}
+                    {:else if gate.gate_kind === 'erc1155_token'}
+                      {gate.min_amount ?? 1} × {gate.name ||
+                        gate.collection_name}
+                    {:else if gate.gate_kind === 'erc721_class'}
                       <span class="erc721 glow">
-                        ({gate.name || gate.collection_name})
+                        {gate.name || gate.collection_name} (Class)
+                      </span>
+                    {:else if gate.gate_kind === 'erc1155_class'}
+                      <span class="erc1155 glow">
+                        {gate.name || gate.collection_name} (Class)
                       </span>
                     {:else}
-                      <span class="erc721 glow">
-                        {gate.name || gate.collection_name}
-                      </span>
+                      {gate.name || gate.collection_name || 'Unknown Gate'}
                     {/if}
-                  {:else if gate.gate_kind === 'erc1155_token'}
-                    {gate.min_amount ?? 1} × {gate.name || gate.collection_name}
-                  {:else if gate.gate_kind === 'erc721_class'}
-                    <span class="erc721 glow">
-                      {gate.name || gate.collection_name} (Class)
-                    </span>
-                  {:else if gate.gate_kind === 'erc1155_class'}
-                    <span class="erc1155 glow">
-                      {gate.name || gate.collection_name} (Class)
-                    </span>
-                  {:else}
-                    {gate.name || gate.collection_name || 'Unknown Gate'}
-                  {/if}
-                </a>
-              {/if}
-            {/each}
-          </span>
-        </section>
-      {/if}
+                  </a>
+                {/if}
+              {/each}
+            </span>
+          </section>
+        {/if}
 
-      <p class="description transparent-container white-txt text-shad">
-        {topic.description}
-      </p>
+        <p class="description transparent-container white-txt text-shad">
+          {topic.description}
+        </p>
+      </div>
     {/if}
   {:catch}
     <div class="container">

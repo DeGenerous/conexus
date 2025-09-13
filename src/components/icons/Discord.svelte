@@ -4,7 +4,7 @@
 
 <a
   class="button-anchor blur purple-btn"
-  href="https://dgrslabs.ink/join"
+  href="{import.meta.env.PUBLIC_FRONTEND_URL}/join"
   target="_blank"
 >
   <img src="/icons/discord.png" alt="Discord" />

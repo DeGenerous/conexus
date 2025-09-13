@@ -81,7 +81,7 @@
       style={termsAccepted ? '' : 'color: rgba(255, 50, 50, 0.75);'}
     >
       * I have read and agree to the <a
-        href="{import.meta.env.PUBLIC_FRONTEND_URL}/terms-of-service"
+        href="https://dgrslabs.ink/terms-of-service"
         target="_blank"
         style={termsAccepted ? '' : 'color: rgba(255, 50, 50, 0.9);'}
       >

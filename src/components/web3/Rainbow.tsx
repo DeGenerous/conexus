@@ -95,7 +95,7 @@ const Web3Provider: React.FC<Web3Props> = ({ linking = false, children }) => {
               address,
               chainId,
               statement:
-                'Welcome to CoNexus! Click to sign in and accept the Terms of Service: {import.meta.env.PUBLIC_FRONTEND_URL}/terms-of-service',
+                'Welcome to CoNexus! Click to sign in and accept the Terms of Service: https://dgrslabs.ink/terms-of-service',
               domain: window.location.host,
               uri: window.location.origin,
               version: '1',

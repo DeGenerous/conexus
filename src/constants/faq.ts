@@ -19,7 +19,7 @@ const frequentlyAskedQuestions: {
           <b>Email Sign-Up</b> – Slightly more setup, but gives you the most control and access. Also requires a referral code.
         </li>
       </ul>
-      <p>👉 <b>Need a referral code?</b> Join our <a href="{import.meta.env.PUBLIC_FRONTEND_URL}/join">Discord</a> and check the <code>#ref-codes</code> channel to get one instantly.</p>
+      <p>👉 <b>Need a referral code?</b> Join our <a href="https://dgrslabs.ink/join">Discord</a> and check the <code>#ref-codes</code> channel to get one instantly.</p>
     `,
   },
   {

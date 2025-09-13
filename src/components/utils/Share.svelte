@@ -31,7 +31,7 @@
         toastStore.show('Copied — now share it with the world!');
         break;
       case 'discord':
-        const shareUrlDiscord = `{import.meta.env.PUBLIC_FRONTEND_URL}/join`;
+        const shareUrlDiscord = `https://dgrslabs.ink/join`;
         await navigator.clipboard.writeText(window.location.href);
         window.open(shareUrlDiscord, '_blank');
         break;

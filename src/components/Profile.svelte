@@ -401,7 +401,7 @@ a11y-no-static-element-interactions-->
         <div class="flex-row">
           <a href="mailto:support@degenerousdao.com">Support</a>
           <span style:color="#bebebe">|</span>
-          <a href="http://degenerousdao.com/join">Discord</a>
+          <a href="https://dgrslabs.ink/join">Discord</a>
           <span style:color="#bebebe">|</span>
           <a href="/learn/faq">FAQ</a>
         </div>
@@ -648,7 +648,7 @@ a11y-no-static-element-interactions-->
                 />
                 <label for="terms">
                   * I have read and agree to the <a
-                    href="https://test.degenerousdao.com/terms-of-service"
+                    href="https://dgrslabs.ink/terms-of-service"
                     target="_blank"
                   >
                     Terms of Service</a

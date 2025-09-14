@@ -152,7 +152,7 @@ class MediaManager {
   //   type: 'tile' | 'description',
   // ): Promise<string | null> {
   //   let formattedFileName = MediaManager.#formatFileName(category);
-  //   let folderUrl = `https://media.degenerousdao.com/conexus-categories/images/${formattedFileName}/description/${type}.avif`;
+  //   let folderUrl = `https://media.dgrslabs.ink/conexus-categories/images/${formattedFileName}/description/${type}.avif`;
 
   //   let valid = await MediaManager.#isValidImageUrl(folderUrl);
   //   if (valid) {
@@ -218,7 +218,7 @@ class MediaManager {
   // static async #fetchRandomMusicUrl(category: string): Promise<string | null> {
   //   const formattedFileName = this.#formatFileName(category);
 
-  //   const folderURL = `https://media.degenerousdao.com/conexus-categories/music/${formattedFileName}`;
+  //   const folderURL = `https://media.dgrslabs.ink/conexus-categories/music/${formattedFileName}`;
 
   //   const response = await fetch(folderURL);
 
@@ -242,7 +242,7 @@ class MediaManager {
   //   category: string,
   // ): Promise<string | null> {
   //   let formattedFileName = this.#formatFileName(category);
-  //   let folderUrl = `https://media.degenerousdao.com/conexus-categories/images/${formattedFileName}/backgrounds`;
+  //   let folderUrl = `https://media.dgrslabs.ink/conexus-categories/images/${formattedFileName}/backgrounds`;
 
   //   let response = await fetch(folderUrl);
   //   let files = await response.json();

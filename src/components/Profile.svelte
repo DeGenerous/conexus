@@ -20,6 +20,7 @@
   import openModal from '@stores/modal.svelte';
   import { walletSwitchModal } from '@constants/modal';
   import { getCurrentUser } from '@utils/route-guard';
+  import { GetCache, SetCache, TERMS_KEY } from '@constants/cache';
 
   import ProfileSVG from '@components/icons/Profile.svelte';
   import DoorSVG from '@components/icons/Door.svelte';
@@ -158,6 +159,7 @@
       referral_code: referralCode,
       newsletter: newsletterSignup,
     });
+    SetCache(TERMS_KEY, termsAccepted); // temp for terms modal
   };
 </script>
 
@@ -399,7 +401,7 @@ a11y-no-static-element-interactions-->
         <div class="flex-row">
           <a href="mailto:support@degenerousdao.com">Support</a>
           <span style:color="#bebebe">|</span>
-          <a href="http://degenerousdao.com/join">Discord</a>
+          <a href="https://dgrslabs.ink/join">Discord</a>
           <span style:color="#bebebe">|</span>
           <a href="/learn/faq">FAQ</a>
         </div>
@@ -646,7 +648,7 @@ a11y-no-static-element-interactions-->
                 />
                 <label for="terms">
                   * I have read and agree to the <a
-                    href="https://docs.google.com/document/d/1fEemq6HVM_h8ZTbc_Fl_k3RvlPdjYd70TI1iloT5gXA/edit?usp=sharing"
+                    href="https://dgrslabs.ink/terms-of-service"
                     target="_blank"
                   >
                     Terms of Service</a

@@ -17,6 +17,7 @@
   import BackArrow from '@components/icons/BackArrow.svelte';
   import PlaySVG from '@components/icons/Play.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
+  import LogoSVG from '@components/icons/Logo.svelte';
 
   let {
     header = '',
@@ -142,14 +143,7 @@
     {#if arrow}
       <BackArrow href={arrow} />
     {:else}
-      <a
-        class="top-left-icon flex fade-in"
-        href="https://degenerousdao.com/"
-        target="_blank"
-        aria-label="DeGenerous"
-      >
-        <img src="/logo.avif" alt="Logo" />
-      </a>
+      <LogoSVG />
     {/if}
 
     {#if header === 'CoNexus'}<ConexusLogo />{/if}

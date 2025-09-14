@@ -17,7 +17,7 @@ import {
 import getRankByPotentials from '@constants/ranks';
 
 const getNftNumbers = async (wallet: string): Promise<number[]> => {
-  const json = await fetch(`https://api.degenerousdao.com/nft/owner/${wallet}`);
+  const json = await fetch(`https://api.dgrslabs.ink/nft/owner/${wallet}`);
   const data = await json.json();
   const nftNumbers = data.ownedNfts?.map((nft: any) => +nft.tokenId);
   return nftNumbers;
@@ -62,7 +62,7 @@ const getNFTs = async (): Promise<boolean> => {
 
     for (let i = 0; i < nftNumbers.length; i++) {
       const response = await fetch(
-        `https://api.degenerousdao.com/nft/data/${nftNumbers[i]}`,
+        `https://api.dgrslabs.ink/nft/data/${nftNumbers[i]}`,
       );
       metadata[i] = await response.json();
       const potential = new nftTile(metadata, i);

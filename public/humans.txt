@@ -10,7 +10,7 @@ GitHub: https://github.com/windickated
                          
 /* SITE */
 
-Contact: support@degenerousdao.com
-Website: https://www.degenerousdao.com
+Contact: support@dgrslabs.com
+Website: https://dgrslabs.ink
 Standards: HTML5, CSS3.                
 Software: Astro.js, Svelte, Typescript, etc.

@@ -4,7 +4,7 @@
 
 <a
   class="button-anchor blur purple-btn"
-  href="http://degenerousdao.com/join"
+  href="https://dgrslabs.ink/join"
   target="_blank"
 >
   <img src="/icons/discord.png" alt="Discord" />

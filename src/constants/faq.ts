@@ -19,7 +19,7 @@ const frequentlyAskedQuestions: {
           <b>Email Sign-Up</b> – Slightly more setup, but gives you the most control and access. Also requires a referral code.
         </li>
       </ul>
-      <p>👉 <b>Need a referral code?</b> Join our <a href="http://degenerousdao.com/join">Discord</a> and check the <code>#ref-codes</code> channel to get one instantly.</p>
+      <p>👉 <b>Need a referral code?</b> Join our <a href="https://dgrslabs.ink/join">Discord</a> and check the <code>#ref-codes</code> channel to get one instantly.</p>
     `,
   },
   {
@@ -57,10 +57,10 @@ const frequentlyAskedQuestions: {
     `,
   },
   {
-    question: 'What is DeGenerous DAO?',
+    question: 'What is DGRS LABS?',
     answer: `
       <p>
-        DeGenerous DAO is a collective building media technology for the next generation of creators. We're focused on reimagining storytelling as something <b>interactive, social, and creator-owned</b>, starting with our core platform: <b>CoNexus</b>.
+        DGRS LABS is a collective building media technology for the next generation of creators. We're focused on reimagining storytelling as something <b>interactive, social, and creator-owned</b>, starting with our core platform: <b>CoNexus</b>.
       </p>
     `,
   },

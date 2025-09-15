@@ -27,7 +27,7 @@
     </div>
   {:then sections}
     <div class="flex-row">
-      {#each sections as section (section.id)}
+      {#each sections as section, i (section.id ?? section.name ?? i)}
         <MenuTile {section} />
       {/each}
     </div>

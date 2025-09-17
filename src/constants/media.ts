@@ -9,7 +9,7 @@ export const serveUrl = (file_id?: string) => {
   return `/api/topic/serve-media/${file_id}`;
 };
 
-export const mediaURL = 'https://media.degenerousdao.com';
+export const mediaURL = 'https://media.dgrslabs.ink';
 
 export const assetsURL = `${mediaURL}/assets`;
 

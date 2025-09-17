@@ -42,7 +42,7 @@
         <h4>Terms of Service</h4>
         <p>
           To continue using CoNexus, you must review and accept the updated 
-          <a href="https://test.degenerousdao.com/terms-of-service" target="_blank" rel="noopener noreferrer"
+          <a href="https://dgrslabs.ink/terms-of-service" target="_blank" rel="noopener noreferrer"
           >Terms of Service</a
           >.
         </p>

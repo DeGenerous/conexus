@@ -4,7 +4,7 @@
 
 <a
   class="top-left-icon"
-  href="https://degenerousdao.com/"
+  href="https://dgrslabs.ink"
   target="_blank"
   aria-label="DGRS LABS website"
 >

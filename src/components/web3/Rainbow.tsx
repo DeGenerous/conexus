@@ -52,33 +52,28 @@ const Web3Provider: React.FC<Web3Props> = ({ linking = false, children }) => {
   let AUTHENTICATION_STATUS: AuthenticationStatus = 'unauthenticated';
 
   const authAPI = useMemo(
-    () => new AuthenticationAPI(import.meta.env.PUBLIC_BACKEND),
+    () => new AuthAPI(import.meta.env.PUBLIC_BACKEND),
     [],
   );
-  // const accountAPI = useMemo(
-  //   () => new AccountAPI(import.meta.env.PUBLIC_BACKEND),
-  //   [],
-  // );
+  const accountAPI = useMemo(
+    () => new AccountAPI(import.meta.env.PUBLIC_BACKEND),
+    [],
+  );
 
   const authenticationAdapter = useMemo(
     () =>
       createAuthenticationAdapter({
         getNonce: async () => {
-          const { status, message, data } = await authAPI.web3Getnonce();
+          const { data, error } = await authAPI.web3Getnonce();
 
-          switch (status) {
-            case 'error':
-              console.error('Failed to fetch nonce:', message);
-              throw new Error('Failed to fetch nonce');
-            case 'success':
-              if (!data) {
-                console.error('Failed to fetch nonce:', message);
-                throw new Error('Failed to fetch nonce');
-              }
-              return data;
-            default:
-              throw new Error('Unknown error occurred');
+          if (!data) {
+            console.error('Failed to fetch nonce:', error);
+            throw new Error('Failed to fetch nonce');
           }
+
+          AUTHENTICATION_STATUS = 'loading';
+
+          return data.nonce;
         },
 
         createMessage: ({ nonce, address, chainId }) => {
@@ -111,50 +106,50 @@ const Web3Provider: React.FC<Web3Props> = ({ linking = false, children }) => {
         },
 
         verify: async ({ message, signature }) => {
-          let resp: APIResponse<User>;
+          let resp: APIResponse<{ user: User }>;
 
-          resp = await authAPI.web3WalletSignin({
-            message,
-            signature,
-          });
-
-          const { status, message: apiMessage, data } = resp;
-
-          switch (status) {
-            case 'error':
-              console.error('Failed to verify signature:', apiMessage);
-              AUTHENTICATION_STATUS = 'unauthenticated';
-              return false;
-            case 'success':
-              if (!data) {
-                console.error('Failed to verify signature:', apiMessage);
-                AUTHENTICATION_STATUS = 'unauthenticated';
-                return false;
-              }
-              SetCache(USER_KEY, data, TTL_HOUR);
-              authenticated.set(data);
-              AUTHENTICATION_STATUS = 'authenticated';
-              window.location.reload();
-              return true;
-            default:
-              throw new Error('Unknown error occurred');
+          if (linking) {
+            resp = await accountAPI.web3WalletLink({
+              message,
+              signature,
+            });
+          } else {
+            resp = await authAPI.web3WalletSignin({
+              message,
+              signature,
+            });
           }
+
+          const { data, error } = resp;
+
+          if (!data) {
+            console.error('Failed to verify signature:', error?.details);
+            AUTHENTICATION_STATUS = 'unauthenticated';
+            return false;
+          }
+
+          SetCache(USER_KEY, data.user, TTL_HOUR);
+
+          authenticated.set(data.user);
+
+          AUTHENTICATION_STATUS = 'authenticated';
+
+          window.location.reload();
+
+          return true;
         },
 
         signOut: async () => {
-          const { status, message } = await authAPI.logout();
+          const { data, error } = await accountAPI.logout();
 
-          switch (status) {
-            case 'error':
-              console.error('Failed to sign out:', message);
-              return;
-            case 'success':
-              authenticated.set(null);
-              AUTHENTICATION_STATUS = 'unauthenticated';
-              window.location.reload();
-            default:
-              console.error('Unknown error occurred while signing out');
+          if (!data) {
+            console.error('Failed to sign out:', error);
+            return;
           }
+
+          authenticated.set(null);
+
+          AUTHENTICATION_STATUS = 'unauthenticated';
         },
       }),
     [linking],

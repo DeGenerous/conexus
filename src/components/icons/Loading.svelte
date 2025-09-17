@@ -7,9 +7,9 @@
   >
     <defs>
       <!-- Gradient for red arc -->
-      <linearGradient id="red-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="rgba(255, 60, 64, 1)" />
-        <stop offset="100%" stop-color="rgb(255, 60, 64, 0)" />
+      <linearGradient id="cyan-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="rgba(51, 226, 230, 1)" />
+        <stop offset="100%" stop-color="rgb(51, 226, 230, 0)" />
       </linearGradient>
 
       <!-- Gradient for blue arc -->
@@ -24,7 +24,7 @@
       cy="32"
       r="28"
       fill="none"
-      stroke="url(#red-gradient)"
+      stroke="url(#cyan-gradient)"
       stroke-width="10"
       stroke-linecap="round"
       stroke-dasharray="88 88"

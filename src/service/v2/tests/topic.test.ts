@@ -46,7 +46,7 @@ describe('TopicAPI', () => {
 
   it('should get topic manager data', async () => {
     const manager: TopicManager = {
-      Topic: {
+      topic: {
         id: '1',
         name: 'Test Topic',
         description: 'Test Description',
@@ -54,12 +54,12 @@ describe('TopicAPI', () => {
         visibility: 'public',
         media_folder_id: 'folder1',
       },
-      TopicPrompt: {
+      topic_prompt: {
         id: 'tp1',
         prompt: 'Test prompt',
         image_prompt: 'Test image prompt',
       },
-      TopicPromptSettings: {
+      topic_prompt_settings: {
         imageStyle: 'default',
         language: 'en',
         interactivity: 'min',
@@ -68,10 +68,10 @@ describe('TopicAPI', () => {
         readingStyle: 'normal',
         kidsMode: 'no',
       },
-      Categories: [],
-      Genres: [],
-      Gates: [],
-      MediaFiles: [],
+      categories: [],
+      genres: [],
+      gates: [],
+      media_files: [],
     };
     mockRequest.mockResolvedValue(manager);
     const result = await api.topicManager('1');
@@ -179,8 +179,8 @@ describe('TopicAPI', () => {
         openPrompt: '',
         tablePrompt: {} as TablePrompt,
       }, // Provide appropriate mock data as per your DraftPayload type
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      created_at: new Date(),
+      updated_at: new Date(),
     };
     mockRequest.mockResolvedValue('draft1');
     const result = await api.newDraft(draft);
@@ -201,8 +201,8 @@ describe('TopicAPI', () => {
         openPrompt: '',
         tablePrompt: {} as TablePrompt,
       },
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      created_at: new Date(),
+      updated_at: new Date(),
     };
     mockRequest.mockResolvedValue(draft);
     const result = await api.getDraft('d1');
@@ -223,8 +223,8 @@ describe('TopicAPI', () => {
           openPrompt: '',
           tablePrompt: {} as TablePrompt,
         },
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        created_at: new Date(),
+        updated_at: new Date(),
       },
     ];
     mockRequest.mockResolvedValue(drafts);
@@ -246,8 +246,8 @@ describe('TopicAPI', () => {
           openPrompt: '',
           tablePrompt: {} as TablePrompt,
         },
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        created_at: new Date(),
+        updated_at: new Date(),
       },
     ];
     mockRequest.mockResolvedValue(drafts);
@@ -267,8 +267,8 @@ describe('TopicAPI', () => {
         openPrompt: '',
         tablePrompt: {} as TablePrompt,
       },
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      created_at: new Date(),
+      updated_at: new Date(),
     };
     await api.updateDraft('d1', draft);
     expect(api.request).toHaveBeenCalledWith('/topic/drafts/d1', {

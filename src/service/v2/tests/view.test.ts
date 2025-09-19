@@ -62,7 +62,11 @@ describe('ViewAPI', () => {
     mockRequest.mockResolvedValue([]);
     await api.genreTopics('section1', 'genre1');
     expect(mockRequest).toHaveBeenCalledWith(
-      '/topic/genre-topics/genre1?page=1&page_size=5',
+      '/topic/genre-topics',
+      {
+        method: 'POST',
+        body: JSON.stringify({ section_id: 'section1', genre_id: 'genre1', page: 1, page_size: 10 }),
+      }
     );
   });
 
@@ -85,7 +89,7 @@ describe('ViewAPI', () => {
         sort_order: 'name',
         page: 1,
         pageSize: 5,
-        search_kind: '1',
+        search_kind: 1,
       }),
     });
   });
@@ -101,7 +105,7 @@ describe('ViewAPI', () => {
         sort_order: 'name',
         page: 2,
         pageSize: 10,
-        search_kind: '2',
+        search_kind: 2,
       }),
     });
   });

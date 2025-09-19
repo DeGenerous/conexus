@@ -97,7 +97,7 @@ export default class AuthenticationAPI extends Fetcher {
   }
 
   /**
-   * Logs out the current user by making a request to the `/auth/logout` endpoint.
+   * Logs out the current user by making a request to the `/auth/signout` endpoint.
    *
    * @returns A promise that resolves with the response from the logout request.
    */

@@ -46,7 +46,7 @@ describe('ViewAPI', () => {
     mockRequest.mockResolvedValue([]);
     await api.sectionTopics('sec1', 2, 10);
     expect(mockRequest).toHaveBeenCalledWith(
-      '/topic/section-categories/sec1?page=2&page_size=10',
+      '/topic/section-topics/sec1?page=2&page_size=10',
     );
   });
 

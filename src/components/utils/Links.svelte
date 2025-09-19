@@ -18,7 +18,7 @@
         <h5>Explore more:</h5>
         <button
           onclick={() =>
-            window.open('https://loredex.degenerousdao.com/', '_blank')}
+            window.open('https://loredex.dgrslabs.ink/', '_blank')}
         >
           Loredex
         </button>
@@ -27,7 +27,7 @@
         <h5>Influence the storyline:</h5>
         <button
           onclick={() =>
-            window.open('https://governance.degenerousdao.com/', '_blank')}
+            window.open('https://governance.dgrslabs.ink/', '_blank')}
         >
           Governance Hub
         </button>

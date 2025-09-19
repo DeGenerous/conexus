@@ -57,6 +57,7 @@ export default class Fetcher {
     const headers: HeadersInit = {
       ...options.headers,
       'Cache-Control': 'no-cache',
+      'X-API_KEY': import.meta.env.PUBLIC_API_KEY || '',
     };
 
     try {

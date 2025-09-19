@@ -11,7 +11,7 @@ export const seoConfig = {
     'CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.',
   type: 'website',
   image: {
-    url: 'https://media.degenerousdao.com/assets/logo.png', // Change this to your website's OpenGraph image URL.
+    url: 'https://media.dgrslabs.ink/assets/logo.png', // Change this to your website's OpenGraph image URL.
     alt: 'DGRS LABS', // Change this to your website's OpenGraph image alt text.
     width: 480,
     height: 480,

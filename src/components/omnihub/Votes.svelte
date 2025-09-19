@@ -28,7 +28,7 @@
         </h5>
         <a
           class="button-anchor button-glowing blur"
-          href="https://governance.degenerousdao.com/"
+          href="https://governance.dgrslabs.ink/"
           target="_blank"
         >
           Enter the Governance Hub

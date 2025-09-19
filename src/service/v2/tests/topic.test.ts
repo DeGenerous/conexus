@@ -93,7 +93,7 @@ describe('TopicAPI', () => {
   });
 
   it('should change category sort order', async () => {
-    await api.changeCategorySortOrder('t1', 'c1', 3);
+    await api.changeTopicSortOrder('t1', 'c1', 3);
     expect(api.request).toHaveBeenCalledWith('/topic/change-sortorder', {
       method: 'PATCH',
       body: JSON.stringify({

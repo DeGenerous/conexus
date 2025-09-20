@@ -36,7 +36,8 @@ class MediaManager {
             return [];
           }
         }
-        toastStore.show(error.message, 'error');
+        const message = error.details ?? 'Unable to process media upload';
+        toastStore.show(message, 'error');
         return [];
       }
       return [];

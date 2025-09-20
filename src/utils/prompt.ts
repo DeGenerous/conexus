@@ -46,66 +46,6 @@ function generatePrompt(
     }
   }
 
-  const setUpSettings = () => {
-    let promptSettings: string =
-      'Note: Consider the following characteristics for the story, follow these strictly especially the premise.\n\n';
-
-    promptSettings += `You will only write in ${settings.language}.\n`;
-
-    if (settings.interactivity !== 'standard')
-      promptSettings +=
-        'Adjust the interactivity of the story based on the following:\n';
-    switch (settings.interactivity) {
-      case 'min': {
-        promptSettings +=
-          'Make sure user gets to make a decision between options for every little decision.\n\n';
-        break;
-      }
-      case 'max': {
-        promptSettings +=
-          'Steps will have more text and events, so user gets options only for key decisions.\n\n';
-        break;
-      }
-    }
-
-    if (settings.difficulty !== 'min')
-      promptSettings +=
-        'Adjust the story based on the following difficulty level: \n';
-    switch (settings.difficulty) {
-      case 'standard': {
-        promptSettings +=
-          'It should be difficult for the user to succeed in the story.\n\n';
-        break;
-      }
-      case 'max': {
-        promptSettings +=
-          'It should be extremely difficult for the user to succeed in the story. They will likely fail every single time.\n\n';
-        break;
-      }
-    }
-
-    promptSettings += 'Adjust the story based on the following: \n';
-    switch (settings.length) {
-      case 'min': {
-        promptSettings +=
-          'The story should last maximum 20 steps, usually ending after 15, and each step should have 2 to 3 sentences. You will focus more on character development, interactions, etc making sure the user gets immersed as the main character, and key events should happen rarely. The story should have two arcs or acts if the user makes decisions to last long enough.\n\n';
-        break;
-      }
-      case 'standard': {
-        promptSettings +=
-          'You will use standard pacing, making sure you focus on both character development and actionable events. The story should have three arcs or acts if the user makes decisions to last long enough.\n\n';
-        break;
-      }
-      case 'max': {
-        promptSettings +=
-          'The story should have many steps, and 10 sentences per step. You will use quick pacing to the story, going for more action and making sure large events happen faster. The story should have five to eight arcs or acts if the user makes decisions to last enough.\n\n';
-        break;
-      }
-    }
-
-    return promptSettings;
-  };
-
   const setUpPrompt = () => {
     if (typeof data === 'string') {
       return data;
@@ -247,7 +187,6 @@ function generatePrompt(
     return promptData;
   };
 
-  const storySettings = setUpSettings();
   const storyPrompt = setUpPrompt();
 
   // const fullStory: CreatePrompt = {

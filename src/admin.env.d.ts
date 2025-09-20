@@ -31,6 +31,11 @@ type CollectionSection = {
   categories?: CollectionCategory[];
 };
 
+type Collection = CollectionCategory & {
+  section_id: number | string;
+  topics: CollectionTopic[];
+};
+
 type MediaType = 'background' | 'description' | 'tile' | 'audio' | 'video';
 
 type ThumbnailTopic = {

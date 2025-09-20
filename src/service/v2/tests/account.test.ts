@@ -18,7 +18,7 @@ describe('AccountAPI', () => {
 
   it('calls me() with token', async () => {
     const token = 'abc123';
-    await api.me(token);
+    await api.me(false, token);
     expect(api.request).toHaveBeenCalledWith('/account/me', {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -69,9 +69,9 @@ describe('AccountAPI', () => {
     expect(api.request).toHaveBeenCalledWith('/account/new-referral-code');
   });
 
-  it('calls getReferralCodes()', async () => {
-    await api.getReferralCodes();
-    expect(api.request).toHaveBeenCalledWith('/account/get-referral-codes');
+  it('calls getReferralCode()', async () => {
+    await api.getReferralCode();
+    expect(api.request).toHaveBeenCalledWith('/account/get-referral-code');
   });
 
   it('calls useReferralCode()', async () => {

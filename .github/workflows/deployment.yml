@@ -1,32 +1,55 @@
 # This workflow will build a golang project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
 
-name: Go
+name: CoNexus CI/CD
 
 on:
   push:
-    branches: [ "staging" ]
+    branches:
+      - main
+      - staging
+      - develop
   pull_request:
-    branches: [ "staging" ]
+    branches:
+      - main
+      - staging
+      - develop
 
 jobs:
-
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        port: ${{ secrets.PORT }}
-        script: |
-            cd ~/git/frontend/conexus-test
-            pwd
-            git checkout staging
-            git pull
-            cd scripts
-            ./pod.sh
+      - name: Set branch-specific environment
+        run: |
+          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+            echo "DEPLOY_ENV=production" >> $GITHUB_ENV
+            echo "DEPLOY_BRANCH=main" >> $GITHUB_ENV
+          elif [[ "${GITHUB_REF}" == "refs/heads/staging" ]]; then
+            echo "DEPLOY_ENV=staging" >> $GITHUB_ENV
+            echo "DEPLOY_BRANCH=staging" >> $GITHUB_ENV
+          elif [[ "${GITHUB_REF}" == "refs/heads/develop" ]]; then
+            echo "DEPLOY_ENV=develop" >> $GITHUB_ENV
+            echo "DEPLOY_BRANCH=develop" >> $GITHUB_ENV
+          fi
+
+      - name: Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }} # switched from password to SSH key like backend
+          port: ${{ secrets.PORT }}
+          script: |
+            set -e
+            DEPLOY_ENV=${{ env.DEPLOY_ENV }}
+            DEPLOY_BRANCH=${{ env.DEPLOY_BRANCH }}
+
+            cd ~/apps/conexus
+            git fetch --all
+            git checkout $DEPLOY_BRANCH
+            git pull origin $DEPLOY_BRANCH
+
+            ./reload.sh reload $DEPLOY_ENV

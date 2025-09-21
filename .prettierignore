@@ -1,9 +1,32 @@
 # Ignore artifacts:
 build
+
 node_modules
+public
+scripts
+
 dist
-.env.local
+.astro
 .github
+.vscode
+.idea
+.DS_Store
+
+.gitignore
+.gitattributes
+
+Dockerfile
+Makefile
+
+*.log
+
+.env*
+
+*.sh
+
 bun.lockb
 package-lock.json
+pnpm-lock.yaml
 # astro.config.mjs
+
+README.md

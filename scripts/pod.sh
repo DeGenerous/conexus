@@ -16,6 +16,11 @@ if [ ! -f "$ENV_FILE" ]; then
   exit 1
 fi
 
+# Load environment variables
+set -o allexport
+. "$ENV_FILE"
+set +o allexport
+
 POD_NAME="${NAME}-pod-$ENV"
 CONTAINER_NAME="${NAME}-container-$ENV"
 IMAGE_NAME="${NAME}:$ENV"

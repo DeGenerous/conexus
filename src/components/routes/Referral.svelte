@@ -11,11 +11,17 @@
 
   let code = $state<string>('');
   let referralCodeValid = $state<boolean>(false);
+  let isValidatingCode = $state<boolean>(false);
+  let codeValidated = $state<boolean>(false);
   let termsAccepted = $state<boolean>(false);
 
   $effect(() => {
     if (code.length === 16) validateReferralCode();
-    else if (code.length < 16) referralCodeValid = false;
+    else if (code.length < 16) {
+      referralCodeValid = false;
+      codeValidated = false;
+      isValidatingCode = false;
+    }
   });
 
   const useReferralCode = async () => {
@@ -31,9 +37,31 @@
   };
 
   async function validateReferralCode() {
-    const validated = await auth.validateReferralCode(code);
+    const currentCode = code;
+    if (currentCode.length !== 16) return;
 
-    return validated;
+    try {
+      isValidatingCode = true;
+      referralCodeValid = false;
+      codeValidated = false;
+
+      const validated = await auth.validateReferralCode(currentCode);
+
+      if (code !== currentCode) return;
+
+      referralCodeValid = validated;
+      codeValidated = true;
+    } catch (error) {
+      console.error('Failed to validate referral code:', error);
+      if (code !== currentCode) return;
+
+      referralCodeValid = false;
+      codeValidated = true;
+    } finally {
+      if (code === currentCode) {
+        isValidatingCode = false;
+      }
+    }
   }
 </script>
 
@@ -51,17 +79,15 @@
   />
 
   {#if code.length === 16}
-    {#await auth.validateReferralCode(code)}
+    {#if isValidatingCode}
       <p class="validation gray">Checking referral code...</p>
-    {:then referralObject}
-      {#if referralObject}
+    {:else if codeValidated}
+      {#if referralCodeValid}
         <p class="validation green">Referral code is valid</p>
       {:else}
         <p class="validation">Referral code is invalid</p>
       {/if}
-    {:catch}
-      <p class="validation">Some error occured...</p>
-    {/await}
+    {/if}
   {:else if code}
     <p class="validation">Code should contain 16 characters</p>
   {/if}

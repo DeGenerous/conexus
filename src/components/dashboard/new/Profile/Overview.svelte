@@ -114,9 +114,22 @@
   $: if (referralCode.length < 16) referralCodeValid = false;
 
   async function validateReferralCode() {
-    const validated = await authentication.validateReferralCode(referralCode);
+    const currentCode = referralCode;
+    if (currentCode.length !== 16) return;
 
-    return validated;
+    try {
+      referralCodeValid = false;
+      const validated = await authentication.validateReferralCode(currentCode);
+
+      if (referralCode !== currentCode) return;
+
+      referralCodeValid = validated;
+    } catch (error) {
+      console.error('Failed to validate referral code:', error);
+      if (referralCode !== currentCode) return;
+
+      referralCodeValid = false;
+    }
   }
 
   // Sign up user with Email and Referral Code

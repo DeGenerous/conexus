@@ -52,12 +52,12 @@ export default class Fetcher {
   protected async request<T>(
     endpoint: string,
     options: RequestInit = {},
-    responseType: 'json' | 'blob' = 'json',
+    responseType: 'json' | 'blob' | 'text' = 'json',
   ): Promise<APIResponse<T>> {
     const headers: HeadersInit = {
       ...options.headers,
       'Cache-Control': 'no-cache',
-      'X-API_KEY': import.meta.env.PUBLIC_API_KEY || '',
+      'X-API_KEY': import.meta.env.PUBLIC_BACKEND_API_KEY || '',
     };
 
     try {
@@ -89,11 +89,17 @@ export default class Fetcher {
           message: 'Blob fetched successfully',
           data: (await response.blob()) as T,
         };
-      } else {
+      } else if (responseType === 'text') {
         responseData = {
           status: 'success',
           message: 'Text fetched successfully',
           data: (await response.text()) as unknown as T,
+        };
+      } else {
+        responseData = {
+          status: 'error',
+          message: 'Unsupported response type',
+          error: { details: 'Unsupported response type' },
         };
       }
 
@@ -110,7 +116,7 @@ export default class Fetcher {
   protected async requestRetry<T>(
     endpoint: string,
     options: RequestInit = {},
-    responseType: 'json' | 'blob' = 'json',
+    responseType: 'json' | 'blob' | 'text' = 'json',
     retries = 3, // Number of retries before failing
     delay = 500, // Initial delay in ms (doubles each retry)
   ): Promise<APIResponse<T>> {
@@ -142,11 +148,17 @@ export default class Fetcher {
             message: 'Blob fetched successfully',
             data: (await response.blob()) as T,
           };
-        } else {
+        } else if (responseType === 'text') {
           responseData = {
             status: 'success',
             message: 'Text fetched successfully',
             data: (await response.text()) as unknown as T,
+          };
+        } else {
+          responseData = {
+            status: 'error',
+            message: 'Unsupported response type',
+            error: { details: 'Unsupported response type' },
           };
         }
 

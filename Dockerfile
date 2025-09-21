@@ -7,11 +7,14 @@ RUN apk add --no-cache python3 make g++
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
+# Copy package.json to the working directory
+COPY package.json ./
+
+# Copy the pnpm-lock.yaml if you are using pnpm
+COPY pnpm-lock.yaml ./
 
 # Install dependencies
-RUN npm install
+RUN pnpm install
 
 # copy public files
 COPY public ./app/public
@@ -20,7 +23,7 @@ COPY public ./app/public
 COPY . .
 
 # Build the Next.js application
-RUN npm run build
+RUN pnpm run build
 
 ENV HOST=0.0.0.0
 

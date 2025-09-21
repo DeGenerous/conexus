@@ -1,24 +1,36 @@
-#!/bin/bash
+#!/usr/bin/env sh
+set -eu
 
-# Variables
-APP_NAME=conexus-v1
-CONTAINER_NAME=conexus-v1-container
-POD_NAME=conexus-v1-pod
+ENV=$1
+NAME=$2
 
-# Export evnironment variables
-export $(grep -v '^#' .env | xargs)
+if [ -z "$ENV" ]; then
+  echo "❌ No environment specified. Usage: ./pod.sh <env> [name]"
+  exit 1
+fi
 
-# Build the Docker image
-podman build -t $APP_NAME ..
+ENV_FILE="/etc/dgrs/conexus/envs/.env.$ENV"
 
-# Remove the existing container if it exists
-podman rm -f $CONTAINER_NAME
+if [ ! -f "$ENV_FILE" ]; then
+  echo "❌ Environment file not found: $ENV_FILE"
+  exit 1
+fi
 
-# Remove the existing pod if it exists
-podman pod rm -f $POD_NAME
+POD_NAME="${NAME}-pod-$ENV"
+CONTAINER_NAME="${NAME}-container-$ENV"
+IMAGE_NAME="${NAME}:$ENV"
 
-# Create a new pod
-podman pod create --name $POD_NAME -p 4323:4321
+# Cleanup
+podman rm -f "$CONTAINER_NAME" 2>/dev/null || true
+podman pod rm -f "$POD_NAME" 2>/dev/null || true
 
-# Run the container in the pod
-podman run -d --name $CONTAINER_NAME --pod $POD_NAME $APP_NAME
+# Create new pod
+podman pod create --name "$POD_NAME" -p "${FRONTEND_PORT:-4323}:4321"
+
+# Run container inside pod
+podman run -d \
+  --name "$CONTAINER_NAME" \
+  --pod "$POD_NAME" \
+  "$IMAGE_NAME"
+
+echo "✅ Pod $POD_NAME running with container $CONTAINER_NAME on port ${FRONTEND_PORT:-4323}"

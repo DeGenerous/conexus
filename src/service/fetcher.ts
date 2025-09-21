@@ -28,10 +28,8 @@
  *
  */
 export default class Fetcher {
-  /**
-   * The base URL for the API.
-   */
   protected baseUrl: string;
+  protected apiKey: string;
 
   /**
    * Creates an instance of Fetcher.
@@ -39,6 +37,60 @@ export default class Fetcher {
    */
   constructor(baseUrl: string = import.meta.env.PUBLIC_BACKEND as string) {
     this.baseUrl = baseUrl;
+    this.apiKey = import.meta.env.PUBLIC_BACKEND_API_KEY || '';
+  }
+
+  private async doFetch<T>(
+    endpoint: string,
+    options: RequestInit = {},
+    responseType: 'json' | 'blob' | 'text' = 'json',
+  ): Promise<APIResponse<T>> {
+    const headers: HeadersInit = {
+      ...options.headers,
+      'Cache-Control': 'no-cache',
+      ...(this.apiKey ? { 'X-API_KEY': this.apiKey } : {}),
+    };
+
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      ...options,
+      headers,
+      credentials: 'include',
+    });
+
+    if (response.status === 401) {
+      return {
+        status: 'error',
+        message: 'Unauthorized access',
+        error: { details: 'Unauthorized access' },
+      };
+    }
+
+    const contentType = response.headers.get('Content-Type') || '';
+    const isJson = contentType.includes('application/json');
+
+    if (responseType === 'json' && isJson) {
+      return await response.json();
+    }
+    if (responseType === 'blob') {
+      return {
+        status: 'success',
+        message: 'Blob fetched successfully',
+        data: (await response.blob()) as T,
+      };
+    }
+    if (responseType === 'text') {
+      return {
+        status: 'success',
+        message: 'Text fetched successfully',
+        data: (await response.text()) as unknown as T,
+      };
+    }
+
+    return {
+      status: 'error',
+      message: 'Unsupported response type',
+      error: { details: `Unsupported response type: ${responseType}` },
+    };
   }
 
   /**
@@ -54,56 +106,8 @@ export default class Fetcher {
     options: RequestInit = {},
     responseType: 'json' | 'blob' | 'text' = 'json',
   ): Promise<APIResponse<T>> {
-    const headers: HeadersInit = {
-      ...options.headers,
-      'Cache-Control': 'no-cache',
-      'X-API_KEY': import.meta.env.PUBLIC_BACKEND_API_KEY || '',
-    };
-
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        ...options,
-        headers,
-        credentials: 'include',
-      });
-
-      if (response.status === 401) {
-        // Handle unauthorized access
-        return {
-          status: 'error',
-          message: 'Unauthorized access',
-          error: { details: 'Unauthorized access' },
-        };
-      }
-
-      const contentType = response.headers.get('Content-Type');
-      const isJson = contentType && contentType.includes('application/json');
-
-      let responseData: APIResponse<T>;
-
-      if (responseType === 'json' && isJson) {
-        responseData = await response.json();
-      } else if (responseType === 'blob') {
-        responseData = {
-          status: 'success',
-          message: 'Blob fetched successfully',
-          data: (await response.blob()) as T,
-        };
-      } else if (responseType === 'text') {
-        responseData = {
-          status: 'success',
-          message: 'Text fetched successfully',
-          data: (await response.text()) as unknown as T,
-        };
-      } else {
-        responseData = {
-          status: 'error',
-          message: 'Unsupported response type',
-          error: { details: 'Unsupported response type' },
-        };
-      }
-
-      return responseData;
+      return await this.doFetch<T>(endpoint, options, responseType);
     } catch (error) {
       return {
         status: 'error',
@@ -120,72 +124,19 @@ export default class Fetcher {
     retries = 3, // Number of retries before failing
     delay = 500, // Initial delay in ms (doubles each retry)
   ): Promise<APIResponse<T>> {
-    const headers: HeadersInit = {
-      ...options.headers,
-      'Cache-Control': 'no-cache',
-    };
-
     for (let attempt = 0; attempt <= retries; attempt++) {
-      console.warn(`Fetching ${endpoint} (Attempt ${attempt + 1}/${retries})`);
-
       try {
-        const response = await fetch(`${this.baseUrl}${endpoint}`, {
-          ...options,
-          headers,
-          credentials: 'include',
-        });
-
-        const contentType = response.headers.get('Content-Type');
-        const isJson = contentType && contentType.includes('application/json');
-
-        let responseData: APIResponse<T>;
-
-        if (responseType === 'json' && isJson) {
-          responseData = await response.json();
-        } else if (responseType === 'blob') {
-          responseData = {
-            status: 'success',
-            message: 'Blob fetched successfully',
-            data: (await response.blob()) as T,
-          };
-        } else if (responseType === 'text') {
-          responseData = {
-            status: 'success',
-            message: 'Text fetched successfully',
-            data: (await response.text()) as unknown as T,
-          };
-        } else {
-          responseData = {
-            status: 'error',
-            message: 'Unsupported response type',
-            error: { details: 'Unsupported response type' },
-          };
-        }
-
-        return responseData;
+        return await this.doFetch<T>(endpoint, options, responseType);
       } catch (error) {
-        console.error(`Request failed to ${endpoint}:`, error);
-
         if (attempt < retries) {
+          console.warn(
+            `Retrying ${endpoint} (attempt ${attempt + 1}/${retries})`,
+          );
           await new Promise((res) =>
             setTimeout(res, delay * Math.pow(2, attempt)),
           );
           continue;
         }
-
-        if (
-          (error as Error).message.includes('Failed to parse URL from /api/') &&
-          retries > 0
-        ) {
-          return this.requestRetry(
-            endpoint,
-            options,
-            responseType,
-            retries - 1,
-            delay,
-          );
-        }
-
         return {
           status: 'error',
           message: (error as Error).message,
@@ -196,7 +147,7 @@ export default class Fetcher {
 
     return {
       status: 'error',
-      message: 'Something went wrong',
+      message: 'Max retries exceeded',
       error: { details: 'Max retries exceeded' },
     };
   }

@@ -22,11 +22,11 @@
   import { ensureCreator, userState } from '@utils/route-guard';
   import Drafts from '@utils/story-drafts';
 
-  import Slider from '@components/dashboard/dream/create/Slider.svelte';
-  import Characters from '@components/dashboard/dream/create/Characters.svelte';
-  import Scenario from '@components/dashboard/dream/create/Scenario.svelte';
-  import WritingStyle from '@components/dashboard/dream/create/WritingStyle.svelte';
-  import CategoryFetcher from '@components/dashboard/new/common/CategoryFetcher.svelte';
+  import Slider from '@components/dashboard/dream-legacy/create/Slider.svelte';
+  import Characters from '@components/dashboard/dream-legacy/create/Characters.svelte';
+  import Scenario from '@components/dashboard/dream-legacy/create/Scenario.svelte';
+  import WritingStyle from '@components/dashboard/dream-legacy/create/WritingStyle.svelte';
+  import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
 
   onMount(ensureCreator);

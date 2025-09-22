@@ -11,10 +11,10 @@
   import { navContext } from '@stores/navigation.svelte';
   import { userState } from '@utils/route-guard';
 
-  import GenreTags from '@components/dashboard/dream/manage/GenreTags.svelte';
-  import Media from '@components/dashboard/dream/manage/Media.svelte';
-  import NftGating from '@components/dashboard/dream/manage/NftGating.svelte';
-  import ExploreCategory from '@components/dashboard/dream/manage/category/ExploreCategory.svelte';
+  import GenreTags from '@components/dashboard/dream-legacy/manage/GenreTags.svelte';
+  import Media from '@components/dashboard/dream-legacy/manage/Media.svelte';
+  import NftGating from '@components/dashboard/dream-legacy/manage/NftGating.svelte';
+  import ExploreCategory from '@components/dashboard/dream-legacy/manage/category/ExploreCategory.svelte';
   import EditSVG from '@components/icons/Edit.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';

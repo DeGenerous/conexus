@@ -2,9 +2,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import Collections from '@components/dashboard/dream/manage/Collections.svelte';
-  import Categories from '@components/dashboard/dream/manage/Categories.svelte';
-  import NFTGates from '@components/dashboard/dream/manage/NFTGates.svelte';
+  import Collections from '@components/dashboard/dream-legacy/manage/Collections.svelte';
+  import Categories from '@components/dashboard/dream-legacy/manage/Categories.svelte';
+  import NFTGates from '@components/dashboard/dream-legacy/manage/NFTGates.svelte';
   import { ensureCreator } from '@utils/route-guard';
 
   let nav: 'collection' | 'categories' | 'nft-gates' = $state('collection');

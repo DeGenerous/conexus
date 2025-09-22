@@ -1,7 +1,7 @@
 <script lang="ts">
   import CategoryView from '@lib/category';
 
-  import CategoryFetcher from '@components/dashboard/new/common/CategoryFetcher.svelte';
+  import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
 
   import { ensureCreator } from '@utils/route-guard';
 

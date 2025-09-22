@@ -8,7 +8,7 @@
   import CoNexusApp from '@lib/view';
   import { toastStore } from '@stores/toast.svelte';
 
-  import StoryList from '@components/dashboard/dream/manage/collection/StoryList.svelte';
+  import StoryList from '@components/dashboard/dream-legacy/manage/collection/StoryList.svelte';
 
   export let selectInput = (event: Event) => {};
 

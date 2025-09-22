@@ -21,12 +21,12 @@
   import { ensureCreator } from '@utils/route-guard';
   import Drafts from '@utils/story-drafts';
 
-  import Slider from '@components/dashboard/dream/create/Slider.svelte';
-  import Characters from '@components/dashboard/dream/create/Characters.svelte';
-  import Scenario from '@components/dashboard/dream/create/Scenario.svelte';
-  import WritingStyle from '@components/dashboard/dream/create/WritingStyle.svelte';
+  import Slider from '@components/dashboard/dream/new/create/Slider.svelte';
+  import Characters from '@components/dashboard/dream/new/create/Characters.svelte';
+  import Scenario from '@components/dashboard/dream/new/create/Scenario.svelte';
+  import WritingStyle from '@components/dashboard/dream/new/create/WritingStyle.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
-  import CategoryFetcher from '@components/dashboard/new/common/CategoryFetcher.svelte';
+  import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
 
   let isAdmin = $state(false);
 

@@ -59,7 +59,7 @@ export default class Topic {
     return data;
   }
 
-  async processDraftDOcument(file: File, category_id: string): Promise<void> {
+  async processDraftDocument(file: File, category_id: string): Promise<void> {
     const { message, data } = await this.api.draftDocument(file, category_id);
 
     if (!data) {

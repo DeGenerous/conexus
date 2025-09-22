@@ -4,7 +4,7 @@
   import CategoryView from '@lib/category';
   import { ensureCreator, userState } from '@utils/route-guard';
 
-  import CategoryFetcher from '@components/dashboard/new/common/CategoryFetcher.svelte';
+  import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
 
   let categoryView = new CategoryView();
 

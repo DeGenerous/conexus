@@ -9,7 +9,7 @@
   } from '@constants/cache';
   import { showProfile } from '@stores/modal.svelte';
 
-  import Ranks from '@components/dashboard/new/omnihub/Ranks.svelte';
+  import Ranks from '@components/dashboard/omnihub/Ranks.svelte';
   import FilterSVG from '@components/icons/Filter.svelte';
 
   let {

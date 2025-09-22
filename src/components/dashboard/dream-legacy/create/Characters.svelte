@@ -3,7 +3,7 @@
   import { tablePrompt } from '@stores/dream.svelte';
 
   import Dropdown from '@components/utils/Dropdown.svelte';
-  import NewCharacter from '@components/dashboard/dream/create/NewCharacter.svelte';
+  import NewCharacter from '@components/dashboard/dream-legacy/create/NewCharacter.svelte';
 
   // ADD NEW SIDE CHARACTER
 

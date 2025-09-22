@@ -4,16 +4,16 @@
 
   import { userState } from '@utils/route-guard';
 
-  import { profileRoutes } from '@components/dashboard/new/Profile';
-  import { dreamRoutes } from '@components/dashboard/new/dream';
-  import { adminRoutes } from '@components/dashboard/new/admin';
-  import { omnihubRoutes } from '@components/dashboard/new/omnihub';
+  import { profileRoutes } from '@components/dashboard/profile';
+  import { dreamRoutes } from '@components/dashboard/dream';
+  import { adminRoutes } from '@components/dashboard/admin';
+  import { omnihubRoutes } from '@components/dashboard/omnihub';
 
   import {
     DASHBOARD_LINKS,
     buildRoutes,
-  } from '@components/dashboard/new/routes';
-  import Sidebar from '@components/dashboard/new/Sidebar.svelte';
+  } from '@components/dashboard/routes';
+  import Sidebar from '@components/dashboard/Sidebar.svelte';
 
   let signedIn = $state(false);
   let isAdmin = $state<boolean>(false);

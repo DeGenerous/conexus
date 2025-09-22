@@ -1,7 +1,7 @@
 import type { WrappedComponent } from 'svelte-spa-router';
 
 import { home } from './home';
-import { PROFILE_ROUTES } from './Profile';
+import { PROFILE_ROUTES } from './profile';
 import { DREAM_ROUTES } from './dream';
 import { ADMIN_ROUTES } from './admin';
 import { OMNIHUB } from './omnihub';

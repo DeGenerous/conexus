@@ -28,6 +28,7 @@
     isCreator = await userState('creator');
 
     if (isAdmin) {
+      // TODO: check and fix
       adminCollection = await topicManager.getAdminCollection(page, pageSize);
     } else if (isCreator) {
       creatorCollection = await topicManager.getCreatorCollection(

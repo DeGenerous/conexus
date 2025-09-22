@@ -2,11 +2,11 @@
   import { link } from 'svelte-spa-router';
 
   import { NAV_ROUTES }from '@constants/routes';
-  import SidebarLink from '@components/dashboard/new/SidebarLink.svelte';
+  import SidebarLink from '@components/dashboard/SidebarLink.svelte';
   import {
     DASHBOARD_PATH,
     DASHBOARD_LINKS,
-  } from '@components/dashboard/new/routes';
+  } from '@components/dashboard/routes';
 
   let {
     isAdmin,

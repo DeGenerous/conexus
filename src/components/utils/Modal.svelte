@@ -11,7 +11,7 @@
     themeSettings,
   } from '@stores/modal.svelte';
 
-  import Drafts from '@components/dashboard/dream/create/Drafts.svelte';
+  import Drafts from '@components/dashboard/dream-legacy/create/Drafts.svelte';
   import ThemeSettings from '@components/utils/ThemeSettings.svelte';
 
   let dialog: HTMLDialogElement;

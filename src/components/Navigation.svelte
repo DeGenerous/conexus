@@ -148,14 +148,7 @@
     {#if arrow}
       <BackArrow href={arrow} />
     {:else}
-      <a
-        class="top-left-icon flex fade-in"
-        href={NAV_ROUTES.WEBSITE}
-        target="_blank"
-        aria-label="DeGenerous"
-      >
-        <img src="/logo.avif" alt="Logo" />
-      </a>
+      <LogoSVG />
     {/if}
 
     {#if header === 'CoNexus'}<ConexusLogo />{/if}

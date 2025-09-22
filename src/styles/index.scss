@@ -134,13 +134,12 @@ html {
   padding-block: 4rem 6rem;
   letter-spacing: 0.025rem;
   word-spacing: 0.2em;
-  background-color: $dark-blue;
+  background-color: black;
 
   @include cyan(0.85, 'text');
   @include font;
 
   @include respond-up('small-desktop') {
-    background-color: black;
     padding-block: 4rem 2rem;
   }
 
@@ -172,6 +171,18 @@ html {
     gap: 0.5rem;
   }
 
+  .gap {
+    gap: 1rem;
+  }
+
+  .gap-24 {
+    gap: 1.5rem;
+  }
+
+  .gap-32 {
+    gap: 2rem;
+  }
+
   .blur {
     -webkit-backdrop-filter: blur(1rem);
     backdrop-filter: blur(1rem);
@@ -183,6 +194,14 @@ html {
 
   .pad {
     padding: 1rem;
+  }
+
+  .pad-24 {
+    padding: 1.5rem;
+  }
+
+  .pad-32 {
+    padding: 2rem;
   }
 
   .pad-inline {
@@ -282,19 +301,20 @@ html {
     @extend .pad;
     @extend .round;
     width: clamp(250px, 90%, 50rem);
+    // max-width: 90rem;
     box-shadow: $shadow-plus-inset-glow;
-    animation: dark-glowing 10s ease-in-out infinite;
+    animation: dark-glowing 15s ease-in-out infinite;
     margin-inline: auto;
   }
 
   .transparent-container {
     @extend .container;
-    animation: transparent-glowing 10s ease-in-out infinite;
+    animation: transparent-glowing 15s ease-in-out infinite;
   }
 
   .opaque-container {
     @extend .container;
-    animation: dark-glowing-opaque 10s ease-in-out infinite;
+    animation: dark-glowing-opaque 15s ease-in-out infinite;
   }
 
   .mobile-text-wrapper {
@@ -330,7 +350,7 @@ html {
     input:not(input[type='range']),
     textarea,
     select {
-      animation: dark-glowing 10s ease-in-out infinite;
+      animation: dark-glowing 15s ease-in-out infinite;
       @include white-txt;
       @include box-shadow(0 0 0.5rem rgba(0, 0, 0, 0.75));
 

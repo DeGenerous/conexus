@@ -26,16 +26,16 @@
 
   let {
     header = '',
-    storyName,
     subheading = '',
     activeTab = 'Home',
     arrow = null,
+    hidden = false,
   }: {
     header: string;
-    storyName: string;
     subheading: string;
     activeTab: string;
     arrow: Nullable<string>;
+    hidden?: boolean;
   } = $props();
 
   // let app: CoNexusApp = new CoNexusApp();
@@ -141,7 +141,7 @@
 
 <svelte:window {onkeydown} {onscroll} />
 
-{#if $story === null && storyName !== 'Maintenance'}
+{#if $story === null && hidden === false}
   <header
     class="flex-row pad-inline blur transition semi-transparent-dark-bg shad-behind dark-glowing-opaque"
   >
@@ -224,7 +224,7 @@
     </button>
 
     <!-- Dashboard -->
-    <a
+    <!-- <a
       class="fade-in"
       class:active={activeTab === 'Dashboard'}
       href={NAV_ROUTES.HOME}
@@ -246,7 +246,7 @@
         <rect x="7.5" y="-7.5" width="52.5" height="67.5" />
       </svg>
       <p>Dashboard</p>
-    </a>
+    </a> -->
 
     <!-- HOME -->
     <a
@@ -279,7 +279,7 @@
     </a>
 
     <!-- DREAM -->
-    <a
+    <!-- <a
       class="fade-in"
       class:active={activeTab === 'Dream'}
       href={NAV_ROUTES.DREAM}
@@ -322,7 +322,7 @@
         </g>
       </svg>
       <p>Dream</p>
-    </a>
+    </a> -->
 
     <!-- NEXT SECTION -->
     <button

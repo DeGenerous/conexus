@@ -1,5 +1,5 @@
 ---
-import { ClientRouter } from "astro:transitions";
+import { ClientRouter } from 'astro:transitions';
 
 import { SEO } from 'astro-seo';
 import { seoConfig } from '../../utils/seoConfig';
@@ -29,6 +29,7 @@ type LayoutProps = {
   url?: string;
   type?: string;
   disableIndexing?: boolean;
+  hiddenNav?: boolean;
 };
 
 const {
@@ -45,6 +46,7 @@ const {
   imageType = 'image/jpeg',
   url = 'https://conexus.degenerousdao.com/',
   type = 'website',
+  hiddenNav = false,
 
   ogTitle,
   disableIndexing = false,
@@ -154,7 +156,7 @@ const absoluteImageURL = image.startsWith('http')
       {subheading}
       activeTab={nav}
       {arrow}
-      storyName={story}
+      hidden={hiddenNav}
       client:load
     />
 

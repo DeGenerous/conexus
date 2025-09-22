@@ -1,7 +1,7 @@
 export const NAV_ROUTES = {
   CONEXUS: 'https://conexus.ink',
   WEBSITE: 'https://dgrslabs.ink/',
-  TERMS: 'https://dgrslabs.ink/legal/terms-of-service',
+  TERMS: 'https://dgrslabs.ink/terms-of-service',
   SUPPORT: 'mailto:support@dgrslabs.ink',
   WIKI: 'https://degenerousdao.gitbook.io/wiki',
   DISCORD: 'https://dgrslabs.ink/join',

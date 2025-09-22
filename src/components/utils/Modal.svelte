@@ -73,6 +73,8 @@
   on:close={closeDialog}
   on:click|self={closeDialog}
   aria-label="Modal"
+  aria-modal="true"
+  role="dialog"
 >
   <div class="flex" on:click|stopPropagation>
     <!-- DYNAMIC CONTENT PROVIDED BY openModal() FUNCTION -->

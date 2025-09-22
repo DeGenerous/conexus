@@ -1,6 +1,6 @@
 # Makefile for running Astro Svelte application with variables
 
-PKG_MGR ?= npm
+PKG_MGR ?= pnpm
 
 install:
 	$(PKG_MGR) install

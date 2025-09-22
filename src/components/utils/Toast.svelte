@@ -37,6 +37,8 @@
   class:fading-right={fading >= 0.5}
   class:hide
   on:click={closeToast}
+  type="button"
+  aria-live={type === 'error' ? 'assertive' : 'polite'}
 >
   <p>{@html message}</p>
 </button>

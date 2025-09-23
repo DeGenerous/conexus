@@ -2,13 +2,17 @@
   let {
     onclick = () => {},
     voidBtn = false,
+    text = '',
+    fullWidth = false,
   }: {
     onclick: () => void;
     voidBtn?: boolean;
+    text?: string;
+    fullWidth?: boolean;
   } = $props();
 </script>
 
-<button class="flex" class:void-btn={voidBtn} {onclick} aria-label="Back">
+<button class="flex-row" class:void-btn={voidBtn} class:full-width={fullWidth} {onclick} aria-label="Back">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
     <defs>
       <mask id="quit-svg-mask">
@@ -26,6 +30,7 @@
 
     <circle r="100" mask="url(#quit-svg-mask)" />
   </svg>
+  {text}
 </button>
 
 <style lang="scss">
@@ -37,6 +42,11 @@
     &.void-btn {
       width: 2rem;
       fill: $light-blue;
+    }
+
+    &.full-width {
+      width: 100%;
+      justify-content: space-between;
     }
 
     &:hover,

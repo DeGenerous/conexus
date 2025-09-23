@@ -78,7 +78,7 @@
       </button>
 
       {#if expanded.has(item.name)}
-        <ul class="submenu flex gap-8 fade-in">
+        <ul class="submenu flex gap-8">
           {#each item.children as child}
             <li>
               <SidebarLink
@@ -169,6 +169,16 @@
     padding-block: 0.5rem;
     padding-left: 1.5rem;
     border-left: 1px solid rgba(51, 226, 230, 0.25);
+    transition: all 0.3s ease;
+
+    // Fallback if no support
+    opacity: 1;
+    transform: none;
+
+    @starting-style {
+      opacity: 0;
+      transform: scaleY(0.5) translateY(-50%);
+    }
 
     li {
       width: 100%;

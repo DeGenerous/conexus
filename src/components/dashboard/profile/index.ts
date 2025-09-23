@@ -3,7 +3,7 @@ import wrap from 'svelte-spa-router/wrap';
 
 import ProfileOverview from './Overview.svelte';
 import ProfileBookmarks from './Bookmark.svelte';
-import ProfileMetrics from './Metrics.svelte';
+// import ProfileMetrics from './Metrics.svelte';
 
 export const PROFILE_ROUTES = [
   {

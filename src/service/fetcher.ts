@@ -48,7 +48,7 @@ export default class Fetcher {
     const headers: HeadersInit = {
       ...options.headers,
       'Cache-Control': 'no-cache',
-      ...(this.apiKey ? { 'X-API_KEY': this.apiKey } : {}),
+      ...(this.apiKey ? { 'X-API-KEY': this.apiKey } : {}),
     };
 
     const response = await fetch(`${this.baseUrl}${endpoint}`, {

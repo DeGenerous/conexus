@@ -50,7 +50,7 @@
   }
 </script>
 
-<section class="fade-in">
+<section class="blur fade-in">
   <button
     aria-label="Toggle navigation"
     aria-controls="dashboard-sidebar"
@@ -67,7 +67,7 @@
     close={closeSidebar}
   />
 
-  <div class="dashboard-content">
+  <div class="dashboard-content flex pad">
     <Router {routes} />
   </div>
 </section>
@@ -80,11 +80,7 @@
     grid-template-columns: 1fr;
     width: 100vw;
     min-height: 100dvh;
-    background: radial-gradient(
-      circle at 0 0,
-      rgba(20, 20, 40, 0.85),
-      rgba(5, 5, 15, 0.95)
-    );
+    background-color: rgba(0, 0, 0, 0.5);
 
     button {
       position: fixed;
@@ -92,21 +88,21 @@
       left: 1rem;
     }
 
-    .dashboard-content {
-      padding: 1rem;
-      overflow-y: auto;
-    }
+    // .dashboard-content {
+    //   // padding: 1rem;
+    //   // overflow-y: auto;
+    // }
 
     @include respond-up(small-desktop) {
-      grid-template-columns: 280px minmax(0, 1fr);
+      grid-template-columns: 320px minmax(0, 1fr);
 
       button {
         display: none;
       }
 
-      .dashboard-content {
-        padding: 2rem;
-      }
+      // .dashboard-content {
+      //   padding: 2rem;
+      // }
     }
   }
 </style>

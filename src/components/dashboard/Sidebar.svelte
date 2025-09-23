@@ -2,9 +2,11 @@
   import { onDestroy } from 'svelte';
   import { location } from 'svelte-spa-router';
 
-  import { NAV_ROUTES }from '@constants/routes';
+  // import { NAV_ROUTES }from '@constants/routes';
   import SidebarLink from '@components/dashboard/SidebarLink.svelte';
   import { DASHBOARD_LINKS } from '@components/dashboard/routes';
+
+  import QuitSVG from '@components/icons/Quit.svelte';
 
   let {
     isAdmin,
@@ -42,15 +44,15 @@
 {/if}
 
 <aside class="flex pad-24 vert-scrollbar" class:open aria-label="Dashboard navigation">
-  <header>
-    <h4>Dashboard</h4>
-
+  <header class="flex-row">
+    <QuitSVG onclick={() => (window.location.href = "/")} text="Back to CoNexus" fullWidth={true} />
+    <!-- <h4>Dashboard</h4> -->
     <button aria-label="Close navigation" onclick={close}>
       ✕
     </button>
   </header>
 
-  <nav>
+  <nav class="flex gap-8">
     {#each DASHBOARD_LINKS as item}
       <SidebarLink
         {isAdmin}
@@ -63,7 +65,7 @@
     {/each}
   </nav>
 
-  <footer>
+  <!-- <footer>
     <hr />
     <p>Report bugs or ask for help</p>
     <div>
@@ -73,7 +75,7 @@
       <span aria-hidden="true">|</span>
       <a href={NAV_ROUTES.FAQ}>FAQ</a>
     </div>
-  </footer>
+  </footer> -->
 </aside>
 
 <style lang="scss">
@@ -82,7 +84,7 @@
   .sidebar-scrim {
     position: fixed;
     inset: 0;
-    background: rgba(2, 4, 12, 0.6);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 900;
 
     @include respond-up(small-desktop) {
@@ -99,58 +101,55 @@
     top: 0;
     align-items: flex-start;
     justify-content: flex-start;
-    padding-inline-start: 1.5rem;
-    padding-inline-end: 1.5rem;
-    background: rgba(10, 10, 20, 0.95);
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    padding-inline: 1.5rem;
+    background-color: $dark-blue;
+    border-right: 1px solid rgba(150, 150, 150, 0.25);
     overflow-y: scroll;
     overscroll-behavior: contain;
     z-index: 1000;
     transform: translateX(-110%);
-    transition: transform 220ms ease;
+    transition: transform 0.3s ease;
 
     &.open {
       transform: translateX(0);
     }
 
     header {
-      display: flex;
-      align-items: center;
+      width: 100%;
       justify-content: space-between;
-      gap: 0.75rem;
 
-      h4 {
-        @include cyan(1, text);
-      }
+      // h4 {
+      //   width: 100%;
+      //   text-transform: uppercase;
+      //   @include cyan(1, text);
+      // }
     }
 
     nav {
       width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
+      align-items: stretch;
     }
 
-    footer {
-      margin-top: auto;
-      color: #bebebe;
+    // footer {
+    //   margin-top: auto;
+    //   color: #bebebe;
 
-      div {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
+    //   div {
+    //     display: flex;
+    //     align-items: center;
+    //     justify-content: center;
+    //     gap: 0.5rem;
 
-        a {
-          color: #ffffff;
-          text-decoration: none;
+    //     a {
+    //       color: #ffffff;
+    //       text-decoration: none;
 
-          &:hover {
-            text-decoration: underline;
-          }
-        }
-      }
-    }
+    //       &:hover {
+    //         text-decoration: underline;
+    //       }
+    //     }
+    //   }
+    // }
 
     @include respond-up(small-desktop) {
       position: sticky;

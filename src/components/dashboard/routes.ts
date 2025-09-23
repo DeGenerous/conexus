@@ -6,8 +6,6 @@ import { DREAM_ROUTES } from './dream';
 import { ADMIN_ROUTES } from './admin';
 import { OMNIHUB } from './omnihub';
 
-export const DASHBOARD_PATH = '/dashboard';
-
 export const DASHBOARD_LINKS: Linking[] = [
   {
     name: 'Profile',
@@ -35,7 +33,6 @@ export const DASHBOARD_LINKS: Linking[] = [
         children: DREAM_ROUTES.MANAGE.map((route) => ({
           name: route.name,
           path: route.path,
-          intended: route.intended ?? 'creator',
         })),
       },
     ],

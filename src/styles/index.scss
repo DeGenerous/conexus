@@ -131,7 +131,7 @@ a {
 
 html {
   text-align: center;
-  padding-block: 4rem 6rem;
+  // padding-block: 4rem 6rem;
   letter-spacing: 0.025rem;
   word-spacing: 0.2em;
   background-color: black;
@@ -139,9 +139,9 @@ html {
   @include cyan(0.85, 'text');
   @include font;
 
-  @include respond-up('small-desktop') {
-    padding-block: 4rem 2rem;
-  }
+  // @include respond-up('small-desktop') {
+  //   padding-block: 4rem 2rem;
+  // }
 
   &::-webkit-scrollbar {
     width: 0px;

@@ -1,12 +1,10 @@
 <script lang="ts">
-  import { link } from 'svelte-spa-router';
+  import { onDestroy } from 'svelte';
+  import { location } from 'svelte-spa-router';
 
   import { NAV_ROUTES }from '@constants/routes';
   import SidebarLink from '@components/dashboard/SidebarLink.svelte';
-  import {
-    DASHBOARD_PATH,
-    DASHBOARD_LINKS,
-  } from '@components/dashboard/routes';
+  import { DASHBOARD_LINKS } from '@components/dashboard/routes';
 
   let {
     isAdmin,
@@ -23,30 +21,35 @@
   let expanded = $state<Set<string>>(new Set());
   let activePath = $state<string>('');
 
+  const unsubscribe = location.subscribe((value) => {
+    activePath = value ?? '';
+    close?.();
+  });
+
+  onDestroy(() => {
+    unsubscribe();
+  });
+
   function toggleExpand(name: string) {
-    const newSet = new Set(expanded);
-    newSet.has(name) ? newSet.delete(name) : newSet.add(name);
-    expanded = newSet;
+    const next = new Set(expanded);
+    next.has(name) ? next.delete(name) : next.add(name);
+    expanded = next;
   }
 </script>
 
 {#if open}
-  <div
-    role="button"
-    class="backdrop"
-    aria-label="Close sidebar"
-    onclick={close}
-    onkeydown={(e) => {
-      if (e.key === 'Enter' || e.key === ' ') close();
-    }}
-    tabindex="0"
-  ></div>
+  <div class="sidebar-scrim blur" role="presentation" aria-hidden="true" onclick={close}></div>
 {/if}
 
-<aside class="sidebar {open ? 'open' : ''}">
-  <a class="sidebar-title" href={DASHBOARD_PATH} use:link tabindex="0">
-    Dashboard
-  </a>
+<aside class="flex pad-24 vert-scrollbar" class:open aria-label="Dashboard navigation">
+  <header>
+    <h4>Dashboard</h4>
+
+    <button aria-label="Close navigation" onclick={close}>
+      ✕
+    </button>
+  </header>
+
   <nav>
     {#each DASHBOARD_LINKS as item}
       <SidebarLink
@@ -59,93 +62,103 @@
       />
     {/each}
   </nav>
-  <div class="sidebar-footer">
-    <hr />
 
-    <h4>Report bugs or ask for help</h4>
-    <div class="flex-row">
+  <footer>
+    <hr />
+    <p>Report bugs or ask for help</p>
+    <div>
       <a href={NAV_ROUTES.SUPPORT}>Support</a>
-      <span style:color="#bebebe">|</span>
+      <span aria-hidden="true">|</span>
       <a href={NAV_ROUTES.DISCORD}>Discord</a>
-      <span style:color="#bebebe">|</span>
+      <span aria-hidden="true">|</span>
       <a href={NAV_ROUTES.FAQ}>FAQ</a>
     </div>
-  </div>
+  </footer>
 </aside>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .sidebar {
-    width: 250px;
-    min-height: 100vh;
+  .sidebar-scrim {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 4, 12, 0.6);
+    z-index: 900;
+
+    @include respond-up(small-desktop) {
+      display: none;
+    }
+  }
+
+  aside {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: min(85vw, 320px);
+    max-width: 320px;
+    height: 100dvh;
+    top: 0;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding-inline-start: 1.5rem;
+    padding-inline-end: 1.5rem;
     background: rgba(10, 10, 20, 0.95);
-    padding: 1.5rem;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    flex-shrink: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    overflow-y: scroll;
+    overscroll-behavior: contain;
+    z-index: 1000;
+    transform: translateX(-110%);
+    transition: transform 220ms ease;
 
-    .sidebar-title {
-      font-size: 1.25rem;
-      font-weight: bold;
-      margin-bottom: 1rem;
-      @include text-glow;
-    }
-
-    .sidebar-footer {
-      margin-top: auto;
-      padding-top: 1rem;
-      color: #bebebe;
-
-      h4 {
-        font-size: 0.875rem;
-        margin-bottom: 0.5rem;
-      }
-
-      a {
-        color: #ffffff;
-        text-decoration: none;
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-
-      .flex-row {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-      }
-    }
-  }
-
-  /* Default: visible */
-  .sidebar.open {
-    transform: none;
-  }
-
-  /* Small screens: slide in/out */
-  @media (max-width: 768px) {
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-      z-index: 1500;
-    }
-
-    .sidebar.open {
+    &.open {
       transform: translateX(0);
     }
 
-    .backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1400;
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+
+      h4 {
+        @include cyan(1, text);
+      }
+    }
+
+    nav {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    footer {
+      margin-top: auto;
+      color: #bebebe;
+
+      div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+
+        a {
+          color: #ffffff;
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+
+    @include respond-up(small-desktop) {
+      position: sticky;
+      transform: none;
+
+      header button {
+        display: none;
+      }
     }
   }
 </style>

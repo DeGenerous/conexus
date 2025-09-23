@@ -65,15 +65,20 @@
     {#if item.children}
       <!-- Dropdown -->
       <button
-        class="menu-toggle"
+        class="void-btn menu-toggle"
+        class:expanded={expanded.has(item.name)}
         aria-expanded={expanded.has(item.name)}
         onclick={() => toggleExpand(item.name)}
+        title={item.name}
       >
-        {item.name}
+        <h5>{item.name}</h5>
+        <span class="chevron" aria-hidden="true">
+          {expanded.has(item.name) ? '▾' : '▸'}
+        </span>
       </button>
 
       {#if expanded.has(item.name)}
-        <ul class="submenu">
+        <ul class="submenu flex gap-8 fade-in">
           {#each item.children as child}
             <li>
               <SidebarLink
@@ -95,6 +100,7 @@
         class="standalone {activePath === item.path ? 'selected' : ''}"
         use:link
         tabindex="0"
+        title={item.name}
       >
         {item.name}
       </a>
@@ -105,46 +111,67 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .menu-toggle {
-    background: none;
-    border: none;
-    font-size: 1rem;
+  .menu-toggle,
+  .standalone {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
     text-align: left;
-    padding: 0.5rem 0;
-    color: white;
-    cursor: pointer;
-    transition: color 0.2s;
-    @include text-glow;
+    text-decoration: none;
+    border-radius: 0.75rem;
+    transition: background 0.3s ease, color 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    @include white-txt;
 
-    &:hover {
-      color: #64b5f6;
+    &:hover,
+    &:focus-visible {
+      @include cyan(0.1);
+      @include bright;
     }
+  }
+
+  .menu-toggle {
+    h5 {
+      @include white-txt;
+      @include font(body);
+    }
+
+    &.expanded h5 {
+      @include cyan(1, text);
+    }
+  }
+
+  .standalone {
+    &:hover,
+    &:focus-visible {
+      @include cyan(1, text);
+    }
+
+    &.selected{
+      @include cyan(0.85);
+      @include dark-blue(1, text);
+    }
+  }
+
+  .chevron {
+    margin-left: auto;
+    font-size: 0.75rem;
+    opacity: 0.75;
+    flex: none;
   }
 
   .submenu {
-    list-style: none;
-    margin: 0.25rem 0 0.5rem 1rem;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
+    align-items: flex-start;
+    padding-block: 0.5rem;
+    padding-left: 1.5rem;
+    border-left: 1px solid rgba(51, 226, 230, 0.25);
 
-  a.standalone {
-    display: block;
-    color: white;
-    padding: 0.5rem 0;
-    cursor: pointer;
-    text-decoration: none;
-    transition: color 0.2s;
-
-    &:hover {
-      color: #64b5f6;
-    }
-
-    &.selected {
-      font-weight: bold;
-      color: #64b5f6;
+    li {
+      width: 100%;
     }
   }
 </style>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import Router, { location, type WrappedComponent } from 'svelte-spa-router';
+  import Router, { type WrappedComponent } from 'svelte-spa-router';
 
   import { userState } from '@utils/route-guard';
 
@@ -18,6 +18,7 @@
   let signedIn = $state(false);
   let isAdmin = $state<boolean>(false);
   let isCreator = $state<boolean>(false);
+  let sidebarOpen = $state<boolean>(false);
 
   onMount(async () => {
     signedIn = await userState('signed');
@@ -31,13 +32,6 @@
     isCreator = await userState('creator');
   });
 
-  let sidebarOpen = $state(false);
-
-  function toggleSidebar() {
-    sidebarOpen = !sidebarOpen;
-  }
-
-  // A mapping of path -> component
   const componentMap: Record<string, WrappedComponent> = {
     ...profileRoutes,
     ...dreamRoutes,
@@ -46,10 +40,23 @@
   };
 
   const routes = buildRoutes(DASHBOARD_LINKS, componentMap);
+
+  function toggleSidebar() {
+    sidebarOpen = !sidebarOpen;
+  }
+
+  function closeSidebar() {
+    sidebarOpen = false;
+  }
 </script>
 
-<div class="dashboard-layout">
-  <button class="hamburger" onclick={toggleSidebar} aria-label="Toggle sidebar">
+<section class="fade-in">
+  <button
+    aria-label="Toggle navigation"
+    aria-controls="dashboard-sidebar"
+    aria-expanded={sidebarOpen}
+    onclick={toggleSidebar}
+  >
     ☰
   </button>
 
@@ -57,46 +64,49 @@
     {isAdmin}
     {isCreator}
     open={sidebarOpen}
-    close={() => (sidebarOpen = false)}
+    close={closeSidebar}
   />
 
-  <main class="dashboard-main">
+  <div class="dashboard-content">
     <Router {routes} />
-  </main>
-</div>
+  </div>
+</section>
 
-<!-- <hr />
-/#{$location} -->
+<style lang="scss">
+  @use "/src/styles/mixins" as *;
 
-<style>
-  .dashboard-layout {
-    display: flex;
-    height: 100%;
-    width: 100%;
-  }
+  section {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100vw;
+    min-height: 100dvh;
+    background: radial-gradient(
+      circle at 0 0,
+      rgba(20, 20, 40, 0.85),
+      rgba(5, 5, 15, 0.95)
+    );
 
-  .dashboard-main {
-    flex: 1;
-    padding: 1rem;
-    overflow-y: auto;
-  }
+    button {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+    }
 
-  .hamburger {
-    display: none;
-    position: fixed;
-    top: 1rem;
-    left: 1rem;
-    background: transparent;
-    border: none;
-    font-size: 2rem;
-    color: white;
-    cursor: pointer;
-    z-index: 2000;
-  }
+    .dashboard-content {
+      padding: 1rem;
+      overflow-y: auto;
+    }
 
-  @media (max-width: 768px) {
-    .hamburger {
-      display: block;
+    @include respond-up(small-desktop) {
+      grid-template-columns: 280px minmax(0, 1fr);
+
+      button {
+        display: none;
+      }
+
+      .dashboard-content {
+        padding: 2rem;
+      }
     }
   }
 </style>

@@ -16,11 +16,11 @@ export const PROFILE_ROUTES = [
     path: '/profile/bookmarks',
     component: ProfileBookmarks,
   },
-  {
-    name: 'Metrics',
-    path: '/profile/metrics',
-    component: ProfileMetrics,
-  },
+  // {
+  //   name: 'Metrics',
+  //   path: '/profile/metrics',
+  //   component: ProfileMetrics,
+  // },
 ];
 
 export const profileRoutes = Object.fromEntries(

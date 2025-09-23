@@ -3,11 +3,9 @@ import wrap from 'svelte-spa-router/wrap';
 
 import DreamCreate from './new/Create.svelte';
 import DreamDraft from './new/Draft.svelte';
-import DreamDemo from './new/Demo.svelte';
 
 import DreamCollections from './manage/Collection.svelte';
 import DreamCategories from './manage/Category.svelte';
-import DreamNFTGates from './manage/NFTGate.svelte';
 
 export const DREAM_ROUTES = {
   NEW: [
@@ -21,11 +19,6 @@ export const DREAM_ROUTES = {
       path: '/dream/drafts',
       component: DreamDraft,
     },
-    {
-      name: 'Demo',
-      path: '/dream/demo',
-      component: DreamDemo,
-    },
   ],
   MANAGE: [
     {
@@ -37,12 +30,6 @@ export const DREAM_ROUTES = {
       name: 'Categories',
       path: '/dream/manage/categories',
       component: DreamCategories,
-    },
-    {
-      name: 'NFT Gates',
-      path: '/dream/manage/nft-gates',
-      component: DreamNFTGates,
-      intended: 'admin',
     },
   ],
 };

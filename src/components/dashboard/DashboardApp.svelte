@@ -18,7 +18,6 @@
   let signedIn = $state(false);
   let isAdmin = $state<boolean>(false);
   let isCreator = $state<boolean>(false);
-  let sidebarOpen = $state<boolean>(false);
 
   onMount(async () => {
     signedIn = await userState('signed');
@@ -40,63 +39,38 @@
   };
 
   const routes = buildRoutes(DASHBOARD_LINKS, componentMap);
-
-  function toggleSidebar() {
-    sidebarOpen = !sidebarOpen;
-  }
-
-  function closeSidebar() {
-    sidebarOpen = false;
-  }
 </script>
 
-<section class="blur fade-in">
-  <button
-    aria-label="Toggle navigation"
-    aria-controls="dashboard-sidebar"
-    aria-expanded={sidebarOpen}
-    onclick={toggleSidebar}
-  >
-    ☰
-  </button>
+<Sidebar
+  {isAdmin}
+  {isCreator}
+/>
 
-  <Sidebar
-    {isAdmin}
-    {isCreator}
-    open={sidebarOpen}
-    close={closeSidebar}
-  />
-
-  <div class="dashboard-content flex pad-24">
-    <Router {routes} />
-  </div>
-</section>
+<div class="dashboard-content flex pad-24 blur fade-in">
+  <span class="holder"></span>
+  <Router {routes} />
+</div>
 
 <style lang="scss">
   @use "/src/styles/mixins" as *;
 
-  section {
+  .dashboard-content {
     display: grid;
     grid-template-columns: 1fr;
     width: 100vw;
     min-height: 100dvh;
     background-color: rgba(0, 0, 0, 0.5);
 
-    button {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-    }
-
-    .dashboard-content {
-      justify-content: flex-start;
+    .holder {
+      width: 100%;
+      display: none;
     }
 
     @include respond-up(small-desktop) {
       grid-template-columns: 320px minmax(0, 1fr);
 
-      button {
-        display: none;
+      .holder {
+        display: block;
       }
     }
   }

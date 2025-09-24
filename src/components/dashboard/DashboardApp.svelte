@@ -67,7 +67,7 @@
     close={closeSidebar}
   />
 
-  <div class="dashboard-content flex pad">
+  <div class="dashboard-content flex pad-24">
     <Router {routes} />
   </div>
 </section>
@@ -88,10 +88,9 @@
       left: 1rem;
     }
 
-    // .dashboard-content {
-    //   // padding: 1rem;
-    //   // overflow-y: auto;
-    // }
+    .dashboard-content {
+      justify-content: flex-start;
+    }
 
     @include respond-up(small-desktop) {
       grid-template-columns: 320px minmax(0, 1fr);
@@ -99,10 +98,6 @@
       button {
         display: none;
       }
-
-      // .dashboard-content {
-      //   padding: 2rem;
-      // }
     }
   }
 </style>

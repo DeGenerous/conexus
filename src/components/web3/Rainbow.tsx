@@ -24,7 +24,7 @@ import AuthenticationAPI from '@service/v2/authentication';
 import '@rainbow-me/rainbowkit/styles.css';
 
 const wagmiConfig = getDefaultConfig({
-  appName: 'Degenerous DAO',
+  appName: 'DGRS LABS',
   appIcon: `${assetsURL}/logo.png`,
   appUrl: import.meta.env.PUBLIC_FRONTEND,
   projectId: import.meta.env.PUBLIC_WAGMI_PROJECT_ID,

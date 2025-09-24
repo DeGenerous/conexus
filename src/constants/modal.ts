@@ -1,5 +1,7 @@
-export const walletSwitchModal =
-  '<h4>Are you sure you want to select this address as your main one?</h4>';
+export const removeWallethModal = `
+  <h4>Are you sure you want to remove this address?</h4>
+  <h5>This action is irreversible.</h5>
+`;
 
 export const deleteStoryModal = `
   <h4>Are you sure you want to delete this story?</h4>

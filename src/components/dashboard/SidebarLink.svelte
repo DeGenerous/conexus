@@ -120,7 +120,7 @@
     padding: 0.5rem 0.75rem;
     text-align: left;
     text-decoration: none;
-    border-radius: 0.75rem;
+    border-radius: 0.5rem;
     transition: background 0.3s ease, color 0.3s ease;
     white-space: nowrap;
     overflow: hidden;
@@ -166,8 +166,9 @@
 
   .submenu {
     align-items: flex-start;
-    padding-block: 0.5rem;
-    padding-left: 1.5rem;
+    margin-top: 0.5rem;
+    padding-left: 0.75rem;
+    margin-left: 0.75rem;
     border-left: 1px solid rgba(51, 226, 230, 0.25);
     transition: all 0.3s ease;
 

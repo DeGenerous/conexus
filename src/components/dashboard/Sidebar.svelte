@@ -23,8 +23,67 @@
   let expanded = $state<Set<string>>(new Set());
   let activePath = $state<string>('');
 
+  function hasChildren(link: Linking): link is Linking & { children: Linking[] } {
+    return Array.isArray((link as { children?: Linking[] }).children);
+  }
+
+  function findParentChain(
+    links: Linking[],
+    targetPath: string,
+    trail: string[] = [],
+  ): string[] | null {
+    for (const link of links) {
+      if ('path' in link && link.path === targetPath) {
+        return trail;
+      }
+
+      if (hasChildren(link)) {
+        const nextTrail = [...trail, link.name];
+        const result = findParentChain(link.children, targetPath, nextTrail);
+        if (result) {
+          return result;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  function ensureExpandedForPath(path: string) {
+    const chain = findParentChain(DASHBOARD_LINKS, path);
+    if (!chain || chain.length === 0) {
+      return;
+    }
+
+    const next = new Set(expanded);
+    let changed = false;
+
+    for (const name of chain) {
+      if (!next.has(name)) {
+        next.add(name);
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      expanded = next;
+    }
+  }
+
+  function sanitizePath(path: string | null | undefined): string {
+    if (!path) {
+      return '';
+    }
+
+    const withoutHash = path.split('#')[0];
+    const [clean] = withoutHash.split('?');
+    return clean ?? '';
+  }
+
   const unsubscribe = location.subscribe((value) => {
-    activePath = value ?? '';
+    const nextPath = sanitizePath(value);
+    activePath = nextPath;
+    ensureExpandedForPath(nextPath);
     close?.();
   });
 
@@ -53,6 +112,17 @@
   </header>
 
   <nav class="flex gap-8">
+    <SidebarLink
+      {isAdmin}
+      {isCreator}
+      item={{
+        name: 'Dashboard',
+        path: '/dashboard',
+      }}
+      {expanded}
+      {toggleExpand}
+      {activePath}
+    />
     {#each DASHBOARD_LINKS as item}
       <SidebarLink
         {isAdmin}

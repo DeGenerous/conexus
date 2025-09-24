@@ -9,6 +9,22 @@
     'A new world of endless possibilities awaits you.',
     'Infinitely unique. Never repeatable.',
   ];
+
+  const prioritizeCommunityPicks = <T extends { name: string }>(sections: T[]): T[] => {
+    const targetIndex = sections.findIndex(
+      (section) => section.name === 'Community Picks'
+    );
+
+    if (targetIndex <= 0) {
+      return sections;
+    }
+
+    const reordered = [...sections];
+    const [target] = reordered.splice(targetIndex, 1);
+    reordered.unshift(target);
+
+    return reordered;
+  };
 </script>
 
 <section
@@ -27,7 +43,7 @@
     </div>
   {:then sections}
     <div class="flex-row">
-      {#each sections as section, i (section.id ?? `section-${i}`)}
+      {#each prioritizeCommunityPicks(sections) as section, i (section.id ?? `section-${i}`)}
         <MenuTile {section} />
       {/each}
     </div>

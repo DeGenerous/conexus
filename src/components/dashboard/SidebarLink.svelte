@@ -121,7 +121,9 @@
     text-align: left;
     text-decoration: none;
     border-radius: 0.5rem;
-    transition: background 0.3s ease, color 0.3s ease;
+    transition:
+      background 0.3s ease,
+      color 0.3s ease;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -151,7 +153,7 @@
       @include cyan(1, text);
     }
 
-    &.selected{
+    &.selected {
       @include cyan(0.85);
       @include dark-blue(1, text);
     }

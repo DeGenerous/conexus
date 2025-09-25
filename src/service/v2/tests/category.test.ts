@@ -11,7 +11,7 @@ class MockFetcher extends CategoryAPI {
 
 describe('CategoryAPI', () => {
   let api: MockFetcher;
-  
+
   const category: Category = {
     name: 'Test Category',
     description: 'Test Description',

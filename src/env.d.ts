@@ -98,7 +98,7 @@ type Creator = {
   id: string;
   username: string;
   avatar: string;
-}
+};
 
 type Genre = {
   id?: string;

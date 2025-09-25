@@ -52,7 +52,7 @@ describe('ViewAPI', () => {
 
   it('calls request with correct URL for categoryTopics', async () => {
     mockRequest.mockResolvedValue([]);
-    await api.categoryTopics("5", 1, 20);
+    await api.categoryTopics('5', 1, 20);
     expect(mockRequest).toHaveBeenCalledWith(
       '/topic/category-topics/5?page=1&page_size=20',
     );
@@ -61,13 +61,15 @@ describe('ViewAPI', () => {
   it('calls request with correct URL and default params for genreTopics', async () => {
     mockRequest.mockResolvedValue([]);
     await api.genreTopics('section1', 'genre1');
-    expect(mockRequest).toHaveBeenCalledWith(
-      '/topic/genre-topics',
-      {
-        method: 'POST',
-        body: JSON.stringify({ section_id: 'section1', genre_id: 'genre1', page: 1, page_size: 10 }),
-      }
-    );
+    expect(mockRequest).toHaveBeenCalledWith('/topic/genre-topics', {
+      method: 'POST',
+      body: JSON.stringify({
+        section_id: 'section1',
+        genre_id: 'genre1',
+        page: 1,
+        page_size: 10,
+      }),
+    });
   });
 
   it('calls request with correct URL and custom params for genreTopics', async () => {
@@ -112,7 +114,7 @@ describe('ViewAPI', () => {
 
   it('calls request with correct URL and header for topicView with account_id', async () => {
     mockRequest.mockResolvedValue({});
-    await api.topicView("42", 'acc123');
+    await api.topicView('42', 'acc123');
     expect(mockRequest).toHaveBeenCalledWith('/topic/view/42', {
       headers: {
         'X-Requester-ID': 'acc123',
@@ -122,7 +124,7 @@ describe('ViewAPI', () => {
 
   it('calls request with correct URL and header for topicView without account_id', async () => {
     mockRequest.mockResolvedValue({});
-    await api.topicView("99");
+    await api.topicView('99');
     expect(mockRequest).toHaveBeenCalledWith('/topic/view/99', {
       headers: {
         'X-Requester-ID': '',

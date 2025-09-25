@@ -5,7 +5,7 @@
   // import CoNexusApp from '@lib/view';
   import { GetCache, SetCache, ONBOARDING_KEY } from '@constants/cache';
   import { trailerURL } from '@constants/media';
-  import { NAV_ROUTES }from '@constants/routes';
+  import { NAV_ROUTES } from '@constants/routes';
   import { story, game } from '@stores/conexus.svelte';
   import {
     highlightCommunityPicks,

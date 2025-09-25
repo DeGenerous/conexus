@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { NAV_ROUTES }from '@constants/routes';
+  import { NAV_ROUTES } from '@constants/routes';
   import Topic from '@lib/topics';
   import CategoryView from '@lib/category';
   import { toastStore } from '@stores/toast.svelte';

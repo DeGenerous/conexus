@@ -34,7 +34,7 @@
 
   onMount(async () => {
     user = await getCurrentUser();
-    console.log(user)
+    console.log(user);
   });
 
   // Change password
@@ -57,11 +57,9 @@
   };
 
   const openRemoveWalletModal = (id: string) =>
-    openModal(
-      removeWallethModal,
-      "Remove",
-      () => (console.log("Remove wallet ID: " + id)),
-    )
+    openModal(removeWallethModal, 'Remove', () =>
+      console.log('Remove wallet ID: ' + id),
+    );
 </script>
 
 {#if user}
@@ -227,11 +225,12 @@
               <span class="wallet small-tile">
                 <h4>{index + 1}</h4>
                 <p class="pad-8 round-8 transparent-dark-bg soft-white-txt">
-                  {wallet.slice(0, 6) +
-                    '...' +
-                    wallet.slice(-4)}
+                  {wallet.slice(0, 6) + '...' + wallet.slice(-4)}
                 </p>
-                <CloseSVG onclick={() => openRemoveWalletModal(id!)} voidBtn={true} />
+                <CloseSVG
+                  onclick={() => openRemoveWalletModal(id!)}
+                  voidBtn={true}
+                />
               </span>
             {/each}
           </ul>
@@ -260,7 +259,7 @@
       width: 100%;
       justify-content: space-between;
     }
-    
+
     .web3-wallets {
       ul {
         flex-wrap: wrap;

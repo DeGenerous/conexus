@@ -30,12 +30,9 @@ export default class AccountAPI extends Fetcher {
   async me(refresh: boolean = false, token?: string) {
     const query = refresh ? '?refresh=true' : '';
 
-    return this.request<User>(
-      `${this.group}/me${query}`,
-      {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      },
-    );
+    return this.request<User>(`${this.group}/me${query}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
   }
 
   /**

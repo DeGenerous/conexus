@@ -41,7 +41,7 @@ type NFTResponse = {
 type FungibleToken = {
   wallet_address: string;
   balance: number;
-}
+};
 
 type FungibleResponse = {
   contract: string;

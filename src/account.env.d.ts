@@ -123,7 +123,7 @@ type DisplayUser = {
   account_id: string;
   username: string;
   avatar: string;
-}
+};
 
 type CreatorTile = {
   Genre: string[];

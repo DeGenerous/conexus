@@ -15,8 +15,7 @@ export function creatorGuard(component: typeof SvelteComponent) {
 
   return wrap({
     component,
-    conditions: [
-    ],
+    conditions: [],
     props: {
       isAdmin,
       isCreator,

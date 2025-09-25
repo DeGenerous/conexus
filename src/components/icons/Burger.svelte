@@ -14,7 +14,7 @@
 </svg>
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   svg {
     width: 2.5rem;
@@ -25,7 +25,9 @@
   }
 
   .line {
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
     transform-origin: 12px 12px;
   }
 

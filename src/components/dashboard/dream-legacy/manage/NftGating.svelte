@@ -52,7 +52,7 @@
 <div class="flex-row">
   <h4>Web3 Gating</h4>
   <div class="container">
-    {#if topic_gates &&topic_gates.length > 0}
+    {#if topic_gates && topic_gates.length > 0}
       {#each topic_gates as gate}
         {#if 'type' in gate}
           <button class="void-btn small-orange-tile">

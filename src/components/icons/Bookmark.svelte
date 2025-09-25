@@ -97,11 +97,11 @@
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
-        >
+      >
         <path
-        d="M6 2h12a2 2 0 0 1 2 2v18l-8-4-8 4V4a2 2 0 0 1 2-2z"
-        transform={svgFocus ? 'scale(1.1) translate(-1,-1)' : ''}
-        fill={!isBookmarked ? 'none' : 'currentColor'}
+          d="M6 2h12a2 2 0 0 1 2 2v18l-8-4-8 4V4a2 2 0 0 1 2-2z"
+          transform={svgFocus ? 'scale(1.1) translate(-1,-1)' : ''}
+          fill={!isBookmarked ? 'none' : 'currentColor'}
         />
       </svg>
     </button>

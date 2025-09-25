@@ -219,7 +219,12 @@
   <div class="tiles-collection filtered-tiles" onscroll={handleScroll}>
     {#key sortedTopics}
       {#each sortedTopics as topic, i}
-        <TopicTile {name} {intended} bind:topic={sortedTopics[i]} bind:loading={isSearching} />
+        <TopicTile
+          {name}
+          {intended}
+          bind:topic={sortedTopics[i]}
+          bind:loading={isSearching}
+        />
       {/each}
       {#if !isEndReached && isSearching}
         <TopicTile {name} {intended} topic={null} loading={isSearching} />

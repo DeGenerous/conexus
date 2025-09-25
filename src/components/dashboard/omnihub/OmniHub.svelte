@@ -36,13 +36,15 @@
       return;
     }
 
-    if ("nft" in data && data.nft) {
+    if ('nft' in data && data.nft) {
       const potentialsMeta = normalizeMeta(data);
-      
+
       potentials = data.nft.nfts ? nftTileToNFT(data.nft.nfts) : [];
 
       if (potentialsMeta) {
-        potentialsPower = potentialsMeta.total_level ? potentialsMeta.total_level : 0;
+        potentialsPower = potentialsMeta.total_level
+          ? potentialsMeta.total_level
+          : 0;
         userRank = potentialsMeta.rank ? potentialsMeta.rank : null;
       }
     }

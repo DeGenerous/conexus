@@ -11,6 +11,9 @@ dev:
 build:
 	$(PKG_MGR) run build
 
+format: 
+	$(PKG_MGR) run format
+
 preview:
 	$(PKG_MGR) run preview
 

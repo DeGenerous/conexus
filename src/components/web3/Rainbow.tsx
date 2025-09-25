@@ -17,7 +17,7 @@ import { mainnet, base } from 'wagmi/chains';
 
 import { SetCache, USER_KEY, TTL_HOUR } from '@constants/cache';
 import { assetsURL } from '@constants/media';
-import { NAV_ROUTES }from '@constants/routes';
+import { NAV_ROUTES } from '@constants/routes';
 import { authenticated } from '@stores/account.svelte';
 import AuthenticationAPI from '@service/v2/authentication';
 

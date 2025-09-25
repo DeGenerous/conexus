@@ -1,4 +1,4 @@
-import { NAV_ROUTES }from './routes';
+import { NAV_ROUTES } from './routes';
 
 const frequentlyAskedQuestions: {
   question: string;

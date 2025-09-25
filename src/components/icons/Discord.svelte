@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { NAV_ROUTES }from '@constants/routes';
+  import { NAV_ROUTES } from '@constants/routes';
 
   let { text = 'Discord' }: { text?: string } = $props();
 </script>

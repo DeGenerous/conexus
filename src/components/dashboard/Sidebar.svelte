@@ -2,7 +2,6 @@
   import { onDestroy } from 'svelte';
   import { location } from 'svelte-spa-router';
 
-  // import { NAV_ROUTES }from '@constants/routes';
   import SidebarLink from '@components/dashboard/SidebarLink.svelte';
   import { DASHBOARD_LINKS } from '@components/dashboard/routes';
 
@@ -29,7 +28,9 @@
     sidebarOpen = false;
   }
 
-  function hasChildren(link: Linking): link is Linking & { children: Linking[] } {
+  function hasChildren(
+    link: Linking,
+  ): link is Linking & { children: Linking[] } {
     return Array.isArray((link as { children?: Linking[] }).children);
   }
 
@@ -113,10 +114,7 @@
   ></div>
 {/if}
 
-<section
-  class:open={sidebarOpen}
-  aria-label="Dashboard navigation"
->
+<section class:open={sidebarOpen} aria-label="Dashboard navigation">
   <button
     class="flex void-btn pad-8"
     aria-label="Toggle navigation"
@@ -129,7 +127,11 @@
 
   <aside class="flex pad-24 vert-scrollbar">
     <header class="flex-row">
-      <QuitSVG onclick={() => (window.location.href = "/")} text="Back to CoNexus" fullWidth={true} />
+      <QuitSVG
+        onclick={() => (window.location.href = '/')}
+        text="Back to CoNexus"
+        fullWidth={true}
+      />
       <!-- <h4>Dashboard</h4> -->
       <!-- <button aria-label="Close navigation" onclick={close}>
         ✕
@@ -159,18 +161,6 @@
         />
       {/each}
     </nav>
-
-    <!-- <footer>
-      <hr />
-      <p>Report bugs or ask for help</p>
-      <div>
-        <a href={NAV_ROUTES.SUPPORT}>Support</a>
-        <span aria-hidden="true">|</span>
-        <a href={NAV_ROUTES.DISCORD}>Discord</a>
-        <span aria-hidden="true">|</span>
-        <a href={NAV_ROUTES.FAQ}>FAQ</a>
-      </div>
-    </footer> -->
   </aside>
 </section>
 
@@ -232,27 +222,6 @@
         width: 100%;
         align-items: stretch;
       }
-
-      // footer {
-      //   margin-top: auto;
-      //   color: #bebebe;
-
-      //   div {
-      //     display: flex;
-      //     align-items: center;
-      //     justify-content: center;
-      //     gap: 0.5rem;
-
-      //     a {
-      //       color: #ffffff;
-      //       text-decoration: none;
-
-      //       &:hover {
-      //         text-decoration: underline;
-      //       }
-      //     }
-      //   }
-      // }
     }
 
     @include respond-up(small-desktop) {

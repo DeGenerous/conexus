@@ -17,8 +17,7 @@
       <div class="flex-row">
         <h5>Explore more:</h5>
         <button
-          onclick={() =>
-            window.open('https://loredex.dgrslabs.ink/', '_blank')}
+          onclick={() => window.open('https://loredex.dgrslabs.ink/', '_blank')}
         >
           Loredex
         </button>

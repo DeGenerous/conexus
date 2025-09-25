@@ -164,14 +164,16 @@
   };
 </script>
 
-<ProfileSVG onclick={() => {
-  if (user) {
-    // If user is logged in, go to the dashboard
-    window.location.href = '/dashboard';
-    return;
-  }
-  $showProfile = true
-}} />
+<ProfileSVG
+  onclick={() => {
+    if (user) {
+      // If user is logged in, go to the dashboard
+      window.location.href = '/dashboard';
+      return;
+    }
+    $showProfile = true;
+  }}
+/>
 
 <!-- svelte-ignore
 a11y-click-events-have-key-events

@@ -15,7 +15,7 @@
   import ThemeSettings from '@components/utils/ThemeSettings.svelte';
 
   let dialog: HTMLDialogElement;
-  
+
   let termsAccepted: boolean = false;
 
   $: if (dialog && $showModal) {
@@ -59,7 +59,7 @@
       modal.buttonFunc = () => {
         SetCache(TERMS_KEY, true);
         window.location.reload();
-      }
+      };
     }
   };
 

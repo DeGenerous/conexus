@@ -196,8 +196,8 @@
     button {
       position: absolute;
       left: calc(100% - 1px);
-      border-right: 1px solid rgba(150, 150, 150, 0.25);
-      border-bottom: 1px solid rgba(150, 150, 150, 0.25);
+      border-right: 1px solid $transparent-gray;
+      border-bottom: 1px solid $transparent-gray;
       border-bottom-right-radius: 1rem;
       @include dark-blue;
     }
@@ -209,7 +209,7 @@
       justify-content: flex-start;
       padding-inline: 1.5rem;
       background-color: $dark-blue;
-      border-right: 1px solid rgba(150, 150, 150, 0.25);
+      border-right: 1px solid $transparent-gray;
       overflow-y: scroll;
       overscroll-behavior: contain;
 

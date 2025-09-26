@@ -28,6 +28,8 @@
   import CloseSVG from '@components/icons/Close.svelte';
   import DiscordBtn from '@components/icons/Discord.svelte';
 
+  export let activeTab: string = 'Dashboard';
+
   let dialog: HTMLDialogElement;
 
   $: if (dialog && $showProfile) {
@@ -164,16 +166,7 @@
   };
 </script>
 
-<ProfileSVG
-  onclick={() => {
-    if (user) {
-      // If user is logged in, go to the dashboard
-      window.location.href = '/dashboard';
-      return;
-    }
-    $showProfile = true;
-  }}
-/>
+<ProfileSVG {activeTab} {user} />
 
 <!-- svelte-ignore
 a11y-click-events-have-key-events

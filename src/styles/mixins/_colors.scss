@@ -57,6 +57,7 @@ $rose: rgb(200, 140, 140); // #c88c8c
 $bright-rose: rgb(230, 175, 175); // #e6afaf
 
 $gray: rgb(150, 150, 150);
+$transparent-gray: rgba(150, 150, 150, 0.25);
 $dark-gray: rgb(16, 16, 16);
 
 @mixin white-txt($opacity: 'normal') {

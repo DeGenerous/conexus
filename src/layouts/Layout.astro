@@ -17,7 +17,7 @@ type LayoutProps = {
   header?: string;
   subheading?: string;
   nav?: string;
-  arrow?: boolean;
+  arrow?: string;
   story?: string;
   title?: string;
   ogTitle?: string;
@@ -36,7 +36,7 @@ const {
   header,
   subheading,
   nav,
-  arrow,
+  arrow = '',
   story,
   title = 'CoNexus | AI Storytelling',
   description = 'CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.',

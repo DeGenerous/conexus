@@ -1,11 +1,30 @@
-<div class="flex">
-  <svg
-    class="scaling"
-    viewBox="0 0 2341 546"
-    fill="#2440BD"
-    stroke="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+<script lang="ts">
+  let {
+    href = "#",
+    target = "_self",
+    hideForMobiles = false,
+    hideForPCs = false,
+  }: {
+    href?: string;
+    target?: string;
+    hideForMobiles?: boolean;
+    hideForPCs?: boolean;
+  } = $props();
+  let svgFocus = $state<boolean>(false);
+</script>
+
+<a
+  class="flex nohover-link"
+  class:pc-only={hideForMobiles}
+  class:mobile-only={hideForPCs}
+  onpointerover={() => (svgFocus = true)}
+  onpointerout={() => (svgFocus = false)}
+  {href}
+  {target}
+  rel={target === "_blank" ? "noopener noreferrer" : undefined}
+  aria-label="CoNexus"
+>
+  <svg viewBox="0 0 2341 546" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M539 91C576 91 607.833 100.333 634.5 119C661.5 137.333 680.833 162.667 692.5 195L631.5 217.5C624.167 197.167 612.5 181.333 596.5 170C580.833 158.667 561.667 153 539 153C518.333 153 500.167 157.833 484.5 167.5C469.167 177.167 457.333 191 449 209C441 226.667 437 248 437 273C437 298 441 319.5 449 337.5C457.333 355.5 469.167 369.333 484.5 379C500.167 388.667 518.333 393.5 539 393.5C561.667 393.5 580.833 387.833 596.5 376.5C612.5 365.167 624.167 349.333 631.5 329L692.5 351C680.833 383.333 661.5 408.833 634.5 427.5C607.833 446.167 576 455.5 539 455.5C506 455.5 476.833 447.833 451.5 432.5C426.5 417.167 407 395.833 393 368.5C379 341.167 372 309.333 372 273C372 236.667 379 205 393 178C407 150.667 426.5 129.333 451.5 114C476.833 98.6667 506 91 539 91Z"
     />
@@ -37,219 +56,48 @@
     <path
       d="M217.364 467.744C203.955 472.732 202.2 491.768 214.486 498.933C218.417 501.251 225.648 501.883 229.509 500.267C243.34 494.367 244.182 474.909 230.913 468.517C227.614 466.902 220.664 466.55 217.364 467.744Z"
     />
-
-    <animate
-      attributeName="fill"
-      values="
-          rgb(51,226,230);
-          rgb(160, 120, 255);
-          rgb(56,117,250);
-        "
-      dur="8s"
-      repeatCount="indefinite"
-    />
   </svg>
-
-  <!-- <svg
-    class="sin-wave waving"
-    viewBox="-70 0 840 200"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="rgb(51,226,230)"
-  >
-    <path
-      d="
-        M 0,25
-        Q 50,0 100,25
-        T 200,25
-        T 300,25
-        T 400,25
-        T 500,25
-        T 600,25
-        T 700,25
-
-        A 25 45 0 0 1 700,175
-
-        Q 650,200 600,175
-        T 500,175
-        T 400,175
-        T 300,175
-        T 200,175
-        T 100,175
-        T 0,175
-
-        A 25 45 0 0 1 10,25
-
-        Z
-    "
-    >
-      <animate
-        attributeName="fill"
-        values="
-          rgb(51,226,230);
-          rgb(160, 120, 255);
-          rgb(56,117,250);
-        "
-        dur="8s"
-        repeatCount="indefinite"
-      />
-    </path>
-  </svg>
-
-  <svg
-    class="cos-wave waving"
-    viewBox="-70 0 840 200"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="rgb(56,117,250)"
-  >
-    <path
-      d="
-        M 0,25
-        Q 50,50 100,25
-        T 200,25
-        T 300,25
-        T 400,25
-        T 500,25
-        T 600,25
-        T 700,25
-
-        A 25 50 0 0 1 700,175
-
-        Q 650,150 600,175
-        T 500,175
-        T 400,175
-        T 300,175
-        T 200,175
-        T 100,175
-        T 0,175
-
-        A 25 50 0 0 1 0,25
-
-        Z
-    "
-    >
-      <animate
-        attributeName="fill"
-        values="
-          rgb(56,117,250);
-          rgb(36, 65, 189);
-          rgb(120,100,190);
-          rgb(22, 30, 95);
-          rgb(51,226,230);
-        "
-        dur="8s"
-        repeatCount="indefinite"
-      />
-    </path>
-  </svg>
-
-  <svg
-    class="small-wave waving"
-    viewBox="-30 0 810 200"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="rgb(120,100,190)"
-  >
-    <path
-      d="
-      M 0,25
-      Q 25,0 50,25
-      T 100,25
-      T 150,25
-      T 200,25
-      T 250,25
-      T 300,25
-      T 350,25
-      T 400,25
-      T 450,25
-      T 500,25
-      T 550,25
-      T 600,25
-      T 650,25
-      T 700,25
-      T 750,25
-
-      A 25 80 0 0 1 750,175
-
-      Q 725,200 700,175
-      T 650,175
-      T 600,175
-      T 550,175
-      T 500,175
-      T 450,175
-      T 400,175
-      T 350,175
-      T 300,175
-      T 250,175
-      T 200,175
-      T 150,175
-      T 100,175
-      T 50,175
-      T 0,175
-
-      A 25 80 0 0 1 0,25
-
-      Z
-    "
-    >
-      <animate
-        attributeName="fill"
-        values="
-          rgb(255, 140, 0);
-          rgb(200, 140, 140);
-          rgb(255, 60, 64);
-          rgb(0, 185, 55);
-        "
-        dur="8s"
-        repeatCount="indefinite"
-      />
-    </path>
-  </svg> -->
-</div>
+</a>
 
 <style lang="scss">
-  @use '/src/styles/mixins' as *;
+  @use "/src/styles/mixins" as *;
 
-  div {
-    position: relative;
-    width: 100%;
-    max-width: 12.5rem;
-    height: 3rem;
-
-    @include respond-up(small-desktop) {
-      margin: 3rem auto;
-      height: 6rem;
-      width: clamp(10rem, 40%, 25rem);
-      max-width: unset;
-    }
+  a {
+    height: 2.5rem;
+    width: 10rem;
+    border-radius: 0.5rem;
+    fill: $cyan;
+    @include cyan(0.1);
 
     svg {
-      width: 100%;
-      fill: $blue;
-      stroke: none;
+      width: 85%;
     }
 
-    // svg {
-    //   position: absolute;
-    //   stroke: none;
-    //   fill: $cyan;
-    // }
+    &.mobile-only {
+      margin-bottom: 0.5rem;
+    }
 
-    // .sin-wave {
-    //   width: 105%;
-    //   z-index: -1;
-    // }
+    &:hover:not(&:disabled),
+    &:active:not(&:disabled),
+    &:focus:not(&:disabled) {
+      fill: $dark-blue;
+      @include cyan;
+    }
 
-    // .cos-wave {
-    //   width: 105%;
-    //   z-index: -2;
-    //   animation-delay: -2s;
-    //   opacity: 0.75;
-    // }
+    &.mobile-only {
+      display: flex;
 
-    // .small-wave {
-    //   width: 100%;
-    //   z-index: -3;
-    //   animation-delay: -3s;
-    //   opacity: 0.5;
-    // }
+      @include respond-up("small-desktop") {
+        display: none;
+      }
+    }
+
+    &.pc-only {
+      display: none;
+
+      @include respond-up("small-desktop") {
+        display: flex;
+      }
+    }
   }
 </style>

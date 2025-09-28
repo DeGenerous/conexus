@@ -125,43 +125,29 @@
     <BurgerSVG expanded={sidebarOpen} />
   </button>
 
-  <aside class="flex pad-24 vert-scrollbar">
-    <header class="flex-row">
-      <QuitSVG
-        onclick={() => (window.location.href = '/')}
-        text="Back to CoNexus"
-        fullWidth={true}
-      />
-      <!-- <h4>Dashboard</h4> -->
-      <!-- <button aria-label="Close navigation" onclick={close}>
-        ✕
-      </button> -->
-    </header>
-
-    <nav class="flex gap-8">
+  <nav class="flex gap-8">
+    <SidebarLink
+      {isAdmin}
+      {isCreator}
+      item={{
+        name: 'Dashboard',
+        path: '/dashboard',
+      }}
+      {expanded}
+      {toggleExpand}
+      {activePath}
+    />
+    {#each DASHBOARD_LINKS as item}
       <SidebarLink
         {isAdmin}
         {isCreator}
-        item={{
-          name: 'Dashboard',
-          path: '/dashboard',
-        }}
+        {item}
         {expanded}
         {toggleExpand}
         {activePath}
       />
-      {#each DASHBOARD_LINKS as item}
-        <SidebarLink
-          {isAdmin}
-          {isCreator}
-          {item}
-          {expanded}
-          {toggleExpand}
-          {activePath}
-        />
-      {/each}
-    </nav>
-  </aside>
+    {/each}
+  </nav>
 </section>
 
 <style lang="scss">
@@ -202,33 +188,32 @@
       @include dark-blue;
     }
 
-    aside {
+    nav {
       width: 100%;
       height: 100%;
-      align-items: flex-start;
+      align-items: stretch;
       justify-content: flex-start;
       padding-inline: 1.5rem;
+      padding-top: 0.5rem;
       background-color: $dark-blue;
       border-right: 1px solid $transparent-gray;
       overflow-y: scroll;
       overscroll-behavior: contain;
-
-      header {
-        width: 100%;
-        justify-content: space-between;
-      }
-
-      nav {
-        width: 100%;
-        align-items: stretch;
-      }
     }
 
     @include respond-up(small-desktop) {
       transform: none;
+      top: 4.5rem;
+      height: calc(100dvh - 4.5rem);
 
       button {
         display: none;
+      }
+
+      nav {
+        padding-top: 0;
+        border: none;
+        box-shadow: 0.1rem 0 0.25rem rgba(0, 0, 0, 0.75);
       }
     }
   }

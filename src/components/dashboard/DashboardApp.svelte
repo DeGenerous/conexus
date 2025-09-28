@@ -63,8 +63,13 @@
       display: none;
     }
 
+    div {
+      justify-content: flex-start;
+    }
+
     @include respond-up(small-desktop) {
       grid-template-columns: 320px minmax(0, 1fr);
+      padding-top: 6rem;
 
       .placeholder {
         display: block;

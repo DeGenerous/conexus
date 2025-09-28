@@ -93,6 +93,9 @@ export default defineConfig({
                 changeOrigin: true,
                 secure: false,
                 rewrite: (path) => path.replace(/^\/api/, ''),
+                headers: {
+                  'X-API-KEY': import.meta.env.VITE_API_KEY,
+                },
               },
             }
           : undefined,

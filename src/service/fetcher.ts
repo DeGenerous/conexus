@@ -88,8 +88,8 @@ export default class Fetcher {
 
     return {
       status: 'error',
-      message: 'Unsupported response type',
-      error: { details: `Unsupported response type: ${responseType}` },
+      message: 'Unexpected error occurred',
+      error: { details: `Unexpected error occurred: ${responseType}` },
     };
   }
 

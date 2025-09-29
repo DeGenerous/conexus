@@ -22,6 +22,7 @@
   import BackArrow from '@components/icons/BackArrow.svelte';
   import PlaySVG from '@components/icons/Play.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
+  import ConexusLogo from '@components/icons/ConexusLogo.svelte';
   import BackArrowPCNav from './utils/BackArrowPCNav.svelte';
 
   let {
@@ -142,19 +143,11 @@
 <svelte:window {onkeydown} {onscroll} />
 
 {#if $story === null && hidden === false}
-  <!-- <header
-    class="flex-row pad-inline blur transition semi-transparent-dark-bg shad-behind dark-glowing-opaque"
-  >
-    {#if arrow}
-      <BackArrow href={arrow} />
-    {:else}
-      <LogoSVG />
-    {/if}
-
-    <h1 class:sr-only={header === 'CoNexus'}>{header}</h1>
-
-    <Profile />
-  </header> -->
+  {#if header === 'CoNexus'}
+    <header class="flex-row">
+      <ConexusLogo />
+    </header>
+  {/if}
 
   <!-- {#if showIntro}
     <div class="video-wrapper container fade-in">
@@ -263,7 +256,19 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  /* MOBILE Styling */
+  header {
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    height: 4rem;
+    z-index: 100;
+    border-bottom: 1px solid $transparent-gray;
+    @include dark-blue;
+
+    @include respond-up(small-desktop) {
+      display: none;
+    }
+  }
 
   // header {
   //   margin-top: 4rem;

@@ -293,11 +293,11 @@ $dark-gray: rgb(16, 16, 16);
 }
 
 :global(:where(h4, h5)) {
-  @include white-txt(soft);
+  @include white-txt;
 }
 
 :global(:where(label)) {
-  @include white-txt((0.5));
+  @include white-txt((soft));
 }
 
 :global(:where(.validation)) {

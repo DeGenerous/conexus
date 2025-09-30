@@ -65,7 +65,7 @@ dialog {
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
-    padding: 1rem;
+    padding: 1.5rem;
     padding-bottom: 2rem;
     @include white-txt(soft);
   }

@@ -29,9 +29,7 @@
   };
 </script>
 
-<section
-  class="flex blur pad round transparent-dark-bg shad-inset-glow fade-in dark-glowing"
->
+<section class="container fade-in dark-glowing">
   <h5>{menuText[0]}</h5>
 
   {#await app.getSections()}
@@ -66,17 +64,17 @@
     & > div {
       width: 100%;
       flex-wrap: wrap;
+      gap: 1rem;
       padding-inline: 0;
     }
-  }
 
-  @include respond-up(tablet) {
-    section {
+    @include respond-up(tablet) {
       width: auto;
 
       & > div {
-        padding-inline: 1rem;
+        gap: 1.5rem;
       }
     }
   }
+
 </style>

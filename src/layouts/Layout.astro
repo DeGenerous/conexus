@@ -151,16 +151,17 @@ const absoluteImageURL = image.startsWith('http')
   <body>
     <ToastContainer client:load />
 
-    <Navigation
-      {header}
-      {subheading}
-      activeTab={nav}
-      {arrow}
-      hidden={hiddenNav}
-      client:load
-    />
-
-    <slot />
+    <main>
+      <Navigation
+        {header}
+        {subheading}
+        activeTab={nav}
+        {arrow}
+        hidden={hiddenNav}
+        client:load
+      />
+      <slot />
+    </main>
 
     <Modal client:load />
 

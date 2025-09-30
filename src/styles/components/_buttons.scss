@@ -20,7 +20,7 @@ button:not(.void-btn),
   outline: none;
   text-transform: uppercase;
   letter-spacing: 1px;
-  @include white-txt(0.9);
+  @include white-txt;
   @include blue(0.75);
   @include cyan-border(0.5);
 

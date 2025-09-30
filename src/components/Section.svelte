@@ -214,6 +214,12 @@
       <div class="category flex">
         <Category {name} {intended} {category} />
       </div>
+      <div class="category flex">
+        <Category {name} {intended} {category} />
+      </div>
+      <div class="category flex">
+        <Category {name} {intended} {category} />
+      </div>
     {/each}
 
     {#if loading}

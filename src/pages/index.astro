@@ -18,14 +18,8 @@ const footerText = [
 ---
 
 <Layout {...meta}>
-  <main>
-    <Menu client:load />
-    <footer class="flex">
-      {
-        footerText.map((text: any) => (
-          <p class="mobile-text-wrapper pad-inline text-shad">{text}</p>
-        ))
-      }
-    </footer>
-  </main>
+  <Menu client:load />
+  <footer class="mobile-text-wrapper">
+    {footerText.map((text: any) => <p>{text}</p>)}
+  </footer>
 </Layout>

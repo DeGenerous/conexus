@@ -145,11 +145,14 @@
 {#if $story === null && hidden === false}
   {#if header === 'CoNexus'}
     <header class="flex-row">
+      <h1 class="sr-only">CoNexus</h1>
       <ConexusLogo />
     </header>
+  {:else if header}
+    <h1>{header}</h1>
   {/if}
 
-  <!-- {#if showIntro}
+  {#if showIntro}
     <div class="video-wrapper container fade-in">
       <video class="round" controls autoplay loop muted>
         <source src={`${trailerURL}/CoNexusTrailer.webm`} type="video/webm" />
@@ -179,13 +182,11 @@
         </span>
       {/if}
     </p>
-  {:else}
-    <div class="empty-subheading"></div>
-  {/if} -->
+  {/if}
 
-  <!-- {#if onboarding && header === 'CoNexus'}
+  {#if onboarding && header === 'CoNexus'}
     <Onboarding />
-  {/if} -->
+  {/if}
 
   <nav class="flex-row">
     <!-- PREVIOUS SECTION -->
@@ -257,9 +258,10 @@
   @use '/src/styles/mixins' as *;
 
   header {
-    position: fixed;
+    position: sticky;
     top: 0;
     width: 100vw;
+    margin-top: -1.5rem;
     height: 4rem;
     z-index: 100;
     border-bottom: 1px solid $transparent-gray;
@@ -270,71 +272,38 @@
     }
   }
 
-  // header {
-  //   margin-top: 4rem;
-  //   min-height: 4rem;
-  //   position: fixed;
-  //   top: 0;
-  //   width: 100vw;
-  //   justify-content: space-between;
-  //   gap: 1.5rem;
-  //   z-index: 100;
+  .subheading {
+    position: relative;
+    @include text-shadow;
 
-  //   @include respond-up(small-desktop) {
-  //     position: static;
-  //     width: auto;
-  //     justify-content: center;
-  //     min-height: unset;
-  //     background-color: transparent !important;
-  //     backdrop-filter: none !important;
-  //     -webkit-backdrop-filter: none;
-  //     box-shadow: none;
-  //   }
+    .intro-wrapper {
+      width: 100%;
+      padding-top: 1rem;
+    }
 
-  //   h1 {
-  //     text-transform: capitalize;
-  //     @include text-shadow;
-  //   }
-  // }
+    &.onboarding {
+      z-index: 1000;
+    }
 
-  // .subheading {
-  //   position: relative;
-  //   margin: 1rem auto;
-  //   @include text-shadow;
+    @include respond-up(small-desktop) {
+      width: clamp(20rem, 95%, 80rem);
+    }
+  }
 
-  //   .intro-wrapper {
-  //     width: 100%;
-  //     padding-top: 1rem;
-  //   }
+  .video-wrapper {
+    position: relative;
+    width: clamp(250px, 95%, 70rem);
+    margin-block: 1rem;
+    padding: 0;
 
-  //   &.onboarding {
-  //     z-index: 1000;
-  //   }
+    @include respond-up(small-desktop) {
+      margin-block: 1rem 2rem;
+    }
 
-  //   @include respond-up(small-desktop) {
-  //     width: clamp(20rem, 95%, 80rem);
-  //     margin-block: 1rem 2rem;
-  //   }
-  // }
-
-  // .empty-subheading {
-  //   height: 1rem;
-  // }
-
-  // .video-wrapper {
-  //   position: relative;
-  //   width: clamp(250px, 95%, 70rem);
-  //   margin-block: 1rem;
-  //   padding: 0;
-
-  //   @include respond-up(small-desktop) {
-  //     margin-block: 1rem 2rem;
-  //   }
-
-  //   video {
-  //     width: 100%;
-  //   }
-  // }
+    video {
+      width: 100%;
+    }
+  }
 
   nav {
     position: fixed;

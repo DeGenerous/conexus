@@ -62,7 +62,7 @@
   </p>
 
   <span
-    class="flex-row pad-inline round-8 shad"
+    class="flex-row pad-inline round-8"
     class:loading-animation={disabled}
     class:transparent-glowing={!disabled}
   >

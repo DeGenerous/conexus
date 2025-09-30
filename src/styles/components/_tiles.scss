@@ -16,7 +16,7 @@
   justify-content: center;
   gap: 1rem;
   padding-inline: 1.5rem;
-  margin-block: 1rem 0;
+  margin-block: 0 -0.5rem;
   z-index: 50;
 
   h2 {
@@ -35,10 +35,14 @@
   }
 
   @include respond-up(tablet) {
-    margin-block: 0 -1rem;
+    h2 {
+      line-height: 1;
+    }
 
     button {
-      bottom: 0.5rem;
+      bottom: 0;
+      right: 1rem;
+      box-shadow: none;
     }
   }
 }
@@ -54,13 +58,16 @@
   justify-content: flex-start;
   overflow-x: scroll;
   overflow-y: hidden;
-  gap: 1rem;
-  padding: 1rem;
-  box-shadow: $shadow-plus-inset-glow;
-  animation: transparent-glowing 10s ease-in-out infinite;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  // box-shadow: $shadow-plus-inset-glow;
+  animation: transparent-glowing 15s ease-in-out infinite;
   scrollbar-width: thin;
   scrollbar-color: $transparent-cyan transparent;
   outline: none !important;
+  border-top: 1px solid $transparent-gray;
+  border-bottom: 1px solid $transparent-gray;
+  @include cyan(0.1);
 
   @include respond-up(tablet) {
     min-height: 22rem;
@@ -205,7 +212,7 @@
   text-decoration: none !important;
   flex: none;
   @include blue(0.75);
-  @include white-txt;
+  @include white-txt(1);
   @include box-shadow;
 
   &:hover:not(.loading-tile),

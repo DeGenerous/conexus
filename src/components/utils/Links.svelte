@@ -5,9 +5,7 @@
 </script>
 
 {#if section_name == 'Community Picks' || section_name == 'Dischordian Saga'}
-  <section
-    class="flex pad mar-inline round blur shad-inset-glow transparent-glowing"
-  >
+  <section class="transparent-container">
     {#if section_name == 'Community Picks'}
       <div class="flex-row">
         <h5>Join the community:</h5>
@@ -35,8 +33,12 @@
   </section>
 {/if}
 
-<style>
-  h5 {
-    text-align: right;
+<style lang="scss">
+  .transparent-container {
+    width: auto;
+
+    h5 {
+      text-align: right;
+    }
   }
 </style>

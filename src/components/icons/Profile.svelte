@@ -41,7 +41,14 @@
   onpointerover={() => (svgFocus = true)}
   onpointerout={() => (svgFocus = false)}
 >
-  <h4>Credits: 69</h4>
+  <h4>
+    Credits:
+    {#if user}
+      {user.credits}
+    {:else}
+      ...
+    {/if}
+  </h4>
 
   <span class="flex transition" class:visible={svgFocus}>
     <a href="/dashboard#/profile/overview" target="_self">Profile</a>

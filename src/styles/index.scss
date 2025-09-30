@@ -1,6 +1,6 @@
 // UTILITY CLASSES:
-// flex, flex-row, flex-wrap, blur, validation, transition, gap-8
-// Padding: pad-# 8, 16 (none); Padding-Inline: pad-inline
+// flex, flex-row, flex-wrap, blur, validation, transition, gap-# 8, 16 (none), 24, 32
+// Padding: pad-# 8, 16 (none), 24, 32; Padding-Inline: pad-inline
 // Border-radius: round-# 8, 12, 16 (none), 24, 32
 // Margin: mar, mar-inline (16), mar-auto
 // (# - pixel value)
@@ -101,7 +101,7 @@ ol:not(.default-ol) {
 
 :where(hr) {
   width: 100%;
-  @include gray-border(0.25);
+  @include gray-border;
 }
 
 :where(code) {
@@ -131,7 +131,7 @@ a {
 
 html {
   text-align: center;
-  // padding-block: 4rem 6rem;
+  padding-block: 1.5rem 5.5rem;
   letter-spacing: 0.025rem;
   word-spacing: 0.2em;
   background-color: black;
@@ -139,9 +139,9 @@ html {
   @include cyan(0.85, 'text');
   @include font;
 
-  // @include respond-up('small-desktop') {
-  //   padding-block: 4rem 2rem;
-  // }
+  @include respond-up('small-desktop') {
+    padding-block: 6rem 2rem;
+  }
 
   &::-webkit-scrollbar {
     width: 0px;
@@ -155,7 +155,7 @@ html {
     flex-flow: column nowrap;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
   }
 
   .flex-row {
@@ -298,13 +298,14 @@ html {
   .container {
     @extend .flex;
     @extend .blur;
-    @extend .pad;
+    @extend .pad-24;
     @extend .round;
     width: clamp(250px, 90%, 50rem);
     // max-width: 90rem;
-    box-shadow: $shadow-plus-inset-glow;
+    // box-shadow: $shadow-plus-inset-glow;
     animation: dark-glowing 15s ease-in-out infinite;
     margin-inline: auto;
+    @include gray-border;
   }
 
   .transparent-container {
@@ -318,12 +319,13 @@ html {
   }
 
   .mobile-text-wrapper {
-    @extend .transparent-container;
     display: block;
+    @extend .transparent-container;
 
     @include respond-up(small-desktop) {
-      box-shadow: none;
+      // box-shadow: none;
       animation: none;
+      border: none;
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
       width: auto;

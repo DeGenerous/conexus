@@ -249,6 +249,11 @@
       </div>
     {/key}
   </section>
+
+  <!-- TODO: Add newsletter, refresh data button, referral codes (?) -->
+{:else}
+  <h5>Loading profile data...</h5>
+  <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {/if}
 
 <style lang="scss">

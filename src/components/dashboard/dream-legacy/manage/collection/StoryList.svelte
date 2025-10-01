@@ -21,7 +21,6 @@
 
   // Change order of single topic
   const handleChangeOrder = (event: Event, topic_id: number) => {
-    // TODO: Change for Topics
     // import Topics from '@lib/topics';
     // const topicManager = new Topics();
     clearTimeout(debounceTimeout);
@@ -42,7 +41,6 @@
   };
 
   const handleSwitchAvailable = async (id: number, key: string) => {
-    // TODO: Change for Topics
     // import Topics from '@lib/topics';
     // const topicManager = new Topics();
     await admin.changeAvailability(id, switchAvailable(key));

@@ -36,27 +36,29 @@
   <p>Dashboard</p>
 </a>
 
-<div
-  class="credits-tab flex-row gap-8 transition"
+<button
+  class="void-btn credits-tab flex-row gap-8 transition"
   onpointerover={() => (svgFocus = true)}
   onpointerout={() => (svgFocus = false)}
+  onclick={() => {
+    if (!user) $showProfile = true;
+  }}
 >
   <h4>
-    Credits:
     {#if user}
-      {user.credits}
+      Credits: {user.credits}
     {:else}
-      ...
+      Sign In
     {/if}
   </h4>
 
-  {#if activeTab !== 'Dashboard'}
+  {#if activeTab !== 'Dashboard' && user}
     <span class="flex transition" class:visible={svgFocus}>
       <a href="/dashboard#/profile/overview" target="_self">Profile</a>
       <a href="/dashboard#/profile/bookmarks" target="_self">Bookmarks</a>
     </span>
   {/if}
-</div>
+</button>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

@@ -19,16 +19,18 @@
   import detectIOS from '@utils/ios-device';
   import { userState, getCurrentUser } from '@utils/route-guard';
 
-  import BookmarkSVG from '@components/icons/Bookmark2.svelte';
+  import Bookmark from '@components/utils/Bookmark.svelte';
+  import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
+  import Tts from '@components/music/Tts.svelte';
+  import Step from '@components/Step.svelte';
+  import Share from '@components/utils/Share.svelte';
+
   import DeleteSVG from '@components/icons/Delete.svelte';
   import DoorSVG from '@components/icons/Door.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
   import LockSVG from '@components/icons/Lock.svelte';
   import PlaySVG from '@components/icons/Play.svelte';
-  import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
-  import Tts from '@components/music/Tts.svelte';
-  import Step from '@components/Step.svelte';
-  import Share from '@components/utils/Share.svelte';
+
 
   export let section_name: string;
   export let topic_id: string;
@@ -240,9 +242,11 @@
                   >
                     PLAY NOW
                   </button>
-                  <BookmarkSVG user_id={userID} topic_id={topic.id} />
                 {/if}
                 <Share />
+                {#if userID}
+                  <Bookmark user_id={userID} topic_id={topic.id} />
+                {/if}
               {/if}
             </span>
           </div>
@@ -462,6 +466,10 @@
           width: 100%;
         }
 
+        button {
+          width: 100%;
+        }
+
         .genres {
           @include cyan(0.1);
           @include font(small);
@@ -481,7 +489,7 @@
 
       @include respond-up(tablet) {
         div {
-          flex-direction: row;
+          flex-flow: row wrap;
           justify-content: space-between;
           flex: none;
 
@@ -494,6 +502,10 @@
             justify-content: flex-end;
             flex-direction: row-reverse;
             flex: none;
+
+            button {
+              width: auto;
+            }
           }
         }
       }

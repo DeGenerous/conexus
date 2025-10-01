@@ -132,5 +132,7 @@ export default class Authentication {
     ClearCache('auth');
 
     toastStore.show(message || 'Logged out successfully', 'info');
+
+    window.open('/', '_self');
   }
 }

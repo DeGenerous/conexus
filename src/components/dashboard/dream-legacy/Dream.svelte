@@ -131,8 +131,6 @@
       </div>
     {/if}
 
-    <!-- TODO: Fetch sections -->
-
     {#await isAdmin ? category.listAdminCategories('') : category.listCreatorCategories() then categories: Category[]}
       <div class="input-container">
         <label for="category">Select Category</label>

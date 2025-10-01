@@ -350,7 +350,6 @@
         <span class="flex-row">
           {#if editingPrompt}
             <CloseSVG onclick={() => (editingPrompt = false)} />
-            <!-- todo reset data -->
             <SaveSVG
               onclick={() => {
                 editingPrompt = false;

@@ -8,7 +8,11 @@
   class="flex nohover-link"
   onpointerover={() => (svgFocus = true)}
   onpointerout={() => (svgFocus = false)}
-  href={arrow ? arrow : 'https://dgrslabs.ink/'}
+  href={arrow
+    ? arrow === 'back'
+      ? 'javascript:window.history.back()'
+      : arrow
+    : 'https://dgrslabs.ink/'}
   target={arrow ? '_self' : '_blank'}
   aria-label={arrow ? 'Back' : 'DGRS Labs'}
 >

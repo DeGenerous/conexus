@@ -24,7 +24,6 @@
   import CloseSVG from '@components/icons/Close.svelte';
   import ConexusLogo from '@components/icons/ConexusLogo.svelte';
   import BackArrowPCNav from './utils/BackArrowPCNav.svelte';
-  import { act } from 'react';
 
   let {
     header = '',
@@ -160,13 +159,64 @@
 <svelte:window {onkeydown} {onscroll} />
 
 {#if $story === null && hidden === false}
-  {#if header === 'CoNexus'}
-    <header class="flex-row">
-      <h1 class="sr-only">CoNexus</h1>
-      <ConexusLogo />
+  {#if header}
+    <header class="flex-row" class:mobile-home-header={header === 'CoNexus'}>
+      {#if header === 'CoNexus'}
+        <h1 class="sr-only">CoNexus</h1>
+        <ConexusLogo />
+      {:else if header}
+        {#if $prevItem}
+          <button
+            class="flex-row fade-in blur"
+            class:inactive={!$prevItem}
+            onclick={() => navigateTo($prevItem)}
+            disabled={!$prevItem}
+            draggable="false"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="-100 -100 200 200"
+              fill="white"
+            >
+              <polygon
+                points="-75 0 -10 -65 -10 65"
+                stroke-width="10"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <rect x="-30" y="-25" width="100" height="50" rx="5" />
+            </svg>
+            <p>{$prevItem?.name}</p>
+          </button>
+        {/if}
+        <h1>{header}</h1>
+        {#if $nextItem}
+          <button
+            class="flex-row fade-in blur"
+            class:inactive={!$nextItem}
+            onclick={() => navigateTo($nextItem)}
+            disabled={!$nextItem}
+            draggable="false"
+          >
+            <p>{$nextItem?.name}</p>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="-100 -100 200 200"
+              fill="white"
+              style:transform="rotate(180deg)"
+            >
+              <polygon
+                points="-75 0 -10 -65 -10 65"
+                stroke-width="10"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <rect x="-30" y="-25" width="100" height="50" rx="5" />
+            </svg>
+          </button>
+        {/if}
+      {/if}
     </header>
-  {:else if header}
-    <h1>{header}</h1>
   {/if}
 
   {#if showIntro}
@@ -206,66 +256,13 @@
   {/if}
 
   <nav class="flex-row" class:hide={hiddenHeader}>
-    <!-- PREVIOUS SECTION -->
-    <!-- <button
-      class="void-btn fade-in"
-      class:inactive={!$prevItem}
-      onclick={() => navigateTo($prevItem)}
-      disabled={!$prevItem}
-      draggable="false"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="-100 -100 200 200"
-        fill="white"
-      >
-        <polygon
-          points="-75 0 -10 -65 -10 65"
-          stroke-width="10"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-        <rect x="-30" y="-25" width="100" height="50" rx="5" />
-      </svg>
-      <p>{$prevItem?.name}</p>
-    </button> -->
-
     <BackArrowPCNav {arrow} />
-    <!-- {#if arrow} -->
-    <BackArrow href={arrow} hideForPCs={true} />
-    <!-- {:else}
-      <LogoDGRSSVG />
-    {/if} -->
 
-    <!-- HOME -->
+    <BackArrow href={arrow} hideForPCs={true} />
+
     <HomeSVG {activeTab} />
 
     <Profile {activeTab} />
-
-    <!-- NEXT SECTION -->
-    <!-- <button
-      class="void-btn fade-in"
-      class:inactive={!$nextItem}
-      onclick={() => navigateTo($nextItem)}
-      disabled={!$nextItem}
-      draggable="false"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="-100 -100 200 200"
-        fill="white"
-        style:transform="rotate(180deg)"
-      >
-        <polygon
-          points="-75 0 -10 -65 -10 65"
-          stroke-width="10"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-        <rect x="-30" y="-25" width="100" height="50" rx="5" />
-      </svg>
-      <p>{$nextItem?.name}</p>
-    </button> -->
   </nav>
 {/if}
 
@@ -275,17 +272,53 @@
   @use '/src/styles/mixins' as *;
 
   header {
-    position: sticky;
-    top: 0;
     width: 100vw;
-    margin-top: -1.5rem;
-    height: 4rem;
-    z-index: 100;
-    border-bottom: 1px solid $transparent-gray;
-    @include dark-blue;
 
-    @include respond-up(small-desktop) {
-      display: none;
+    &:not(.mobile-home-header) {
+      padding-inline: 1.5rem;
+      justify-content: space-between;
+
+      h1 {
+        width: 100%;
+      }
+
+      button {
+        fill: currentColor;
+        justify-content: space-between;
+
+        p {
+          display: none;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+
+      @include respond-up(tablet) {
+        align-items: flex-start;
+
+        button {
+          width: 12.5rem;
+
+          p {
+            display: block;
+          }
+        }
+      }
+    }
+
+    &.mobile-home-header {
+      position: sticky;
+      top: 0;
+      margin-top: -1.5rem;
+      height: 4rem;
+      z-index: 100;
+      border-bottom: 1px solid $transparent-gray;
+      @include dark-blue;
+
+      @include respond-up(small-desktop) {
+        display: none;
+      }
     }
   }
 

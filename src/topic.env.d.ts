@@ -11,9 +11,8 @@ type TopicInCategoryInSection = {
 };
 
 type TopicInSection = {
-  topic_id: number;
-  topic_name: string;
-  topic_order: number;
+  id: number;
+  name: string;
 };
 
 type CategoryInSection = {

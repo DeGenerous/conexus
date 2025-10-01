@@ -119,7 +119,7 @@
   padding: 0.5rem;
   border-radius: 1.5rem;
   box-shadow: $soft-shadow-plus-inset-glow;
-  @include navy(0.75);
+  @include navy;
   @include cyan(0.75, text);
 
   &.big-menu-tile {

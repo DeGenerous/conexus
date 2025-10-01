@@ -17,7 +17,7 @@
   class:active={activeTab === 'Dashboard'}
   id="profile-icon"
   aria-label="Profile"
-  href="/dashboard"
+  href="/dashboard#/dashboard"
   onclick={(event) => {
     if (!user) {
       event.preventDefault();
@@ -50,10 +50,12 @@
     {/if}
   </h4>
 
-  <span class="flex transition" class:visible={svgFocus}>
-    <a href="/dashboard#/profile/overview" target="_self">Profile</a>
-    <a href="/dashboard#/profile/bookmarks" target="_self">Bookmarks</a>
-  </span>
+  {#if activeTab !== 'Dashboard'}
+    <span class="flex transition" class:visible={svgFocus}>
+      <a href="/dashboard#/profile/overview" target="_self">Profile</a>
+      <a href="/dashboard#/profile/bookmarks" target="_self">Bookmarks</a>
+    </span>
+  {/if}
 </div>
 
 <style lang="scss">

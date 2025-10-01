@@ -1,6 +1,6 @@
 <!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
-  import { onMount, tick } from 'svelte';
+  import { onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
 
   import {
@@ -86,15 +86,17 @@
       .flat();
     if (storedTopics) {
       navContext.setContext({
-        items: storedTopics.map(({ topic_name, topic_order }) => ({
-          name: topic_name,
-          link: `/s/${section_name}/${topic_name}?id=${topic_order}`,
+        items: storedTopics.map(({ name, id }) => ({
+          name: name,
+          link: `/s/${section_name}/${id}?title=${name}`,
         })),
         index: storedTopics.findIndex(
-          (topic) => topic.topic_name === topic_name,
+          (topic) => topic.name == topic_name,
         ),
       });
     }
+
+    console.log(storedTopics);
 
     termsAccepted = GetCache<boolean>(TERMS_KEY) || false; // temp for terms modal
   });

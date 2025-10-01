@@ -1,6 +1,6 @@
 <script lang="ts">
   let {
-    href = "#",
+    href = '#',
     onclick = () => {},
     big = false,
     branding = false,
@@ -58,7 +58,7 @@
 </a>
 
 <style lang="scss">
-  @use "/src/styles/mixins" as *;
+  @use '/src/styles/mixins' as *;
 
   a {
     height: 2.5rem;

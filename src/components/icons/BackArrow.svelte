@@ -34,10 +34,10 @@
   @use '/src/styles/mixins' as *;
 
   a {
-     &.mobile-only {
+    &.mobile-only {
       display: flex;
 
-      @include respond-up("small-desktop") {
+      @include respond-up('small-desktop') {
         display: none;
       }
     }
@@ -45,7 +45,7 @@
     &.pc-only {
       display: none;
 
-      @include respond-up("small-desktop") {
+      @include respond-up('small-desktop') {
         display: flex;
       }
     }

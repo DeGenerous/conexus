@@ -232,7 +232,7 @@
 
     <BackArrowPCNav {arrow} />
     <!-- {#if arrow} -->
-      <BackArrow href={arrow} hideForPCs={true} />
+    <BackArrow href={arrow} hideForPCs={true} />
     <!-- {:else}
       <LogoDGRSSVG />
     {/if} -->

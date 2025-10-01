@@ -3,10 +3,10 @@
 
   let {
     activeTab,
-    user
+    user,
   }: {
     activeTab: string;
-    user: Nullable<User>
+    user: Nullable<User>;
   } = $props();
 
   let svgFocus = $state<boolean>(false);

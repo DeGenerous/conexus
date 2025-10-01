@@ -274,7 +274,7 @@ export default class AppView {
       api_error(message);
     }
 
-    console.log(data)
+    console.log(data);
 
     return data || null;
   }

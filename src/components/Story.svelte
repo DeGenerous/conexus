@@ -155,7 +155,9 @@
     {#if topic === null}
       <div class="container">
         <h4 class="red-txt">Story not found...</h4>
-        <p class="soft-white-txt">The story you are looking for does not exist.</p>
+        <p class="soft-white-txt">
+          The story you are looking for does not exist.
+        </p>
       </div>
     {:else}
       <div
@@ -263,7 +265,10 @@
                         `Delete story: ${topic_name}`,
                         () => DeleteStory(continuable.story_id),
                       );
-                      if (topic.unfinished_stories?.length === deletedStories.length) {
+                      if (
+                        topic.unfinished_stories?.length ===
+                        deletedStories.length
+                      ) {
                         noUnfinishedStoriesLeft = true;
                       }
                     }}
@@ -336,7 +341,7 @@
         {/if}
       </div> -->
       </div>
-      
+
       {#if topic.topic_gates && topic.topic_gates.length > 0}
         <section
           class="flex gating blur pad-8 gap-8 mar-auto round-12 wavy-mask-left-right"
@@ -387,8 +392,7 @@
                       </span>
                     {/if}
                   {:else if gate.gate_kind === 'erc1155_token'}
-                    {gate.min_amount ?? 1} × {gate.name ||
-                      gate.collection_name}
+                    {gate.min_amount ?? 1} × {gate.name || gate.collection_name}
                   {:else if gate.gate_kind === 'erc721_class'}
                     <span class="erc721 glow">
                       {gate.name || gate.collection_name} (Class)
@@ -406,7 +410,7 @@
           </span>
         </section>
       {/if}
-      
+
       <p class="description transparent-container white-txt text-shad">
         {topic.description}
       </p>

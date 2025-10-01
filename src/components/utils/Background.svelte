@@ -74,7 +74,7 @@
     z-index: -100;
     transition:
       opacity 0.6s linear,
-      filter 0.9s ease-in-out;
+      filter 0.9s ease;
 
     // Fallback if no support
     opacity: 1;

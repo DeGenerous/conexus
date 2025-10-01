@@ -23,7 +23,7 @@
   };
 </script>
 
-<div class="flex-row blur pad-8 shad" class:active={searchField}>
+<div class="flex-row blur pad-8" class:active={searchField}>
   {#if isSearching}
     <LoadingSVG />
   {:else}
@@ -47,7 +47,13 @@
   div {
     gap: 0.5rem;
     width: 100%;
-    @include light-blue(0.5);
+    transition: background-color 0.3s ease;
+    @include blue(0.75);
+    @include gray-border;
+
+    &.active {
+      @include deep-green;
+    }
 
     input {
       text-align: left;

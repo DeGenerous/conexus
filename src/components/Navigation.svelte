@@ -24,6 +24,7 @@
   import CloseSVG from '@components/icons/Close.svelte';
   import ConexusLogo from '@components/icons/ConexusLogo.svelte';
   import BackArrowPCNav from './utils/BackArrowPCNav.svelte';
+  import { act } from 'react';
 
   let {
     header = '',
@@ -41,6 +42,7 @@
 
   // let app: CoNexusApp = new CoNexusApp();
 
+  let hiddenHeader = $state<boolean>(false);
   let showIntro = $state<boolean>(false);
   let onboarding = $state<boolean>(false);
   let sections: string[] = ['Community Picks', 'Collabs', 'Dischordian Saga'];
@@ -89,10 +91,25 @@
     if (event.key === 'f') game.fullscreen = !game.fullscreen;
   };
 
-  // ONBOARDING
+  // ONBOARDING && PC-Hide
+  const clamp = 64; // px after which hiding can kick in
 
+  let lastY = 0;
+  let ticking = false;
   const onscroll = (event: Event) => {
     if (onboarding) event.preventDefault();
+
+    if (activeTab === 'Dashboard') return;
+
+    const y = window.scrollY;
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      if (y > lastY && y > clamp) hiddenHeader = true;
+      else if (y < lastY) hiddenHeader = false;
+      lastY = y;
+      ticking = false;
+    });
   };
 
   let tippyInstance: Instance;
@@ -188,7 +205,7 @@
     <Onboarding />
   {/if}
 
-  <nav class="flex-row">
+  <nav class="flex-row" class:hide={hiddenHeader}>
     <!-- PREVIOUS SECTION -->
     <!-- <button
       class="void-btn fade-in"
@@ -325,7 +342,12 @@
       gap: 1rem;
       padding: 1rem;
       border: none;
+      transition: transform 0.3s ease;
       @include box-shadow;
+
+      &.hide {
+        transform: translateY(-100%);
+      }
     }
   }
 </style>

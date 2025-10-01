@@ -61,7 +61,7 @@
   gap: 1.5rem;
   padding: 1.5rem;
   // box-shadow: $shadow-plus-inset-glow;
-  animation: transparent-glowing 15s ease-in-out infinite;
+  animation: transparent-glowing 15s ease infinite;
   scrollbar-width: thin;
   scrollbar-color: $transparent-cyan transparent;
   outline: none !important;
@@ -303,7 +303,7 @@
 }
 
 .loading-tile {
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease;
   @extend .tile;
   cursor: progress;
 
@@ -410,7 +410,7 @@
   border-radius: 0.5rem;
   flex: none;
 
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease;
 
   // Fallback if no support
   opacity: 1;
@@ -540,7 +540,7 @@
     color: $dark-blue;
     background-color: inherit;
 
-    transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease;
 
     // Fallback if no support
     opacity: 1;

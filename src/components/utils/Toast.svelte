@@ -52,7 +52,7 @@
     width: fit-content;
     margin-inline: auto;
 
-    transition: all 0.6s ease-out;
+    transition: all 0.6s ease;
     opacity: 1;
 
     @include white-txt(1);

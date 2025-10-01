@@ -220,7 +220,7 @@
 
     {#key user}
       <div class="web3-wallets flex">
-        {#if user.wallets && user.wallets.length == 1}
+        {#if user.wallets && user.wallets.length >= 1}
           <h4>Connected Addresses</h4>
           <ul class="flex-row">
             {#each user.wallets.filter((address) => !address.faux) as { id, wallet }, index}

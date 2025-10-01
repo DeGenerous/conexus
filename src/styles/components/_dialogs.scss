@@ -9,7 +9,7 @@ dialog {
   border-radius: 1rem;
   overflow-x: hidden;
   box-shadow: $deep-shadow-plus-inset-glow;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease;
 
   // Fallback if no support
   opacity: 1;
@@ -54,7 +54,7 @@ dialog {
     background: rgba(0, 0, 0, 0.75);
     -webkit-backdrop-filter: blur(0.25rem);
     backdrop-filter: blur(0.25rem);
-    transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease;
   }
 
   &[open] {

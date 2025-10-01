@@ -216,7 +216,7 @@
     rgba(51, 226, 230, 0)
   );
   background-size: 500% auto;
-  animation: shimmer 2s ease-in-out infinite;
+  animation: shimmer 2s ease infinite;
 }
 
 :global(.shimmer) {
@@ -234,7 +234,7 @@
 }
 
 :global(.fade-in) {
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease;
 
   // Fallback if no support
   opacity: 1;
@@ -249,7 +249,7 @@
 }
 
 :global(.waving) {
-  animation: waving 6s ease-in-out infinite;
+  animation: waving 6s ease infinite;
 }
 
 :global(.button-glowing) {
@@ -277,9 +277,9 @@
 }
 
 :global(.pulse-animation) {
-  animation: pulse-animation 6s ease-in-out infinite;
+  animation: pulse-animation 6s ease infinite;
 }
 
 :global(.scaling) {
-  animation: scaling 15s ease-in-out infinite;
+  animation: scaling 15s ease infinite;
 }

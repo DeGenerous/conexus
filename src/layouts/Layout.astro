@@ -29,7 +29,6 @@ type LayoutProps = {
   url?: string;
   type?: string;
   disableIndexing?: boolean;
-  hiddenNav?: boolean;
 };
 
 const {
@@ -46,7 +45,6 @@ const {
   imageType = 'image/jpeg',
   url = 'https://conexus.degenerousdao.com/',
   type = 'website',
-  hiddenNav = false,
 
   ogTitle,
   disableIndexing = false,
@@ -152,14 +150,7 @@ const absoluteImageURL = image.startsWith('http')
     <ToastContainer client:load />
 
     <main>
-      <Navigation
-        {header}
-        {subheading}
-        activeTab={nav}
-        {arrow}
-        hidden={hiddenNav}
-        client:load
-      />
+      <Navigation {header} {subheading} activeTab={nav} {arrow} client:load />
       <slot />
     </main>
 

@@ -280,7 +280,7 @@
       ],
       {
         duration: 600,
-        easing: 'ease-in-out',
+        easing: 'ease',
       },
     );
     pictureAnimation = new Animation(pictureKeyframe, document.timeline);
@@ -1059,7 +1059,7 @@ a11y_no_noninteractive_element_interactions -->
     }
 
     label {
-      transition: color 0.3s ease-in-out;
+      transition: color 0.3s ease;
 
       &::after {
         content: ':';
@@ -1095,7 +1095,7 @@ a11y_no_noninteractive_element_interactions -->
       padding: 0.5rem;
       gap: 0.5rem;
       transform: translateY(100%);
-      transition: all 0.6s ease-in-out;
+      transition: all 0.6s ease;
       background-color: $dark-gray;
       @include white-txt(soft);
 

@@ -175,7 +175,7 @@
 
   ul {
     li {
-      transition: 0.3s ease-in-out;
+      transition: 0.3s ease;
       padding: 0.5rem;
       border-radius: 0.5rem;
       @include gray(0.5);

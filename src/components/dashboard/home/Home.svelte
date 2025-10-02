@@ -7,12 +7,14 @@
 <footer class="flex">
   <hr />
   <h5>Report bugs or ask for help</h5>
-  <div class="flex-row">
+  <div class="flex-row gap">
     <a href={NAV_ROUTES.SUPPORT}>Support</a>
     <span aria-hidden="true">|</span>
     <a href={NAV_ROUTES.DISCORD}>Discord</a>
     <span aria-hidden="true">|</span>
     <a href={NAV_ROUTES.FAQ}>FAQ</a>
+    <span aria-hidden="true">|</span>
+    <a href={NAV_ROUTES.BLOG}>Blog</a>
   </div>
 </footer>
 

@@ -12,7 +12,7 @@
   };
 </script>
 
-<section class="dream-container">
+<section class="dream-container" class:collapsed={!isOpen}>
   <button
     class="void-btn flex-row"
     class:active={isOpen}

@@ -15,6 +15,7 @@
   @use '/src/styles/mixins' as *;
 
   section {
+    width: 100%;
     color: $soft-white;
   }
 </style>

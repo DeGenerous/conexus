@@ -19,4 +19,5 @@ export const NAV_ROUTES = {
   DEMO: '/dashboard/dream/manage/demo',
 
   FAQ: '/learn/faq',
+  BLOG: '/learn/blog',
 };

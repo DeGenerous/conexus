@@ -10,6 +10,7 @@
   import { navContext } from '@stores/navigation.svelte';
   import { type NFT } from '@stores/omnihub.svelte';
   import { attributes } from '@constants/attributes';
+  import { NAV_ROUTES } from '@constants/routes';
 
   import Votes from '@components/omnihub/Votes.svelte';
 
@@ -84,17 +85,13 @@
 
       <span class="transparent-container">
         <h5>View on Marketplace:</h5>
-        <a
-          class="button-anchor"
-          href="https://magiceden.io/collections/ethereum/0xfa511d5c4cce10321e6e86793cc083213c36278e"
-          target="_blank"
-        >
+        <a class="button-anchor" href={NAV_ROUTES.MAGIC_EDEN} target="_blank">
           <img src="/icons/magiceden.png" alt="Magic Eden marketplace" />
           Magic Eden
         </a>
         <a
           class="button-anchor"
-          href="https://opensea.io/item/ethereum/0xfa511d5c4cce10321e6e86793cc083213c36278e/{potential.id}"
+          href="{NAV_ROUTES.OPENSEA}/{potential.id}"
           target="_blank"
         >
           <img src="/icons/opensea.png" alt="OpenSea marketplace" />
@@ -107,7 +104,7 @@
       <span class="flex-row gap-8">
         <a
           class="button-anchor purple-btn"
-          href="https://singular.app/collectibles/base/0x111e0861baa9d479cff55d542e5a9e4205012bbe/{potential.id}"
+          href="{NAV_ROUTES.SINGULAR}/{potential.id}"
           target="_blank"
         >
           Customize

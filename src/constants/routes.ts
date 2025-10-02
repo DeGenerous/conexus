@@ -1,6 +1,11 @@
 export const NAV_ROUTES = {
-  CONEXUS: 'https://conexus.ink',
+  // General links
+  MEDIA: 'https://media.dgrslabs.ink',
+  LOGO: 'https://media.dgrslabs.ink/assets/logo.png',
+  CONEXUS: 'https://conexus.degenerousdao.com',
   WEBSITE: 'https://dgrslabs.ink/',
+  GOVERNANCE_HUB: 'https://governance.dgrslabs.ink',
+  LOREDEX: 'https://loredex.dgrslabs.ink',
   TERMS: 'https://dgrslabs.ink/terms-of-service',
   SUPPORT: 'mailto:support@dgrslabs.ink',
   WIKI: 'https://degenerousdao.gitbook.io/wiki',
@@ -9,15 +14,15 @@ export const NAV_ROUTES = {
     `https://twitter.com/intent/tweet?text=${encodedMessage}&url=${encodedURI}`,
   FACEBOOK: (encodedMessage: string, encodedURI: string) =>
     `https://www.facebook.com/sharer/sharer.php?u=${encodedURI}&quote=${encodedMessage}`,
-
-  // TODO: Deprecate these routes
-  HOME: '/dashboard',
-  DREAM: '/dashboard/dream',
-  CREATE: '/dashboard/dream/create',
-  MANAGE: '/dashboard/dream/manage',
-  EXPLORE: (topic_id: string) => `/dashboard/dream/manage/${topic_id}`,
-  DEMO: '/dashboard/dream/manage/demo',
-
+  MAGIC_EDEN: 'https://magiceden.io/collections/ethereum/potentials-eth',
+  OPENSEA: 'https://opensea.io/collection/potentials-eth',
+  SINGULAR:
+    'https://singular.app/collectibles/base/0x111e0861baa9d479cff55d542e5a9e4205012bbe',
+  // CoNexus routes
+  HOME: '/',
+  DASHBOARD: '/dashboard',
+  PROFILE: '/dashboard#/profile/overview',
+  BOOKMARKS: '/dashboard#/profile/bookmarks',
   FAQ: '/learn/faq',
   BLOG: '/learn/blog',
 };

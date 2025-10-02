@@ -8,6 +8,7 @@
     TTL_SHORT,
   } from '@constants/cache';
   import { showProfile } from '@stores/modal.svelte';
+  import { NAV_ROUTES } from '@constants/routes';
 
   import Ranks from '@components/dashboard/omnihub/Ranks.svelte';
   import FilterSVG from '@components/icons/Filter.svelte';
@@ -112,7 +113,7 @@
     <span class="flex-row">
       <a
         class="button-anchor button-glowing"
-        href="https://magiceden.io/collections/ethereum/0xfa511d5c4cce10321e6e86793cc083213c36278e"
+        href={NAV_ROUTES.MAGIC_EDEN}
         target="_blank"
       >
         <img src="/icons/magiceden.png" alt="Magic Eden marketplace" />
@@ -120,7 +121,7 @@
       </a>
       <a
         class="button-anchor button-glowing"
-        href="https://opensea.io/collection/potentials-eth"
+        href={NAV_ROUTES.OPENSEA}
         target="_blank"
       >
         <img src="/icons/opensea.png" alt="OpenSea marketplace" />

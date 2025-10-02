@@ -10,6 +10,7 @@
     draftsManager,
     themeSettings,
   } from '@stores/modal.svelte';
+  import { NAV_ROUTES } from '@constants/routes';
 
   import Drafts from '@components/dashboard/dream-legacy/create/Drafts.svelte';
   import ThemeSettings from '@components/utils/ThemeSettings.svelte';
@@ -42,7 +43,7 @@
         <h4>Terms of Service</h4>
         <p>
           To continue using CoNexus, you must review and accept the updated 
-          <a href="https://dgrslabs.ink/terms-of-service" target="_blank" rel="noopener noreferrer"
+          <a href=${NAV_ROUTES.TERMS} target="_blank" rel="noopener noreferrer"
           >Terms of Service</a
           >.
         </p>

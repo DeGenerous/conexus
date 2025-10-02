@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { NAV_ROUTES } from '@constants/routes';
+
   import DiscordBtn from '@components/icons/Discord.svelte';
 
   let { section_name = '' }: { section_name: string } = $props();
@@ -14,17 +16,14 @@
     {:else}
       <div class="flex-row">
         <h5>Explore more:</h5>
-        <button
-          onclick={() => window.open('https://loredex.dgrslabs.ink/', '_blank')}
-        >
+        <button onclick={() => window.open(NAV_ROUTES.LOREDEX, '_blank')}>
           Loredex
         </button>
       </div>
       <div class="flex-row">
         <h5>Influence the storyline:</h5>
         <button
-          onclick={() =>
-            window.open('https://governance.dgrslabs.ink/', '_blank')}
+          onclick={() => window.open(NAV_ROUTES.GOVERNANCE_HUB, '_blank')}
         >
           Governance Hub
         </button>

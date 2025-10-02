@@ -3,6 +3,7 @@
   import Authentication from '@lib/authentication';
   import { toastStore } from '@stores/toast.svelte';
   import { ClearCache } from '@constants/cache';
+  import { NAV_ROUTES } from '@constants/routes';
 
   import DiscordSVG from '@components/icons/Discord.svelte';
 
@@ -105,7 +106,7 @@
       style={termsAccepted ? '' : 'color: rgba(255, 50, 50, 0.75);'}
     >
       * I have read and agree to the <a
-        href="https://dgrslabs.ink/terms-of-service"
+        href={NAV_ROUTES.TERMS}
         target="_blank"
         style={termsAccepted ? '' : 'color: rgba(255, 50, 50, 0.9);'}
       >

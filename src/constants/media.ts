@@ -1,3 +1,5 @@
+import { NAV_ROUTES } from './routes';
+
 export const blankImage = '/blank.avif';
 
 export const pcBG = '/conexusBG.avif';
@@ -9,7 +11,7 @@ export const serveUrl = (file_id?: string) => {
   return `/api/topic/serve-media/${file_id}`;
 };
 
-export const mediaURL = 'https://media.dgrslabs.ink';
+export const mediaURL = NAV_ROUTES.MEDIA;
 
 export const assetsURL = `${mediaURL}/assets`;
 

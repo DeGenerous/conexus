@@ -20,6 +20,7 @@
   } from '@constants/regexp';
   import { getCurrentUser } from '@utils/route-guard';
   import { SetCache, TERMS_KEY } from '@constants/cache';
+  import { NAV_ROUTES } from '@constants/routes';
 
   import ProfileSVG from '@components/icons/Profile.svelte';
   import DoorSVG from '@components/icons/Door.svelte';
@@ -426,7 +427,7 @@ a11y-no-static-element-interactions-->
               />
               <label for="terms">
                 * I have read and agree to the <a
-                  href="https://dgrslabs.ink/terms-of-service"
+                  href={NAV_ROUTES.TERMS}
                   target="_blank"
                 >
                   Terms of Service</a

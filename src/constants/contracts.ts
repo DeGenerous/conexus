@@ -1,8 +1,10 @@
+import { NAV_ROUTES } from './routes';
+
 const contracts: Map<SupportedContracts, { name: string; link?: string }> =
   new Map();
 contracts.set('Potential', {
   name: 'Potential',
-  link: 'https://magiceden.io/collections/ethereum/0xfa511d5c4cce10321e6e86793cc083213c36278e',
+  link: NAV_ROUTES.MAGIC_EDEN,
 });
 contracts.set('Apes', {
   name: 'GLMR Ape',

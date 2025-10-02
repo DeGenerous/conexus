@@ -3,6 +3,7 @@ import { ClientRouter } from 'astro:transitions';
 
 import { SEO } from 'astro-seo';
 import { seoConfig } from '../../utils/seoConfig';
+import { NAV_ROUTES } from '@constants/routes';
 
 import ToastContainer from '@components/utils/ToastContainer.svelte';
 import Modal from '@components/utils/Modal.svelte';
@@ -42,7 +43,7 @@ const {
   imageWidth = 480,
   imageHeight = 480,
   imageType = 'image/jpeg',
-  url = 'https://conexus.degenerousdao.com/',
+  url = NAV_ROUTES.CONEXUS,
   type = 'website',
 
   ogTitle,

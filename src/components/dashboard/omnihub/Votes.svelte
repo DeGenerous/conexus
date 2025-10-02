@@ -5,6 +5,7 @@
     loadingStatus,
   } from '@stores/omnihub.svelte';
   import { getVotingHistory } from '@utils/ds-episodes';
+  import { NAV_ROUTES } from '@constants/routes';
 
   import LoadingSVG from '@components/icons/Loading.svelte';
 </script>
@@ -28,7 +29,7 @@
         </h5>
         <a
           class="button-anchor button-glowing blur"
-          href="https://governance.degenerousdao.com/"
+          href={NAV_ROUTES.GOVERNANCE_HUB}
           target="_blank"
         >
           Enter the Governance Hub

@@ -1,7 +1,7 @@
 import {
   USER_KEY,
   TTL_HOUR,
-  REFERRAL_CODES_KEY,
+  REFERRAL_CODE_KEY,
   TTL_SHORT,
   SUBSCRIPTION_STATUS_KEY,
   ClearCache,
@@ -10,7 +10,6 @@ import {
 } from '@constants/cache';
 import { api_error } from '@errors/index';
 import AccountAPI from '@service/v2/account';
-import { authenticated, referralCodes } from '@stores/account.svelte';
 import { toastStore } from '@stores/toast.svelte';
 
 import NotificationService from './notification';
@@ -22,31 +21,6 @@ class Account {
   constructor() {
     this.api = new AccountAPI(import.meta.env.PUBLIC_BACKEND);
     this.notification = new NotificationService(this.api);
-  }
-
-  /**
-   * Fetch the current user's information.
-   * @param refresh - Whether to refresh the user data from the server.
-   * @returns {Promise<void>}
-   */
-  async me(refresh: boolean = false): Promise<void> {
-    // Try getting user data from localStorage
-    const cachedUser = GetCache<User>(USER_KEY);
-    if (cachedUser) {
-      authenticated.set(cachedUser);
-      return;
-    }
-
-    // If no valid cached user, fetch from API
-    const { message, data } = await this.api.me(refresh);
-
-    if (!data) {
-      api_error(message, false);
-      return;
-    }
-
-    SetCache(USER_KEY, data, TTL_HOUR);
-    authenticated.set(data);
   }
 
   /**
@@ -73,7 +47,6 @@ class Account {
 
     // Store user data in localStorage with timestamp
     SetCache(USER_KEY, data, TTL_SHORT);
-    authenticated.set(data);
 
     return data;
   }
@@ -165,25 +138,24 @@ class Account {
 
   /**
    * Get the user's referral codes.
-   * @returns {Promise<void>}
+   * @returns {Promise<ReferralCode | null>}
    */
-  async getReferralCode(): Promise<void> {
-    const cachedData = GetCache<ReferralCode>(REFERRAL_CODES_KEY);
+  async getReferralCode(): Promise<ReferralCode | null> {
+    const cachedData = GetCache<ReferralCode>(REFERRAL_CODE_KEY);
     if (cachedData) {
-      referralCodes.set(cachedData);
-      return;
+      return cachedData;
     }
 
     // Fetch fresh data
     const { message, data } = await this.api.getReferralCode();
 
     if (!data) {
-      api_error(message);
-      return;
+      // api_error(message);
+      return null;
     }
 
-    referralCodes.set(data);
-    SetCache(REFERRAL_CODES_KEY, data, TTL_SHORT);
+    SetCache(REFERRAL_CODE_KEY, data, TTL_SHORT);
+    return data;
   }
 
   /**

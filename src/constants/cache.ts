@@ -73,7 +73,7 @@ export const CATEGORY_TOPICS_KEY = (category: string): string =>
 
 // Cache subscription status & referral codes
 export const SUBSCRIPTION_STATUS_KEY = 'subscription_status';
-export const REFERRAL_CODES_KEY = 'referral_codes';
+export const REFERRAL_CODE_KEY = 'referral_code';
 
 // Cache OmniHub data
 export const POTENTIALS_KEY = 'potentials';
@@ -84,7 +84,7 @@ export const SELECTED_POTENTIAL_KEY = 'selected_potential';
 const authKeys = [
   USER_KEY,
   SUBSCRIPTION_STATUS_KEY,
-  REFERRAL_CODES_KEY,
+  REFERRAL_CODE_KEY,
   POTENTIALS_KEY,
   SELECTED_POTENTIAL_KEY,
 ];

@@ -2,7 +2,6 @@
   import { onMount } from 'svelte';
 
   import Account from '@lib/account';
-  import { referralCodes } from '@stores/account.svelte';
   import { showProfile } from '@stores/modal.svelte';
   import openModal from '@stores/modal.svelte';
   import { referralActivationNotice, refreshDataModal } from '@constants/modal';

@@ -417,6 +417,10 @@
   transform: none;
   filter: none;
 
+  h5 {
+    white-space: nowrap;
+  }
+
   & > p {
     width: 100%;
     padding: 0.5rem;

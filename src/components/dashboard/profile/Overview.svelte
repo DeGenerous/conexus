@@ -18,7 +18,7 @@
   import openModal from '@stores/modal.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';
   import { getCurrentUser } from '@utils/route-guard';
-  import { refreshDataModal } from '@constants/modal';
+  import { referralActivationNotice, refreshDataModal } from '@constants/modal';
   import { toastStore } from '@stores/toast.svelte';
   import { ClearCache } from '@constants/cache';
 
@@ -27,6 +27,7 @@
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
   import ResetSVG from '@components/icons/Reset.svelte';
+  import CopySVG from '@components/icons/Copy.svelte';
   import WalletConnect from '@components/web3/WalletConnect.svelte';
 
   // SIGNED IN USER PROFILE
@@ -75,6 +76,14 @@
     openModal(removeWallethModal, 'Remove', () =>
       console.log('Remove wallet ID: ' + id),
     );
+
+  const copyRefCode = (code: string) => {
+    let codeBtn = document.getElementById(code) as HTMLButtonElement;
+    navigator.clipboard.writeText(code);
+    codeBtn.classList.add('copied'); // animation
+    setTimeout(() => codeBtn.classList.remove('copied'), 600);
+    toastStore.show('Copied to clipboard: ' + code);
+  };
 </script>
 
 {#if user}
@@ -233,41 +242,84 @@
       <hr />
     {/if}
 
-    {#key user}
-      <div class="web3-wallets flex">
-        {#if user.wallets && user.wallets.length >= 1}
-          <h4>Connected Addresses</h4>
-          <ul class="flex-row">
-            {#each user.wallets.filter((address) => !address.faux) as { id, wallet }, index}
-              <span class="wallet small-tile">
-                <h4>{index + 1}</h4>
-                <p class="pad-8 round-8 transparent-dark-bg soft-white-txt">
-                  {wallet.slice(0, 6) + '...' + wallet.slice(-4)}
-                </p>
-                <CloseSVG
-                  onclick={() => openRemoveWalletModal(id!)}
-                  voidBtn={true}
-                />
-              </span>
-            {/each}
-          </ul>
-          {#if user?.email && user?.first_name}
-            <WalletConnect linking={true} title={'Add another address'} />
-          {/if}
-
-          {#if $accountError && $accountError.selectMainWallet}
-            <p class="validation">{$accountError.selectMainWallet}</p>
-          {/if}
-        {:else}
-          <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
+    <div class="web3-wallets flex">
+      {#if user.wallets && user.wallets.length >= 1}
+        <h4>Connected Addresses</h4>
+        <ul class="flex-row">
+          {#each user.wallets.filter((address) => !address.faux) as { id, wallet }, index}
+            <span class="wallet small-tile">
+              <h4>{index + 1}</h4>
+              <p class="pad-8 round-8 transparent-dark-bg soft-white-txt">
+                {wallet.slice(0, 6) + '...' + wallet.slice(-4)}
+              </p>
+              <CloseSVG
+                onclick={() => openRemoveWalletModal(id!)}
+                voidBtn={true}
+              />
+            </span>
+          {/each}
+        </ul>
+        {#if user?.email && user?.first_name}
+          <WalletConnect linking={true} title={'Add another address'} />
         {/if}
-      </div>
-      
-    {/key}
+
+        {#if $accountError && $accountError.selectMainWallet}
+          <p class="validation">{$accountError.selectMainWallet}</p>
+        {/if}
+      {:else}
+        <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
+      {/if}
+    </div>
 
     <hr />
 
     {#if user.email_confirmed}
+      {#await account.getReferralCode() then refCode}
+        {#if refCode !== null}
+          {#if refCode.usage_count >= refCode.max_usage}
+            <h4 class="text-glowing">
+              🏆 You've unlocked all {refCode.max_usage} referrals 🚀
+            </h4>
+            <p class="text-glowing">
+              Your early support won't go unnoticed. Stay tuned for updates.
+            </p>
+          {:else}
+            <h4>Your referrals: {refCode.usage_count}</h4>
+            <button
+              class="void-btn small-green-tile"
+              id={refCode.code}
+              onclick={() => copyRefCode(refCode.code)}
+              aria-label="Copy code {refCode.code}"
+            >
+              <h5>Referral code:</h5>
+              <p>{refCode.code}</p>
+              <CopySVG data={refCode.code} />
+            </button>
+          {/if}
+        {:else}
+          <button
+            class="green-btn"
+            onclick={() => {
+              if (!user?.referred) {
+                openModal(
+                  referralActivationNotice,
+                  'Proceed',
+                  () => (window.location.href = '/referral'),
+                );
+                return;
+              }
+              account
+                .generateReferralCode()
+                .then(() => window.location.reload());
+            }}
+          >
+            Get referral code
+          </button>
+        {/if}
+
+        <hr />
+      {/await}
+
       {#if subscribedToNewsletter}
         <button
           class="red-btn"

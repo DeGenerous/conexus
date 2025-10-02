@@ -1,15 +1,11 @@
 <script lang="ts">
-  let {
-    copySvgFocus = null,
-    data = true,
-  }: {
-    copySvgFocus: Nullable<string | boolean>;
-    data: string | boolean;
-  } = $props();
+  let { data = true }: { data: string | boolean } = $props();
+
+  let svgFocus = $state<boolean>(false);
 </script>
 
 <svg
-  class:copy-hover={copySvgFocus === data}
+  class:copy-hover={svgFocus}
   xmlns="http://www.w3.org/2000/svg"
   viewBox="-100 -100 200 200"
   stroke-width="15"

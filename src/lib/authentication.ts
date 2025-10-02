@@ -1,7 +1,7 @@
 import { USER_KEY, TTL_HOUR, SetCache, ClearCache } from '@constants/cache';
 import { api_error } from '@errors/index';
 import AuthenticationAPI from '@service/v2/authentication';
-import { authenticated, accountError } from '@stores/account.svelte';
+import { accountError } from '@stores/account.svelte';
 import { toastStore } from '@stores/toast.svelte';
 
 /**
@@ -63,7 +63,7 @@ export default class Authentication {
     }
 
     SetCache(USER_KEY, data, TTL_HOUR);
-    authenticated.set(data);
+    window.location.reload();
   }
 
   /**

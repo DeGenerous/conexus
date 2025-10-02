@@ -31,7 +31,6 @@
   import LockSVG from '@components/icons/Lock.svelte';
   import PlaySVG from '@components/icons/Play.svelte';
 
-
   export let section_name: string;
   export let topic_id: string;
   export let topic_name: string;
@@ -56,9 +55,19 @@
   };
 
   let activeTopic: Nullable<TopicPage> = null;
+  let unfinishedStories: UnfinishedStory[] = [];
 
   let videoError = false;
   let imageError = false;
+
+  const fetchTopicData = async (
+    user_id: string | undefined,
+  ): Promise<TopicPage | null> => {
+    const topic = await view.getTopicPage(topic_id, user_id);
+    activeTopic = topic;
+    unfinishedStories = topic?.unfinished_stories || [];
+    return topic;
+  };
 
   const restartGame = () => {
     game.background_image = null;
@@ -92,9 +101,7 @@
           name: name,
           link: `/s/${section_name}/${id}?title=${name}`,
         })),
-        index: storedTopics.findIndex(
-          (topic) => topic.name == topic_name,
-        ),
+        index: storedTopics.findIndex((topic) => topic.name == topic_name),
       });
     }
 
@@ -102,13 +109,12 @@
   });
 
   // CONTINUE SHAPING section
-
-  let deletedStories: string[] = []; // temp storage before reload for immediate removal
-  let noUnfinishedStoriesLeft: boolean = false;
-
   async function DeleteStory(story_id: any) {
     await conexusGame.delete(story_id);
-    deletedStories = deletedStories.filter((id) => id !== story_id);
+    unfinishedStories = unfinishedStories.filter(
+      ({ story_id: id }) => id !== story_id,
+    );
+    console.log(unfinishedStories);
   }
 
   // Calculate story creation date to show on CONTINUE button
@@ -136,7 +142,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $story === null}
-  {#await view.getTopicPage(topic_id, userID)}
+  {#await fetchTopicData(userID)}
     <div class="story-wrapper flex">
       <section class="story container">
         <span class="fake-img loading-animation round-8"></span>
@@ -228,7 +234,6 @@
                         );
                         return;
                       }
-                      activeTopic = topic;
                       topic &&
                         conexusGame.start(
                           topic.id,
@@ -250,51 +255,41 @@
           </div>
         </section>
 
-        {#if topic.unfinished_stories && topic.unfinished_stories.length > 0 && !noUnfinishedStoriesLeft}
+        {#if unfinishedStories.length}
           <section
             class="unfinished-stories transparent-container vert-scrollbar"
           >
             <h5 class="text-glowing">
-              Continue Shaping: {topic.unfinished_stories.length -
-                deletedStories.length}
+              Continue Shaping: {unfinishedStories.length}
             </h5>
-            {#each topic.unfinished_stories as continuable}
-              {#if !deletedStories.includes(continuable.story_id)}
-                <div class="small-tile" role="button" tabindex="0">
-                  <DeleteSVG
-                    disabled={game.loading}
-                    onclick={() => {
-                      openModal(
-                        deleteUnfinishedModal,
-                        `Delete story: ${topic_name}`,
-                        () => DeleteStory(continuable.story_id),
-                      );
-                      if (
-                        topic.unfinished_stories?.length ===
-                        deletedStories.length
-                      ) {
-                        noUnfinishedStoriesLeft = true;
-                      }
-                    }}
-                  />
-                  <span class="flex">
-                    <p>{convertDate(continuable.created_at)}</p>
-                    <p class="story-id">
-                      {continuable.story_id.split('-')[0]}
-                    </p>
-                  </span>
-                  <PlaySVG
-                    disabled={game.loading || !termsAccepted}
-                    onclick={() => {
-                      activeTopic = topic;
-                      conexusGame.continue(
-                        { topic_id: topic.id, story_id: continuable.story_id },
-                        handleSetMedia,
-                      );
-                    }}
-                  />
-                </div>
-              {/if}
+            {#each unfinishedStories as continuable}
+              <div class="small-tile" role="button" tabindex="0">
+                <DeleteSVG
+                  disabled={game.loading}
+                  onclick={() => {
+                    openModal(
+                      deleteUnfinishedModal,
+                      `Delete story: ${topic_name}`,
+                      () => DeleteStory(continuable.story_id),
+                    );
+                  }}
+                />
+                <span class="flex">
+                  <p>{convertDate(continuable.created_at)}</p>
+                  <p class="story-id">
+                    {continuable.story_id.split('-')[0]}
+                  </p>
+                </span>
+                <PlaySVG
+                  disabled={game.loading || !termsAccepted}
+                  onclick={() => {
+                    conexusGame.continue(
+                      { topic_id: topic.id, story_id: continuable.story_id },
+                      handleSetMedia,
+                    );
+                  }}
+                />
+              </div>
             {/each}
           </section>
         {/if}
@@ -488,7 +483,7 @@
 
         .buttons {
           width: 100%;
-          
+
           button {
             width: 100%;
           }
@@ -497,7 +492,7 @@
         @include respond-up(small-desktop) {
           flex-direction: row;
           justify-content: space-between;
-          
+
           .genres {
             width: auto;
 

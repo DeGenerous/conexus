@@ -18,11 +18,15 @@
   import openModal from '@stores/modal.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';
   import { getCurrentUser } from '@utils/route-guard';
+  import { refreshDataModal } from '@constants/modal';
+  import { toastStore } from '@stores/toast.svelte';
+  import { ClearCache } from '@constants/cache';
 
   import DoorSVG from '@components/icons/Door.svelte';
   import EyeSVG from '@components/icons/Eye.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
+  import ResetSVG from '@components/icons/Reset.svelte';
   import WalletConnect from '@components/web3/WalletConnect.svelte';
 
   // SIGNED IN USER PROFILE
@@ -30,18 +34,29 @@
   const account: Account = new Account();
   const authentication: Authentication = new Authentication();
 
-  let user: Nullable<User> = null;
+  let user = $state<Nullable<User>>(null);
+  let subscribedToNewsletter = $state<boolean>(false);
 
   onMount(async () => {
     user = await getCurrentUser();
     console.log(user);
+
+    if (user && user.email_confirmed) {
+      // account.getReferralCode();
+      checkSubscription();
+    }
   });
 
+  const checkSubscription = async () => {
+    if (!user?.email) return;
+    subscribedToNewsletter = await account.subscriptionStatus(user?.email);
+  };
+
   // Change password
-  let editingPassword: boolean = false;
-  let editOldPassword: string = '';
-  let editPassword: string = '';
-  let editPasswordConfirm: string = '';
+  let editingPassword = $state<boolean>(false);
+  let editOldPassword = $state<string>('');
+  let editPassword = $state<string>('');
+  let editPasswordConfirm = $state<string>('');
 
   const saveChangedPassword = async (e: Event) => {
     e.preventDefault();
@@ -196,7 +211,7 @@
               <button
                 class="red-btn"
                 type="button"
-                on:click={() => (editingPassword = false)}
+                onclick={() => (editingPassword = false)}
               >
                 Cancel
               </button>
@@ -207,7 +222,7 @@
                   editPassword !== editPasswordConfirm}
               />
             {:else}
-              <button type="button" on:click={() => (editingPassword = true)}>
+              <button type="button" onclick={() => (editingPassword = true)}>
                 Change password
               </button>
             {/if}
@@ -247,7 +262,50 @@
           <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
         {/if}
       </div>
+      
     {/key}
+
+    <hr />
+
+    {#if user.email_confirmed}
+      {#if subscribedToNewsletter}
+        <button
+          class="red-btn"
+          onclick={() => {
+            account
+              .unsubscribeNewsletter(user?.email!)
+              .then(() => checkSubscription());
+          }}
+        >
+          Unsubscribe from Newsletter
+        </button>
+      {:else}
+        <button
+          class="green-btn"
+          onclick={() => {
+            account
+              .subscribeNewsletter(user?.email!)
+              .then(() => checkSubscription());
+          }}
+        >
+          Subscribe to Newsletter
+        </button>
+      {/if}
+    {/if}
+
+    <ResetSVG
+      onclick={() => {
+        openModal(refreshDataModal, 'Refresh', () => {
+          ClearCache('full');
+          toastStore.show(
+            'The cache has been reset. Fresh data will be fetched when needed.',
+            'info',
+          );
+          account.getReferralCode();
+        });
+      }}
+      text="Refresh Data"
+    />
   </section>
 
   <!-- TODO: Add newsletter, refresh data button, referral codes (?) -->

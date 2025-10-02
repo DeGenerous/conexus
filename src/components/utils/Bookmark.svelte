@@ -131,7 +131,7 @@
   });
 </script>
 
-<span class="bookmark-container">
+<span class="bookmark-container flex">
   <button
     class="bookmark void-btn flex"
     aria-label="Bookmark"
@@ -198,8 +198,11 @@
 
   .bookmark-container {
     position: relative;
-    display: inline-block;
-    margin-left: 0.5rem;
+    width: 100%;
+
+    @include respond-up(tablet) {
+      width: auto;
+    }
 
     .bookmark {
       width: 2rem;

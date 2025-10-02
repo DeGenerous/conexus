@@ -98,8 +98,6 @@
       });
     }
 
-    console.log(storedTopics);
-
     termsAccepted = GetCache<boolean>(TERMS_KEY) || false; // temp for terms modal
   });
 
@@ -440,13 +438,23 @@
   @use '/src/styles/mixins' as *;
 
   .story-wrapper {
+    width: 100vw;
+    padding-inline: 1.5rem;
+
+    @include respond-up(full-hd) {
+      flex-direction: row;
+    }
+
     .story {
-      max-width: 50rem;
+      width: 100%;
+      max-width: 68rem;
+      margin-inline: unset;
 
       img,
       .fake-img {
         width: 100%;
         height: 25rem;
+        object-fit: cover;
         @include cyan(0.1);
       }
 
@@ -462,17 +470,9 @@
       div {
         width: 100%;
 
-        span {
-          width: 100%;
-        }
-
-        button {
-          width: 100%;
-        }
-
         .genres {
+          width: 100%;
           @include cyan(0.1);
-          @include font(small);
 
           p {
             padding: 0;
@@ -481,25 +481,33 @@
           }
 
           &.default-genres {
-            min-width: 20rem;
+            width: 100%;
             min-height: 2.2rem;
           }
         }
-      }
 
-      @include respond-up(tablet) {
-        div {
-          flex-flow: row wrap;
+        .buttons {
+          width: 100%;
+          
+          button {
+            width: 100%;
+          }
+        }
+
+        @include respond-up(small-desktop) {
+          flex-direction: row;
           justify-content: space-between;
-          flex: none;
-
-          span {
-            max-width: 100%;
+          
+          .genres {
             width: auto;
+
+            &.default-genres {
+              width: 10rem;
+            }
           }
 
           .buttons {
-            justify-content: flex-end;
+            width: auto;
             flex-direction: row-reverse;
             flex: none;
 
@@ -509,15 +517,14 @@
           }
         }
       }
-
-      @include respond-up(small-desktop) {
-        max-width: 68rem;
-        width: auto;
-      }
     }
 
     .unfinished-stories {
+      width: 100%;
+      max-width: 68rem;
+      margin-inline: unset;
       overflow-x: hidden !important;
+      flex: none;
 
       h5 {
         width: 100%;
@@ -549,36 +556,21 @@
 
       @include respond-up(tablet) {
         flex-flow: row wrap;
-        width: 90%;
-        max-width: 50rem;
 
         div {
           width: auto;
         }
       }
 
-      @include respond-up(small-desktop) {
-        max-width: 68rem;
-      }
-    }
-
-    @include respond-up(large-desktop) {
-      flex-direction: row;
-
-      .story {
-        margin-inline: unset;
-      }
-
-      .unfinished-stories {
-        margin-inline: unset;
+      @include respond-up(full-hd) {
         align-items: flex-start;
         width: 18rem;
         max-height: 30.5rem;
         overflow: auto;
 
-        @include respond-up(full-hd) {
-          width: 36rem;
-        }
+        // @include respond-up(full-hd) {
+        //   width: 36rem;
+        // }
 
         // @include respond-up(quad-hd) {
         //   width: 52rem;
@@ -633,9 +625,16 @@
   }
 
   .description {
-    width: clamp(250px, 90%, 90rem);
+    width: calc(100% - 3rem);
+    max-width: 68rem;
+
+    @include respond-up(full-hd) {
+      width: calc(100% - 200px);
+      max-width: 87.5rem;
+    }
   }
 
+  // TODO: Check all this styling
   .gate-link {
     padding: 0.25rem 0.5rem;
     border-radius: 0.5rem;

@@ -117,15 +117,68 @@ ol:not(.default-ol) {
 
 /* GENERAL STYLING */
 
-a {
-  color: rgba(51, 226, 230, 0.9);
-  text-decoration: none;
+// a {
+//   color: rgba(51, 226, 230, 0.9);
+//   text-decoration: none;
 
-  &:hover,
-  &:active,
-  &:focus {
-    color: $cyan;
-    text-decoration: underline;
+//   &:hover,
+//   &:active,
+//   &:focus {
+//     color: $cyan;
+//     text-decoration: underline;
+//   }
+// }
+
+a {
+  position: relative;
+  text-decoration: none;
+  @include cyan(0.9, text);
+
+  // Customizable underline variables
+  $u-thickness: 2px;
+  $u-offset: 0.1em; // distance below text
+
+  &:not(.nohover-link, .button-anchor) {
+    white-space: nowrap; // prevent line breaks
+  }
+
+  &:not(.nohover-link, .button-anchor)::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(-1 * $u-offset);
+    height: $u-thickness;
+    background: currentColor;
+
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.6s ease-in-out;
+    pointer-events: none;
+  }
+
+  &:not(.nohover-link, .button-anchor):hover::after,
+  &:not(.nohover-link, .button-anchor):focus-visible::after {
+    transform: scaleX(1);
+    @include cyan(1, text);
+    // transform-origin: left; // expand from left
+  }
+
+  // When mouse leaves: shrink to the right
+  &:not(.nohover-link, .button-anchor):not(:hover)::after {
+    transform: scaleX(0);
+    // transform-origin: right;
+  }
+}
+
+.tile,
+.menu-tile,
+.navigation-tab {
+  &:not(.nohover-link, .button-anchor)::after {
+    bottom: unset;
+    height: unset;
+    background: unset;
+    transform: unset;
   }
 }
 

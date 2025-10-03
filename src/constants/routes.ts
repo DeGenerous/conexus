@@ -25,4 +25,6 @@ export const NAV_ROUTES = {
   BOOKMARKS: '/dashboard#/profile/bookmarks',
   FAQ: '/learn/faq',
   BLOG: '/learn/blog',
+  // Temp
+  EXPLORE: (topic_id: string) => `/dashboard/dream/manage/${topic_id}`,
 };

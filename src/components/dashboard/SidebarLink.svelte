@@ -97,7 +97,8 @@
       <!-- Standalone -->
       <a
         href={item.path}
-        class="standalone {activePath === item.path ? 'selected' : ''}"
+        class="standalone nohover-link"
+        class:selected={activePath === item.path}
         use:link
         tabindex="0"
         title={item.name}

@@ -112,14 +112,6 @@ type TopicNFTGate = {
   created_at?: Date;
 };
 
-type ContractGate = {
-  name?: string;
-  link?: string;
-};
-
-type TopicNFTGateWithContract = {} & TopicNFTGate & ContractGate;
-interface TopicNFTGateWithContract extends TopicNFTGate, ContractGate {}
-
 /* V2 */
 
 type TopicRequest = {

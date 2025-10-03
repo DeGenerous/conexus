@@ -1,15 +1,6 @@
 /// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
 
-type TopicInCategoryInSection = {
-  id: number;
-  name: string;
-  order: number;
-  available: boolean;
-  genres?: string;
-  category_id?: number;
-};
-
 type TopicInSection = {
   id: number;
   name: string;

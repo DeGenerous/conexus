@@ -54,15 +54,6 @@ type ReferralSignUp = {
   newsletter: boolean;
 };
 
-type Available = {
-  available: number;
-  used: number;
-  bonus: number;
-  continuable?: ContinuableStory[];
-  categories?: Category[];
-  has_ape?: boolean;
-};
-
 type SubscriptionStatus = {
   is_active: boolean;
   subscribed_at: {

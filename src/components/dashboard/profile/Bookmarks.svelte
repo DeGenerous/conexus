@@ -5,6 +5,8 @@
   import Account from '@lib/account';
   import { toastStore } from '@stores/toast.svelte';
 
+  import CloseSVG from '@components/icons/Close.svelte';
+
   const account: Account = new Account();
 
   // Derive types from Account methods so we don't guess import paths
@@ -50,6 +52,11 @@
     await account.createBookmarkFolder(name);
     newFolderName = '';
     await loadFolders();
+  }
+
+  async function removeFolder(folder: BookmarkFolder) {
+    console.log('Removing folder:');
+    console.log(folder);
   }
 
   // async function addTag() {
@@ -141,21 +148,25 @@
   });
 </script>
 
-<ul class="flex-row flex-wrap">
-  {#each folders as folder}
-    <li>
-      <button
-        class="void-btn"
-        type="button"
-        class:small-rose-tile={folder.id !== selectedFolder}
-        class:small-green-tile={folder.id === selectedFolder}
-        onclick={() => openFolder(folder.id, folder.name)}
-      >
-        <p>{folder.name}</p>
-      </button>
-    </li>
-  {/each}
-</ul>
+<div class="container">
+  <h4>Bookmark Folders: {folders.length}</h4>
+  <ul class="flex-row flex-wrap">
+    {#each folders as folder}
+      <li>
+        <button
+          class="void-btn"
+          type="button"
+          class:small-rose-tile={folder.id !== selectedFolder}
+          class:small-green-tile={folder.id === selectedFolder}
+          onclick={() => openFolder(folder.id, folder.name)}
+        >
+          <p>{folder.name}</p>
+          <CloseSVG onclick={() => removeFolder(folder)} voidBtn={true} dark={true} />
+        </button>
+      </li>
+    {/each}
+  </ul>
+</div>
 
 <!-- <h2>Tags</h2>
 <ul>
@@ -200,6 +211,9 @@
           width="1024"
         />
         <h5>{topic.name}</h5>
+        <button class="red-btn" onclick={() => removeBookmark(topic.id)}>
+          Remove
+        </button>
       </a>
       <!-- <li>
         <div class="card-head">
@@ -276,6 +290,7 @@
 
     @include respond-up(small-desktop) {
       width: auto;
+      min-width: 42rem;
     }
   }
 </style>

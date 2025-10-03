@@ -3,6 +3,11 @@ export const removeWallethModal = `
   <h5>This action is irreversible.</h5>
 `;
 
+export const removeBookmarkFolder = `
+  <h4>Are you sure you want to delete this folder?</h4>
+  <h5>This action is irreversible.</h5>
+`;
+
 export const deleteStoryModal = `
   <h4>Are you sure you want to delete this story?</h4>
   <h5>This action is irreversible. You will lose it forever!</h5>

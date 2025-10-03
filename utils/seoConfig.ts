@@ -21,7 +21,7 @@ export const seoConfig = {
   locale: 'en_US', // Change this to your website's locale.
   twitter: {
     card: 'summary_large_image',
-    site: '@degenerousdao',
+    site: '@dgrs_labs',
     creator: '@Maxi_maximalist',
   },
 };

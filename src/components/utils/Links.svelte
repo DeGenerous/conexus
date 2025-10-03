@@ -16,17 +16,19 @@
     {:else}
       <div class="flex-row">
         <h5>Explore more:</h5>
-        <button onclick={() => window.open(NAV_ROUTES.LOREDEX, '_blank')}>
+        <a class="button-anchor" href={NAV_ROUTES.LOREDEX} target="_blank">
           Loredex
-        </button>
+        </a>
       </div>
       <div class="flex-row">
         <h5>Influence the storyline:</h5>
-        <button
-          onclick={() => window.open(NAV_ROUTES.GOVERNANCE_HUB, '_blank')}
+        <a
+          class="button-anchor"
+          href={NAV_ROUTES.GOVERNANCE_HUB}
+          target="_blank"
         >
           Governance Hub
-        </button>
+        </a>
       </div>
     {/if}
   </section>

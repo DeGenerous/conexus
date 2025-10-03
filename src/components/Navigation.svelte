@@ -343,12 +343,7 @@
   .video-wrapper {
     position: relative;
     width: clamp(250px, 95%, 70rem);
-    margin-block: 1rem;
     padding: 0;
-
-    @include respond-up(small-desktop) {
-      margin-block: 1rem 2rem;
-    }
 
     video {
       width: 100%;

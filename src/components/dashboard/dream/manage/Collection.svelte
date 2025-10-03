@@ -265,7 +265,7 @@
     }
   }
 
-  @media (max-width: 768px) {
+  @include mobile-only {
     .collection-container {
       gap: 1rem;
       padding: 0.5rem;

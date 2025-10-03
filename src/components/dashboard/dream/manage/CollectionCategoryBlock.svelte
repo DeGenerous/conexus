@@ -381,7 +381,7 @@
     }
   }
 
-  @media (max-width: 768px) {
+  @include mobile-only {
     .category li {
       min-width: 150px;
     }

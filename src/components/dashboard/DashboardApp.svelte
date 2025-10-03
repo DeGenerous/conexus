@@ -54,7 +54,8 @@
     display: grid;
     grid-template-columns: 1fr;
     width: 100vw;
-    min-height: calc(100dvh - 4rem);
+    min-height: 100dvh;
+    padding-block: 5rem;
     background-color: rgba(0, 0, 0, 0.25);
 
     .placeholder {
@@ -69,7 +70,7 @@
 
     @include respond-up(small-desktop) {
       grid-template-columns: 320px minmax(0, 1fr);
-      min-height: calc(100dvh - 4.5rem);
+      padding-block: 6rem 1.5rem;
 
       .placeholder {
         display: block;
@@ -78,10 +79,6 @@
   }
 
   :global(html) {
-    padding-block: 0 4rem;
-
-    @include respond-up(small-desktop) {
-      padding-block: 4.5rem 0;
-    }
+    padding-block: 0;
   }
 </style>

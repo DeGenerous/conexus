@@ -2,7 +2,9 @@
   import { NAV_ROUTES } from '@constants/routes';
 </script>
 
-<h1>Welcome to the Dashboard</h1>
+<h2>Welcome to the Dashboard</h2>
+
+<h5>Your unfinished stories will be there</h5>
 
 <footer class="flex">
   <hr />

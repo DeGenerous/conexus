@@ -4,6 +4,8 @@
   import { blankImage, serveUrl } from '@constants/media';
   import Account from '@lib/account';
   import { toastStore } from '@stores/toast.svelte';
+  import openModal from '@stores/modal.svelte';
+  import { removeBookmarkFolder } from '@constants/modal';
 
   import CloseSVG from '@components/icons/Close.svelte';
 
@@ -55,8 +57,10 @@
   }
 
   async function removeFolder(folder: BookmarkFolder) {
-    console.log('Removing folder:');
-    console.log(folder);
+    openModal(removeBookmarkFolder, 'Delete', () => {
+      console.log('Removing folder:');
+      console.log(folder);
+    });
   }
 
   // async function addTag() {
@@ -161,7 +165,11 @@
           onclick={() => openFolder(folder.id, folder.name)}
         >
           <p>{folder.name}</p>
-          <CloseSVG onclick={() => removeFolder(folder)} voidBtn={true} dark={true} />
+          <CloseSVG
+            onclick={() => removeFolder(folder)}
+            voidBtn={true}
+            dark={true}
+          />
         </button>
       </li>
     {/each}
@@ -189,7 +197,7 @@
 
 <div class="tiles-collection">
   {#if topics.length === 0}
-    <h5 class="empty-title flex">
+    <h5 class="empty-title flex text-glowing">
       {#if openedTitle === 'Topics'}
         Select any folder to see bookmarks
       {:else}
@@ -199,7 +207,7 @@
   {:else}
     {#each topics as topic}
       <a
-        class="rose-tile"
+        class="tile rose-tile"
         href="/c/CommunityPicks/{topic.topic_id}?title={topic.name}"
       >
         <img
@@ -221,10 +229,10 @@
             {topic.name ?? 'Bookmark'}
           </h3>
           <div class="actions"> -->
-            <!-- <button onclick={() => openBookmarkDetails(topic.id)}
+      <!-- <button onclick={() => openBookmarkDetails(topic.id)}
               >Details</button
             > -->
-            <!--<button class="danger" onclick={() => removeBookmark(topic.id)}
+      <!--<button class="danger" onclick={() => removeBookmark(topic.id)}
               >Remove</button
             >
           </div>
@@ -277,7 +285,13 @@
   @use '/src/styles/mixins' as *;
 
   .tiles-collection {
-    width: calc(100% + 3rem);
+    width: 100vw;
+    margin-inline: -1.5rem;
+
+    @include respond-up(small-desktop) {
+      width: calc(100% + 3rem);
+      margin-inline: 0;
+    }
 
     .empty-title {
       width: 100%;

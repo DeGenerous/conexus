@@ -153,6 +153,7 @@
 
   h4 {
     color: inherit;
+    white-space: wrap;
   }
 
   @include respond-up(tablet) {
@@ -237,6 +238,7 @@
   h5 {
     padding-inline: 1rem;
     color: inherit;
+    white-space: wrap;
   }
 
   @include respond-up(tablet) {

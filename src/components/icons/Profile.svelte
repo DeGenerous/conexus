@@ -54,8 +54,14 @@
 
   {#if activeTab !== 'Dashboard' && user}
     <span class="flex transition" class:visible={svgFocus}>
-      <a href="/dashboard#/profile/overview" target="_self">Profile</a>
-      <a href="/dashboard#/profile/bookmarks" target="_self">Bookmarks</a>
+      <a class="nohover-link" href="/dashboard#/profile/overview" target="_self"
+        >Profile</a
+      >
+      <a
+        class="nohover-link"
+        href="/dashboard#/profile/bookmarks"
+        target="_self">Bookmarks</a
+      >
     </span>
   {/if}
 </button>

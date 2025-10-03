@@ -69,7 +69,7 @@ type TopicGates = {
   specific_token_ids?: number[];
 };
 
-type CategoryTopics = {
+type CategoryTopic = {
   id: string;
   name: string;
   sort_order: number;
@@ -84,7 +84,7 @@ type SectionCategoryTopics = {
   name: string;
   sort_order: number;
   topic_count: number;
-  topics?: CategoryTopics[];
+  topics?: CategoryTopic[];
 };
 
 type UnfinishedStory = {

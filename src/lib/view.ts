@@ -104,7 +104,7 @@ export default class AppView {
     category_id: string,
     page: number,
     pageSize: number,
-  ): Promise<CategoryTopics[]> {
+  ): Promise<CategoryTopic[]> {
     const { message, data } = await this.api.categoryTopics(
       category_id,
       page,
@@ -117,7 +117,7 @@ export default class AppView {
     }
 
     const orderedCategoryTopics = data.sort(
-      (a: CategoryTopics, b: CategoryTopics) => {
+      (a: CategoryTopic, b: CategoryTopic) => {
         if (a.sort_order < b.sort_order) return -1;
         if (a.sort_order > b.sort_order) return 1;
         return 0;
@@ -165,8 +165,8 @@ export default class AppView {
     page: number = 1,
     pageSize: number = 5,
     intended: 's' | 'c',
-  ): Promise<CategoryTopics[]> {
-    let response: APIResponse<CategoryTopics[]>;
+  ): Promise<CategoryTopic[]> {
+    let response: APIResponse<CategoryTopic[]>;
 
     switch (intended) {
       case 's':
@@ -247,7 +247,7 @@ export default class AppView {
     pageSize: number = 5,
     sort_order: TopicSortOrder = 'category',
     intended: 's' | 'c',
-  ): Promise<CategoryTopics[]> {
+  ): Promise<CategoryTopic[]> {
     const { status, message, data } = await this.api.genreTopics(
       section_id,
       genre_id,

@@ -1,19 +1,19 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { serveUrl } from '@constants/media';
+  import { blankImage, serveUrl } from '@constants/media';
   import Account from '@lib/account';
   import { toastStore } from '@stores/toast.svelte';
 
   const account: Account = new Account();
 
   // Derive types from Account methods so we don't guess import paths
-  type FolderTopics = Awaited<ReturnType<Account['getBookmarkFolderTopic']>>; // Bookmark[]
-  type TagTopics = NonNullable<
-    Awaited<ReturnType<Account['getBookmarkTagsTopic']>>
-  >; // Bookmark[]
-  type Topics = FolderTopics | TagTopics; // both resolve to Bookmark[]
-  type BookmarkItem = Topics extends (infer U)[] ? U : never;
+  // type FolderTopics = Awaited<ReturnType<Account['getBookmarkFolderTopic']>>; // Bookmark[]
+  // type TagTopics = NonNullable<
+  //   Awaited<ReturnType<Account['getBookmarkTagsTopic']>>
+  // >; // Bookmark[]
+  // type Topics = FolderTopics | TagTopics; // both resolve to Bookmark[]
+  // type BookmarkItem = Topics extends (infer U)[] ? U : never;
 
   // --- Svelte 5 runes state ---
   let folders = $state<BookmarkFolder[]>([]);
@@ -147,7 +147,7 @@
       <button
         class="void-btn"
         type="button"
-        class:small-orange-tile={folder.id !== selectedFolder}
+        class:small-rose-tile={folder.id !== selectedFolder}
         class:small-green-tile={folder.id === selectedFolder}
         onclick={() => openFolder(folder.id, folder.name)}
       >
@@ -186,37 +186,49 @@
       {/if}
     </h5>
   {:else}
-    <ul class="flex-row">
-      {#each topics as topic}
-        <li>
-          <div class="card-head">
-            <h3>
-              {topic.name ?? 'Bookmark'}
-            </h3>
-            <div class="actions">
-              <!-- <button onclick={() => openBookmarkDetails(topic.id)}
-                >Details</button
-              > -->
-              <button class="danger" onclick={() => removeBookmark(topic.id)}
-                >Remove</button
-              >
-            </div>
+    {#each topics as topic}
+      <a
+        class="rose-tile"
+        href="/c/CommunityPicks/{topic.topic_id}?title={topic.name}"
+      >
+        <img
+          loading="lazy"
+          src={serveUrl(topic.tile_file_url) ?? blankImage}
+          alt={topic.name}
+          draggable="false"
+          height="1024"
+          width="1024"
+        />
+        <h5>{topic.name}</h5>
+      </a>
+      <!-- <li>
+        <div class="card-head">
+          <h3>
+            {topic.name ?? 'Bookmark'}
+          </h3>
+          <div class="actions"> -->
+            <!-- <button onclick={() => openBookmarkDetails(topic.id)}
+              >Details</button
+            > -->
+            <!--<button class="danger" onclick={() => removeBookmark(topic.id)}
+              >Remove</button
+            >
           </div>
-          <p>
-            {#if topic.tile_file_url}
-              <img
-                src={serveUrl(topic.tile_file_url)}
-                alt={topic.name ?? ''}
-                width="100"
-              />
-            {:else}
-              No image
-            {/if}
-          </p>
-          <code class="muted">ID: {topic.id}</code>
-        </li>
-      {/each}
-    </ul>
+        </div>
+        <p>
+          {#if topic.tile_file_url}
+            <img
+              src={serveUrl(topic.tile_file_url)}
+              alt={topic.name ?? ''}
+              width="100"
+            />
+          {:else}
+            No image
+          {/if}
+        </p>
+        <code class="muted">ID: {topic.id}</code>
+      </li> -->
+    {/each}
   {/if}
 </div>
 

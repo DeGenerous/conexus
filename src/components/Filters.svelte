@@ -25,11 +25,11 @@
       page?: number,
       pageSize?: number,
       sort_order?: TopicSortOrder,
-    ) => Promise<CategoryTopics[]>;
+    ) => Promise<CategoryTopic[]>;
   } = $props();
 
-  let filteredTopics = $state<CategoryTopics[]>([]);
-  let sortedTopics = $state<CategoryTopics[]>([]);
+  let filteredTopics = $state<CategoryTopic[]>([]);
+  let sortedTopics = $state<CategoryTopic[]>([]);
 
   let searchField = $state<string>(''); // search INPUT value
   let activeGenre = $state<string>(''); // genres SELECT value
@@ -144,7 +144,7 @@
 
   // SORTING
 
-  function applySorting(data: CategoryTopics[]) {
+  function applySorting(data: CategoryTopic[]) {
     return isSorting ? sortByName(data) : sortByOrder(data);
   }
 
@@ -153,8 +153,8 @@
     else sortedTopics = sortByOrder([...filteredTopics]);
   };
 
-  function sortByName(data: CategoryTopics[]) {
-    return data.sort((a: CategoryTopics, b: CategoryTopics) => {
+  function sortByName(data: CategoryTopic[]) {
+    return data.sort((a: CategoryTopic, b: CategoryTopic) => {
       const firstTopic = a.name.toLowerCase().trim();
       const secondTopic = b.name.toLowerCase().trim();
       // Sorting all topics in the category alphabetically
@@ -164,8 +164,8 @@
     });
   }
 
-  function sortByOrder(data: CategoryTopics[]) {
-    return data.sort((a: CategoryTopics, b: CategoryTopics) => {
+  function sortByOrder(data: CategoryTopic[]) {
+    return data.sort((a: CategoryTopic, b: CategoryTopic) => {
       if (a.sort_order < b.sort_order) return -1;
       if (a.sort_order > b.sort_order) return 1;
       return 0;

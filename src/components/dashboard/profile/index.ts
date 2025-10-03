@@ -2,7 +2,7 @@ import type { SvelteComponent } from 'svelte';
 import wrap from 'svelte-spa-router/wrap';
 
 import ProfileOverview from './Overview.svelte';
-import ProfileBookmarks from './Bookmark.svelte';
+import ProfileBookmarks from './Bookmarks.svelte';
 // import ProfileMetrics from './Metrics.svelte';
 
 export const PROFILE_ROUTES = [

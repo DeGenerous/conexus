@@ -58,7 +58,7 @@ export default class ViewAPI extends Fetcher {
    * @returns A promise that resolves to an array of Topic objects.
    */
   async categoryTopics(category_id: string, page: number, pageSize: number) {
-    return this.request<CategoryTopics[]>(
+    return this.request<CategoryTopic[]>(
       `${this.topicGroup}/category-topics/${category_id}?page=${page}&page_size=${pageSize}`,
     );
   }
@@ -94,7 +94,7 @@ export default class ViewAPI extends Fetcher {
     pageSize: number = 5,
     search_kind: 1 | 2 = 1,
   ) {
-    return this.request<CategoryTopics[]>(`${this.topicGroup}/search`, {
+    return this.request<CategoryTopic[]>(`${this.topicGroup}/search`, {
       method: 'POST',
       body: JSON.stringify({
         section_id,
@@ -138,7 +138,7 @@ export default class ViewAPI extends Fetcher {
     pageSize: number = 5,
     search_kind: 1 | 2 = 2,
   ) {
-    return this.request<CategoryTopics[]>(`${this.topicGroup}/search`, {
+    return this.request<CategoryTopic[]>(`${this.topicGroup}/search`, {
       method: 'POST',
       body: JSON.stringify({
         account_id,
@@ -166,7 +166,7 @@ export default class ViewAPI extends Fetcher {
     pageSize: number = 5,
     sort_order: TopicSortOrder = 'name',
   ) {
-    return this.request<CategoryTopics[]>(`${this.topicGroup}/genre-topics`, {
+    return this.request<CategoryTopic[]>(`${this.topicGroup}/genre-topics`, {
       method: 'POST',
       body: JSON.stringify({
         section_id,

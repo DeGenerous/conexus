@@ -11,13 +11,13 @@
   }: {
     name: string;
     intended: 's' | 'c';
-    topic: Nullable<CategoryTopics>;
+    topic: Nullable<CategoryTopic>;
     loading: boolean;
   } = $props();
 
   const topicName: string = topic ? topic.name.trim() : '';
 
-  const listTopicGates = (topic: CategoryTopics) => {
+  const listTopicGates = (topic: CategoryTopic) => {
     return (
       topic.topic_gates
         ?.map((gate) => {

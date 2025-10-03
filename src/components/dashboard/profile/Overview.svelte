@@ -87,7 +87,6 @@
 </script>
 
 {#if user}
-  <section class="flex">
     <header class="flex-row">
       {#if user.credits > 0}
         <p>
@@ -358,7 +357,6 @@
       }}
       text="Refresh Data"
     />
-  </section>
 
   <!-- TODO: Add newsletter, refresh data button, referral codes (?) -->
 {:else}
@@ -369,43 +367,39 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  section {
+  header {
     width: 100%;
+    justify-content: space-between;
+  }
 
-    header {
-      width: 100%;
-      justify-content: space-between;
+  .web3-wallets {
+    ul {
+      flex-wrap: wrap;
     }
 
-    .web3-wallets {
-      ul {
-        flex-wrap: wrap;
+    .wallet {
+      min-width: 14rem;
+      @include blue;
+
+      h4 {
+        @include dark-blue(1, text);
       }
 
-      .wallet {
-        min-width: 14rem;
-        @include blue;
+      &:hover:not(&:disabled),
+      &:active:not(&:disabled),
+      &:focus:not(&:disabled) {
+        @include bright;
+      }
 
+      &:disabled {
+        cursor: not-allowed;
+        fill: $cyan;
+        box-shadow: $shadow-plus-inset-glow;
+        @include blue(1, bg, bright);
+
+        p,
         h4 {
-          @include dark-blue(1, text);
-        }
-
-        &:hover:not(&:disabled),
-        &:active:not(&:disabled),
-        &:focus:not(&:disabled) {
-          @include bright;
-        }
-
-        &:disabled {
-          cursor: not-allowed;
-          fill: $cyan;
-          box-shadow: $shadow-plus-inset-glow;
-          @include blue(1, bg, bright);
-
-          p,
-          h4 {
-            color: $cyan;
-          }
+          color: $cyan;
         }
       }
     }

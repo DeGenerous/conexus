@@ -207,7 +207,7 @@
     .bookmark {
       width: 2rem;
       fill: none;
-      @include orange(1, text);
+      @include rose(1, text);
 
       &:hover,
       &:active,

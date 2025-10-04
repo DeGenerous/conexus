@@ -10,11 +10,11 @@ export const OMNIHUB = [
     path: '/omnihub',
     component: OmniHub,
   },
-  {
-    name: 'Portrait',
-    path: '/omnihub/portrait',
-    component: Portrait,
-  },
+  // {
+  //   name: 'Portrait',
+  //   path: '/omnihub/portrait',
+  //   component: Portrait,
+  // },
 ];
 
 export const omnihubRoutes = Object.fromEntries(

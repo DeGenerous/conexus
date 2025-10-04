@@ -120,6 +120,7 @@
     stroke: $light-blue;
     color: $light-blue;
     gap: 0.5rem;
+    width: 2rem;
 
     &:hover:not(&.muted),
     &:active:not(&.muted),
@@ -146,6 +147,7 @@
       fill: $white;
       stroke: $white;
       color: $white;
+      width: auto;
     }
   }
 </style>

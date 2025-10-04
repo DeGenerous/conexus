@@ -168,7 +168,7 @@
 
         &:hover:not(&:disabled),
         &:active:not(&:disabled),
-        &:focus:not(&:disabled) {
+        &:focus-visible:not(&:disabled) {
           filter: hue-rotate(30deg) saturate(200%);
         }
 

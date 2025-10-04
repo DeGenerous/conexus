@@ -38,7 +38,7 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     transform: scale(1.05) !important;
     background-color: $light-blue !important;
     border-color: $cyan !important;

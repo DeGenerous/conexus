@@ -49,7 +49,7 @@
 
     &:hover:not(&:disabled),
     &:active:not(&:disabled),
-    &:focus:not(&:disabled) {
+    &:focus-visible:not(&:disabled) {
       fill: $cyan;
       @include scale;
 
@@ -61,7 +61,7 @@
     &.right:not(&:disabled) {
       &:hover,
       &:active,
-      &:focus {
+      &:focus-visible {
         svg g {
           transform: scale(1.2) rotate(180deg) !important;
         }

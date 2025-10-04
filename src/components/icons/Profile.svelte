@@ -121,7 +121,7 @@
 
         &:hover,
         &:active,
-        &:focus {
+        &:focus-visible {
           @include navy;
           @include cyan(1, text);
         }
@@ -130,7 +130,7 @@
 
     &:hover,
     &:active,
-    &:focus {
+    &:focus-visible {
       color: $dark-blue;
       @include cyan;
     }

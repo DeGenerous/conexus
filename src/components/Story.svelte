@@ -600,7 +600,7 @@
 
         &:hover:not(&.inactive-link),
         &:active:not(&.inactive-link),
-        &:focus:not(&.inactive-link) {
+        &:focus-visible:not(&.inactive-link) {
           text-decoration: underline $orange;
           color: $bright-orange;
         }
@@ -610,7 +610,7 @@
 
           &:hover,
           &:active,
-          &:focus {
+          &:focus-visible {
             text-decoration: underline $deep-orange;
             color: $deep-orange;
           }

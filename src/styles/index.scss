@@ -452,7 +452,7 @@ html {
 
       &:hover:not(.active, .inactive),
       &:active:not(.active, .inactive),
-      &:focus:not(.active, .inactive) {
+      &:focus-visible:not(.active, .inactive) {
         @include cyan(1, text);
 
         svg {
@@ -500,7 +500,7 @@ html {
 
       &:hover:not(&:disabled),
       &:active:not(&:disabled),
-      &:focus:not(&:disabled) {
+      &:focus-visible:not(&:disabled) {
         transform: none;
         @include white-txt;
         @include box-shadow;
@@ -553,7 +553,7 @@ html {
 
         &:hover,
         &:active,
-        &:focus {
+        &:focus-visible {
           @include scale;
           @include bright;
         }
@@ -613,7 +613,7 @@ html {
 
       &:hover,
       &:active,
-      &:focus {
+      &:focus-visible {
         text-decoration: none;
         @include bright;
         @include scale-up(soft);
@@ -717,7 +717,7 @@ html {
 
         &:hover,
         &:active,
-        &:focus {
+        &:focus-visible {
           p {
             @include cyan(1, text);
           }
@@ -758,7 +758,7 @@ html {
 
     &:hover,
     &:active,
-    &:focus {
+    &:focus-visible {
       @include scale;
     }
 

@@ -73,7 +73,7 @@
 
     &:hover:not(&:disabled),
     &:active:not(&:disabled),
-    &:focus:not(&:disabled) {
+    &:focus-visible:not(&:disabled) {
       fill: $cyan;
       @include dark-blue;
     }
@@ -101,7 +101,7 @@
 
       &:hover,
       &:active:not(&:disabled),
-      &:focus:not(&:disabled) {
+      &:focus-visible:not(&:disabled) {
         fill: $dark-blue;
         @include cyan;
       }

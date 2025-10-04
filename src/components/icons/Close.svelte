@@ -41,7 +41,7 @@
 
     &:active,
     &:hover,
-    &:focus {
+    &:focus-visible {
       stroke: $dark-red;
 
       svg {
@@ -55,7 +55,7 @@
 
       &:active,
       &:hover,
-      &:focus {
+      &:focus-visible {
         stroke: $red;
       }
     }

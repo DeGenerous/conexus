@@ -60,7 +60,7 @@
       width: 100%;
       @include dark-blue(0.75);
 
-      &:focus {
+      &:focus-visible {
         @include box-glow;
       }
     }
@@ -72,7 +72,7 @@
         width: auto;
       }
 
-      input:focus {
+      input:focus-visible {
         width: 30rem;
       }
     }

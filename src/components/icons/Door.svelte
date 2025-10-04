@@ -146,7 +146,7 @@
 
     &:hover,
     &:active,
-    &:focus {
+    &:focus-visible {
       stroke: $cyan;
 
       .outside-door path {

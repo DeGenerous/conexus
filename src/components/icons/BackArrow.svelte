@@ -50,17 +50,4 @@
       }
     }
   }
-  // a {
-  //   fill: $light-blue;
-
-  //   &:hover,
-  //   &:active,
-  //   &:focus {
-  //     fill: $cyan;
-
-  //     #back-arrow-svg-mask path {
-  //       transform: scale(1.1);
-  //     }
-  //   }
-  // }
 </style>

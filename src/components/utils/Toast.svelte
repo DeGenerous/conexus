@@ -87,7 +87,7 @@
 
     &:hover,
     &:active,
-    &:focus {
+    &:focus-visible {
       @include box-shadow(deep);
 
       &.info {

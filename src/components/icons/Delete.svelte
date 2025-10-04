@@ -47,7 +47,7 @@
 
     &:hover:not(&:disabled),
     &:active:not(&:disabled),
-    &:focus:not(&:disabled) {
+    &:focus-visible:not(&:disabled) {
       @include scale;
       @include bright;
     }

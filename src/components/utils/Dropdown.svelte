@@ -60,7 +60,7 @@
       }
 
       &:hover,
-      &:focus {
+      &:focus-visible {
         @include bright;
       }
     }

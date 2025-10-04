@@ -57,7 +57,7 @@
 
     &:hover,
     &:active,
-    &:focus {
+    &:focus-visible {
       fill: $cyan;
 
       svg {

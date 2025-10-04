@@ -28,7 +28,7 @@ input {
     @include scale(1.01, x);
   }
 
-  &:focus {
+  &:focus-visible {
     @include cyan-border;
     @include cyan(0.15);
   }
@@ -137,7 +137,7 @@ input[type='color'] {
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     transform: none;
     @include bright;
   }

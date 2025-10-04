@@ -299,7 +299,7 @@
 
         &:hover,
         &:active,
-        &:focus {
+        &:focus-visible {
           text-decoration: underline;
           @include red(1, text);
         }

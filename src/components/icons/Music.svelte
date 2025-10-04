@@ -94,7 +94,7 @@
 
     &:hover:not(&.muted),
     &:active:not(&.muted),
-    &:focus:not(&.muted) {
+    &:focus-visible:not(&.muted) {
       fill: $cyan;
       stroke: $cyan;
       color: $cyan;

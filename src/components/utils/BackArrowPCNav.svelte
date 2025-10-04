@@ -139,7 +139,7 @@
 
     &:hover,
     &:active,
-    &:focus {
+    &:focus-visible {
       fill: $dark-blue;
       @include cyan;
     }

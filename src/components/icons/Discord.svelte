@@ -24,7 +24,7 @@
 
     &:hover,
     &:active,
-    &:focus {
+    &:focus-visible {
       img {
         @include scale-up(soft);
         @include box-shadow;

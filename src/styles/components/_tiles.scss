@@ -133,7 +133,7 @@
 
   &:hover:not(.loading-menu-tile),
   &:active:not(.loading-menu-tile),
-  &:focus:not(.loading-menu-tile) {
+  &:focus-visible:not(.loading-menu-tile) {
     text-decoration: none;
     box-shadow: $shadow-plus-inset-glow;
     outline: none;
@@ -218,7 +218,7 @@
 
   &:hover:not(.loading-tile),
   &:active:not(.loading-tile),
-  &:focus:not(.loading-tile) {
+  &:focus-visible:not(.loading-tile) {
     @include dark-blue(1, text);
     @include blue(0.9, bg, bright);
     @include bright;
@@ -262,7 +262,7 @@
 
     &:hover,
     &:active,
-    &:focus {
+    &:focus-visible {
       @include orange;
       @include orange(1, text, bright);
       @include bright(100%);
@@ -340,7 +340,7 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     @include purple(1, bg, bright);
     @include dark-red(1, text);
   }
@@ -352,7 +352,7 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     @include deep-green;
     @include dark-green(1, text);
   }
@@ -364,7 +364,7 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     @include rose;
     @include dark-red(1, text);
   }
@@ -376,7 +376,7 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     @include light-blue(0.5);
     @include cyan(1, text);
   }
@@ -392,7 +392,7 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     background-color: $royal-purple;
     @include orange(1, text, bright);
   }
@@ -436,7 +436,7 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(:disabled) {
+  &:focus-visible:not(:disabled) {
     @include white-txt;
     @include scale-up(soft);
     @include box-shadow(deep);
@@ -467,7 +467,7 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(:disabled) {
+  &:focus-visible:not(:disabled) {
     @include purple(1, bg, bright);
   }
 }
@@ -482,7 +482,7 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(:disabled) {
+  &:focus-visible:not(:disabled) {
     @include orange(1, bg, bright);
   }
 }
@@ -497,7 +497,7 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(:disabled) {
+  &:focus-visible:not(:disabled) {
     @include rose(1, bg, bright);
   }
 }
@@ -512,7 +512,7 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(:disabled) {
+  &:focus-visible:not(:disabled) {
     @include bright;
   }
 }

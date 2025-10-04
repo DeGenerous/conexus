@@ -12,7 +12,7 @@
   import { attributes } from '@constants/attributes';
   import { NAV_ROUTES } from '@constants/routes';
 
-  import Votes from '@components/omnihub/Votes.svelte';
+  import Votes from '@components/dashboard/omnihub/Votes.svelte';
 
   let potential = $state<Nullable<NFT>>(null);
   let loading = $state<boolean>(true);

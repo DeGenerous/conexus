@@ -62,10 +62,8 @@
         href="/dashboard#/profile/bookmarks"
         target="_self">Bookmarks</a
       >
-      <a
-        class="nohover-link"
-        href="/dashboard#/omnihub"
-        target="_self">OmniHub</a
+      <a class="nohover-link" href="/dashboard#/omnihub" target="_self"
+        >OmniHub</a
       >
     </span>
   {/if}

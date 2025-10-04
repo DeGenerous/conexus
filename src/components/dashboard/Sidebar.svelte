@@ -193,8 +193,7 @@
       height: 100%;
       align-items: stretch;
       justify-content: flex-start;
-      padding-inline: 1.5rem;
-      padding-top: 0.5rem;
+      padding: 0.5rem 1.5rem;
       background-color: $dark-blue;
       border-right: 1px solid $transparent-gray;
       overflow-y: scroll;
@@ -211,7 +210,8 @@
       }
 
       nav {
-        padding-top: 0;
+        padding: 0 1.5rem;
+        padding-bottom: 1.5rem;
         border: none;
         box-shadow: 0.1rem 0 0.25rem rgba(0, 0, 0, 0.75);
       }

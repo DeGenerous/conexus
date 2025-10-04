@@ -219,7 +219,13 @@
           width="1024"
         />
         <h5>{topic.name}</h5>
-        <button class="red-btn" onclick={() => removeBookmark(topic.id)}>
+        <button
+          class="red-btn"
+          onclick={(event) => {
+            event.preventDefault();
+            removeBookmark(topic.id);
+          }}
+        >
           Remove
         </button>
       </a>

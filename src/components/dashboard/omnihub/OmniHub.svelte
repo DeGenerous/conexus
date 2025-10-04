@@ -53,11 +53,6 @@
   });
 </script>
 
-<section class="transparent-container flex-row flex-wrap">
-  <h5 class="learn-label">Explore Platform Knowledge</h5>
-  <a class="button-anchor purple-btn" href="/learn"> Learn & Explore </a>
-</section>
-
 {#if loading}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {:else}
@@ -86,18 +81,8 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .learn-label {
-    &::after {
-      content: ':';
-    }
-  }
-
   section {
-    @include auto-width;
-
-    @include respond-up(small-desktop) {
-      width: auto;
-    }
+    width: 100%;
 
     &.omnihub {
       padding-bottom: 0;
@@ -111,21 +96,6 @@
 
       img {
         width: 20rem;
-      }
-
-      @include respond-up(small-desktop) {
-        span {
-          width: auto;
-        }
-      }
-
-      @include respond-up(large-desktop) {
-        margin-inline: 0;
-        padding-top: 2rem;
-
-        span {
-          margin-bottom: 1rem;
-        }
       }
     }
   }

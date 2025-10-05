@@ -115,9 +115,8 @@
 
     .dgrs-logo {
       position: absolute;
-      top: calc(100% - 1rem);
+      top: 100%;
       left: -1rem;
-      left: 0;
       height: 3.5rem;
       width: 12rem;
       padding-top: 1rem;

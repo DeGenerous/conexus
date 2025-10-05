@@ -157,7 +157,7 @@
   };
 </script>
 
-<svelte:window {onkeydown} />
+<!-- <svelte:window {onkeydown} /> -->
 
 <!-- DRAFTS -->
 <!-- {#if $currentDraft || $draftsIndex.length}

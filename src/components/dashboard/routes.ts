@@ -39,34 +39,11 @@ export const DASHBOARD_LINKS: Linking[] = [
   },
   {
     name: 'Admin',
-    intended: 'admin',
-    children: [
-      {
-        name: 'Management',
-        intended: 'admin',
-        children: ADMIN_ROUTES.MANAGEMENT.map((route) => ({
-          name: route.name,
-          path: route.path,
-        })),
-      },
-      {
-        name: 'Web3',
-        intended: 'admin',
-        children: ADMIN_ROUTES.WEB3.map((route) => ({
-          name: route.name,
-          path: route.path,
-        })),
-      },
-
-      {
-        name: 'Analytics',
-        intended: 'admin',
-        children: ADMIN_ROUTES.ANALYTICS.map((route) => ({
-          name: route.name,
-          path: route.path,
-        })),
-      },
-    ],
+    intended: 'all',
+    children: ADMIN_ROUTES.map((route) => ({
+      name: route.name,
+      path: route.path,
+    })),
   },
   ...OMNIHUB,
 ];

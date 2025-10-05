@@ -35,6 +35,12 @@
     isAdmin = resp.isAdmin;
   });
 
+  let selectedSectionId = $state('');
+
+  $effect(() => {
+    if (selectedSectionId) $storyData.category_id = '';
+  });
+
   let topic = new Topic();
 
   let promptFormat: 'Table' | 'Open' = $state('Open');
@@ -49,90 +55,88 @@
 
   // DRAFTS
 
-  const fingerprint = derived(
-    [storyData, promptSettings, openPrompt, tablePrompt],
-    ([$s, $p, $o, $t]) => JSON.stringify([$s, $p, $o, $t]),
-  );
+  // const fingerprint = derived(
+  //   [storyData, promptSettings, openPrompt, tablePrompt],
+  //   ([$s, $p, $o, $t]) => JSON.stringify([$s, $p, $o, $t]),
+  // );
 
-  let timer: ReturnType<typeof setTimeout>;
+  // let timer: ReturnType<typeof setTimeout>;
 
-  const unsub = fingerprint.subscribe(() => {
-    clearTimeout(timer);
-    timer = setTimeout(() => Drafts.save(), 300000); // 5 minutes debounce
-  });
+  // const unsub = fingerprint.subscribe(() => {
+  //   clearTimeout(timer);
+  //   timer = setTimeout(() => Drafts.save(), 300000); // 5 minutes debounce
+  // });
 
-  onDestroy(unsub);
+  // onDestroy(unsub);
 
-  const saveDraft = () => Drafts.save();
+  // const saveDraft = () => Drafts.save();
 
-  onMount(() => {
-    const draftID = GetCache<string>(CURRENT_DRAFT_KEY);
-    if (draftID) Drafts.restore(draftID);
-    else Drafts.create();
+  // onMount(() => {
+  //   const draftID = GetCache<string>(CURRENT_DRAFT_KEY);
+  //   if (draftID) Drafts.restore(draftID);
+  //   else Drafts.create();
 
-    // Last‑chance save on hard refresh
-    window.addEventListener('beforeunload', saveDraft);
-    return () => window.removeEventListener('beforeunload', saveDraft);
-  });
+  //   // Last‑chance save on hard refresh
+  //   window.addEventListener('beforeunload', saveDraft);
+  //   return () => window.removeEventListener('beforeunload', saveDraft);
+  // });
 
-  // Save draft on <Control + 's'> or <Command + 's'>
-  const onkeydown = (event: KeyboardEvent) => {
-    const { key, ctrlKey, metaKey, repeat } = event;
-    if (repeat) return;
-    if (!ctrlKey && !metaKey) return;
-    event.preventDefault();
-    if (key === 's') saveDraft();
-  };
+  // // Save draft on <Control + 's'> or <Command + 's'>
+  // const onkeydown = (event: KeyboardEvent) => {
+  //   const { key, ctrlKey, metaKey, repeat } = event;
+  //   if (repeat) return;
+  //   if (!ctrlKey && !metaKey) return;
+  //   event.preventDefault();
+  //   if (key === 's') saveDraft();
+  // };
 
-  let lastSavedAgo = $state<string>('');
+  // let lastSavedAgo = $state<string>('');
 
-  // Recompute "last saved" string
-  const updateLastSavedLabel = () => {
-    if (!$currentDraft?.updated_at) return;
+  // // Recompute "last saved" string
+  // const updateLastSavedLabel = () => {
+  //   if (!$currentDraft?.updated_at) return;
 
-    const now = Date.now();
-    const diffMs = now - Number($currentDraft.updated_at);
-    const diffSec = Math.floor(diffMs / 1000);
-    const diffMin = Math.floor(diffSec / 60);
-    const diffHr = Math.floor(diffMin / 60);
-    const diffDay = Math.floor(diffHr / 24);
-    const diffMonth = Math.floor(diffDay / 30);
+  //   const now = Date.now();
+  //   const diffMs = now - Number($currentDraft.updated_at);
+  //   const diffSec = Math.floor(diffMs / 1000);
+  //   const diffMin = Math.floor(diffSec / 60);
+  //   const diffHr = Math.floor(diffMin / 60);
+  //   const diffDay = Math.floor(diffHr / 24);
+  //   const diffMonth = Math.floor(diffDay / 30);
 
-    if (diffSec < 2) {
-      lastSavedAgo = 'just now';
-    } else if (diffSec < 60) {
-      lastSavedAgo = `${diffSec}s ago`;
-    } else if (diffMin < 60) {
-      lastSavedAgo = `${diffMin}m ago`;
-    } else if (diffHr < 24) {
-      lastSavedAgo = `${diffHr}h ago`;
-    } else if (diffDay < 30) {
-      lastSavedAgo = `${diffDay}d ago`;
-    } else {
-      lastSavedAgo = `${diffMonth}mo ago`;
-    }
-  };
+  //   if (diffSec < 2) {
+  //     lastSavedAgo = 'just now';
+  //   } else if (diffSec < 60) {
+  //     lastSavedAgo = `${diffSec}s ago`;
+  //   } else if (diffMin < 60) {
+  //     lastSavedAgo = `${diffMin}m ago`;
+  //   } else if (diffHr < 24) {
+  //     lastSavedAgo = `${diffHr}h ago`;
+  //   } else if (diffDay < 30) {
+  //     lastSavedAgo = `${diffDay}d ago`;
+  //   } else {
+  //     lastSavedAgo = `${diffMonth}mo ago`;
+  //   }
+  // };
 
-  // Timer that updates the label every 60 seconds
-  let interval: ReturnType<typeof setInterval>;
+  // // Timer that updates the label every 60 seconds
+  // let interval: ReturnType<typeof setInterval>;
 
-  let selectedSectionId = $state('');
+  // onMount(() => {
+  //   updateLastSavedLabel(); // run immediately on load
 
-  onMount(() => {
-    updateLastSavedLabel(); // run immediately on load
+  //   interval = setInterval(() => {
+  //     updateLastSavedLabel();
+  //   }, 2000); // every 2 seconds
 
-    interval = setInterval(() => {
-      updateLastSavedLabel();
-    }, 2000); // every 2 seconds
+  //   return () => clearInterval(interval); // cleanup on destroy
+  // });
 
-    return () => clearInterval(interval); // cleanup on destroy
-  });
-
-  const openDraftsManager = () => {
-    $draftsIndex = Drafts.list();
-    $showModal = true;
-    $draftsManager = true;
-  };
+  // const openDraftsManager = () => {
+  //   $draftsIndex = Drafts.list();
+  //   $showModal = true;
+  //   $draftsManager = true;
+  // };
 
   // CREATE DREAM
 
@@ -156,11 +160,11 @@
 <svelte:window {onkeydown} />
 
 <!-- DRAFTS -->
-{#if $currentDraft || $draftsIndex.length}
+<!-- {#if $currentDraft || $draftsIndex.length}
   <div class="drafts-wrapper fade-in container flex-row flex-wrap">
     {#if $currentDraft}
       <h5>
-        <!-- 📝 Working on draft: {$currentDraft.id.split('-')[0]} -->
+        📝 Working on draft: {$currentDraft.id.split('-')[0]}
         <strong>
           - Last saved: {lastSavedAgo}
         </strong>
@@ -179,7 +183,7 @@
       </button>
     </span>
   </div>
-{/if}
+{/if} -->
 
 <!-- CATEGORY, TITLE, DESCRIPTION, IMAGE PROMPT -->
 <div class="dream-container">
@@ -193,61 +197,54 @@
       categories: Category[],
     )}
       {#if isAdmin}
-        {#if loadingSections}
-          <p>Loading sections...</p>
-        {:else if errorSections}
-          <p class="validation">{errorSections}</p>
-        {:else}
-          <div class="input-container">
-            <label for="sections">Sections</label>
-            {#if sections.length > 0}
-              <select id="sections" bind:value={selectedSectionId}>
-                <option value="">Select a section</option>
-                {#each sections as { id, name }}
-                  <option value={id}>{name}</option>
-                {/each}
-              </select>
-            {:else}
-              <p class="validation">No sections found</p>
-            {/if}
-          </div>
-        {/if}
-      {/if}
-
-      {#if loadingCategories}
-        <p>Loading categories...</p>
-      {:else if errorCategories}
-        <p class="validation">{errorCategories}</p>
-      {:else}
         <div class="input-container">
-          <label for="category">Select Category</label>
-          <select
-            id="category"
-            class:red-border={!$storyData.category_id}
-            bind:value={$storyData.category_id}
-          >
-            <option value={null} selected={true} disabled hidden>Select</option>
-            {#each categories as { id, name }}
-              <option value={id}>{name}</option>
-            {/each}
-          </select>
+          <label for="sections">
+            {#if loadingSections}
+              Loading sections...
+            {:else if errorSections}
+              {errorSections}
+            {:else}
+              Section
+            {/if}
+          </label>
+          {#if sections.length > 0}
+            <select id="sections" bind:value={selectedSectionId}>
+              <option value="" disabled hidden>Select section</option>
+              {#each sections as { id, name }}
+                <option value={id}>{name}</option>
+              {/each}
+            </select>
+          {:else}
+            <p class="validation">No sections found</p>
+          {/if}
         </div>
       {/if}
+
+      <div class="input-container">
+        <label for="category">
+          {#if loadingCategories}
+            <p>Loading categories...</p>
+          {:else if errorCategories}
+            <p class="validation">{errorCategories}</p>
+          {:else}
+            Category
+          {/if}
+        </label>
+
+        <select
+          id="category"
+          class:red-border={!$storyData.category_id && categories.length > 0}
+          bind:value={$storyData.category_id}
+          disabled={categories.length === 0}
+        >
+          <option value="" disabled hidden>Select category</option>
+          {#each categories as { id, name }}
+            <option value={id}>{name}</option>
+          {/each}
+        </select>
+      </div>
     {/snippet}
   </CategoryFetcher>
-  <!-- <label for="category">Select Category</label>
-    <select
-      id="category"
-      class:red-border={!$storyData.category_id}
-      bind:value={$storyData.category_id}
-    >
-      <option value={null} selected={true} disabled hidden>Select</option>
-      {#await Admin ? category.listAdminCategories('') : category.listCreatorCategories() then categories}
-        {#each categories as { name, id }}
-          <option value={id}>{name}</option>
-        {/each}
-      {/await}
-    </select> -->
 
   <hr />
 
@@ -548,29 +545,29 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .drafts-wrapper {
-    width: 95%;
-    height: 100%;
-    max-width: 100rem;
-    justify-content: space-between;
-    animation: none;
-    @include rose(0.25);
+  // .drafts-wrapper {
+  //   width: 95%;
+  //   height: 100%;
+  //   max-width: 100rem;
+  //   justify-content: space-between;
+  //   animation: none;
+  //   @include rose(0.25);
 
-    h5 {
-      @include rose(1, text, bright);
-      strong {
-        @include white-txt(soft);
-      }
-    }
+  //   h5 {
+  //     @include rose(1, text, bright);
+  //     strong {
+  //       @include white-txt(soft);
+  //     }
+  //   }
 
-    span {
-      width: 100%;
+  //   span {
+  //     width: 100%;
 
-      @include respond-up(tablet) {
-        width: auto;
-      }
-    }
-  }
+  //     @include respond-up(tablet) {
+  //       width: auto;
+  //     }
+  //   }
+  // }
 
   #blank {
     min-height: 25rem;

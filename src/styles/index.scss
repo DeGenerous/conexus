@@ -342,7 +342,7 @@ html {
     @extend .pad-24;
     @extend .round;
     width: clamp(250px, 90%, 50rem);
-    // max-width: 90rem;
+    max-width: 90rem;
     // box-shadow: $shadow-plus-inset-glow;
     animation: dark-glowing 15s ease infinite;
     margin-inline: auto;
@@ -479,12 +479,8 @@ html {
 
   .dream-container {
     @extend .transparent-container;
-    width: calc(100% - 3rem);
+    width: 100%;
     max-width: 90rem;
-
-    @include respond-up(large-desktop) {
-      width: calc(100% - 200px);
-    }
 
     &,
     * {

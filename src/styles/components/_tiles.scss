@@ -433,6 +433,7 @@
 
   @include box-shadow;
   @include white-txt(soft);
+  @include gray(0.5);
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),

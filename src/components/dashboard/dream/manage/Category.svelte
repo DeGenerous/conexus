@@ -1,7 +1,7 @@
 <script lang="ts">
   import CategoryView from '@lib/category';
   import { ensureCreator } from '@utils/route-guard';
-  
+
   import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
 
   let categoryView = new CategoryView();
@@ -77,45 +77,49 @@
       categories: Category[],
     )}
       {#if isAdmin}
-        {#if loadingSections}
-          <p>Loading sections...</p>
-        {:else if errorSections}
-          <p class="validation">{errorSections}</p>
-        {:else}
-          <h4>Sections: {sections.length}</h4>
-          <div class="container">
-            {#if sections.length > 0}
-              <select bind:value={selectedSectionId}>
-                <option value="">Select a section</option>
-                {#each sections as { id, name }}
-                  <option value={id}>{name}</option>
-                {/each}
-              </select>
-            {:else}
-              <p class="validation">No sections found</p>
-            {/if}
-          </div>
-        {/if}
-      {/if}
-
-      {#if loadingCategories}
-        <p>Loading categories...</p>
-      {:else if errorCategories}
-        <p class="validation">{errorCategories}</p>
-      {:else}
-        <h4>Categories: {categories.length}</h4>
-        <div class="container">
-          {#if categories.length > 0}
-            {#each categories as { name }}
-              <button class="category void-btn small-tile">
-                <p>{name}</p>
-              </button>
-            {/each}
+        <h4>
+          {#if loadingSections}
+            Loading sections...
+          {:else if errorSections}
+            {errorSections}
           {:else}
-            <p class="validation">No categories found</p>
+            Sections: {sections.length}
+          {/if}
+        </h4>
+        <div class="container">
+          {#if sections.length > 0}
+            <select bind:value={selectedSectionId}>
+              <option value="" disabled hidden>Select a section</option>
+              {#each sections as { id, name }}
+                <option value={id}>{name}</option>
+              {/each}
+            </select>
+          {:else}
+            <p class="validation">No sections found</p>
           {/if}
         </div>
       {/if}
+
+      <h4>
+        {#if loadingCategories}
+          Loading categories...
+        {:else if errorCategories}
+          {errorCategories}
+        {:else}
+          Categories: {categories.length}
+        {/if}
+      </h4>
+      <div class="container">
+        {#if categories.length > 0}
+          {#each categories as { name }}
+            <button class="void-btn small-tile">
+              <p>{name}</p>
+            </button>
+          {/each}
+        {:else}
+          <p class="validation">No categories found</p>
+        {/if}
+      </div>
     {/snippet}
   </CategoryFetcher>
 </section>
@@ -147,10 +151,7 @@
     />
   </span>
 
-  <button
-    onclick={addCategory}
-    disabled={!newCategoryName || addingCategory}
-  >
+  <button onclick={addCategory} disabled={!newCategoryName || addingCategory}>
     {#if addingCategory}
       Adding...
     {:else}
@@ -162,8 +163,9 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .container,
-  .dream-container {
+  .container {
     width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 </style>

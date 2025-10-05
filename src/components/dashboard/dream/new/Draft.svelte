@@ -5,4 +5,4 @@
   let Creator = $isCreator;
 </script>
 
-<h1>Welcome to drafts</h1>
+<h5>Your drafts will be there</h5>

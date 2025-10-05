@@ -297,8 +297,8 @@
         flex: none;
       }
 
-      @include respond-up(large-desktop) {
-        max-width: 30rem;
+      @include respond-up(full-hd) {
+        max-width: calc(50% - 0.75rem);
       }
     }
   }

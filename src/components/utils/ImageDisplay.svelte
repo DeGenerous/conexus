@@ -53,6 +53,7 @@
   onclick={() => (fullWidthImage = !fullWidthImage)}
   class:slim={!fullWidthImage}
   style:box-shadow={boxShadow ? '' : 'none'}
+  style:border={boxShadow ? 'none' : ''}
   style:max-width="{imageWidth}px"
   style={width < 768 ? '' : `height: ${imageHeight}px`}
   style:zoom
@@ -77,6 +78,7 @@
 
   .transparent-container {
     padding: 0 !important;
+    @include box-shadow;
 
     span {
       position: relative;
@@ -91,7 +93,7 @@
     }
 
     img {
-      max-height: inherit;
+      max-height: 100%;
       height: 100%;
       border-radius: inherit;
     }

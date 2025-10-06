@@ -425,6 +425,7 @@ a11y_no_noninteractive_element_interactions -->
         style:font-style={$customFont.italic ? 'italic' : ''}
         style:color={$customFont.accentColor}
         style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
+        style:border={$customStyling.boxShadow ? 'none' : ''}
         style:max-width={width >= DESKTOP_BREAKPOINT
           ? `${customScale.optionsWidth}%`
           : ''}
@@ -451,6 +452,7 @@ a11y_no_noninteractive_element_interactions -->
         class:transparent-container={$customStyling.optionsContainer}
         style:color={$customFont.accentColor}
         style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
+        style:border={$customStyling.boxShadow ? 'none' : ''}
         style:max-width={width >= DESKTOP_BREAKPOINT
           ? `${customScale.optionsWidth}%`
           : ''}
@@ -942,6 +944,7 @@ a11y_no_noninteractive_element_interactions -->
 
     .options {
       align-items: flex-start;
+      @include box-shadow;
 
       @include respond-up(small-desktop) {
         width: 100%;

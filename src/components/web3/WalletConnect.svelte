@@ -67,4 +67,5 @@ a11y_no_static_element_interactions -->
   onclick={closeProfile}
   role="toolbar"
   tabindex="-1"
+  style:width="auto"
 ></div>

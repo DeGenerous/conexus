@@ -188,7 +188,7 @@
 <!-- CATEGORY, TITLE, DESCRIPTION, IMAGE PROMPT -->
 <div class="dream-container">
   <CategoryFetcher bind:selectedSectionId>
-    {#snippet Data(
+    {#snippet children(
       loadingSections: boolean,
       errorSections: string,
       sections: Section[],

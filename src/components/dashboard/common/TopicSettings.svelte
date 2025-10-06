@@ -19,7 +19,7 @@
     // settings = $bindable($promptSettings),
 
     promptFormat = $bindable<'Table' | 'Open'>('Open'),
-    Data,
+    children,
   }: {
     // imageStyle: string;
     // language: string;
@@ -32,7 +32,7 @@
     // settings: PromptSettings;
 
     promptFormat?: 'Table' | 'Open';
-    Data?: Snippet<
+    children: Snippet<
       [
         promptFormat: 'Table' | 'Open',
         setPromptFormat: (format: 'Table' | 'Open') => void,
@@ -154,9 +154,7 @@
     </div>
   </div>
 
-  {#if Data}
-    {@render Data(promptFormat, setPromptFormat)}
-  {/if}
+  {@render children(promptFormat, setPromptFormat)}
 </div>
 
 <style lang="scss">

@@ -60,7 +60,7 @@
 
 <div>
   <CategoryFetcher bind:selectedSectionId>
-    {#snippet Data(
+    {#snippet children(
       loadingSections: boolean,
       errorSections: string,
       sections: Section[],

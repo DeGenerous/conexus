@@ -189,7 +189,7 @@
 <!-- CATEGORY, TITLE, DESCRIPTION, IMAGE PROMPT -->
 <div class="dream-container">
   <CategoryFetcher bind:selectedSectionId>
-    {#snippet Data(
+    {#snippet children(
       loadingSections: boolean,
       errorSections: string,
       sections: Section[],
@@ -307,7 +307,7 @@
 
 <!-- MAIN SETTINGS -->
 <TopicSettings bind:promptFormat>
-  {#snippet Data(
+  {#snippet children(
     promptFormat: 'Table' | 'Open',
     setPromptFormat: (format: 'Table' | 'Open') => void,
   )}

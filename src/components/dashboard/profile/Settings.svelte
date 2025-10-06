@@ -13,7 +13,7 @@
 <h2>Personal Story Settings</h2>
 
 <TopicSettings>
-  {#snippet Data()}
+  {#snippet children()}
     <div class="flex-row flex-wrap">
       <button class="red-btn" onclick={resetSettings}>
         Reset to Default

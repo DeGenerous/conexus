@@ -68,7 +68,7 @@
 
 <section class="dream-container fade-in">
   <CategoryFetcher bind:selectedSectionId bind:fetchCategories>
-    {#snippet Data(
+    {#snippet children(
       loadingSections: boolean,
       errorSections: string,
       sections: Section[],

@@ -9,11 +9,11 @@
   let {
     selectedSectionId = $bindable(),
     fetchCategories = $bindable(),
-    Data,
+    children,
   }: {
     selectedSectionId: string;
     fetchCategories?: () => Promise<void>;
-    Data: Snippet<
+    children: Snippet<
       [
         loadingSections: boolean,
         errorSections: string,
@@ -91,13 +91,11 @@
   });
 </script>
 
-{#if Data}
-  {@render Data(
-    loadingSections,
-    errorSections,
-    sections,
-    loadingCategories,
-    errorCategories,
-    categories,
-  )}
-{/if}
+{@render children(
+  loadingSections,
+  errorSections,
+  sections,
+  loadingCategories,
+  errorCategories,
+  categories,
+)}

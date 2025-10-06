@@ -490,9 +490,10 @@ html {
     input:not(input[type='range']),
     textarea,
     select {
-      animation: dark-glowing 15s ease infinite;
+      // animation: dark-glowing 15s ease infinite;
+      background-color: rgba(0, 0, 0, 0.5);
       @include white-txt;
-      @include box-shadow(0 0 0.5rem rgba(0, 0, 0, 0.75));
+      // @include box-shadow(0 0 0.5rem rgba(0, 0, 0, 0.75));
 
       &:hover:not(&:disabled),
       &:active:not(&:disabled),
@@ -506,10 +507,10 @@ html {
       }
     }
 
-    h4,
-    h5 {
-      @include text-shadow;
-    }
+    // h4,
+    // h5 {
+    //   @include text-shadow;
+    // }
 
     div {
       width: 100%;

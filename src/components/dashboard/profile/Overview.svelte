@@ -202,50 +202,6 @@
     {/if}
   </div>
 
-  <!-- {#if user.email_confirmed}
-    {#await account.getReferralCode() then refCode}
-      {#if refCode !== null}
-        {#if refCode.usage_count >= refCode.max_usage}
-          <h4 class="text-glowing">
-            🏆 You've unlocked all {refCode.max_usage} referrals 🚀
-          </h4>
-          <p class="text-glowing">
-            Your early support won't go unnoticed. Stay tuned for updates.
-          </p>
-        {:else}
-          <button
-            class="void-btn small-green-tile"
-            id={refCode.code}
-            onclick={() => copyRefCode(refCode.code)}
-            aria-label="Copy code {refCode.code}"
-          >
-            <h5>Referral code:</h5>
-            <p>{refCode.code}</p>
-            <CopySVG data={refCode.code} />
-          </button>
-          <h4>Your referrals: {refCode.usage_count}</h4>
-        {/if}
-      {:else}
-        <button
-          class="green-btn"
-          onclick={() => {
-            if (!user?.referred) {
-              openModal(
-                referralActivationNotice,
-                'Proceed',
-                () => (window.location.href = '/referral'),
-              );
-              return;
-            }
-            account.generateReferralCode().then(() => window.location.reload());
-          }}
-        >
-          Get referral code
-        </button>
-      {/if}
-    {/await}
-  {/if} -->
-
   {#if user.email && user.first_name}
     <Dropdown name="Account">
       <form class="flex">
@@ -375,7 +331,7 @@
       {#if user.email_confirmed}
         {#if subscribedToNewsletter}
           <button
-            class="red-btn"
+            class="unsubscribe-btn void-btn"
             onclick={() => {
               account
                 .unsubscribeNewsletter(user?.email!)
@@ -469,6 +425,44 @@
       .container {
         justify-content: center;
       }
+    }
+  }
+
+  .unsubscribe-btn {
+    position: relative;
+    text-decoration: none;
+    white-space: nowrap; // prevent line breaks
+    @include red(0.5, text);
+
+    // Customizable underline variables
+    $u-thickness: 2px;
+    $u-offset: 0.1em; // distance below text
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: calc(-1 * $u-offset);
+      height: $u-thickness;
+      background: currentColor;
+
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.6s ease-in-out;
+      pointer-events: none;
+    }
+
+    &:hover::after,
+    &:focus-visible::after {
+      transform: scaleX(1);
+      @include red(1, text);
+    }
+
+    &:hover,
+    &:active,
+    &:focus-visible {
+      @include red(1, text);
     }
   }
 

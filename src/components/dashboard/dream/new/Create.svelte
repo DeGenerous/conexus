@@ -21,12 +21,13 @@
   import { ensureCreator } from '@utils/route-guard';
   import Drafts from '@utils/story-drafts';
 
-  import Slider from '@components/dashboard/dream/new/create/Slider.svelte';
+  import Slider from '@components/utils/Slider.svelte';
   import Characters from '@components/dashboard/dream/new/create/Characters.svelte';
   import Scenario from '@components/dashboard/dream/new/create/Scenario.svelte';
   import WritingStyle from '@components/dashboard/dream/new/create/WritingStyle.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
   import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
+  import TopicSettings from '@components/dashboard/common/TopicSettings.svelte';
 
   let isAdmin = $state(false);
 
@@ -305,133 +306,32 @@
 </div>
 
 <!-- MAIN SETTINGS -->
-<div class="dream-container">
-  <div class="flex-row">
-    <h4>Content</h4>
-    <div class="container">
-      <div class="input-container">
-        <label for="style">Visual style</label>
-        <select id="style" bind:value={$promptSettings.imageStyle}>
-          {#each dreamData.imageStyle as option}
-            <option value={option}>{option}</option>
-          {/each}
-        </select>
-      </div>
-
-      <div class="input-container">
-        <label for="language">Language</label>
-        <select id="language" bind:value={$promptSettings.language}>
-          {#each countries as { name }}
-            <option value={name}>{name}</option>
-          {/each}
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <div class="flex-row">
-    <h4>Interactivity</h4>
-    <div class="container">
-      <div
-        class="input-container"
-        class:disabled={$promptSettings.kidsMode !== null}
-      >
-        <label for="frequency">Control</label>
-        <select
-          id="frequency"
-          bind:value={$promptSettings.interactivity}
-          disabled={$promptSettings.kidsMode !== null}
+<TopicSettings bind:promptFormat>
+  {#snippet Data(
+    promptFormat: 'Table' | 'Open',
+    setPromptFormat: (format: 'Table' | 'Open') => void,
+  )}
+    <div class="flex-row">
+      <h4>Format</h4>
+      <div class="container">
+        <button
+          class="void-btn dream-radio-btn"
+          class:active={promptFormat === 'Table'}
+          onclick={() => setPromptFormat('Table')}
         >
-          {#each dreamData.min_max as option}
-            <option value={option}>{option}</option>
-          {/each}
-        </select>
-      </div>
-
-      <div
-        class="input-container"
-        class:disabled={$promptSettings.kidsMode !== null}
-      >
-        <label for="difficulty">Difficulty</label>
-        <select
-          id="difficulty"
-          bind:value={$promptSettings.difficulty}
-          disabled={$promptSettings.kidsMode !== null}
+          Table
+        </button>
+        <button
+          class="void-btn dream-radio-btn"
+          class:active={promptFormat === 'Open'}
+          onclick={() => setPromptFormat('Open')}
         >
-          {#each dreamData.min_max as option}
-            <option value={option}>{option}</option>
-          {/each}
-        </select>
+          Open
+        </button>
       </div>
     </div>
-  </div>
-
-  <div class="flex-row" class:disabled={$promptSettings.kidsMode !== null}>
-    <h4>Length</h4>
-    <div class="container">
-      <Slider
-        bind:sliderValue={$promptSettings.length}
-        parameters={dreamData.min_max}
-        inputValue={2}
-        disabled={$promptSettings.kidsMode !== null}
-      />
-    </div>
-  </div>
-
-  <div class="flex-row">
-    <h4>Settings</h4>
-    <div class="container">
-      <div
-        class="input-container"
-        class:disabled={$promptSettings.kidsMode !== null}
-      >
-        <label for="reading-style">Reading style</label>
-        <select
-          id="reading-style"
-          bind:value={$promptSettings.readingStyle}
-          disabled={$promptSettings.kidsMode !== null}
-        >
-          {#each dreamData.readingStyle as option}
-            <option value={option}>{option}</option>
-          {/each}
-        </select>
-      </div>
-
-      <div
-        class="kids-mode input-container transition round-8 shad"
-        class:selected={$promptSettings.kidsMode !== null}
-      >
-        <label for="kids-mode transition">Kids mode</label>
-        <select id="kids-mode" bind:value={$promptSettings.kidsMode}>
-          <option value={null}>Off</option>
-          {#each dreamData.kidsMode as option}
-            <option value={option}>{option}</option>
-          {/each}
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <div class="flex-row">
-    <h4>Format</h4>
-    <div class="container">
-      <button
-        class="void-btn dream-radio-btn"
-        class:active={promptFormat === 'Table'}
-        onclick={() => (promptFormat = 'Table')}
-      >
-        Table
-      </button>
-      <button
-        class="void-btn dream-radio-btn"
-        class:active={promptFormat === 'Open'}
-        onclick={() => (promptFormat = 'Open')}
-      >
-        Open
-      </button>
-    </div>
-  </div>
-</div>
+  {/snippet}
+</TopicSettings>
 
 {#if promptFormat === 'Table'}
   <div class="dream-container">
@@ -574,36 +474,6 @@
 
     @include respond-up(small-desktop) {
       min-height: 12vw;
-    }
-  }
-
-  .disabled {
-    opacity: 0.5;
-
-    select {
-      color: transparent;
-    }
-  }
-
-  .kids-mode {
-    padding-block: 0.5rem;
-    @include deep-green(0.5);
-
-    label {
-      @include green(1, text);
-    }
-
-    select {
-      animation: none;
-      @include dark-green;
-    }
-
-    &.selected {
-      @include deep-green;
-
-      label {
-        @include bright(150%);
-      }
     }
   }
 </style>

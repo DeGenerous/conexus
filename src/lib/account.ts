@@ -436,13 +436,15 @@ class Account {
    * @returns {Promise<DashboardTopic[] | null>}
    */
   async getUserStories(
-    ended: boolean,
+    ended: boolean = false,
     duration: DurationEnum,
   ): Promise<DashboardTopic[] | null> {
     const { message, data } = await this.api.getStories({
       ended,
       duration,
     });
+
+    // TODO
 
     if (!data) {
       api_error(message);

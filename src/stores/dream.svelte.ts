@@ -185,13 +185,7 @@ export const tablePrompt = writable<TablePrompt>({
 
 // RESET ALL DATA STORES
 
-export const clearAllData = () => {
-  storyData.set({
-    name: '',
-    description: '',
-    imagePrompt: '',
-    category_id: '',
-  });
+export const resetSettings = () => {
   promptSettings.set({
     imageStyle: 'Realistic',
     language: 'English',
@@ -201,6 +195,16 @@ export const clearAllData = () => {
     readingStyle: 'simple',
     kidsMode: null,
   });
+};
+
+export const clearAllData = () => {
+  storyData.set({
+    name: '',
+    description: '',
+    imagePrompt: '',
+    category_id: '',
+  });
+  resetSettings();
   openPrompt.set('');
   tablePrompt.set({
     premise: '',

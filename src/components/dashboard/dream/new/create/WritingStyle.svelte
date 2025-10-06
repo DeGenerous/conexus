@@ -3,7 +3,7 @@
   import { tablePrompt } from '@stores/dream.svelte';
 
   import Dropdown from '@components/utils/Dropdown.svelte';
-  import Slider from '@components/dashboard/dream/new/create/Slider.svelte';
+  import Slider from '@components/utils/Slider.svelte';
 
   const tenseHints = {
     past: 'Tells the story as if it already happened, allowing reflection and depth. Great for epic tales and classic adventures.',

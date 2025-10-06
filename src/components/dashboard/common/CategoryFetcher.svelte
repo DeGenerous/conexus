@@ -10,7 +10,7 @@
     selectedSectionId = $bindable(),
     fetchCategories = $bindable(),
     Data,
-  } = $props<{
+  }: {
     selectedSectionId: string;
     fetchCategories?: () => Promise<void>;
     Data: Snippet<
@@ -23,7 +23,7 @@
         categories: Category[],
       ]
     >;
-  }>();
+  } = $props();
 
   let isAdmin = $state<boolean>(false);
   let isCreator = $state<boolean>(false);

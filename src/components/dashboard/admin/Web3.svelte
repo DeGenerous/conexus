@@ -11,13 +11,6 @@
 <h5>Coming soon...</h5>
 
 <p>
-  createNewContract
-  deleteContract
-
-  createNewTokenGate
-  createNewClassGate
-
-  getAllGates
-  getGate
-  deleteGate
+  createNewContract deleteContract createNewTokenGate createNewClassGate
+  getAllGates getGate deleteGate
 </p>

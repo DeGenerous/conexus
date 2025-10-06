@@ -36,15 +36,6 @@
 </span>
 
 <p>
-  listAccounts
-  disableUserAccount
-  changeUserRole
-
-  fetchAccountCount
-  fetchWalletCount
-  
-  fetchAccountGrowth
-  fetchWalletGrowth
-
-  fetchTopAccounts
+  listAccounts disableUserAccount changeUserRole fetchAccountCount
+  fetchWalletCount fetchAccountGrowth fetchWalletGrowth fetchTopAccounts
 </p>

@@ -11,16 +11,6 @@
 <h5>Coming soon...</h5>
 
 <p>
-  createNewSection
-
-  createNewGenre
-  deleteGenre
-
-  fetchTopicCount
-  fetchStoryCount
-  
-  fetchTopicGrowth
-  fetchStoryGrowth
-
-  fetchTopTopics
+  createNewSection createNewGenre deleteGenre fetchTopicCount fetchStoryCount
+  fetchTopicGrowth fetchStoryGrowth fetchTopTopics
 </p>

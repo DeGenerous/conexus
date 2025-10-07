@@ -145,7 +145,7 @@
     which: 'search' | 'genre',
     page: number = 1,
     pageSize: number = 10,
-    sort_order: TopicSortOrder = 'category',
+    sort_order: TopicSortOrder = 'name',
   ) => {
     switch (which) {
       case 'search':
@@ -158,7 +158,6 @@
           intended,
         );
       case 'genre':
-        // get genre id by name
         const genre = genres.find((g) => g.name === text);
         if (!genre || !genre.id) return [];
 

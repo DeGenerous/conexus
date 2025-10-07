@@ -157,23 +157,56 @@ export default class ViewAPI extends Fetcher {
    * @param genre_id The ID of the genre.
    * @param page The page number to retrieve.
    * @param pageSize The number of topics per page.
+   * @param sort_order The sort order for the results.
    * @returns A promise that resolves to an array of Topic objects.
    */
-  async genreTopics(
+  async sectionGenreTopics(
     section_id: string,
     genre_id: string,
     page: number = 1,
-    pageSize: number = 5,
+    page_size: number = 5,
     sort_order: TopicSortOrder = 'name',
   ) {
+    const search_kind: 1 | 2 = 1;
     return this.request<CategoryTopic[]>(`${this.topicGroup}/genre-topics`, {
       method: 'POST',
       body: JSON.stringify({
         section_id,
         genre_id,
         page,
+        page_size,
+        sort_order,
+        search_kind,
+      }),
+    });
+  }
+
+  /**
+   * Retrieves a list of topics within a specific genre.
+   * @param account_id The ID of the creator.
+   * @param genre_id The ID of the genre.
+   * @param page The page number to retrieve.
+   * @param pageSize The number of topics per page.
+   * @param sort_order The sort order for the results.
+   * @returns A promise that resolves to an array of Topic objects.
+   */
+  async creatorGenreTopics(
+    account_id: string,
+    genre_id: string,
+    page: number = 1,
+    pageSize: number = 5,
+    sort_order: TopicSortOrder = 'name',
+  ) {
+    const search_kind: 1 | 2 = 2;
+    return this.request<CategoryTopic[]>(`${this.topicGroup}/genre-topics`, {
+      method: 'POST',
+      body: JSON.stringify({
+        account_id,
+        genre_id,
+        page,
         pageSize,
         sort_order,
+        search_kind,
       }),
     });
   }

@@ -5,8 +5,6 @@ type Bookmark = {
   id?: string;
   bookmark_folder_id?: string;
   topic_id: string;
-  route_name?: string;
-  creator: boolean;
   note?: string;
   sort_order?: number;
 } & DashboardTopic;

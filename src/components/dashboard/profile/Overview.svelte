@@ -112,14 +112,8 @@
     />
   </header>
 
-  <img
-    class="pfp round"
-    src={blankImage}
-    alt="PFP"
-  />
-  <button>
-    Change profile picture
-  </button>
+  <img class="pfp round" src={blankImage} alt="PFP" />
+  <button> Change profile picture </button>
 
   <div class="dream-container">
     <div class="flex-row">
@@ -173,7 +167,7 @@
                   onclick={() => copyRefCode(refCode.code)}
                   aria-label="Copy code {refCode.code}"
                 >
-                  <h5>Your referrals: {refCode.usage_count}</h5>
+                  <h5>Referrals: {refCode.usage_count}</h5>
                   <p>{refCode.code}</p>
                   <CopySVG data={refCode.code} />
                 </button>
@@ -192,7 +186,9 @@
                 );
                 return;
               }
-              account.generateReferralCode().then(() => window.location.reload());
+              account
+                .generateReferralCode()
+                .then(() => window.location.reload());
             }}
           >
             Get referral code
@@ -268,9 +264,13 @@
 
           {#if editPassword}
             {#if !regexpRestrictedCharsCheck.test(editPassword)}
-              <p class="validation">Password contains a restricted character!</p>
+              <p class="validation">
+                Password contains a restricted character!
+              </p>
             {:else if !regexpLengthCheck.test(editPassword)}
-              <p class="validation">Password should contain 8 - 24 characters</p>
+              <p class="validation">
+                Password should contain 8 - 24 characters
+              </p>
             {/if}
 
             {#if !regexpSpecialCharCheck.test(editPassword)}

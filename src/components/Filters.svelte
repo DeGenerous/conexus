@@ -112,8 +112,11 @@
     isSorting = false;
   };
 
+  let prevGenre = '';
+
   $effect(() => {
-    if (activeGenre) {
+    if (activeGenre && activeGenre !== prevGenre) {
+      prevGenre = activeGenre;
       searchField = '';
       resetAndFetch({ text: activeGenre, mode: 'genre' });
     }

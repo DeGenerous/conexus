@@ -241,20 +241,42 @@ export default class AppView {
   }
 
   async getGenreTopics(
-    section_id: string,
+    id: string,
     genre_id: string,
     page: number = 1,
     pageSize: number = 5,
     sort_order: TopicSortOrder = 'category',
     intended: 's' | 'c',
   ): Promise<CategoryTopic[]> {
-    const { status, message, data } = await this.api.genreTopics(
-      section_id,
-      genre_id,
-      page,
-      pageSize,
-      sort_order,
-    );
+    let response: APIResponse<CategoryTopic[]>;
+
+    switch (intended) {
+      case 's':
+        response = await this.api.sectionGenreTopics(
+          id,
+          genre_id,
+          page,
+          pageSize,
+          sort_order,
+        );
+        break;
+
+      case 'c':
+        response = await this.api.creatorGenreTopics(
+          id,
+          genre_id,
+          page,
+          pageSize,
+          sort_order,
+        );
+        break;
+
+      default:
+        api_error('Invalid intended type');
+        return [];
+    }
+
+    const { status, message, data } = response;
 
     if (status === 'error') {
       api_error(message);

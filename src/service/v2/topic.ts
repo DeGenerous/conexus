@@ -452,7 +452,7 @@ export default class TopicAPI extends Fetcher {
    * @returns An array of draft data
    */
   async getDrafts() {
-    return this.request<DraftPayload[]>(this.draftGroup, {
+    return this.request<DraftView[]>(this.draftGroup, {
       method: 'GET',
     });
   }

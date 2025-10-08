@@ -63,7 +63,6 @@
 </div>
 
 <footer class="flex">
-  <hr />
   <h5>Report bugs or ask for help</h5>
   <div class="flex-row gap">
     <a href={NAV_ROUTES.SUPPORT}>Support</a>

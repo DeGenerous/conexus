@@ -2,7 +2,7 @@ import type { SvelteComponent } from 'svelte';
 import wrap from 'svelte-spa-router/wrap';
 
 import DreamCreate from './new/Create.svelte';
-import DreamDraft from './new/Draft.svelte';
+import DreamDrafts from './new/Drafts.svelte';
 
 import DreamCollections from './manage/Collection.svelte';
 import DreamCategories from './manage/Category.svelte';
@@ -17,7 +17,7 @@ export const DREAM_ROUTES = {
     {
       name: 'Drafts',
       path: '/dream/drafts',
-      component: DreamDraft,
+      component: DreamDrafts,
     },
   ],
   MANAGE: [

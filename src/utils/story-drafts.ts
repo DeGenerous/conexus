@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'uuid';
+import Topic from '@lib/topics';
 import {
   clearAllData,
   currentDraft,
@@ -10,102 +11,69 @@ import {
   GetCache,
   SetCache,
   ClearCache,
-  DRAFTS_INDEX_KEY,
-  DRAFT_KEY,
   CURRENT_DRAFT_KEY,
 } from '@constants/cache';
 
+let topic: Topic = new Topic();
+
 const SCHEMA_VERSION = 1; // bump when shape changes
-
-function readIndex(): DraftIndexEntry[] {
-  return GetCache(DRAFTS_INDEX_KEY) || [];
-}
-
-function writeIndex(list: DraftIndexEntry[]) {
-  SetCache(DRAFTS_INDEX_KEY, list);
-}
 
 const shortenID = (id: string) => id.split('-')[0];
 
 const Drafts = {
-  create(): string {
+  async create(): Promise<string | null> {
     clearAllData();
 
-    const id = uuid();
     const when = new Date();
     const draft: DraftPayload = {
-      id,
+      id: uuid(),
       title: 'Untitled',
       created_at: when,
       updated_at: when,
-      schema: SCHEMA_VERSION,
-      data: collectState(),
+      ...collectState(),
     };
 
-    SetCache(DRAFT_KEY(id), draft);
-    writeIndex([...readIndex(), { id, title: draft.title, updated_at: when }]);
+    const id = await topic.saveNewTopicDraft(draft);
+    console.log('new-draft-id: ', id);
     SetCache(CURRENT_DRAFT_KEY, id);
 
     currentDraft.set(draft);
     toastStore.show(
-      `You just began a new dream. Draft created: ${shortenID(id)} (${draft.title})`,
+      `You just began a new dream. Draft created: ${shortenID(id!)} (${draft.title})`,
     );
     return id;
   },
 
-  save(id?: string) {
+  async save(id?: string): Promise<void> {
     if (typeof window === 'undefined') return;
 
-    id ||= GetCache(CURRENT_DRAFT_KEY) || this.create();
-    const draft = structuredClone(GetCache<DraftPayload>(DRAFT_KEY(id!)));
-    if (!draft) return toastStore.show(`Save unknown draft`, 'error');
+    id ||= GetCache(CURRENT_DRAFT_KEY) || await this.create();
+    const draft = await topic.getDraft(id!);
+    if (!draft || !id) return toastStore.show(`Save unknown draft`, 'error');
 
-    draft.data = collectState();
-    draft.updated_at = new Date();
-    if (draft.data.storyData.name) draft.title = draft.data.storyData.name;
+    // draft.data = collectState();
+    if (draft.story_data.name) draft.title = draft.story_data.name;
 
-    SetCache(DRAFT_KEY(id!), draft);
-
-    // sync index entry
-    const list = readIndex();
-    const entry = list.find((e) => e.id === id)!;
-    entry.title = draft.data.storyData.name || 'Untitled';
-    entry.updated_at = draft.updated_at;
-    writeIndex(list);
-
+    await topic.updateDraft(id, draft);
     currentDraft.set(draft);
     toastStore.show(`Draft saved: ${shortenID(id as string)} (${draft.title})`);
   },
 
-  restore(id: string) {
-    const draft = GetCache<DraftPayload>(DRAFT_KEY(id));
+  async restore(id: string): Promise<void> {
+    const draft = await topic.getDraft(id);
     if (!draft) return toastStore.show('Draft not found', 'error');
 
-    if (draft.schema !== SCHEMA_VERSION)
-      return toastStore.show(
-        'This draft is from an older version and cannot be loaded',
-        'error',
-      );
-
-    applyState(draft.data);
+    // applyState(draft.data);
     SetCache(CURRENT_DRAFT_KEY, id);
 
     currentDraft.set(draft);
     toastStore.show('Draft restored - you’re back where you left off');
   },
-
+  
   delete(id: string) {
-    ClearCache(DRAFT_KEY(id));
-    writeIndex(readIndex().filter((e) => e.id !== id));
     if (GetCache(CURRENT_DRAFT_KEY) === id) ClearCache(CURRENT_DRAFT_KEY);
 
     toastStore.show(`Draft deleted: ${shortenID(id)}`);
-  },
-
-  list(): DraftIndexEntry[] {
-    return readIndex().sort(
-      (a, b) => b.updated_at.getTime() - a.updated_at.getTime(),
-    );
   },
 };
 

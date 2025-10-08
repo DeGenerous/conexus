@@ -23,8 +23,6 @@ export const VOLUME_KEY = (type: 'voice' | 'music'): string => `${type}_volume`;
 export const TTS_SPEED_KEY = 'tts_speed';
 
 // Story drafts
-export const DRAFTS_INDEX_KEY = 'draft_index'; // stringified DraftIndexEntry[]
-export const DRAFT_KEY = (id?: string) => `draft:${id}`;
 export const CURRENT_DRAFT_KEY = 'current_draft'; // id of the open draft
 
 /* -------------------------------------------------------------------- */
@@ -99,16 +97,6 @@ const viewKeys = [
   SECTION_CATEGORIES_KEY('Dischordian Saga'),
 ];
 
-function getAllDrafts() {
-  const draftsIndex = GetCache<DraftIndexEntry[]>(DRAFTS_INDEX_KEY);
-  if (!draftsIndex) return;
-  return draftsIndex.map(({ id }) => GetCache<DraftPayload>(DRAFT_KEY(id))!);
-}
-
-function restoreAllDrafts(drafts: DraftPayload[]) {
-  drafts.map((draft: DraftPayload) => SetCache(DRAFT_KEY(draft.id), draft));
-}
-
 function saveImportantAndClearCache() {
   // saving important values
   const cookieConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
@@ -121,9 +109,7 @@ function saveImportantAndClearCache() {
   const customFont = localStorage.getItem(FONT_KEY);
   const customStyling = localStorage.getItem(STYLING_KEY);
   const customScale = localStorage.getItem(SCALE_KEY);
-  const draftsIndex = localStorage.getItem(DRAFTS_INDEX_KEY);
   const currentDraft = localStorage.getItem(CURRENT_DRAFT_KEY);
-  const allDrafts = getAllDrafts();
   const user = localStorage.getItem(USER_KEY); // save user object too
   const termsAccepted = localStorage.getItem(TERMS_KEY); // temp for terms modal
   // deleting all values
@@ -140,9 +126,7 @@ function saveImportantAndClearCache() {
   if (customFont) localStorage.setItem(FONT_KEY, customFont);
   if (customStyling) localStorage.setItem(STYLING_KEY, customStyling);
   if (customScale) localStorage.setItem(SCALE_KEY, customScale);
-  if (draftsIndex) localStorage.setItem(DRAFTS_INDEX_KEY, draftsIndex);
   if (currentDraft) localStorage.setItem(CURRENT_DRAFT_KEY, currentDraft);
-  if (allDrafts?.length) restoreAllDrafts(allDrafts);
   if (user) localStorage.setItem(USER_KEY, user);
   if (termsAccepted) localStorage.setItem(TERMS_KEY, termsAccepted); // temp
 }

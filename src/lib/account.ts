@@ -444,8 +444,6 @@ class Account {
       duration,
     });
 
-    // TODO
-
     if (!data) {
       api_error(message);
       return null;

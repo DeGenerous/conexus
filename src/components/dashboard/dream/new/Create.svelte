@@ -3,8 +3,6 @@
   import { derived } from 'svelte/store';
 
   import { GetCache, CURRENT_DRAFT_KEY } from '@constants/cache';
-  import countries from '@constants/countries.json';
-  import dreamData from '@constants/dream';
   import { resetDreamModal, openStoryManage } from '@constants/modal';
   import Topic from '@lib/topics';
   import {
@@ -14,14 +12,12 @@
     tablePrompt,
     clearAllData,
     currentDraft,
-    draftsIndex,
   } from '@stores/dream.svelte';
-  import openModal, { showModal, draftsManager } from '@stores/modal.svelte';
+  import openModal from '@stores/modal.svelte';
   import generatePrompt from '@utils/prompt';
   import { ensureCreator } from '@utils/route-guard';
   import Drafts from '@utils/story-drafts';
 
-  import Slider from '@components/utils/Slider.svelte';
   import Characters from '@components/dashboard/dream/new/create/Characters.svelte';
   import Scenario from '@components/dashboard/dream/new/create/Scenario.svelte';
   import WritingStyle from '@components/dashboard/dream/new/create/WritingStyle.svelte';
@@ -50,7 +46,7 @@
     $storyData.name &&
       $storyData.description &&
       $storyData.description.length > 100 &&
-      $storyData.imagePrompt.length <= 1400 &&
+      $storyData.image_prompt.length <= 1400 &&
       $storyData.category_id,
   );
 
@@ -61,7 +57,7 @@
   //   ([$s, $p, $o, $t]) => JSON.stringify([$s, $p, $o, $t]),
   // );
 
-  // let timer: ReturnType<typeof setTimeout>;
+  let timer: ReturnType<typeof setTimeout>;
 
   // const unsub = fingerprint.subscribe(() => {
   //   clearTimeout(timer);
@@ -70,19 +66,19 @@
 
   // onDestroy(unsub);
 
-  // const saveDraft = () => Drafts.save();
+  const saveDraft = () => Drafts.save();
 
-  // onMount(() => {
-  //   const draftID = GetCache<string>(CURRENT_DRAFT_KEY);
-  //   if (draftID) Drafts.restore(draftID);
-  //   else Drafts.create();
+  onMount(() => {
+    const draftID = GetCache<string>(CURRENT_DRAFT_KEY);
+    if (draftID) Drafts.restore(draftID);
+    else Drafts.create();
 
-  //   // Last‑chance save on hard refresh
-  //   window.addEventListener('beforeunload', saveDraft);
-  //   return () => window.removeEventListener('beforeunload', saveDraft);
-  // });
+    // Last‑chance save on hard refresh
+    window.addEventListener('beforeunload', saveDraft);
+    return () => window.removeEventListener('beforeunload', saveDraft);
+  });
 
-  // // Save draft on <Control + 's'> or <Command + 's'>
+  //// Save draft on <Control + 's'> or <Command + 's'>
   // const onkeydown = (event: KeyboardEvent) => {
   //   const { key, ctrlKey, metaKey, repeat } = event;
   //   if (repeat) return;
@@ -91,53 +87,47 @@
   //   if (key === 's') saveDraft();
   // };
 
-  // let lastSavedAgo = $state<string>('');
+  let lastSavedAgo = $state<string>('');
 
-  // // Recompute "last saved" string
-  // const updateLastSavedLabel = () => {
-  //   if (!$currentDraft?.updated_at) return;
+  // Recompute "last saved" string
+  const updateLastSavedLabel = () => {
+    if (!$currentDraft?.updated_at) return;
 
-  //   const now = Date.now();
-  //   const diffMs = now - Number($currentDraft.updated_at);
-  //   const diffSec = Math.floor(diffMs / 1000);
-  //   const diffMin = Math.floor(diffSec / 60);
-  //   const diffHr = Math.floor(diffMin / 60);
-  //   const diffDay = Math.floor(diffHr / 24);
-  //   const diffMonth = Math.floor(diffDay / 30);
+    const now = Date.now();
+    const diffMs = now - Number($currentDraft.updated_at);
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHr = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHr / 24);
+    const diffMonth = Math.floor(diffDay / 30);
 
-  //   if (diffSec < 2) {
-  //     lastSavedAgo = 'just now';
-  //   } else if (diffSec < 60) {
-  //     lastSavedAgo = `${diffSec}s ago`;
-  //   } else if (diffMin < 60) {
-  //     lastSavedAgo = `${diffMin}m ago`;
-  //   } else if (diffHr < 24) {
-  //     lastSavedAgo = `${diffHr}h ago`;
-  //   } else if (diffDay < 30) {
-  //     lastSavedAgo = `${diffDay}d ago`;
-  //   } else {
-  //     lastSavedAgo = `${diffMonth}mo ago`;
-  //   }
-  // };
+    if (diffSec < 2) {
+      lastSavedAgo = 'just now';
+    } else if (diffSec < 60) {
+      lastSavedAgo = `${diffSec}s ago`;
+    } else if (diffMin < 60) {
+      lastSavedAgo = `${diffMin}m ago`;
+    } else if (diffHr < 24) {
+      lastSavedAgo = `${diffHr}h ago`;
+    } else if (diffDay < 30) {
+      lastSavedAgo = `${diffDay}d ago`;
+    } else {
+      lastSavedAgo = `${diffMonth}mo ago`;
+    }
+  };
 
-  // // Timer that updates the label every 60 seconds
-  // let interval: ReturnType<typeof setInterval>;
+  // Timer that updates the label every 60 seconds
+  let interval: ReturnType<typeof setInterval>;
 
-  // onMount(() => {
-  //   updateLastSavedLabel(); // run immediately on load
+  onMount(() => {
+    updateLastSavedLabel(); // run immediately on load
 
-  //   interval = setInterval(() => {
-  //     updateLastSavedLabel();
-  //   }, 2000); // every 2 seconds
+    interval = setInterval(() => {
+      updateLastSavedLabel();
+    }, 2000); // every 2 seconds
 
-  //   return () => clearInterval(interval); // cleanup on destroy
-  // });
-
-  // const openDraftsManager = () => {
-  //   $draftsIndex = Drafts.list();
-  //   $showModal = true;
-  //   $draftsManager = true;
-  // };
+    return () => clearInterval(interval); // cleanup on destroy
+  });
 
   // CREATE DREAM
 
@@ -160,31 +150,23 @@
 
 <!-- <svelte:window {onkeydown} /> -->
 
-<!-- DRAFTS -->
-<!-- {#if $currentDraft || $draftsIndex.length}
-  <div class="drafts-wrapper fade-in container flex-row flex-wrap">
-    {#if $currentDraft}
-      <h5>
-        📝 Working on draft: {$currentDraft.id.split('-')[0]}
-        <strong>
-          - Last saved: {lastSavedAgo}
-        </strong>
-      </h5>
-    {:else}
-      <h5>There is no draft selected</h5>
-    {/if}
+<!-- DRAFT SAVING -->
+{#if $currentDraft}
+  <div class="draft-wrapper fade-in container flex-row flex-wrap">
+    <h5>
+      📝 Working on draft: {$currentDraft.id?.split('-')[0]}
+      <strong>
+        - Last saved: {lastSavedAgo}
+      </strong>
+    </h5>
     <span class="flex-row">
-      {#if $currentDraft}
-        <SaveSVG onclick={saveDraft} />
-      {:else}
-        <button class="green-btn" onclick={saveDraft}>Create a draft</button>
-      {/if}
-      <button class="rose-btn" onclick={openDraftsManager}>
-        Manage Drafts
+      <SaveSVG onclick={saveDraft} />
+      <button onclick={saveDraft}>
+        Start new Draft
       </button>
     </span>
   </div>
-{/if} -->
+{/if}
 
 <!-- CATEGORY, TITLE, DESCRIPTION, IMAGE PROMPT -->
 <div class="dream-container">
@@ -287,20 +269,20 @@
     <label for="image-prompts">Image Generation Instructions</label>
     <textarea
       id="image-prompts"
-      class:red-border={$storyData.imagePrompt.length > 1400}
+      class:red-border={$storyData.image_prompt.length > 1400}
       placeholder="What does your world feel like, what visual mood are you going for, and what elements stand out? Describe the environment, style, lighting, and textures you want to see."
       rows="2"
-      bind:value={$storyData.imagePrompt}
-      style:min-height={$storyData.imagePrompt.length > 500
-        ? $storyData.imagePrompt.length / 50 + 'rem'
+      bind:value={$storyData.image_prompt}
+      style:min-height={$storyData.image_prompt.length > 500
+        ? $storyData.image_prompt.length / 50 + 'rem'
         : ''}
     ></textarea>
   </div>
 
-  {#if $storyData.imagePrompt && $storyData.imagePrompt.length > 1400}
+  {#if $storyData.image_prompt && $storyData.image_prompt.length > 1400}
     <p class="validation">
       Please shorten your message to 1400 characters or less, you’ve typed {$storyData
-        .imagePrompt.length}
+        .image_prompt.length}
     </p>
   {/if}
 </div>
@@ -380,9 +362,9 @@
         id="first-act"
         placeholder="Describe how the story begins—introduce the main character, their current situation, and the inciting event that sets the plot in motion."
         rows="2"
-        bind:value={$tablePrompt.firstAction}
-        style:min-height={$tablePrompt.firstAction.length > 500
-          ? $tablePrompt.firstAction.length / 50 + 'rem'
+        bind:value={$tablePrompt.first_action}
+        style:min-height={$tablePrompt.first_action.length > 500
+          ? $tablePrompt.first_action.length / 50 + 'rem'
           : ''}
       ></textarea>
     </div>
@@ -402,9 +384,9 @@
     <textarea
       placeholder="Add any additional styling, references, details, twists, character ideas, or world-building elements you’d like to include in your story."
       rows="2"
-      bind:value={$tablePrompt.additionalData}
-      style:min-height={$tablePrompt.additionalData.length > 500
-        ? $tablePrompt.additionalData.length / 50 + 'rem'
+      bind:value={$tablePrompt.additional_data}
+      style:min-height={$tablePrompt.additional_data.length > 500
+        ? $tablePrompt.additional_data.length / 50 + 'rem'
         : ''}
     ></textarea>
   </div>
@@ -445,29 +427,29 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  // .drafts-wrapper {
-  //   width: 95%;
-  //   height: 100%;
-  //   max-width: 100rem;
-  //   justify-content: space-between;
-  //   animation: none;
-  //   @include rose(0.25);
+  .draft-wrapper {
+    width: 95%;
+    height: 100%;
+    max-width: 100rem;
+    justify-content: space-between;
+    animation: none;
+    @include rose(0.25);
 
-  //   h5 {
-  //     @include rose(1, text, bright);
-  //     strong {
-  //       @include white-txt(soft);
-  //     }
-  //   }
+    h5 {
+      @include rose(1, text, bright);
+      strong {
+        @include white-txt(soft);
+      }
+    }
 
-  //   span {
-  //     width: 100%;
+    span {
+      width: 100%;
 
-  //     @include respond-up(tablet) {
-  //       width: auto;
-  //     }
-  //   }
-  // }
+      @include respond-up(tablet) {
+        width: auto;
+      }
+    }
+  }
 
   #blank {
     min-height: 25rem;

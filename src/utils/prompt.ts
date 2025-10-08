@@ -12,27 +12,27 @@ function generatePrompt(
   settings: PromptSettings,
   data: TablePrompt | string,
 ): TopicRequest {
-  let imagePrompt: string = `Use ${settings.imageStyle} style.\n\n`;
+  let imagePrompt: string = `Use ${settings.image_style} style.\n\n`;
 
-  imagePrompt += props.imagePrompt;
+  imagePrompt += props.image_prompt;
 
   // ADDING CHARACTERS TO THE IMAGE PROMPT
   if (typeof data !== 'string') {
     imagePrompt += '\n';
 
-    imagePrompt += `Main Character: name: ${data.mainCharacter.name}, description: ${data.mainCharacter.description}`;
+    imagePrompt += `Main Character: name: ${data.main_character.name}, description: ${data.main_character.description}`;
 
-    if (data.mainCharacter.physicality)
-      imagePrompt += `, physicality: ${data.mainCharacter.physicality}`;
+    if (data.main_character.physicality)
+      imagePrompt += `, physicality: ${data.main_character.physicality}`;
 
-    if (data.mainCharacter.physicality)
-      imagePrompt += `, psychology: ${data.mainCharacter.psychology}`;
+    if (data.main_character.psychology)
+      imagePrompt += `, psychology: ${data.main_character.psychology}`;
 
     imagePrompt += '\n';
 
-    if (data.sideCharacters.length > 0) {
+    if (data.side_characters.length > 0) {
       imagePrompt += 'Side Characters:\n';
-      data.sideCharacters.map((character: Character) => {
+      data.side_characters.map((character: Character) => {
         imagePrompt += `name: ${character.name}, description: ${character.description}`;
 
         if (character.physicality)
@@ -59,25 +59,25 @@ function generatePrompt(
 
     if (data.exposition) promptData += `Exposition: ${data.exposition}\n`;
 
-    if (data.firstAction) promptData += `First Act: ${data.firstAction}\n`;
+    if (data.first_action) promptData += `First Act: ${data.first_action}\n`;
 
     // CHARACTERS
     promptData += '\n';
     promptData += 'The following characters are involved in the story:\n';
 
-    promptData += `Main Character: name: ${data.mainCharacter.name}, description: ${data.mainCharacter.description}`;
+    promptData += `Main Character: name: ${data.main_character.name}, description: ${data.main_character.description}`;
 
-    if (data.mainCharacter.physicality)
-      promptData += `, physicality: ${data.mainCharacter.physicality}`;
+    if (data.main_character.physicality)
+      promptData += `, physicality: ${data.main_character.physicality}`;
 
-    if (data.mainCharacter.physicality)
-      promptData += `, psychology: ${data.mainCharacter.psychology}`;
+    if (data.main_character.psychology)
+      promptData += `, psychology: ${data.main_character.psychology}`;
 
     promptData += '\n';
 
-    if (data.sideCharacters.length > 0) {
+    if (data.side_characters.length > 0) {
       promptData += 'Side Characters:\n';
-      data.sideCharacters.map((character: Character) => {
+      data.side_characters.map((character: Character) => {
         promptData += `name: ${character.name}, description: ${character.description}`;
 
         if (character.physicality)
@@ -102,38 +102,38 @@ function generatePrompt(
     }
 
     // SCENARIOS
-    if (data.winningScenarios.length > 0) {
+    if (data.winning_scenarios.length > 0) {
       promptData += '\n';
       promptData += 'Incorportate the following winning scenarios:\n';
-      data.winningScenarios.map((scenario: string, index: number) => {
+      data.winning_scenarios.map((scenario: string, index: number) => {
         promptData += `${index + 1}) ${scenario}\n`;
       });
     }
 
-    if (data.losingScenarios.length > 0) {
+    if (data.losing_scenarios.length > 0) {
       promptData += '\n';
       promptData += 'Incorportate the following losing scenarios:\n';
-      data.losingScenarios.map((scenario: string, index: number) => {
+      data.losing_scenarios.map((scenario: string, index: number) => {
         promptData += `${index + 1}) ${scenario}\n`;
       });
     }
 
-    if (data.keyEvents.length > 0) {
+    if (data.key_events.length > 0) {
       promptData += '\n';
       promptData += 'Incorportate the following key events:\n';
-      data.keyEvents.map((event: string, index: number) => {
+      data.key_events.map((event: string, index: number) => {
         promptData += `${index + 1}) ${event}\n`;
       });
     }
 
     // WRITING STYLE
-    if (data.POV) {
+    if (data.pov) {
       promptData += '\n';
-      promptData += `Tell the story from the point of view of: ${data.POV}\n`;
+      promptData += `Tell the story from the point of view of: ${data.pov}\n`;
     }
 
     promptData += '\n';
-    switch (data.storyArcs) {
+    switch (data.story_arcs) {
       case 'min': {
         promptData +=
           'The story should have two arcs or acts if the user makes decisions to last long enough.\n';
@@ -174,15 +174,15 @@ function generatePrompt(
     promptData +=
       'The following writing style and tone are to be considered:\n';
 
-    promptData += `Writing Style:\n- Tense: ${data.tense};\n- Style: ${data.writingStyle};\n- Voice: ${data.voice}.\n`;
+    promptData += `Writing Style:\n- Tense: ${data.tense};\n- Style: ${data.writing_style};\n- Voice: ${data.voice}.\n`;
 
     promptData += 'Tone:\n';
     data.tone.map(({ name, value }) => {
       if (value !== 'none') promptData += `- ${name}: ${value};\n`;
     });
 
-    if (data.additionalData)
-      promptData += `\nAlso consider:\n${data.additionalData}`;
+    if (data.additional_data)
+      promptData += `\nAlso consider:\n${data.additional_data}`;
 
     return promptData;
   };

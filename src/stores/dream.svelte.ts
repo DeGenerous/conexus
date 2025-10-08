@@ -3,18 +3,18 @@ import { writable, get } from 'svelte/store';
 export const storyData = writable<StoryData>({
   name: '',
   description: '',
-  imagePrompt: '',
+  image_prompt: '',
   category_id: '',
 });
 
 export const promptSettings = writable<PromptSettings>({
-  imageStyle: 'Realistic',
+  image_style: 'Realistic',
   language: 'English',
   interactivity: 'standard',
   difficulty: 'standard',
   length: 'standard',
-  readingStyle: 'simple',
-  kidsMode: null,
+  reading_style: 'simple',
+  kids_mode: null,
 });
 
 export const openPrompt = writable<string>('');
@@ -23,19 +23,19 @@ export const tablePrompt = writable<TablePrompt>({
   premise: '',
   environment: '',
   exposition: '',
-  firstAction: '',
-  mainCharacter: {
+  first_action: '',
+  main_character: {
     name: '',
     description: '',
   },
-  sideCharacters: [],
+  side_characters: [],
   relationships: [],
-  winningScenarios: [],
-  losingScenarios: [],
-  keyEvents: [],
+  winning_scenarios: [],
+  losing_scenarios: [],
+  key_events: [],
   tense: 'present',
-  storyArcs: 'min',
-  writingStyle: 'descriptive',
+  story_arcs: 'min',
+  writing_style: 'descriptive',
   voice: 'active',
   pacing: 'standard',
   tone: [
@@ -180,20 +180,20 @@ export const tablePrompt = writable<TablePrompt>({
       ],
     },
   ],
-  additionalData: '',
+  additional_data: '',
 });
 
 // RESET ALL DATA STORES
 
 export const resetSettings = () => {
   promptSettings.set({
-    imageStyle: 'Realistic',
+    image_style: 'Realistic',
     language: 'English',
     interactivity: 'standard',
     difficulty: 'standard',
     length: 'standard',
-    readingStyle: 'simple',
-    kidsMode: null,
+    reading_style: 'simple',
+    kids_mode: null,
   });
 };
 
@@ -201,7 +201,7 @@ export const clearAllData = () => {
   storyData.set({
     name: '',
     description: '',
-    imagePrompt: '',
+    image_prompt: '',
     category_id: '',
   });
   resetSettings();
@@ -210,19 +210,19 @@ export const clearAllData = () => {
     premise: '',
     environment: '',
     exposition: '',
-    firstAction: '',
-    mainCharacter: {
+    first_action: '',
+    main_character: {
       name: '',
       description: '',
     },
-    sideCharacters: [],
+    side_characters: [],
     relationships: [],
-    winningScenarios: [],
-    losingScenarios: [],
-    keyEvents: [],
+    winning_scenarios: [],
+    losing_scenarios: [],
+    key_events: [],
     tense: 'present',
-    storyArcs: 'standard',
-    writingStyle: 'descriptive',
+    story_arcs: 'standard',
+    writing_style: 'descriptive',
     voice: 'active',
     pacing: 'standard',
     tone: [
@@ -367,27 +367,26 @@ export const clearAllData = () => {
         ],
       },
     ],
-    additionalData: '',
+    additional_data: '',
   });
 };
 
 // COLLECT ALL DATA FROM STORES (for drafts)
 
 export const currentDraft = writable<Nullable<DraftPayload>>(null);
-export const draftsIndex = writable<DraftIndexEntry[]>([]);
 
 export function collectState() {
   return {
-    storyData: get(storyData),
-    promptSettings: get(promptSettings),
-    openPrompt: get(openPrompt),
-    tablePrompt: get(tablePrompt),
+    story_data: get(storyData),
+    prompt_settings: get(promptSettings),
+    open_prompt: get(openPrompt),
+    table_prompt: get(tablePrompt),
   };
 }
 
 export function applyState(state: ReturnType<typeof collectState>) {
-  storyData.set(state.storyData);
-  promptSettings.set(state.promptSettings);
-  openPrompt.set(state.openPrompt);
-  tablePrompt.set(state.tablePrompt);
+  storyData.set(state.story_data);
+  promptSettings.set(state.prompt_settings);
+  openPrompt.set(state.open_prompt);
+  tablePrompt.set(state.table_prompt);
 }

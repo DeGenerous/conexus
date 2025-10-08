@@ -7,12 +7,10 @@
     modal,
     showModal,
     resetModal,
-    draftsManager,
     themeSettings,
   } from '@stores/modal.svelte';
   import { NAV_ROUTES } from '@constants/routes';
 
-  import Drafts from '@components/dashboard/dream-legacy/create/Drafts.svelte';
   import ThemeSettings from '@components/utils/ThemeSettings.svelte';
 
   let dialog: HTMLDialogElement;
@@ -29,7 +27,6 @@
   const closeDialog = () => {
     dialog.classList.add('dialog-fade-out'); // animation before close
     $showModal = false;
-    if ($draftsManager) $draftsManager = false;
     if ($themeSettings) $themeSettings = false;
     resetModal();
     setTimeout(() => dialog?.close(), 300);
@@ -79,11 +76,6 @@
   <div class="flex" on:click|stopPropagation>
     <!-- DYNAMIC CONTENT PROVIDED BY openModal() FUNCTION -->
     {@html modal.content}
-
-    <!-- DRAFTS MANGER -->
-    {#if $draftsManager}
-      <Drafts {closeDialog} />
-    {/if}
 
     <!-- CUSTOM THEMES WINDOW -->
     {#if $themeSettings}

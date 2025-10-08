@@ -70,13 +70,15 @@ export default class Topic {
     toastStore.show(message || `Document processed successfully`, 'info');
   }
 
-  async getDrafts(): Promise<DraftPayload[]> {
+  async getDrafts(): Promise<DraftView[]> {
     const { message, data } = await this.api.getDrafts();
 
     if (!data) {
       api_error(message);
       return [];
     }
+
+    console.log(data)
 
     return data;
   }

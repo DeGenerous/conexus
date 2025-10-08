@@ -241,7 +241,8 @@ export default class CoNexus {
     }
 
     // return to topic page
-    window.location.href = `/topic/${topic_id}`; // TODO: Change to topic page
+    // window.location.href = `/topic/${topic_id}`; // TODO: Change to topic page
+    open('/', '_self');
 
     toastStore.show(message || 'Credits rolled back', 'info');
   }

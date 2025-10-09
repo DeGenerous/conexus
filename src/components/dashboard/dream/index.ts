@@ -4,8 +4,8 @@ import wrap from 'svelte-spa-router/wrap';
 import DreamCreate from './new/Create.svelte';
 import DreamDrafts from './new/Drafts.svelte';
 
-import DreamCollections from './manage/Collection.svelte';
-import DreamCategories from './manage/Category.svelte';
+import DreamCollections from './manage/Collections.svelte';
+import DreamCategories from './manage/Categories.svelte';
 
 export const DREAM_ROUTES = {
   NEW: [

@@ -16,8 +16,6 @@ import {
 
 let topic: Topic = new Topic();
 
-const SCHEMA_VERSION = 1; // bump when shape changes
-
 const shortenID = (id: string) => id.split('-')[0];
 
 const Drafts = {

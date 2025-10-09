@@ -3,12 +3,21 @@
 
   import SelectorSVG from '@components/icons/Selector.svelte';
 
-  let { children, name }: { children: Snippet; name: string } = $props();
+  let {
+    children,
+    name,
+    dropdownFunc = null,
+  }: {
+    children: Snippet;
+    name: string;
+    dropdownFunc?: Nullable<() => void>
+  } = $props();
 
   let isOpen = $state(false);
 
   const toggleDropdown = () => {
     isOpen = !isOpen;
+    dropdownFunc?.();
   };
 </script>
 
@@ -16,6 +25,7 @@
   <button
     class="void-btn flex-row"
     class:active={isOpen}
+    aria-expanded={isOpen}
     onclick={toggleDropdown}
   >
     <h4>{name}</h4>

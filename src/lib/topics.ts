@@ -78,7 +78,7 @@ export default class Topic {
       return [];
     }
 
-    console.log(data)
+    console.log(data);
 
     return data;
   }

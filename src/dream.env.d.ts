@@ -31,7 +31,7 @@ type PromptSettings = {
   length: Min_Max;
   reading_style: string;
   kids_mode: Nullable<string>;
-}
+};
 
 type TablePrompt = {
   premise: string;
@@ -52,14 +52,14 @@ type TablePrompt = {
   pov?: string;
   tone: Tone;
   additional_data: string;
-}
+};
 
 type StoryData = {
   name: string;
   description: string;
   image_prompt: string;
   category_id: string;
-}
+};
 
 type CreatePrompt = {
   topic: string;
@@ -124,7 +124,7 @@ type DraftData = {
   open_prompt: string;
   story_data: StoryData;
   prompt_settings: PromptSettings;
-}
+};
 
 // type DraftPayload = {
 //   title: string;
@@ -138,7 +138,7 @@ type DraftPayload = DraftData & {
   tenant_id?: string;
   account_id?: string;
   title: string; // copy of storyData.name (or "Untitled")
-}
+};
 
 type TopicRequest = {
   name: string;

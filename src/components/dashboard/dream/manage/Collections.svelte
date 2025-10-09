@@ -4,7 +4,7 @@
   import Topics from '@lib/topics';
   import { ensureCreator } from '@utils/route-guard';
 
-  import CategoryBlock from '@components/dashboard/dream/manage/CategoryBlock.svelte';
+  import CategoryBlock from '@components/dashboard/dream/manage/collections/CategoryBlock.svelte';
   import Dropdown from '@components/utils/Dropdown.svelte';
 
   const topicManager = new Topics();
@@ -143,17 +143,13 @@
           {#if expandedCreators.has(creator.creator_id)}
             {#if creator.categories && creator.categories.length > 0}
               {#each creator.categories as category}
-                <CategoryBlock
-                  {isAdmin}
-                  {category}
-                  {topicManager}
-                />
+                <CategoryBlock {isAdmin} {category} {topicManager} />
               {/each}
             {:else}
               <p class="validation">No categories found</p>
             {/if}
           {/if}
-        </Dropdown> 
+        </Dropdown>
       {/each}
     {:else}
       <p class="validation">No creators found</p>

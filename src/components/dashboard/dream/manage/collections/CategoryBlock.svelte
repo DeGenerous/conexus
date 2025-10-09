@@ -135,7 +135,7 @@
 
 <button
   type="button"
-  class="category-toggle void-btn flex-row"
+  class="category-toggle void-btn flex-row fade-in"
   class:active={expandedCategories.has(workingCategory.category_id)}
   aria-expanded={expandedCategories.has(workingCategory.category_id)}
   onclick={() => toggleExpandCategory(workingCategory.category_id)}
@@ -144,6 +144,7 @@
       toggleExpandCategory(workingCategory.category_id);
     }
   }}
+  disabled={workingCategory.topic_count === 0}
 >
   <span class="flex-row gap round-8">
     <h5>Order:</h5>
@@ -174,7 +175,11 @@
   {#if workingCategory.topics && workingCategory.topics.length > 0}
     <section class="tiles-collection fade-in">
       {#each workingCategory.topics as topic, i}
-        <a class="tile" href={NAV_ROUTES.EXPLORE(topic.topic_id)}>
+        <a
+          class="tile"
+          href={NAV_ROUTES.EXPLORE(topic.topic_id)}
+          target="_blank"
+        >
           <h5>{topic.topic_name}</h5>
           <div class="flex">
             <span class="input-container">
@@ -230,9 +235,7 @@
                   )}
                 disabled={topic.available === false || !isAdmin}
               >
-                {topic.visibility === 'public'
-                  ? 'Make Private'
-                  : 'Make Public'}
+                {topic.visibility === 'public' ? 'Make Private' : 'Make Public'}
               </button>
             {/if}
           </div>
@@ -267,6 +270,11 @@
     &:active,
     &:focus-visible {
       @include bright;
+    }
+
+    &:disabled {
+      fill: $dark-blue;
+      stroke: $dark-blue;
     }
 
     h4 {

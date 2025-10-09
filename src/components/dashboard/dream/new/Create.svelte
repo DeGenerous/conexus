@@ -161,9 +161,7 @@
     </h5>
     <span class="flex-row">
       <SaveSVG onclick={saveDraft} />
-      <button onclick={saveDraft}>
-        Start new Draft
-      </button>
+      <button onclick={saveDraft}> Start new Draft </button>
     </span>
   </div>
 {/if}

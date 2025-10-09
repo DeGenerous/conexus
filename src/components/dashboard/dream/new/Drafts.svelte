@@ -28,6 +28,6 @@
       onclick={() => open('/dashboard#/dream/create', '_self')}
     >
       Create a Dream
-  </button>
+    </button>
   {/if}
 {/await}

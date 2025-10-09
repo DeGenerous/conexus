@@ -10,7 +10,7 @@
   }: {
     children: Snippet;
     name: string;
-    dropdownFunc?: Nullable<() => void>
+    dropdownFunc?: Nullable<() => void>;
   } = $props();
 
   let isOpen = $state(false);

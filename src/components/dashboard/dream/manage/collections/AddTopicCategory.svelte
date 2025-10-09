@@ -58,7 +58,7 @@
   </div>
 </div>
 
-<div>
+<span class="flex-row flex-wrap">
   <CategoryFetcher bind:selectedSectionId>
     {#snippet children(
       loadingSections: boolean,
@@ -70,60 +70,50 @@
     )}
       {#if isAdmin}
         {#if loadingSections}
-          <p>Loading sections...</p>
+          <p class="validation green-txt">Loading sections...</p>
         {:else if errorSections}
           <p class="validation">{errorSections}</p>
         {:else}
-          <h4>Sections: {sections.length}</h4>
-          <div class="container">
-            {#if sections.length > 0}
-              <select bind:value={selectedSectionId}>
-                <option value="">Select a section</option>
-                {#each sections as { id, name }}
-                  <option value={id}>{name}</option>
-                {/each}
-              </select>
-            {:else}
-              <p class="validation">No sections found</p>
-            {/if}
-          </div>
-        {/if}
-      {/if}
-
-      {#if loadingCategories}
-        <p>Loading categories...</p>
-      {:else if errorCategories}
-        <p class="validation">{errorCategories}</p>
-      {:else}
-        <div class="add-category flex-row">
-          {#if categories.length > 0}
-            <select bind:value={selectedCategoryId}>
-              <option value="" hidden disabled>Select</option>
-              {#each categories.filter((c) => !topic_categories.some((tc: Category) => tc.id === c.id)) as { id, name }}
+          {#if sections.length > 0}
+            <select bind:value={selectedSectionId}>
+              <option value="" disabled hidden>Select section</option>
+              {#each sections as { id, name }}
                 <option value={id}>{name}</option>
               {/each}
             </select>
-            <button onclick={handleAddCategory} disabled={!selectedCategoryId}
-              >Add Category</button
-            >
           {:else}
-            <p class="validation">No categories found</p>
+            <p class="validation">No sections found</p>
           {/if}
-        </div>
+        {/if}
       {/if}
+
+      {#if !loadingCategories && errorCategories}
+        <p class="validation">{errorCategories}</p>
+      {:else}
+        <select bind:value={selectedCategoryId} disabled={!selectedSectionId}>
+          <option value="" hidden disabled>
+            {#if categories.length > 0}
+              Select category
+            {:else if selectedSectionId && !loadingCategories}
+              No categories found
+            {/if}
+          </option>
+          {#if categories.length > 0}
+            {#each categories.filter((c) => !topic_categories.some((tc: Category) => tc.id === c.id)) as { id, name }}
+              <option value={id}>{name}</option>
+            {/each}
+          {/if}
+        </select>
+      {/if}
+
+      <button onclick={handleAddCategory} disabled={!selectedCategoryId}>
+        Add Category
+      </button>
     {/snippet}
   </CategoryFetcher>
-</div>
+</span>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .container {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .add-category {
-    justify-content: center;
-  }
 </style>

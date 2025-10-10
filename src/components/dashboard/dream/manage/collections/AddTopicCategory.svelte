@@ -73,17 +73,15 @@
           <p class="validation green-txt">Loading sections...</p>
         {:else if errorSections}
           <p class="validation">{errorSections}</p>
+        {:else if sections.length > 0}
+          <select bind:value={selectedSectionId}>
+            <option value="" disabled hidden>Select section</option>
+            {#each sections as { id, name }}
+              <option value={id}>{name}</option>
+            {/each}
+          </select>
         {:else}
-          {#if sections.length > 0}
-            <select bind:value={selectedSectionId}>
-              <option value="" disabled hidden>Select section</option>
-              {#each sections as { id, name }}
-                <option value={id}>{name}</option>
-              {/each}
-            </select>
-          {:else}
-            <p class="validation">No sections found</p>
-          {/if}
+          <p class="validation">No sections found</p>
         {/if}
       {/if}
 
@@ -115,5 +113,4 @@
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
-
 </style>

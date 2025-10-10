@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { dndzone, type DndEvent } from 'svelte-dnd-action';
   import { tippy } from 'svelte-tippy';
 
   import { NAV_ROUTES } from '@constants/routes';
@@ -16,16 +17,26 @@
     topicManager: Topics;
   } = $props();
 
-  let debounceTimeout: NodeJS.Timeout;
-
   let workingCategory = $state<CollectionCategory>(category);
-
   let expandedCategories = $state<Set<string>>(new Set());
 
-  let draggedTopic = $state<CollectionTopic | null>(null);
+  type DraggableTopic = CollectionTopic & { id: string };
 
-  function setDraggedTopic(topic: CollectionTopic | null) {
-    draggedTopic = topic;
+  function createTopicItems(
+    topics: CollectionTopic[] = workingCategory.topics ?? [],
+  ): DraggableTopic[] {
+    return topics.map((topic) => ({
+      ...topic,
+      id: topic.topic_id,
+    }));
+  }
+
+  let topicItems = $state<DraggableTopic[]>(createTopicItems());
+
+  function syncTopicItems(
+    topics: CollectionTopic[] = workingCategory.topics ?? [],
+  ) {
+    topicItems = createTopicItems(topics);
   }
 
   async function fetchTopicCollection(
@@ -38,9 +49,58 @@
       10,
       refresh,
     );
+    workingCategory.topic_count = workingCategory.topics?.length ?? 0;
+    syncTopicItems(workingCategory.topics ?? []);
   }
 
+  $effect(() => {
+    const incoming = category;
+    const idChanged = workingCategory.category_id !== incoming.category_id;
+
+    if (idChanged) {
+      const topics = incoming.topics ?? workingCategory.topics ?? [];
+      workingCategory = {
+        ...incoming,
+        topics,
+        topic_count: topics.length || incoming.topic_count,
+      };
+      syncTopicItems(workingCategory.topics ?? []);
+      return;
+    }
+
+    const orderChanged =
+      workingCategory.category_order !== incoming.category_order;
+    const nameChanged =
+      workingCategory.category_name !== incoming.category_name;
+    const countChanged =
+      incoming.topic_count !== undefined &&
+      workingCategory.topic_count !== incoming.topic_count;
+
+    if (orderChanged || nameChanged || countChanged) {
+      workingCategory = {
+        ...workingCategory,
+        category_order: incoming.category_order,
+        category_name: incoming.category_name,
+        topic_count:
+          incoming.topic_count ??
+          workingCategory.topic_count ??
+          workingCategory.topics?.length ??
+          0,
+      };
+    }
+
+    if (incoming.topics && incoming.topics !== workingCategory.topics) {
+      workingCategory = {
+        ...workingCategory,
+        topics: incoming.topics,
+        topic_count: incoming.topics.length,
+      };
+      syncTopicItems(incoming.topics);
+    }
+  });
+
   async function toggleExpandCategory(categoryId: string) {
+    if (workingCategory.topic_count === 0) return;
     const newSet = new Set(expandedCategories);
     if (newSet.has(categoryId)) {
       newSet.delete(categoryId);
@@ -58,43 +118,6 @@
     const input = event.target as HTMLInputElement;
     input.select();
   };
-
-  function handleChangeCategoryOrder(event: Event, category_id: string) {
-    clearTimeout(debounceTimeout);
-    const input = event.target as HTMLInputElement;
-
-    debounceTimeout = setTimeout(async () => {
-      if (input.value == '') input.value = '0';
-
-      // await topicManager.changeSortOrderInCategory(
-      //   category_id,
-      //   Number(input.value),
-      // );
-
-      // await fetchCollections();
-    }, 1000);
-  }
-
-  function handleChangeTopicOrder(
-    event: Event,
-    topic_id: string,
-    category_id: string,
-  ) {
-    clearTimeout(debounceTimeout);
-    const input = event.target as HTMLInputElement;
-
-    debounceTimeout = setTimeout(async () => {
-      if (input.value == '') input.value = '0';
-
-      await topicManager.changeSortOrderInCategory(
-        topic_id,
-        category_id,
-        Number(input.value),
-      );
-
-      await fetchTopicCollection(category_id, true);
-    }, 1000);
-  }
 
   async function toggleAvailability(topic_id: string, available: boolean) {
     await topicManager.changeAvailability(topic_id, available);
@@ -114,28 +137,30 @@
     await fetchTopicCollection(workingCategory.category_id, true);
   }
 
-  function moveTopicToCategory(
-    topic: CollectionTopic,
-    targetCategory: CollectionCategory,
-  ) {
-    // Remove from old category
-    workingCategory.topics = (workingCategory.topics || []).filter(
-      (t) => t.topic_id !== topic.topic_id,
-    );
+  function handleTopicsConsider(event: CustomEvent<DndEvent<DraggableTopic>>) {
+    topicItems = event.detail.items as DraggableTopic[];
+  }
 
-    // Add to new category
-    if (!targetCategory.topics) {
-      targetCategory.topics = [];
-    }
-    targetCategory.topics.push(topic);
+  function handleTopicsFinalize(event: CustomEvent<DndEvent<DraggableTopic>>) {
+    const updated = event.detail.items.map((item, index) => ({
+      ...item,
+      order: index + 1,
+    }));
 
-    topicManager.moveTopic(topic.topic_id, targetCategory.category_id);
+    topicItems = updated;
+    workingCategory.topics = updated.map(({ id, ...rest }) => ({ ...rest }));
+    workingCategory.topic_count = workingCategory.topics?.length ?? 0;
+
+    console.log('[Collections] Topic order updated', {
+      categoryId: workingCategory.category_id,
+      topics: updated.map(({ topic_id, order }) => ({ topic_id, order })),
+    });
   }
 </script>
 
 <button
   type="button"
-  class="category-toggle void-btn flex-row fade-in"
+  class="category-toggle void-btn fade-in"
   class:active={expandedCategories.has(workingCategory.category_id)}
   aria-expanded={expandedCategories.has(workingCategory.category_id)}
   onclick={() => toggleExpandCategory(workingCategory.category_id)}
@@ -144,37 +169,45 @@
       toggleExpandCategory(workingCategory.category_id);
     }
   }}
-  disabled={workingCategory.topic_count === 0}
 >
-  <span class="flex-row gap round-8">
-    <h5>Order:</h5>
-    <input
-      id="category-order-{workingCategory.category_id}"
-      type="number"
-      value={workingCategory.category_order}
-      onclick={selectInput}
-      min="1"
-      max="99"
-      oninput={(event) =>
-        handleChangeCategoryOrder(event, workingCategory.category_id)}
-    />
-  </span>
-  <h4>{workingCategory.category_name}</h4>
-  <span class="flex-row gap round-8">
-    <h5>Topics: {workingCategory.topic_count}</h5>
-    <SelectorSVG
-      focused={null}
-      disabled={false}
-      hideForMobiles={false}
-      rotate={expandedCategories.has(workingCategory.category_id) ? '90' : '0'}
-    />
-  </span>
+  <div class="flex-row">
+    <span class="flex-row gap round-8">
+      <h5>Order:</h5>
+      <input
+        id="category-order-{workingCategory.category_id}"
+        type="number"
+        value={workingCategory.category_order}
+        onclick={selectInput}
+        min="1"
+        max="99"
+        readonly
+      />
+    </span>
+    <h4>{workingCategory.category_name}</h4>
+    <span class="flex-row gap round-8">
+      <h5>Topics: {workingCategory.topic_count}</h5>
+      <SelectorSVG
+        focused={null}
+        disabled={false}
+        hideForMobiles={false}
+        rotate={expandedCategories.has(workingCategory.category_id) ? '90' : '0'}
+      />
+    </span>
+  </div>
 </button>
 
 {#if expandedCategories.has(workingCategory.category_id)}
-  {#if workingCategory.topics && workingCategory.topics.length > 0}
-    <section class="tiles-collection fade-in">
-      {#each workingCategory.topics as topic, i}
+  {#if topicItems && topicItems.length > 0}
+    <section
+      class="tiles-collection fade-in"
+      use:dndzone={{
+        items: topicItems,
+        type: `topics-${workingCategory.category_id}`,
+      }}
+      onconsider={handleTopicsConsider}
+      onfinalize={handleTopicsFinalize}
+    >
+      {#each topicItems as topic (topic.id)}
         <a
           class="tile"
           href={NAV_ROUTES.EXPLORE(topic.topic_id)}
@@ -191,12 +224,7 @@
                 onclick={selectInput}
                 min="1"
                 max="99"
-                oninput={(event) =>
-                  handleChangeTopicOrder(
-                    event,
-                    topic.topic_id,
-                    workingCategory.category_id,
-                  )}
+                readonly
               />
             </span>
             <button
@@ -235,13 +263,17 @@
                   )}
                 disabled={topic.available === false || !isAdmin}
               >
-                {topic.visibility === 'public' ? 'Make Private' : 'Make Public'}
+                {topic.visibility === 'public'
+                  ? 'Make Private'
+                  : 'Make Public'}
               </button>
             {/if}
           </div>
         </a>
       {/each}
     </section>
+  {:else}
+    <p class="validation">No topics found</p>
   {/if}
 {/if}
 
@@ -249,18 +281,12 @@
   @use '/src/styles/mixins' as *;
 
   .category-toggle {
-    width: calc(100% + 3rem);
-    margin-inline: -1.5rem;
-    justify-content: space-between;
+    width: 100%;
     padding: 0.5rem;
     stroke: $white;
     fill: $white;
     @include blue;
     @include white-txt(1);
-
-    @include respond-up(small-desktop) {
-      margin-inline: 0;
-    }
 
     &.active {
       @include deep-green;
@@ -277,36 +303,38 @@
       stroke: $dark-blue;
     }
 
-    h4 {
-      width: auto;
-    }
+    div {
+      justify-content: space-between;
 
-    span {
-      h5 {
-        display: none;
+      h4 {
+        width: auto;
       }
 
-      @include respond-up(tablet) {
-        width: 10rem;
-        height: 100%;
-        padding: 0.5rem;
-        background-color: rgba(0, 0, 0, 0.5);
-        @include dark-border;
-
+      span {
         h5 {
-          display: block;
+          display: none;
+        }
+
+        @include respond-up(tablet) {
+          width: 10rem;
+          height: 100%;
+          padding: 0.5rem;
+          background-color: rgba(0, 0, 0, 0.5);
+          @include dark-border;
+
+          h5 {
+            display: block;
+          }
         }
       }
     }
   }
 
   .tiles-collection {
-    width: calc(100% + 3rem);
-    margin-inline: -1.5rem;
-    margin-top: -1.5rem;
+    width: calc(100vw - 6rem);
 
     @include respond-up(small-desktop) {
-      margin-inline: 0;
+      width: 100%;
     }
 
     .tile {

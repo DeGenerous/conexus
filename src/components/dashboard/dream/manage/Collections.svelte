@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
+  import { dndzone, type DndEvent } from 'svelte-dnd-action';
+
   import Topics from '@lib/topics';
   import { ensureCreator } from '@utils/route-guard';
 
@@ -42,6 +44,27 @@
   let expandedSections = $state<Set<string>>(new Set());
   let expandedCreators = $state<Set<string>>(new Set());
 
+  type DraggableCategory = CollectionCategory & { id: string };
+  let sectionCategoryItems = $state<Record<string, DraggableCategory[]>>({});
+
+  function createCategoryItems(
+    categories: CollectionCategory[] = [],
+  ): DraggableCategory[] {
+    return categories.map((category) => ({
+      ...category,
+      id: category.category_id,
+    }));
+  }
+
+  function ensureSectionCategoryItems(section: CollectionSection) {
+    sectionCategoryItems = {
+      ...sectionCategoryItems,
+      [section.section_id]:
+        sectionCategoryItems[section.section_id] ??
+        createCategoryItems(section.categories ?? []),
+    };
+  }
+
   async function toggleExpandSection(id: string) {
     const newSet = new Set(expandedSections);
     if (newSet.has(id)) {
@@ -51,12 +74,15 @@
 
       // load categories if not already loaded
       const section = sections.find((s) => s.section_id === id);
-      if (section && !section.categories) {
-        section.categories = await topicManager.getSectionCategoryCollection(
-          id,
-          1,
-          pageSize,
-        );
+      if (section) {
+        if (!section.categories) {
+          section.categories = await topicManager.getSectionCategoryCollection(
+            id,
+            1,
+            pageSize,
+          );
+        }
+        ensureSectionCategoryItems(section);
       }
     }
     expandedSections = newSet;
@@ -82,32 +108,56 @@
     expandedCreators = newSet;
   }
 
-  // drag state
-  // let draggedCategory = $state<CollectionCategory | null>(null);
+  function getSectionCategoryItems(
+    sectionId: string,
+    fallback: CollectionCategory[] = [],
+  ): DraggableCategory[] {
+    return (
+      sectionCategoryItems[sectionId] ?? createCategoryItems(fallback ?? [])
+    );
+  }
 
-  // async function moveCategoryToSection(
-  //   category: CollectionCategory,
-  //   targetSection: CollectionSection,
-  // ) {
-  //   // Remove from old section
-  //   for (const section of sections) {
-  //     section.categories = (section.categories || []).filter(
-  //       (c) => c.category_id !== category.category_id,
-  //     );
-  //   }
-  //   // Add to new section
-  //   if (!targetSection.categories) {
-  //     targetSection.categories =
-  //       await topicManager.getSectionCategoryCollection(
-  //         targetSection.section_id,
-  //         1,
-  //         pageSize,
-  //       );
-  //   }
-  //   targetSection.categories.push(category);
+  function handleCategoryConsider(
+    sectionId: string,
+    event: CustomEvent<DndEvent<DraggableCategory>>,
+  ) {
+    sectionCategoryItems = {
+      ...sectionCategoryItems,
+      [sectionId]: event.detail.items as DraggableCategory[],
+    };
+  }
 
-  //   topicManager.moveCategory(category.category_id, targetSection.section_id);
-  // }
+  function handleCategoryFinalize(
+    sectionId: string,
+    event: CustomEvent<DndEvent<DraggableCategory>>,
+  ) {
+    const updated = event.detail.items.map((item, index) => ({
+      ...item,
+      category_order: index + 1,
+    }));
+
+    sectionCategoryItems = {
+      ...sectionCategoryItems,
+      [sectionId]: updated,
+    };
+
+    sections = sections.map((section) =>
+      section.section_id === sectionId
+        ? {
+            ...section,
+            categories: updated.map(({ id, ...rest }) => ({ ...rest })),
+          }
+        : section,
+    );
+
+    console.log('[Collections] Category order updated', {
+      sectionId,
+      categories: updated.map(({ category_id, category_order }) => ({
+        category_id,
+        category_order,
+      })),
+    });
+  }
 </script>
 
 {#if isAdmin}
@@ -162,9 +212,27 @@
       >
         {#if expandedSections.has(section.section_id)}
           {#if section.categories && section.categories.length > 0}
-            {#each section.categories as category}
-              <CategoryBlock {isAdmin} {category} {topicManager} />
-            {/each}
+            <div
+              class="category-dnd-zone flex"
+              use:dndzone={{
+                items: getSectionCategoryItems(
+                  section.section_id,
+                  section.categories,
+                ),
+                type: `categories-${section.section_id}`,
+                dropFromOthersDisabled: true,
+              }}
+              onconsider={(event) =>
+                handleCategoryConsider(section.section_id, event)}
+              onfinalize={(event) =>
+                handleCategoryFinalize(section.section_id, event)}
+            >
+              {#each getSectionCategoryItems(section.section_id, section.categories) as category (category.id)}
+                <div class="category-draggable">
+                  <CategoryBlock {isAdmin} {category} {topicManager} />
+                </div>
+              {/each}
+            </div>
           {:else}
             <p class="validation">No categories found</p>
           {/if}
@@ -185,3 +253,17 @@
     <p class="validation">No categories found</p>
   {/if}
 {/if}
+
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
+
+  .category-dnd-zone {
+    width: calc(100% + 3rem);
+    margin-inline: -1.5rem;
+    flex-flow: column nowrap;
+  }
+
+  .category-draggable {
+    width: 100%;
+  }
+</style>

@@ -162,6 +162,7 @@
   type="button"
   class="category-toggle void-btn fade-in"
   class:active={expandedCategories.has(workingCategory.category_id)}
+  class:disabled={workingCategory.topic_count === 0}
   aria-expanded={expandedCategories.has(workingCategory.category_id)}
   onclick={() => toggleExpandCategory(workingCategory.category_id)}
   onkeydown={(e) => {
@@ -292,15 +293,15 @@
       @include deep-green;
     }
 
+    &.disabled {
+      cursor: not-allowed;
+      @include gray(0.25);
+    }
+
     &:hover,
     &:active,
     &:focus-visible {
       @include bright;
-    }
-
-    &:disabled {
-      fill: $dark-blue;
-      stroke: $dark-blue;
     }
 
     div {
@@ -323,7 +324,9 @@
           @include dark-border;
 
           h5 {
-            display: block;
+            display: flex;
+            align-items: center;
+            height: 3rem;
           }
         }
       }
@@ -331,11 +334,7 @@
   }
 
   .tiles-collection {
-    width: calc(100vw - 6rem);
-
-    @include respond-up(small-desktop) {
-      width: 100%;
-    }
+    width: 100%;
 
     .tile {
       div {

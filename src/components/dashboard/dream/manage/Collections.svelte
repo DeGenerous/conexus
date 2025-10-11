@@ -264,6 +264,10 @@
   }
 
   .category-draggable {
-    width: 100%;
+    width: calc(100vw - 6rem);
+
+    @include respond-up(small-desktop) {
+      width: 100%;
+    }
   }
 </style>

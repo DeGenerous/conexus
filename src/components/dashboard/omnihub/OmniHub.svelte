@@ -2,16 +2,16 @@
   import { onMount } from 'svelte';
 
   import Curation from '@lib/curation';
-  import { showProfile } from '@stores/modal.svelte';
+  import { NAV_ROUTES } from '@constants/routes';
+  import { normalizeMeta } from '@utils/potentials';
 
   import NFTSection from '@components/dashboard/omnihub/NFTs.svelte';
-  import { normalizeMeta } from '@utils/potentials';
 
   const curation = new Curation();
 
   let noWalletDetected = $state<boolean>(false);
 
-  let loading = $state<boolean>(true);
+  let loading = $state<boolean>(false);
 
   let potentials = $state<Array<NFT>>([]);
   let potentialsPower = $state<number>(0);
@@ -55,21 +55,52 @@
 
 {#if loading}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
+{:else if potentials.length}
+  <NFTSection {potentials} {potentialsPower} {userRank} />
 {:else}
-  <section class="omnihub transparent-container flex-row flex-wrap">
-    <span class="opaque-container fade-in">
+  <section class="container flex-row flex-wrap">
+    <div class="container fade-in">
       {#if noWalletDetected}
         <h5>
           Connect a wallet to activate OmniHub and access your assets, identity,
-          and tools.
+          and tools
         </h5>
-        <button class="button-glowing" onclick={() => ($showProfile = true)}>
+        <button onclick={() => open('/dashboard#/profile/overview', '_self')}>
           Open Your Profile
         </button>
       {:else}
-        <NFTSection {potentials} {potentialsPower} {userRank} />
+        <h5 class="validation">
+          No Potentials Detected Across Connected Wallets
+        </h5>
+
+        <hr />
+
+        <p>
+          If your Potential lies elsewhere, link the right access point through
+          your profile
+        </p>
+        <button onclick={() => open('/dashboard#/profile/overview', '_self')}>
+          Connect Another Wallet
+        </button>
+
+        <hr />
+
+        <p>
+          Or explore the Marketplace to discover a Potential that resonates with
+          your journey
+        </p>
+        <span class="flex-row flex-wrap">
+          <a class="button-anchor" href={NAV_ROUTES.MAGIC_EDEN} target="_blank">
+            <img src="/icons/magiceden.png" alt="Magic Eden marketplace" />
+            Magic Eden
+          </a>
+          <a class="button-anchor" href={NAV_ROUTES.OPENSEA} target="_blank">
+            <img src="/icons/opensea.png" alt="OpenSea marketplace" />
+            OpenSea
+          </a>
+        </span>
       {/if}
-    </span>
+    </div>
     <img
       class="fade-in"
       src="/omnihub/quarchon.avif"
@@ -81,21 +112,33 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  section {
+  section.container {
     width: 100%;
+    padding-bottom: 0;
+    background-image: url('/omnihub/anchor-bg.avif');
+    background-position: bottom;
+    background-size: contain;
 
-    &.omnihub {
-      padding-bottom: 0;
-      background-image: url('/omnihub/anchor-bg.avif');
-      background-position: bottom;
-      background-size: contain;
+    > img {
+      width: 20rem;
+    }
 
-      span {
-        width: 100%;
+    > div {
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      animation: none;
+
+      p {
+        @include white-txt;
       }
+    }
 
-      img {
-        width: 20rem;
+    @include respond-up(full-hd) {
+      flex-flow: row nowrap;
+      padding-bottom: 1.5rem;
+
+      > img {
+        margin-block: auto -1.5rem;
       }
     }
   }

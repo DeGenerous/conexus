@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { link } from 'svelte-spa-router';
 
   import {
@@ -7,11 +6,8 @@
     SELECTED_POTENTIAL_KEY,
     TTL_SHORT,
   } from '@constants/cache';
-  import { showProfile } from '@stores/modal.svelte';
-  import { NAV_ROUTES } from '@constants/routes';
 
   import Ranks from '@components/dashboard/omnihub/Ranks.svelte';
-  import FilterSVG from '@components/icons/Filter.svelte';
 
   let {
     potentials,
@@ -23,131 +19,97 @@
     userRank: Nullable<string>;
   } = $props();
 
-  let nftsDetected = $state<boolean>(true);
-
   let sorting = $state<'id' | 'level'>('level');
 
-  const sortedPotentials = () => {
-    return potentials.sort((a: NFT, b: NFT) => {
+  let sortedPotentials = $derived<NFT[]>(
+    [...potentials].sort((a: NFT, b: NFT) => {
       if (sorting === 'id') {
         return Number(a.token_id) - Number(b.token_id);
-      } else {
-        return Number(b.level) - Number(a.level);
       }
-    });
-  };
+
+      return Number(b.level) - Number(a.level);
+    }),
+  );
 </script>
 
-{#if nftsDetected}
-  <span class="collection-wrapper flex">
-    <div class="collection-header container">
-      <div class="flex-row gap-8">
-        <h4>Potentials:</h4>
-        <span class="flex pad-8">{potentials.length}</span>
-      </div>
+<p>
+  A singular platform to manage your journey. From staking tokens to tracking
+  incoming rewards and customizing your character sheet, OmniHub brings all your
+  essential tools into one seamless, story-driven interface. Power, progress,
+  and personalization — all in one place.
+</p>
 
-      <div class="flex-row gap-8">
-        <h4>
-          <strong class="pc-only">Total&nbsp;</strong>Power:
-        </h4>
-        <span class="flex pad-8">{potentialsPower}</span>
-      </div>
+<div class="collection-header container">
+  <div class="flex-row gap-8">
+    <h5>Potentials:</h5>
+    <span class="flex pad-8">{potentials.length}</span>
+  </div>
 
-      {#if potentials.length > 4}
-        <span class="flex-row">
-          <select bind:value={sorting}>
-            <option value="id" selected={sorting === 'id'}> Sort by ID </option>
-            <option value="level" selected={sorting === 'level'}>
-              Sort by Level
-            </option>
-          </select>
-        </span>
-      {/if}
-    </div>
+  <div class="flex-row gap-8">
+    <h5>
+      <strong class="pc-only">Total&nbsp;</strong>Power:
+    </h5>
+    <span class="flex pad-8">{potentialsPower}</span>
+  </div>
 
-    <div class="tiles-collection">
-      {#if potentials.length}
-        {#each potentials as nft}
-          <a
-            class="potential-tile"
-            use:link
-            href="/omnihub/portrait"
-            onclick={() => SetCache(SELECTED_POTENTIAL_KEY, nft, TTL_SHORT)}
-          >
-            <img src={nft.image} alt={nft.name} />
-            <h5>{nft.name}</h5>
-          </a>
-        {/each}
-      {:else}
-        {#each Array(5) as _}
-          <div class="loading-tile potential-tile">
-            <div class="loading-animation"></div>
-            <span class="loading-animation"></span>
-          </div>
-        {/each}
-      {/if}
-    </div>
-  </span>
-
-  <Ranks {userRank} />
-{:else}
-  <section class="container">
-    <p class="validation">No Potentials Detected Across Connected Wallets</p>
-
-    <hr />
-
-    <p class="text-glowing">
-      If your Potential lies elsewhere, link the right access point through your
-      profile.
-    </p>
-    <button class="button-glowing" onclick={() => ($showProfile = true)}>
-      Connect Another Wallet
-    </button>
-
-    <hr />
-
-    <p class="text-glowing">
-      Or explore the Marketplace to discover a Potential that resonates with
-      your journey.
-    </p>
+  {#if potentials.length > 4}
     <span class="flex-row">
-      <a
-        class="button-anchor button-glowing"
-        href={NAV_ROUTES.MAGIC_EDEN}
-        target="_blank"
-      >
-        <img src="/icons/magiceden.png" alt="Magic Eden marketplace" />
-        Magic Eden
-      </a>
-      <a
-        class="button-anchor button-glowing"
-        href={NAV_ROUTES.OPENSEA}
-        target="_blank"
-      >
-        <img src="/icons/opensea.png" alt="OpenSea marketplace" />
-        OpenSea
-      </a>
+      <select bind:value={sorting}>
+        <option value="id"> Sort by ID </option>
+        <option value="level"> Sort by Level </option>
+      </select>
     </span>
-  </section>
-{/if}
+  {/if}
+</div>
+
+<div class="tiles-collection dashboard-collection">
+  {#if sortedPotentials.length}
+    {#each sortedPotentials as nft}
+      <a
+        class="tile potential-tile"
+        use:link
+        href="/omnihub"
+        onclick={() => SetCache(SELECTED_POTENTIAL_KEY, nft, TTL_SHORT)}
+      >
+        <img src={nft.image} alt={nft.name} />
+        <h5>{nft.name}</h5>
+      </a>
+    {/each}
+  {:else}
+    {#each Array(5) as _}
+      <div class="loading-tile potential-tile">
+        <div class="loading-animation"></div>
+        <span class="loading-animation"></span>
+      </div>
+    {/each}
+  {/if}
+</div>
+
+<Ranks {userRank} />
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
   .collection-header {
-    width: 100%;
-    margin-inline: 0;
+    width: 100vw;
+    margin-inline: -1.5rem;
     border-radius: 0;
     flex-flow: row wrap;
     justify-content: space-between;
-    margin-bottom: -1rem;
+    margin-bottom: -1.5rem;
     animation: none;
     background-color: $royal-purple;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
+    border: none;
+
+    @include respond-up(small-desktop) {
+      width: calc(100% + 3rem);
+      margin-inline: 0;
+    }
 
     div {
-      h4 {
+      h5 {
         @include orange(1, text);
       }
 
@@ -179,7 +141,7 @@
       }
 
       div {
-        h4 {
+        h5 {
           strong {
             display: inline;
           }

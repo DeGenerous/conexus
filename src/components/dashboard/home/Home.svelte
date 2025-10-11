@@ -37,7 +37,7 @@
   </select>
 </div>
 
-<div class="tiles-collection">
+<div class="tiles-collection dashboard-collection">
   {#if !unfinishedStories}
     <h5 class="empty-title flex text-glowing">
       Your unfinished stories will be there
@@ -77,21 +77,6 @@
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
-
-  .tiles-collection {
-    width: 100vw;
-    margin-inline: -1.5rem;
-
-    @include respond-up(small-desktop) {
-      width: calc(100% + 3rem);
-      margin-inline: 0;
-    }
-
-    .empty-title {
-      width: 100%;
-      height: 100%;
-    }
-  }
 
   footer {
     width: 100%;

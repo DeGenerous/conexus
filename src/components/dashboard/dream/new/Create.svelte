@@ -3,7 +3,7 @@
   import { derived } from 'svelte/store';
 
   import { GetCache, CURRENT_DRAFT_KEY } from '@constants/cache';
-  import { resetDreamModal, openStoryManage } from '@constants/modal';
+  import { ensureMessage, openStoryManage } from '@constants/modal';
   import Topic from '@lib/topics';
   import {
     storyData,
@@ -410,7 +410,8 @@
 <div class="flex-row flex-wrap">
   <button
     class="red-btn blur"
-    onclick={() => openModal(resetDreamModal, 'Reset', clearAllData)}
+    onclick={() =>
+      openModal(ensureMessage('reset all data'), 'Reset', clearAllData)}
   >
     Reset Data
   </button>

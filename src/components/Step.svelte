@@ -27,7 +27,7 @@
     customFont,
     customStyling,
   } from '@stores/modal.svelte';
-  import { resetSettingsModal, gameRulesModal } from '@constants/modal';
+  import { ensureMessage, gameRulesModal } from '@constants/modal';
   import isColorLight from '@utils/brightness';
 
   import Slider from '@components/music/Slider.svelte';
@@ -876,7 +876,7 @@ a11y_no_noninteractive_element_interactions -->
           text="Reset to default scale"
           onclick={() =>
             openModal(
-              resetSettingsModal(activeControlPanel),
+              ensureMessage(`reset ${activeControlPanel} settings`),
               'Reset scale',
               () => updateScale('reset'),
             )}

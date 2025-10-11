@@ -1,21 +1,5 @@
-export const removeWallethModal = `
-  <h4>Are you sure you want to remove this address?</h4>
-  <h5>This action is irreversible.</h5>
-`;
-
-export const removeBookmarkFolder = `
-  <h4>Are you sure you want to delete this folder?</h4>
-  <h5>This action is irreversible.</h5>
-`;
-
-export const deleteStoryModal = `
-  <h4>Are you sure you want to delete this story?</h4>
-  <h5>This action is irreversible. You will lose it forever!</h5>
-`;
-
-export const deleteUnfinishedModal = `
-  <h4>Are you sure you want to delete this story?</h4>
-  <h5>This action is irreversible. You will lose all progress on this story.</h5>
+export const ensureMessage = (message: string = 'remove this') => `
+  <h4>Are you sure you want to ${message}?</h4>
 `;
 
 export const referralWarning = `
@@ -31,11 +15,6 @@ export const referralActivationNotice = `
 export const refreshDataModal = `
   <p>This will force a CoNexus reload, and remove old stored files - letting you see the latest version of the platform with the newest content. It won't affect your local settings.</p>
 `;
-
-export const resetSettingsModal = (type: any) =>
-  `<h4>Are you sure you want to reset ${type} settings?</h4>`;
-
-export const resetDreamModal = `<h4>Are you sure you want to reset all data?</h4>`;
 
 export const openStoryManage = `
   <h4>Dream created!</h4>

@@ -7,7 +7,7 @@
   import TopicManagement from '@lib/topics';
   import { GetCache, ALL_TOPICS_KEY } from '@constants/cache';
   import openModal from '@stores/modal.svelte';
-  import { deleteStoryModal } from '@constants/modal';
+  import { ensureMessage } from '@constants/modal';
   import { navContext } from '@stores/navigation.svelte';
   import { userState } from '@utils/route-guard';
 
@@ -378,10 +378,14 @@
   <button
     class="red-btn blur"
     onclick={() =>
-      openModal(deleteStoryModal, `Delete story: ${derivedTopicName}`, () => {
-        topicManager.deleteTopic(topic_id);
-        window.location.href = '/dashboard/dream/manage/';
-      })}
+      openModal(
+        ensureMessage('delete this story'),
+        `Delete story: ${derivedTopicName}`,
+        () => {
+          topicManager.deleteTopic(topic_id);
+          window.location.href = '/dashboard/dream/manage/';
+        },
+      )}
   >
     Delete Story
   </button>

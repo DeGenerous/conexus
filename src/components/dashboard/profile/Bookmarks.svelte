@@ -5,7 +5,7 @@
   import Account from '@lib/account';
   import { toastStore } from '@stores/toast.svelte';
   import openModal from '@stores/modal.svelte';
-  import { removeBookmarkFolder } from '@constants/modal';
+  import { ensureMessage } from '@constants/modal';
 
   import CloseSVG from '@components/icons/Close.svelte';
 
@@ -57,7 +57,7 @@
   }
 
   async function removeFolder(folder: BookmarkFolder) {
-    openModal(removeBookmarkFolder, 'Delete', () => {
+    openModal(ensureMessage('remove this folder'), 'Remove', () => {
       console.log('Removing folder:');
       console.log(folder);
     });

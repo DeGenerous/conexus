@@ -2,7 +2,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { removeWallethModal } from '@constants/modal';
+  import { ensureMessage } from '@constants/modal';
   import {
     regexpPasswordValidation,
     regexpLengthCheck,
@@ -80,8 +80,10 @@
   };
 
   const openRemoveWalletModal = (id: string) =>
-    openModal(removeWallethModal, 'Remove', () =>
-      console.log('Remove wallet ID: ' + id),
+    openModal(
+      ensureMessage('unlink this wallet from your account'),
+      'Unlink',
+      () => console.log('Remove wallet ID: ' + id),
     );
 
   const copyRefCode = (code: string) => {

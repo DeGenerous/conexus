@@ -9,7 +9,7 @@
     TERMS_KEY,
   } from '@constants/cache';
   import { blankImage, serveUrl } from '@constants/media';
-  import { deleteUnfinishedModal, referralWarning } from '@constants/modal';
+  import { ensureMessage, referralWarning } from '@constants/modal';
   import { NAV_ROUTES } from '@constants/routes';
   import CoNexusGame from '@lib/story';
   import CoNexusApp from '@lib/view';
@@ -282,7 +282,7 @@
                   disabled={game.loading}
                   onclick={() => {
                     openModal(
-                      deleteUnfinishedModal,
+                      ensureMessage('delete this story'),
                       `Delete story: ${topic_name}`,
                       () => DeleteStory(continuable.story_id),
                     );
@@ -310,52 +310,6 @@
             {/each}
           </section>
         {/if}
-
-        <!-- {#if isLogged}
-        {#await conexusGame.storyContinuables(story_name!) then continuables: ContinuableStory[]}
-          {#if continuables.length > 0 && !noUnfinishedStoriesLeft}
-            <section
-              class="unfinished-stories transparent-container vert-scrollbar"
-            >
-              <h5 class="text-glowing">
-                Continue Shaping: {continuables.length - deletedStories.length}
-              </h5>
-              {#each continuables as continuable}
-                {#if !deletedStories.includes(continuable.story_id)}
-                  <div class="small-tile" role="button" tabindex="0">
-                    <DeleteSVG
-                      disabled={game.loading}
-                      onclick={() =>
-                        openModal(
-                          deleteUnfinishedModal,
-                          `Delete story: ${continuable.category}`,
-                          () => DeleteStory(continuable.story_id),
-                        )}
-                    />
-                    <span class="flex">
-                      <p>{convertDate(continuable.created!)}</p>
-                      <p class="story-id">
-                        {continuable.story_id.split('-')[0]}
-                      </p>
-                    </span>
-                    <PlaySVG
-                      disabled={game.loading || !termsAccepted}
-                      onclick={() => {
-                        activeTopic = topic;
-                        conexusGame.continueGame(continuable, handleSetMedia);
-                      }}
-                    />
-                  </div>
-                {/if}
-              {/each}
-            </section>
-          {/if}
-        {:catch}
-          <section class="unfinished-stories transparent-container">
-            <p class="validation">Failed to fetch unfinished stories...</p>
-          </section>
-        {/if}
-      </div> -->
       </div>
 
       {#if activeTopic.topic_gates && activeTopic.topic_gates.length > 0}

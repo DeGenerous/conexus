@@ -384,7 +384,7 @@ export function collectState() {
   };
 }
 
-export function applyState(state: ReturnType<typeof collectState>) {
+export function applyState(state: DraftPayload) {
   storyData.set(state.story_data);
   promptSettings.set(state.prompt_settings);
   openPrompt.set(state.open_prompt);

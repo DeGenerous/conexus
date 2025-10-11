@@ -11,7 +11,7 @@
 
   let noWalletDetected = $state<boolean>(false);
 
-  let loading = $state<boolean>(false);
+  let loading = $state<boolean>(true);
 
   let potentials = $state<Array<NFT>>([]);
   let potentialsPower = $state<number>(0);

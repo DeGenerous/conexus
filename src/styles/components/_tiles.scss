@@ -453,7 +453,8 @@
     white-space: nowrap;
   }
 
-  & > p {
+  & > p,
+  span > p {
     width: 100%;
     padding: 0.5rem;
     border-radius: 0.5rem;

@@ -427,9 +427,7 @@
   @use '/src/styles/mixins' as *;
 
   .draft-wrapper {
-    width: 95%;
-    height: 100%;
-    max-width: 100rem;
+    width: 100%;
     justify-content: space-between;
     animation: none;
     @include rose(0.25);

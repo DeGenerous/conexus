@@ -132,7 +132,7 @@ type DraftData = {
 // }
 
 type DraftPayload = DraftData & {
-  id: string; // uuid v4
+  id?: string; // uuid v4
   created_at: Date; // epoch ms
   updated_at: Date; // epoch ms
   tenant_id?: string;

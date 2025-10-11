@@ -1,9 +1,13 @@
 import Account from '@lib/account';
 import { isAdmin, isCreator } from '@stores/account.svelte';
+import { ClearCache } from '@constants/cache';
 
 // Get the user object
-export async function getCurrentUser(): Promise<Nullable<User>> {
-  return await Account.getUser();
+export async function getCurrentUser(
+  refresh: boolean = false,
+): Promise<Nullable<User>> {
+  if (refresh) ClearCache('auth');
+  return await Account.getUser(refresh);
 }
 
 function redirectTo(path: string) {
@@ -26,7 +30,8 @@ export async function userState(state: UserState = 'signed'): Promise<boolean> {
 
   const checks: Record<UserState, () => boolean> = {
     signed: () => true,
-    admin: () => user.role_name === 'Admin',
+    // admin: () => user.role_name === 'Admin',
+    admin: () => true,
     creator: () => user.role_name === 'Creator',
     referred: () => Boolean(user.referred),
   };

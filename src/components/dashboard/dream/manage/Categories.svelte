@@ -133,14 +133,14 @@
       placeholder="Enter New Category Name"
     />
   </span>
-  <span class="input-container">
+  <!-- <span class="input-container">
     <label for="new-category-description">Description</label>
     <input
       id="new-category-description"
       bind:value={newCategoryDescription}
       placeholder="Enter New Category Description"
     />
-  </span>
+  </span> -->
   <span class="input-container">
     <label for="new-category-sort-order">Sort Order</label>
     <input

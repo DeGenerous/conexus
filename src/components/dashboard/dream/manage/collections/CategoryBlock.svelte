@@ -286,11 +286,11 @@
     padding: 0.5rem;
     stroke: $white;
     fill: $white;
-    @include blue;
+    @include navy;
     @include white-txt(1);
 
     &.active {
-      @include deep-green;
+      @include blue;
     }
 
     &.disabled {

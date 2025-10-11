@@ -45,6 +45,21 @@
       box-shadow: none;
     }
   }
+
+  &.dashboard-collection-header {
+    width: 100vw;
+    flex-flow: row wrap;
+    margin-inline: -1.5rem;
+    margin-bottom: -1.5rem;
+    padding-block: 0.5rem;
+    @include navy;
+
+    @include respond-up(tablet) {
+      width: calc(100% + 3rem);
+      justify-content: space-between;
+      margin-inline: 0;
+    }
+  }
 }
 
 .tiles-collection {

@@ -39,16 +39,16 @@
   and personalization — all in one place.
 </p>
 
-<div class="collection-header container">
+<div class="collection-header dashboard-collection-header">
   <div class="flex-row gap-8">
-    <h5>Potentials:</h5>
+    <h4>Potentials:</h4>
     <span class="flex pad-8">{potentials.length}</span>
   </div>
 
   <div class="flex-row gap-8">
-    <h5>
+    <h4>
       <strong class="pc-only">Total&nbsp;</strong>Power:
-    </h5>
+    </h4>
     <span class="flex pad-8">{potentialsPower}</span>
   </div>
 
@@ -109,7 +109,7 @@
     }
 
     div {
-      h5 {
+      h4 {
         @include orange(1, text);
       }
 
@@ -141,7 +141,7 @@
       }
 
       div {
-        h5 {
+        h4 {
           strong {
             display: inline;
           }

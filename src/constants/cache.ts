@@ -115,7 +115,9 @@ function saveImportantAndClearCache() {
   const currentDraft = localStorage.getItem(CURRENT_DRAFT_KEY);
   const user = localStorage.getItem(USER_KEY); // save user object too
   const termsAccepted = localStorage.getItem(TERMS_KEY); // temp for terms modal
-  const unfinishedStoriesRange = localStorage.getItem(UNFINISHED_STORIES_RANGE_KEY);
+  const unfinishedStoriesRange = localStorage.getItem(
+    UNFINISHED_STORIES_RANGE_KEY,
+  );
   // deleting all values
   localStorage.clear();
   // restoring saved values

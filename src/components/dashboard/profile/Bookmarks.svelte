@@ -160,6 +160,11 @@
   });
 </script>
 
+<p>
+  Quick return to saved stories and moments. Organize by folders and pick up
+  exactly where you left off.
+</p>
+
 <div class="container">
   {#if !folders.length}
     <h4>No bookmark folders yet</h4>

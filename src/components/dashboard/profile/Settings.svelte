@@ -10,7 +10,12 @@
   };
 </script>
 
-<h2>Personal Story Settings</h2>
+<h3>Personal Story Settings</h3>
+
+<p>
+  Make stories fit you. Set tone, pace, difficulty, content filters, and
+  continuity.
+</p>
 
 <TopicSettings>
   {#snippet children()}

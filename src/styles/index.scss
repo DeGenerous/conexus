@@ -793,6 +793,23 @@ html {
   }
 }
 
+.progress-bar {
+  position: relative;
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 0.25rem;
+
+  span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: inherit;
+    height: 100%;
+    border-radius: inherit;
+    @include cyan;
+  }
+}
+
 // For screen readers
 .sr-only {
   clip: rect(1px, 1px, 1px, 1px);

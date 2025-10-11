@@ -5,9 +5,8 @@
   let { user_id, topic_id }: { user_id: string; topic_id: string } = $props();
 
   const account: Account = new Account();
-  const AUTO_BOOKMARK_DELAY = 3000;
+  const AUTO_BOOKMARK_DELAY = 5000;
 
-  let svgFocus = $state(false);
   let showManage = $state(false);
   let folders = $state<BookmarkFolder[]>([]);
   let isBookmarked = $state<Bookmark | null>(null);
@@ -39,7 +38,7 @@
     clearAutoBookmarkTimer();
     bookmarkTimeout = setTimeout(() => {
       if (showManage) {
-        void addBookmark();
+        addBookmark();
       }
     }, AUTO_BOOKMARK_DELAY);
   }
@@ -53,7 +52,6 @@
   function closeManage() {
     showManage = false;
     clearAutoBookmarkTimer();
-    document.removeEventListener('click', handleOutsideClick, true);
   }
 
   async function addBookmark(folderId?: string) {
@@ -96,24 +94,11 @@
       return;
     }
 
-    optimisticBookmarked = true;
     showManage = true;
     if (!folders.length) {
       fetchFolders();
     }
     startAutoBookmarkTimer();
-    document.addEventListener('click', handleOutsideClick, true);
-  }
-
-  function handleOutsideClick(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.bookmark-container')) {
-      if (showManage) {
-        void addBookmark();
-      } else {
-        closeManage();
-      }
-    }
   }
 
   function handleFolderSelect(folderId?: string) {
@@ -136,12 +121,6 @@
     class="bookmark void-btn flex"
     aria-label="Bookmark"
     onclick={handleBookmarkClick}
-    onpointerover={() => {
-      if (!optimisticBookmarked) svgFocus = true;
-    }}
-    onpointerout={() => {
-      if (!optimisticBookmarked) svgFocus = false;
-    }}
     disabled={inFlight}
     title={inFlight
       ? 'Saving...'
@@ -158,7 +137,6 @@
     >
       <path
         d="M6 2h12a2 2 0 0 1 2 2v18l-8-4-8 4V4a2 2 0 0 1 2-2z"
-        transform={svgFocus ? 'scale(1.08) translate(-0.8,-0.8)' : ''}
         stroke="currentColor"
         fill={optimisticBookmarked ? 'currentColor' : 'none'}
       />
@@ -167,28 +145,40 @@
 
   {#if showManage}
     <div
-      class="flex gap pad round-8 fade-in"
+      class="bookmark-popup flex gap pad round-8 fade-in"
       role="dialog"
       tabindex="0"
-      onpointerenter={() => clearAutoBookmarkTimer()}
-      onpointerleave={() => startAutoBookmarkTimer()}
-      onkeydown={(e) => {
-        if (e.key === 'Escape') {
-          closeManage();
-        }
-      }}
     >
-      <h5>Select a folder</h5>
-      <ul class="flex gap-8">
-        {#each folders as folder}
-          <li>
-            <button onclick={() => handleFolderSelect(folder.id)}>
-              {folder.name}
-            </button>
-          </li>
-        {/each}
-      </ul>
-      <p>Or wait to bookmark without folder</p>
+      {#if folders.length > 1}
+        <h5>Select a folder</h5>
+        <ul class="flex gap-8">
+          {#each folders as folder}
+            {#if folder.name !== 'General'}
+              <li>
+                <button
+                  class="rose-btn"
+                  onclick={() => handleFolderSelect(folder.id)}
+                >
+                  {folder.name}
+                </button>
+              </li>
+            {/if}
+          {/each}
+        </ul>
+      {/if}
+      <p>Saving to General folder...</p>
+      <div class="progress-bar">
+        <span style:animation-duration="{AUTO_BOOKMARK_DELAY / 1000}s"></span>
+      </div>
+      <button
+        onclick={() => {
+          closeManage();
+          addBookmark();
+        }}
+      >
+        Save now
+      </button>
+      <button class="red-btn" onclick={closeManage}> Cancel </button>
     </div>
   {/if}
 </span>
@@ -222,7 +212,7 @@
       }
     }
 
-    div {
+    .bookmark-popup {
       position: absolute;
       bottom: calc(100% + 0.5rem);
       left: 50%;

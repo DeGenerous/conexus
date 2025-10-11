@@ -204,6 +204,17 @@
   }
 }
 
+@keyframes progress-bar {
+  0% {
+    width: 100%;
+    background-color: green;
+  }
+  100% {
+    width: 0%;
+    background-color: red;
+  }
+}
+
 // General definitions
 
 :global(.loading-animation) {
@@ -282,4 +293,8 @@
 
 :global(.scaling) {
   animation: scaling 15s ease infinite;
+}
+
+:global(.progress-bar span) {
+  animation: progress-bar 10s linear forwards;
 }

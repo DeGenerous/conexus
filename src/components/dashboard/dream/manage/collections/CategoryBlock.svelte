@@ -190,7 +190,9 @@
         focused={null}
         disabled={false}
         hideForMobiles={false}
-        rotate={expandedCategories.has(workingCategory.category_id) ? '90' : '0'}
+        rotate={expandedCategories.has(workingCategory.category_id)
+          ? '90'
+          : '0'}
       />
     </span>
   </div>
@@ -263,9 +265,7 @@
                   )}
                 disabled={topic.available === false || !isAdmin}
               >
-                {topic.visibility === 'public'
-                  ? 'Make Private'
-                  : 'Make Public'}
+                {topic.visibility === 'public' ? 'Make Private' : 'Make Public'}
               </button>
             {/if}
           </div>

@@ -89,6 +89,10 @@
     userID = user?.id;
     isReferred = await userState('referred');
 
+    // TODO: await fetchTopicData(userID)
+
+    // TODO: delete the sunfinished story after credit rollback
+
     // Get all topics in SECTION from the localStorage
     const storedTopics = GetCache<CategoryInSection[]>(
       SECTION_CATEGORIES_KEY(section_name),

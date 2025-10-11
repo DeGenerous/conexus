@@ -146,34 +146,46 @@
     }
   }
 
+  const openGeneralFolder = () => {
+    const general = folders.find((f) => f.name.toLowerCase() === 'general');
+    if (general) {
+      openFolder(general.id, general.name);
+    }
+  };
+
   onMount(async () => {
     await loadFolders();
+    openGeneralFolder();
     // await loadTags();
   });
 </script>
 
 <div class="container">
-  <h4>Bookmark Folders: {folders.length}</h4>
-  <ul class="flex-row flex-wrap">
-    {#each folders as folder}
-      <li>
-        <button
-          class="void-btn"
-          type="button"
-          class:small-rose-tile={folder.id !== selectedFolder}
-          class:small-green-tile={folder.id === selectedFolder}
-          onclick={() => openFolder(folder.id, folder.name)}
-        >
-          <p>{folder.name}</p>
-          <CloseSVG
-            onclick={() => removeFolder(folder)}
-            voidBtn={true}
-            dark={true}
-          />
-        </button>
-      </li>
-    {/each}
-  </ul>
+  {#if !folders.length}
+    <h4>No bookmark folders yet</h4>
+  {:else}
+    <h4>Bookmark Folders: {folders.length}</h4>
+    <ul class="flex-row flex-wrap">
+      {#each folders as folder}
+        <li>
+          <button
+            class="void-btn"
+            type="button"
+            class:small-rose-tile={folder.id !== selectedFolder}
+            class:small-green-tile={folder.id === selectedFolder}
+            onclick={() => openFolder(folder.id, folder.name)}
+          >
+            <p>{folder.name}</p>
+            <CloseSVG
+              onclick={() => removeFolder(folder)}
+              voidBtn={true}
+              dark={true}
+            />
+          </button>
+        </li>
+      {/each}
+    </ul>
+  {/if}
 </div>
 
 <!-- <h2>Tags</h2>
@@ -198,7 +210,10 @@
 <div class="tiles-collection">
   {#if topics.length === 0}
     <h5 class="empty-title flex text-glowing">
-      {#if openedTitle === 'Topics'}
+      {#if !folders.length}
+        Bookmark any story to create the General folder automatically, or create
+        a folder now
+      {:else if openedTitle === 'Topics'}
         Select any folder to see bookmarks
       {:else}
         Folder "{openedTitle}" is empty
@@ -208,7 +223,9 @@
     {#each topics as topic}
       <a
         class="tile rose-tile"
-        href="/c/CommunityPicks/{topic.topic_id}?title={topic.name}"
+        href="/{topic.creator
+          ? 'c'
+          : 's'}/{topic.route_name}/{topic.topic_id}?title={topic.name}"
       >
         <img
           loading="lazy"
@@ -260,11 +277,6 @@
   {/if}
 </div>
 
-<div class="container flex-row flex-wrap">
-  <input bind:value={newFolderName} placeholder="New folder name" />
-  <button onclick={addFolder}>Add New Bookmark Folder</button>
-</div>
-
 <!-- <aside class="bookmark-tools">
   <div class="details-panel">
     <h3>Bookmark Details</h3>
@@ -286,6 +298,11 @@
     {/if}
   </div>
 </aside> -->
+
+<div class="container flex-row flex-wrap">
+  <input bind:value={newFolderName} placeholder="New folder name" />
+  <button onclick={addFolder}>Add New Bookmark Folder</button>
+</div>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

@@ -97,7 +97,7 @@ type DashboardTopic = {
   name?: string;
   tile_file_url?: string;
   route_name?: string;
-  creator: boolean;
+  creator?: boolean;
 };
 
 type AccountNotificationData = {

@@ -30,6 +30,7 @@
   import LoadingSVG from '@components/icons/Loading.svelte';
   import LockSVG from '@components/icons/Lock.svelte';
   import PlaySVG from '@components/icons/Play.svelte';
+  import { toastStore } from '@stores/toast.svelte';
 
   export let section_name: string;
   export let topic_id: string;
@@ -54,19 +55,28 @@
     if (audio) game.background_music = audio;
   };
 
+  let inFlight = false;
   let activeTopic: Nullable<TopicPage> = null;
   let unfinishedStories: UnfinishedStory[] = [];
 
   let videoError = false;
   let imageError = false;
 
-  const fetchTopicData = async (
-    user_id: string | undefined,
-  ): Promise<TopicPage | null> => {
-    const topic = await view.getTopicPage(topic_id, user_id);
-    activeTopic = topic;
-    unfinishedStories = topic?.unfinished_stories || [];
-    return topic;
+  const fetchTopicData = async (user_id: string | undefined): Promise<void> => {
+    try {
+      inFlight = true;
+      const topic = await view.getTopicPage(topic_id, user_id);
+      activeTopic = topic;
+      unfinishedStories = topic?.unfinished_stories || [];
+    } catch (error) {
+      toastStore.show(
+        'Failed to fetch story, please try again or contact support',
+        'error',
+      );
+      activeTopic = null;
+    } finally {
+      inFlight = false;
+    }
   };
 
   const restartGame = () => {
@@ -89,9 +99,7 @@
     userID = user?.id;
     isReferred = await userState('referred');
 
-    // TODO: await fetchTopicData(userID)
-
-    // TODO: delete the sunfinished story after credit rollback
+    await fetchTopicData(userID);
 
     // Get all topics in SECTION from the localStorage
     const storedTopics = GetCache<CategoryInSection[]>(
@@ -118,7 +126,6 @@
     unfinishedStories = unfinishedStories.filter(
       ({ story_id: id }) => id !== story_id,
     );
-    console.log(unfinishedStories);
   }
 
   // Calculate story creation date to show on CONTINUE button
@@ -146,7 +153,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $story === null}
-  {#await fetchTopicData(userID)}
+  {#if inFlight}
     <div class="story-wrapper flex">
       <section class="story container">
         <span class="fake-img loading-animation round-8"></span>
@@ -163,8 +170,8 @@
         </div>
       </section>
     </div>
-  {:then topic: Nullable<TopicPage>}
-    {#if topic === null}
+  {:else if activeTopic}
+    {#if activeTopic === null}
       <div class="container">
         <h4 class="red-txt">Story not found...</h4>
         <p class="soft-white-txt">
@@ -177,7 +184,7 @@
         style:cursor={game.loading ? 'progress' : ''}
       >
         <section class="story container">
-          {#if topic?.video_file_url && !videoError}
+          {#if activeTopic.video_file_url && !videoError}
             <video
               class="round-8 transparent-glowing"
               controls
@@ -186,7 +193,10 @@
               muted
               on:error={() => (videoError = true)}
             >
-              <source src={serveUrl(topic.video_file_url)} type="video/mp4" />
+              <source
+                src={serveUrl(activeTopic.video_file_url)}
+                type="video/mp4"
+              />
               <track kind="captions" />
             </video>
           {:else}
@@ -194,18 +204,18 @@
               class="round-8 transparent-glowing"
               src={imageError
                 ? blankImage
-                : serveUrl(topic?.description_file_url ?? blankImage)}
-              alt={topic?.name ?? 'Default image'}
+                : serveUrl(activeTopic.description_file_url ?? blankImage)}
+              alt={activeTopic.name ?? 'Default image'}
               draggable="false"
               width="1024"
               on:error={() => (imageError = true)}
             />
           {/if}
           <div class="flex">
-            {#if topic.genres && topic.genres.length > 0}
+            {#if activeTopic.genres && activeTopic.genres.length > 0}
               <span class="genres round-8 pad-8 transparent-glowing">
                 <p class="text-glowing">
-                  {topic.genres.join(', ').toUpperCase()}
+                  {activeTopic.genres.join(', ').toUpperCase()}
                 </p>
               </span>
             {/if}
@@ -238,9 +248,9 @@
                         );
                         return;
                       }
-                      topic &&
+                      activeTopic &&
                         conexusGame.start(
-                          topic.id,
+                          activeTopic.id,
                           'topic',
                           'play_limited',
                           handleSetMedia,
@@ -252,7 +262,7 @@
                 {/if}
                 <Share />
                 {#if userID}
-                  <Bookmark user_id={userID} topic_id={topic.id} />
+                  <Bookmark user_id={userID} topic_id={activeTopic.id} />
                 {/if}
               {/if}
             </span>
@@ -288,7 +298,10 @@
                   disabled={game.loading || !termsAccepted}
                   onclick={() => {
                     conexusGame.continue(
-                      { topic_id: topic.id, story_id: continuable.story_id },
+                      {
+                        topic_id: activeTopic?.id!,
+                        story_id: continuable.story_id,
+                      },
                       handleSetMedia,
                     );
                   }}
@@ -345,7 +358,7 @@
       </div> -->
       </div>
 
-      {#if topic.topic_gates && topic.topic_gates.length > 0}
+      {#if activeTopic.topic_gates && activeTopic.topic_gates.length > 0}
         <section
           class="flex gating blur pad-8 gap-8 mar-auto round-12 wavy-mask-left-right"
         >
@@ -354,7 +367,7 @@
             <h5>Only available to holders of:</h5>
           </div>
           <span class="flex-row pad-8 pad-inline round-8">
-            {#each topic.topic_gates as gate}
+            {#each activeTopic.topic_gates as gate}
               {#if gate}
                 <a
                   href={gate.purchase_link || NAV_ROUTES.WIKI}
@@ -415,15 +428,10 @@
       {/if}
 
       <p class="description transparent-container white-txt text-shad">
-        {topic.description}
+        {activeTopic.description}
       </p>
     {/if}
-  {:catch}
-    <div class="container">
-      <h4 class="red-txt">Failed to fetch story...</h4>
-      <p class="soft-white-txt">Please try again or contact support.</p>
-    </div>
-  {/await}
+  {/if}
 {:else}
   {#if !detectIOS()}
     <BackgroundMusic />

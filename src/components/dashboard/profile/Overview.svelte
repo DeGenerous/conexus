@@ -46,7 +46,7 @@
   let usernameInput = $state<string>('player_12345');
 
   onMount(async () => {
-    user = await getCurrentUser();
+    user = await getCurrentUser(true);
     console.log(user);
 
     if (user && user.email_confirmed) {
@@ -410,7 +410,7 @@
     justify-content: space-between;
   }
 
-  img {
+  .pfp {
     @include gray-border;
 
     @include respond-up(tablet) {

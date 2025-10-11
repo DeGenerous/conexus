@@ -1,10 +1,10 @@
 import { ERROR_REQUIRED_TOKEN, ERROR_OUT_OF_CREDITS } from '@constants/error';
 import { api_error } from '@errors/index';
-import Account from '@lib/account';
 import StoryAPI from '@service/v2/story';
 import { story, game } from '@stores/conexus.svelte';
 import { toastStore } from '@stores/toast.svelte';
 import openModal from '@stores/modal.svelte';
+import { getCurrentUser } from '@utils/route-guard';
 
 export default class CoNexus {
   protected api: StoryAPI;
@@ -82,7 +82,7 @@ export default class CoNexus {
       return;
     }
 
-    await Account.getUser();
+    await getCurrentUser(true);
 
     await setMedia(topic_id);
 
@@ -107,10 +107,13 @@ export default class CoNexus {
 
     if (!data) {
       this.#rollbackCredits(continuable.topic_id);
+      this.delete(continuable.story_id);
       api_error(message);
       game.loading = false;
       return;
     }
+
+    await getCurrentUser(true);
 
     // Set background image and music
     await setMedia(continuable.topic_id);
@@ -242,7 +245,7 @@ export default class CoNexus {
 
     // return to topic page
     // window.location.href = `/topic/${topic_id}`; // TODO: Change to topic page
-    open('/', '_self');
+    window.location.reload();
 
     toastStore.show(message || 'Credits rolled back', 'info');
   }

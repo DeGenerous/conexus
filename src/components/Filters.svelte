@@ -208,7 +208,7 @@
 </section>
 
 {#if filteredTopics.length > 0}
-  <div class="collection-header">
+  <div class="collection-header fade-in">
     <h2 class="text-glowing">Filtered Stories</h2>
     <SortingSVG
       sorting={isSorting}
@@ -219,7 +219,7 @@
       hideForMobiles={true}
     />
   </div>
-  <div class="tiles-collection filtered-tiles" onscroll={handleScroll}>
+  <div class="tiles-collection filtered-tiles fade-in" onscroll={handleScroll}>
     {#key sortedTopics}
       {#each sortedTopics as topic, i}
         <TopicTile

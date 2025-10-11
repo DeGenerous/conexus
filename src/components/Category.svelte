@@ -122,7 +122,7 @@
   };
 </script>
 
-<div class="collection-header">
+<div class="collection-header fade-in">
   {#if !category || !name}
     <h2>Loading stories...</h2>
   {:else}
@@ -139,7 +139,7 @@
   />
 </div>
 
-<div class="tiles-collection" onscroll={handleScroll}>
+<div class="tiles-collection fade-in" onscroll={handleScroll}>
   {#if !category || !name}
     {#each Array(Math.floor(Math.random() * 3) + 3) as _}
       <div class="loading-tile">

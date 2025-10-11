@@ -1,7 +1,10 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import Account from '@lib/account';
   import { NAV_ROUTES } from '@constants/routes';
   import { blankImage, serveUrl } from '@constants/media';
+  import { GetCache, SetCache, UNFINISHED_STORIES_RANGE_KEY } from '@constants/cache';
 
   let account: Account = new Account();
 
@@ -15,15 +18,22 @@
     '1 WEEK',
     '1 MONTH',
   ];
-  let selectedRange = $state<DurationEnum>(timeRanges[0]);
+  let selectedRange = $state<DurationEnum | null>(null);
 
   const fetchUnfinishedStories = async (range: DurationEnum) => {
+    SetCache(UNFINISHED_STORIES_RANGE_KEY, range);
     unfinishedStories = await account.getUserStories(range);
   };
 
   $effect(() => {
-    fetchUnfinishedStories(selectedRange);
+    if (selectedRange) fetchUnfinishedStories(selectedRange);
   });
+
+  onMount(() => {
+    const cachedRange = GetCache<DurationEnum>(UNFINISHED_STORIES_RANGE_KEY);
+      if (cachedRange && timeRanges.includes(cachedRange)) selectedRange = cachedRange;
+      else selectedRange = timeRanges[0];
+  })
 </script>
 
 <h2>Continue Shaping</h2>

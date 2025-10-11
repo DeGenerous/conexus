@@ -25,6 +25,9 @@ export const TTS_SPEED_KEY = 'tts_speed';
 // Story drafts
 export const CURRENT_DRAFT_KEY = 'current_draft'; // id of the open draft
 
+// Unfinished stories
+export const UNFINISHED_STORIES_RANGE_KEY = 'unfinished_stories_range';
+
 /* -------------------------------------------------------------------- */
 // 1 MONTH
 /* -------------------------------------------------------------------- */
@@ -112,6 +115,7 @@ function saveImportantAndClearCache() {
   const currentDraft = localStorage.getItem(CURRENT_DRAFT_KEY);
   const user = localStorage.getItem(USER_KEY); // save user object too
   const termsAccepted = localStorage.getItem(TERMS_KEY); // temp for terms modal
+  const unfinishedStoriesRange = localStorage.getItem(UNFINISHED_STORIES_RANGE_KEY);
   // deleting all values
   localStorage.clear();
   // restoring saved values
@@ -129,6 +133,8 @@ function saveImportantAndClearCache() {
   if (currentDraft) localStorage.setItem(CURRENT_DRAFT_KEY, currentDraft);
   if (user) localStorage.setItem(USER_KEY, user);
   if (termsAccepted) localStorage.setItem(TERMS_KEY, termsAccepted); // temp
+  if (unfinishedStoriesRange)
+    localStorage.setItem(UNFINISHED_STORIES_RANGE_KEY, unfinishedStoriesRange);
 }
 
 export const SetCache = <T>(key: string, value: T, ttl: number = TTL_YEAR) => {

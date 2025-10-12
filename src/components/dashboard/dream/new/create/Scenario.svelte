@@ -5,14 +5,14 @@
   let newWinningScenario: string = $state('');
   const addWinningScenario = () => {
     if (newWinningScenario === '') return;
-    $tablePrompt.winningScenarios = [
-      ...$tablePrompt.winningScenarios,
+    $tablePrompt.winning_scenarios = [
+      ...$tablePrompt.winning_scenarios,
       newWinningScenario,
     ];
     newWinningScenario = '';
   };
   const removeWinningScenario = (index: number) => {
-    $tablePrompt.winningScenarios = $tablePrompt.winningScenarios.filter(
+    $tablePrompt.winning_scenarios = $tablePrompt.winning_scenarios.filter(
       (scenario, nr) => {
         return nr !== index;
       },
@@ -22,14 +22,14 @@
   let newLosingScenario: string = $state('');
   const addLosingScenario = () => {
     if (newLosingScenario === '') return;
-    $tablePrompt.losingScenarios = [
-      ...$tablePrompt.losingScenarios,
+    $tablePrompt.losing_scenarios = [
+      ...$tablePrompt.losing_scenarios,
       newLosingScenario,
     ];
     newLosingScenario = '';
   };
   const removeLosingScenario = (index: number) => {
-    $tablePrompt.losingScenarios = $tablePrompt.losingScenarios.filter(
+    $tablePrompt.losing_scenarios = $tablePrompt.losing_scenarios.filter(
       (scenario, nr) => {
         return nr !== index;
       },
@@ -39,11 +39,11 @@
   let newKeyEvent: string = $state('');
   const addKeyEvent = () => {
     if (newKeyEvent === '') return;
-    $tablePrompt.keyEvents = [...$tablePrompt.keyEvents, newKeyEvent];
+    $tablePrompt.key_events = [...$tablePrompt.key_events, newKeyEvent];
     newKeyEvent = '';
   };
   const removeKeyEvent = (index: number) => {
-    $tablePrompt.keyEvents = $tablePrompt.keyEvents.filter((event, nr) => {
+    $tablePrompt.key_events = $tablePrompt.key_events.filter((event, nr) => {
       return nr !== index;
     });
   };
@@ -75,13 +75,13 @@
 
 <Dropdown name="Describe Scenarios">
   <h4>
-    Winning Scenarios{$tablePrompt.winningScenarios.length
-      ? ': ' + $tablePrompt.winningScenarios.length
+    Winning Scenarios{$tablePrompt.winning_scenarios.length
+      ? ': ' + $tablePrompt.winning_scenarios.length
       : ''}
   </h4>
-  {#if $tablePrompt.winningScenarios.length > 0}
+  {#if $tablePrompt.winning_scenarios.length > 0}
     <ul class="winning-scenarios flex">
-      {#each $tablePrompt.winningScenarios as scenario, index}
+      {#each $tablePrompt.winning_scenarios as scenario, index}
         <li class="flex">
           <p>{scenario}</p>
           <button class="red-btn" onclick={() => removeWinningScenario(index)}>
@@ -104,13 +104,13 @@
   <hr />
 
   <h4>
-    Losing Scenarios{$tablePrompt.losingScenarios.length
-      ? ': ' + $tablePrompt.losingScenarios.length
+    Losing Scenarios{$tablePrompt.losing_scenarios.length
+      ? ': ' + $tablePrompt.losing_scenarios.length
       : ''}
   </h4>
-  {#if $tablePrompt.losingScenarios.length > 0}
+  {#if $tablePrompt.losing_scenarios.length > 0}
     <ul class="losing-scenarios flex">
-      {#each $tablePrompt.losingScenarios as scenario, index}
+      {#each $tablePrompt.losing_scenarios as scenario, index}
         <li class="flex">
           <p>{scenario}</p>
           <button class="red-btn" onclick={() => removeLosingScenario(index)}>
@@ -133,13 +133,13 @@
   <hr />
 
   <h4>
-    Key Events{$tablePrompt.keyEvents.length
-      ? ': ' + $tablePrompt.keyEvents.length
+    Key Events{$tablePrompt.key_events.length
+      ? ': ' + $tablePrompt.key_events.length
       : ''}
   </h4>
-  {#if $tablePrompt.keyEvents.length > 0}
+  {#if $tablePrompt.key_events.length > 0}
     <ul class="key-events flex">
-      {#each $tablePrompt.keyEvents as event, index}
+      {#each $tablePrompt.key_events as event, index}
         <li class="flex">
           <p>{event}</p>
           <button class="red-btn" onclick={() => removeKeyEvent(index)}>

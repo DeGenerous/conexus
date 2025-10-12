@@ -54,7 +54,7 @@
       <h4>Story Arcs</h4>
       <div class="container">
         <Slider
-          bind:sliderValue={$tablePrompt.storyArcs}
+          bind:sliderValue={$tablePrompt.story_arcs}
           parameters={dreamData.min_max}
           inputValue={2}
           hints={[
@@ -73,14 +73,14 @@
           {#each dreamData.writingStyle as style}
             <button
               class="void-btn dream-radio-btn"
-              class:active={style === $tablePrompt.writingStyle}
-              onclick={() => ($tablePrompt.writingStyle = style)}
+              class:active={style === $tablePrompt.writing_style}
+              onclick={() => ($tablePrompt.writing_style = style)}
             >
               {style}
             </button>
           {/each}
         </span>
-        <p>{styleHints[$tablePrompt.writingStyle]}</p>
+        <p>{styleHints[$tablePrompt.writing_style]}</p>
       </div>
     </div>
 
@@ -124,7 +124,7 @@
         id="point-of-view"
         placeholder="Specify the perspective of the story—first-person, second-person, or third-person—and whose eyes we experience the journey through. E.g. First-person, from the detective’s skeptical assistant, uncovering their mentor’s hidden dark secret."
         rows="3"
-        bind:value={$tablePrompt.POV}
+        bind:value={$tablePrompt.pov}
       ></textarea>
     </div>
   </section>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount } from 'svelte';
   import { derived } from 'svelte/store';
 
   import { GetCache, CURRENT_DRAFT_KEY } from '@constants/cache';
@@ -25,20 +25,15 @@
   import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
   import TopicSettings from '@components/dashboard/common/TopicSettings.svelte';
 
+  const topic = new Topic();
+
   let isAdmin = $state(false);
-
-  onMount(async () => {
-    const resp = await ensureCreator();
-    isAdmin = resp.isAdmin;
-  });
-
   let selectedSectionId = $state('');
+  let lastSavedAgo = $state<string>('unsaved');
 
   $effect(() => {
     if (selectedSectionId) $storyData.category_id = '';
   });
-
-  let topic = new Topic();
 
   let promptFormat: 'Table' | 'Open' = $state('Open');
 
@@ -50,83 +45,113 @@
       $storyData.category_id,
   );
 
-  // DRAFTS
+  const AUTO_SAVE_DELAY_MS = 5 * 60 * 1000;
+  const LAST_SAVED_REFRESH_MS = 2000;
 
-  // const fingerprint = derived(
-  //   [storyData, promptSettings, openPrompt, tablePrompt],
-  //   ([$s, $p, $o, $t]) => JSON.stringify([$s, $p, $o, $t]),
-  // );
+  const fingerprint = derived(
+    [storyData, promptSettings, openPrompt, tablePrompt],
+    ([$s, $p, $o, $t]) => JSON.stringify([$s, $p, $o, $t]),
+  );
 
-  let timer: ReturnType<typeof setTimeout>;
+  let autoSaveTimer: ReturnType<typeof setTimeout> | null = null;
 
-  // const unsub = fingerprint.subscribe(() => {
-  //   clearTimeout(timer);
-  //   timer = setTimeout(() => Drafts.save(), 300000); // 5 minutes debounce
-  // });
+  const clearAutoSaveTimer = () => {
+    if (!autoSaveTimer) return;
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = null;
+  };
 
-  // onDestroy(unsub);
-
-  const saveDraft = () => Drafts.save();
-
-  onMount(() => {
-    const draftID = GetCache<string>(CURRENT_DRAFT_KEY);
-    if (draftID) Drafts.restore(draftID);
-    else Drafts.create();
-
-    // Last‑chance save on hard refresh
-    window.addEventListener('beforeunload', saveDraft);
-    return () => window.removeEventListener('beforeunload', saveDraft);
-  });
-
-  //// Save draft on <Control + 's'> or <Command + 's'>
-  // const onkeydown = (event: KeyboardEvent) => {
-  //   const { key, ctrlKey, metaKey, repeat } = event;
-  //   if (repeat) return;
-  //   if (!ctrlKey && !metaKey) return;
-  //   event.preventDefault();
-  //   if (key === 's') saveDraft();
-  // };
-
-  let lastSavedAgo = $state<string>('');
-
-  // Recompute "last saved" string
   const updateLastSavedLabel = () => {
-    if (!$currentDraft?.updated_at) return;
+    if (!$currentDraft?.updated_at) {
+      lastSavedAgo = 'unsaved';
+      return;
+    }
 
-    const now = Date.now();
-    const diffMs = now - Number($currentDraft.updated_at);
+    const updated = new Date($currentDraft.updated_at);
+    const diffMs = Math.max(0, Date.now() - updated.getTime());
     const diffSec = Math.floor(diffMs / 1000);
     const diffMin = Math.floor(diffSec / 60);
     const diffHr = Math.floor(diffMin / 60);
     const diffDay = Math.floor(diffHr / 24);
-    const diffMonth = Math.floor(diffDay / 30);
+    const diffMon = Math.floor(diffDay / 30);
 
-    if (diffSec < 2) {
-      lastSavedAgo = 'just now';
-    } else if (diffSec < 60) {
-      lastSavedAgo = `${diffSec}s ago`;
-    } else if (diffMin < 60) {
-      lastSavedAgo = `${diffMin}m ago`;
-    } else if (diffHr < 24) {
-      lastSavedAgo = `${diffHr}h ago`;
-    } else if (diffDay < 30) {
-      lastSavedAgo = `${diffDay}d ago`;
-    } else {
-      lastSavedAgo = `${diffMonth}mo ago`;
-    }
+    if (diffSec < 2) lastSavedAgo = 'just now';
+    else if (diffSec < 60) lastSavedAgo = `${diffSec}s ago`;
+    else if (diffMin < 60) lastSavedAgo = `${diffMin}m ago`;
+    else if (diffHr < 24) lastSavedAgo = `${diffHr}h ago`;
+    else if (diffDay < 30) lastSavedAgo = `${diffDay}d ago`;
+    else lastSavedAgo = `${diffMon}mo ago`;
   };
 
-  // Timer that updates the label every 60 seconds
-  let interval: ReturnType<typeof setInterval>;
+  const saveDraft = async () => {
+    clearAutoSaveTimer();
+    await Drafts.save($currentDraft?.id);
+    updateLastSavedLabel();
+  };
+
+  const triggerSaveDraft = () => {
+    void saveDraft();
+  };
+
+  const createDraft = async () => {
+    clearAutoSaveTimer();
+    clearAllData();
+    lastSavedAgo = 'unsaved';
+    await Drafts.create();
+    updateLastSavedLabel();
+  };
+
+  const queueAutoSave = () => {
+    if (!$currentDraft?.id) return;
+    clearAutoSaveTimer();
+    autoSaveTimer = setTimeout(() => {
+      triggerSaveDraft();
+    }, AUTO_SAVE_DELAY_MS);
+  };
 
   onMount(() => {
-    updateLastSavedLabel(); // run immediately on load
+    let destroyed = false;
+    let isInitialFingerprintRun = true;
 
-    interval = setInterval(() => {
+    void (async () => {
+      const resp = await ensureCreator();
+      if (!destroyed) isAdmin = resp.isAdmin;
+    })();
+
+    void (async () => {
+      const draftID = GetCache<string>(CURRENT_DRAFT_KEY);
+      if (draftID) await Drafts.restore(draftID);
+      else await Drafts.create();
+
+      if (!destroyed) updateLastSavedLabel();
+    })();
+
+    const unsubscribeFingerprint = fingerprint.subscribe(() => {
+      if (isInitialFingerprintRun) {
+        isInitialFingerprintRun = false;
+        return;
+      }
+
+      queueAutoSave();
+    });
+
+    const handleBeforeUnload = () => {
+      triggerSaveDraft();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    const lastSavedInterval = setInterval(() => {
       updateLastSavedLabel();
-    }, 2000); // every 2 seconds
+    }, LAST_SAVED_REFRESH_MS);
 
-    return () => clearInterval(interval); // cleanup on destroy
+    return () => {
+      destroyed = true;
+      clearAutoSaveTimer();
+      unsubscribeFingerprint();
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      clearInterval(lastSavedInterval);
+    };
   });
 
   // CREATE DREAM
@@ -143,12 +168,14 @@
       'Manage Story',
       () => (window.location.href = storyLink),
     );
-    Drafts.delete(GetCache(CURRENT_DRAFT_KEY)!);
+    clearAutoSaveTimer();
+    const cachedDraftId = GetCache<string>(CURRENT_DRAFT_KEY);
+    if (cachedDraftId) await Drafts.delete(cachedDraftId);
+    currentDraft.set(null);
     clearAllData();
+    lastSavedAgo = 'unsaved';
   };
 </script>
-
-<!-- <svelte:window {onkeydown} /> -->
 
 <!-- DRAFT SAVING -->
 {#if $currentDraft}
@@ -160,8 +187,10 @@
       </strong>
     </h5>
     <span class="flex-row">
-      <SaveSVG onclick={saveDraft} />
-      <button onclick={saveDraft}> Start new Draft </button>
+      <SaveSVG onclick={triggerSaveDraft} />
+      <button class="rose-btn" onclick={createDraft}>
+        Start new Draft
+      </button>
     </span>
   </div>
 {/if}
@@ -189,7 +218,11 @@
             {/if}
           </label>
           {#if sections.length > 0}
-            <select id="sections" bind:value={selectedSectionId}>
+            <select
+              id="sections"
+              bind:value={selectedSectionId}
+              class:red-border={!selectedSectionId}
+            >
               <option value="" disabled hidden>Select section</option>
               {#each sections as { id, name }}
                 <option value={id}>{name}</option>
@@ -415,9 +448,6 @@
   >
     Reset Data
   </button>
-  <button class="rose-btn blur" onclick={() => Drafts.create()}
-    >Start New Draft</button
-  >
   <button class="green-btn blur" onclick={generateStory} disabled={!validation}>
     Create a DREAM
   </button>

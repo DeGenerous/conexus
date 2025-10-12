@@ -23,6 +23,13 @@
 
   const options = setOptions();
 
+  $effect(() => {
+    if (sliderValue == null) return;
+    const activeOption = options.find(({ value }) => value === sliderValue);
+    if (!activeOption) return;
+    inputValue = activeOption.id;
+  });
+
   function handleChange() {
     const activeValue = options.filter((option) => option.id == inputValue)[0]
       .value;

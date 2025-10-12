@@ -28,13 +28,17 @@ const Drafts = {
       ...draftData,
     };
 
-    console.log('created draft');
-    console.log(draft);
-
     const id = await topic.saveNewTopicDraft(draft);
+    if (!id) {
+      toastStore.show('Failed to create draft', 'error');
+      return null;
+    }
+    draft.id = id;
     SetCache(CURRENT_DRAFT_KEY, id);
 
+
     currentDraft.set(draft);
+
     toastStore.show(
       `You just began a new dream. Draft created: ${shortenID(id!)}`,
     );
@@ -56,26 +60,22 @@ const Drafts = {
     draft.table_prompt = draftData.table_prompt;
     draft.title = draft.story_data.name || 'Untitled';
 
-    console.log('saving draft');
-    console.log(draft);
+    currentDraft.set(draft);
 
     await topic.updateDraft(id, draft);
-    currentDraft.set(draft);
-    toastStore.show(`Draft saved: ${shortenID(id as string)} (${draft.title})`);
+      
+    // toastStore.show(`Draft saved: ${shortenID(id as string)} (${draft.title})`);
   },
 
   async restore(id: string): Promise<void> {
     const draft = await topic.getDraft(id);
     if (!draft) return toastStore.show('Draft not found', 'error');
 
-    console.log('restoring draft');
-    console.log(draft);
-
-    // applyState(draft.data);
     SetCache(CURRENT_DRAFT_KEY, id);
+    applyState(draft);
 
     currentDraft.set(draft);
-    applyState(draft);
+
     toastStore.show(
       `Draft ${shortenID(id as string)} restored - you’re back where you left off`,
     );
@@ -83,13 +83,10 @@ const Drafts = {
 
   async delete(id: string) {
     if (GetCache(CURRENT_DRAFT_KEY) === id) ClearCache(CURRENT_DRAFT_KEY);
-
-    console.log('deleting draft');
-    console.log(id);
-
+    
     await topic.deleteDraft(id);
 
-    toastStore.show(`Draft deleted: ${shortenID(id)}`);
+    // toastStore.show(`Draft deleted: ${shortenID(id)}`);
   },
 };
 

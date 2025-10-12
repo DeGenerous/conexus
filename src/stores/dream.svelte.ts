@@ -14,7 +14,7 @@ export const promptSettings = writable<PromptSettings>({
   difficulty: 'standard',
   length: 'standard',
   reading_style: 'simple',
-  kids_mode: null,
+  kids_mode: '',
 });
 
 export const openPrompt = writable<string>('');

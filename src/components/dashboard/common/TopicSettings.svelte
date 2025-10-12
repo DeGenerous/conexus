@@ -76,13 +76,13 @@
     <div class="container">
       <div
         class="input-container"
-        class:disabled={$promptSettings.kids_mode !== null}
+        class:disabled={$promptSettings.kids_mode !== ''}
       >
         <label for="frequency">Control</label>
         <select
           id="frequency"
           bind:value={$promptSettings.interactivity}
-          disabled={$promptSettings.kids_mode !== null}
+          disabled={$promptSettings.kids_mode !== ''}
         >
           {#each dreamData.min_max as option}
             <option value={option}>{option}</option>
@@ -92,13 +92,13 @@
 
       <div
         class="input-container"
-        class:disabled={$promptSettings.kids_mode !== null}
+        class:disabled={$promptSettings.kids_mode !== ''}
       >
         <label for="difficulty">Difficulty</label>
         <select
           id="difficulty"
           bind:value={$promptSettings.difficulty}
-          disabled={$promptSettings.kids_mode !== null}
+          disabled={$promptSettings.kids_mode !== ''}
         >
           {#each dreamData.min_max as option}
             <option value={option}>{option}</option>
@@ -108,14 +108,14 @@
     </div>
   </div>
 
-  <div class="flex-row" class:disabled={$promptSettings.kids_mode !== null}>
+  <div class="flex-row" class:disabled={$promptSettings.kids_mode !== ''}>
     <h4>Length</h4>
     <div class="container">
       <Slider
         bind:sliderValue={$promptSettings.length}
         parameters={dreamData.min_max}
         inputValue={2}
-        disabled={$promptSettings.kids_mode !== null}
+        disabled={$promptSettings.kids_mode !== ''}
       />
     </div>
   </div>
@@ -125,13 +125,13 @@
     <div class="container">
       <div
         class="input-container"
-        class:disabled={$promptSettings.kids_mode !== null}
+        class:disabled={$promptSettings.kids_mode !== ''}
       >
         <label for="reading-style">Reading style</label>
         <select
           id="reading-style"
           bind:value={$promptSettings.reading_style}
-          disabled={$promptSettings.kids_mode !== null}
+          disabled={$promptSettings.kids_mode !== ''}
         >
           {#each dreamData.readingStyle as option}
             <option value={option}>{option}</option>
@@ -141,11 +141,11 @@
 
       <div
         class="kids-mode input-container transition round-8 shad"
-        class:selected={$promptSettings.kids_mode !== null}
+        class:selected={$promptSettings.kids_mode}
       >
         <label for="kids-mode transition">Kids mode</label>
         <select id="kids-mode" bind:value={$promptSettings.kids_mode}>
-          <option value={null}>Off</option>
+          <option value="">Off</option>
           {#each dreamData.kidsMode as option}
             <option value={option}>{option}</option>
           {/each}

@@ -2,6 +2,11 @@ export const ensureMessage = (message: string = 'remove this') => `
   <h4>Are you sure you want to ${message}?</h4>
 `;
 
+export const restoreDraft = (title: string) => `
+  <h4>Restore this draft?</h4>
+  <p>Open “${title}” in the creator with all fields prefilled.</p>
+`;
+
 export const referralWarning = `
   <h4>This World Opens with a Code</h4>
   <p>To play stories and build your world, you'll need a referral code. It’s not about keeping people out — it’s about inviting the right people in.</p>

@@ -1,4 +1,3 @@
-import { v4 as uuid } from 'uuid';
 import Topic from '@lib/topics';
 import {
   clearAllData,
@@ -16,28 +15,28 @@ import {
 
 let topic: Topic = new Topic();
 
-const shortenID = (id: string) => id.split('-')[0];
+const shortenID = (id: string) => id?.split('-')[0];
 
 const Drafts = {
   async create(): Promise<string | null> {
     clearAllData();
 
-    const when = new Date();
+    const draftData = collectState();
+
     const draft: DraftPayload = {
-      id: uuid(),
-      title: 'Untitled',
-      created_at: when,
-      updated_at: when,
-      ...collectState(),
+      title: draftData.story_data.name || 'Untitled',
+      ...draftData,
     };
 
+    console.log('created draft');
+    console.log(draft);
+
     const id = await topic.saveNewTopicDraft(draft);
-    console.log('new-draft-id: ', id);
     SetCache(CURRENT_DRAFT_KEY, id);
 
     currentDraft.set(draft);
     toastStore.show(
-      `You just began a new dream. Draft created: ${shortenID(id!)} (${draft.title})`,
+      `You just began a new dream. Draft created: ${shortenID(id!)}`,
     );
     return id;
   },
@@ -49,8 +48,16 @@ const Drafts = {
     const draft = await topic.getDraft(id!);
     if (!draft || !id) return toastStore.show(`Save unknown draft`, 'error');
 
-    // draft.data = collectState();
-    if (draft.story_data.name) draft.title = draft.story_data.name;
+    const draftData = collectState();
+
+    draft.story_data = draftData.story_data;
+    draft.prompt_settings = draftData.prompt_settings;
+    draft.open_prompt = draftData.open_prompt;
+    draft.table_prompt = draftData.table_prompt;
+    draft.title = draft.story_data.name || 'Untitled';
+
+    console.log('saving draft');
+    console.log(draft);
 
     await topic.updateDraft(id, draft);
     currentDraft.set(draft);
@@ -61,15 +68,26 @@ const Drafts = {
     const draft = await topic.getDraft(id);
     if (!draft) return toastStore.show('Draft not found', 'error');
 
+    console.log('restoring draft');
+    console.log(draft);
+
     // applyState(draft.data);
     SetCache(CURRENT_DRAFT_KEY, id);
 
     currentDraft.set(draft);
-    toastStore.show('Draft restored - you’re back where you left off');
+    applyState(draft);
+    toastStore.show(
+      `Draft ${shortenID(id as string)} restored - you’re back where you left off`,
+    );
   },
 
-  delete(id: string) {
+  async delete(id: string) {
     if (GetCache(CURRENT_DRAFT_KEY) === id) ClearCache(CURRENT_DRAFT_KEY);
+
+    console.log('deleting draft');
+    console.log(id);
+
+    await topic.deleteDraft(id);
 
     toastStore.show(`Draft deleted: ${shortenID(id)}`);
   },

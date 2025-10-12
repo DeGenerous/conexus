@@ -29,14 +29,14 @@
     and keep writing without re-entering details.
   </p>
   {#if drafts.length}
-    <h4>Drafts: {drafts.length}</h4>
+    <h4>Saved Drafts: {drafts.length}</h4>
     <div class="container flex-row flex-wrap">
       {#each drafts as { id, title, created_at, updated_at }}
-        <button class="void-btn small-tile">
-          <h5>{title} ({id.split('-')[0]})</h5>
+        <button class="void-btn small-tile small-rose-tile">
+          <h5>{title}</h5>
           <span class="flex-row gap-8">
-            <p>{convertDate(updated_at)}</p>
-            <CloseSVG onclick={() => Drafts.delete(id!)} voidBtn={true} />
+            <p>{id.split('-')[0]} - {convertDate(updated_at)}</p>
+            <CloseSVG onclick={() => Drafts.delete(id!)} voidBtn={true} dark={true} />
           </span>
         </button>
       {/each}
@@ -63,6 +63,7 @@
 
       h5 {
         white-space: wrap;
+        @include dark-red(1, text);
       }
 
       p {

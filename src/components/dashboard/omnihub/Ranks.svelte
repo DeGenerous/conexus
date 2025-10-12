@@ -1,11 +1,8 @@
 <script lang="ts">
   import { ranks } from '@constants/ranks';
 
-  let {
-    userRank,
-  }: {
-    userRank: Nullable<string>;
-  } = $props();
+  let { userRank }: { userRank: Nullable<string> } = $props();
+
   let showTable = $state<boolean>(false);
 </script>
 

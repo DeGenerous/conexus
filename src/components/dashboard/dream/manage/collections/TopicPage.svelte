@@ -33,10 +33,11 @@
 
   let topic = $state<Nullable<TopicManager>>(null);
 
-  let topic_name = $derived<string>('Loading...');
+  let topic_name = $state<string>('Loading...');
   let topic_description = $state<string>('');
   let topic_availability = $state<boolean>(false);
   let topic_visibility = $state<TopicVisibility>('public');
+  let topic_media_files = $state<TopicMediaFile[]>([]);
 
   let topic_prompt_id = $state<string>('');
   let topic_prompt = $state<string>('');
@@ -45,16 +46,11 @@
   let topic_categories = $state<TopicCategory[]>([]);
   let topic_genres = $state<TopicGenre[]>([]);
   let topic_gates = $state<Gate[]>([]);
-  let topic_media_files = $state<TopicMediaFile[]>([]);
 
-  let derivedTopicName = $derived<string>(topic_name);
-  let derivedTopicDescription = $derived<string>(topic_description);
-  let derivedTopicAvailability = $derived<boolean>(topic_availability);
-  let derivedTopicVisibility = $derived<TopicVisibility>(topic_visibility);
-  let derivedTopicPrompt = $derived<string>(topic_prompt);
-  let derivedTopicImagePrompt = $derived<string>(topic_imagePrompt);
-
-  let jsonBlob: Nullable<Blob> = null;
+  let nameDraft = $state<string>('');
+  let descriptionDraft = $state<string>('');
+  let promptDraft = $state<string>('');
+  let imagePromptDraft = $state<string>('');
 
   let categoryTopics: string[] = [];
   let activeStoryIndex: number = 0;
@@ -92,20 +88,6 @@
     topic_gates = topic.gates;
     topic_media_files = topic.media_files;
 
-    const exportObject = {
-      topic: topic_name,
-      description: topic_description,
-      prompt_id: topic_prompt_id,
-      prompt: topic_prompt,
-      image_prompt: topic_imagePrompt,
-      genres: topic_genres,
-      categories: topic_categories,
-    };
-
-    jsonBlob = new Blob([JSON.stringify(exportObject)], {
-      type: 'application/json',
-    });
-
     const storedTopics: Nullable<string> = GetCache(ALL_TOPICS_KEY);
     if (storedTopics) {
       navContext.setContext({
@@ -116,12 +98,41 @@
         index: storedTopics.split('][').indexOf(topic_id),
       });
     }
+
+    nameDraft = topic_name;
+    descriptionDraft = topic_description;
+    promptDraft = topic_prompt;
+    imagePromptDraft = topic_imagePrompt;
   });
 
   let editingName = $state<boolean>(false);
   let editingDescription = $state<boolean>(false);
   let editingPrompt = $state<boolean>(false);
   let editingImagePrompt = $state<boolean>(false);
+
+  $effect(() => {
+    if (editingName) {
+      nameDraft = topic_name;
+    }
+  });
+
+  $effect(() => {
+    if (editingDescription) {
+      descriptionDraft = topic_description;
+    }
+  });
+
+  $effect(() => {
+    if (editingImagePrompt) {
+      imagePromptDraft = topic_imagePrompt;
+    }
+  });
+
+  $effect(() => {
+    if (editingPrompt) {
+      promptDraft = topic_prompt;
+    }
+  });
 
   async function handleCategoryChange(
     categoryId: string,
@@ -173,20 +184,39 @@
     await topicManager.deleteFileFromTopic(topic_id, file_id, media_type);
   }
 
-  const switchAvailable = (available: boolean) => {
-    if (available) return false;
-    else return true;
-  };
+  async function toggleAvailability(topic_id: string, available: boolean) {
+    await topicManager.changeAvailability(topic_id, available);
+    topic_availability = available;
+  }
+
+  async function toggleVisibility(
+    topic_id: string,
+    visibility: 'public' | 'private',
+  ) {
+    await topicManager.changeVisibility(topic_id, visibility);
+    topic_visibility = topic_visibility === 'public' ? 'private' : 'public';
+  }
 
   const downloadTopicJson = () => {
-    if (jsonBlob) {
-      const url = URL.createObjectURL(jsonBlob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${topic_name}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
+    const exportObject = {
+      topic: topic_name,
+      description: topic_description,
+      prompt_id: topic_prompt_id,
+      prompt: topic_prompt,
+      image_prompt: topic_imagePrompt,
+      genres: topic_genres,
+      categories: topic_categories,
+    };
+
+    const blob = new Blob([JSON.stringify(exportObject)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `${topic_name}.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
   };
 </script>
 
@@ -201,11 +231,21 @@
           <button
             class:green-btn={topic_availability}
             class:red-btn={!topic_availability}
-            use:tippy={{ content: 'Toggle visibility', animation: 'scale' }}
-            onclick={() => {}}
-            disabled
+            use:tippy={{ content: 'Toggle availability', animation: 'scale' }}
+            onclick={() => {toggleAvailability(topic_id, !topic_availability)}}
           >
-            {topic_availability}
+            {topic_availability ? 'Available' : 'Unavailable'}
+          </button>
+          <button
+            class:green-btn={topic_visibility === 'public'}
+            class:red-btn={topic_visibility === 'private'}
+            use:tippy={{ content: 'Toggle visibility', animation: 'scale' }}
+            onclick={() => {toggleVisibility(
+              topic_id,
+              topic_visibility === 'public' ? 'private' : 'public',
+            )}}
+          >
+            {topic_visibility === 'public' ? 'Public' : 'Private'}
           </button>
           <button
             class="rose-btn"
@@ -232,28 +272,32 @@
               <CloseSVG
                 onclick={() => {
                   editingName = false;
-                  derivedTopicName = topic_name;
+                  nameDraft = topic_name;
                 }}
               />
             {/if}
             <div class="input-container">
               <label for="story-name">Story name</label>
               <input
-                bind:value={derivedTopicName}
+                bind:value={nameDraft}
                 type="text"
-                size={derivedTopicName.length + 1}
+                size={nameDraft.length + 1}
                 maxlength="50"
                 disabled={!editingName}
               />
             </div>
             {#if editingName}
               <SaveSVG
-                onclick={() => {
+                onclick={async () => {
+                  if (topic_name === nameDraft) {
+                    editingName = false;
+                    return;
+                  }
+                  await topicManager.changeName(topic_id, nameDraft);
+                  topic_name = nameDraft;
                   editingName = false;
-                  topicManager.changeName(topic_id, derivedTopicName);
-                  window.location.href = `${NAV_ROUTES.EXPLORE(topic_id)}`;
                 }}
-                disabled={true}
+                disabled={topic_name === nameDraft}
               />
             {:else}
               <EditSVG bind:editing={editingName} />
@@ -291,16 +335,26 @@
           <h4>Description</h4>
           <span class="flex-row">
             {#if editingDescription}
-              <CloseSVG onclick={() => (editingDescription = false)} />
-              <SaveSVG
+              <CloseSVG
                 onclick={() => {
                   editingDescription = false;
-                  topicManager.changeDescription(
-                    topic_id,
-                    derivedTopicDescription,
-                  );
+                  descriptionDraft = topic_description;
                 }}
-                disabled={topic_description == derivedTopicDescription}
+              />
+              <SaveSVG
+                onclick={async () => {
+                  if (topic_description === descriptionDraft) {
+                    editingDescription = false;
+                    return;
+                  }
+                  await topicManager.changeDescription(
+                    topic_id,
+                    descriptionDraft,
+                  );
+                  topic_description = descriptionDraft;
+                  editingDescription = false;
+                }}
+                disabled={topic_description === descriptionDraft}
               />
             {:else}
               <EditSVG bind:editing={editingDescription} />
@@ -312,7 +366,7 @@
           class="dream-input dream-textfield"
           placeholder="Describe the overall story, its key themes, and what kind of journey the main character will take. Is it an epic adventure, a gripping mystery, or a heartwarming romance? Keep it engaging and set the stage for the reader!"
           rows="5"
-          bind:value={derivedTopicDescription}
+          bind:value={descriptionDraft}
           disabled={!editingDescription}
         ></textarea>
       </div>
@@ -323,16 +377,26 @@
           <h4>Image Generation Instructions</h4>
           <span class="flex-row">
             {#if editingImagePrompt}
-              <CloseSVG onclick={() => (editingImagePrompt = false)} />
-              <SaveSVG
+              <CloseSVG
                 onclick={() => {
                   editingImagePrompt = false;
-                  topicManager.editImagePrompt(
-                    topic_id,
-                    derivedTopicImagePrompt,
-                  );
+                  imagePromptDraft = topic_imagePrompt;
                 }}
-                disabled={topic_imagePrompt == derivedTopicImagePrompt}
+              />
+              <SaveSVG
+                onclick={async () => {
+                  if (topic_imagePrompt === imagePromptDraft) {
+                    editingImagePrompt = false;
+                    return;
+                  }
+                  await topicManager.editImagePrompt(
+                    topic_id,
+                    imagePromptDraft,
+                  );
+                  topic_imagePrompt = imagePromptDraft;
+                  editingImagePrompt = false;
+                }}
+                disabled={topic_imagePrompt === imagePromptDraft}
               />
             {:else}
               <EditSVG bind:editing={editingImagePrompt} />
@@ -344,7 +408,7 @@
           class="dream-input dream-textfield"
           placeholder="E.g. A breathtaking cosmic landscape filled with swirling galaxies, ancient ruins, and a lone traveler standing at the edge of destiny."
           rows="5"
-          bind:value={derivedTopicImagePrompt}
+          bind:value={imagePromptDraft}
           disabled={!editingImagePrompt}
         ></textarea>
       </div>
@@ -355,13 +419,23 @@
           <h4>Prompt</h4>
           <span class="flex-row">
             {#if editingPrompt}
-              <CloseSVG onclick={() => (editingPrompt = false)} />
-              <SaveSVG
+              <CloseSVG
                 onclick={() => {
                   editingPrompt = false;
-                  topicManager.editPrompt(topic_id, derivedTopicPrompt);
+                  promptDraft = topic_prompt;
                 }}
-                disabled={topic_prompt == derivedTopicPrompt}
+              />
+              <SaveSVG
+                onclick={async () => {
+                  if (topic_prompt === promptDraft) {
+                    editingPrompt = false;
+                    return;
+                  }
+                  await topicManager.editPrompt(topic_id, promptDraft);
+                  topic_prompt = promptDraft;
+                  editingPrompt = false;
+                }}
+                disabled={topic_prompt === promptDraft}
               />
             {:else}
               <EditSVG bind:editing={editingPrompt} />
@@ -372,7 +446,7 @@
           id="prompt"
           placeholder="Describe any scenario you want, and the AI will turn it into a story! Whether it's a thrilling mystery, an epic fantasy, or a hilarious adventure, your imagination sets the stage. You can be as detailed or vague as you like—every idea sparks a unique tale. E.g. Make a unique Sherlock Holmes story where during an investigation he ends up taking a new type of drug, deeply affecting him so he’ll lead a fight both versus himself and a serial killer."
           rows="5"
-          bind:value={derivedTopicPrompt}
+          bind:value={promptDraft}
           disabled={!editingPrompt}
         ></textarea>
       </div>
@@ -386,9 +460,9 @@
       onclick={() =>
         openModal(
           ensureMessage('delete this story'),
-          `Delete story: ${derivedTopicName}`,
-          () => {
-            topicManager.deleteTopic(topic_id);
+          `Delete story: ${topic_name}`,
+          async () => {
+            await topicManager.deleteTopic(topic_id);
             window.location.href = '/dashboard/dream/manage/';
           },
         )}
@@ -421,6 +495,14 @@
 
     @include respond-up(tablet) {
       min-height: 12.5rem;
+    }
+  }
+
+  .story-name {
+    justify-content: center;
+
+    .input-container {
+      width: auto;
     }
   }
 

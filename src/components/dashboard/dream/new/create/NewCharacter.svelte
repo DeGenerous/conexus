@@ -6,8 +6,9 @@
     physicality: '',
   });
 
-  let { character = $bindable(createEmptyCharacter()) }: { character: Character } =
-    $props();
+  let {
+    character = $bindable(createEmptyCharacter()),
+  }: { character: Character } = $props();
 
   const updateCharacter = (field: keyof Character, value: string) => {
     character = {
@@ -35,8 +36,7 @@
     rows="3"
     value={character.description}
     oninput={(event) =>
-      updateCharacter('description', event.currentTarget.value)
-    }
+      updateCharacter('description', event.currentTarget.value)}
   ></textarea>
 </div>
 
@@ -48,8 +48,7 @@
     rows="3"
     value={character.physicality ?? ''}
     oninput={(event) =>
-      updateCharacter('physicality', event.currentTarget.value)
-    }
+      updateCharacter('physicality', event.currentTarget.value)}
   ></textarea>
 </div>
 
@@ -61,7 +60,6 @@
     rows="3"
     value={character.psychology ?? ''}
     oninput={(event) =>
-      updateCharacter('psychology', event.currentTarget.value)
-    }
+      updateCharacter('psychology', event.currentTarget.value)}
   ></textarea>
 </div>

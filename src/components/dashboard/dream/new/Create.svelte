@@ -188,9 +188,7 @@
     </h5>
     <span class="flex-row">
       <SaveSVG onclick={triggerSaveDraft} />
-      <button class="rose-btn" onclick={createDraft}>
-        Start new Draft
-      </button>
+      <button class="rose-btn" onclick={createDraft}> Start new Draft </button>
     </span>
   </div>
 {/if}

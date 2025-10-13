@@ -36,7 +36,6 @@ const Drafts = {
     draft.id = id;
     SetCache(CURRENT_DRAFT_KEY, id);
 
-
     currentDraft.set(draft);
 
     toastStore.show(
@@ -63,7 +62,7 @@ const Drafts = {
     currentDraft.set(draft);
 
     await topic.updateDraft(id, draft);
-      
+
     // toastStore.show(`Draft saved: ${shortenID(id as string)} (${draft.title})`);
   },
 
@@ -83,7 +82,7 @@ const Drafts = {
 
   async delete(id: string) {
     if (GetCache(CURRENT_DRAFT_KEY) === id) ClearCache(CURRENT_DRAFT_KEY);
-    
+
     await topic.deleteDraft(id);
 
     // toastStore.show(`Draft deleted: ${shortenID(id)}`);

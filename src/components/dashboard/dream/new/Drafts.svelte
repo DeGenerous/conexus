@@ -32,27 +32,19 @@
   };
 
   const openDraft = (id: string, title: string) => {
-    openModal(
-      restoreDraft(title),
-      'Restore',
-      () => {
-        SetCache(CURRENT_DRAFT_KEY, id);
-        open('/dashboard#/dream/create', '_self');
-      },
-    );
+    openModal(restoreDraft(title), 'Restore', () => {
+      SetCache(CURRENT_DRAFT_KEY, id);
+      open('/dashboard#/dream/create', '_self');
+    });
   };
 
   const deleteDraft = (event: Event, id: string) => {
     event.stopPropagation();
-    openModal(
-      ensureMessage('delete this draft'),
-      'Delete',
-      () => {
-        Drafts.delete(id).then(() => {
-          drafts = drafts.filter((draft) => draft.id !== id);
-        });
-      },
-    );
+    openModal(ensureMessage('delete this draft'), 'Delete', () => {
+      Drafts.delete(id).then(() => {
+        drafts = drafts.filter((draft) => draft.id !== id);
+      });
+    });
   };
 
   // TODO: processDraftDocument
@@ -69,11 +61,18 @@
     <h4>Saved Drafts: {drafts.length}</h4>
     <div class="container flex-row flex-wrap">
       {#each drafts as { id, title, created_at, updated_at }}
-        <button class="void-btn small-tile small-rose-tile" onclick={() => openDraft(id!, title!)}>
+        <button
+          class="void-btn small-tile small-rose-tile"
+          onclick={() => openDraft(id!, title!)}
+        >
           <h5>{title}</h5>
           <span class="flex-row gap-8">
             <p>{id.split('-')[0]} - {convertDate(updated_at)}</p>
-            <CloseSVG onclick={(event) => deleteDraft(event, id!)} voidBtn={true} dark={true} />
+            <CloseSVG
+              onclick={(event) => deleteDraft(event, id!)}
+              voidBtn={true}
+              dark={true}
+            />
           </span>
         </button>
       {/each}

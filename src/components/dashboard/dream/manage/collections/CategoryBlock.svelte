@@ -119,20 +119,24 @@
     input.select();
   };
 
-  async function toggleAvailability(topic_id: string, available: boolean) {
+  async function toggleAvailability(event:Event, topic_id: string, available: boolean) {
+    event.preventDefault();
     await topicManager.changeAvailability(topic_id, available);
     await fetchTopicCollection(workingCategory.category_id, true);
   }
 
   async function toggleVisibility(
+    event: Event,
     topic_id: string,
     visibility: 'public' | 'private',
   ) {
+    event.preventDefault();
     await topicManager.changeVisibility(topic_id, visibility);
     await fetchTopicCollection(workingCategory.category_id, true);
   }
 
-  async function submitTopic(topic_id: string) {
+  async function submitTopic(event: Event, topic_id: string) {
+    event.preventDefault();
     await topicManager.submitTopic(topic_id);
     await fetchTopicCollection(workingCategory.category_id, true);
   }
@@ -237,36 +241,37 @@
               }}
               class:green-btn={topic.available === true}
               class:red-btn={topic.available === false}
-              onclick={() =>
-                toggleAvailability(topic.topic_id, !topic.available)}
+              onclick={(event) =>
+                toggleAvailability(event, topic.topic_id, !topic.available)}
             >
-              {topic.available ? 'Disable' : 'Enable'}
+              {topic.available ? 'Available' : 'Unavailable'}
             </button>
-            <button
+            <!-- <button
               use:tippy={{
                 content: 'Submit Topic for review',
                 animation: 'scale',
                 theme: 'light',
               }}
-              onclick={() => submitTopic(topic.topic_id)}
+              onclick={(event) => submitTopic(event, topic.topic_id)}
               disabled={topic.visibility === 'public'}
             >
               {topic.visibility === 'public' ? 'Submitted' : 'Submit'}
-            </button>
+            </button> -->
             {#if isAdmin}
               <button
                 use:tippy={{
                   content: 'Toggle visibility',
                   animation: 'scale',
                 }}
-                onclick={() =>
+                onclick={(event) =>
                   toggleVisibility(
+                    event,
                     topic.topic_id,
                     topic.visibility === 'public' ? 'private' : 'public',
                   )}
-                disabled={topic.available === false || !isAdmin}
+                disabled={topic.available === false && !isAdmin}
               >
-                {topic.visibility === 'public' ? 'Make Private' : 'Make Public'}
+                {topic.visibility === 'public' ? 'Public' : 'Private'}
               </button>
             {/if}
           </div>
@@ -335,6 +340,7 @@
 
   .tiles-collection {
     width: 100%;
+    min-height: unset;
 
     .tile {
       div {

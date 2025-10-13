@@ -14,6 +14,7 @@
   import GenreTags from '@components/dashboard/dream-legacy/manage/GenreTags.svelte';
   import Media from '@components/dashboard/dream-legacy/manage/Media.svelte';
   import NftGating from '@components/dashboard/dream-legacy/manage/NftGating.svelte';
+  
   import ExploreCategory from '@components/dashboard/dream/manage/collections/AddTopicCategory.svelte';
   import EditSVG from '@components/icons/Edit.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
@@ -202,6 +203,7 @@
             class:red-btn={!topic_availability}
             use:tippy={{ content: 'Toggle visibility', animation: 'scale' }}
             onclick={() => {}}
+            disabled
           >
             {topic_availability}
           </button>
@@ -214,7 +216,7 @@
           </button>
           <a
             class="button-anchor purple-btn"
-            href={`/dashboard/dream/manage/demo?demoID=${topic_id}&demoName=${topic_name}`}
+            href="/dashboard/topic/{topic_id}/demo?demoID={topic_id}&demoName={topic_name}"
           >
             Play Demo
           </a>

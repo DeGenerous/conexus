@@ -119,7 +119,11 @@
     input.select();
   };
 
-  async function toggleAvailability(event:Event, topic_id: string, available: boolean) {
+  async function toggleAvailability(
+    event: Event,
+    topic_id: string,
+    available: boolean,
+  ) {
     event.preventDefault();
     await topicManager.changeAvailability(topic_id, available);
     await fetchTopicCollection(workingCategory.category_id, true);

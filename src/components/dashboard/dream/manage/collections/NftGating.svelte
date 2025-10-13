@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
+  import Collection from '@lib/collection';
+
   import CloseSVG from '@components/icons/Close.svelte';
 
   let {
@@ -14,10 +16,16 @@
     ) => Promise<void>;
   } = $props();
 
+  let collection: Collection = new Collection();
+
+  let allCollections = $state<any>([]);
   let allGates = $state<Gate[]>([]);
   let newGateId = $state('');
 
-  const fetchGates = async () => {};
+  const fetchGates = async () => {
+    allCollections = await collection.listCollections();
+    // console.log(allCollections)
+  };
 
   onMount(fetchGates);
 
@@ -93,11 +101,11 @@
     flex-wrap: wrap;
     justify-content: center;
 
-    @include respond-up(tablet) {
-      &.classes {
-        justify-content: space-around;
-      }
-    }
+    // @include respond-up(tablet) {
+    //   &.classes {
+    //     justify-content: space-around;
+    //   }
+    // }
   }
 
   .add-gating {

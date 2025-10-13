@@ -11,11 +11,11 @@
   import { navContext } from '@stores/navigation.svelte';
   import { userState } from '@utils/route-guard';
 
-  import GenreTags from '@components/dashboard/dream-legacy/manage/GenreTags.svelte';
-  import Media from '@components/dashboard/dream-legacy/manage/Media.svelte';
-  import NftGating from '@components/dashboard/dream-legacy/manage/NftGating.svelte';
-
   import ExploreCategory from '@components/dashboard/dream/manage/collections/AddTopicCategory.svelte';
+  import GenreTags from '@components/dashboard/dream/manage/collections/GenreTags.svelte';
+  import NftGating from '@components/dashboard/dream/manage/collections/NftGating.svelte';
+  import Media from '@components/dashboard/dream/manage/collections/Media.svelte';
+
   import EditSVG from '@components/icons/Edit.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
@@ -232,7 +232,9 @@
             class:green-btn={topic_availability}
             class:red-btn={!topic_availability}
             use:tippy={{ content: 'Toggle availability', animation: 'scale' }}
-            onclick={() => {toggleAvailability(topic_id, !topic_availability)}}
+            onclick={() => {
+              toggleAvailability(topic_id, !topic_availability);
+            }}
           >
             {topic_availability ? 'Available' : 'Unavailable'}
           </button>
@@ -240,10 +242,12 @@
             class:green-btn={topic_visibility === 'public'}
             class:red-btn={topic_visibility === 'private'}
             use:tippy={{ content: 'Toggle visibility', animation: 'scale' }}
-            onclick={() => {toggleVisibility(
-              topic_id,
-              topic_visibility === 'public' ? 'private' : 'public',
-            )}}
+            onclick={() => {
+              toggleVisibility(
+                topic_id,
+                topic_visibility === 'public' ? 'private' : 'public',
+              );
+            }}
           >
             {topic_visibility === 'public' ? 'Public' : 'Private'}
           </button>
@@ -453,7 +457,7 @@
     </section>
 
     <!-- MEDIA FILES -->
-    <!-- <Media bind:topic_media_files {handleMediaUpload} {handleDeleteMedia} /> -->
+    <Media bind:topic_media_files {handleMediaUpload} {handleDeleteMedia} />
 
     <button
       class="red-btn blur"

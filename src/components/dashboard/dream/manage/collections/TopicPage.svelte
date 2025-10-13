@@ -14,7 +14,7 @@
   import GenreTags from '@components/dashboard/dream-legacy/manage/GenreTags.svelte';
   import Media from '@components/dashboard/dream-legacy/manage/Media.svelte';
   import NftGating from '@components/dashboard/dream-legacy/manage/NftGating.svelte';
-  
+
   import ExploreCategory from '@components/dashboard/dream/manage/collections/AddTopicCategory.svelte';
   import EditSVG from '@components/icons/Edit.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
@@ -379,7 +379,7 @@
     </section>
 
     <!-- MEDIA FILES -->
-    <Media bind:topic_media_files {handleMediaUpload} {handleDeleteMedia} />
+    <!-- <Media bind:topic_media_files {handleMediaUpload} {handleDeleteMedia} /> -->
 
     <button
       class="red-btn blur"

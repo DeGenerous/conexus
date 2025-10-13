@@ -10,7 +10,7 @@
     topic_genres,
     handleGenreChange,
   }: {
-    topic_genres: TopicGenre[];
+    topic_genres: TopicGenre[] | null;
     handleGenreChange: (
       genreId: string,
       method: 'add' | 'remove',
@@ -20,7 +20,7 @@
   let newGenreId = $state('');
 
   $effect(() => {
-    topic_genres = topic_genres.sort(sortByName);
+    topic_genres = topic_genres ? topic_genres.sort(sortByName) : null;
   });
 
   $effect(() => {
@@ -31,23 +31,32 @@
     });
   });
 
-  async function handleRemoveGenre(genre_id: string) {
-    topic_genres = topic_genres.filter((genre) => genre.id !== genre_id);
-
-    const genre = availableGenres.find((g: Genre) => g.name === genre_id);
-    if (genre && genre.id) await handleGenreChange(genre.id, 'remove');
+  async function handleRemoveGenre(name: string) {
+    try {
+      const genre = availableGenres.find((g: Genre) => g.name === name);
+      if (genre && genre.id) await handleGenreChange(genre.id, 'remove');
+      topic_genres = topic_genres ? topic_genres.filter((genre) => genre.name !== name) : null;
+    } catch (error) {
+      console.error('Error removing genre:', error);
+    }
   }
 
   async function handleAddGenre() {
     if (newGenreId === '') return;
 
-    if (topic_genres.some((tg) => tg.id === newGenreId)) {
+    if (topic_genres?.some((tg) => tg.id === newGenreId)) {
       return;
     }
 
-    await handleGenreChange(newGenreId, 'add');
-
-    newGenreId = '';
+    try {
+      await handleGenreChange(newGenreId, 'add');
+      const genre = availableGenres.find((g: Genre) => g.id === newGenreId);
+      topic_genres = topic_genres ? [...topic_genres, { id: genre?.id || '', name: genre?.name || '' }] : [{ id: genre?.id || '', name: genre?.name || '' }];
+    } catch (error) {
+      console.error('Error adding genre:', error);
+    } finally {
+      newGenreId = '';
+    }
   }
 
   function sortByName(a: Genre, b: Genre) {
@@ -69,14 +78,14 @@
         <button class="void-btn small-purple-tile">
           <p>{genre.name}</p>
           <CloseSVG
-            onclick={() => handleRemoveGenre(genre.id)}
+            onclick={() => handleRemoveGenre(genre.name)}
             voidBtn={true}
             dark={true}
           />
         </button>
       {/each}
     {:else}
-      <p class="valigation">No genres selected</p>
+      <p class="validation">No genres selected</p>
     {/if}
   </div>
 </div>
@@ -85,7 +94,7 @@
   <select bind:value={newGenreId}>
     <option value="" hidden disabled>Select</option>
     {#each availableGenres
-      .filter((g) => !topic_genres.some((tg) => tg.id === g.id))
+      .filter((g) => !topic_genres?.some((tg) => tg.id === g.id))
       .sort(sortByName) as genre}
       <option value={genre.id}>{genre.name}</option>
     {/each}

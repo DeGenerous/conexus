@@ -102,8 +102,11 @@
         @include dark-red(1, text);
       }
 
-      p {
-        width: auto;
+      span > p {
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        @include dark-red(0.5);
+        @include box-shadow(soft, inset);
       }
 
       @include respond-up(large-desktop) {

@@ -453,8 +453,7 @@
     white-space: nowrap;
   }
 
-  & > p,
-  span > p {
+  & > p {
     width: 100%;
     padding: 0.5rem;
     border-radius: 0.5rem;
@@ -508,7 +507,7 @@
   @extend .small-tile;
   @include orange(0.85);
 
-  p {
+  & > p {
     @include dark-red(0.5);
   }
 
@@ -523,7 +522,7 @@
   @extend .small-tile;
   @include rose(0.85);
 
-  p {
+  & > p {
     @include dark-red(0.5);
   }
 
@@ -538,7 +537,7 @@
   @extend .small-tile;
   @include deep-green;
 
-  p {
+  & > p {
     @include dark-green(0.5);
   }
 

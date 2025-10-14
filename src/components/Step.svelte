@@ -29,6 +29,7 @@
   } from '@stores/modal.svelte';
   import { ensureMessage, gameRulesModal } from '@constants/modal';
   import isColorLight from '@utils/brightness';
+  import { getCurrentUser } from '@utils/route-guard';
 
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
@@ -260,7 +261,7 @@
   let pictureKeyframe: KeyframeEffect;
   let pictureAnimation: Animation;
 
-  $: if (step.image && step.image_type !== 'url') {
+  $: if (step.image) {
     pictureAnimation.play();
     window.scrollTo({
       top: 0,
@@ -268,7 +269,14 @@
     });
   }
 
+  let isGuest: boolean = false;
+
   onMount(() => {
+    getCurrentUser().then((u) => {
+      if (u?.role_name === 'Guest') isGuest = true;
+    });
+
+    
     const stepImage = document.getElementById('step-image') as HTMLImageElement;
     pictureKeyframe = new KeyframeEffect(
       stepImage,
@@ -342,15 +350,17 @@ a11y_no_noninteractive_element_interactions -->
     style:color={$customFont.baseColor}
     on:pointerdown={handleWrapperPointer}
   >
-    <ImageDisplay
-      {width}
-      {zoom}
-      image={step.image}
-      image_type={step.image_type}
-      imageWidth={customScale.imageWidth}
-      imageHeight={customScale.imageHeight}
-      boxShadow={$customStyling.boxShadow}
-    />
+    {#if !isGuest}
+      <ImageDisplay
+        {width}
+        {zoom}
+        image={step.image}
+        image_type={step.image_type}
+        imageWidth={customScale.imageWidth}
+        imageHeight={customScale.imageHeight}
+        boxShadow={$customStyling.boxShadow}
+      />
+    {/if}
 
     {#if step.title}
       <h4
@@ -608,7 +618,9 @@ a11y_no_noninteractive_element_interactions -->
       on:click|stopPropagation
     >
       <Slider type="music" />
-      <Slider type="voice" />
+      {#if !isGuest}
+        <Slider type="voice" />
+      {/if}
     </section>
 
     <!-- STYLING CONTROLLER -->

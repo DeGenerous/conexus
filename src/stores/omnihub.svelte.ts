@@ -1,13 +1,13 @@
 import { writable } from 'svelte/store';
 
 export class nftTile {
-  id: number;
+  token_id: number;
   name: string;
   image: string;
   level: string;
   attributes: Object[];
   constructor(data: any, i: number) {
-    this.id = data[i].name.replace(/^\D+/g, '');
+    this.token_id = data[i].name.replace(/^\D+/g, '');
     this.name = data[i].name;
     this.image = data[i].image;
     this.level = data[i].attributes[2].value;

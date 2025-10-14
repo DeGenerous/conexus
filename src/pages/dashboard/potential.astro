@@ -1,0 +1,13 @@
+---
+import Layout from '@layouts/Layout.astro';
+import Portrait from '@components/dashboard/omnihub/Portrait.svelte';
+
+const meta = {
+  header: 'Portrait',
+  nav: 'Portrait',
+};
+---
+
+<Layout {...meta}>
+  <Portrait client:load />
+</Layout>

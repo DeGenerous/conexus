@@ -27,11 +27,11 @@
     potential = GetCache<NFT>(SELECTED_POTENTIAL_KEY);
     const allPotentials = GetCache<NFT[]>(POTENTIALS_KEY) || [];
 
-    const index = allPotentials.findIndex((p) => p.id === potential?.id);
+    const index = allPotentials.findIndex((p) => p.token_id === potential?.token_id);
 
     navContext.setContext({
       items: allPotentials.map((p) => ({
-        name: `#${p.id}`,
+        name: `#${p.token_id}`,
         action() {
           SetCache(SELECTED_POTENTIAL_KEY, p);
           window.location.reload();
@@ -49,7 +49,7 @@
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {:else if potential}
   <section class="flex">
-    <header class="flex-row pad-8 pad-inline blur shad-inset-glow">
+    <header class="flex-row pad-8 pad-inline blur shad">
       <h4>{potential.name} ({getAttribute('class')})</h4>
 
       <div class="level flex-row gap-8">
@@ -91,7 +91,7 @@
         </a>
         <a
           class="button-anchor"
-          href="{NAV_ROUTES.OPENSEA}/{potential.id}"
+          href="https://opensea.io/item/ethereum/0xfa511d5c4cce10321e6e86793cc083213c36278e/{potential.token_id}"
           target="_blank"
         >
           <img src="/icons/opensea.png" alt="OpenSea marketplace" />
@@ -100,11 +100,11 @@
       </span>
     </div>
 
-    <footer class="flex-row pad-8 pad-inline blur shad-inset-glow">
+    <footer class="flex-row pad-8 pad-inline blur shad">
       <span class="flex-row gap-8">
         <a
           class="button-anchor purple-btn"
-          href="{NAV_ROUTES.SINGULAR}/{potential.id}"
+          href="{NAV_ROUTES.SINGULAR}/{potential.token_id}"
           target="_blank"
         >
           Customize

@@ -76,7 +76,7 @@
   {:else}
     <span class="flex-row flex-wrap">
       <h5 class="text-glowing">See How You Shaped the Saga:</h5>
-      <button class="button-glowing blur" onclick={getVotingHistory}>
+      <button onclick={getVotingHistory} disabled>
         Check Voting History
       </button>
     </span>

@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { link } from 'svelte-spa-router';
-
   import {
     SetCache,
+    POTENTIALS_KEY,
     SELECTED_POTENTIAL_KEY,
     TTL_SHORT,
   } from '@constants/cache';
@@ -67,9 +66,11 @@
     {#each sortedPotentials as nft}
       <a
         class="tile potential-tile"
-        use:link
-        href="/omnihub"
-        onclick={() => SetCache(SELECTED_POTENTIAL_KEY, nft, TTL_SHORT)}
+        href="/dashboard/potential"
+        onclick={() => {
+          SetCache(POTENTIALS_KEY, potentials, TTL_SHORT);
+          SetCache(SELECTED_POTENTIAL_KEY, nft, TTL_SHORT)
+        }}
       >
         <img src={nft.image} alt={nft.name} />
         <h5>{nft.name}</h5>

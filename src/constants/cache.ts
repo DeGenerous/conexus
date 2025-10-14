@@ -28,6 +28,9 @@ export const CURRENT_DRAFT_KEY = 'current_draft'; // id of the open draft
 // Unfinished stories
 export const UNFINISHED_STORIES_RANGE_KEY = 'unfinished_stories_range';
 
+// Potential voting history from Dischordian Saga
+export const DS_VOTING_HISTORY_KEY = (id: string) => `ds_voting_history[${id}]`;
+
 /* -------------------------------------------------------------------- */
 // 1 MONTH
 /* -------------------------------------------------------------------- */

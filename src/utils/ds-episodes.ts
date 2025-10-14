@@ -1,5 +1,5 @@
 import contract from '@lib/contract';
-import { GetCache, SELECTED_POTENTIAL_KEY } from '@constants/cache';
+import { GetCache, SetCache, SELECTED_POTENTIAL_KEY, DS_VOTING_HISTORY_KEY } from '@constants/cache';
 import {
   type NFT,
   episodes,
@@ -7,13 +7,9 @@ import {
   loadingStatus,
 } from '@stores/omnihub.svelte';
 
-const fetchEpisodes = async (): Promise<StoryNode[][]> => {
+const fetchEpisodes = async (nftNumber: number): Promise<StoryNode[][]> => {
   loadingStatus.set('Loading Season 1 Episode 1...');
   episodes.set([]);
-
-  const cachedPotential = GetCache<NFT>(SELECTED_POTENTIAL_KEY);
-  let nftNumber: number = Number(cachedPotential?.token_id);
-  // console.log('Selected Potential: ' + nftNumber);
 
   // Season 1 episodes
   const s1Nodes: StoryNode[] = [];
@@ -104,8 +100,19 @@ const getVote = async (
 };
 
 export const getVotingHistory = async () => {
+  const cachedVotes = GetCache<StoryNode[][]>(
+    DS_VOTING_HISTORY_KEY(String(GetCache<NFT>(SELECTED_POTENTIAL_KEY)?.token_id)),
+  );
+  if (cachedVotes) {
+    episodes.set(cachedVotes);
+    totalEpisodes.set(30);
+    return;
+  }
+
   try {
-    await fetchEpisodes()
+    const cachedPotential = GetCache<NFT>(SELECTED_POTENTIAL_KEY);
+    let nftNumber: number = Number(cachedPotential?.token_id);
+    await fetchEpisodes(nftNumber)
       .then((votes) =>
         votes.map((season) => season.filter((episode) => episode.vote)),
       )
@@ -125,6 +132,11 @@ export const getVotingHistory = async () => {
 
         // console.log(memories);
         episodes.set(memories);
+        SetCache(
+          DS_VOTING_HISTORY_KEY(String(nftNumber)),
+          memories,
+          1000 * 60 * 60 * 24 * 30, // 30 days
+        );
       });
     loadingStatus.set(null);
   } catch (error) {

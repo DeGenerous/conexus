@@ -209,8 +209,7 @@
 
 <section class="flex" onscroll={handleScroll}>
   {#if categories.length > 0}
-    <!-- TODO: uncomment this {#each categories as category (category.id)} -->
-    {#each categories as category}
+    {#each categories as category (category.id)}
       <div class="category flex">
         <Category {name} {intended} {category} />
       </div>

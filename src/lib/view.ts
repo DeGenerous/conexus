@@ -122,7 +122,7 @@ export default class AppView {
         if (a.sort_order > b.sort_order) return 1;
         return 0;
       },
-    );
+    ).filter((topic) => topic.available);
 
     return orderedCategoryTopics;
   }

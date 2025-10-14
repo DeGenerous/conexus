@@ -27,7 +27,9 @@
     potential = GetCache<NFT>(SELECTED_POTENTIAL_KEY);
     const allPotentials = GetCache<NFT[]>(POTENTIALS_KEY) || [];
 
-    const index = allPotentials.findIndex((p) => p.token_id === potential?.token_id);
+    const index = allPotentials.findIndex(
+      (p) => p.token_id === potential?.token_id,
+    );
 
     navContext.setContext({
       items: allPotentials.map((p) => ({

@@ -69,7 +69,7 @@
         href="/dashboard/potential"
         onclick={() => {
           SetCache(POTENTIALS_KEY, potentials, TTL_SHORT);
-          SetCache(SELECTED_POTENTIAL_KEY, nft, TTL_SHORT)
+          SetCache(SELECTED_POTENTIAL_KEY, nft, TTL_SHORT);
         }}
       >
         <img src={nft.image} alt={nft.name} />

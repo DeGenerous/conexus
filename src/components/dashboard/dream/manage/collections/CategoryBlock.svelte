@@ -224,10 +224,7 @@
       onfinalize={handleTopicsFinalize}
     >
       {#each topicItems as topic (topic.id)}
-        <a
-          class="tile"
-          href={NAV_ROUTES.EXPLORE(topic.topic_id)}
-        >
+        <a class="tile" href={NAV_ROUTES.EXPLORE(topic.topic_id)}>
           <h5>{topic.topic_name}</h5>
           <div class="flex">
             <span class="input-container">

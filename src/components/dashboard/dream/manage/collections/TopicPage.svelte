@@ -89,7 +89,9 @@
     topic_media_files = topic.media_files;
 
     const topicCategoryIds = topic.categories.map((cat) => cat.id);
-    const storedTopics: Nullable<CollectionTopic[]> = GetCache(MANAGE_CATEGORY_TOPICS_KEY(topicCategoryIds[0]));
+    const storedTopics: Nullable<CollectionTopic[]> = GetCache(
+      MANAGE_CATEGORY_TOPICS_KEY(topicCategoryIds[0]),
+    );
     if (storedTopics) {
       navContext.setContext({
         items: storedTopics.map(({ topic_id, topic_name }) => ({

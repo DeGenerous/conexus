@@ -276,7 +276,6 @@
       if (u?.role_name === 'Guest') isGuest = true;
     });
 
-    
     const stepImage = document.getElementById('step-image') as HTMLImageElement;
     pictureKeyframe = new KeyframeEffect(
       stepImage,

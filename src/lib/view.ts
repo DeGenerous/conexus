@@ -116,13 +116,13 @@ export default class AppView {
       return [];
     }
 
-    const orderedCategoryTopics = data.sort(
-      (a: CategoryTopic, b: CategoryTopic) => {
+    const orderedCategoryTopics = data
+      .sort((a: CategoryTopic, b: CategoryTopic) => {
         if (a.sort_order < b.sort_order) return -1;
         if (a.sort_order > b.sort_order) return 1;
         return 0;
-      },
-    ).filter((topic) => topic.available);
+      })
+      .filter((topic) => topic.available);
 
     return orderedCategoryTopics;
   }

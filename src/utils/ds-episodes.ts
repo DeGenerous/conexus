@@ -1,5 +1,10 @@
 import contract from '@lib/contract';
-import { GetCache, SetCache, SELECTED_POTENTIAL_KEY, DS_VOTING_HISTORY_KEY } from '@constants/cache';
+import {
+  GetCache,
+  SetCache,
+  SELECTED_POTENTIAL_KEY,
+  DS_VOTING_HISTORY_KEY,
+} from '@constants/cache';
 import {
   type NFT,
   episodes,
@@ -101,7 +106,9 @@ const getVote = async (
 
 export const getVotingHistory = async () => {
   const cachedVotes = GetCache<StoryNode[][]>(
-    DS_VOTING_HISTORY_KEY(String(GetCache<NFT>(SELECTED_POTENTIAL_KEY)?.token_id)),
+    DS_VOTING_HISTORY_KEY(
+      String(GetCache<NFT>(SELECTED_POTENTIAL_KEY)?.token_id),
+    ),
   );
   if (cachedVotes) {
     episodes.set(cachedVotes);

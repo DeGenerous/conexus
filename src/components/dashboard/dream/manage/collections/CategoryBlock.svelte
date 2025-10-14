@@ -4,6 +4,7 @@
 
   import { NAV_ROUTES } from '@constants/routes';
   import Topics from '@lib/topics';
+  import { SetCache, MANAGE_CATEGORY_TOPICS_KEY } from '@constants/cache';
 
   import SelectorSVG from '@components/icons/Selector.svelte';
 
@@ -50,6 +51,10 @@
       refresh,
     );
     workingCategory.topic_count = workingCategory.topics?.length ?? 0;
+    SetCache(
+      MANAGE_CATEGORY_TOPICS_KEY(workingCategory.category_id),
+      workingCategory.topics ?? [],
+    );
     syncTopicItems(workingCategory.topics ?? []);
   }
 
@@ -222,7 +227,6 @@
         <a
           class="tile"
           href={NAV_ROUTES.EXPLORE(topic.topic_id)}
-          target="_blank"
         >
           <h5>{topic.topic_name}</h5>
           <div class="flex">

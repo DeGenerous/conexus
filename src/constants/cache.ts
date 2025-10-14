@@ -42,9 +42,6 @@ export const TERMS_KEY = 'terms_accepted'; // temp for terms modal
 // 1 DAY
 /* -------------------------------------------------------------------- */
 
-// Cache all topics for /dashboard/manage to switch between them with arrows
-export const ALL_TOPICS_KEY = 'all_topics';
-
 // Cache all sections
 export const SECTIONS_KEY = 'sections';
 
@@ -59,6 +56,7 @@ export const CATEGORIES_KEY = 'categories';
 // 1) user object
 // 2) all CATEGORIES inside SECTION (separate for every SECTION)
 // 3) all TOPICS inside CATEGORY (separate for every CATEGORY)
+// 4) all TOPICS inside CATEGORY for the DASHBOARD-DREAM-MANAGE (separate for every CATEGORY)
 
 export const USER_KEY = 'user';
 
@@ -67,6 +65,9 @@ export const SECTION_CATEGORIES_KEY = (section: string): string =>
 
 export const CATEGORY_TOPICS_KEY = (category: string): string =>
   `category_topics[${category}]`;
+
+export const MANAGE_CATEGORY_TOPICS_KEY = (category: string): string =>
+  `manage_category_topics[${category}]`;
 
 /* -------------------------------------------------------------------- */
 // 15 MINUTES
@@ -94,7 +95,6 @@ const viewKeys = [
   SECTIONS_KEY,
   CATEGORIES_KEY,
   GENRES_KEY,
-  ALL_TOPICS_KEY,
   SECTION_CATEGORIES_KEY('Community Picks'),
   SECTION_CATEGORIES_KEY('Collabs'),
   SECTION_CATEGORIES_KEY('Dischordian Saga'),

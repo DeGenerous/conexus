@@ -5,7 +5,7 @@
 
   import { NAV_ROUTES } from '@constants/routes';
   import TopicManagement from '@lib/topics';
-  import { GetCache, ALL_TOPICS_KEY } from '@constants/cache';
+  import { GetCache, MANAGE_CATEGORY_TOPICS_KEY } from '@constants/cache';
   import openModal from '@stores/modal.svelte';
   import { ensureMessage } from '@constants/modal';
   import { navContext } from '@stores/navigation.svelte';
@@ -88,14 +88,15 @@
     topic_gates = topic.gates;
     topic_media_files = topic.media_files;
 
-    const storedTopics: Nullable<string> = GetCache(ALL_TOPICS_KEY);
+    const topicCategoryIds = topic.categories.map((cat) => cat.id);
+    const storedTopics: Nullable<CollectionTopic[]> = GetCache(MANAGE_CATEGORY_TOPICS_KEY(topicCategoryIds[0]));
     if (storedTopics) {
       navContext.setContext({
-        items: storedTopics.split('][').map((id) => ({
-          name: id,
-          link: `/dashboard/dream/manage/${id}`,
+        items: storedTopics.map(({ topic_id, topic_name }) => ({
+          name: topic_name,
+          link: `/dashboard/topic/${topic_id}`,
         })),
-        index: storedTopics.split('][').indexOf(topic_id),
+        index: storedTopics.findIndex(({ topic_id }) => topic_id === topic_id),
       });
     }
 
@@ -220,7 +221,7 @@
   };
 </script>
 
-<section class="topic-wrapper flex pad-24 blur">
+<section class="topic-wrapper flex pad-24">
   {#if !topic || !topic.topic || !topic.topic_prompt || !topic.categories}
     <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
   {:else}
@@ -481,13 +482,7 @@
 
   .topic-wrapper {
     width: 100vw;
-    min-height: 100dvh;
-    padding-block: 5rem;
-    background-color: rgba(0, 0, 0, 0.25);
-
-    @include respond-up(small-desktop) {
-      padding-block: 6rem 1.5rem;
-    }
+    padding-block: 0;
 
     @include respond-up(large-desktop) {
       padding-inline: 100px;
@@ -535,9 +530,5 @@
   #prompt:disabled,
   #image-prompt:disabled {
     @include white-txt(0.5);
-  }
-
-  :global(html) {
-    padding-block: 0;
   }
 </style>

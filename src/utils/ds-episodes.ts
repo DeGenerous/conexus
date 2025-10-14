@@ -12,7 +12,7 @@ const fetchEpisodes = async (): Promise<StoryNode[][]> => {
   episodes.set([]);
 
   const cachedPotential = GetCache<NFT>(SELECTED_POTENTIAL_KEY);
-  let nftNumber: number = Number(cachedPotential?.id);
+  let nftNumber: number = Number(cachedPotential?.token_id);
   // console.log('Selected Potential: ' + nftNumber);
 
   // Season 1 episodes

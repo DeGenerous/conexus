@@ -231,7 +231,8 @@
 
       & > span {
         width: 100%;
-        @include box-shadow(deep, inset);
+        animation: none;
+        @include dark-red(0.25);
 
         @include respond-up(tablet) {
           flex-direction: row;

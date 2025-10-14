@@ -76,7 +76,7 @@
   {:else}
     <span class="flex-row flex-wrap">
       <h5 class="text-glowing">See How You Shaped the Saga:</h5>
-      <button onclick={getVotingHistory} disabled>
+      <button class="button-glowing" onclick={getVotingHistory}>
         Check Voting History
       </button>
     </span>
@@ -142,7 +142,8 @@
 
         ol {
           width: inherit;
-          @include box-shadow(deep, inset);
+          animation: none;
+          background-color: rgba(0, 0, 0, 0.5);
 
           li {
             @include white-txt(0.5);

@@ -130,7 +130,11 @@
         <label for="accounts-role" class:disabled={!includeMetrics}>
           User Role
         </label>
-        <select id="accounts-role" bind:value={accountMetrics.role_id} disabled={!includeMetrics}>
+        <select
+          id="accounts-role"
+          bind:value={accountMetrics.role_id}
+          disabled={!includeMetrics}
+        >
           <option value="" disabled selected>Coming Soon</option>
         </select>
       </div>
@@ -147,7 +151,10 @@
           />
         </span>
         <span class="flex-row gap-8">
-          <label for="accounts-confirmed-email" class:disabled={!includeMetrics}>
+          <label
+            for="accounts-confirmed-email"
+            class:disabled={!includeMetrics}
+          >
             Confirmed Email:
           </label>
           <input
@@ -223,7 +230,7 @@
       </button>
     </div>
   </div>
-  
+
   <div class="flex-row">
     <h4>Accounts Growth</h4>
     <div class="container">
@@ -244,7 +251,7 @@
       </button>
     </div>
   </div>
-   <div class="flex-row">
+  <div class="flex-row">
     <h4>Wallets Growth</h4>
     <div class="container">
       <h5 class="text-glowing">

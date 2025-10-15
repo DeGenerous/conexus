@@ -156,7 +156,7 @@
   .sidebar-scrim {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: $transparent-black;
     z-index: 900;
     transform: none !important;
 

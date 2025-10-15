@@ -330,7 +330,7 @@
           width: 10rem;
           height: 100%;
           padding: 0.5rem;
-          background-color: rgba(0, 0, 0, 0.5);
+          background-color: $transparent-black;
           @include dark-border;
 
           h5 {

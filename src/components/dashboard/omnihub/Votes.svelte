@@ -143,7 +143,7 @@
         ol {
           width: inherit;
           animation: none;
-          background-color: rgba(0, 0, 0, 0.5);
+          background-color: $transparent-black;
 
           li {
             @include white-txt(0.5);

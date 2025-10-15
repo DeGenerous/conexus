@@ -167,7 +167,7 @@ export default class AdminAPI extends Fetcher {
    * @returns A promise that resolves to the account count.
    */
   async accountCount(request: AccountMetricFilter) {
-    return this.request<number>(`${this.countGroup}/account`, {
+    return this.request<number>(`${this.countGroup}/accounts`, {
       method: 'POST',
       body: JSON.stringify(request),
     });
@@ -179,7 +179,7 @@ export default class AdminAPI extends Fetcher {
    * @returns A promise that resolves to the wallet count.
    */
   async walletCount(request: WalletMetricFilter) {
-    return this.request<number>(`${this.countGroup}/wallet`, {
+    return this.request<number>(`${this.countGroup}/wallets`, {
       method: 'POST',
       body: JSON.stringify(request),
     });
@@ -191,7 +191,7 @@ export default class AdminAPI extends Fetcher {
    * @returns A promise that resolves to the topic count.
    */
   async topicCount(request: TopicMetricFilter) {
-    return this.request<number>(`${this.countGroup}/topic`, {
+    return this.request<number>(`${this.countGroup}/topics`, {
       method: 'POST',
       body: JSON.stringify(request),
     });
@@ -203,7 +203,7 @@ export default class AdminAPI extends Fetcher {
    * @returns A promise that resolves to the story count.
    */
   async storyCount(request: StoryMetricFilter) {
-    return this.request<number>(`${this.countGroup}/story`, {
+    return this.request<number>(`${this.countGroup}/stories`, {
       method: 'POST',
       body: JSON.stringify(request),
     });
@@ -217,7 +217,7 @@ export default class AdminAPI extends Fetcher {
    * @returns A promise that resolves to the account growth metrics.
    */
   async accountGrowth(request: AccountMetricFilter) {
-    return this.request<number>(`${this.growthGroup}/account`, {
+    return this.request<number>(`${this.growthGroup}/accounts`, {
       method: 'POST',
       body: JSON.stringify(request),
     });
@@ -229,7 +229,7 @@ export default class AdminAPI extends Fetcher {
    * @returns A promise that resolves to the wallet growth metrics.
    */
   async walletGrowth(request: WalletMetricFilter) {
-    return this.request<number>(`${this.growthGroup}/wallet`, {
+    return this.request<number>(`${this.growthGroup}/wallets`, {
       method: 'POST',
       body: JSON.stringify(request),
     });
@@ -241,7 +241,7 @@ export default class AdminAPI extends Fetcher {
    * @returns A promise that resolves to the topic growth metrics.
    */
   async topicGrowth(request: TopicMetricFilter) {
-    return this.request<number>(`${this.growthGroup}/topic`, {
+    return this.request<number>(`${this.growthGroup}/topics`, {
       method: 'POST',
       body: JSON.stringify(request),
     });
@@ -253,7 +253,7 @@ export default class AdminAPI extends Fetcher {
    * @returns A promise that resolves to the story growth metrics.
    */
   async storyGrowth(request: StoryMetricFilter) {
-    return this.request<number>(`${this.growthGroup}/story`, {
+    return this.request<number>(`${this.growthGroup}/stories`, {
       method: 'POST',
       body: JSON.stringify(request),
     });

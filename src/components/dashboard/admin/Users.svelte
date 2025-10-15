@@ -1,41 +1,27 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
-  import AdminApp from '@lib/admin';
-
-  import LoadingSVG from '@components/icons/Loading.svelte';
-
-  const admin = new AdminApp();
-
-  let users = $state<Partial<User>[]>([]);
-  let count = $state<number>(0);
-
-  onMount(() => {
-    admin.listAccounts(1, 1000).then((res) => {
-      if (res) {
-        users = res.users;
-        count = res.count;
-      }
-    });
-  });
+  import Accounts from '@components/dashboard/admin/users/Accounts.svelte';
 </script>
 
 <h2>Accounts & Roles</h2>
 
-<span class="flex-row">
-  {#if !count}
-    <LoadingSVG />
+<Accounts />
+
+<!-- <span class="flex-row">
+  {#if !userCount}
+    <button onclick={getAccountsCount} disabled={fetchingUserCount}>
+      {#if fetchingUserCount}
+        <LoadingSVG />
+        Loading...
+      {:else}
+        Get Accounts Count
+      {/if}
+    </button>
+  {:else}
+    <h5>Total users: {userCount}</h5>
   {/if}
-  <h5>
-    {#if count}
-      Total users: {count}
-    {:else}
-      Fetching users...
-    {/if}
-  </h5>
-</span>
+</span> -->
 
 <p>
-  listAccounts disableUserAccount changeUserRole fetchAccountCount
-  fetchWalletCount fetchAccountGrowth fetchWalletGrowth fetchTopAccounts
+  TODO: listAccounts disableUserAccount changeUserRole
+  fetchAccountGrowth fetchWalletGrowth fetchTopAccounts
 </p>

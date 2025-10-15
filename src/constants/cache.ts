@@ -27,6 +27,7 @@ export const CURRENT_DRAFT_KEY = 'current_draft'; // id of the open draft
 
 // Unfinished stories
 export const UNFINISHED_STORIES_RANGE_KEY = 'unfinished_stories_range';
+export const FINISHED_STORIES_RANGE_KEY = 'finished_stories_range';
 
 // Potential voting history from Dischordian Saga
 export const DS_VOTING_HISTORY_KEY = (id: string) => `ds_voting_history[${id}]`;
@@ -121,6 +122,7 @@ function saveImportantAndClearCache() {
   const unfinishedStoriesRange = localStorage.getItem(
     UNFINISHED_STORIES_RANGE_KEY,
   );
+  const finishedStoriesRange = localStorage.getItem(FINISHED_STORIES_RANGE_KEY);
   // deleting all values
   localStorage.clear();
   // restoring saved values
@@ -140,6 +142,8 @@ function saveImportantAndClearCache() {
   if (termsAccepted) localStorage.setItem(TERMS_KEY, termsAccepted); // temp
   if (unfinishedStoriesRange)
     localStorage.setItem(UNFINISHED_STORIES_RANGE_KEY, unfinishedStoriesRange);
+  if (finishedStoriesRange)
+    localStorage.setItem(FINISHED_STORIES_RANGE_KEY, finishedStoriesRange);
 }
 
 export const SetCache = <T>(key: string, value: T, ttl: number = TTL_YEAR) => {

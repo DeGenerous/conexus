@@ -2,6 +2,7 @@
   import { NAV_ROUTES } from '@constants/routes';
 
   import UnfinishedStories from '@components/dashboard/home/UnfinishedStories.svelte';
+  import FinishedStories from '@components/dashboard/home/FinishedStories.svelte';
 </script>
 
 <p>
@@ -10,6 +11,7 @@
 </p>
 
 <UnfinishedStories />
+<FinishedStories />
 
 <footer class="flex">
   <h5>Report bugs or ask for help</h5>

@@ -1,8 +1,22 @@
 <script lang="ts">
-  import { resetSettings } from '@stores/dream.svelte';
+  import {
+    promptSettings,
+    resetSettings,
+    isPromptSettingsDefault,
+    defaultPromptSettings,
+    arePromptSettingsEqual,
+  } from '@stores/dream.svelte';
   import { toastStore } from '@stores/toast.svelte';
 
   import TopicSettings from '@components/dashboard/common/TopicSettings.svelte';
+
+  const compareSettings = $derived(() => {
+    const originalSettings = defaultPromptSettings(); // TEMP: change to personal settings when available
+
+    if (!originalSettings) return true;
+
+    return arePromptSettingsEqual($promptSettings, originalSettings);
+  });
 
   const saveChanges = async () => {
     await new Promise((r) => setTimeout(r, 500));
@@ -19,17 +33,21 @@
 
 <TopicSettings>
   {#snippet children()}
-    <div class="flex-row flex-wrap">
-      <button class="red-btn" onclick={resetSettings}>
+    <span class="flex-row flex-wrap">
+      <button
+        class="red-btn"
+        onclick={resetSettings}
+        disabled={isPromptSettingsDefault($promptSettings)}
+      >
         Reset to Default
       </button>
-      <button class="green-btn" onclick={saveChanges}> Save Changes </button>
-    </div>
+      <button
+        class="green-btn"
+        onclick={saveChanges}
+        disabled={compareSettings()}
+      >
+        Save Changes
+      </button>
+    </span>
   {/snippet}
 </TopicSettings>
-
-<style>
-  .flex-row {
-    justify-content: center;
-  }
-</style>

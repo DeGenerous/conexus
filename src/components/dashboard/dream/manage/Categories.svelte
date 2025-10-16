@@ -66,7 +66,7 @@
   }
 </script>
 
-<section class="dream-container fade-in">
+<section class="dream-container">
   <CategoryFetcher bind:selectedSectionId bind:fetchCategories>
     {#snippet children(
       loadingSections: boolean,

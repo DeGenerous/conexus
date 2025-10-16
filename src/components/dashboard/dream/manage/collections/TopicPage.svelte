@@ -10,10 +10,17 @@
   import { ensureMessage } from '@constants/modal';
   import { navContext } from '@stores/navigation.svelte';
   import { userState } from '@utils/route-guard';
+  import {
+    promptSettings,
+    resetSettings,
+    isPromptSettingsDefault,
+    arePromptSettingsEqual,
+  } from '@stores/dream.svelte';
 
   import ExploreCategory from '@components/dashboard/dream/manage/collections/AddTopicCategory.svelte';
   import GenreTags from '@components/dashboard/dream/manage/collections/GenreTags.svelte';
   import NftGating from '@components/dashboard/dream/manage/collections/NftGating.svelte';
+  import TopicSettings from '@components/dashboard/common/TopicSettings.svelte';
   import Media from '@components/dashboard/dream/manage/collections/Media.svelte';
 
   import EditSVG from '@components/icons/Edit.svelte';
@@ -52,11 +59,30 @@
   let promptDraft = $state<string>('');
   let imagePromptDraft = $state<string>('');
 
-  let categoryTopics: string[] = [];
-  let activeStoryIndex: number = 0;
-  let prevStoryIndex = $derived(
-    activeStoryIndex <= 0 ? categoryTopics.length - 1 : activeStoryIndex - 1,
-  );
+  const setUpSettings = (settings: PromptSettings) => {
+    if (!settings) return;
+    promptSettings.set({
+      image_style: settings.image_style,
+      language: settings.language,
+      interactivity: settings.interactivity,
+      difficulty: settings.difficulty,
+      length: settings.length,
+      reading_style: settings.reading_style,
+      kids_mode: settings.kids_mode,
+    });
+  };
+
+  const compareSettings = $derived(() => {
+    const originalSettings = topic?.topic_prompt_settings;
+
+    if (!originalSettings) return true;
+
+    return arePromptSettingsEqual($promptSettings, originalSettings);
+  });
+
+  const saveSettingsChanges = async () => {
+    await topicManager.editPromptSettings(topic_id, $promptSettings);
+  };
 
   onMount(async () => {
     isAdmin = await userState('admin');
@@ -68,11 +94,14 @@
     }
 
     topic = await topicManager.getTopicManager(topic_id);
+    console.log(topic);
 
     if (!topic || !topic.topic || !topic.topic_prompt || !topic.categories) {
       window.location.href = NAV_ROUTES.MANAGE;
       return;
     }
+
+    setUpSettings(topic.topic_prompt_settings);
 
     topic_name = topic.topic.name;
     topic_description = topic.topic.description;
@@ -333,9 +362,30 @@
       {#if isAdmin}
         <NftGating {topic_gates} {handleGatingChange} />
       {/if}
+    </section>
 
-      <hr />
+    <TopicSettings>
+      {#snippet children()}
+        <span class="flex-row flex-wrap">
+          <button
+            class="red-btn"
+            onclick={resetSettings}
+            disabled={isPromptSettingsDefault($promptSettings)}
+          >
+            Reset to Default
+          </button>
+          <button
+            class="green-btn"
+            onclick={saveSettingsChanges}
+            disabled={compareSettings()}
+          >
+            Save Changes
+          </button>
+        </span>
+      {/snippet}
+    </TopicSettings>
 
+    <section class="dream-container">
       <!-- DESCRIPTION -->
       <div class="flex-row">
         <span class="edit-wrapper flex">

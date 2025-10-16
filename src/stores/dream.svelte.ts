@@ -7,7 +7,7 @@ export const storyData = writable<StoryData>({
   category_id: '',
 });
 
-export const promptSettings = writable<PromptSettings>({
+const DEFAULT_PROMPT_SETTINGS: PromptSettings = {
   image_style: 'Realistic',
   language: 'English',
   interactivity: 'standard',
@@ -15,7 +15,36 @@ export const promptSettings = writable<PromptSettings>({
   length: 'standard',
   reading_style: 'simple',
   kids_mode: '',
+};
+
+export const defaultPromptSettings = (): PromptSettings => ({
+  ...DEFAULT_PROMPT_SETTINGS,
 });
+
+export const arePromptSettingsEqual = (
+  a: Nullable<PromptSettings>,
+  b: Nullable<PromptSettings>,
+): boolean => {
+  if (!a || !b) {
+    return false;
+  }
+
+  return (
+    a.image_style === b.image_style &&
+    a.language === b.language &&
+    a.interactivity === b.interactivity &&
+    a.difficulty === b.difficulty &&
+    a.length === b.length &&
+    a.reading_style === b.reading_style &&
+    a.kids_mode === b.kids_mode
+  );
+};
+
+export const isPromptSettingsDefault = (settings: PromptSettings): boolean => {
+  return arePromptSettingsEqual(settings, DEFAULT_PROMPT_SETTINGS);
+};
+
+export const promptSettings = writable<PromptSettings>(defaultPromptSettings());
 
 export const openPrompt = writable<string>('');
 
@@ -186,15 +215,7 @@ export const tablePrompt = writable<TablePrompt>({
 // RESET ALL DATA STORES
 
 export const resetSettings = () => {
-  promptSettings.set({
-    image_style: 'Realistic',
-    language: 'English',
-    interactivity: 'standard',
-    difficulty: 'standard',
-    length: 'standard',
-    reading_style: 'simple',
-    kids_mode: null,
-  });
+  promptSettings.set(defaultPromptSettings());
 };
 
 export const clearAllData = () => {

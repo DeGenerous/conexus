@@ -1,7 +1,6 @@
 import { writable } from 'svelte/store';
 
 // Lightweight toast queue with auto-expiry used by ToastContainer.svelte
-
 type ToastType = 'info' | 'error';
 
 interface Toast {
@@ -13,6 +12,10 @@ interface Toast {
 
 function createToastStore() {
   const { subscribe, update } = writable<Toast[]>([]);
+  const timers = new Map<number, ReturnType<typeof setTimeout>>();
+
+  const remove = (id: number) =>
+    update((toasts) => toasts.filter((toast) => toast.id !== id));
 
   return {
     subscribe,
@@ -24,12 +27,22 @@ function createToastStore() {
       const id = Date.now();
       update((toasts) => [...toasts, { id, message, type, duration }]);
 
-      setTimeout(() => {
-        update((toasts) => toasts.filter((toast) => toast.id !== id));
+      const timeout = setTimeout(() => {
+        timers.delete(id);
+        remove(id);
       }, duration);
+
+      timers.set(id, timeout);
+
+      return id;
     },
     close: (id: number) => {
-      update((toasts) => toasts.filter((toast) => toast.id !== id));
+      const timeout = timers.get(id);
+      if (timeout) {
+        clearTimeout(timeout);
+        timers.delete(id);
+      }
+      remove(id);
     },
   };
 }

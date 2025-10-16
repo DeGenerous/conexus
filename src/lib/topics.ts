@@ -270,22 +270,28 @@ export default class Topic {
     topic_id: string,
     category_id: string,
     sort_order: number,
-  ): Promise<void> {
-    const { message, data } = await this.api.changeTopicSortOrder(
+    options: { silent?: boolean } = {},
+  ): Promise<string | null> {
+    const response = await this.api.changeTopicSortOrder(
       topic_id,
       category_id,
       sort_order,
     );
 
-    if (!data) {
-      api_error(message);
-      return;
+    if (response.status === 'error' || !response.data) {
+      api_error(response.message);
+      return null;
     }
 
-    toastStore.show(
-      message || `Category sort order changed for topic ${topic_id}`,
-      'info',
-    );
+    const successMessage =
+      response.message ||
+      `Category sort order changed for topic ${topic_id}`;
+
+    if (!options.silent) {
+      toastStore.show(successMessage, 'info');
+    }
+
+    return successMessage;
   }
 
   async removeTopicFromCategory(

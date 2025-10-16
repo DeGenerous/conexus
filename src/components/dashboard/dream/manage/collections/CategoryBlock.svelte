@@ -5,6 +5,7 @@
   import { NAV_ROUTES } from '@constants/routes';
   import Topics from '@lib/topics';
   import { SetCache, MANAGE_CATEGORY_TOPICS_KEY } from '@constants/cache';
+  import { toastStore } from '@stores/toast.svelte';
 
   import SelectorSVG from '@components/icons/Selector.svelte';
 
@@ -20,6 +21,7 @@
 
   let workingCategory = $state<CollectionCategory>(category);
   let expandedCategories = $state<Set<string>>(new Set());
+  let isReordering = $state(false);
 
   type DraggableTopic = CollectionTopic & { id: string };
 
@@ -150,11 +152,55 @@
     await fetchTopicCollection(workingCategory.category_id, true);
   }
 
+  async function persistTopicOrder(
+    categoryId: string,
+    updates: { topic_id: string; order: number }[],
+  ) {
+    if (updates.length === 0 || isReordering) return;
+
+    isReordering = true;
+    let success = true;
+
+    try {
+      for (const { topic_id, order } of updates) {
+        const response = await topicManager.changeSortOrderInCategory(
+          topic_id,
+          categoryId,
+          order,
+          { silent: true },
+        );
+
+        if (!response) {
+          success = false;
+          break;
+        }
+      }
+
+      if (!success) {
+        await fetchTopicCollection(categoryId, true);
+        return;
+      }
+
+      toastStore.show('Topic order updated', 'info');
+    } finally {
+      isReordering = false;
+    }
+  }
+
   function handleTopicsConsider(event: CustomEvent<DndEvent<DraggableTopic>>) {
+    if (isReordering) return;
     topicItems = event.detail.items as DraggableTopic[];
   }
 
-  function handleTopicsFinalize(event: CustomEvent<DndEvent<DraggableTopic>>) {
+  async function handleTopicsFinalize(
+    event: CustomEvent<DndEvent<DraggableTopic>>,
+  ) {
+    if (isReordering) return;
+
+    const previousTopics = (workingCategory.topics ?? []).map((topic) => ({
+      ...topic,
+    }));
+
     const updated = event.detail.items.map((item, index) => ({
       ...item,
       order: index + 1,
@@ -163,11 +209,30 @@
     topicItems = updated;
     workingCategory.topics = updated.map(({ id, ...rest }) => ({ ...rest }));
     workingCategory.topic_count = workingCategory.topics?.length ?? 0;
+    SetCache(
+      MANAGE_CATEGORY_TOPICS_KEY(workingCategory.category_id),
+      workingCategory.topics ?? [],
+    );
+
+    const updates = updated
+      .map(({ topic_id, order }) => {
+        const previousOrder = previousTopics.find(
+          (topic) => topic.topic_id === topic_id,
+        )?.order;
+        return { topic_id, order, previousOrder };
+      })
+      .filter(
+        ({ order, previousOrder }) =>
+          previousOrder === undefined || order !== previousOrder,
+      )
+      .map(({ topic_id, order }) => ({ topic_id, order }));
 
     console.log('[Collections] Topic order updated', {
       categoryId: workingCategory.category_id,
       topics: updated.map(({ topic_id, order }) => ({ topic_id, order })),
     });
+
+    await persistTopicOrder(workingCategory.category_id, updates);
   }
 </script>
 
@@ -216,9 +281,12 @@
   {#if topicItems && topicItems.length > 0}
     <section
       class="tiles-collection fade-in"
+      class:reordering={isReordering}
+      aria-busy={isReordering}
       use:dndzone={{
         items: topicItems,
         type: `topics-${workingCategory.category_id}`,
+        dragDisabled: isReordering,
       }}
       onconsider={handleTopicsConsider}
       onfinalize={handleTopicsFinalize}
@@ -346,6 +414,11 @@
   .tiles-collection {
     width: 100%;
     min-height: unset;
+
+    &.reordering {
+      pointer-events: none;
+      opacity: 0.75;
+    }
 
     .tile {
       div {

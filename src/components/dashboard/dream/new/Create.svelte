@@ -251,9 +251,17 @@
           id="category"
           class:red-border={!$storyData.category_id && categories.length > 0}
           bind:value={$storyData.category_id}
-          disabled={categories.length === 0}
+          disabled={isAdmin && !selectedSectionId}
         >
-          <option value="" disabled hidden>Select category</option>
+          <option value="" disabled hidden>
+            {#if categories.length > 0}
+              Select category
+            {:else if isAdmin && !selectedSectionId}
+              No section selected
+            {:else if !loadingCategories}
+              No categories found
+            {/if}
+          </option>
           {#each categories as { id, name }}
             <option value={id}>{name}</option>
           {/each}

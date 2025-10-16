@@ -100,22 +100,25 @@
       {#if !loadingCategories && errorCategories}
         <p class="validation">{errorCategories}</p>
       {:else}
+        {@const availableCategories = categories.filter(
+          (c) => !topic_categories.some((tc: Category) => tc.id === c.id),
+        )}
         <select
           bind:value={selectedCategoryId}
-          disabled={!selectedSectionId ||
-            !categories.filter(
-              (c) => !topic_categories.some((tc: Category) => tc.id === c.id),
-            ).length}
+          disabled={(isAdmin && !selectedSectionId) ||
+            !availableCategories.length}
         >
           <option value="" hidden disabled>
-            {#if categories.filter((c) => !topic_categories.some((tc: Category) => tc.id === c.id)).length > 0}
+            {#if availableCategories.length > 0}
               Select category
-            {:else if selectedSectionId && !loadingCategories}
+            {:else if isAdmin && !selectedSectionId}
+              No section selected
+            {:else if !loadingCategories}
               No categories found
             {/if}
           </option>
-          {#if categories.length > 0}
-            {#each categories.filter((c) => !topic_categories.some((tc: Category) => tc.id === c.id)) as { id, name }}
+          {#if availableCategories.length > 0}
+            {#each availableCategories as { id, name }}
               <option value={id}>{name}</option>
             {/each}
           {/if}

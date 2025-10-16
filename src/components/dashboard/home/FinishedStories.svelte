@@ -61,7 +61,7 @@
   {:else}
     {#each finishedStories as topic}
       <a
-        class="tile gray-tile"
+        class="tile"
         href="/c/CommunityPicks/{topic.topic_id}?title={topic.name}"
       >
         <img

@@ -3,72 +3,23 @@
 
   import LoadingSVG from '@components/icons/Loading.svelte';
 
-  let {
-    dateRange,
-  }: {
-    dateRange: { start_date: string; end_date: string };
-  } = $props();
+  let { dateRange }: { dateRange: { start_date: string; end_date: string } } =
+    $props();
 
   const admin: AdminApp = new AdminApp();
 
-  let topUsers = $state<TopNMetricResult>([
-    {
-      id: 'aklwnfanakwfnakwfn',
-      name: 'User 1',
-      activity_count: 100,
-    },
-    {
-      id: 'aklwnfanakwfnakwfn',
-      name: 'User 1',
-      activity_count: 100,
-    },
-    {
-      id: 'aklwnfanakwfnakwfn',
-      name: 'User 1',
-      activity_count: 100,
-    },
-    {
-      id: 'aklwnfanakwfnakwfn',
-      name: 'User 1',
-      activity_count: 100,
-    },
-    {
-      id: 'aklwnfanakwfnakwfn',
-      name: 'User 1',
-      activity_count: 100,
-    },
-    {
-      id: 'aklwnfanakwfnakwfn',
-      name: 'User 1',
-      activity_count: 100,
-    },
-    {
-      id: 'aklwnfanakwfnakwfn',
-      name: 'User 1',
-      activity_count: 100,
-    },
-    {
-      id: 'aklwnfanakwfnakwfn',
-      name: 'User 1',
-      activity_count: 100,
-    },
-    {
-      id: 'aklwnfanakwfnakwfn',
-      name: 'User 1',
-      activity_count: 100,
-    },
-    {
-      id: 'aklwnfanakwfnakwfn',
-      name: 'User 1',
-      activity_count: 100,
-    },
-  ]);
+  let topUsers = $state<TopNMetricResult>([]);
   let fetching = $state<boolean>(false);
 
   const topUsersMetrics = $state<TopNMetricFilter>({
-    start_date: dateRange.start_date,
-    end_date: dateRange.end_date,
+    start_date: undefined,
+    end_date: undefined,
     n: 10,
+  });
+
+  $effect(() => {
+    topUsersMetrics.start_date = dateRange.start_date;
+    topUsersMetrics.end_date = dateRange.end_date;
   });
 
   const getTopUsers = async () => {
@@ -109,7 +60,16 @@
           ? index / (topUsers.length - 1)
           : 0}
       >
-        <h5>{index + 1}. {name} <strong>({id})</strong></h5>
+        <h5>
+          {index + 1}. {name} ({id.split('-')[0]})
+          {#if index === 0}
+            🥇
+          {:else if index === 1}
+            🥈
+          {:else if index === 2}
+            🥉
+          {/if}
+        </h5>
         <h5>Stories Played: {activity_count}</h5>
       </li>
     {/each}
@@ -151,11 +111,6 @@
 
       h5 {
         @include white-txt(soft);
-
-        strong {
-          font-weight: normal;
-        }
-
         @include mobile-only {
           width: 100%;
         }

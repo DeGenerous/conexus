@@ -18,30 +18,46 @@
   let walletGrowth = $state<number>(0);
   let fetchingWalletGrowth = $state<boolean>(false);
 
+  const getEndDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  };
+
   const dateRange = $state<{ start_date: string; end_date: string }>({
-    start_date: '',
-    end_date: '',
+    start_date: '2023-01-01',
+    end_date: getEndDate(),
   });
-  let includeMetrics = $state<boolean>(false);
 
   const accountMetrics = $state<AccountMetricFilter>({
-    start_date: dateRange.start_date,
-    end_date: dateRange.end_date,
+    start_date: undefined,
+    end_date: undefined,
+    role_id: undefined,
     referred: true,
     email_confirmed: true,
   });
+  let includeAccountMetrics = $state<boolean>(false);
 
   const walletMetrics = $state<WalletMetricFilter>({
-    start_date: dateRange.start_date,
-    end_date: dateRange.end_date,
+    start_date: undefined,
+    end_date: undefined,
     is_faux: false,
     main: false,
+  });
+
+  $effect(() => {
+    accountMetrics.start_date = dateRange.start_date;
+    accountMetrics.end_date = dateRange.end_date;
+  });
+
+  $effect(() => {
+    walletMetrics.start_date = dateRange.start_date;
+    walletMetrics.end_date = dateRange.end_date;
   });
 
   const getAccountsCount = async () => {
     fetchingUserCount = true;
     const cnt = await admin.fetchAccountCount(
-      includeMetrics ? accountMetrics : {},
+      includeAccountMetrics ? accountMetrics : {},
     );
     if (cnt !== null) userCount = cnt;
     fetchingUserCount = false;
@@ -56,9 +72,7 @@
 
   const getAccountsGrowth = async () => {
     fetchingUserGrowth = true;
-    const growth = await admin.fetchAccountGrowth(
-      includeMetrics ? accountMetrics : {},
-    );
+    const growth = await admin.fetchAccountGrowth(accountMetrics);
     if (growth !== null) userGrowth = growth;
     fetchingUserGrowth = false;
   };
@@ -73,52 +87,26 @@
 
 <section class="dream-container">
   <div class="flex-row">
-    <h4>Metrics</h4>
-    <div class="container">
-      <button
-        class="void-btn dream-radio-btn"
-        class:active={includeMetrics}
-        onclick={() => (includeMetrics = true)}
-      >
-        ENABLED
-      </button>
-      <button
-        class="void-btn dream-radio-btn"
-        class:active={!includeMetrics}
-        onclick={() => (includeMetrics = false)}
-      >
-        DISABLED
-      </button>
-    </div>
-  </div>
-
-  <div class="flex-row">
     <h4>Date Range</h4>
     <div class="container">
       <div class="input-container">
-        <label for="accounts-start-date" class:disabled={!includeMetrics}>
-          From
-        </label>
+        <label for="accounts-start-date"> From </label>
         <input
           id="accounts-start-date"
           type="date"
           bind:value={dateRange.start_date}
-          min="2024-01-01"
+          min="2022-01-01"
           max={new Date().toISOString().split('T')[0]}
-          disabled={!includeMetrics}
         />
       </div>
       <div class="input-container">
-        <label for="accounts-end-date" class:disabled={!includeMetrics}>
-          To
-        </label>
+        <label for="accounts-end-date"> To </label>
         <input
           id="accounts-end-date"
           type="date"
           bind:value={dateRange.end_date}
           min="2024-01-01"
           max={new Date().toISOString().split('T')[0]}
-          disabled={!includeMetrics}
         />
       </div>
     </div>
@@ -127,41 +115,26 @@
     <h4>Accounts</h4>
     <div class="container">
       <div class="accounts-role input-container">
-        <label for="accounts-role" class:disabled={!includeMetrics}>
-          User Role
-        </label>
-        <select
-          id="accounts-role"
-          bind:value={accountMetrics.role_id}
-          disabled={!includeMetrics}
-        >
+        <label for="accounts-role"> User Role </label>
+        <select id="accounts-role" value="">
           <option value="" disabled selected>Coming Soon</option>
         </select>
       </div>
       <span class="accounts-data flex">
         <span class="flex-row gap-8">
-          <label for="accounts-referred" class:disabled={!includeMetrics}>
-            Referred:
-          </label>
+          <label for="accounts-referred"> Referred: </label>
           <input
             id="accounts-referred"
             type="checkbox"
             bind:checked={accountMetrics.referred}
-            disabled={!includeMetrics}
           />
         </span>
         <span class="flex-row gap-8">
-          <label
-            for="accounts-confirmed-email"
-            class:disabled={!includeMetrics}
-          >
-            Confirmed Email:
-          </label>
+          <label for="accounts-confirmed-email"> Confirmed Email: </label>
           <input
             id="accounts-confirmed-email"
             type="checkbox"
             bind:checked={accountMetrics.email_confirmed}
-            disabled={!includeMetrics}
           />
         </span>
       </span>
@@ -200,6 +173,14 @@
           Click to fetch count
         {/if}
       </h5>
+      <span class="flex-row gap-8">
+        <input
+          type="checkbox"
+          bind:checked={includeAccountMetrics}
+          id="accounts-include-metrics"
+        />
+        <label for="accounts-include-metrics">Metrics</label>
+      </span>
       <button onclick={getAccountsCount} disabled={fetchingUserCount}>
         {#if fetchingUserCount}
           <LoadingSVG />
@@ -284,18 +265,6 @@
     &::-webkit-calendar-picker-indicator {
       filter: brightness(0) saturate(100%) invert(1);
     }
-  }
-
-  input,
-  select {
-    &:disabled {
-      color: transparent !important;
-    }
-  }
-
-  label.disabled {
-    opacity: 0.25;
-    cursor: not-allowed;
   }
 
   h5 {

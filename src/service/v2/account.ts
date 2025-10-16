@@ -84,9 +84,21 @@ export default class AccountAPI extends Fetcher {
     if (image_url) formData.append('image_url', image_url);
     if (new_avatar) formData.append('file', new_avatar);
 
-    return this.request(`/account/change-avatar`, {
+    return this.request(`${this.group}/change-avatar`, {
       method: 'POST',
       body: formData,
+    });
+  }
+
+  /**
+   * Change Avatar accepts an image url or a new avatar file
+   * @param bio - The new bio text.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   */
+  async changeBio(bio: string) {
+    return this.request(`${this.group}/change-bio`, {
+      method: 'POST',
+      body: JSON.stringify({ bio }),
     });
   }
 
@@ -182,6 +194,17 @@ export default class AccountAPI extends Fetcher {
     return this.request<Bookmark[]>(
       `${this.group}/get-folder-bookmarks/${folderId}`,
     );
+  }
+
+  /**
+   * Delete Bookmark Folder
+   * @param folderId - The ID of the bookmark folder to delete.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   */
+  async deleteBookmarkFolder(folderId: string) {
+    return this.request(`${this.group}/delete-bookmark-folder/${folderId}`, {
+      method: 'DELETE',
+    });
   }
 
   /**

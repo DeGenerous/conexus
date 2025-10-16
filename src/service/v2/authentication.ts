@@ -97,6 +97,30 @@ export default class AuthenticationAPI extends Fetcher {
   }
 
   /**
+   * Select a web3 wallet for authentication.
+   * @param wallet - the wallet address to select.
+   * @returns A promise that resolves to an APIResponse containing the user data or an error.
+   */
+  async web3SelectWallet(wallet: string) {
+    return this.request<User>(`${this.group}/web3-select-wallet`, {
+      method: 'POST',
+      body: JSON.stringify({ wallet }),
+    });
+  }
+
+  /**
+   * Unlink a web3 wallet from the user's account.
+   * @param wallet - the wallet address to unlink.
+   * @returns A promise that resolves to an APIResponse containing the user data or an error.
+   */
+  async web3UnlinkWallet(wallet: string) {
+    return this.request<User>(`${this.group}/web3-unlink-wallet`, {
+      method: 'POST',
+      body: JSON.stringify({ wallet }),
+    });
+  }
+
+  /**
    * Logs out the current user by making a request to the `/auth/signout` endpoint.
    *
    * @returns A promise that resolves with the response from the logout request.

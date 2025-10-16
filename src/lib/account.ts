@@ -120,6 +120,21 @@ class Account {
   }
 
   /**
+   * Change the user's bio.
+   * @param bio The new bio.
+   */
+  async changeBio(bio: string): Promise<void> {
+    const { status, message } = await this.api.changeBio(bio);
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || 'Bio changed successfully', 'info');
+  }
+
+  /**
    * Generate a new referral code.
    * @returns {Promise<string | null>}
    */
@@ -284,6 +299,17 @@ class Account {
     // );
 
     return data || [];
+  }
+
+  async deleteBookmarkFolder(folderId: string): Promise<void> {
+    const { status, message } = await this.api.deleteBookmarkFolder(folderId);
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || 'Bookmark folder deleted successfully', 'info');
   }
 
   /**

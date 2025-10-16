@@ -35,7 +35,32 @@
     referred: true,
     email_confirmed: true,
   });
-  let includeAccountMetrics = $state<boolean>(false);
+
+  let accountStatus = $state<string>('');
+
+  $effect(() => {
+    if (accountStatus === 'referred') {
+      accountMetrics.referred = true;
+      accountMetrics.email_confirmed = false;
+    } else if (accountStatus === 'confirmed-email') {
+      accountMetrics.referred = undefined;
+      accountMetrics.email_confirmed = true;
+    } else if (accountStatus === 'referred-and-confirmed') {
+      accountMetrics.referred = true;
+      accountMetrics.email_confirmed = true;
+    } else {
+      accountMetrics.referred = undefined;
+      accountMetrics.email_confirmed = undefined;
+    }
+
+    if (accountStatus === 'all-time') {
+      accountMetrics.start_date = undefined;
+      accountMetrics.end_date = undefined;
+    } else {
+      accountMetrics.start_date = dateRange.start_date;
+      accountMetrics.end_date = dateRange.end_date;
+    }
+  });
 
   const walletMetrics = $state<WalletMetricFilter>({
     start_date: undefined,
@@ -47,18 +72,13 @@
   $effect(() => {
     accountMetrics.start_date = dateRange.start_date;
     accountMetrics.end_date = dateRange.end_date;
-  });
-
-  $effect(() => {
     walletMetrics.start_date = dateRange.start_date;
     walletMetrics.end_date = dateRange.end_date;
   });
 
   const getAccountsCount = async () => {
     fetchingUserCount = true;
-    const cnt = await admin.fetchAccountCount(
-      includeAccountMetrics ? accountMetrics : {},
-    );
+    const cnt = await admin.fetchAccountCount(accountMetrics);
     if (cnt !== null) userCount = cnt;
     fetchingUserCount = false;
   };
@@ -116,28 +136,20 @@
     <div class="container">
       <div class="accounts-role input-container">
         <label for="accounts-role"> User Role </label>
-        <select id="accounts-role" value="">
+        <select id="accounts-role" value="" disabled>
           <option value="" disabled selected>Coming Soon</option>
         </select>
       </div>
-      <span class="accounts-data flex">
-        <span class="flex-row gap-8">
-          <label for="accounts-referred"> Referred: </label>
-          <input
-            id="accounts-referred"
-            type="checkbox"
-            bind:checked={accountMetrics.referred}
-          />
-        </span>
-        <span class="flex-row gap-8">
-          <label for="accounts-confirmed-email"> Confirmed Email: </label>
-          <input
-            id="accounts-confirmed-email"
-            type="checkbox"
-            bind:checked={accountMetrics.email_confirmed}
-          />
-        </span>
-      </span>
+      <div class="accounts-role input-container">
+        <label for="accounts-status"> Status </label>
+        <select id="accounts-status" bind:value={accountStatus}>
+          <option value="">Any status</option>
+          <option value="referred">Referred</option>
+          <option value="confirmed-email">Confirmed Email</option>
+          <option value="referred-and-confirmed">Referred & Confirmed</option>
+          <option value="all-time">All Existing Users</option>
+        </select>
+      </div>
     </div>
   </div>
 
@@ -173,14 +185,6 @@
           Click to fetch count
         {/if}
       </h5>
-      <span class="flex-row gap-8">
-        <input
-          type="checkbox"
-          bind:checked={includeAccountMetrics}
-          id="accounts-include-metrics"
-        />
-        <label for="accounts-include-metrics">Metrics</label>
-      </span>
       <button onclick={getAccountsCount} disabled={fetchingUserCount}>
         {#if fetchingUserCount}
           <LoadingSVG />
@@ -269,13 +273,5 @@
 
   h5 {
     width: 100%;
-  }
-
-  .accounts-role {
-    width: auto;
-  }
-
-  .accounts-data {
-    align-items: flex-end;
   }
 </style>

@@ -112,7 +112,7 @@ type TopicMetricFilter = {
 } & BaseMetricFilter;
 
 type StoryMetricFilter = {
-  topic_id: string;
+  topic_id?: string;
   account_id?: string;
   ended?: boolean;
 } & BaseMetricFilter;

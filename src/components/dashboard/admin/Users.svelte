@@ -2,7 +2,7 @@
   import Numbers from '@components/dashboard/admin/users/Numbers.svelte';
 </script>
 
-<h2>Accounts & Roles</h2>
+<h3>Accounts & Roles</h3>
 
 <Numbers />
 

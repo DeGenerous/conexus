@@ -6,11 +6,8 @@
   const admin = new AdminApp();
 </script>
 
-<h2>Collections & Gates</h2>
-
-<h5>Coming soon...</h5>
+<h3>Collections & Gates</h3>
 
 <p>
-  createNewContract deleteContract createNewTokenGate createNewClassGate
-  getAllGates getGate deleteGate
+  TODO: createNewContract deleteContract createNewTokenGate createNewClassGate getAllGates getGate deleteGate
 </p>

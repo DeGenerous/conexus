@@ -1,16 +1,9 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
-  import AdminApp from '@lib/admin';
-
-  const admin = new AdminApp();
+  import Numbers from '@components/dashboard/admin/stories/Numbers.svelte';
 </script>
 
-<h2>Stories & Genres</h2>
+<h3>Stories & Genres</h3>
 
-<h5>Coming soon...</h5>
+<Numbers />
 
-<p>
-  createNewSection createNewGenre deleteGenre fetchTopicCount fetchStoryCount
-  fetchTopicGrowth fetchStoryGrowth fetchTopTopics
-</p>
+<p>TODO: createNewSection createNewGenre deleteGenre</p>

@@ -46,10 +46,13 @@ const Drafts = {
 
   async save(id?: string): Promise<void> {
     if (typeof window === 'undefined') return;
-
+    
     id ||= GetCache(CURRENT_DRAFT_KEY) || (await this.create());
     const draft = await topic.getDraft(id!);
-    if (!draft || !id) return toastStore.show(`Save unknown draft`, 'error');
+    if (!draft || !id) {
+      toastStore.show(`Save unknown draft`, 'error');
+      return;
+    }
 
     const draftData = collectState();
 
@@ -68,7 +71,10 @@ const Drafts = {
 
   async restore(id: string): Promise<void> {
     const draft = await topic.getDraft(id);
-    if (!draft) return toastStore.show('Draft not found', 'error');
+    if (!draft) {
+      toastStore.show('Draft not found', 'error');
+      return;
+    }
 
     SetCache(CURRENT_DRAFT_KEY, id);
     applyState(draft);

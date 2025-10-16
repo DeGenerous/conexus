@@ -1,5 +1,7 @@
 import { writable, derived } from 'svelte/store';
 
+// Shared navigation context so the header arrows can link between related pages
+
 function createNavContext() {
   const { subscribe, set } = writable<Nullable<NavContext>>(null);
 

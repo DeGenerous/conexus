@@ -35,6 +35,7 @@
   let allLoaded = $state<boolean>(false); // Prevent further requests when empty response
   let showNoCategoriesMessage = $state<boolean>(false);
 
+  // incremental loader; each call pulls the next page and appends while respecting the cache for sections
   const fetchCategories = async () => {
     if (!name || loading || allLoaded) return;
     loading = true;
@@ -140,6 +141,7 @@
     }
   });
 
+  // delegate search/genre filtering to the view API while keeping the same signature for both explorer types
   const getTopics = async (
     text: string,
     which: 'search' | 'genre',

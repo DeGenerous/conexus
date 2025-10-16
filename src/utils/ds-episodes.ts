@@ -12,11 +12,12 @@ import {
   loadingStatus,
 } from '@stores/omnihub.svelte';
 
+// Pull both v1/v2 saga episodes from chain, enrich with vote info, and cache them in the Omnihub stores
 const fetchEpisodes = async (nftNumber: number): Promise<StoryNode[][]> => {
   loadingStatus.set('Loading Season 1 Episode 1...');
   episodes.set([]);
 
-  // Season 1 episodes
+  // Season 1 episodes (legacy contract)
   const s1Nodes: StoryNode[] = [];
   const s1Count = await (await contract('v1')).getStoryNodesCount();
   for (let i = 0; i < s1Count; i++) {
@@ -55,7 +56,7 @@ const fetchEpisodes = async (nftNumber: number): Promise<StoryNode[][]> => {
     if (vote > 0) s1Nodes[s1Nodes.length - 1].vote = vote;
   }
 
-  // Season 2 episodes
+  // Season 2 episodes (current contract)
   const s2Nodes: StoryNode[] = [];
   const s2Count = await (await contract()).getStoryNodesCount();
   for (let i = 0; i < s2Count; i++) {

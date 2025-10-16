@@ -1,5 +1,7 @@
 import * as Comlink from 'comlink';
 
+// Thin wrapper that lazily spins up the AVIF Web Worker and proxies encode calls
+
 let workerApi: Awaited<ReturnType<typeof init>> | null = null;
 
 async function init() {

@@ -36,6 +36,7 @@
   const ondragover = (type: string) => (dragover = type);
 
   // map UI ‘MediaType’ → slot key
+  // map backend media types to the individual slot buckets we track in local rune state
   const typeToSlot = {
     description: 'description',
     tile: 'tile',
@@ -44,7 +45,7 @@
     audio: 'audio',
   };
 
-  // Counts already present in state
+  // helper counters let us enforce per-slot upload limits before we hit the API
   const counters = {
     description: () => (description ? 1 : 0),
     tile: () => (tile ? 1 : 0),
@@ -57,8 +58,6 @@
   const loadMedia = async () => {
     if (!topic_media_files) return;
     isLoading = true;
-
-    console.log(topic_media_files);
 
     for (const file of topic_media_files) {
       const slot = typeToSlot[file.media_type];

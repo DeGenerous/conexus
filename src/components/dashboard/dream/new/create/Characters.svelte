@@ -63,6 +63,7 @@
 
   // UTILS
 
+  // derive helper copy and validation flags so the UI can guide writers toward valid input
   $: relationshipExamples =
     newRelationship.type === 'friends'
       ? 'Family, Mentor/Protégé, Allies of Convenience, Unbreakable Bond...'

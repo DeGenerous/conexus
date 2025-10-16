@@ -1,4 +1,6 @@
 import { writable } from 'svelte/store';
+
+// Global modal + theme customisation state shared across the app shell
 import {
   defaultFont,
   defaultStyling,

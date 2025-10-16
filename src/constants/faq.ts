@@ -1,5 +1,6 @@
 import { NAV_ROUTES } from './routes';
 
+// FAQ content rendered on the /learn onboarding pages
 const frequentlyAskedQuestions: {
   question: string;
   answer: string;

@@ -18,6 +18,7 @@
   let svgFocus = $state<boolean>(false);
 
   const handleSearchFocus = () => {
+    // clicking the magnifier should focus the native input for accessibility shortcuts
     if (!searchInput) return;
     searchInput.focus();
   };

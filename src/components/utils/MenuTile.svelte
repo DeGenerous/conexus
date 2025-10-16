@@ -15,6 +15,7 @@
 
   $effect(() => {
     if (section.name === 'Community Picks' && $highlightCommunityPicks) {
+      // spotlight the curated section during onboarding by calling tippy manually instead of on hover
       const instance = tippy(
         document.querySelector('.highlighted-menu-tile')!,
         {

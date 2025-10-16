@@ -16,6 +16,7 @@
   let isOpen = $state(false);
 
   const toggleDropdown = () => {
+    // fire optional hook so parents can lazy-load content the moment the drawer opens
     isOpen = !isOpen;
     dropdownFunc?.();
   };

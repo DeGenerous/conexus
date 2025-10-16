@@ -35,6 +35,7 @@
   let loading = $state<boolean>(false);
   let isEndReached = $state<boolean>(false);
 
+  // load topics page-by-page and persist them so revisiting the category instantly restores the scroller
   const fetchTopics = async () => {
     if (!category || loading || isEndReached) return;
 

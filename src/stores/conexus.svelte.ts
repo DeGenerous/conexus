@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import CoNexusGame from '@lib/story';
 
+// Root gameplay stores shared by the reader experience (current game instance + UI state)
 export const story = writable<Nullable<CoNexusGame>>(null);
 
 export const game = $state<{

@@ -1,5 +1,6 @@
 import { NAV_ROUTES } from './routes';
 
+// Structured content blocks for the marketing blog/landing pages
 const blogPages: BlogPage[] = [
   {
     url: 'choose-your-own-adventure-tools',

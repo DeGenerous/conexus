@@ -11,6 +11,7 @@
   let hide: boolean = false;
 
   const closeToast = () => {
+    // randomise the exit direction so stacked toasts don’t all slide the same way
     fading = Math.random();
     setTimeout(() => {
       if (onClose) onClose();

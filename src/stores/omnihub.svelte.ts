@@ -1,5 +1,7 @@
 import { writable } from 'svelte/store';
 
+// Omnihub dashboard stores for wallet-based NFT data and episode playback
+
 export class nftTile {
   token_id: number;
   name: string;

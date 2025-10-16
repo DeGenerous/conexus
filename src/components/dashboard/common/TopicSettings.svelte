@@ -8,29 +8,9 @@
   import Slider from '@components/utils/Slider.svelte';
 
   let {
-    // imageStyle = $bindable('Realistic'),
-    // language = $bindable('English'),
-    // kidsMode = $bindable<string | null>(null),
-    // interactivity = $bindable('standard'),
-    // difficulty = $bindable('standard'),
-    // length = $bindable('standard'),
-    // readingStyle = $bindable('Simple'),
-
-    // settings = $bindable($promptSettings),
-
     promptFormat = $bindable<'Table' | 'Open'>('Open'),
     children,
   }: {
-    // imageStyle: string;
-    // language: string;
-    // kidsMode: string | null;
-    // interactivity: string;
-    // difficulty: string;
-    // length: string;
-    // readingStyle: string;
-
-    // settings: PromptSettings;
-
     promptFormat?: 'Table' | 'Open';
     children: Snippet<
       [

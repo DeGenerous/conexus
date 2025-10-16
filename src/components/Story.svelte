@@ -45,6 +45,7 @@
   const conexusGame: CoNexusGame = new CoNexusGame();
   const view: CoNexusApp = new CoNexusApp();
 
+  // hydrate the shared stores with whatever background assets this topic exposes
   const handleSetMedia = async (topic_id: string) => {
     const [image, audio] = await Promise.all([
       view.setBackgroundImage(topic_id),
@@ -62,6 +63,7 @@
   let videoError = false;
   let imageError = false;
 
+  // fetch the complete topic page payload plus unfinished stories for the current user
   const fetchTopicData = async (user_id: string | undefined): Promise<void> => {
     try {
       inFlight = true;
@@ -108,6 +110,7 @@
       ?.map((category: CategoryInSection) => category.topics)
       .flat();
     if (storedTopics) {
+      // populate the global navigation rail so the section menu highlights this topic and siblings
       navContext.setContext({
         items: storedTopics.map(({ name, id }) => ({
           name: name,

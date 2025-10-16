@@ -94,7 +94,6 @@
     }
 
     topic = await topicManager.getTopicManager(topic_id);
-    console.log(topic);
 
     if (!topic || !topic.topic || !topic.topic_prompt || !topic.categories) {
       window.location.href = NAV_ROUTES.MANAGE;
@@ -122,6 +121,7 @@
       MANAGE_CATEGORY_TOPICS_KEY(topicCategoryIds[0]),
     );
     if (storedTopics) {
+      // seed the navigation sidebar with adjacent topics so admins can jump between stories without a round trip
       navContext.setContext({
         items: storedTopics.map(({ topic_id, topic_name }) => ({
           name: topic_name,
@@ -142,6 +142,7 @@
   let editingPrompt = $state<boolean>(false);
   let editingImagePrompt = $state<boolean>(false);
 
+  // whenever an edit toggle opens we repopulate the draft with the latest saved value to avoid stale local state
   $effect(() => {
     if (editingName) {
       nameDraft = topic_name;

@@ -17,6 +17,7 @@
 
   let termsAccepted: boolean = false;
 
+  // mirror the store flag onto the <dialog> element manually so we can play the fade-out animation before closing
   $: if (dialog && $showModal) {
     dialog.classList.remove('dialog-fade-out');
     dialog.showModal();

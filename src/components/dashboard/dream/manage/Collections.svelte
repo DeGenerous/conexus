@@ -45,6 +45,7 @@
   let expandedCreators = $state<Set<string>>(new Set());
 
   type DraggableCategory = CollectionCategory & { id: string };
+  // local mirror of section categories so drag reordering stays responsive before the API round-trip
   let sectionCategoryItems = $state<Record<string, DraggableCategory[]>>({});
 
   function createCategoryItems(
@@ -72,7 +73,7 @@
     } else {
       newSet.add(id);
 
-      // load categories if not already loaded
+      // load categories lazily the first time a section expands to avoid redundant requests
       const section = sections.find((s) => s.section_id === id);
       if (section) {
         if (!section.categories) {
@@ -150,6 +151,7 @@
         : section,
     );
 
+    // TODO: once backend exposes a batch reorder endpoint, replace this client log / noop with an API call
     console.log('[Collections] Category order updated', {
       sectionId,
       categories: updated.map(({ category_id, category_order }) => ({

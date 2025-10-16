@@ -1,3 +1,4 @@
+// Micro-templates for modals rendered through the global modal store
 export const ensureMessage = (message: string = 'remove this') => `
   <h4>Are you sure you want to ${message}?</h4>
 `;

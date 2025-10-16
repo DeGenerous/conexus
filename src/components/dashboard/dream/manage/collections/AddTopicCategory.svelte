@@ -33,7 +33,10 @@
 
   async function handleRemoveCategory(category_id: string) {
     if (topic_categories.length <= 1)
-      return toastStore.show('Topic should have at least one category', 'error');
+      return toastStore.show(
+        'Topic should have at least one category',
+        'error',
+      );
 
     try {
       await handleCategoryChange(category_id, 'remove');
@@ -99,7 +102,10 @@
       {:else}
         <select
           bind:value={selectedCategoryId}
-          disabled={!selectedSectionId || !categories.filter((c) => !topic_categories.some((tc: Category) => tc.id === c.id)).length}
+          disabled={!selectedSectionId ||
+            !categories.filter(
+              (c) => !topic_categories.some((tc: Category) => tc.id === c.id),
+            ).length}
         >
           <option value="" hidden disabled>
             {#if categories.filter((c) => !topic_categories.some((tc: Category) => tc.id === c.id)).length > 0}

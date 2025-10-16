@@ -11,6 +11,7 @@ export const ranks: Attribute[] = [
   { name: 'Cosmic Pioneer', value: 1 },
 ];
 
+// pick the highest rank whose threshold is satisfied by the supplied potential count
 function getRankByPotentials(potentials: number): Nullable<string> {
   if (potentials < 1) return null;
   return ranks

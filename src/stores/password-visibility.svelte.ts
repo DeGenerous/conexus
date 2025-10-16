@@ -1,3 +1,4 @@
+// Simple shared toggle map to control visibility of password fields across forms
 const passwordVisible = $state<PasswordVisibility>({
   login: false,
   signup: false,

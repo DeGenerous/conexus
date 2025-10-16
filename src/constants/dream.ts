@@ -1,3 +1,4 @@
+// Enumerations used by the story creator UI for prompt-building dropdowns
 const dreamData = {
   imageStyle: [
     'Cinematic',

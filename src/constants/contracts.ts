@@ -1,5 +1,6 @@
 import { NAV_ROUTES } from './routes';
 
+// Central registry for supported contract types → display name (and optional external link)
 const contracts: Map<SupportedContracts, { name: string; link?: string }> =
   new Map();
 contracts.set('Potential', {
@@ -19,6 +20,7 @@ export default contracts;
 export const contractGetter = (
   contract: SupportedContracts,
 ): { name: string; link?: string } => {
+  // fall back to the raw enum label if we don't have a friendlier mapping yet
   const contractData = contracts.get(contract);
   if (contractData) {
     return contractData;

@@ -1,8 +1,5 @@
-/**
- * Determine if a color is a light color
- * @see https://gist.github.com/krabs-github/ec56e4f1c12cddf86ae9c551aa9d9e04
- */
-
+// Determine if the provided color string is light enough for dark text overlays
+// @see https://gist.github.com/krabs-github/ec56e4f1c12cddf86ae9c551aa9d9e04
 function isColorLight(color: any): boolean {
   let r: number;
   let g: number;

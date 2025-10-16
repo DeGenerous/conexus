@@ -1,5 +1,7 @@
 import { writable } from 'svelte/store';
 
+// Lightweight toast queue with auto-expiry used by ToastContainer.svelte
+
 type ToastType = 'info' | 'error';
 
 interface Toast {

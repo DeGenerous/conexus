@@ -284,8 +284,7 @@ export default class Topic {
     }
 
     const successMessage =
-      response.message ||
-      `Category sort order changed for topic ${topic_id}`;
+      response.message || `Category sort order changed for topic ${topic_id}`;
 
     if (!options.silent) {
       toastStore.show(successMessage, 'info');

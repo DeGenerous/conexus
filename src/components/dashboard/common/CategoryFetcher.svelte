@@ -68,6 +68,7 @@
     }
   }
 
+  // expose a refresh hook to parents so they can trigger category reloads on demand
   fetchCategories = async () => {
     if (isAdmin && selectedSectionId) {
       await fetchCategoriesBase();

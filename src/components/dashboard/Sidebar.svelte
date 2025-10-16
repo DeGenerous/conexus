@@ -6,7 +6,6 @@
   import { DASHBOARD_LINKS } from '@components/dashboard/routes';
 
   import BurgerSVG from '@components/icons/Burger.svelte';
-  import QuitSVG from '@components/icons/Quit.svelte';
 
   let {
     isAdmin,

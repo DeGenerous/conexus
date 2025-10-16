@@ -37,6 +37,7 @@
 
   let promptFormat: 'Table' | 'Open' = $state('Open');
 
+  // minimal gating for the "Create" CTA: ensure we have base metadata and the prompt stays within limits
   let validation = $derived(
     $storyData.name &&
       $storyData.description &&
@@ -48,6 +49,7 @@
   const AUTO_SAVE_DELAY_MS = 5 * 60 * 1000;
   const LAST_SAVED_REFRESH_MS = 2000;
 
+  // fingerprint combines all draft sources so we can debounce autosaves when any piece of state changes
   const fingerprint = derived(
     [storyData, promptSettings, openPrompt, tablePrompt],
     ([$s, $p, $o, $t]) => JSON.stringify([$s, $p, $o, $t]),
@@ -163,13 +165,13 @@
       generatePrompt($storyData, $promptSettings, promptData),
     );
     if (!topic_id) return;
-    
+
     const storyLink = `/dashboard/topic/${topic_id}`;
     openModal(
       openStoryManage,
       'Manage Story',
       () => (window.location.href = storyLink),
-    );  
+    );
     clearAutoSaveTimer();
     const cachedDraftId = GetCache<string>(CURRENT_DRAFT_KEY);
     if (cachedDraftId) await Drafts.delete(cachedDraftId);

@@ -1,5 +1,6 @@
 import { writable, get } from 'svelte/store';
 
+// Authoring-state stores used by the Dream story creator (draft data + prompt settings)
 export const storyData = writable<StoryData>({
   name: '',
   description: '',

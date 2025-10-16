@@ -1,3 +1,4 @@
+// Base attribute seeds used when creating new potential NFTs/users
 export const attributes: Attribute[] = [
   {
     name: 'attack',

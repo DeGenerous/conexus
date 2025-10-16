@@ -60,6 +60,7 @@
     syncTopicItems(workingCategory.topics ?? []);
   }
 
+  // keep a mutable working copy in sync with new props so drag/optimistic edits don't fight parent updates
   $effect(() => {
     const incoming = category;
     const idChanged = workingCategory.category_id !== incoming.category_id;
@@ -152,6 +153,7 @@
     await fetchTopicCollection(workingCategory.category_id, true);
   }
 
+  // commit reordering changes sequentially so we can bail out and refresh if any update fails
   async function persistTopicOrder(
     categoryId: string,
     updates: { topic_id: string; order: number }[],
@@ -214,6 +216,7 @@
       workingCategory.topics ?? [],
     );
 
+    // build a minimal patch set by comparing new order against the last known ordering
     const updates = updated
       .map(({ topic_id, order }) => {
         const previousOrder = previousTopics.find(
@@ -226,11 +229,6 @@
           previousOrder === undefined || order !== previousOrder,
       )
       .map(({ topic_id, order }) => ({ topic_id, order }));
-
-    console.log('[Collections] Topic order updated', {
-      categoryId: workingCategory.category_id,
-      topics: updated.map(({ topic_id, order }) => ({ topic_id, order })),
-    });
 
     await persistTopicOrder(workingCategory.category_id, updates);
   }

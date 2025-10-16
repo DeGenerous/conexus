@@ -1,5 +1,7 @@
 <script lang="ts">
   import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
+  import { toastStore } from '@stores/toast.svelte';
+
   import CloseSVG from '@components/icons/Close.svelte';
 
   let { isAdmin, isCreator, topic_categories, handleCategoryChange } = $props<{
@@ -21,7 +23,7 @@
 
     if (topic_categories.some((tc) => tc.id === selectedCategoryId)) {
       // Category already exists
-      return;
+      return toastStore.show('Category already exists', 'error');
     }
 
     await handleCategoryChange(selectedCategoryId, 'add');
@@ -30,11 +32,18 @@
   }
 
   async function handleRemoveCategory(category_id: string) {
-    topic_categories = topic_categories.filter(
-      (category) => category.id !== category_id,
-    );
+    if (topic_categories.length <= 1)
+      return toastStore.show('Topic should have at least one category', 'error');
 
-    await handleCategoryChange(category_id, 'remove');
+    try {
+      await handleCategoryChange(category_id, 'remove');
+
+      topic_categories = topic_categories.filter(
+        (category) => category.id !== category_id,
+      );
+    } catch (error) {
+      console.error(error);
+    }
   }
 </script>
 
@@ -88,9 +97,12 @@
       {#if !loadingCategories && errorCategories}
         <p class="validation">{errorCategories}</p>
       {:else}
-        <select bind:value={selectedCategoryId} disabled={!selectedSectionId}>
+        <select
+          bind:value={selectedCategoryId}
+          disabled={!selectedSectionId || !categories.filter((c) => !topic_categories.some((tc: Category) => tc.id === c.id)).length}
+        >
           <option value="" hidden disabled>
-            {#if categories.length > 0}
+            {#if categories.filter((c) => !topic_categories.some((tc: Category) => tc.id === c.id)).length > 0}
               Select category
             {:else if selectedSectionId && !loadingCategories}
               No categories found

@@ -159,15 +159,17 @@
   const generateStory = async () => {
     const promptData: TablePrompt | string =
       promptFormat === 'Table' ? $tablePrompt : $openPrompt;
-    await topic.newTopic(
+    const topic_id = await topic.newTopic(
       generatePrompt($storyData, $promptSettings, promptData),
     );
-    const storyLink = `/dashboard/dream/manage/${$storyData.name}`;
+    if (!topic_id) return;
+    
+    const storyLink = `/dashboard/topic/${topic_id}`;
     openModal(
       openStoryManage,
       'Manage Story',
       () => (window.location.href = storyLink),
-    );
+    );  
     clearAutoSaveTimer();
     const cachedDraftId = GetCache<string>(CURRENT_DRAFT_KEY);
     if (cachedDraftId) await Drafts.delete(cachedDraftId);

@@ -535,6 +535,17 @@ class Account {
 
     return data;
   }
+
+  async fetchRoles(): Promise<TenantRole[]> {
+    const { status, message, data } = await this.api.getRoles();
+
+    if (status === 'error') {
+      api_error(message);
+      return [];
+    }
+
+    return data || [];
+  }
 }
 
 export default Account;

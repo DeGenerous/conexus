@@ -21,7 +21,7 @@
   import { referralActivationNotice, refreshDataModal } from '@constants/modal';
   import { toastStore } from '@stores/toast.svelte';
   import { ClearCache } from '@constants/cache';
-  import { blankImage } from '@constants/media';
+  import { blankImage, serveUrl } from '@constants/media';
   import { MEDIA_RULES, validateFiles } from '@utils/file-validation';
   import { toAvif } from '@utils/avif-convert';
 
@@ -191,7 +191,7 @@
     />
   </header>
 
-  <img class="pfp round" src={avatarUrl} alt="PFP" />
+  <img class="pfp round" src={serveUrl(avatarUrl)} alt="PFP" />
   <button
     onclick={triggerAvatarPicker}
     disabled={isUploadingAvatar}

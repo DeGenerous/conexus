@@ -272,7 +272,7 @@ class AdminApp {
   /* HELPER */
 
   #metricNumber(message: string, data: number | undefined): number {
-    if (!data) {
+    if (data === undefined) {
       api_error(message);
       return 0;
     }

@@ -60,6 +60,12 @@ type ViewTopic = {
 type TenantRole = {
   id: string;
   name: Roles;
+  monthly_credits: number;
+  play_without_media: number;
+  play_with_media: number;
+  can_genenrate_media: boolean;
+  create_topic_cost: number;
+  publish_topic_cost: number;
 };
 
 type Contract = {

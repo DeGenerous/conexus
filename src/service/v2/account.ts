@@ -376,4 +376,10 @@ export default class AccountAPI extends Fetcher {
       method: 'POST',
     });
   }
+
+  async getRoles() {
+    return this.request<TenantRole[]>(`/admin/roles`, {
+      method: 'GET',
+    });
+  }
 }

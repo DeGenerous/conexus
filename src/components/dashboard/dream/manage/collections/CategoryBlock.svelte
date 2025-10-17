@@ -19,6 +19,7 @@
     topicManager: Topics;
   } = $props();
 
+  // Local mirror of the category to support optimistic updates during DnD
   let workingCategory = $state<CollectionCategory>(category);
   let expandedCategories = $state<Set<string>>(new Set());
   let isReordering = $state(false);
@@ -36,12 +37,14 @@
 
   let topicItems = $state<DraggableTopic[]>(createTopicItems());
 
+  // Refresh the draggable items array anytime the source topics change
   function syncTopicItems(
     topics: CollectionTopic[] = workingCategory.topics ?? [],
   ) {
     topicItems = createTopicItems(topics);
   }
 
+  // Pull the latest topics for this category and cache them for other views
   async function fetchTopicCollection(
     categoryId: string,
     refresh: boolean = false,
@@ -154,6 +157,7 @@
   }
 
   // commit reordering changes sequentially so we can bail out and refresh if any update fails
+  // Commit reordering changes sequentially so we can bail out and refresh if any update fails
   async function persistTopicOrder(
     categoryId: string,
     updates: { topic_id: string; order: number }[],
@@ -189,11 +193,13 @@
     }
   }
 
+  // Keep the UI responsive while dragging, unless a save is still running
   function handleTopicsConsider(event: CustomEvent<DndEvent<DraggableTopic>>) {
     if (isReordering) return;
     topicItems = event.detail.items as DraggableTopic[];
   }
 
+  // Optimistically reorder topics, compute the delta, then persist to the backend
   async function handleTopicsFinalize(
     event: CustomEvent<DndEvent<DraggableTopic>>,
   ) {

@@ -4,15 +4,19 @@
   import { dndzone, type DndEvent } from 'svelte-dnd-action';
 
   import Topics from '@lib/topics';
-  import { ensureCreator } from '@utils/route-guard';
+  import CategoryView from '@lib/category';
+  import { toastStore } from '@stores/toast.svelte';
+  import { ensureCreator, getCurrentUser } from '@utils/route-guard';
 
   import CategoryBlock from '@components/dashboard/dream/manage/collections/CategoryBlock.svelte';
   import Dropdown from '@components/utils/Dropdown.svelte';
 
   const topicManager = new Topics();
+  const categoryManager = new CategoryView();
 
-  let isAdmin = $state(false);
-  let isCreator = $state(false);
+  let isAdmin = $state<boolean>(false);
+  let isCreator = $state<boolean>(false);
+  let userID = $state<string>('');
 
   let page = $state(1);
   let pageSize = $state(10);
@@ -21,7 +25,10 @@
   let creators = $state<CollectionCreator[]>([]);
   let creatorCategories = $state<CollectionCategory[]>([]);
 
+  // Load initial collections for the active role
   onMount(async () => {
+    const user = await getCurrentUser();
+
     const { isAdmin: is_admin, isCreator: is_creator } = await ensureCreator();
 
     isAdmin = is_admin;
@@ -31,11 +38,16 @@
       sections = await topicManager.getSectionCollection(page, pageSize);
       creators = await topicManager.getCreatorCollection(page, pageSize);
     } else if (isCreator) {
+      userID = user?.id ?? '';
       creatorCategories = await topicManager.getCreatorCategoryCollection(
-        'creators', // id retrieved in backend
+        userID,
         page,
         pageSize,
       );
+      creatorCategoryItems = {
+        ...creatorCategoryItems,
+        [CREATOR_SELF_KEY]: createCategoryItems(creatorCategories ?? []),
+      };
     }
   });
 
@@ -47,6 +59,31 @@
   type DraggableCategory = CollectionCategory & { id: string };
   // local mirror of section categories so drag reordering stays responsive before the API round-trip
   let sectionCategoryItems = $state<Record<string, DraggableCategory[]>>({});
+  let creatorCategoryItems = $state<Record<string, DraggableCategory[]>>({});
+  let sectionReordering = $state<Set<string>>(new Set());
+  let creatorReordering = $state<Set<string>>(new Set());
+  const CREATOR_SELF_KEY = 'creator-self';
+
+  // Track which sections/creators are currently persisting their new order
+  function setSectionReordering(sectionId: string, active: boolean) {
+    const next = new Set(sectionReordering);
+    if (active) {
+      next.add(sectionId);
+    } else {
+      next.delete(sectionId);
+    }
+    sectionReordering = next;
+  }
+
+  function setCreatorReordering(creatorId: string, active: boolean) {
+    const next = new Set(creatorReordering);
+    if (active) {
+      next.add(creatorId);
+    } else {
+      next.delete(creatorId);
+    }
+    creatorReordering = next;
+  }
 
   function createCategoryItems(
     categories: CollectionCategory[] = [],
@@ -63,6 +100,15 @@
       [section.section_id]:
         sectionCategoryItems[section.section_id] ??
         createCategoryItems(section.categories ?? []),
+    };
+  }
+
+  function ensureCreatorCategoryItems(creator: CollectionCreator) {
+    creatorCategoryItems = {
+      ...creatorCategoryItems,
+      [creator.creator_id]:
+        creatorCategoryItems[creator.creator_id] ??
+        createCategoryItems(creator.categories ?? []),
     };
   }
 
@@ -105,6 +151,9 @@
           pageSize,
         );
       }
+      if (creator) {
+        ensureCreatorCategoryItems(creator);
+      }
     }
     expandedCreators = newSet;
   }
@@ -118,20 +167,38 @@
     );
   }
 
+  function getCreatorCategoryItems(
+    creatorId: string,
+    fallback: CollectionCategory[] = [],
+  ): DraggableCategory[] {
+    return (
+      creatorCategoryItems[creatorId] ?? createCategoryItems(fallback ?? [])
+    );
+  }
+
   function handleCategoryConsider(
     sectionId: string,
     event: CustomEvent<DndEvent<DraggableCategory>>,
   ) {
+    if (sectionReordering.has(sectionId)) return;
     sectionCategoryItems = {
       ...sectionCategoryItems,
       [sectionId]: event.detail.items as DraggableCategory[],
     };
   }
 
-  function handleCategoryFinalize(
+  // Persist section category reorder (admin scope)
+  async function handleCategoryFinalize(
     sectionId: string,
     event: CustomEvent<DndEvent<DraggableCategory>>,
   ) {
+    if (sectionReordering.has(sectionId)) return;
+
+    const previousCategories = (
+      sections.find((section) => section.section_id === sectionId)
+        ?.categories ?? []
+    ).map((category) => ({ ...category }));
+
     const updated = event.detail.items.map((item, index) => ({
       ...item,
       category_order: index + 1,
@@ -151,7 +218,19 @@
         : section,
     );
 
-    // TODO: once backend exposes a batch reorder endpoint, replace this client log / noop with an API call
+    const updates = updated
+      .map(({ category_id, category_order }) => {
+        const previousOrder = previousCategories.find(
+          (category) => category.category_id === category_id,
+        )?.category_order;
+        return { category_id, order: category_order, previousOrder };
+      })
+      .filter(
+        ({ order, previousOrder }) =>
+          previousOrder === undefined || order !== previousOrder,
+      )
+      .map(({ category_id, order }) => ({ category_id, order }));
+
     console.log('[Collections] Category order updated', {
       sectionId,
       categories: updated.map(({ category_id, category_order }) => ({
@@ -159,9 +238,197 @@
         category_order,
       })),
     });
+
+    await persistCategoryOrder('sections', sectionId, updates, () =>
+      refreshSectionCategories(sectionId),
+    );
+  }
+
+  function handleCreatorCategoryConsider(
+    creatorKey: string,
+    event: CustomEvent<DndEvent<DraggableCategory>>,
+  ) {
+    if (creatorReordering.has(creatorKey)) return;
+    creatorCategoryItems = {
+      ...creatorCategoryItems,
+      [creatorKey]: event.detail.items as DraggableCategory[],
+    };
+  }
+
+  // Persist creator category reorder (admin + self scopes)
+  async function handleCreatorCategoryFinalize(
+    creatorKey: string,
+    event: CustomEvent<DndEvent<DraggableCategory>>,
+    context: 'admin' | 'self' = 'admin',
+  ) {
+    if (creatorReordering.has(creatorKey)) return;
+
+    const previousCategories =
+      context === 'admin'
+        ? (
+            creators.find((creator) => creator.creator_id === creatorKey)
+              ?.categories ?? []
+          ).map((category) => ({ ...category }))
+        : creatorCategories.map((category) => ({ ...category }));
+
+    const updated = event.detail.items.map((item, index) => ({
+      ...item,
+      category_order: index + 1,
+    }));
+
+    creatorCategoryItems = {
+      ...creatorCategoryItems,
+      [creatorKey]: updated,
+    };
+
+    if (context === 'admin') {
+      creators = creators.map((creator) =>
+        creator.creator_id === creatorKey
+          ? {
+              ...creator,
+              categories: updated.map(({ id, ...rest }) => ({ ...rest })),
+            }
+          : creator,
+      );
+    } else {
+      creatorCategories = updated.map(({ id, ...rest }) => ({ ...rest }));
+    }
+
+    const updates = updated
+      .map(({ category_id, category_order }) => {
+        const previousOrder = previousCategories.find(
+          (category) => category.category_id === category_id,
+        )?.category_order;
+        return { category_id, order: category_order, previousOrder };
+      })
+      .filter(
+        ({ order, previousOrder }) =>
+          previousOrder === undefined || order !== previousOrder,
+      )
+      .map(({ category_id, order }) => ({ category_id, order }));
+
+    const onFailure =
+      context === 'admin'
+        ? () => refreshCreatorCategories(creatorKey)
+        : () => refreshStandaloneCreatorCategories();
+
+    await persistCategoryOrder('creators', creatorKey, updates, onFailure);
+  }
+
+  // Shared persistence flow used by both section and creator reorder handlers
+  async function persistCategoryOrder(
+    mode: 'sections' | 'creators',
+    key: string,
+    updates: { category_id: string; order: number }[],
+    onFailure?: () => Promise<void>,
+  ) {
+    if (updates.length === 0) return;
+
+    if (mode === 'sections') {
+      if (sectionReordering.has(key)) return;
+      setSectionReordering(key, true);
+    } else {
+      if (creatorReordering.has(key)) return;
+      setCreatorReordering(key, true);
+    }
+
+    let success = true;
+
+    try {
+      for (const { category_id, order } of updates) {
+        const result =
+          mode === 'sections'
+            ? await categoryManager.updateAdminCategoryOrder(
+                category_id,
+                order,
+                { silent: true },
+              )
+            : await categoryManager.updateCreatorCategoryOrder(
+                category_id,
+                order,
+                { silent: true },
+              );
+
+        if (!result) {
+          success = false;
+          break;
+        }
+      }
+    } finally {
+      if (mode === 'sections') {
+        setSectionReordering(key, false);
+      } else {
+        setCreatorReordering(key, false);
+      }
+    }
+
+    if (!success) {
+      if (onFailure) {
+        await onFailure();
+      }
+      return;
+    }
+
+    toastStore.show('Category order updated', 'info');
+  }
+
+  // Admin: re-fetch a single section's categories to resync after failures
+  async function refreshSectionCategories(sectionId: string) {
+    const categories = await topicManager.getSectionCategoryCollection(
+      sectionId,
+      1,
+      pageSize,
+      true,
+    );
+
+    sections = sections.map((section) =>
+      section.section_id === sectionId ? { ...section, categories } : section,
+    );
+
+    sectionCategoryItems = {
+      ...sectionCategoryItems,
+      [sectionId]: createCategoryItems(categories ?? []),
+    };
+  }
+
+  // Admin: re-fetch creator categories for a specific creator
+  async function refreshCreatorCategories(creatorId: string) {
+    const categories = await topicManager.getCreatorCategoryCollection(
+      creatorId,
+      1,
+      pageSize,
+      true,
+    );
+
+    creators = creators.map((creator) =>
+      creator.creator_id === creatorId ? { ...creator, categories } : creator,
+    );
+
+    creatorCategoryItems = {
+      ...creatorCategoryItems,
+      [creatorId]: createCategoryItems(categories ?? []),
+    };
+  }
+
+  // Creator dashboard: re-fetch personal categories
+  async function refreshStandaloneCreatorCategories() {
+    const categories = await topicManager.getCreatorCategoryCollection(
+      userID,
+      1,
+      pageSize,
+      true,
+    );
+
+    creatorCategories = categories ?? [];
+
+    creatorCategoryItems = {
+      ...creatorCategoryItems,
+      [CREATOR_SELF_KEY]: createCategoryItems(creatorCategories ?? []),
+    };
   }
 </script>
 
+<!-- Admin collections management -->
 {#if isAdmin}
   <div class="dream-container">
     <div class="flex-row">
@@ -194,9 +461,34 @@
         >
           {#if expandedCreators.has(creator.creator_id)}
             {#if creator.categories && creator.categories.length > 0}
-              {#each creator.categories as category}
-                <CategoryBlock {isAdmin} {category} {topicManager} />
-              {/each}
+              <div
+                class="category-dnd-zone flex"
+                class:reordering={creatorReordering.has(creator.creator_id)}
+                aria-busy={creatorReordering.has(creator.creator_id)}
+                use:dndzone={{
+                  items: getCreatorCategoryItems(
+                    creator.creator_id,
+                    creator.categories,
+                  ),
+                  type: `creator-categories-${creator.creator_id}`,
+                  dropFromOthersDisabled: true,
+                  dragDisabled: creatorReordering.has(creator.creator_id),
+                }}
+                onconsider={(event) =>
+                  handleCreatorCategoryConsider(creator.creator_id, event)}
+                onfinalize={(event) =>
+                  handleCreatorCategoryFinalize(
+                    creator.creator_id,
+                    event,
+                    'admin',
+                  )}
+              >
+                {#each getCreatorCategoryItems(creator.creator_id, creator.categories) as category (category.id)}
+                  <div class="category-draggable">
+                    <CategoryBlock {isAdmin} {category} {topicManager} />
+                  </div>
+                {/each}
+              </div>
             {:else}
               <p class="validation">No categories found</p>
             {/if}
@@ -216,6 +508,8 @@
           {#if section.categories && section.categories.length > 0}
             <div
               class="category-dnd-zone flex"
+              class:reordering={sectionReordering.has(section.section_id)}
+              aria-busy={sectionReordering.has(section.section_id)}
               use:dndzone={{
                 items: getSectionCategoryItems(
                   section.section_id,
@@ -223,6 +517,7 @@
                 ),
                 type: `categories-${section.section_id}`,
                 dropFromOthersDisabled: true,
+                dragDisabled: sectionReordering.has(section.section_id),
               }}
               onconsider={(event) =>
                 handleCategoryConsider(section.section_id, event)}
@@ -246,11 +541,30 @@
   {/if}
 {/if}
 
+<!-- Creator-only category management -->
 {#if isCreator && !isAdmin}
   {#if creatorCategories && creatorCategories.length > 0}
-    {#each creatorCategories as category}
-      <CategoryBlock {isAdmin} {category} {topicManager} />
-    {/each}
+    <div
+      class="category-dnd-zone flex"
+      class:reordering={creatorReordering.has(CREATOR_SELF_KEY)}
+      aria-busy={creatorReordering.has(CREATOR_SELF_KEY)}
+      use:dndzone={{
+        items: getCreatorCategoryItems(CREATOR_SELF_KEY, creatorCategories),
+        type: `creator-categories-${CREATOR_SELF_KEY}`,
+        dropFromOthersDisabled: true,
+        dragDisabled: creatorReordering.has(CREATOR_SELF_KEY),
+      }}
+      onconsider={(event) =>
+        handleCreatorCategoryConsider(CREATOR_SELF_KEY, event)}
+      onfinalize={(event) =>
+        handleCreatorCategoryFinalize(CREATOR_SELF_KEY, event, 'self')}
+    >
+      {#each getCreatorCategoryItems(CREATOR_SELF_KEY, creatorCategories) as category (category.id)}
+        <div class="category-draggable">
+          <CategoryBlock {isAdmin} {category} {topicManager} />
+        </div>
+      {/each}
+    </div>
   {:else}
     <p class="validation">No categories found</p>
   {/if}
@@ -263,6 +577,11 @@
     width: calc(100% + 3rem);
     margin-inline: -1.5rem;
     flex-flow: column nowrap;
+
+    &.reordering {
+      pointer-events: none;
+      opacity: 0.75;
+    }
   }
 
   .category-draggable {

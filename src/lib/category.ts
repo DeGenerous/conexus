@@ -101,18 +101,25 @@ export default class CategoryView {
   async updateAdminCategoryOrder(
     category_id: string,
     dashboard_sort_order: number,
-  ): Promise<void> {
-    const { status, message } = await this.api.updateAdminCategoryOrder(
+    options: { silent?: boolean } = {},
+  ): Promise<string | null> {
+    const response = await this.api.updateAdminCategoryOrder(
       category_id,
       dashboard_sort_order,
     );
 
-    if (status == 'error') {
-      api_error(message);
-      return;
+    if (response.status === 'error') {
+      api_error(response.message);
+      return null;
     }
 
-    toastStore.show(message || 'Category updated successfully', 'info');
+    const successMessage = response.message || 'Category updated successfully';
+
+    if (!options.silent) {
+      toastStore.show(successMessage, 'info');
+    }
+
+    return successMessage;
   }
 
   async updateCreatorCategoryName(
@@ -152,17 +159,24 @@ export default class CategoryView {
   async updateCreatorCategoryOrder(
     category_id: string,
     dashboard_sort_order: number,
-  ): Promise<void> {
-    const { status, message } = await this.api.updateCreatorCategoryOrder(
+    options: { silent?: boolean } = {},
+  ): Promise<string | null> {
+    const response = await this.api.updateCreatorCategoryOrder(
       category_id,
       dashboard_sort_order,
     );
 
-    if (status == 'error') {
-      api_error(message);
-      return;
+    if (response.status === 'error') {
+      api_error(response.message);
+      return null;
     }
 
-    toastStore.show(message || 'Category updated successfully', 'info');
+    const successMessage = response.message || 'Category updated successfully';
+
+    if (!options.silent) {
+      toastStore.show(successMessage, 'info');
+    }
+
+    return successMessage;
   }
 }

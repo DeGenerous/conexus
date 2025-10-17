@@ -311,18 +311,20 @@
                 readonly
               />
             </span>
-            <button
-              use:tippy={{
-                content: 'Toggle availability',
-                animation: 'scale',
-              }}
-              class:green-btn={topic.available === true}
-              class:red-btn={topic.available === false}
-              onclick={(event) =>
-                toggleAvailability(event, topic.topic_id, !topic.available)}
-            >
-              {topic.available ? 'Available' : 'Unavailable'}
-            </button>
+            {#if isAdmin}
+              <button
+                use:tippy={{
+                  content: 'Toggle availability',
+                  animation: 'scale',
+                }}
+                class:green-btn={topic.available === true}
+                class:red-btn={topic.available === false}
+                onclick={(event) =>
+                  toggleAvailability(event, topic.topic_id, !topic.available)}
+              >
+                {topic.available ? 'Available' : 'Unavailable'}
+              </button>
+            {/if}
             <!-- <button
               use:tippy={{
                 content: 'Submit Topic for review',
@@ -334,23 +336,22 @@
             >
               {topic.visibility === 'public' ? 'Submitted' : 'Submit'}
             </button> -->
-            {#if isAdmin}
-              <button
-                use:tippy={{
-                  content: 'Toggle visibility',
-                  animation: 'scale',
-                }}
-                onclick={(event) =>
-                  toggleVisibility(
-                    event,
-                    topic.topic_id,
-                    topic.visibility === 'public' ? 'private' : 'public',
-                  )}
-                disabled={topic.available === false && !isAdmin}
-              >
-                {topic.visibility === 'public' ? 'Public' : 'Private'}
-              </button>
-            {/if}
+            <button
+              use:tippy={{
+                content: 'Toggle visibility',
+                animation: 'scale',
+              }}
+              class:green-btn={topic.visibility === 'public'}
+              class:red-btn={topic.visibility === 'private'}
+              onclick={(event) =>
+                toggleVisibility(
+                  event,
+                  topic.topic_id,
+                  topic.visibility === 'public' ? 'private' : 'public',
+                )}
+            >
+              {topic.visibility === 'public' ? 'Public' : 'Private'}
+            </button>
           </div>
         </a>
       {/each}

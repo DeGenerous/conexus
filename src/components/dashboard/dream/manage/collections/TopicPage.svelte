@@ -269,16 +269,18 @@
       <!-- KEY BUTTONS -->
       {#key topic}
         <span class="flex-row flex-wrap">
-          <button
-            class:green-btn={topic_availability}
-            class:red-btn={!topic_availability}
-            use:tippy={{ content: 'Toggle availability', animation: 'scale' }}
-            onclick={() => {
-              toggleAvailability(topic_id, !topic_availability);
-            }}
-          >
-            {topic_availability ? 'Available' : 'Unavailable'}
-          </button>
+          {#if isAdmin}
+            <button
+              class:green-btn={topic_availability}
+              class:red-btn={!topic_availability}
+              use:tippy={{ content: 'Toggle availability', animation: 'scale' }}
+              onclick={() => {
+                toggleAvailability(topic_id, !topic_availability);
+              }}
+            >
+              {topic_availability ? 'Available' : 'Unavailable'}
+            </button>
+          {/if}
           <button
             class:green-btn={topic_visibility === 'public'}
             class:red-btn={topic_visibility === 'private'}

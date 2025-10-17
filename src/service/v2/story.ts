@@ -19,7 +19,7 @@ export default class StoryAPI extends Fetcher {
   protected group: string = '/story';
 
   /**
-   * Start a new story
+   * Start a new topic story
    * @param topic_id The ID of the topic
    * @param settings The settings for the story
    * @param mode The play mode for the story, either 'play_limited' or 'play_unlimited'
@@ -36,6 +36,17 @@ export default class StoryAPI extends Fetcher {
         method: 'POST',
         body: JSON.stringify({ topic_id, settings, mode }),
       },
+    );
+  }
+
+  /**
+   * Demo a new topic story
+   * @param topic_id The ID of the topic
+   * @returns The story data and image generation task ID
+   */
+  async demo(topic_id: string) {
+    return this.request<{ story: GameData; task_id: string }>(
+      `${this.group}/demo/${topic_id}`,
     );
   }
 

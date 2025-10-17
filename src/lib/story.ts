@@ -92,6 +92,59 @@ export default class CoNexus {
   }
 
   /**
+   * Demo a new game
+   * @param topic_id  The ID of the topic to start the game for
+   * @param setMedia A function to set the media for the story
+   * @returns {Promise<void>} A promise that resolves when the game is started
+   */
+  async demo(
+    topic_id: string,
+    setMedia: (topic_id: string) => Promise<void>,
+  ): Promise<void> {
+    game.loading = true;
+
+    const { status, message, data } = await this.api.demo(topic_id);
+
+    if (!data) {
+      if (status === 'error') {
+        if (message.match(ERROR_REQUIRED_TOKEN)) {
+          const errorMessage: string[] = message.split('. ');
+
+          const errorTitle = errorMessage[0];
+          const nftLinks = errorMessage[1];
+
+          openModal(`
+            <h4>${errorTitle}</h4>
+            <p>${nftLinks}</p>
+          `);
+        } else if (message.match(ERROR_OUT_OF_CREDITS)) {
+          const errorMessage: string[] = message.split(', ');
+
+          const errorTitle = errorMessage[0];
+          const outOfCredits = errorMessage[1];
+
+          openModal(`
+            <h4>${errorTitle}</h4>
+            <p>${outOfCredits.charAt(0).toUpperCase() + outOfCredits.slice(1)}</p>
+          `);
+        }
+      }
+
+      api_error(message);
+      game.loading = false;
+      return;
+    }
+
+    await getCurrentUser(true);
+
+    await setMedia(topic_id);
+
+    game.loading = false;
+
+    await this.#setStory(data);
+  }
+
+  /**
    * Continue a pre-existing story
    * @param continuable The story to continue
    * @param setMedia A function to set the media for the story

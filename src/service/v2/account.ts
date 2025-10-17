@@ -84,9 +84,21 @@ export default class AccountAPI extends Fetcher {
     if (image_url) formData.append('image_url', image_url);
     if (new_avatar) formData.append('file', new_avatar);
 
-    return this.request(`/account/change-avatar`, {
+    return this.request(`${this.group}/change-avatar`, {
       method: 'POST',
       body: formData,
+    });
+  }
+
+  /**
+   * Change Avatar accepts an image url or a new avatar file
+   * @param bio - The new bio text.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   */
+  async changeBio(bio: string) {
+    return this.request(`${this.group}/change-bio`, {
+      method: 'POST',
+      body: JSON.stringify({ bio }),
     });
   }
 
@@ -182,6 +194,17 @@ export default class AccountAPI extends Fetcher {
     return this.request<Bookmark[]>(
       `${this.group}/get-folder-bookmarks/${folderId}`,
     );
+  }
+
+  /**
+   * Delete Bookmark Folder
+   * @param folderId - The ID of the bookmark folder to delete.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   */
+  async deleteBookmarkFolder(folderId: string) {
+    return this.request(`${this.group}/delete-bookmark-folder/${folderId}`, {
+      method: 'DELETE',
+    });
   }
 
   /**
@@ -298,6 +321,46 @@ export default class AccountAPI extends Fetcher {
       method: 'POST',
       body: JSON.stringify({ action, restore }),
     });
+  }
+
+  /**
+   * Create or update prompt settings.
+   * @param settings - The prompt settings to create or update.
+   * @returns A promise that resolves to the created or updated prompt settings or an error.
+   */
+  async createOrUpdatePromptSettings(settings: PromptSettings) {
+    return this.request(`${this.group}/prompt-settings`, {
+      method: 'POST',
+      body: JSON.stringify(settings),
+    });
+  }
+
+  /**
+   * Get prompt settings.
+   * @returns A promise that resolves to the prompt settings or an error.
+   */
+  async getPromptSettings() {
+    return this.request<PromptSettings>(`${this.group}/prompt-settings`);
+  }
+
+  /**
+   * Create or update a custom theme.
+   * @param settings - The custom theme settings to create or update.
+   * @returns A promise that resolves to the created or updated custom theme or an error.
+   */
+  async createOrUpdateCustomTheme(settings: CustomTheme) {
+    return this.request(`${this.group}/custom-theme`, {
+      method: 'POST',
+      body: JSON.stringify(settings),
+    });
+  }
+
+  /**
+   * Get the custom theme.
+   * @returns A promise that resolves to the custom theme or an error.
+   */
+  async getCustomTheme() {
+    return this.request<CustomTheme>(`${this.group}/custom-theme`);
   }
 
   async notificationInbox(page: number, pageSize: number) {

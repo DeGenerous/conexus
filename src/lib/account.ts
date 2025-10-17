@@ -120,6 +120,21 @@ class Account {
   }
 
   /**
+   * Change the user's bio.
+   * @param bio The new bio.
+   */
+  async changeBio(bio: string): Promise<void> {
+    const { status, message } = await this.api.changeBio(bio);
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || 'Bio changed successfully', 'info');
+  }
+
+  /**
    * Generate a new referral code.
    * @returns {Promise<string | null>}
    */
@@ -284,6 +299,17 @@ class Account {
     // );
 
     return data || [];
+  }
+
+  async deleteBookmarkFolder(folderId: string): Promise<void> {
+    const { status, message } = await this.api.deleteBookmarkFolder(folderId);
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || 'Bookmark folder deleted successfully', 'info');
   }
 
   /**
@@ -462,6 +488,52 @@ class Account {
     }
 
     toastStore.show(message || 'Streak updated successfully', 'info');
+  }
+
+  async createOrUpdatePromptSettings(settings: PromptSettings): Promise<void> {
+    const { status, message } =
+      await this.api.createOrUpdatePromptSettings(settings);
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || 'Prompt settings updated successfully', 'info');
+  }
+
+  async getPromptSettings(): Promise<PromptSettings | null> {
+    const { message, data } = await this.api.getPromptSettings();
+
+    if (!data) {
+      api_error(message);
+      return null;
+    }
+
+    return data;
+  }
+
+  async createOrUpdateCustomTheme(settings: CustomTheme): Promise<void> {
+    const { status, message } =
+      await this.api.createOrUpdateCustomTheme(settings);
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || 'Custom theme updated successfully', 'info');
+  }
+
+  async getCustomTheme(): Promise<CustomTheme | null> {
+    const { message, data } = await this.api.getCustomTheme();
+
+    if (!data) {
+      api_error(message);
+      return null;
+    }
+
+    return data;
   }
 }
 

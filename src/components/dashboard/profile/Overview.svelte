@@ -184,31 +184,6 @@
 
 {#if user}
   <header class="flex-row">
-    <div class="transparent-container flex-row flex-wrap gap">
-      {#if user.credits >= 0}
-        <h5>
-          Credits:
-          <strong>
-            {user.credits} /
-            {#if user.role_name === 'Guest'}
-              10
-            {:else if user.role_name === 'Player'}
-              100
-            {:else if user.role_name === 'Creator'}
-              690
-            {:else if user.role_name === 'Admin'}
-              ∞
-            {/if}
-          </strong>
-        </h5>
-        <span class="pc-only">|</span>
-        <h5>
-          Bonus: <strong>{user.bonus}</strong>
-        </h5>
-      {:else}
-        <h5 class="validation">Error fetching credits...</h5>
-      {/if}
-    </div>
     <DoorSVG
       state="outside"
       text="Sign out"
@@ -614,29 +589,10 @@
 
   header {
     width: 100%;
-    justify-content: space-between;
+    justify-content: flex-end;
 
-    .transparent-container {
-      width: auto;
-      margin: 0;
-      padding: 0.5rem;
-      border-radius: 0.5rem;
-
-      span {
-        @include white-txt(0.25);
-      }
-
-      h5 {
-        @include white-txt;
-
-        strong {
-          padding: 0.25rem 0.5rem;
-          border-radius: 0.5rem;
-          background-color: $transparent-black;
-          @include gray-border;
-          @include cyan(1, text);
-        }
-      }
+    @include mobile-only {
+      margin-top: -3.5rem;
     }
   }
 

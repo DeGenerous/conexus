@@ -9,5 +9,6 @@
 <h3>Collections & Gates</h3>
 
 <p>
-  TODO: createNewContract deleteContract createNewTokenGate createNewClassGate getAllGates getGate deleteGate
+  TODO: createNewContract deleteContract createNewTokenGate createNewClassGate
+  getAllGates getGate deleteGate
 </p>

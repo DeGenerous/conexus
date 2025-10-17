@@ -26,5 +26,6 @@ export const NAV_ROUTES = {
   FAQ: '/learn/faq',
   BLOG: '/learn/blog',
   MANAGE: '/dashboard#/dream/manage/collections',
+  OMNIHUB: `/dashboard#/omnihub`,
   EXPLORE: (topic_id: string) => `/dashboard/topic/${topic_id}`,
 };

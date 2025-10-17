@@ -45,7 +45,7 @@ class AdminApp {
     toastStore.show(message || 'User account disabled successfully', 'info');
   }
 
-  async createNewSection(name: string, description: string): Promise<void> {
+  async createNewSection(name: string, description: string = ''): Promise<void> {
     const { status, message } = await this.api.createSection({
       name,
       description,
@@ -70,7 +70,7 @@ class AdminApp {
   //   toastStore.show(message || 'Section deleted successfully', 'info');
   // }
 
-  async createNewGenre(name: string, description: string): Promise<void> {
+  async createNewGenre(name: string, description: string = ''): Promise<void> {
     const { status, message } = await this.api.createGenre({
       name,
       description,

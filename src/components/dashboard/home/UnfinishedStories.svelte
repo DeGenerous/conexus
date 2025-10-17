@@ -77,3 +77,12 @@
     {/each}
   {/if}
 </div>
+
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
+
+  .tiles-collection {
+    animation: none;
+    @include blue(0.1);
+  }
+</style>

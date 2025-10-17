@@ -61,7 +61,7 @@
   {:else}
     {#each finishedStories as topic}
       <a
-        class="tile"
+        class="tile gray-tile"
         href="/c/CommunityPicks/{topic.topic_id}?title={topic.name}"
       >
         <img
@@ -77,3 +77,16 @@
     {/each}
   {/if}
 </div>
+
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
+
+  .collection-header {
+    @include gray(0.25);
+  }
+
+  .tiles-collection {
+    animation: none;
+    @include gray(0.1);
+  }
+</style>

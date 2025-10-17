@@ -184,16 +184,31 @@
 
 {#if user}
   <header class="flex-row">
-    {#if user.credits >= 0}
-      <p>
-        Credits remaining this month:
-        <strong>
-          {user.credits}
-        </strong>
-      </p>
-    {:else}
-      <p class="validation">Error fetching credits...</p>
-    {/if}
+    <div class="transparent-container flex-row flex-wrap gap">
+      {#if user.credits >= 0}
+        <h5>
+          Credits:
+          <strong>
+            {user.credits} /
+            {#if user.role_name === 'Guest'}
+              10
+            {:else if user.role_name === 'Player'}
+              100
+            {:else if user.role_name === 'Creator'}
+              690
+            {:else if user.role_name === 'Admin'}
+              ∞
+            {/if}
+          </strong>
+        </h5>
+        <span class="pc-only">|</span>
+        <h5>
+          Bonus: <strong>{user.bonus}</strong>
+        </h5>
+      {:else}
+        <h5 class="validation">Error fetching credits...</h5>
+      {/if}
+    </div>
     <DoorSVG
       state="outside"
       text="Sign out"
@@ -223,6 +238,38 @@
   />
 
   <div class="dream-container">
+    <div class="flex-row">
+      <h4>Credits</h4>
+      <div class="credits container">
+        <span class="flex">
+          <h5>
+            Monthly:
+            <strong>
+              {user.credits} /
+              {#if user.role_name === 'Guest'}
+                10
+              {:else if user.role_name === 'Player'}
+                100
+              {:else if user.role_name === 'Creator'}
+                690
+              {:else if user.role_name === 'Admin'}
+                ∞
+              {/if}
+            </strong>
+          </h5>
+          <p class="caption">Included each month. Resets on the 1st.</p>
+        </span>
+        <span class="flex">
+          <h5>
+            Bonus: <strong>{user.bonus}</strong>
+          </h5>
+          <p class="caption">
+            Extra credits from referrals or promos. Don’t reset.
+          </p>
+        </span>
+      </div>
+    </div>
+
     <div class="flex-row">
       <h4>Username</h4>
       <div class="container">
@@ -258,44 +305,6 @@
           <EditSVG bind:editing={editingUsername} />
         {/if}
       </div>
-    </div>
-
-    <div class="flex-row">
-      <span class="edit-wrapper flex">
-        <h4>Creator Bio</h4>
-        <span class="flex-row">
-          {#if editingBio}
-            <CloseSVG
-              onclick={() => {
-                editingBio = false;
-                bioInput = user?.avatar_bio || '';
-              }}
-            />
-            <SaveSVG
-              onclick={async () => {
-                if (user?.avatar_bio === bioInput) {
-                  editingBio = false;
-                  return;
-                }
-                await account.changeBio(bioInput);
-                editingBio = false;
-              }}
-              disabled={user?.avatar_bio === bioInput}
-            />
-          {:else}
-            <EditSVG bind:editing={editingBio} />
-          {/if}
-        </span>
-      </span>
-      <textarea
-        id="description"
-        class="dream-input dream-textfield"
-        placeholder="Introduce yourself to the community..."
-        rows="3"
-        maxlength="300"
-        bind:value={bioInput}
-        disabled={!editingBio}
-      ></textarea>
     </div>
 
     {#if user.email_confirmed}
@@ -347,6 +356,44 @@
         {/if}
       {/await}
     {/if}
+
+    <div class="flex-row">
+      <span class="edit-wrapper flex">
+        <h4>Creator Bio</h4>
+        <span class="flex-row">
+          {#if editingBio}
+            <CloseSVG
+              onclick={() => {
+                editingBio = false;
+                bioInput = user?.avatar_bio || '';
+              }}
+            />
+            <SaveSVG
+              onclick={async () => {
+                if (user?.avatar_bio === bioInput) {
+                  editingBio = false;
+                  return;
+                }
+                await account.changeBio(bioInput);
+                editingBio = false;
+              }}
+              disabled={user?.avatar_bio === bioInput}
+            />
+          {:else}
+            <EditSVG bind:editing={editingBio} />
+          {/if}
+        </span>
+      </span>
+      <textarea
+        id="description"
+        class="dream-input dream-textfield"
+        placeholder="Introduce yourself to the community..."
+        rows="3"
+        maxlength="300"
+        bind:value={bioInput}
+        disabled={!editingBio}
+      ></textarea>
+    </div>
   </div>
 
   {#if user.email && user.first_name}
@@ -568,6 +615,29 @@
   header {
     width: 100%;
     justify-content: space-between;
+
+    .transparent-container {
+      width: auto;
+      margin: 0;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+
+      span {
+        @include white-txt(0.25);
+      }
+
+      h5 {
+        @include white-txt;
+
+        strong {
+          padding: 0.25rem 0.5rem;
+          border-radius: 0.5rem;
+          background-color: $transparent-black;
+          @include gray-border;
+          @include cyan(1, text);
+        }
+      }
+    }
   }
 
   .pfp {
@@ -582,6 +652,30 @@
     div {
       .container {
         justify-content: center;
+
+        &.credits {
+          @include white-txt;
+
+          span {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            gap: 0.5rem;
+            @include gray-border;
+
+            &:first-of-type {
+              @include orange(0.15);
+            }
+
+            &:last-of-type {
+              @include deep-green(0.25);
+            }
+
+            p.caption {
+              @include white-txt(soft);
+              @include font(caption);
+            }
+          }
+        }
       }
     }
 

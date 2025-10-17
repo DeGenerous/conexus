@@ -2,53 +2,93 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  // import AdminApp from '@lib/admin';
   import CoNexusGame from '@lib/story';
+  import { story, game } from '@stores/conexus.svelte';
   import { ensureCreator } from '@utils/route-guard';
 
   import LoadingSVG from '@components/icons/Loading.svelte';
   import SelectorSVG from '@components/icons/Selector.svelte';
 
-  // let adminApp: AdminApp = new AdminApp();
-  let game: CoNexusGame = new CoNexusGame();
+  const conexusGame = new CoNexusGame();
 
-  let promptId: string | null = $state(null);
-  let topic_name: string | null = $state(null);
-  let story: GameData | null = $state(null);
+  let promptId = $state<string | null>(null);
+  let topicName = $state<string | null>(null);
 
-  let loading: boolean = $state(false);
-  let nextStepLoading: boolean = $state(false);
-  let demoStarted: boolean = $state(false);
-  let focusedOption: Nullable<number> = $state(null);
+  let demoStarted = $state(false);
+  let focusedOption = $state<Nullable<number>>(null);
+  let demoError = $state<string | null>(null);
+
+  const step = $derived<Nullable<StepData>>($story?.step_data ?? null);
+  const options = $derived(() => step?.options ?? []);
+  const isEnded = $derived(() => step?.ended ?? false);
+  const canInteract = $derived(() => {
+    if (!step || game.loading) return false;
+    if (step.ended) return false;
+    const activeStory = $story;
+    const maxStep = activeStory?.maxStep ?? step.step;
+    return step.step === maxStep;
+  });
+
+  $effect(() => {
+    if (game.loading) {
+      focusedOption = null;
+    }
+  });
 
   onMount(async () => {
     await ensureCreator();
 
+    // ensure we start the demo with a clean slate
+    $story = null;
+    game.background_image = null;
+    game.background_music = null;
+
     const urlParams = new URLSearchParams(window.location.search);
     promptId = urlParams.get('demoID');
-    topic_name = urlParams.get('demoName');
+    topicName = urlParams.get('demoName');
 
     if (!promptId) {
       window.history.back();
     }
   });
 
-  const startDemo = async () => {
-    demoStarted = true;
-    loading = true;
+  const setDemoMedia = async (_topicId: string) => {
+    game.background_image = null;
+    game.background_music = null;
+  };
 
-    if (promptId) {
-      // story = await adminApp.demoPrompt(parseInt(promptId));
-      loading = false;
+  const startDemo = async () => {
+    if (!promptId || game.loading) return;
+
+    demoError = null;
+    demoStarted = true;
+    $story = null;
+
+    try {
+      await conexusGame.demo(promptId, setDemoMedia);
+
+      if (!$story) {
+        demoError = 'We could not load that demo. Please try again.';
+        demoStarted = false;
+      }
+    } catch (error) {
+      console.error(error);
+      demoError = 'We could not load that demo. Please try again.';
+      demoStarted = false;
     }
   };
 
-  const handleResponse = async (story_id: string, choice: number) => {
-    nextStepLoading = true;
-    // const { data } = await game.respond(story_id, choice);
-    // if (data) story = data;
-    story = null;
-    nextStepLoading = false;
+  const handleResponse = async (choice: number) => {
+    if (!canInteract) return;
+    focusedOption = null;
+    await $story?.nextStep(choice);
+  };
+
+  const stopDemo = () => {
+    demoStarted = false;
+    $story = null;
+    game.background_image = null;
+    game.background_music = null;
   };
 </script>
 
@@ -56,58 +96,76 @@
   <section class="dream-container fade-in">
     <h5>Experience how your prompt comes to life.</h5>
     <div class="container">
-      {#if topic_name}
-        <h4 class="text-glowing fade-in">{topic_name}</h4>
+      {#if topicName}
+        <h4 class="text-glowing fade-in">{topicName}</h4>
       {/if}
-      <!-- <button class="start-btn" onclick={startDemo} disabled={!topic_name}> -->
-      <button class="start-btn" disabled>
-        {#if topic_name}
+      <button
+        class="start-btn"
+        onclick={startDemo}
+        disabled={!topicName || game.loading}
+      >
+        {#if topicName}
           Start Demo
         {:else}
           Loading...
         {/if}
       </button>
+      {#if demoError}
+        <p class="validation">{demoError}</p>
+      {/if}
     </div>
     <h5>
       Play through the opening moments of your creation and refine your vision.
     </h5>
   </section>
-{:else if loading}
+{:else if game.loading && !step}
   <div class="transparent-container flex-row fade-in">
     <h5 class="loading-title text-glowing">Preparing a demo, please wait...</h5>
     <LoadingSVG />
   </div>
-{:else if !story}
+{:else if !step}
   <div class="transparent-container fade-in">
-    <p class="validation">Sorry, we couldn't find that prompt</p>
+    <p class="validation">Sorry, we couldn't load that prompt.</p>
+    <button class="void-btn" onclick={stopDemo}>Try again</button>
   </div>
 {:else}
   <section class="demo-step dream-container">
-    <h3 class="text-glowing">{story.title}</h3>
+    {#if topicName}
+      <h3 class="text-glowing">{topicName}</h3>
+    {/if}
+
+    {#if step.title}
+      <h4 class="text-glowing">{step.title}</h4>
+    {/if}
+
     <div class="text container">
-      {story.story}
+      {step.story}
     </div>
-    {#if story.options.length > 0}
+
+    {#if !isEnded && options.length}
       <div class="options container flex">
-        {#each story.options as option, i}
+        {#each options() as option, i}
           <button
+            id="option-{i}"
             class="void-btn flex-row text-glowing"
-            onclick={() => story && handleResponse(story.id.toString(), i + 1)}
+            disabled={!canInteract}
+            onclick={() => handleResponse(i + 1)}
             onpointerover={() => {
-              if (!nextStepLoading) {
+              if (canInteract()) {
                 focusedOption = i;
               }
             }}
             onpointerout={() => {
-              if (!nextStepLoading) {
+              if (canInteract()) {
                 focusedOption = null;
               }
             }}
-            disabled={nextStepLoading}
+            onfocus={() => (focusedOption = i)}
+            onblur={() => (focusedOption = null)}
           >
             <SelectorSVG
               focused={focusedOption === i}
-              disabled={nextStepLoading}
+              disabled={!canInteract}
               hideForMobiles={true}
               glowing={true}
             />
@@ -115,13 +173,33 @@
           </button>
         {/each}
       </div>
+    {:else}
+      <div class="summary container transparent-container">
+        <h5 class="text-glowing">Summary</h5>
+        <p>{step.summary}</p>
+        {#if step.trait}
+          <p>
+            CoNexus identified your trait as:
+            <strong class="text-glowing">{step.trait}</strong>
+          </p>
+        {/if}
+        <div class="actions flex-row">
+          <button class="start-btn" onclick={startDemo} disabled={game.loading}>
+            Run Demo Again
+          </button>
+          <button class="void-btn" onclick={stopDemo} disabled={game.loading}>
+            Exit Demo
+          </button>
+        </div>
+      </div>
     {/if}
+
     <div class="step flex-row">
-      {#if nextStepLoading}
+      {#if game.loading}
         <LoadingSVG />
       {/if}
-      <h5>{topic_name}:</h5>
-      <h5>Step {story.step}</h5>
+      <h5>{topicName}:</h5>
+      <h5>Step {step.step}</h5>
     </div>
   </section>
 {/if}
@@ -151,6 +229,24 @@
       text-align: left;
       white-space: pre-wrap;
       @include white-txt;
+    }
+
+    .summary {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      text-align: left;
+      @include white-txt;
+
+      p {
+        white-space: pre-wrap;
+      }
+
+      .actions {
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      }
     }
 
     .options {

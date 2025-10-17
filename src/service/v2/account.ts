@@ -323,6 +323,46 @@ export default class AccountAPI extends Fetcher {
     });
   }
 
+  /**
+   * Create or update prompt settings.
+   * @param settings - The prompt settings to create or update.
+   * @returns A promise that resolves to the created or updated prompt settings or an error.
+   */
+  async createOrUpdatePromptSettings(settings: PromptSettings) {
+    return this.request(`${this.group}/prompt-settings`, {
+      method: 'POST',
+      body: JSON.stringify(settings),
+    });
+  }
+
+  /**
+   * Get prompt settings.
+   * @returns A promise that resolves to the prompt settings or an error.
+   */
+  async getPromptSettings() {
+    return this.request<PromptSettings>(`${this.group}/prompt-settings`);
+  }
+
+  /**
+   * Create or update a custom theme.
+   * @param settings - The custom theme settings to create or update.
+   * @returns A promise that resolves to the created or updated custom theme or an error.
+   */
+  async createOrUpdateCustomTheme(settings: CustomTheme) {
+    return this.request(`${this.group}/custom-theme`, {
+      method: 'POST',
+      body: JSON.stringify(settings),
+    });
+  }
+
+  /**
+   * Get the custom theme.
+   * @returns A promise that resolves to the custom theme or an error.
+   */
+  async getCustomTheme() {
+    return this.request<CustomTheme>(`${this.group}/custom-theme`);
+  }
+
   async notificationInbox(page: number, pageSize: number) {
     return this.request<{
       notifications: AccountNotification[];

@@ -489,6 +489,52 @@ class Account {
 
     toastStore.show(message || 'Streak updated successfully', 'info');
   }
+
+  async createOrUpdatePromptSettings(settings: PromptSettings): Promise<void> {
+    const { status, message } =
+      await this.api.createOrUpdatePromptSettings(settings);
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || 'Prompt settings updated successfully', 'info');
+  }
+
+  async getPromptSettings(): Promise<PromptSettings | null> {
+    const { message, data } = await this.api.getPromptSettings();
+
+    if (!data) {
+      api_error(message);
+      return null;
+    }
+
+    return data;
+  }
+
+  async createOrUpdateCustomTheme(settings: CustomTheme): Promise<void> {
+    const { status, message } =
+      await this.api.createOrUpdateCustomTheme(settings);
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || 'Custom theme updated successfully', 'info');
+  }
+
+  async getCustomTheme(): Promise<CustomTheme | null> {
+    const { message, data } = await this.api.getCustomTheme();
+
+    if (!data) {
+      api_error(message);
+      return null;
+    }
+
+    return data;
+  }
 }
 
 export default Account;

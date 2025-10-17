@@ -548,6 +548,21 @@
   }
 }
 
+.small-blue-tile {
+  @extend .small-tile;
+  @include blue;
+
+  & > p {
+    @include dark-blue(0.5);
+  }
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus-visible:not(:disabled) {
+    @include bright;
+  }
+}
+
 // USAGE: &::after { content: 'Label'; }
 // ADDITIONAL CLASSES: &.selected / &.active
 .small-tile-addon {

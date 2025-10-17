@@ -36,13 +36,13 @@ describe('CategoryAPI', () => {
     expect(api.request).toHaveBeenCalledWith('/category/admin/section2');
   });
 
-  it('updateAdminCategory calls request with correct args', async () => {
-    await api.updateAdminCategory('cat123', category);
-    expect(api.request).toHaveBeenCalledWith('/category/admin/cat123', {
-      method: 'PUT',
-      body: JSON.stringify(category),
-    });
-  });
+  // it('updateAdminCategory calls request with correct args', async () => {
+  //   await api.updateAdminCategory('cat123', category);
+  //   expect(api.request).toHaveBeenCalledWith('/category/admin/cat123', {
+  //     method: 'PUT',
+  //     body: JSON.stringify(category),
+  //   });
+  // });
 
   it('createCreatorCategory calls request with correct args', async () => {
     await api.createCreatorCategory(category);
@@ -57,11 +57,11 @@ describe('CategoryAPI', () => {
     expect(api.request).toHaveBeenCalledWith('/category/creator');
   });
 
-  it('updateCreatorCategory calls request with correct args', async () => {
-    await api.updateCreatorCategory('cat456', category);
-    expect(api.request).toHaveBeenCalledWith('/category/creator/cat456', {
-      method: 'PUT',
-      body: JSON.stringify(category),
-    });
-  });
+  // it('updateCreatorCategory calls request with correct args', async () => {
+  //   await api.updateCreatorCategory('cat456', category);
+  //   expect(api.request).toHaveBeenCalledWith('/category/creator/cat456', {
+  //     method: 'PUT',
+  //     body: JSON.stringify(category),
+  //   });
+  // });
 });

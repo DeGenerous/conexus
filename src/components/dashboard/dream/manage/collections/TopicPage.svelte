@@ -572,6 +572,7 @@
 
   .edit-wrapper {
     flex-flow: row wrap;
+    gap: 1rem;
 
     @include respond-up(small-desktop) {
       flex-direction: column;

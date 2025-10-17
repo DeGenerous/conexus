@@ -22,6 +22,8 @@
   import { toastStore } from '@stores/toast.svelte';
   import { ClearCache } from '@constants/cache';
   import { blankImage } from '@constants/media';
+  import { MEDIA_RULES, validateFiles } from '@utils/file-validation';
+  import { toAvif } from '@utils/avif-convert';
 
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import Dropdown from '@components/utils/Dropdown.svelte';
@@ -33,6 +35,7 @@
   import ResetSVG from '@components/icons/Reset.svelte';
   import CopySVG from '@components/icons/Copy.svelte';
   import EditSVG from '@components/icons/Edit.svelte';
+  import LoadingSVG from '@components/icons/Loading.svelte';
 
   // SIGNED IN USER PROFILE
 
@@ -45,22 +48,30 @@
   let editingUsername = $state<boolean>(false);
   let usernameInput = $state<string>('player_12345');
 
-  onMount(async () => {
-    user = await getCurrentUser(true);
-    console.log(user);
-
-    if (user && user.email_confirmed) {
-      // account.getReferralCode();
-      checkSubscription();
-    }
-  });
+  let editingBio = $state<boolean>(false);
+  let bioInput = $state<string>('');
+  let avatarUrl = $state<string>(blankImage);
+  let isUploadingAvatar = $state<boolean>(false);
+  let avatarInputEl = $state<HTMLInputElement | undefined>();
 
   const checkSubscription = async () => {
     if (!user?.email) return;
     subscribedToNewsletter = await account.subscriptionStatus(user?.email);
   };
 
+  onMount(async () => {
+    user = await getCurrentUser(true);
+    console.log(user);
+
+    if (user && user.email_confirmed) checkSubscription();
+
+    usernameInput = user?.username || '';
+    bioInput = user?.avatar_bio || '';
+    avatarUrl = user?.avatar_url || blankImage;
+  });
+
   // Change password
+
   let editingPassword = $state<boolean>(false);
   let editOldPassword = $state<string>('');
   let editPassword = $state<string>('');
@@ -79,19 +90,95 @@
     editPasswordConfirm = '';
   };
 
-  const openRemoveWalletModal = (id: string) =>
-    openModal(
-      ensureMessage('unlink this wallet from your account'),
-      'Unlink',
-      () => console.log('Remove wallet ID: ' + id),
-    );
-
   const copyRefCode = (code: string) => {
     let codeBtn = document.getElementById(code) as HTMLButtonElement;
     navigator.clipboard.writeText(code);
     codeBtn.classList.add('copied'); // animation
     setTimeout(() => codeBtn.classList.remove('copied'), 600);
     toastStore.show('Copied to clipboard: ' + code);
+  };
+
+  // Web3 wallets
+
+  const openSelectWalletModal = (wallet_id: string) => {
+    openModal(
+      ensureMessage('select this wallet as the main address for your account'),
+      'Select',
+      () => selectMainWallet(wallet_id),
+    );
+  };
+
+  const selectMainWallet = async (wallet_id: string) => {
+    await authentication.selectMainWallet(wallet_id);
+    user = await getCurrentUser(true);
+  };
+
+  const openRemoveWalletModal = (event: Event, wallet_id: string) => {
+    event.stopPropagation();
+    openModal(
+      ensureMessage('unlink this wallet from your account'),
+      'Unlink',
+      () => unlinkWallet(wallet_id),
+    );
+  };
+
+  const unlinkWallet = async (walletId: string) => {
+    await authentication.unlinkWallet(walletId);
+    user = await getCurrentUser(true);
+  };
+
+  // Profile picture upload and conversion to AVIF
+
+  function shouldConvertAvatar(file: File): boolean {
+    if (!file.type.startsWith('image/')) return false;
+    return file.type !== 'image/avif';
+  }
+
+  const triggerAvatarPicker = () => avatarInputEl?.click();
+
+  const refreshUserAvatar = async () => {
+    user = await getCurrentUser(true);
+    avatarUrl = user?.avatar_url || blankImage;
+  };
+
+  const handleAvatarUpload = async (event: Event) => {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    try {
+      isUploadingAvatar = true;
+
+      const accepted = await validateFiles('description', [input.files[0]], 0);
+
+      const nextFile = accepted.at(0);
+      if (!nextFile) return;
+
+      let upload = nextFile;
+
+      if (shouldConvertAvatar(nextFile)) {
+        toastStore.show(`Converting ${nextFile.name} to AVIF format…`);
+        try {
+          const avif = await toAvif(nextFile);
+          if (avif.size > MEDIA_RULES.description.maxBytes) {
+            throw new Error('Converted image is larger than 1.5 MiB');
+          }
+          upload = new File([avif], nextFile.name.replace(/\.\w+$/, '.avif'), {
+            type: 'image/avif',
+          });
+        } catch (err) {
+          toastStore.show(String(err), 'error');
+          return;
+        }
+      }
+
+      await account.changeAvatar(undefined, upload);
+      await refreshUserAvatar();
+    } catch (error) {
+      console.error('Failed to upload avatar:', error);
+    } finally {
+      isUploadingAvatar = false;
+      input.value = '';
+    }
   };
 </script>
 
@@ -114,8 +201,26 @@
     />
   </header>
 
-  <img class="pfp round" src={blankImage} alt="PFP" />
-  <button> Change profile picture </button>
+  <img class="pfp round" src={avatarUrl} alt="PFP" />
+  <button
+    onclick={triggerAvatarPicker}
+    disabled={isUploadingAvatar}
+    aria-busy={isUploadingAvatar}
+  >
+    {#if isUploadingAvatar}
+      <LoadingSVG />
+      Uploading...
+    {:else}
+      Change Profile Picture
+    {/if}
+  </button>
+  <input
+    bind:this={avatarInputEl}
+    type="file"
+    accept="image/avif,image/jpeg,image/png,image/webp"
+    onchange={handleAvatarUpload}
+    style:display="none"
+  />
 
   <div class="dream-container">
     <div class="flex-row">
@@ -132,21 +237,65 @@
         <input
           bind:value={usernameInput}
           type="text"
+          placeholder="Enter your username"
           size={usernameInput.length + 1}
           maxlength="50"
           disabled={!editingUsername}
         />
         {#if editingUsername}
           <SaveSVG
-            onclick={() => {
+            onclick={async () => {
+              if (user?.username === usernameInput) {
+                editingUsername = false;
+                return;
+              }
+              await account.changeUsername(usernameInput);
               editingUsername = false;
             }}
-            disabled={true}
+            disabled={user?.username === usernameInput}
           />
         {:else}
           <EditSVG bind:editing={editingUsername} />
         {/if}
       </div>
+    </div>
+
+    <div class="flex-row">
+      <span class="edit-wrapper flex">
+        <h4>Creator Bio</h4>
+        <span class="flex-row">
+          {#if editingBio}
+            <CloseSVG
+              onclick={() => {
+                editingBio = false;
+                bioInput = user?.avatar_bio || '';
+              }}
+            />
+            <SaveSVG
+              onclick={async () => {
+                if (user?.avatar_bio === bioInput) {
+                  editingBio = false;
+                  return;
+                }
+                await account.changeBio(bioInput);
+                editingBio = false;
+              }}
+              disabled={user?.avatar_bio === bioInput}
+            />
+          {:else}
+            <EditSVG bind:editing={editingBio} />
+          {/if}
+        </span>
+      </span>
+      <textarea
+        id="description"
+        class="dream-input dream-textfield"
+        placeholder="Introduce yourself to the community..."
+        rows="3"
+        maxlength="300"
+        bind:value={bioInput}
+        disabled={!editingBio}
+      ></textarea>
     </div>
 
     {#if user.email_confirmed}
@@ -362,16 +511,30 @@
     <Dropdown name="Connected Addresses">
       <ul class="flex-row flex-wrap">
         {#each user.wallets.filter((address) => !address.faux) as { id, wallet }, index}
-          <span class="wallet small-tile">
+          <button
+            class="wallet void-btn"
+            class:small-blue-tile={user.main_wallet !== wallet}
+            class:small-orange-tile={user.main_wallet === wallet}
+            onclick={() => {
+              if (wallet === user?.main_wallet) {
+                toastStore.show(
+                  'This wallet is already set as your main address',
+                );
+                return;
+              }
+              openSelectWalletModal(id!);
+            }}
+          >
             <h4>{index + 1}</h4>
             <p class="pad-8 round-8 transparent-dark-bg soft-white-txt">
               {wallet.slice(0, 6) + '...' + wallet.slice(-4)}
             </p>
             <CloseSVG
-              onclick={() => openRemoveWalletModal(id!)}
+              onclick={(event) => openRemoveWalletModal(event, id!)}
               voidBtn={true}
+              dark={wallet === user.main_wallet}
             />
-          </span>
+          </button>
         {/each}
       </ul>
       {#if user?.email && user?.first_name}
@@ -400,7 +563,6 @@
     text="Refresh Data"
   />
 {:else}
-  <h5>Loading profile data...</h5>
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {/if}
 
@@ -424,6 +586,21 @@
     div {
       .container {
         justify-content: center;
+      }
+    }
+
+    .edit-wrapper {
+      flex-flow: row wrap;
+      width: 14rem;
+      gap: 1rem;
+
+      @include respond-up(small-desktop) {
+        flex-direction: column;
+        align-items: flex-end;
+      }
+
+      h4 {
+        width: auto;
       }
     }
   }
@@ -468,29 +645,23 @@
 
   .wallet {
     min-width: 14rem;
-    @include blue;
 
     h4 {
       width: auto;
+    }
+
+    &.small-blue-tile h4 {
       @include dark-blue(1, text);
+    }
+
+    &.small-orange-tile h4 {
+      @include dark-red(1, text);
     }
 
     &:hover:not(&:disabled),
     &:active:not(&:disabled),
     &:focus-visible:not(&:disabled) {
       @include bright;
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      fill: $cyan;
-      box-shadow: $shadow-plus-inset-glow;
-      @include blue(1, bg, bright);
-
-      p,
-      h4 {
-        color: $cyan;
-      }
     }
   }
 </style>

@@ -45,7 +45,10 @@ export default class CategoryAPI extends Fetcher {
     );
   }
 
-  async updateAdminCategoryOrder(category_id: string, dashboard_sort_order: number) {
+  async updateAdminCategoryOrder(
+    category_id: string,
+    dashboard_sort_order: number,
+  ) {
     return await this.request(`${this.group}/admin/${category_id}/order`, {
       method: 'PUT',
       body: JSON.stringify({ dashboard_sort_order }),
@@ -72,7 +75,10 @@ export default class CategoryAPI extends Fetcher {
     );
   }
 
-  async updateCreatorCategoryOrder(category_id: string, dashboard_sort_order: number) {
+  async updateCreatorCategoryOrder(
+    category_id: string,
+    dashboard_sort_order: number,
+  ) {
     return await this.request(`${this.group}/creator/${category_id}/order`, {
       method: 'PUT',
       body: JSON.stringify({ dashboard_sort_order }),

@@ -119,6 +119,47 @@ export default class Authentication {
   }
 
   /**
+   * Selects a wallet as the primary Web3 address for the user.
+   * @param wallet - The wallet address to select.
+   * @returns A promise that resolves to the updated user or null on failure.
+   */
+  async selectMainWallet(wallet: string): Promise<Nullable<User>> {
+    const { status, message, data } = await this.api.web3SelectWallet(wallet);
+
+    if (status === 'error' || !data) {
+      accountError.set({
+        selectMainWallet:
+          message || 'There was a problem selecting this wallet address.',
+      });
+      return null;
+    }
+
+    accountError.set(null);
+    SetCache(USER_KEY, data, TTL_HOUR);
+    toastStore.show(message || 'Wallet selected successfully', 'info');
+    return data;
+  }
+
+  /**
+   * Unlinks a wallet from the user's account.
+   * @param wallet - The wallet address to unlink.
+   * @returns A promise that resolves to the updated user or null on failure.
+   */
+  async unlinkWallet(wallet: string): Promise<Nullable<User>> {
+    const { status, message, data } = await this.api.web3UnlinkWallet(wallet);
+
+    if (status === 'error' || !data) {
+      api_error(message);
+      return null;
+    }
+
+    accountError.set(null);
+    SetCache(USER_KEY, data, TTL_HOUR);
+    toastStore.show(message || 'Wallet unlinked successfully', 'info');
+    return data;
+  }
+
+  /**
    * Logs the user out.
    */
   async logout(): Promise<void> {

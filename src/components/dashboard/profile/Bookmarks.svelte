@@ -56,10 +56,10 @@
     await loadFolders();
   }
 
-  async function removeFolder(folder: BookmarkFolder) {
-    openModal(ensureMessage('remove this folder'), 'Remove', () => {
-      console.log('Removing folder:');
-      console.log(folder);
+  async function removeFolder(folder_id: string) {
+    openModal(ensureMessage('remove this folder'), 'Remove', async () => {
+      await account.deleteBookmarkFolder(folder_id);
+      await loadFolders();
     });
   }
 
@@ -182,7 +182,7 @@
           >
             <p>{folder.name}</p>
             <CloseSVG
-              onclick={() => removeFolder(folder)}
+              onclick={() => removeFolder(folder.id!)}
               voidBtn={true}
               dark={true}
             />

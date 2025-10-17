@@ -33,7 +33,19 @@
       genres = await view.getGenres();
     });
   };
+
+  const onkeypress = (event: KeyboardEvent) => {
+    if (event.key !== 'Enter' || event.repeat) return;
+    if (!newGenreName) return;
+    const activeInput = document.activeElement as HTMLElement;
+    if (activeInput && activeInput.tagName === 'INPUT') {
+      addNewGenre();
+      activeInput.blur();
+    }
+  };
 </script>
+
+<svelte:window {onkeypress} />
 
 <section class="dream-container">
   <h4>Available Genres: {genres.length}</h4>

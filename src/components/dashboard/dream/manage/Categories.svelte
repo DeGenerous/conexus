@@ -1,6 +1,7 @@
 <script lang="ts">
   import CategoryView from '@lib/category';
   import { ensureCreator } from '@utils/route-guard';
+  import { toastStore } from '@stores/toast.svelte';
 
   import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
 
@@ -28,18 +29,15 @@
 
   let addingCategory = $state(false);
 
-  let errorAdd = $state('');
-
   async function addCategory() {
     if (!newCategoryName.trim()) return;
 
     addingCategory = true;
-    errorAdd = '';
 
     try {
       if (isAdmin) {
         if (!selectedSectionId) {
-          errorAdd = 'Please select a section first.';
+          toastStore.show('Please select a section first.', 'error');
           return;
         }
         await categoryView.createAdminCategory(selectedSectionId, {
@@ -59,12 +57,24 @@
 
       if (fetchCategories) await fetchCategories(); // refresh list
     } catch {
-      errorAdd = 'Failed to add category';
+      toastStore.show('Failed to add category', 'error');
     } finally {
       addingCategory = false;
     }
   }
+
+  const onkeypress = (event: KeyboardEvent) => {
+    if (event.key !== 'Enter' || event.repeat) return;
+    if (!newCategoryName) return;
+    const activeInput = document.activeElement as HTMLElement;
+    if (activeInput && activeInput.tagName === 'INPUT') {
+      addCategory();
+      activeInput.blur();
+    }
+  };
 </script>
+
+<svelte:window {onkeypress} />
 
 <section class="dream-container">
   <CategoryFetcher bind:selectedSectionId bind:fetchCategories>

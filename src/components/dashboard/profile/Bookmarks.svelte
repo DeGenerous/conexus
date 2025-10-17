@@ -83,9 +83,19 @@
     }
   };
 
-  async function removeFolder(folder_id: string) {
+  async function removeFolder(folder: BookmarkFolder) {
+    if (!folder.id) {
+      toastStore.show('Folder ID is missing', 'error');
+      return;
+    }
+
+    if (folder.name.toLowerCase() === 'general') {
+      toastStore.show('Cannot remove the General folder', 'error');
+      return;
+    }
+
     openModal(ensureMessage('remove this folder'), 'Remove', async () => {
-      await account.deleteBookmarkFolder(folder_id);
+      await account.deleteBookmarkFolder(folder.id!);
       await loadFolders();
       openGeneralFolder();
     });
@@ -154,12 +164,24 @@
     }
   }
 
+  const onkeypress = (event: KeyboardEvent) => {
+    if (event.key !== 'Enter' || event.repeat) return;
+    if (!newFolderName) return;
+    const activeInput = document.activeElement as HTMLElement;
+    if (activeInput && activeInput.tagName === 'INPUT') {
+      addFolder();
+      activeInput.blur();
+    }
+  };
+
   onMount(async () => {
     await loadFolders();
     openGeneralFolder();
     // await loadTags();
   });
 </script>
+
+<svelte:window {onkeypress} />
 
 <p>
   Quick return to saved stories and moments. Organize by folders and pick up
@@ -183,7 +205,7 @@
           >
             <p>{folder.name}</p>
             <CloseSVG
-              onclick={() => removeFolder(folder.id!)}
+              onclick={() => removeFolder(folder)}
               voidBtn={true}
               dark={true}
             />

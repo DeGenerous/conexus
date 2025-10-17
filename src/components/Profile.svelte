@@ -3,7 +3,6 @@
   import { onMount } from 'svelte';
 
   import WalletConnect from '@components/web3/WalletConnect.svelte';
-  import Account from '@lib/account';
   import Authentication from '@lib/authentication';
   import { accountError } from '@stores/account.svelte';
   import { showProfile } from '@stores/modal.svelte';
@@ -30,6 +29,10 @@
   import DiscordBtn from '@components/icons/Discord.svelte';
 
   export let activeTab: string = 'Dashboard';
+
+  const authentication: Authentication = new Authentication();
+
+  let user: Nullable<User> = null;
 
   let dialog: HTMLDialogElement;
 
@@ -59,43 +62,9 @@
     $showProfile = false;
   };
 
-  // SIGNED IN USER PROFILE
-
-  const account: Account = new Account();
-  const authentication: Authentication = new Authentication();
-
-  let user: Nullable<User> = null;
-
   onMount(async () => {
     user = await getCurrentUser();
   });
-
-  // Change password
-  let editingPassword: boolean = false;
-  let editOldPassword: string = '';
-  let editPassword: string = '';
-  let editPasswordConfirm: string = '';
-
-  const saveChangedPassword = async (e: Event) => {
-    e.preventDefault();
-    $accountError = null as AccountError; // reset storage from any old errors
-    await account.changePassword({
-      old_password: editOldPassword,
-      new_password: editPassword,
-    });
-    if (!$accountError || !$accountError.changePassword)
-      editingPassword = false;
-    editPassword = '';
-    editPasswordConfirm = '';
-  };
-
-  // Select wallet address as the main one
-  // const handleWalletSelect = async (address: string) => {
-  //   await account.selectMainWallet(address);
-  //   if ($accountError && $accountError.selectMainWallet) return;
-  //   // Reload the page to update the user object
-  //   location.reload();
-  // };
 
   // NON-SIGNED WINDOWS
 

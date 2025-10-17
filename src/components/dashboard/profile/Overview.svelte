@@ -540,10 +540,6 @@
       {#if user?.email && user?.first_name}
         <WalletConnect linking={true} title={'Add another address'} />
       {/if}
-
-      {#if $accountError && $accountError.selectMainWallet}
-        <p class="validation">{$accountError.selectMainWallet}</p>
-      {/if}
     </Dropdown>
   {:else}
     <WalletConnect linking={true} title={'Connect Web3 Wallet'} />

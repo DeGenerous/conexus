@@ -73,10 +73,8 @@ type SubscriptionStatus = {
 type AccountError = {
   signin?: Nullable<string>;
   signup?: Nullable<string>;
-  validateReferralCode?: Nullable<string>;
   googleSignin?: Nullable<string>;
   changePassword?: Nullable<string>;
-  selectMainWallet?: Nullable<string>;
 } | null;
 
 /* V2 */

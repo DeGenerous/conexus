@@ -75,9 +75,7 @@ export default class Authentication {
     const { status, message } = await this.api.validateReferralCode(code);
 
     if (status === 'error') {
-      accountError.set({
-        validateReferralCode: message || 'Unknown error occurred',
-      });
+      api_error(message || 'Unknown error occurred');
       return false;
     }
 
@@ -127,10 +125,9 @@ export default class Authentication {
     const { status, message, data } = await this.api.web3SelectWallet(wallet);
 
     if (status === 'error' || !data) {
-      accountError.set({
-        selectMainWallet:
-          message || 'There was a problem selecting this wallet address.',
-      });
+      api_error(
+        message || 'There was a problem selecting this wallet address.',
+      );
       return null;
     }
 

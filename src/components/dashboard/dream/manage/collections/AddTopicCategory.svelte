@@ -17,6 +17,7 @@
   let selectedSectionId = $state<string>('');
 
   let selectedCategoryId = $state<string>('');
+  let selectedCategoryName = $state<string>('');
 
   async function handleAddCategory() {
     if (selectedCategoryId === '') return;
@@ -26,7 +27,7 @@
       return toastStore.show('Category already exists', 'error');
     }
 
-    await handleCategoryChange(selectedCategoryId, 'add');
+    await handleCategoryChange(selectedCategoryId, 'add', selectedCategoryName);
 
     selectedCategoryId = '';
   }
@@ -86,7 +87,10 @@
         {:else if errorSections}
           <p class="validation">{errorSections}</p>
         {:else if sections.length > 0}
-          <select bind:value={selectedSectionId}>
+          <select
+            bind:value={selectedSectionId}
+            onchange={() => (selectedCategoryId = '')}
+          >
             <option value="" disabled hidden>Select section</option>
             {#each sections as { id, name }}
               <option value={id}>{name}</option>
@@ -105,6 +109,12 @@
         )}
         <select
           bind:value={selectedCategoryId}
+          onchange={() => {
+            const selected = availableCategories.find(
+              (c) => c.id === selectedCategoryId,
+            );
+            selectedCategoryName = selected ? selected.name : '';
+          }}
           disabled={(isAdmin && !selectedSectionId) ||
             !availableCategories.length}
         >
@@ -134,4 +144,8 @@
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
+
+  div .container {
+    justify-content: center;
+  }
 </style>

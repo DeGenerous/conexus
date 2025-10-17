@@ -170,13 +170,21 @@
   async function handleCategoryChange(
     categoryId: string,
     method: 'add' | 'remove',
+    name?: string,
   ) {
     switch (method) {
       case 'add':
         await topicManager.addTopicToCategory(topic_id, categoryId);
+        topic_categories = [
+          ...topic_categories,
+          { id: categoryId, name: name!, sort_order: 0 },
+        ];
         break;
       case 'remove':
         await topicManager.removeTopicFromCategory(topic_id, categoryId);
+        topic_categories = topic_categories.filter(
+          (category) => category.id !== categoryId,
+        );
         break;
     }
   }

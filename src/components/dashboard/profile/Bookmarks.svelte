@@ -56,13 +56,6 @@
     await loadFolders();
   }
 
-  async function removeFolder(folder_id: string) {
-    openModal(ensureMessage('remove this folder'), 'Remove', async () => {
-      await account.deleteBookmarkFolder(folder_id);
-      await loadFolders();
-    });
-  }
-
   // async function addTag() {
   //   const name = newTagName.trim();
   //   if (!name) return;
@@ -81,6 +74,21 @@
     // viewingBookmarkId = null;
     // viewingBookmark = null;
     // editJSON = '';
+  }
+
+  const openGeneralFolder = () => {
+    const general = folders.find((f) => f.name.toLowerCase() === 'general');
+    if (general) {
+      openFolder(general.id, general.name);
+    }
+  };
+
+  async function removeFolder(folder_id: string) {
+    openModal(ensureMessage('remove this folder'), 'Remove', async () => {
+      await account.deleteBookmarkFolder(folder_id);
+      await loadFolders();
+      openGeneralFolder();
+    });
   }
 
   // async function openTag(tagId?: string, tagName?: string) {
@@ -145,13 +153,6 @@
       busy = false;
     }
   }
-
-  const openGeneralFolder = () => {
-    const general = folders.find((f) => f.name.toLowerCase() === 'general');
-    if (general) {
-      openFolder(general.id, general.name);
-    }
-  };
 
   onMount(async () => {
     await loadFolders();

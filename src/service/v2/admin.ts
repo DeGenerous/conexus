@@ -22,6 +22,16 @@ export default class AdminAPI extends Fetcher {
   }
 
   /**
+   * Fetches all roles.
+   * @returns A promise that resolves to the success status of the operation.
+   */
+  async getRoles() {
+    return this.request<TenantRole[]>(`${this.group}/roles`, {
+      method: 'GET',
+    });
+  }
+
+  /**
    * Changes the role of a user account.
    * @param account_id The ID of the account to modify.
    * @param new_role_id The ID of the new role to assign.

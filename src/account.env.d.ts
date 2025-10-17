@@ -28,6 +28,7 @@ type User = {
   role_name?: DefaultRoles;
   username?: string;
   avatar_url?: string;
+  avatar_bio?: string;
   main_wallet?: string;
   faux?: boolean;
   wallets?: AuthWallet[];

@@ -252,13 +252,13 @@ export default class Topic {
     category_id: string,
     sort_order?: number,
   ): Promise<void> {
-    const { message, data } = await this.api.addCategory(
+    const { status, message } = await this.api.addCategory(
       topic_id,
       category_id,
       sort_order,
     );
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return;
     }
@@ -297,12 +297,12 @@ export default class Topic {
     topic_id: string,
     category_id: string,
   ): Promise<void> {
-    const { message, data } = await this.api.removeCategory(
+    const { status, message } = await this.api.removeCategory(
       topic_id,
       category_id,
     );
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return;
     }
@@ -314,9 +314,9 @@ export default class Topic {
   }
 
   async addGenreToTopic(topic_id: string, genre_id: string): Promise<void> {
-    const { message, data } = await this.api.addGenre(topic_id, genre_id);
+    const { status, message } = await this.api.addGenre(topic_id, genre_id);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return;
     }
@@ -328,9 +328,9 @@ export default class Topic {
     topic_id: string,
     genre_id: string,
   ): Promise<void> {
-    const { message, data } = await this.api.removeGenre(topic_id, genre_id);
+    const { status, message } = await this.api.removeGenre(topic_id, genre_id);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return;
     }
@@ -339,9 +339,9 @@ export default class Topic {
   }
 
   async addGateToTopic(topic_id: string, gate_id: string): Promise<void> {
-    const { message, data } = await this.api.addGate(topic_id, gate_id);
+    const { status, message } = await this.api.addGate(topic_id, gate_id);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return;
     }
@@ -350,9 +350,9 @@ export default class Topic {
   }
 
   async removeGateFromTopic(topic_id: string, gate_id: string): Promise<void> {
-    const { message, data } = await this.api.removeGate(topic_id, gate_id);
+    const { status, message } = await this.api.removeGate(topic_id, gate_id);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return;
     }

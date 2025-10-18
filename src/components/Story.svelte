@@ -103,22 +103,23 @@
 
     await fetchTopicData(userID);
 
-    // Get all topics in SECTION from the localStorage
-    const storedTopics = GetCache<CategoryInSection[]>(
-      SECTION_CATEGORIES_KEY(section_name),
-    )
-      ?.map((category: CategoryInSection) => category.topics)
-      .flat();
-    if (storedTopics) {
-      // populate the global navigation rail so the section menu highlights this topic and siblings
-      navContext.setContext({
-        items: storedTopics.map(({ name, id }) => ({
-          name: name,
-          link: `/s/${section_name}/${id}?title=${name}`,
-        })),
-        index: storedTopics.findIndex((topic) => topic.name == topic_name),
-      });
-    }
+    navContext.clear();
+    // // Get all topics in SECTION from the localStorage
+    // const storedTopics = GetCache<CategoryInSection[]>(
+    //   SECTION_CATEGORIES_KEY(section_name),
+    // )
+    //   ?.map((category: CategoryInSection) => category.topics)
+    //   .flat();
+    // if (storedTopics) {
+    //   // populate the global navigation rail so the section menu highlights this topic and siblings
+    //   navContext.setContext({
+    //     items: storedTopics.map(({ name, id }) => ({
+    //       name: name,
+    //       link: `/s/${section_name}/${id}?title=${name}`,
+    //     })),
+    //     index: storedTopics.findIndex((topic) => topic.name == topic_name),
+    //   });
+    // }
 
     termsAccepted = GetCache<boolean>(TERMS_KEY) || false; // temp for terms modal
   });

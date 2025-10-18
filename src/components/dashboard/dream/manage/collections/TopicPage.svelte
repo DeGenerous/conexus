@@ -116,20 +116,20 @@
     topic_gates = topic.gates;
     topic_media_files = topic.media_files;
 
-    const topicCategoryIds = topic.categories.map((cat) => cat.id);
-    const storedTopics: Nullable<CollectionTopic[]> = GetCache(
-      MANAGE_CATEGORY_TOPICS_KEY(topicCategoryIds[0]),
-    );
-    if (storedTopics) {
-      // seed the navigation sidebar with adjacent topics so admins can jump between stories without a round trip
-      navContext.setContext({
-        items: storedTopics.map(({ topic_id, topic_name }) => ({
-          name: topic_name,
-          link: `/dashboard/topic/${topic_id}`,
-        })),
-        index: storedTopics.findIndex(({ topic_id }) => topic_id === topic_id),
-      });
-    }
+    // const topicCategoryIds = topic.categories.map((cat) => cat.id);
+    // const storedTopics: Nullable<CollectionTopic[]> = GetCache(
+    //   MANAGE_CATEGORY_TOPICS_KEY(topicCategoryIds[0]),
+    // );
+    // if (storedTopics) {
+    //   // seed the navigation sidebar with adjacent topics so admins can jump between stories without a round trip
+    //   navContext.setContext({
+    //     items: storedTopics.map(({ topic_id, topic_name }) => ({
+    //       name: topic_name,
+    //       link: `/dashboard/topic/${topic_id}`,
+    //     })),
+    //     index: storedTopics.findIndex(({ topic_id }) => topic_id === topic_id),
+    //   });
+    // }
 
     nameDraft = topic_name;
     descriptionDraft = topic_description;

@@ -459,24 +459,25 @@ class Account {
    * Get user stories.
    * @param ended Whether the stories have ended.
    * @param date_range The date range to filter stories.
-   * @returns {Promise<DashboardTopic[] | null>}
+   * @returns {Promise<UserStoriesMetric[] | null>}
    */
   async getUserStories(
     duration: DurationEnum,
     ended: boolean = false,
-  ): Promise<DashboardTopic[] | null> {
-    const { message, data } = await this.api.getStories({
+  ): Promise<UserStoriesMetric[] | null> {
+    const { status, message, data } = await this.api.getStories({
       ended,
       duration,
     });
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return null;
     }
 
     toastStore.show(message || 'Stories retrieved successfully', 'info');
-    return data;
+
+    return data || null;
   }
 
   async streak(action: StreakAction): Promise<void> {

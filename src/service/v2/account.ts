@@ -304,7 +304,7 @@ export default class AccountAPI extends Fetcher {
    * @returns A promise that resolves to an array of user stories or an error.
    */
   async getStories(request: UserStoriesFilter) {
-    return this.request<DashboardTopic[]>(`${this.group}/stories`, {
+    return this.request<UserStoriesMetric[]>(`${this.group}/stories`, {
       method: 'POST',
       body: JSON.stringify(request),
     });

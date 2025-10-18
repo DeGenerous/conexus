@@ -124,3 +124,15 @@ type CreatorTile = {
 } & DisplayUser;
 
 type StreakAction = 'login' | 'play';
+
+type UserStoriesMetric = {
+  story_count: number;
+  stories: DashboardStoryInfo[];
+} & DashboardTopic;
+
+type DashboardStoryInfo = {
+  story_id: string;
+  total_steps: number;
+  started_at: Date;
+  last_step_at: Date;
+};

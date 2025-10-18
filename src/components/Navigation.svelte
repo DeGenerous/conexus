@@ -5,7 +5,6 @@
   // import CoNexusApp from '@lib/view';
   import { GetCache, SetCache, ONBOARDING_KEY } from '@constants/cache';
   import { trailerURL } from '@constants/media';
-  import { NAV_ROUTES } from '@constants/routes';
   import { story, game } from '@stores/conexus.svelte';
   import {
     highlightCommunityPicks,
@@ -30,13 +29,11 @@
     subheading = '',
     activeTab = 'Home',
     arrow,
-    hidden = false,
   }: {
     header: string;
     subheading: string;
     activeTab: string;
     arrow: string;
-    hidden?: boolean;
   } = $props();
 
   // let app: CoNexusApp = new CoNexusApp();
@@ -158,7 +155,7 @@
 
 <svelte:window {onkeydown} {onscroll} />
 
-{#if $story === null && hidden === false}
+{#if $story === null || ($story !== null && activeTab === 'Demo')}
   {#if header}
     <header class="flex-row" class:mobile-home-header={header === 'CoNexus'}>
       {#if header === 'CoNexus'}

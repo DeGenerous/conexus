@@ -50,7 +50,7 @@
 
   let editingBio = $state<boolean>(false);
   let bioInput = $state<string>('');
-  let avatarUrl = $state<string>(blankImage);
+  let avatarUrl = $state<string>('');
   let isUploadingAvatar = $state<boolean>(false);
   let avatarInputEl = $state<HTMLInputElement | undefined>();
 
@@ -67,7 +67,7 @@
 
     usernameInput = user?.username || '';
     bioInput = user?.avatar_bio || '';
-    avatarUrl = user?.avatar_url || blankImage;
+    avatarUrl = user?.avatar_url || '';
   });
 
   // Change password
@@ -138,7 +138,7 @@
 
   const refreshUserAvatar = async () => {
     user = await getCurrentUser(true);
-    avatarUrl = user?.avatar_url || blankImage;
+    avatarUrl = user?.avatar_url || '';
   };
 
   const handleAvatarUpload = async (event: Event) => {
@@ -191,7 +191,7 @@
     />
   </header>
 
-  <img class="pfp round" src={serveUrl(avatarUrl)} alt="PFP" />
+  <img class="pfp round" src={avatarUrl ? serveUrl(avatarUrl) : blankImage} alt="PFP" />
   <button
     onclick={triggerAvatarPicker}
     disabled={isUploadingAvatar}
@@ -294,7 +294,7 @@
             </p>
           {:else}
             <div class="flex-row">
-              <h4>Referral code</h4>
+              <h4>Referral Code</h4>
               <div class="container">
                 <button
                   class="void-btn small-green-tile gap"

@@ -1,4 +1,4 @@
-<button class="void-btn flex rotate-animation" disabled>
+<button class="void-btn flex rotate-animation fade-in" disabled>
   <svg
     width="64"
     height="64"
@@ -44,7 +44,7 @@
   </svg>
 </button>
 
-<style>
+<style lang="scss">
   button {
     width: 2rem;
     cursor: wait !important;

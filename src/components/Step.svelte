@@ -44,6 +44,7 @@
   import FilledEyeSVG from '@components/icons/FilledEye.svelte';
   import ZoomInSVG from '@components/icons/ZoomIn.svelte';
   import ResetSVG from '@components/icons/Reset.svelte';
+  import LoadingSVG from '@components/icons/Loading.svelte';
 
   export let topic_name: string;
   export let restartGame: () => void;
@@ -425,6 +426,11 @@ a11y_no_noninteractive_element_interactions -->
         >
           {step.trait_description}
         </article>
+      {/if}
+
+      {#if game.loading}
+        <LoadingSVG />
+        <h5>Loading...</h5>
       {/if}
 
       <div

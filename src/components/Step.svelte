@@ -348,6 +348,7 @@ a11y_no_noninteractive_element_interactions -->
     style:font-weight={$customFont.bold ? 'bold' : 'normal'}
     style:font-style={$customFont.italic ? 'italic' : ''}
     style:color={$customFont.baseColor}
+    style:cursor={game.loading ? 'wait' : 'default'}
     on:pointerdown={handleWrapperPointer}
   >
     {#if !isGuest}
@@ -426,11 +427,6 @@ a11y_no_noninteractive_element_interactions -->
         >
           {step.trait_description}
         </article>
-      {/if}
-
-      {#if game.loading}
-        <LoadingSVG />
-        <h5>Loading...</h5>
       {/if}
 
       <div

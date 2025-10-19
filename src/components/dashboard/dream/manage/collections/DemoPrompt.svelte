@@ -159,10 +159,18 @@
           </button>
         {/each}
       {:else}
-        <button class="void-btn menu-option" onclick={startDemo} disabled={game.loading}>
+        <button
+          class="void-btn menu-option"
+          onclick={startDemo}
+          disabled={game.loading}
+        >
           Run Demo Again
         </button>
-        <button class="void-btn menu-option" onclick={stopDemo} disabled={game.loading}>
+        <button
+          class="void-btn menu-option"
+          onclick={stopDemo}
+          disabled={game.loading}
+        >
           Exit Demo
         </button>
       {/if}

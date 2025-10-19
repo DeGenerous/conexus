@@ -43,6 +43,7 @@
         userID,
         page,
         pageSize,
+        true,
       );
       creatorCategoryItems = {
         ...creatorCategoryItems,
@@ -127,6 +128,7 @@
             id,
             1,
             pageSize,
+            true,
           );
         }
         ensureSectionCategoryItems(section);

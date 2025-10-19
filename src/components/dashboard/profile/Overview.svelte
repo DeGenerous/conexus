@@ -100,30 +100,30 @@
 
   // Web3 wallets
 
-  const openSelectWalletModal = (wallet_id: string) => {
+  const openSelectWalletModal = (wallet: string) => {
     openModal(
       ensureMessage('select this wallet as the main address for your account'),
       'Select',
-      () => selectMainWallet(wallet_id),
+      () => selectMainWallet(wallet),
     );
   };
 
-  const selectMainWallet = async (wallet_id: string) => {
-    await authentication.selectMainWallet(wallet_id);
+  const selectMainWallet = async (wallet: string) => {
+    await authentication.selectMainWallet(wallet);
     user = await getCurrentUser(true);
   };
 
-  const openRemoveWalletModal = (event: Event, wallet_id: string) => {
+  const openRemoveWalletModal = (event: Event, wallet: string) => {
     event.stopPropagation();
     openModal(
       ensureMessage('unlink this wallet from your account'),
       'Unlink',
-      () => unlinkWallet(wallet_id),
+      () => unlinkWallet(wallet),
     );
   };
 
-  const unlinkWallet = async (walletId: string) => {
-    await authentication.unlinkWallet(walletId);
+  const unlinkWallet = async (wallet: string) => {
+    await authentication.unlinkWallet(wallet);
     user = await getCurrentUser(true);
   };
 
@@ -191,7 +191,11 @@
     />
   </header>
 
-  <img class="pfp round" src={avatarUrl ? serveUrl(avatarUrl) : blankImage} alt="PFP" />
+  <img
+    class="pfp round"
+    src={avatarUrl ? serveUrl(avatarUrl) : blankImage}
+    alt="PFP"
+  />
   <button
     onclick={triggerAvatarPicker}
     disabled={isUploadingAvatar}
@@ -532,7 +536,7 @@
   {#if user.wallets && user.wallets.length >= 1}
     <Dropdown name="Connected Addresses">
       <ul class="flex-row flex-wrap">
-        {#each user.wallets.filter((address) => !address.faux) as { id, wallet }, index}
+        {#each user.wallets.filter((address) => !address.faux) as { wallet }, index}
           <button
             class="wallet void-btn"
             class:small-blue-tile={user.main_wallet !== wallet}
@@ -544,7 +548,7 @@
                 );
                 return;
               }
-              openSelectWalletModal(id!);
+              openSelectWalletModal(wallet!);
             }}
           >
             <h4>{index + 1}</h4>
@@ -552,7 +556,7 @@
               {wallet.slice(0, 6) + '...' + wallet.slice(-4)}
             </p>
             <CloseSVG
-              onclick={(event) => openRemoveWalletModal(event, id!)}
+              onclick={(event) => openRemoveWalletModal(event, wallet!)}
               voidBtn={true}
               dark={wallet === user.main_wallet}
             />

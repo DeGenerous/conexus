@@ -108,8 +108,9 @@
       SECTION_CATEGORIES_KEY(section_name),
     )
       ?.map((category: CategoryInSection) => category.topics)
-      .flat().filter((topic) => topic !== undefined);
-    console.log('Cashed topics:',storedTopics);
+      .flat()
+      .filter((topic) => topic !== undefined);
+    console.log('Cashed topics:', storedTopics);
     if (storedTopics) {
       // populate the global navigation rail so the section menu highlights this topic and siblings
       navContext.setContext({

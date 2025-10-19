@@ -84,8 +84,8 @@ type UnfinishedStory = {
 };
 
 type TopicNeighbor = {
-  topic_id: string;
-  topic_name: string;
+  TopicID: string;
+  TopicName: string;
 };
 
 type TopicPage = {

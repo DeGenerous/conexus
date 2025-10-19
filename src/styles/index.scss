@@ -162,6 +162,7 @@ a {
 
 .tile,
 .menu-tile,
+.small-tile,
 .navigation-tab {
   &:not(.nohover-link, .button-anchor)::after {
     bottom: unset;

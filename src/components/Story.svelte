@@ -1,4 +1,3 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
@@ -28,14 +27,22 @@
   import PlaySVG from '@components/icons/Play.svelte';
   import { toastStore } from '@stores/toast.svelte';
 
-  export let topic_id: string;
-  export let topic_name: string;
+  let {
+    section_name,
+    username,
+    topic_id,
+    topic_name,
+  }: {
+    section_name?: string;
+    username?: string;
+    topic_id: string;
+    topic_name: string;
+  } = $props();
 
-  let scroll: number;
-  let userID: string | undefined = undefined;
-  let isReferred: boolean = false;
+  let userID = $state<string | undefined>(undefined);
+  let isReferred = $state<boolean>(false);
 
-  let termsAccepted: boolean = false; // temp for terms modal
+  let termsAccepted = $state<boolean>(false); // temp for terms modal
 
   const conexusGame: CoNexusGame = new CoNexusGame();
   const view: CoNexusApp = new CoNexusApp();
@@ -51,12 +58,13 @@
     if (audio) game.background_music = audio;
   };
 
-  let inFlight = false;
-  let activeTopic: Nullable<TopicPage> = null;
-  let unfinishedStories: UnfinishedStory[] = [];
+  let inFlight = $state<boolean>(false);
+  let activeTopic = $state<Nullable<TopicPage>>(null);
+  let unfinishedStories = $state<UnfinishedStory[]>([]);
+  let neighborTopics = $state<TopicNeighbor[]>([]);
 
-  let videoError = false;
-  let imageError = false;
+  let videoError = $state<boolean>(false);
+  let imageError = $state<boolean>(false);
 
   // fetch the complete topic page payload plus unfinished stories for the current user
   const fetchTopicData = async (user_id: string | undefined): Promise<void> => {
@@ -130,9 +138,12 @@
 
     return `${day}.${month}.${year.slice(2)} ${hours}:${minutes}`;
   };
-</script>
 
-<svelte:window bind:scrollY={scroll} />
+  // Browse other topics from this category
+  const browseOtherTopics = async () => {
+    neighborTopics = await view.getTopicNeighbors(topic_id, 1, 20);
+  };
+</script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if $story === null}
@@ -174,7 +185,7 @@
               autoplay
               loop
               muted
-              on:error={() => (videoError = true)}
+              onerror={() => (videoError = true)}
             >
               <source
                 src={serveUrl(activeTopic.video_file_url)}
@@ -191,7 +202,7 @@
               alt={activeTopic.name ?? 'Default image'}
               draggable="false"
               width="1024"
-              on:error={() => (imageError = true)}
+              onerror={() => (imageError = true)}
             />
           {/if}
           <div class="flex">
@@ -222,7 +233,7 @@
                 {:else}
                   <button
                     class="button-glowing"
-                    on:click={() => {
+                    onclick={() => {
                       if (!isReferred) {
                         openModal(
                           referralWarning,
@@ -311,7 +322,7 @@
                   target="_blank"
                   class="gate-link"
                   class:inactive-link={!gate.purchase_link}
-                  on:click={(event) => {
+                  onclick={(event) => {
                     if (gate.purchase_link) return;
                     if (
                       !confirm(
@@ -367,6 +378,29 @@
       <p class="description transparent-container white-txt text-shad">
         {activeTopic.description}
       </p>
+
+      {#if !neighborTopics.length}
+        <button onclick={browseOtherTopics}>
+          Explore More Stories From This Category
+        </button>
+      {:else}
+        <ul
+          class="other-topics transparent-container flex-row flex-wrap fade-in"
+        >
+          {#each neighborTopics as neighbor}
+            <li>
+              <a
+                class="small-tile small-blue-tile"
+                href="/{section_name
+                  ? 's'
+                  : 'c'}/{section_name}/{neighbor.TopicID}?title={neighbor.TopicName}"
+              >
+                <p>{neighbor.TopicName}</p>
+              </a>
+            </li>
+          {/each}
+        </ul>
+      {/if}
     {/if}
   {/if}
 {:else}
@@ -568,7 +602,8 @@
     }
   }
 
-  .description {
+  .description,
+  .other-topics {
     width: calc(100% - 3rem);
     max-width: 68rem;
 

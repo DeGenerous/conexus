@@ -34,6 +34,11 @@ const abi_v2 = [
 
 let abi = abi_v1;
 
+/**
+ * Resolve a read-only contract instance for the requested story version.
+ * @param version - The on-chain contract version to target.
+ * @returns A promise that resolves to an ethers Contract connected to the configured provider.
+ */
 const contract = async (version: 'v1' | 'v2' = 'v2'): Promise<any> => {
   const provider = new JsonRpcProvider(
     `https://base-mainnet.g.alchemy.com/v2/${import.meta.env.PUBLIC_ALCHEMY_API_KEY}`,

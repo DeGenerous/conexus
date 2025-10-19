@@ -1,17 +1,28 @@
 import type AccountAPI from '@service/v2/account';
 import { unread, notifications } from '@stores/notification.svelte';
 
+/**
+ * Coordinates notification WebSocket connections and inbox state.
+ */
 export default class NotificationService {
   protected socket: WebSocket | null = null;
   protected api: AccountAPI;
 
+  /**
+   * Create a new notification service instance.
+   * @param api - The account API client to use.
+   * @param socket - Optional pre-existing WebSocket connection.
+   */
   constructor(api: AccountAPI, socket?: WebSocket) {
     this.api = api;
     this.socket = socket || null;
   }
 
+  /**
+   * Establish a WebSocket connection for real-time notifications.
+   * @param token - The authentication token to authorize the connection.
+   */
   async connect(token: string) {
-    // Connect to the notification WebSocket
     this.socket = new WebSocket(
       `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws/notifications?token=${token}`,
     );
@@ -31,13 +42,18 @@ export default class NotificationService {
     };
   }
 
+  /**
+   * Close the current WebSocket connection if present.
+   */
   async disconnect() {
-    // Disconnect the WebSocket
     this.socket?.close();
   }
 
+  /**
+   * Load the initial notification inbox via the REST API.
+   * @param page_size - The number of notifications to fetch.
+   */
   async fetchInitialInbox(page_size: number) {
-    // Fetch initial inbox notifications
     const { status, message, data } = await this.api.notificationInbox(
       1,
       page_size,
@@ -57,8 +73,11 @@ export default class NotificationService {
     unread.set(data.unreadCount);
   }
 
+  /**
+   * Mark a notification as read and update local UI state.
+   * @param id - The notification identifier to mark as read.
+   */
   async markRead(id: string) {
-    // Mark a notification as read
     const { status, message, data } = await this.api.markNotificationRead(id);
     if (status === 'error') {
       console.error(message || 'Unknown error occurred');

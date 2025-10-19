@@ -13,10 +13,16 @@ import { toastStore } from '@stores/toast.svelte';
 
 import NotificationService from './notification';
 
+/**
+ * Provides convenience methods for interacting with account endpoints and caching user state.
+ */
 class Account {
   protected api: AccountAPI;
   notification: NotificationService;
 
+  /**
+   * Instantiate the account service with default dependencies.
+   */
   constructor() {
     this.api = new AccountAPI(import.meta.env.PUBLIC_BACKEND);
     this.notification = new NotificationService(this.api);
@@ -301,6 +307,10 @@ class Account {
     return data || [];
   }
 
+  /**
+   * Delete an existing bookmark folder.
+   * @param folderId - The identifier of the folder to remove.
+   */
   async deleteBookmarkFolder(folderId: string): Promise<void> {
     const { status, message } = await this.api.deleteBookmarkFolder(folderId);
 
@@ -396,6 +406,10 @@ class Account {
     return data || null;
   }
 
+  /**
+   * Retrieve all bookmarks associated with the current user.
+   * @returns A list of bookmarks, or an empty array on failure.
+   */
   async getBookmarks(): Promise<Bookmark[]> {
     const { status, message, data } = await this.api.getBookmarks();
 
@@ -407,6 +421,11 @@ class Account {
     return data || [];
   }
 
+  /**
+   * Check whether the provided topic is already bookmarked.
+   * @param topic_id - The topic identifier to look up.
+   * @returns The bookmark data when present, otherwise null.
+   */
   async isTopicBookmarked(topic_id: string): Promise<Bookmark | null> {
     const { status, message, data } = await this.api.checkBookmark(topic_id);
 
@@ -480,6 +499,10 @@ class Account {
     return data || null;
   }
 
+  /**
+   * Update the user's streak progress.
+   * @param action - The streak action to report.
+   */
   async streak(action: StreakAction): Promise<void> {
     const { status, message } = await this.api.streak(action);
 
@@ -491,6 +514,10 @@ class Account {
     toastStore.show(message || 'Streak updated successfully', 'info');
   }
 
+  /**
+   * Create or update the user's global prompt settings.
+   * @param settings - The prompt configuration to persist.
+   */
   async createOrUpdatePromptSettings(settings: PromptSettings): Promise<void> {
     const { status, message } =
       await this.api.createOrUpdatePromptSettings(settings);
@@ -503,6 +530,10 @@ class Account {
     toastStore.show(message || 'Prompt settings updated successfully', 'info');
   }
 
+  /**
+   * Retrieve the user's saved prompt settings.
+   * @returns The prompt settings or null if unavailable.
+   */
   async getPromptSettings(): Promise<PromptSettings | null> {
     const { message, data } = await this.api.getPromptSettings();
 
@@ -514,6 +545,10 @@ class Account {
     return data;
   }
 
+  /**
+   * Create or update the user's custom theme configuration.
+   * @param settings - The theme settings to persist.
+   */
   async createOrUpdateCustomTheme(settings: CustomTheme): Promise<void> {
     const { status, message } =
       await this.api.createOrUpdateCustomTheme(settings);
@@ -526,6 +561,10 @@ class Account {
     toastStore.show(message || 'Custom theme updated successfully', 'info');
   }
 
+  /**
+   * Retrieve the user's custom theme configuration.
+   * @returns The stored custom theme or null if not set.
+   */
   async getCustomTheme(): Promise<CustomTheme | null> {
     const { message, data } = await this.api.getCustomTheme();
 
@@ -537,6 +576,10 @@ class Account {
     return data;
   }
 
+  /**
+   * Fetch the roles available to the current tenant.
+   * @returns The list of roles, or an empty array on failure.
+   */
   async fetchRoles(): Promise<TenantRole[]> {
     const { status, message, data } = await this.api.getRoles();
 

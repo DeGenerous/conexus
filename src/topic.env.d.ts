@@ -83,6 +83,11 @@ type UnfinishedStory = {
   created_at: string;
 };
 
+type TopicNeighbor = {
+  topic_id: string;
+  topic_name: string;
+};
+
 type TopicPage = {
   id: string;
   name: string;

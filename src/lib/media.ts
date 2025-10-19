@@ -6,17 +6,35 @@ import { MediaAPI } from '@service/v1';
 import { toastStore } from '@stores/toast.svelte';
 import { game } from '@stores/conexus.svelte';
 
+/**
+ * Manages media assets tied to topics and game state.
+ */
 class MediaManager {
   private mediaAPI: MediaAPI;
 
+  /**
+   * Instantiate the media manager with the configured API client.
+   */
   constructor() {
     this.mediaAPI = new MediaAPI(import.meta.env.PUBLIC_BACKEND);
   }
 
+  /**
+   * Request a media file by its identifier.
+   * @param file_id - The media file identifier to serve.
+   * @returns A promise resolving to the server response.
+   */
   async serveFile(file_id: string) {
     return this.mediaAPI.serveFile(file_id);
   }
 
+  /**
+   * Upload a media asset for a topic.
+   * @param file - The file to upload.
+   * @param topic_id - The topic receiving the media.
+   * @param media_type - The type of media being uploaded.
+   * @returns A list of uploaded media identifiers, or an empty array on failure.
+   */
   async uploadTopicMedia(file: File, topic_id: number, media_type: MediaType) {
     const { data, error } = await this.mediaAPI.uploadFile(
       file,
@@ -46,6 +64,12 @@ class MediaManager {
     return data;
   }
 
+  /**
+   * Fetch media identifiers for the given topic.
+   * @param topic_id - The topic identifier to fetch media for.
+   * @param media_type - The type of media to retrieve.
+   * @returns A list of media identifiers, or an empty array when not found.
+   */
   async fetchTopicMedia(
     topic_id: string,
     media_type: MediaType,
@@ -59,6 +83,12 @@ class MediaManager {
     return data;
   }
 
+  /**
+   * Delete media previously uploaded to a topic.
+   * @param topic_id - The topic identifier.
+   * @param file_id - The media identifier to remove.
+   * @param media_type - The media type of the file.
+   */
   async deleteTopicMedia(
     topic_id: number,
     file_id: string,
@@ -81,10 +111,22 @@ class MediaManager {
     // ClearCache(KEY);
   }
 
+  /**
+   * Convenience wrapper to fetch media using a numeric topic id.
+   * @param topic_id - The topic identifier.
+   * @param media_type - The media type to retrieve.
+   * @returns A list of media identifiers, or an empty array when not found.
+   */
   async fetchMedia(topic_id: number, media_type: MediaType): Promise<string[]> {
     return this.fetchTopicMedia(topic_id.toString(), media_type);
   }
 
+  /**
+   * Resolve the primary story image for display.
+   * @param topid_id - The topic identifier.
+   * @param media_type - The media type to request.
+   * @returns A served URL to the image or a fallback placeholder.
+   */
   async fetchStoryImage(
     topid_id: number,
     media_type: MediaType,
@@ -99,6 +141,10 @@ class MediaManager {
     return serveUrl(images[0]);
   }
 
+  /**
+   * Assign a random background image from the topic media to the game state.
+   * @param topic_id - The topic identifier to load media for.
+   */
   async setBackgroundImage(topic_id: number): Promise<void> {
     const images = await this.fetchMedia(topic_id, 'background');
     if (images.length > 0) {
@@ -110,6 +156,10 @@ class MediaManager {
     }
   }
 
+  /**
+   * Configure background music for the game, falling back to default tracks when needed.
+   * @param topic_id - The topic identifier to load media for.
+   */
   async playBackgroundMusic(topic_id: number): Promise<void> {
     let queue: string[] = JSON.parse(localStorage.getItem('queue') ?? '[]');
 
@@ -120,6 +170,9 @@ class MediaManager {
       return;
     }
 
+    /**
+     * Shuffle the default audio tracks to vary the playlist.
+     */
     const shuffle = <T>(array: T[]): T[] => {
       let currentIndex = array.length,
         randomIndex: number;

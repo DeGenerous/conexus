@@ -10,6 +10,9 @@ import { toastStore } from '@stores/toast.svelte';
 export default class Authentication {
   private api: AuthenticationAPI;
 
+  /**
+   * Initialize the authentication service with the configured backend endpoint.
+   */
   constructor() {
     this.api = new AuthenticationAPI(import.meta.env.PUBLIC_BACKEND);
   }

@@ -11,16 +11,25 @@ import { api_error } from '@errors/index';
 import ViewAPI from '@service/v2/view';
 import { availableGenres } from '@stores/view.svelte';
 
+/**
+ * Provides read-only helpers for fetching view data and caching responses.
+ */
 export default class AppView {
   protected api: ViewAPI;
 
   private static instance: AppView;
 
-  // Constructor
+  /**
+   * Initialize the view service with the configured backend endpoint.
+   */
   constructor() {
     this.api = new ViewAPI(import.meta.env.PUBLIC_BACKEND);
   }
 
+  /**
+   * Get or create the singleton AppView instance.
+   * @returns The shared AppView instance.
+   */
   static getInstance(): AppView {
     if (!AppView.instance) {
       AppView.instance = new AppView();
@@ -81,6 +90,10 @@ export default class AppView {
     return data;
   }
 
+  /**
+   * Retrieve all available genres, caching the result for reuse.
+   * @returns A list of genres or an empty array on failure.
+   */
   async getGenres(): Promise<Genre[]> {
     const cachedData = GetCache<Genre[]>(GENRES_KEY);
     if (cachedData) {
@@ -100,6 +113,13 @@ export default class AppView {
 
     return data;
   }
+  /**
+   * Fetch topics for a given category.
+   * @param category_id - The category identifier.
+   * @param page - The page number to request.
+   * @param pageSize - The number of topics per page.
+   * @returns A sorted list of category topics.
+   */
   async getCategoryTopics(
     category_id: string,
     page: number,
@@ -127,6 +147,13 @@ export default class AppView {
     return orderedCategoryTopics;
   }
 
+  /**
+   * Fetch topics grouped by category within a section.
+   * @param section_id - The section identifier.
+   * @param page - The page number to request.
+   * @param pageSize - The number of records per page.
+   * @returns A sorted list of section category topics.
+   */
   async getSectionCategoryTopics(
     section_id: string,
     page: number,
@@ -158,6 +185,16 @@ export default class AppView {
     return orderedSectionCategoriesTopics;
   }
 
+  /**
+   * Search for categories or sections that match a topic query.
+   * @param id - Section or creator identifier.
+   * @param topic - The topic search term.
+   * @param sort_order - The sorting strategy to apply.
+   * @param page - The page number to request.
+   * @param pageSize - The number of items per page.
+   * @param intended - Whether to search sections ('s') or creators ('c').
+   * @returns A sorted list of category topics.
+   */
   async searchCategories(
     id: string,
     topic: string,
@@ -208,6 +245,13 @@ export default class AppView {
     return data.sort((a, b) => a.sort_order - b.sort_order);
   }
 
+  /**
+   * Fetch topics grouped by category for a creator.
+   * @param creator_id - The creator identifier.
+   * @param page - The page number to request.
+   * @param pageSize - The number of records per page.
+   * @returns A sorted list of creator category topics.
+   */
   async getCreatorCategoryTopics(
     creator_id: string,
     page: number,
@@ -240,6 +284,16 @@ export default class AppView {
     return orderedSectionCategoriesTopics;
   }
 
+  /**
+   * Fetch topics by genre for either sections or creators.
+   * @param id - The section or creator identifier.
+   * @param genre_id - The genre identifier.
+   * @param page - The page number to request.
+   * @param pageSize - The number of items per page.
+   * @param sort_order - The chosen topic sort order.
+   * @param intended - Whether the id references a section ('s') or creator ('c').
+   * @returns A list of category topics, or an empty array on failure.
+   */
   async getGenreTopics(
     id: string,
     genre_id: string,
@@ -286,6 +340,38 @@ export default class AppView {
     return data || [];
   }
 
+  /**
+   * Retrieve neighboring topics for a given topic.
+   * @param topic_id - The topic identifier.
+   * @param page - The page number to request.
+   * @param pageSize - The number of neighbors per page.
+   * @returns A list of neighboring topics or an empty array on failure.
+   */
+  async getTopicNeighbors(
+    topic_id: string,
+    page: number,
+    pageSize: number,
+  ): Promise<TopicNeighbor[]> {
+    const { message, data } = await this.api.topicNeighbors(
+      topic_id,
+      page,
+      pageSize,
+    );
+
+    if (!data) {
+      api_error(message);
+      return [];
+    }
+
+    return data;
+  }
+
+  /**
+   * Retrieve the topic page details, optionally scoped to an account.
+   * @param topic_id - The topic identifier.
+   * @param account_id - Optional account identifier.
+   * @returns The topic page payload or null on failure.
+   */
   async getTopicPage(
     topic_id: string,
     account_id?: string,
@@ -299,6 +385,12 @@ export default class AppView {
     return data || null;
   }
 
+  /**
+   * Fetch media identifiers for a topic.
+   * @param topic_id - The topic identifier.
+   * @param media_type - The type of media to request.
+   * @returns A list of media identifiers or null on failure.
+   */
   async getMediaFile(
     topic_id: string,
     media_type: MediaType,
@@ -313,6 +405,11 @@ export default class AppView {
     return data;
   }
 
+  /**
+   * Request a topic media file by identifier.
+   * @param file_id - The media identifier to serve.
+   * @returns The media blob or null on failure.
+   */
   async serveTopicMedia(file_id: string): Promise<Blob | null> {
     const { message, data } = await this.api.serveMedia(file_id);
 
@@ -323,6 +420,11 @@ export default class AppView {
     return data || null;
   }
 
+  /**
+   * Choose a random background image for the provided topic.
+   * @param topic_id - The topic identifier.
+   * @returns The resolved media URL or null when none exist.
+   */
   async setBackgroundImage(topic_id: string): Promise<string | null> {
     const images = await this.getMediaFile(topic_id, 'background');
     if (images && images.length > 0) {
@@ -333,6 +435,11 @@ export default class AppView {
     return null;
   }
 
+  /**
+   * Choose a random background audio track for the provided topic.
+   * @param topic_id - The topic identifier.
+   * @returns The resolved media URL or null when none exist.
+   */
   async playBackgroundMusic(topic_id: string): Promise<string | null> {
     const audios = await this.getMediaFile(topic_id, 'audio');
     if (audios && audios.length > 0) {

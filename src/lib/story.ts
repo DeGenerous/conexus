@@ -6,6 +6,9 @@ import { toastStore } from '@stores/toast.svelte';
 import openModal from '@stores/modal.svelte';
 import { getCurrentUser } from '@utils/route-guard';
 
+/**
+ * Orchestrates interactive story sessions and syncs game state with the backend.
+ */
 export default class CoNexus {
   protected api: StoryAPI;
   private static instance: CoNexus;
@@ -13,7 +16,11 @@ export default class CoNexus {
   step_data: GameData; // The data for the current step of the story.
   maxStep: number = 0; // The maximum step number of the story.
 
-  // Constructor
+  /**
+   * Create a new story session manager.
+   * @param data - Optional initial game data to bootstrap with.
+   * @param task_id - Optional task identifier for pending assets.
+   */
   constructor(data?: GameData, task_id?: string) {
     this.api = new StoryAPI(import.meta.env.PUBLIC_BACKEND);
 
@@ -23,6 +30,10 @@ export default class CoNexus {
     }
   }
 
+  /**
+   * Get or create the global CoNexus instance.
+   * @returns The shared CoNexus instance.
+   */
   static getInstance(): CoNexus {
     if (!CoNexus.instance) {
       CoNexus.instance = new CoNexus();
@@ -175,9 +186,11 @@ export default class CoNexus {
     await this.#setStory(data);
   }
 
-  // Respond to the current game step
+  /**
+   * Submit a choice for the current game step and advance the story.
+   * @param choice - The option index selected by the player.
+   */
   async nextStep(choice: number): Promise<void> {
-    // set store loading to true
     game.loading = true;
 
     // Start new game
@@ -288,6 +301,10 @@ export default class CoNexus {
     story.set(this);
   }
 
+  /**
+   * Restore credits when a story continuation fails.
+   * @param topic_id - The topic identifier tied to the story.
+   */
   async #rollbackCredits(topic_id: string): Promise<void> {
     const { status, message } = await this.api.restoreCredit();
 
@@ -321,6 +338,11 @@ export default class CoNexus {
     }
   }
 
+  /**
+   * Update local state for the currently active step and trigger media preparation.
+   * @param data - The step data returned from the API.
+   * @param task_id - Optional task identifier for pending assets.
+   */
   async #setStepData(data: GameData, task_id?: string): Promise<void> {
     this.step_data = data;
     this.maxStep = Math.max(this.maxStep, data.step);

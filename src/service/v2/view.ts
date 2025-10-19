@@ -212,6 +212,19 @@ export default class ViewAPI extends Fetcher {
   }
 
   /**
+   * Retrieves the topic neighbors in category.
+   * @param topic_id The ID of the topic to retrieve.
+   * @param page The page number to retrieve.
+   * @param pageSize The number of topics per page.
+   * @returns A promise that resolves to an array of TopicNeighbor objects.
+   */
+  async topicNeighbors(topic_id: string, page: number, pageSize: number) {
+    return this.request<TopicNeighbor[]>(
+      `${this.topicGroup}/neighbors/${topic_id}?page=${page}&page_size=${pageSize}`,
+    );
+  }
+
+  /**
    * Retrieves the details of a specific topic.
    * @param topic_id The ID of the topic to retrieve.
    * @param account_id The ID of the account making the request.

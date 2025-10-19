@@ -289,7 +289,7 @@
       {#each topicItems as topic (topic.id)}
         <a class="tile" href={NAV_ROUTES.EXPLORE(topic.topic_id)}>
           <h5>{topic.topic_name}</h5>
-          <div class="flex">
+          <div class="tile-data flex">
             <span class="input-container">
               <label for="story-order-{topic.topic_id}">Order</label>
               <input
@@ -416,16 +416,9 @@
       opacity: 0.75;
     }
 
-    .tile {
-      div {
-        width: 100%;
-        flex-flow: column nowrap;
-        gap: 1rem;
-        padding: 1rem;
-        border-radius: 0.75rem;
-        @include box-shadow(soft, inset);
-        @include dark-blue(0.5);
-      }
+    .tile-data {
+      padding: 1rem;
+      gap: 1rem;
     }
   }
 </style>

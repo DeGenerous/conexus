@@ -271,6 +271,16 @@
     white-space: wrap;
   }
 
+  .tile-data {
+    width: 100%;
+    flex-flow: column nowrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.75rem;
+    background-color: $transparent-black;
+    @include box-shadow(soft, inset);
+  }
+
   @include respond-up(tablet) {
     width: 15rem;
 

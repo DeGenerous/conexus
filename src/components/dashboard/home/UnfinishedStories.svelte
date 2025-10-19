@@ -11,7 +11,7 @@
 
   let account: Account = new Account();
 
-  let unfinishedStories = $state<DashboardTopic[] | null>(null);
+  let unfinishedStories = $state<UserStoriesMetric[] | null>(null);
 
   let timeRanges: DurationEnum[] = [
     '1 DAY',
@@ -26,6 +26,7 @@
   const fetchUnfinishedStories = async (range: DurationEnum) => {
     SetCache(UNFINISHED_STORIES_RANGE_KEY, range);
     unfinishedStories = await account.getUserStories(range);
+    console.log(unfinishedStories);
   };
 
   $effect(() => {
@@ -73,6 +74,9 @@
           width="1024"
         />
         <h5>{topic.name}</h5>
+        <div class="tile-data flex">
+          <p>Stories Played: {topic.story_count}</p>
+        </div>
       </a>
     {/each}
   {/if}

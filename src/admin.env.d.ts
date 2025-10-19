@@ -63,7 +63,7 @@ type TenantRole = {
   monthly_credits: number;
   play_without_media: number;
   play_with_media: number;
-  can_genenrate_media: boolean;
+  can_generate_media: boolean;
   create_topic_cost: number;
   publish_topic_cost: number;
 };

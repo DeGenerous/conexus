@@ -1,8 +1,10 @@
 import {
   USER_KEY,
   REFERRAL_CODE_KEY,
-  TTL_SHORT,
   SUBSCRIPTION_STATUS_KEY,
+  ROLES_KEY,
+  TTL_SHORT,
+  TTL_MONTH,
   ClearCache,
   GetCache,
   SetCache,
@@ -34,6 +36,8 @@ class Account {
    * @returns {Promise<User | null>}
    */
   static async getUser(refresh: boolean = false): Promise<User | null> {
+    if (refresh) ClearCache('auth');
+
     // Try getting user data from localStorage
     const cachedUser = GetCache<User>(USER_KEY);
     if (cachedUser) {
@@ -580,13 +584,22 @@ class Account {
    * Fetch the roles available to the current tenant.
    * @returns The list of roles, or an empty array on failure.
    */
-  async fetchRoles(): Promise<TenantRole[]> {
+  async fetchRoles(refresh: boolean = false): Promise<TenantRole[]> {
+    if (refresh) ClearCache(ROLES_KEY);
+
+    const cached = GetCache<TenantRole[]>(ROLES_KEY);
+    if (cached) {
+      return cached;
+    }
+
     const { status, message, data } = await this.api.getRoles();
 
     if (status === 'error') {
       api_error(message);
       return [];
     }
+
+    SetCache(ROLES_KEY, data, TTL_MONTH);
 
     return data || [];
   }

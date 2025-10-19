@@ -43,6 +43,8 @@
   const authentication: Authentication = new Authentication();
 
   let user = $state<Nullable<User>>(null);
+  let roles = $state<TenantRole[]>([]);
+  let userRole = $state<Nullable<TenantRole>>(null);
   let subscribedToNewsletter = $state<boolean>(false);
 
   let editingUsername = $state<boolean>(false);
@@ -62,6 +64,11 @@
   onMount(async () => {
     user = await getCurrentUser(true);
     console.log(user);
+
+    roles = await account.fetchRoles();
+    console.log(roles);
+
+    userRole = roles.find((role) => role.name === user?.role_name) || null;
 
     if (user && user.email_confirmed) checkSubscription();
 
@@ -218,38 +225,6 @@
 
   <div class="dream-container">
     <div class="flex-row">
-      <h4>Credits</h4>
-      <div class="credits container">
-        <span class="flex">
-          <h5>
-            Monthly:
-            <strong>
-              {user.credits} /
-              {#if user.role_name === 'Guest'}
-                10
-              {:else if user.role_name === 'Player'}
-                100
-              {:else if user.role_name === 'Creator'}
-                690
-              {:else if user.role_name === 'Admin'}
-                ∞
-              {/if}
-            </strong>
-          </h5>
-          <p class="caption">Included each month. Resets on the 1st.</p>
-        </span>
-        <span class="flex">
-          <h5>
-            Bonus: <strong>{user.bonus}</strong>
-          </h5>
-          <p class="caption">
-            Extra credits from referrals or promos. Don’t reset.
-          </p>
-        </span>
-      </div>
-    </div>
-
-    <div class="flex-row">
       <h4>Username</h4>
       <div class="container">
         {#if editingUsername}
@@ -283,6 +258,34 @@
         {:else}
           <EditSVG bind:editing={editingUsername} />
         {/if}
+      </div>
+    </div>
+
+    <div class="flex-row">
+      <h4>Credits</h4>
+      <div class="credits container">
+        <span class="flex">
+          <h5>
+            Monthly:
+            <strong>
+              {user.credits}
+              {#if userRole !== null && userRole !== undefined}
+                / {userRole.monthly_credits === -1
+                  ? '∞'
+                  : userRole.monthly_credits}
+              {/if}
+            </strong>
+          </h5>
+          <p class="caption">Included each month. Resets on the 1st.</p>
+        </span>
+        <span class="flex">
+          <h5>
+            Bonus: <strong>{user.bonus}</strong>
+          </h5>
+          <p class="caption">
+            Extra credits from referrals or promos. Don’t reset.
+          </p>
+        </span>
       </div>
     </div>
 

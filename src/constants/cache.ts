@@ -40,6 +40,8 @@ export const COOKIE_CONSENT_KEY = 'cookie_consent';
 
 export const GENRES_KEY = 'genres';
 
+export const ROLES_KEY = 'roles';
+
 export const TERMS_KEY = 'terms_accepted'; // temp for terms modal
 
 /* -------------------------------------------------------------------- */
@@ -97,6 +99,8 @@ function saveImportantAndClearCache() {
   const currentDraft = localStorage.getItem(CURRENT_DRAFT_KEY);
   const user = localStorage.getItem(USER_KEY); // save user object too
   const termsAccepted = localStorage.getItem(TERMS_KEY); // temp for terms modal
+  const genres = localStorage.getItem(GENRES_KEY);
+  const roles = localStorage.getItem(ROLES_KEY);
   const unfinishedStoriesRange = localStorage.getItem(
     UNFINISHED_STORIES_RANGE_KEY,
   );
@@ -118,6 +122,8 @@ function saveImportantAndClearCache() {
   if (currentDraft) localStorage.setItem(CURRENT_DRAFT_KEY, currentDraft);
   if (user) localStorage.setItem(USER_KEY, user);
   if (termsAccepted) localStorage.setItem(TERMS_KEY, termsAccepted); // temp
+  if (genres) localStorage.setItem(GENRES_KEY, genres);
+  if (roles) localStorage.setItem(ROLES_KEY, roles);
   if (unfinishedStoriesRange)
     localStorage.setItem(UNFINISHED_STORIES_RANGE_KEY, unfinishedStoriesRange);
   if (finishedStoriesRange)

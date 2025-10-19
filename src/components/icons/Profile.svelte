@@ -62,6 +62,9 @@
         href="/dashboard#/profile/bookmarks"
         target="_self">Bookmarks</a
       >
+      <a class="nohover-link" href="/dashboard#/profile/settings" target="_self"
+        >Settings</a
+      >
       <a class="nohover-link" href="/dashboard#/omnihub" target="_self"
         >OmniHub</a
       >

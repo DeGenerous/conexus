@@ -108,49 +108,49 @@
     });
   };
 
-  let tippyInstance: Instance;
-  const startOnboarding = () =>
-    setTimeout(() => {
-      const isOnboarded = GetCache(ONBOARDING_KEY);
-      if (isOnboarded) return;
+  // let tippyInstance: Instance;
+  // const startOnboarding = () =>
+  //   setTimeout(() => {
+  //     const isOnboarded = GetCache(ONBOARDING_KEY);
+  //     if (isOnboarded) return;
 
-      onboarding = true;
+  //     onboarding = true;
 
-      // Show the tooltip
-      const intro = document.getElementById('intro') as HTMLSpanElement;
+  //     // Show the tooltip
+  //     const intro = document.getElementById('intro') as HTMLSpanElement;
 
-      tippyInstance = tippy(intro, {
-        content: 'Meet CoNexus in 30 seconds',
-        trigger: 'manual',
-        placement: 'bottom',
-        hideOnClick: false,
-      });
+  //     tippyInstance = tippy(intro, {
+  //       content: 'Meet CoNexus in 30 seconds',
+  //       trigger: 'manual',
+  //       placement: 'bottom',
+  //       hideOnClick: false,
+  //     });
 
-      tippyInstance.show();
+  //     tippyInstance.show();
 
-      // Disable scroll
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
-      setTimeout(() => document.documentElement.classList.add('no-scroll'));
-    });
+  //     // Disable scroll
+  //     window.scrollTo({
+  //       top: 0,
+  //       behavior: 'smooth',
+  //     });
+  //     setTimeout(() => document.documentElement.classList.add('no-scroll'));
+  //   });
 
-  const finishOnboarding = () => {
-    SetCache(ONBOARDING_KEY, true);
-    onboarding = false;
+  // const finishOnboarding = () => {
+  //   SetCache(ONBOARDING_KEY, true);
+  //   onboarding = false;
 
-    // Update the store to apply highlighted styling
-    $highlightCommunityPicks = true;
+  //   // Update the store to apply highlighted styling
+  //   $highlightCommunityPicks = true;
 
-    // Destroy the tooltip
-    tippyInstance.destroy();
+  //   // Destroy the tooltip
+  //   tippyInstance.destroy();
 
-    // Enable scroll
-    document.documentElement.classList.remove('no-scroll');
-  };
+  //   // Enable scroll
+  //   document.documentElement.classList.remove('no-scroll');
+  // };
 
-  onMount(startOnboarding);
+  // onMount(startOnboarding);
 </script>
 
 <svelte:window {onkeydown} {onscroll} />
@@ -236,7 +236,7 @@
           <PlaySVG
             onclick={() => {
               showIntro = true;
-              if (onboarding) finishOnboarding();
+              // if (onboarding) finishOnboarding();
             }}
             text="Watch 30-sec Intro"
             voidBtn={false}

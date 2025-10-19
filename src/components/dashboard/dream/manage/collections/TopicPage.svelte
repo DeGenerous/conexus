@@ -5,10 +5,8 @@
 
   import { NAV_ROUTES } from '@constants/routes';
   import TopicManagement from '@lib/topics';
-  import { GetCache, MANAGE_CATEGORY_TOPICS_KEY } from '@constants/cache';
   import openModal from '@stores/modal.svelte';
   import { ensureMessage } from '@constants/modal';
-  import { navContext } from '@stores/navigation.svelte';
   import { userState } from '@utils/route-guard';
   import {
     promptSettings,
@@ -115,22 +113,6 @@
     topic_genres = topic.genres;
     topic_gates = topic.gates;
     topic_media_files = topic.media_files;
-
-    const topicCategoryIds = topic.categories.map((cat) => cat.id);
-    const storedTopics: Nullable<CollectionTopic[]> = GetCache(
-      MANAGE_CATEGORY_TOPICS_KEY(topicCategoryIds[0]),
-    );
-    console.log('Cached topics:', storedTopics);
-    if (storedTopics) {
-      // seed the navigation sidebar with adjacent topics so admins can jump between stories without a round trip
-      navContext.setContext({
-        items: storedTopics.map(({ topic_id, topic_name }) => ({
-          name: topic_name,
-          link: `/dashboard/topic/${topic_id}`,
-        })),
-        index: storedTopics.findIndex(({ topic_id }) => topic_id === topic_id),
-      });
-    }
 
     nameDraft = topic_name;
     descriptionDraft = topic_description;

@@ -1,12 +1,7 @@
 // import { get } from 'svelte/store';
 
 import { getCurrentUser } from './route-guard';
-import {
-  GetCache,
-  SetCache,
-  POTENTIALS_KEY,
-  TTL_SHORT,
-} from '@constants/cache';
+import { GetCache, SetCache, POTENTIALS_KEY, TTL_HOUR } from '@constants/cache';
 import {
   type NFT,
   nftTile,
@@ -70,7 +65,7 @@ const getNFTs = async (): Promise<boolean> => {
       totalPower += Number(potential.level);
     }
 
-    SetCache(POTENTIALS_KEY, NFTs, TTL_SHORT);
+    SetCache(POTENTIALS_KEY, NFTs, TTL_HOUR);
   }
 
   if (NFTs.length) {

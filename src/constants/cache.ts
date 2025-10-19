@@ -56,22 +56,11 @@ export const CATEGORIES_KEY = 'categories';
 // 1 HOUR
 /* -------------------------------------------------------------------- */
 
-// CACHE ALL DATA TO PLAY 1 HOUR WITHOUT UNNECESSARY REQUESTS:
-// 1) user object
-// 2) all CATEGORIES inside SECTION (separate for every SECTION)
-// 3) all TOPICS inside CATEGORY (separate for every CATEGORY)
-// 4) all TOPICS inside CATEGORY for the DASHBOARD-DREAM-MANAGE (separate for every CATEGORY)
-
 export const USER_KEY = 'user';
 
-export const SECTION_CATEGORIES_KEY = (section: string): string =>
-  `section_categories[${section}]`;
-
-export const CATEGORY_TOPICS_KEY = (category: string): string =>
-  `category_topics[${category}]`;
-
-export const MANAGE_CATEGORY_TOPICS_KEY = (category: string): string =>
-  `manage_category_topics[${category}]`;
+// Cache OmniHub data
+export const POTENTIALS_KEY = 'potentials';
+export const SELECTED_POTENTIAL_KEY = 'selected_potential';
 
 /* -------------------------------------------------------------------- */
 // 15 MINUTES
@@ -80,10 +69,6 @@ export const MANAGE_CATEGORY_TOPICS_KEY = (category: string): string =>
 // Cache subscription status & referral codes
 export const SUBSCRIPTION_STATUS_KEY = 'subscription_status';
 export const REFERRAL_CODE_KEY = 'referral_code';
-
-// Cache OmniHub data
-export const POTENTIALS_KEY = 'potentials';
-export const SELECTED_POTENTIAL_KEY = 'selected_potential';
 
 /* -------------------------------------------------------------------- */
 
@@ -95,14 +80,7 @@ const authKeys = [
   SELECTED_POTENTIAL_KEY,
 ];
 
-const viewKeys = [
-  SECTIONS_KEY,
-  CATEGORIES_KEY,
-  GENRES_KEY,
-  SECTION_CATEGORIES_KEY('Community Picks'),
-  SECTION_CATEGORIES_KEY('Collabs'),
-  SECTION_CATEGORIES_KEY('Dischordian Saga'),
-];
+const viewKeys = [SECTIONS_KEY, CATEGORIES_KEY, GENRES_KEY];
 
 function saveImportantAndClearCache() {
   // saving important values

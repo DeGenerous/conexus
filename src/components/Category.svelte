@@ -3,12 +3,6 @@
   import { onMount } from 'svelte';
 
   import CoNexusApp from '@lib/view';
-  import {
-    SetCache,
-    GetCache,
-    CATEGORY_TOPICS_KEY,
-    TTL_HOUR,
-  } from '@constants/cache';
 
   import TopicTile from '@components/utils/TopicTile.svelte';
   import SortingSVG from '@components/icons/Sorting.svelte';
@@ -39,18 +33,6 @@
   const fetchTopics = async () => {
     if (!category || loading || isEndReached) return;
 
-    const cachedTopics = GetCache<CategoryTopic[]>(
-      CATEGORY_TOPICS_KEY(category.name),
-    );
-    if (cachedTopics) {
-      topics = cachedTopics;
-      sortedTopics = applySorting(topics);
-      if (topics.length === category.topic_count) {
-        isEndReached = true;
-        return;
-      }
-    }
-
     loading = true;
 
     const response = await view.getCategoryTopics(
@@ -63,7 +45,6 @@
     if (response && response.length > 0) {
       topics = [...topics, ...response];
       total += response.length;
-      SetCache(CATEGORY_TOPICS_KEY(category.name), topics, TTL_HOUR);
     }
 
     // Stop fetching when we've loaded all topics

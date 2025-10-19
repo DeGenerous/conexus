@@ -6,6 +6,7 @@
     SetCache,
     POTENTIALS_KEY,
     SELECTED_POTENTIAL_KEY,
+    TTL_HOUR,
   } from '@constants/cache';
   import { navContext } from '@stores/navigation.svelte';
   import { type NFT } from '@stores/omnihub.svelte';
@@ -35,7 +36,7 @@
       items: allPotentials.map((p) => ({
         name: `#${p.token_id}`,
         action() {
-          SetCache(SELECTED_POTENTIAL_KEY, p);
+          SetCache(SELECTED_POTENTIAL_KEY, p, TTL_HOUR);
           window.location.reload();
         },
       })),

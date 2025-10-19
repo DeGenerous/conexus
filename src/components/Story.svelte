@@ -3,11 +3,7 @@
   import { onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
 
-  import {
-    GetCache,
-    SECTION_CATEGORIES_KEY,
-    TERMS_KEY,
-  } from '@constants/cache';
+  import { GetCache, TERMS_KEY } from '@constants/cache';
   import { blankImage, serveUrl } from '@constants/media';
   import { ensureMessage, referralWarning } from '@constants/modal';
   import { NAV_ROUTES } from '@constants/routes';
@@ -15,7 +11,6 @@
   import CoNexusApp from '@lib/view';
   import { story, game } from '@stores/conexus.svelte';
   import openModal, { showProfile } from '@stores/modal.svelte';
-  import { navContext } from '@stores/navigation.svelte';
   import detectIOS from '@utils/ios-device';
   import { userState, getCurrentUser } from '@utils/route-guard';
 
@@ -32,7 +27,6 @@
   import PlaySVG from '@components/icons/Play.svelte';
   import { toastStore } from '@stores/toast.svelte';
 
-  export let section_name: string;
   export let topic_id: string;
   export let topic_name: string;
 
@@ -102,25 +96,6 @@
     isReferred = await userState('referred');
 
     await fetchTopicData(userID);
-
-    // Get all topics in SECTION from the localStorage
-    const storedTopics = GetCache<CategoryInSection[]>(
-      SECTION_CATEGORIES_KEY(section_name),
-    )
-      ?.map((category: CategoryInSection) => category.topics)
-      .flat()
-      .filter((topic) => topic !== undefined);
-    console.log('Cashed topics:', storedTopics);
-    if (storedTopics) {
-      // populate the global navigation rail so the section menu highlights this topic and siblings
-      navContext.setContext({
-        items: storedTopics.map(({ name, id }) => ({
-          name: name,
-          link: `/s/${section_name}/${id}?title=${name}`,
-        })),
-        index: storedTopics.findIndex((topic) => topic.name == topic_name),
-      });
-    }
 
     termsAccepted = GetCache<boolean>(TERMS_KEY) || false; // temp for terms modal
   });

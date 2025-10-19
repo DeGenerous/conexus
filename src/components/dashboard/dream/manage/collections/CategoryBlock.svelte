@@ -4,7 +4,6 @@
 
   import { NAV_ROUTES } from '@constants/routes';
   import Topics from '@lib/topics';
-  import { SetCache, MANAGE_CATEGORY_TOPICS_KEY } from '@constants/cache';
   import { toastStore } from '@stores/toast.svelte';
 
   import SelectorSVG from '@components/icons/Selector.svelte';
@@ -56,10 +55,6 @@
       refresh,
     );
     workingCategory.topic_count = workingCategory.topics?.length ?? 0;
-    SetCache(
-      MANAGE_CATEGORY_TOPICS_KEY(workingCategory.category_id),
-      workingCategory.topics ?? [],
-    );
     syncTopicItems(workingCategory.topics ?? []);
   }
 
@@ -217,10 +212,6 @@
     topicItems = updated;
     workingCategory.topics = updated.map(({ id, ...rest }) => ({ ...rest }));
     workingCategory.topic_count = workingCategory.topics?.length ?? 0;
-    SetCache(
-      MANAGE_CATEGORY_TOPICS_KEY(workingCategory.category_id),
-      workingCategory.topics ?? [],
-    );
 
     // build a minimal patch set by comparing new order against the last known ordering
     const updates = updated

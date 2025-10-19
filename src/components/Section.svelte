@@ -3,12 +3,6 @@
   import { onMount } from 'svelte';
 
   import CoNexusApp from '@lib/view';
-  import {
-    SetCache,
-    GetCache,
-    SECTION_CATEGORIES_KEY,
-    TTL_HOUR,
-  } from '@constants/cache';
 
   import Category from '@components/Category.svelte';
   import SearchAndGenre from '@components/Filters.svelte';
@@ -66,24 +60,8 @@
     if (response && response.length > 0) {
       setTimeout(() => {
         categories = [...categories, ...response];
-
-        if (intended === 's') {
-          SetCache(
-            SECTION_CATEGORIES_KEY(name),
-            categories.map((cat) => {
-              const orderedTopics = cat.topics?.sort((a, b) => {
-                if (a.sort_order > b.sort_order) return 1;
-                if (a.sort_order < b.sort_order) return -1;
-                return 0;
-              });
-              cat.topics = orderedTopics;
-              return cat;
-            }),
-            TTL_HOUR,
-          );
-        }
         loading = false;
-      }, 600); // Simulate loading delay
+      }, 150); // Simulate loading delay
       showNoCategoriesMessage = false; // Hide message if categories are found
     } else {
       allLoaded = true; // Stop fetching more categories
@@ -109,16 +87,7 @@
       currExplorerId = explorer.id;
 
       if (intended === 's') {
-        // Handle section-specific logic
-        const cachedCategories = GetCache<SectionCategoryTopics[]>(
-          SECTION_CATEGORIES_KEY(name),
-        );
-
-        if (cachedCategories) {
-          categories = cachedCategories;
-        } else {
-          await fetchCategories();
-        }
+        await fetchCategories();
 
         const data = await app.getGenres();
         genres = data.sort((a, b) => a.name.localeCompare(b.name));

@@ -3,7 +3,7 @@
     SetCache,
     POTENTIALS_KEY,
     SELECTED_POTENTIAL_KEY,
-    TTL_SHORT,
+    TTL_HOUR,
   } from '@constants/cache';
 
   import Ranks from '@components/dashboard/omnihub/Ranks.svelte';
@@ -68,8 +68,8 @@
         class="tile potential-tile"
         href="/dashboard/potential"
         onclick={() => {
-          SetCache(POTENTIALS_KEY, potentials, TTL_SHORT);
-          SetCache(SELECTED_POTENTIAL_KEY, nft, TTL_SHORT);
+          SetCache(POTENTIALS_KEY, potentials, TTL_HOUR);
+          SetCache(SELECTED_POTENTIAL_KEY, nft, TTL_HOUR);
         }}
       >
         <img src={nft.image} alt={nft.name} />

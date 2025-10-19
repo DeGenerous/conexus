@@ -5,6 +5,7 @@ import {
   TTL_DAY,
   GetCache,
   SetCache,
+  ClearCache,
 } from '@constants/cache';
 import { serveUrl } from '@constants/media';
 import { api_error } from '@errors/index';
@@ -94,7 +95,9 @@ export default class AppView {
    * Retrieve all available genres, caching the result for reuse.
    * @returns A list of genres or an empty array on failure.
    */
-  async getGenres(): Promise<Genre[]> {
+  async getGenres(refresh: boolean = false): Promise<Genre[]> {
+    if (refresh) ClearCache(GENRES_KEY);
+
     const cachedData = GetCache<Genre[]>(GENRES_KEY);
     if (cachedData) {
       return cachedData;

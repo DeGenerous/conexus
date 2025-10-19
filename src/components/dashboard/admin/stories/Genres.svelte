@@ -22,7 +22,7 @@
     if (!newGenreName.trim()) return;
 
     await admin.createNewGenre(newGenreName);
-    genres = await view.getGenres();
+    genres = await view.getGenres(true);
 
     newGenreName = '';
   };
@@ -30,7 +30,7 @@
   const deleteGenre = async (id: string) => {
     openModal(ensureMessage('delete this genre'), 'Delete', async () => {
       await admin.deleteGenre(id);
-      genres = await view.getGenres();
+      genres = await view.getGenres(true);
     });
   };
 

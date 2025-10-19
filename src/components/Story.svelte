@@ -13,6 +13,7 @@
   import openModal, { showProfile } from '@stores/modal.svelte';
   import detectIOS from '@utils/ios-device';
   import { userState, getCurrentUser } from '@utils/route-guard';
+  import { navContext } from '@stores/navigation.svelte';
 
   import Bookmark from '@components/utils/Bookmark.svelte';
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
@@ -94,6 +95,8 @@
     const user = await getCurrentUser();
     userID = user?.id;
     isReferred = await userState('referred');
+
+    navContext.clear();
 
     await fetchTopicData(userID);
 

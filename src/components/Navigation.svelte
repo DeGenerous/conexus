@@ -2,13 +2,11 @@
   import { onMount } from 'svelte';
   import tippy, { type Instance } from 'tippy.js';
 
-  // import CoNexusApp from '@lib/view';
   import { GetCache, SetCache, ONBOARDING_KEY } from '@constants/cache';
   import { trailerURL } from '@constants/media';
   import { story, game } from '@stores/conexus.svelte';
   import {
     highlightCommunityPicks,
-    navContext,
     prevItem,
     nextItem,
   } from '@stores/navigation.svelte';
@@ -36,12 +34,9 @@
     arrow: string;
   } = $props();
 
-  // let app: CoNexusApp = new CoNexusApp();
-
   let hiddenHeader = $state<boolean>(false);
   let showIntro = $state<boolean>(false);
   let onboarding = $state<boolean>(false);
-  let sections: string[] = ['Community Picks', 'Collabs', 'Dischordian Saga'];
 
   const navigateTo = (item: Nullable<NavItem>) => {
     if (!item) return;
@@ -51,21 +46,6 @@
       item.action();
     }
   };
-
-  // onMount(async () => {
-  //   sections = await app
-  //     .getSections()
-  //     .then((data) => data.map(({ id, name }) => name));
-  // });
-
-  $effect(() => {
-    if (sections.includes(activeTab)) {
-      navContext.setContext({
-        items: sections.map((name) => ({ name, link: `/s/${name}` })),
-        index: sections.indexOf(activeTab),
-      });
-    }
-  });
 
   // FULLSCREEN
 
@@ -87,7 +67,7 @@
     if (event.key === 'f') game.fullscreen = !game.fullscreen;
   };
 
-  // ONBOARDING && PC-Hide
+  // PC-Hide
   const clamp = 64; // px after which hiding can kick in
 
   let lastY = 0;
@@ -107,6 +87,8 @@
       ticking = false;
     });
   };
+
+  // ONBOARDING
 
   // let tippyInstance: Instance;
   // const startOnboarding = () =>

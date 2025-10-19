@@ -3,6 +3,7 @@
   import { onMount } from 'svelte';
 
   import CoNexusApp from '@lib/view';
+  import { navContext } from '@stores/navigation.svelte';
 
   import Category from '@components/Category.svelte';
   import SearchAndGenre from '@components/Filters.svelte';
@@ -21,6 +22,7 @@
 
   let currExplorerId = $state<string>('');
 
+  let sections = $state<Section[]>([]);
   let categories = $state<SectionCategoryTopics[]>([]);
   let genres = $state<Genre[]>([]);
 
@@ -70,6 +72,14 @@
   };
 
   onMount(async () => {
+    sections = await app.getSections();
+    if (sections.map((s) => s.name).includes(name)) {
+      navContext.setContext({
+        items: sections.map((s) => ({ name: s.name, link: `/s/${s.name}` })),
+        index: sections.findIndex((s) => s.name === name),
+      });
+    }
+
     try {
       let explorer: Section | Creator | null = null;
 

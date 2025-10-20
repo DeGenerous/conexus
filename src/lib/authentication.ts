@@ -149,10 +149,7 @@ export default class Authentication {
     }
 
     if (!data) {
-      toastStore.show(
-        'Wallet selection returned without user data.',
-        'error',
-      );
+      toastStore.show('Wallet selection returned without user data.', 'error');
       return null;
     }
 

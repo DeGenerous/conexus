@@ -33,8 +33,8 @@ class MediaManager {
    * @param file - The file to upload.
    * @param topic_id - The topic receiving the media.
    * @param media_type - The type of media being uploaded.
-  * @returns A list of uploaded media identifiers, or an empty array on failure.
-  */
+   * @returns A list of uploaded media identifiers, or an empty array on failure.
+   */
   async uploadTopicMedia(file: File, topic_id: number, media_type: MediaType) {
     const { status, message, data, error } = await this.mediaAPI.uploadFile(
       file,
@@ -43,7 +43,8 @@ class MediaManager {
     );
 
     if (status === 'error') {
-      const detail = error?.details || message || 'Unable to process media upload';
+      const detail =
+        error?.details || message || 'Unable to process media upload';
       if (
         detail.includes('pq: duplicate key value violates unique constraint')
       ) {

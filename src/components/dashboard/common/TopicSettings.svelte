@@ -119,13 +119,16 @@
         </select>
       </div>
 
+      <!-- TODO: Enable the Kids Mode when available -->
       <div
         class="kids-mode input-container transition round-8 shad"
         class:selected={$promptSettings.kids_mode}
+        style:opacity="0.5"
       >
         <label for="kids-mode transition">Kids mode</label>
-        <select id="kids-mode" bind:value={$promptSettings.kids_mode}>
-          <option value="">Off</option>
+        <select id="kids-mode" bind:value={$promptSettings.kids_mode} disabled>
+          <!-- <option value="">Off</option> -->
+          <option value="">Coming Soon</option>
           {#each dreamData.kidsMode as option}
             <option value={option}>{option}</option>
           {/each}

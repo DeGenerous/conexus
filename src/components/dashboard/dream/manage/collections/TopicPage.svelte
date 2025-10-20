@@ -277,13 +277,15 @@
           >
             {topic_visibility === 'public' ? 'Public' : 'Private'}
           </button>
-          <button
-            class="rose-btn"
-            use:tippy={{ content: 'Download story file', animation: 'scale' }}
-            onclick={downloadTopicJson}
-          >
-            Export JSON
-          </button>
+          {#if isAdmin}
+            <button
+              class="rose-btn"
+              use:tippy={{ content: 'Download story file', animation: 'scale' }}
+              onclick={downloadTopicJson}
+            >
+              Export JSON
+            </button>
+          {/if}
           <a
             class="button-anchor purple-btn"
             href="/dashboard/topic/{topic_id}/demo?demoID={topic_id}&demoName={topic_name}"

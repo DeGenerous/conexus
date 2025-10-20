@@ -53,6 +53,7 @@
   let editingBio = $state<boolean>(false);
   let bioInput = $state<string>('');
   let avatarUrl = $state<string>('');
+  let avatarFileId = $state<string>('');
   let isUploadingAvatar = $state<boolean>(false);
   let avatarInputEl = $state<HTMLInputElement | undefined>();
 
@@ -75,6 +76,7 @@
     usernameInput = user?.username || '';
     bioInput = user?.avatar_bio || '';
     avatarUrl = user?.avatar_url || '';
+    avatarFileId = user?.avatar_file_id || '';
   });
 
   // Change password
@@ -200,7 +202,11 @@
 
   <img
     class="pfp round"
-    src={avatarUrl ? serveUrl(avatarUrl) : blankImage}
+    src={avatarFileId
+      ? serveUrl(avatarFileId)
+      : avatarUrl
+        ? `/api/${encodeURIComponent(avatarUrl)}`
+        : blankImage}
     alt="PFP"
   />
   <button

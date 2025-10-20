@@ -1,6 +1,13 @@
 import { api_error } from '@errors/index';
 import AdminAPI from '@service/v2/admin';
 import { toastStore } from '@stores/toast.svelte';
+import {
+  GetCache,
+  SetCache,
+  ClearCache,
+  ROLES_KEY,
+  TTL_MONTH,
+} from '@constants/cache';
 
 /**
  * Encapsulates admin-level operations that interact with the v2 Admin API.
@@ -40,6 +47,32 @@ class AdminApp {
     }
 
     return { users: data.accounts, count: data.count };
+  }
+
+  /**
+   * Fetch the roles available to the current tenant.
+   * @returns The list of roles, or an empty array on failure.
+   */
+  async fetchRoles(refresh: boolean = false): Promise<TenantRole[]> {
+    if (refresh) ClearCache(ROLES_KEY);
+
+    const cached = GetCache<TenantRole[]>(ROLES_KEY);
+    if (cached) {
+      return cached;
+    }
+
+    const { status, message, data } = await this.api.getRoles();
+
+    if (status === 'error') {
+      api_error(message);
+      return [];
+    }
+
+    if (data) {
+      SetCache(ROLES_KEY, data, TTL_MONTH);
+    }
+
+    return data || [];
   }
 
   /**

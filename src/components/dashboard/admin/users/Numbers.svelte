@@ -1,10 +1,14 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import AdminApp from '@lib/admin';
 
   import TopUsers from '@components/dashboard/admin/users/TopUsers.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
 
   const admin: AdminApp = new AdminApp();
+
+  let roles = $state<TenantRole[]>([]);
 
   let userCount = $state<number>(0);
   let fetchingUserCount = $state<boolean>(false);
@@ -17,6 +21,11 @@
 
   let walletGrowth = $state<number>(0);
   let fetchingWalletGrowth = $state<boolean>(false);
+
+  onMount(async () => {
+    roles = await admin.fetchRoles();
+    console.log(roles);
+  });
 
   const getEndDate = () => {
     const today = new Date();
@@ -136,8 +145,11 @@
     <div class="container">
       <div class="accounts-role input-container">
         <label for="accounts-role"> User Role </label>
-        <select id="accounts-role" value="" disabled>
-          <option value="" disabled selected>Coming Soon</option>
+        <select id="accounts-role" bind:value={accountMetrics.role_id}>
+          <option value="" disabled selected>All roles</option>
+          {#each roles as role}
+            <option value={role.id}>{role.name}</option>
+          {/each}
         </select>
       </div>
       <div class="accounts-role input-container">

@@ -2,7 +2,6 @@ import type { SvelteComponent } from 'svelte';
 import wrap from 'svelte-spa-router/wrap';
 
 import OmniHub from './OmniHub.svelte';
-import Portrait from './Portrait.svelte';
 
 export const OMNIHUB = [
   {
@@ -10,11 +9,6 @@ export const OMNIHUB = [
     path: '/omnihub',
     component: OmniHub,
   },
-  // {
-  //   name: 'Portrait',
-  //   path: '/omnihub/portrait',
-  //   component: Portrait,
-  // },
 ];
 
 export const omnihubRoutes = Object.fromEntries(

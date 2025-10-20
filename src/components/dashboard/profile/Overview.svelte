@@ -386,6 +386,31 @@
 
   {#if user.email && user.first_name}
     <Dropdown name="Account">
+      <ul class="user-roles flex-row flex-wrap">
+        {#each roles as { name, monthly_credits, play_without_media, play_with_media, create_topic_cost }}
+          {#if name !== 'Admin'}
+            <li class="flex" class:active={user.role_name === name}>
+              <h4>{name}</h4>
+              <span class="flex">
+                <p class:allowed={play_without_media !== -1}>
+                  {play_without_media !== -1 ? '✓' : '☓'}
+                  Play text-only stories
+                </p>
+                <p class:allowed={play_with_media !== -1}>
+                  {play_with_media !== -1 ? '✓' : '☓'}
+                  Play stories with media
+                </p>
+                <p class:allowed={create_topic_cost !== -1}>
+                  {create_topic_cost !== -1 ? '✓' : '☓'}
+                  Create custom stories
+                </p>
+              </span>
+              <h5>Monthly Credits: <strong>{monthly_credits}</strong></h5>
+            </li>
+          {/if}
+        {/each}
+      </ul>
+
       <form class="flex">
         <div class="input-container">
           <label for="mail">Email</label>
@@ -614,6 +639,46 @@
 
     @include respond-up(tablet) {
       width: 20rem;
+    }
+  }
+
+  .user-roles {
+    li {
+      padding: 1rem 0.5rem;
+      gap: 1rem;
+      border-radius: 1rem;
+      @include navy(0.75);
+      @include gray-border;
+
+      h4 {
+        width: auto;
+      }
+
+      span {
+        align-items: flex-start;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        background-color: $transparent-black;
+        @include white-txt;
+        @include box-shadow(soft, inset);
+
+        p {
+          @include red(0.75, text);
+
+          &.allowed {
+            @include green(0.9, text);
+          }
+        }
+      }
+
+      &.active {
+        @include deep-green(0.75);
+
+        span {
+          @include dark-green;
+        }
+      }
     }
   }
 

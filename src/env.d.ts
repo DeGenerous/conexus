@@ -97,7 +97,7 @@ type Section = {
 type Creator = {
   id: string;
   username: string;
-  avatar: string;
+  avatar_url: string;
 };
 
 type Genre = {

@@ -9,7 +9,7 @@ export const defaultBG = '/defaultBG.avif';
 // helper to convert a stored media id into an API URL (falls back to a placeholder)
 export const serveUrl = (file_id?: string) => {
   if (!file_id) return blankImage;
-  return `/api/topic/serve-media/${file_id}`;
+  return `/api/media/serve/${file_id}`;
 };
 
 export const mediaURL = NAV_ROUTES.MEDIA;

@@ -41,6 +41,10 @@
     if (!promptId) {
       window.history.back();
     }
+
+    if (promptId && topicName) {
+      startDemo();
+    }
   });
 
   const setDemoMedia = async (_topicId: string) => {
@@ -83,37 +87,29 @@
   };
 </script>
 
-{#if !demoStarted}
+{#if game.loading && !step}
   <section class="dream-container fade-in">
     <h5>Experience how your prompt comes to life.</h5>
     <div class="container">
-      {#if topicName}
-        <h4 class="text-glowing fade-in">{topicName}</h4>
-      {/if}
-      <button
-        class="start-btn"
-        onclick={startDemo}
-        disabled={!topicName || game.loading}
-      >
-        {#if topicName}
-          Start Demo
+      {#if !demoStarted}
+        {#if demoError}
+          <p class="validation">{demoError}</p>
         {:else}
-          Loading...
+          <h4>Loading story data...</h4>
         {/if}
-      </button>
-      {#if demoError}
-        <p class="validation">{demoError}</p>
+      {:else}
+        <span class="flex-row">
+          <LoadingSVG />
+          <h4 class="text-glowing fade-in">
+            Preparing a demo for {topicName}...
+          </h4>
+        </span>
       {/if}
     </div>
     <h5>
       Play through the opening moments of your creation and refine your vision.
     </h5>
   </section>
-{:else if game.loading && !step}
-  <div class="transparent-container flex-row fade-in">
-    <LoadingSVG />
-    <h5 class="text-glowing">Preparing a demo, please wait...</h5>
-  </div>
 {:else if !step}
   <div class="transparent-container fade-in">
     <p class="validation">Sorry, we couldn't load that prompt.</p>

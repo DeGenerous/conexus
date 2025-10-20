@@ -14,6 +14,7 @@
     isPromptSettingsDefault,
     arePromptSettingsEqual,
   } from '@stores/dream.svelte';
+  import { story, game } from '@stores/conexus.svelte';
 
   import ExploreCategory from '@components/dashboard/dream/manage/collections/AddTopicCategory.svelte';
   import GenreTags from '@components/dashboard/dream/manage/collections/GenreTags.svelte';
@@ -83,6 +84,8 @@
   };
 
   onMount(async () => {
+    if ($story || game.loading) window.location.reload(); // ensure clean state
+
     isAdmin = await userState('admin');
     isCreator = await userState('creator');
 

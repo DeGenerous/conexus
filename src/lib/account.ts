@@ -46,11 +46,16 @@ class Account {
 
     const accountAPI = new AccountAPI(import.meta.env.PUBLIC_BACKEND);
 
-    const { message, data } = await accountAPI.me(refresh);
+    const { status, message, data } = await accountAPI.me(refresh);
+
+    if (status === 'error') {
+      ClearCache('auth');
+      api_error(message);
+      return null;
+    }
 
     if (!data) {
       ClearCache('auth');
-      api_error(message);
       return null;
     }
 
@@ -149,15 +154,15 @@ class Account {
    * @returns {Promise<string | null>}
    */
   async generateReferralCode(): Promise<string | null> {
-    const { message, data } = await this.api.createReferralCodes();
+    const { status, message, data } = await this.api.createReferralCodes();
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return null;
     }
 
     toastStore.show(message || 'Referral codes generated successfully', 'info');
-    return data;
+    return data ?? null;
   }
 
   /**
@@ -171,15 +176,17 @@ class Account {
     }
 
     // Fetch fresh data
-    const { message, data } = await this.api.getReferralCode();
+    const { status, message, data } = await this.api.getReferralCode();
 
-    if (!data) {
-      // api_error(message);
+    if (status === 'error') {
+      api_error(message);
       return null;
     }
 
-    SetCache(REFERRAL_CODE_KEY, data, TTL_SHORT);
-    return data;
+    if (data) {
+      SetCache(REFERRAL_CODE_KEY, data, TTL_SHORT);
+    }
+    return data ?? null;
   }
 
   /**
@@ -539,14 +546,14 @@ class Account {
    * @returns The prompt settings or null if unavailable.
    */
   async getPromptSettings(): Promise<PromptSettings | null> {
-    const { message, data } = await this.api.getPromptSettings();
+    const { status, message, data } = await this.api.getPromptSettings();
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return null;
     }
 
-    return data;
+    return data ?? null;
   }
 
   /**
@@ -570,14 +577,14 @@ class Account {
    * @returns The stored custom theme or null if not set.
    */
   async getCustomTheme(): Promise<CustomTheme | null> {
-    const { message, data } = await this.api.getCustomTheme();
+    const { status, message, data } = await this.api.getCustomTheme();
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return null;
     }
 
-    return data;
+    return data ?? null;
   }
 
   /**
@@ -599,7 +606,9 @@ class Account {
       return [];
     }
 
-    SetCache(ROLES_KEY, data, TTL_MONTH);
+    if (data) {
+      SetCache(ROLES_KEY, data, TTL_MONTH);
+    }
 
     return data || [];
   }

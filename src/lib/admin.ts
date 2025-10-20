@@ -25,10 +25,17 @@ class AdminApp {
     page: number,
     page_size: number,
   ): Promise<{ users: Partial<User>[]; count: number } | null> {
-    const { message, data } = await this.api.listAccounts(page, page_size);
+    const { status, message, data } = await this.api.listAccounts(
+      page,
+      page_size,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      return null;
+    }
 
     if (!data) {
-      api_error(message);
       return null;
     }
 
@@ -243,14 +250,14 @@ class AdminApp {
    * @returns The gate details or null if unavailable.
    */
   async getGate(gateId: string): Promise<Gate | null> {
-    const { message, data } = await this.api.getGate(gateId);
+    const { status, message, data } = await this.api.getGate(gateId);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return null;
     }
 
-    return data;
+    return data || null;
   }
 
   /**
@@ -258,9 +265,9 @@ class AdminApp {
    * @returns A list of available gates.
    */
   async getAllGates(): Promise<Gate[]> {
-    const { message, data } = await this.api.getGates();
+    const { status, message, data } = await this.api.getGates();
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return [];
     }
@@ -274,7 +281,12 @@ class AdminApp {
    * @returns The matching account count.
    */
   async fetchAccountCount(body: AccountMetricFilter): Promise<number> {
-    const { message, data } = await this.api.accountCount(body);
+    const { status, message, data } = await this.api.accountCount(body);
+
+    if (status === 'error') {
+      api_error(message);
+      return 0;
+    }
 
     return this.#metricNumber(message, data);
   }
@@ -285,7 +297,12 @@ class AdminApp {
    * @returns The matching wallet count.
    */
   async fetchWalletCount(body: WalletMetricFilter): Promise<number> {
-    const { message, data } = await this.api.walletCount(body);
+    const { status, message, data } = await this.api.walletCount(body);
+
+    if (status === 'error') {
+      api_error(message);
+      return 0;
+    }
 
     return this.#metricNumber(message, data);
   }
@@ -296,7 +313,12 @@ class AdminApp {
    * @returns The matching topic count.
    */
   async fetchTopicCount(body: TopicMetricFilter): Promise<number> {
-    const { message, data } = await this.api.topicCount(body);
+    const { status, message, data } = await this.api.topicCount(body);
+
+    if (status === 'error') {
+      api_error(message);
+      return 0;
+    }
 
     return this.#metricNumber(message, data);
   }
@@ -307,7 +329,12 @@ class AdminApp {
    * @returns The matching story count.
    */
   async fetchStoryCount(body: StoryMetricFilter): Promise<number> {
-    const { message, data } = await this.api.storyCount(body);
+    const { status, message, data } = await this.api.storyCount(body);
+
+    if (status === 'error') {
+      api_error(message);
+      return 0;
+    }
 
     return this.#metricNumber(message, data);
   }
@@ -318,7 +345,12 @@ class AdminApp {
    * @returns The account growth value or zero when unavailable.
    */
   async fetchAccountGrowth(body: AccountMetricFilter): Promise<number> {
-    const { message, data } = await this.api.accountGrowth(body);
+    const { status, message, data } = await this.api.accountGrowth(body);
+
+    if (status === 'error') {
+      api_error(message);
+      return 0;
+    }
 
     return this.#metricNumber(message, data);
   }
@@ -329,7 +361,12 @@ class AdminApp {
    * @returns The wallet growth value or zero when unavailable.
    */
   async fetchWalletGrowth(body: WalletMetricFilter): Promise<number> {
-    const { message, data } = await this.api.walletGrowth(body);
+    const { status, message, data } = await this.api.walletGrowth(body);
+
+    if (status === 'error') {
+      api_error(message);
+      return 0;
+    }
 
     return this.#metricNumber(message, data);
   }
@@ -340,7 +377,12 @@ class AdminApp {
    * @returns The topic growth value or zero when unavailable.
    */
   async fetchTopicGrowth(body: TopicMetricFilter): Promise<number> {
-    const { message, data } = await this.api.topicGrowth(body);
+    const { status, message, data } = await this.api.topicGrowth(body);
+
+    if (status === 'error') {
+      api_error(message);
+      return 0;
+    }
 
     return this.#metricNumber(message, data);
   }
@@ -351,7 +393,12 @@ class AdminApp {
    * @returns The story growth value or zero when unavailable.
    */
   async fetchStoryGrowth(body: StoryMetricFilter): Promise<number> {
-    const { message, data } = await this.api.storyGrowth(body);
+    const { status, message, data } = await this.api.storyGrowth(body);
+
+    if (status === 'error') {
+      api_error(message);
+      return 0;
+    }
 
     return this.#metricNumber(message, data);
   }

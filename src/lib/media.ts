@@ -33,35 +33,28 @@ class MediaManager {
    * @param file - The file to upload.
    * @param topic_id - The topic receiving the media.
    * @param media_type - The type of media being uploaded.
-   * @returns A list of uploaded media identifiers, or an empty array on failure.
-   */
+  * @returns A list of uploaded media identifiers, or an empty array on failure.
+  */
   async uploadTopicMedia(file: File, topic_id: number, media_type: MediaType) {
-    const { data, error } = await this.mediaAPI.uploadFile(
+    const { status, message, data, error } = await this.mediaAPI.uploadFile(
       file,
       topic_id,
       media_type,
     );
 
-    if (!data) {
-      if (error) {
-        if (error.details) {
-          if (
-            error.details.includes(
-              'pq: duplicate key value violates unique constraint',
-            )
-          ) {
-            toastStore.show('This file already exists', 'error');
-            return [];
-          }
-        }
-        const message = error.details ?? 'Unable to process media upload';
-        toastStore.show(message, 'error');
+    if (status === 'error') {
+      const detail = error?.details || message || 'Unable to process media upload';
+      if (
+        detail.includes('pq: duplicate key value violates unique constraint')
+      ) {
+        toastStore.show('This file already exists', 'error');
         return [];
       }
+      toastStore.show(detail, 'error');
       return [];
     }
 
-    return data;
+    return data || [];
   }
 
   /**
@@ -74,13 +67,17 @@ class MediaManager {
     topic_id: string,
     media_type: MediaType,
   ): Promise<string[]> {
-    const { data } = await this.mediaAPI.getFile(topic_id, media_type);
+    const { status, message, data } = await this.mediaAPI.getFile(
+      topic_id,
+      media_type,
+    );
 
-    if (!data) {
+    if (status === 'error') {
+      toastStore.show(message || 'Unable to fetch media', 'error');
       return [];
     }
 
-    return data;
+    return data || [];
   }
 
   /**
@@ -96,16 +93,14 @@ class MediaManager {
   ) {
     // const KEY = `${MEDIA_CACHE_KEY}_${topic_id}_${media_type}`;
 
-    const { data, error } = await this.mediaAPI.DeleteFile(
+    const { status, message, data, error } = await this.mediaAPI.DeleteFile(
       topic_id,
       file_id,
       media_type,
     );
 
-    if (!data) {
-      if (error) {
-        throw new Error(error.details);
-      }
+    if (status === 'error') {
+      throw new Error(error?.details || message || 'Unable to delete media');
     }
 
     // ClearCache(KEY);

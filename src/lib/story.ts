@@ -86,9 +86,9 @@ export default class CoNexus {
             <p>${outOfCredits.charAt(0).toUpperCase() + outOfCredits.slice(1)}</p>
           `);
         }
+        api_error(message);
       }
 
-      api_error(message);
       game.loading = false;
       return;
     }
@@ -139,9 +139,9 @@ export default class CoNexus {
             <p>${outOfCredits.charAt(0).toUpperCase() + outOfCredits.slice(1)}</p>
           `);
         }
+        api_error(message);
       }
 
-      api_error(message);
       game.loading = false;
       return;
     }
@@ -167,12 +167,19 @@ export default class CoNexus {
   ): Promise<void> {
     game.loading = true;
 
-    const { message, data } = await this.api.continue(continuable.story_id);
+    const { status, message, data } = await this.api.continue(
+      continuable.story_id,
+    );
 
-    if (!data) {
+    if (status === 'error') {
       this.#rollbackCredits(continuable.topic_id);
       this.delete(continuable.story_id);
       api_error(message);
+      game.loading = false;
+      return;
+    }
+
+    if (!data) {
       game.loading = false;
       return;
     }
@@ -194,10 +201,18 @@ export default class CoNexus {
     game.loading = true;
 
     // Start new game
-    const { message, data } = await this.api.respond(this.step_data.id, choice);
+    const { status, message, data } = await this.api.respond(
+      this.step_data.id,
+      choice,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      game.loading = false;
+      return;
+    }
 
     if (!data) {
-      api_error(message);
       game.loading = false;
       return;
     }
@@ -213,10 +228,18 @@ export default class CoNexus {
    */
   async loadStep(step: number): Promise<void> {
     game.loading = true;
-    const { message, data } = await this.api.step(this.step_data.id, step);
+    const { status, message, data } = await this.api.step(
+      this.step_data.id,
+      step,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      game.loading = false;
+      return;
+    }
 
     if (!data) {
-      api_error(message);
       game.loading = false;
       return;
     }
@@ -255,8 +278,12 @@ export default class CoNexus {
       task_id,
     );
 
-    if (!data || status === 'error') {
+    if (status === 'error') {
       api_error(message);
+      return;
+    }
+
+    if (!data) {
       return;
     }
 
@@ -286,10 +313,15 @@ export default class CoNexus {
    * @returns A promise that resolves when the TTS is ready
    */
   async #textToSpeech(): Promise<void> {
-    const { message, data } = await this.api.tts(this.step_data.id);
+    const { status, message, data } = await this.api.tts(this.step_data.id);
+
+    if (status === 'error') {
+      api_error(message);
+      game.loading = false;
+      return;
+    }
 
     if (!data) {
-      api_error(message);
       game.loading = false;
       return;
     }

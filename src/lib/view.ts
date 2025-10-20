@@ -44,10 +44,11 @@ export default class AppView {
    * @returns A promise that resolves to the requested Section object.
    */
   async getSection(section_name: string): Promise<Section | null> {
-    const { message, data } = await this.api.getSection(section_name);
+    const { status, message, data } = await this.api.getSection(section_name);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
+      return null;
     }
 
     return data || null;
@@ -59,10 +60,11 @@ export default class AppView {
    * @returns A promise that resolves to the requested Creator object.
    */
   async getCreator(username: string): Promise<Creator | null> {
-    const { message, data } = await this.api.getCreator(username);
+    const { status, message, data } = await this.api.getCreator(username);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
+      return null;
     }
 
     return data || null;
@@ -79,16 +81,18 @@ export default class AppView {
       return cachedData;
     }
 
-    const { message, data } = await this.api.sections();
+    const { status, message, data } = await this.api.sections();
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return [];
     }
 
-    SetCache(SECTIONS_KEY, data, TTL_DAY);
+    if (data) {
+      SetCache(SECTIONS_KEY, data, TTL_DAY);
+    }
 
-    return data;
+    return data || [];
   }
 
   /**
@@ -103,18 +107,19 @@ export default class AppView {
       return cachedData;
     }
 
-    const { message, data } = await this.api.genres();
+    const { status, message, data } = await this.api.genres();
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return [];
     }
 
-    SetCache(GENRES_KEY, data, TTL_MONTH);
+    if (data) {
+      SetCache(GENRES_KEY, data, TTL_MONTH);
+      availableGenres.splice(0, availableGenres.length, ...data); // Update state
+    }
 
-    availableGenres.splice(0, availableGenres.length, ...data); // Update state
-
-    return data;
+    return data || [];
   }
   /**
    * Fetch topics for a given category.
@@ -128,14 +133,18 @@ export default class AppView {
     page: number,
     pageSize: number,
   ): Promise<CategoryTopic[]> {
-    const { message, data } = await this.api.categoryTopics(
+    const { status, message, data } = await this.api.categoryTopics(
       category_id,
       page,
       pageSize,
     );
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
+      return [];
+    }
+
+    if (!data) {
       return [];
     }
 
@@ -355,18 +364,18 @@ export default class AppView {
     page: number,
     pageSize: number,
   ): Promise<TopicNeighbor[]> {
-    const { message, data } = await this.api.topicNeighbors(
+    const { status, message, data } = await this.api.topicNeighbors(
       topic_id,
       page,
       pageSize,
     );
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return [];
     }
 
-    return data;
+    return data || [];
   }
 
   /**
@@ -379,10 +388,14 @@ export default class AppView {
     topic_id: string,
     account_id?: string,
   ): Promise<TopicPage | null> {
-    const { message, data } = await this.api.topicView(topic_id, account_id);
+    const { status, message, data } = await this.api.topicView(
+      topic_id,
+      account_id,
+    );
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
+      return null;
     }
 
     return data || null;
@@ -398,14 +411,17 @@ export default class AppView {
     topic_id: string,
     media_type: MediaType,
   ): Promise<string[] | null> {
-    const { message, data } = await this.api.getFile(topic_id, media_type);
+    const { status, message, data } = await this.api.getFile(
+      topic_id,
+      media_type,
+    );
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return null;
     }
 
-    return data;
+    return data ?? null;
   }
 
   /**
@@ -414,10 +430,11 @@ export default class AppView {
    * @returns The media blob or null on failure.
    */
   async serveTopicMedia(file_id: string): Promise<Blob | null> {
-    const { message, data } = await this.api.serveMedia(file_id);
+    const { status, message, data } = await this.api.serveMedia(file_id);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
+      return null;
     }
 
     return data || null;

@@ -21,14 +21,14 @@ export default class Topic {
    * @returns The newly created topic identifier, or null on failure.
    */
   async newTopic(body: TopicRequest): Promise<string | null> {
-    const { message, data } = await this.api.new(body);
+    const { status, message, data } = await this.api.new(body);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return null;
     }
 
-    return data;
+    return data ?? null;
   }
 
   /**
@@ -73,14 +73,14 @@ export default class Topic {
    * @returns The draft identifier or null on failure.
    */
   async saveNewTopicDraft(body: DraftPayload): Promise<string | null> {
-    const { message, data } = await this.api.newDraft(body);
+    const { status, message, data } = await this.api.newDraft(body);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return null;
     }
 
-    return data;
+    return data ?? null;
   }
 
   /**
@@ -89,9 +89,12 @@ export default class Topic {
    * @param category_id - The category identifier for context.
    */
   async processDraftDocument(file: File, category_id: string): Promise<void> {
-    const { message, data } = await this.api.draftDocument(file, category_id);
+    const { status, message, data } = await this.api.draftDocument(
+      file,
+      category_id,
+    );
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return;
     }
@@ -104,16 +107,16 @@ export default class Topic {
    * @returns A list of drafts or an empty array on failure.
    */
   async getDrafts(): Promise<DraftView[]> {
-    const { message, data } = await this.api.getDrafts();
+    const { status, message, data } = await this.api.getDrafts();
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return [];
     }
 
     console.log(data);
 
-    return data;
+    return data || [];
   }
 
   /**
@@ -122,14 +125,14 @@ export default class Topic {
    * @returns The draft payload or null on failure.
    */
   async getDraft(id: string): Promise<DraftPayload | null> {
-    const { message, data } = await this.api.getDraft(id);
+    const { status, message, data } = await this.api.getDraft(id);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return null;
     }
 
-    return data;
+    return data ?? null;
   }
 
   /**
@@ -144,18 +147,18 @@ export default class Topic {
     page: number,
     page_size: number,
   ): Promise<DraftPayload[] | null> {
-    const { message, data } = await this.api.searchDrafts(
+    const { status, message, data } = await this.api.searchDrafts(
       query,
       page,
       page_size,
     );
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return null;
     }
 
-    return data;
+    return data ?? null;
   }
 
   /**
@@ -164,9 +167,9 @@ export default class Topic {
    * @param body - The new draft payload.
    */
   async updateDraft(id: string, body: DraftPayload): Promise<void> {
-    const { message, data } = await this.api.updateDraft(id, body);
+    const { status, message, data } = await this.api.updateDraft(id, body);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return;
     }
@@ -179,9 +182,9 @@ export default class Topic {
    * @param id - The draft identifier to delete.
    */
   async deleteDraft(id: string): Promise<void> {
-    const { message, data } = await this.api.deleteDraft(id);
+    const { status, message, data } = await this.api.deleteDraft(id);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return;
     }
@@ -334,14 +337,14 @@ export default class Topic {
    * @returns The topic manager data or null on failure.
    */
   async getTopicManager(topic_id: string): Promise<TopicManager | null> {
-    const { message, data } = await this.api.topicManager(topic_id);
+    const { status, message, data } = await this.api.topicManager(topic_id);
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return null;
     }
 
-    return data;
+    return data ?? null;
   }
 
   /**
@@ -389,8 +392,12 @@ export default class Topic {
       sort_order,
     );
 
-    if (response.status === 'error' || !response.data) {
+    if (response.status === 'error') {
       api_error(response.message);
+      return null;
+    }
+
+    if (!response.data) {
       return null;
     }
 
@@ -684,19 +691,19 @@ export default class Topic {
     media_type: MediaType,
     file: File,
   ): Promise<string[]> {
-    const { message, data } = await this.api.uploadFile(
+    const { status, message, data } = await this.api.uploadFile(
       topic_id,
       media_type,
       file,
     );
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return [];
     }
 
     toastStore.show(message || `File uploaded for topic ${topic_id}`, 'info');
-    return data;
+    return data || [];
   }
 
   /**
@@ -710,13 +717,13 @@ export default class Topic {
     file_id: string,
     media_type: MediaType,
   ): Promise<void> {
-    const { message, data } = await this.api.deleteMediaFile(
+    const { status, message, data } = await this.api.deleteMediaFile(
       topic_id,
       file_id,
       media_type,
     );
 
-    if (!data) {
+    if (status === 'error') {
       api_error(message);
       return;
     }

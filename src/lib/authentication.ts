@@ -21,15 +21,19 @@ export default class Authentication {
    * Initiates Google Sign-In process.
    */
   async googleSignin(): Promise<void> {
-    const { message, data } = await this.api.googleSignin();
+    const { status, message, data } = await this.api.googleSignin();
+
+    if (status === 'error') {
+      accountError.set({ googleSignin: message || 'Unknown error occurred' });
+      return;
+    }
 
     if (!data) {
       accountError.set({ googleSignin: message || 'Unknown error occurred' });
       return;
-    } else {
-      window.location.href = data;
-      return;
     }
+
+    window.location.href = data;
   }
 
   /**
@@ -38,13 +42,18 @@ export default class Authentication {
    * @returns A promise that resolves when the sign-in process is complete.
    */
   async signin(signinData: SignIn): Promise<void> {
-    const { message, data } = await this.api.signin(
+    const { status, message, data } = await this.api.signin(
       signinData.email,
       signinData.password,
     );
 
-    if (!data) {
+    if (status === 'error') {
       accountError.set({ signin: message || 'Unknown error occurred' });
+      return;
+    }
+
+    if (!data) {
+      accountError.set({ signin: 'Unable to load account data' });
       return;
     }
 
@@ -58,10 +67,15 @@ export default class Authentication {
    * @returns A promise that resolves when the sign-up process is complete.
    */
   async signup(signupData: ReferralSignUp): Promise<void> {
-    const { message, data } = await this.api.signup(signupData);
+    const { status, message, data } = await this.api.signup(signupData);
+
+    if (status === 'error') {
+      accountError.set({ signup: message || 'Unknown error occurred' });
+      return;
+    }
 
     if (!data) {
-      accountError.set({ signup: message || 'Unknown error occurred' });
+      accountError.set({ signup: 'Unable to load account data' });
       return;
     }
 
@@ -127,9 +141,17 @@ export default class Authentication {
   async selectMainWallet(wallet: string): Promise<Nullable<User>> {
     const { status, message, data } = await this.api.web3SelectWallet(wallet);
 
-    if (status === 'error' || !data) {
+    if (status === 'error') {
       api_error(
         message || 'There was a problem selecting this wallet address.',
+      );
+      return null;
+    }
+
+    if (!data) {
+      toastStore.show(
+        'Wallet selection returned without user data.',
+        'error',
       );
       return null;
     }
@@ -148,8 +170,16 @@ export default class Authentication {
   async unlinkWallet(wallet: string): Promise<Nullable<User>> {
     const { status, message, data } = await this.api.web3UnlinkWallet(wallet);
 
-    if (status === 'error' || !data) {
+    if (status === 'error') {
       api_error(message);
+      return null;
+    }
+
+    if (!data) {
+      toastStore.show(
+        'Wallet unlink response did not include user data.',
+        'error',
+      );
       return null;
     }
 

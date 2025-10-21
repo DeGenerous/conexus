@@ -96,12 +96,12 @@
   $: isFormValid = mandatoryFields && termsAccepted && referralCodeValid;
 
   // Validate referral code when length is 16 characters
-  $: if (referralCode.length === 16) validateReferralCode();
-  $: if (referralCode.length < 16) referralCodeValid = false;
+  $: if (referralCode.length === 8) validateReferralCode();
+  $: if (referralCode.length < 8) referralCodeValid = false;
 
   async function validateReferralCode() {
     const currentCode = referralCode;
-    if (currentCode.length !== 16) return;
+    if (currentCode.length !== 8) return;
 
     try {
       referralCodeValid = false;
@@ -122,13 +122,11 @@
   const referralSignup = async (event: Event) => {
     event.preventDefault(); // prevent page reload by form
     await authentication.signup({
-      user: {
-        first_name: first_name.trim(),
-        last_name: last_name.trim(),
-        email: email.trim(),
-        password,
-        referred: referralCodeValid,
-      },
+      first_name: first_name.trim(),
+      last_name: last_name.trim(),
+      email: email.trim(),
+      password,
+      referred: referralCodeValid,
       referral_code: referralCode,
       newsletter: newsletterSignup,
     });

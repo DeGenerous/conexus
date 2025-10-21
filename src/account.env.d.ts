@@ -51,8 +51,7 @@ type ReferralCode = {
   updated_at: string;
 };
 
-type ReferralSignUp = {
-  user: SignUp;
+type ReferralSignUp = SignUp & {
   referral_code: string;
   newsletter: boolean;
 };

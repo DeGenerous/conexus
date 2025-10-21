@@ -7,10 +7,12 @@
     children,
     name,
     dropdownFunc = null,
+    table = false,
   }: {
     children: Snippet;
     name: string;
     dropdownFunc?: Nullable<() => void>;
+    table?: boolean;
   } = $props();
 
   let isOpen = $state(false);
@@ -22,7 +24,7 @@
   };
 </script>
 
-<section class="dream-container" class:collapsed={!isOpen}>
+<section class="dream-container" class:collapsed={!isOpen} class:table>
   <button
     class="void-btn flex-row"
     class:active={isOpen}
@@ -39,7 +41,7 @@
     />
   </button>
   {#if isOpen}
-    <div class="container transition">
+    <div class="transition" class:container={!table}>
       {@render children()}
     </div>
   {/if}
@@ -48,7 +50,7 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  section {
+  .dream-container {
     button {
       width: 100%;
       justify-content: space-between;
@@ -87,6 +89,16 @@
       @starting-style {
         opacity: 0.75;
         filter: brightness(75%);
+      }
+    }
+
+    &.table {
+      div {
+        // padding: 0;
+        background-color: transparent !important;
+        border: none;
+        border-radius: 0;
+        animation: none !important;
       }
     }
   }

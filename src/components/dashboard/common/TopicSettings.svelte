@@ -9,9 +9,11 @@
 
   let {
     promptFormat = $bindable<'Table' | 'Open'>('Open'),
+    nostyling = false,
     children,
   }: {
     promptFormat?: 'Table' | 'Open';
+    nostyling?: boolean;
     children: Snippet<
       [
         promptFormat: 'Table' | 'Open',
@@ -27,7 +29,7 @@
   };
 </script>
 
-<div class="dream-container">
+<section class="flex" class:dream-container={!nostyling} class:nostyling>
   <div class="flex-row">
     <h4>Content</h4>
     <div class="container">
@@ -44,7 +46,7 @@
         <label for="language">Language</label>
         <select id="language" bind:value={$promptSettings.language}>
           {#each countries as { name }}
-            <option value={name}>{name}</option>
+            <option value={name.toLocaleLowerCase()}>{name}</option>
           {/each}
         </select>
       </div>
@@ -56,13 +58,13 @@
     <div class="container">
       <div
         class="input-container"
-        class:disabled={$promptSettings.kids_mode !== ''}
+        class:disabled={$promptSettings.kids_mode !== 'off'}
       >
         <label for="frequency">Control</label>
         <select
           id="frequency"
           bind:value={$promptSettings.interactivity}
-          disabled={$promptSettings.kids_mode !== ''}
+          disabled={$promptSettings.kids_mode !== 'off'}
         >
           {#each dreamData.min_max as option}
             <option value={option}>{option}</option>
@@ -72,13 +74,13 @@
 
       <div
         class="input-container"
-        class:disabled={$promptSettings.kids_mode !== ''}
+        class:disabled={$promptSettings.kids_mode !== 'off'}
       >
         <label for="difficulty">Difficulty</label>
         <select
           id="difficulty"
           bind:value={$promptSettings.difficulty}
-          disabled={$promptSettings.kids_mode !== ''}
+          disabled={$promptSettings.kids_mode !== 'off'}
         >
           {#each dreamData.min_max as option}
             <option value={option}>{option}</option>
@@ -88,14 +90,14 @@
     </div>
   </div>
 
-  <div class="flex-row" class:disabled={$promptSettings.kids_mode !== ''}>
+  <div class="flex-row" class:disabled={$promptSettings.kids_mode !== 'off'}>
     <h4>Length</h4>
     <div class="container">
       <Slider
         bind:sliderValue={$promptSettings.length}
         parameters={dreamData.min_max}
         inputValue={2}
-        disabled={$promptSettings.kids_mode !== ''}
+        disabled={$promptSettings.kids_mode !== 'off'}
       />
     </div>
   </div>
@@ -105,13 +107,13 @@
     <div class="container">
       <div
         class="input-container"
-        class:disabled={$promptSettings.kids_mode !== ''}
+        class:disabled={$promptSettings.kids_mode !== 'off'}
       >
         <label for="reading-style">Reading style</label>
         <select
           id="reading-style"
           bind:value={$promptSettings.reading_style}
-          disabled={$promptSettings.kids_mode !== ''}
+          disabled={$promptSettings.kids_mode !== 'off'}
         >
           {#each dreamData.readingStyle as option}
             <option value={option}>{option}</option>
@@ -127,8 +129,8 @@
       >
         <label for="kids-mode transition">Kids mode</label>
         <select id="kids-mode" bind:value={$promptSettings.kids_mode} disabled>
-          <!-- <option value="">Off</option> -->
-          <option value="">Coming Soon</option>
+          <!-- <option value="off">Off</option> -->
+          <option value="off">Coming Soon</option>
           {#each dreamData.kidsMode as option}
             <option value={option}>{option}</option>
           {/each}
@@ -138,10 +140,25 @@
   </div>
 
   {@render children(promptFormat, setPromptFormat)}
-</div>
+</section>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
+
+  .nostyling {
+    animation: none !important;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+  }
+
+  .container {
+    flex-wrap: wrap;
+
+    @include respond-up(large-desktop) {
+      flex-wrap: nowrap;
+    }
+  }
 
   .disabled {
     opacity: 0.5;

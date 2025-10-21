@@ -30,7 +30,7 @@ type PromptSettings = {
   difficulty: Min_Max;
   length: Min_Max;
   reading_style: string;
-  kids_mode: Nullable<string>;
+  kids_mode: string;
 };
 
 type TablePrompt = {

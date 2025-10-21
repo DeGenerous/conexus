@@ -9,13 +9,13 @@ export const storyData = writable<StoryData>({
 });
 
 const DEFAULT_PROMPT_SETTINGS: PromptSettings = {
-  image_style: 'Realistic',
-  language: 'English',
+  image_style: 'realistic',
+  language: 'english',
   interactivity: 'standard',
   difficulty: 'standard',
   length: 'standard',
   reading_style: 'simple',
-  kids_mode: '',
+  kids_mode: 'off',
 };
 
 export const defaultPromptSettings = (): PromptSettings => ({

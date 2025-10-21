@@ -5,8 +5,11 @@
     customThemes,
     customFont,
     customStyling,
-  } from '@stores/modal.svelte';
-  import { GetCache, SetCache, ClearCache, THEMES_KEY } from '@constants/cache';
+    updateFont,
+    updateStyling,
+    getStoredCustomization,
+  } from '@stores/customization.svelte';
+  import { GetCache, SetCache, ClearCache, THEMES_KEY, FONT_KEY, STYLING_KEY } from '@constants/cache';
 
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
@@ -14,14 +17,26 @@
   let {
     closeDialog = () => {},
   }: {
-    closeDialog: () => void;
+    closeDialog?: () => void;
   } = $props();
+
+  // update FONT in localStorage after every change
+  $effect(() => {
+    $customFont && updateFont();
+  })
+
+  // update STYLING in localStorage after every change
+  $effect(() => {
+    $customStyling && updateStyling();
+  })
 
   onMount(() => {
     const storedThemes = GetCache<Nullable<CustomTheme[]>>(THEMES_KEY);
     if (storedThemes && storedThemes.length) {
       $customThemes = $customThemes.slice(0, 9).concat(storedThemes);
     }
+
+    getStoredCustomization();
   });
 
   let selectedTheme = $state<Nullable<number>>(null);
@@ -48,6 +63,7 @@
 
   // Check if current customization settings are similar to some THEME-object
   const compareCurrentTheme = (theme: CustomTheme): boolean => {
+    if (!$customFont || !$customStyling) return false;
     return (
       $customFont!.family === theme.font!.family &&
       $customFont!.baseSize === theme.font!.baseSize &&
@@ -68,6 +84,7 @@
   // Check if user made any differences in customization, or just some THEME-object is used
   const anyThemeMatched = (): boolean =>
     $customThemes.some((theme) => {
+      console.log('matching', theme)
       return compareCurrentTheme(theme);
     });
 

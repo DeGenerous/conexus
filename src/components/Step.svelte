@@ -21,12 +21,15 @@
     lightThemeFont,
     lightThemeStyling,
   } from '@constants/customization';
-  import openModal, {
-    showModal,
-    themeSettings,
+  import openModal, { showModal } from '@stores/modal.svelte';
+  import {
+    themeSettingsModal,
     customFont,
     customStyling,
-  } from '@stores/modal.svelte';
+    updateFont,
+    updateStyling,
+    getStoredCustomization,
+  } from '@stores/customization.svelte';
   import { ensureMessage, gameRulesModal } from '@constants/modal';
   import isColorLight from '@utils/brightness';
   import { getCurrentUser } from '@utils/route-guard';
@@ -131,13 +134,6 @@
     else zoom = 1;
   };
 
-  // FONT FOR ALL ELEMENTS INSIDE step-wrapper
-
-  const updateFont = (reset: Nullable<'reset'> = null) => {
-    if (reset) $customFont = defaultFont;
-    SetCache(FONT_KEY, $customFont);
-  };
-
   // update FONT in localStorage after every change
   $: $customFont && updateFont();
 
@@ -154,13 +150,6 @@
             : $customFont.accentSize === 'small'
               ? 1
               : 0.75;
-
-  // STYLING CUSTOMIZATION
-
-  const updateStyling = (reset: Nullable<'reset'> = null) => {
-    if (reset) $customStyling = defaultStyling;
-    SetCache(STYLING_KEY, $customStyling);
-  };
 
   // update STYLING in localStorage after every change
   $: $customStyling && updateStyling();
@@ -185,7 +174,7 @@
 
   const openThemeSettings = () => {
     $showModal = true;
-    $themeSettings = true;
+    $themeSettingsModal = true;
   };
 
   // KEYBOARD CONTROLS
@@ -294,14 +283,7 @@
     pictureAnimation = new Animation(pictureKeyframe, document.timeline);
 
     // GET CUSTOMIZATION FROM THE localStorage
-
-    const storedFont = GetCache<CustomFont>(FONT_KEY);
-    if (storedFont) $customFont = storedFont;
-    else updateFont('reset');
-
-    const storedStyling = GetCache<CustomStyling>(STYLING_KEY);
-    if (storedStyling) $customStyling = storedStyling;
-    else updateStyling('reset');
+    getStoredCustomization();
 
     const storedScale = GetCache<CustomScale>(SCALE_KEY);
     if (storedScale) customScale = storedScale;

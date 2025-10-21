@@ -14,6 +14,7 @@
   import { ensureMessage } from '@constants/modal';
 
   import TopicSettings from '@components/dashboard/common/TopicSettings.svelte';
+  import ThemeSettings from '@components/utils/ThemeSettings.svelte';
   import Dropdown from '@components/utils/Dropdown.svelte';
 
   const account: Account = new Account();
@@ -156,6 +157,8 @@
     {/snippet}
   </TopicSettings>
 </Dropdown>
+
+<ThemeSettings />
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

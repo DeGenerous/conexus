@@ -3,12 +3,8 @@
   import { onMount } from 'svelte';
   import { GetCache, SetCache, TERMS_KEY } from '@constants/cache';
 
-  import {
-    modal,
-    showModal,
-    resetModal,
-    themeSettings,
-  } from '@stores/modal.svelte';
+  import { modal, showModal, resetModal } from '@stores/modal.svelte';
+  import { themeSettingsModal } from '@stores/customization.svelte';
   import { NAV_ROUTES } from '@constants/routes';
 
   import ThemeSettings from '@components/utils/ThemeSettings.svelte';
@@ -28,7 +24,7 @@
   const closeDialog = () => {
     dialog.classList.add('dialog-fade-out'); // animation before close
     $showModal = false;
-    if ($themeSettings) $themeSettings = false;
+    if ($themeSettingsModal) $themeSettingsModal = false;
     resetModal();
     setTimeout(() => dialog?.close(), 300);
   };
@@ -79,7 +75,7 @@
     {@html modal.content}
 
     <!-- CUSTOM THEMES WINDOW -->
-    {#if $themeSettings}
+    {#if $themeSettingsModal}
       <ThemeSettings {closeDialog} />
     {/if}
 

@@ -292,14 +292,14 @@
               {/if}
             </strong>
           </h5>
-          <p class="caption">Included each month. Resets on the 1st.</p>
+          <p class="caption">Included each month. Resets in {user.credit_reset_in} days.</p>
         </span>
         <span class="flex">
           <h5>
             Bonus: <strong>{user.bonus}</strong>
           </h5>
           <p class="caption">
-            Extra credits from referrals or promos. Don’t reset.
+            Extra credits from referrals or promos. Never expires.
           </p>
         </span>
       </div>

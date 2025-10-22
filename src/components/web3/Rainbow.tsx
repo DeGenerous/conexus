@@ -112,10 +112,13 @@ const Web3Provider: React.FC<Web3Props> = ({ linking = false, children }) => {
         verify: async ({ message, signature }) => {
           let resp: APIResponse<User>;
 
-          resp = await authAPI.web3WalletSignin({
-            message,
-            signature,
-          });
+          resp = await authAPI.web3WalletSignin(
+            {
+              message,
+              signature,
+            },
+            linking,
+          );
 
           const { status, message: apiMessage, data } = resp;
 

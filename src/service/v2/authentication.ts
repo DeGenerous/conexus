@@ -89,8 +89,10 @@ export default class AuthenticationAPI extends Fetcher {
    * @param signin - The wallet details to signin.
    * @returns A promise that resolves to an APIResponse containing the user data or an error.
    */
-  async web3WalletSignin(signin: Web3Signin) {
-    return this.request<User>(`${this.group}/web3-wallet-signin`, {
+  async web3WalletSignin(signin: Web3Signin, linking: boolean = false) {
+    const url = linking ? `${this.group}/web3-wallet-link` : `${this.group}/web3-wallet-signin`;
+    
+    return this.request<User>(url, {
       method: 'POST',
       body: JSON.stringify(signin),
     });

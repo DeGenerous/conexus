@@ -71,13 +71,33 @@
 
     userRole = roles.find((role) => role.name === user?.role_name) || null;
 
-    if (user && user.email_confirmed) checkSubscription();
+    checkSubscription();
 
     usernameInput = user?.username || '';
     bioInput = user?.avatar_bio || '';
     avatarUrl = user?.avatar_url || '';
     avatarFileId = user?.avatar_file_id || '';
   });
+
+  // Username
+
+  const resetUsername = () => {
+    editingUsername = false;
+    usernameInput = user?.username || '';
+  };
+
+  const changeUsername = async () => {
+    if (user?.username === usernameInput) {
+      editingUsername = false;
+      return;
+    }
+    try {
+      await account.changeUsername(usernameInput);
+      editingUsername = false;
+    } catch (error) {
+      resetUsername();
+    }
+  };
 
   // Change password
 
@@ -118,8 +138,9 @@
   };
 
   const selectMainWallet = async (wallet: string) => {
-    await authentication.selectMainWallet(wallet);
-    user = await getCurrentUser(true);
+    user =
+      (await authentication.selectMainWallet(wallet)) ??
+      (await getCurrentUser(true));
   };
 
   const openRemoveWalletModal = (event: Event, wallet: string) => {
@@ -132,8 +153,9 @@
   };
 
   const unlinkWallet = async (wallet: string) => {
-    await authentication.unlinkWallet(wallet);
-    user = await getCurrentUser(true);
+    user =
+      (await authentication.unlinkWallet(wallet)) ??
+      (await getCurrentUser(true));
   };
 
   // Profile picture upload and conversion to AVIF
@@ -234,12 +256,7 @@
       <h4>Username</h4>
       <div class="container">
         {#if editingUsername}
-          <CloseSVG
-            onclick={() => {
-              editingUsername = false;
-              usernameInput = 'player_12345';
-            }}
-          />
+          <CloseSVG onclick={resetUsername} />
         {/if}
         <input
           bind:value={usernameInput}
@@ -251,14 +268,7 @@
         />
         {#if editingUsername}
           <SaveSVG
-            onclick={async () => {
-              if (user?.username === usernameInput) {
-                editingUsername = false;
-                return;
-              }
-              await account.changeUsername(usernameInput);
-              editingUsername = false;
-            }}
+            onclick={changeUsername}
             disabled={user?.username === usernameInput}
           />
         {:else}
@@ -386,6 +396,9 @@
 
   {#if user.email && user.first_name}
     <Dropdown name="Account">
+      {#if user.role_name === 'Admin'}
+        <h3 style:color="gold">👑 You are Admin 👑</h3>
+      {/if}
       <ul class="user-roles flex-row flex-wrap">
         {#each roles as { name, monthly_credits, play_without_media, play_with_media, create_topic_cost }}
           {#if name !== 'Admin'}
@@ -419,24 +432,28 @@
         {#if !user.email_confirmed && !user.is_oauth}
           <p class="validation">Please check your inbox and confirm email</p>
         {/if}
-        <div class="input-container">
-          <label for="first-name">First name</label>
-          <input
-            id="first-name"
-            type="text"
-            value={user.first_name}
-            disabled={true}
-          />
-        </div>
-        <div class="input-container">
-          <label for="last-name">Last name</label>
-          <input
-            id="last-name"
-            type="text"
-            value={user.last_name}
-            disabled={true}
-          />
-        </div>
+        {#if user.first_name}
+          <div class="input-container">
+            <label for="first-name">First name</label>
+            <input
+              id="first-name"
+              type="text"
+              value={user.first_name}
+              disabled={true}
+            />
+          </div>
+        {/if}
+        {#if user.last_name}
+          <div class="input-container">
+            <label for="last-name">Last name</label>
+            <input
+              id="last-name"
+              type="text"
+              value={user.last_name}
+              disabled={true}
+            />
+          </div>
+        {/if}
 
         {#if editingPassword}
           <div class="input-container">
@@ -539,35 +556,33 @@
         {/if}
       </form>
 
-      {#if user.email_confirmed}
-        {#if subscribedToNewsletter}
-          <button
-            class="unsubscribe-btn void-btn"
-            onclick={() => {
-              account
-                .unsubscribeNewsletter(user?.email!)
-                .then(() => checkSubscription());
-            }}
-          >
-            Unsubscribe from Newsletter
-          </button>
-        {:else}
-          <button
-            class="green-btn"
-            onclick={() => {
-              account
-                .subscribeNewsletter(user?.email!)
-                .then(() => checkSubscription());
-            }}
-          >
-            Subscribe to Newsletter
-          </button>
-        {/if}
+      {#if subscribedToNewsletter}
+        <button
+          class="unsubscribe-btn void-btn"
+          onclick={() => {
+            account
+              .unsubscribeNewsletter(user?.email!)
+              .then(() => checkSubscription());
+          }}
+        >
+          Unsubscribe from Newsletter
+        </button>
+      {:else}
+        <button
+          class="green-btn"
+          onclick={() => {
+            account
+              .subscribeNewsletter(user?.email!)
+              .then(() => checkSubscription());
+          }}
+        >
+          Subscribe to Newsletter
+        </button>
       {/if}
     </Dropdown>
   {/if}
 
-  {#if user.wallets && user.wallets.length >= 1}
+  {#if user.wallets && user.wallets.filter((address) => !address.faux).length >= 1}
     <Dropdown name="Connected Addresses">
       <ul class="flex-row flex-wrap">
         {#each user.wallets.filter((address) => !address.faux) as { wallet }, index}

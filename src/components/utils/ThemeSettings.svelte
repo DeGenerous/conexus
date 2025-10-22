@@ -9,7 +9,14 @@
     updateStyling,
     getStoredCustomization,
   } from '@stores/customization.svelte';
-  import { GetCache, SetCache, ClearCache, THEMES_KEY, FONT_KEY, STYLING_KEY } from '@constants/cache';
+  import {
+    GetCache,
+    SetCache,
+    ClearCache,
+    THEMES_KEY,
+    FONT_KEY,
+    STYLING_KEY,
+  } from '@constants/cache';
 
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
@@ -23,12 +30,12 @@
   // update FONT in localStorage after every change
   $effect(() => {
     $customFont && updateFont();
-  })
+  });
 
   // update STYLING in localStorage after every change
   $effect(() => {
     $customStyling && updateStyling();
-  })
+  });
 
   onMount(() => {
     const storedThemes = GetCache<Nullable<CustomTheme[]>>(THEMES_KEY);
@@ -84,7 +91,7 @@
   // Check if user made any differences in customization, or just some THEME-object is used
   const anyThemeMatched = (): boolean =>
     $customThemes.some((theme) => {
-      console.log('matching', theme)
+      console.log('matching', theme);
       return compareCurrentTheme(theme);
     });
 

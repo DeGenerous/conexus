@@ -53,7 +53,7 @@ export const getStoredCustomization = () => {
   const storedStyling = GetCache<CustomStyling>(STYLING_KEY);
   if (storedStyling) customStyling.set(storedStyling);
   else updateStyling('reset');
-}
+};
 
 export const customThemes = writable<CustomTheme[]>([
   {

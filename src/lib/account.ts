@@ -109,7 +109,7 @@ class Account {
 
     if (status === 'error') {
       api_error(message);
-      return;
+      throw new Error(message);
     }
 
     toastStore.show(message || 'Username changed successfully', 'info');

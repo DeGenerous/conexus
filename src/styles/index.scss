@@ -514,7 +514,7 @@ html {
     //   @include text-shadow;
     // }
 
-    div {
+    div:not(form div) {
       width: 100%;
       flex-flow: row wrap;
       justify-content: space-around;

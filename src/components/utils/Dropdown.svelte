@@ -94,7 +94,6 @@
 
     &.table {
       div {
-        // padding: 0;
         background-color: transparent !important;
         border: none;
         border-radius: 0;

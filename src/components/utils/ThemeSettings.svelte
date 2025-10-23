@@ -9,22 +9,17 @@
     updateStyling,
     getStoredCustomization,
   } from '@stores/customization.svelte';
-  import {
-    GetCache,
-    SetCache,
-    ClearCache,
-    THEMES_KEY,
-    FONT_KEY,
-    STYLING_KEY,
-  } from '@constants/cache';
+  import { GetCache, SetCache, ClearCache, THEMES_KEY } from '@constants/cache';
 
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
 
   let {
     closeDialog = () => {},
+    table = false,
   }: {
     closeDialog?: () => void;
+    table?: boolean;
   } = $props();
 
   // update FONT in localStorage after every change
@@ -104,7 +99,12 @@
   };
 </script>
 
-<ul class="custom-themes transparent-container">
+<ul
+  class="custom-themes"
+  class:transparent-container={!table}
+  class:flex-row={table}
+  class:table
+>
   {#each $customThemes as { name, standard }, index}
     <button
       id="theme-{index}"
@@ -174,10 +174,11 @@
 
   .custom-themes {
     width: 100%;
-    flex-flow: row wrap;
+    flex-wrap: wrap;
 
     .theme-option {
       h4 {
+        width: auto;
         color: $dark-blue;
       }
 
@@ -205,10 +206,15 @@
 
     .add-theme {
       width: 100%;
+      justify-content: center;
     }
 
     @include respond-up(tablet) {
       width: auto;
+    }
+
+    &.table {
+      margin-top: 1.5rem;
     }
   }
 </style>

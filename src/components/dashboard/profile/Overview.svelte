@@ -18,9 +18,8 @@
   import openModal from '@stores/modal.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';
   import { getCurrentUser } from '@utils/route-guard';
-  import { referralActivationNotice, refreshDataModal } from '@constants/modal';
+  import { referralActivationNotice } from '@constants/modal';
   import { toastStore } from '@stores/toast.svelte';
-  import { ClearCache } from '@constants/cache';
   import { blankImage, serveUrl } from '@constants/media';
   import { MEDIA_RULES, validateFiles } from '@utils/file-validation';
   import { toAvif } from '@utils/avif-convert';

@@ -18,10 +18,6 @@ export const referralActivationNotice = `
   <p>Before you can invite others, you need to activate your own account with a referral code. You’re just one step away.</p>
 `;
 
-export const refreshDataModal = `
-  <p>This will force a CoNexus reload, and remove old stored files - letting you see the latest version of the platform with the newest content. It won't affect your local settings.</p>
-`;
-
 export const openStoryManage = `
   <h4>Dream created!</h4>
   <p>You can now customize, share, or edit your story. Want to head to the manage panel?</p>

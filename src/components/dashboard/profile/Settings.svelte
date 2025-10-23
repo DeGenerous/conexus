@@ -23,6 +23,8 @@
   let preferredSettings = $state<'personal' | 'default'>('personal');
   let preferredTheme = $state<'personal' | 'default'>('personal');
 
+  const table = true;
+
   const setPersonalSetup = () =>
     SetCache(PERSONAL_SETUP_KEY, {
       settings: preferredSettings,
@@ -159,9 +161,11 @@
   </TopicSettings>
 </Dropdown>
 
-<StylingController />
+<Dropdown name="Personal Theme" {table}>
+  <StylingController />
 
-<ThemeSettings />
+  <ThemeSettings {table} />
+</Dropdown>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

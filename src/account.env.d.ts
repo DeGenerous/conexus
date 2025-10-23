@@ -24,6 +24,7 @@ type User = {
   referral_code?: string;
   credits: number;
   bonus?: number;
+  credit_reset_in: number;
   role_id: string;
   role_name?: DefaultRoles;
   username?: string;

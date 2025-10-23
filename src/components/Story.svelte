@@ -393,9 +393,9 @@
                 class="small-tile small-blue-tile"
                 href="/{section_name
                   ? 's'
-                  : 'c'}/{section_name}/{neighbor.TopicID}?title={neighbor.TopicName}"
+                  : 'c'}/{section_name}/{neighbor.topic_id}?title={neighbor.topic_name}"
               >
-                <p>{neighbor.TopicName}</p>
+                <p>{neighbor.topic_name}</p>
               </a>
             </li>
           {/each}

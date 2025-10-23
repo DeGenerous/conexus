@@ -2,10 +2,13 @@
   import { onDestroy } from 'svelte';
   import { location } from 'svelte-spa-router';
 
-  import SidebarLink from '@components/dashboard/SidebarLink.svelte';
+  import Authentication from '@lib/authentication.ts';
+
   import { DASHBOARD_LINKS } from '@components/dashboard/routes';
+  import SidebarLink from '@components/dashboard/SidebarLink.svelte';
 
   import BurgerSVG from '@components/icons/Burger.svelte';
+  import DoorSVG from '@components/icons/Door.svelte';
 
   let {
     isAdmin,
@@ -14,6 +17,8 @@
     isAdmin: boolean;
     isCreator: boolean;
   } = $props();
+
+  const authentication: Authentication = new Authentication();
 
   let sidebarOpen = $state<boolean>(false);
   let expanded = $state<Set<string>>(new Set());
@@ -146,6 +151,12 @@
         {activePath}
       />
     {/each}
+    <DoorSVG
+      state="outside"
+      text="Sign Out"
+      onclick={() => authentication.logout()}
+      voidBtn={true}
+    />
   </nav>
 </section>
 

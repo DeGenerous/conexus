@@ -167,10 +167,10 @@
 
   const triggerAvatarPicker = () => avatarInputEl?.click();
 
-  const refreshUserAvatar = async () => {
-    user = await getCurrentUser(true);
-    avatarUrl = user?.avatar_url || '';
-  };
+  // const refreshUserAvatar = async () => {
+  //   user = await getCurrentUser(true);
+  //   avatarUrl = user?.avatar_url || '';
+  // };
 
   const handleAvatarUpload = async (event: Event) => {
     const input = event.target as HTMLInputElement;
@@ -203,7 +203,8 @@
       }
 
       await account.changeAvatar(undefined, upload);
-      await refreshUserAvatar();
+      // await refreshUserAvatar();
+      window.location.reload();
     } catch (error) {
       console.error('Failed to upload avatar:', error);
     } finally {
@@ -214,14 +215,6 @@
 </script>
 
 {#if user}
-  <header class="flex-row">
-    <DoorSVG
-      state="outside"
-      text="Sign out"
-      onclick={() => authentication.logout()}
-    />
-  </header>
-
   <img
     class="pfp round"
     src={avatarFileId
@@ -292,7 +285,9 @@
               {/if}
             </strong>
           </h5>
-          <p class="caption">Included each month. Resets in {user.credit_reset_in} days.</p>
+          <p class="caption">
+            Included each month. Resets in {user.credit_reset_in} days.
+          </p>
         </span>
         <span class="flex">
           <h5>
@@ -619,35 +614,12 @@
   {:else}
     <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
   {/if}
-
-  <ResetSVG
-    onclick={() => {
-      openModal(refreshDataModal, 'Refresh', () => {
-        ClearCache('full');
-        toastStore.show(
-          'The cache has been reset. Fresh data will be fetched when needed.',
-          'info',
-        );
-        account.getReferralCode();
-      });
-    }}
-    text="Refresh Data"
-  />
 {:else}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {/if}
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
-
-  header {
-    width: 100%;
-    justify-content: flex-end;
-
-    @include mobile-only {
-      margin-top: -3.5rem;
-    }
-  }
 
   .pfp {
     @include gray-border;

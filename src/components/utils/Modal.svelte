@@ -76,6 +76,8 @@
 
     <!-- CUSTOM THEMES WINDOW -->
     {#if $themeSettingsModal}
+      <h3>Theme Preferences</h3>
+      <h5>Use the default look or create your own custom theme.</h5>
       <ThemeSettings {closeDialog} />
     {/if}
 

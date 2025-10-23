@@ -104,9 +104,6 @@
   };
 </script>
 
-<h3>Theme Preferences</h3>
-<h5>Use the default look or create your own custom theme.</h5>
-
 <ul class="custom-themes transparent-container">
   {#each $customThemes as { name, standard }, index}
     <button

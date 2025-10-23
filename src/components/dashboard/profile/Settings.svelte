@@ -13,9 +13,10 @@
   import openModal from '@stores/modal.svelte';
   import { ensureMessage } from '@constants/modal';
 
+  import Dropdown from '@components/utils/Dropdown.svelte';
   import TopicSettings from '@components/dashboard/common/TopicSettings.svelte';
   import ThemeSettings from '@components/utils/ThemeSettings.svelte';
-  import Dropdown from '@components/utils/Dropdown.svelte';
+  import StylingController from '@components/utils/StylingController.svelte';
 
   const account: Account = new Account();
 
@@ -157,6 +158,8 @@
     {/snippet}
   </TopicSettings>
 </Dropdown>
+
+<StylingController />
 
 <ThemeSettings />
 

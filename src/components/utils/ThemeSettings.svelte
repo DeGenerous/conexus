@@ -102,7 +102,7 @@
 <ul
   class="custom-themes"
   class:transparent-container={!table}
-  class:flex-row={table}
+  class:flex={table}
   class:table
 >
   {#each $customThemes as { name, standard }, index}
@@ -174,6 +174,7 @@
 
   .custom-themes {
     width: 100%;
+    flex-direction: row;
     flex-wrap: wrap;
 
     .theme-option {

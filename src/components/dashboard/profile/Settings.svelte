@@ -138,7 +138,7 @@
     </div>
   </div>
 
-  <div class="flex-row">
+  <!-- <div class="flex-row">
     <h4>Preferred Theme</h4>
     <div class="container">
       <span class="flex-row">
@@ -167,7 +167,7 @@
         {/if}
       </p>
     </div>
-  </div>
+  </div> -->
 </section>
 
 <Dropdown name="Personal Settings" table={true}>

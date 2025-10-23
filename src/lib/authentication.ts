@@ -92,7 +92,7 @@ export default class Authentication {
     const { status, message } = await this.api.validateReferralCode(code);
 
     if (status === 'error') {
-      api_error(message || 'Unknown error occurred');
+      // api_error(message || 'Unknown error occurred');
       return false;
     }
 

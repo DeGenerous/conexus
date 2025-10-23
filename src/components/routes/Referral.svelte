@@ -12,16 +12,16 @@
 
   let code = $state<string>('');
   let referralCodeValid = $state<boolean>(false);
-  let isValidatingCode = $state<boolean>(false);
   let codeValidated = $state<boolean>(false);
   let termsAccepted = $state<boolean>(false);
+  const REFERRAL_CODE_DEBOUNCE_MS = 500;
+  let referralValidationHandle: ReturnType<typeof setTimeout> | undefined;
 
   $effect(() => {
-    if (code.length === 16) validateReferralCode();
-    else if (code.length < 16) {
+    if (code.length >= 3 && code.length <= 20) validateReferralCode();
+    else if (code.length < 3 || code.length > 20) {
       referralCodeValid = false;
       codeValidated = false;
-      isValidatingCode = false;
     }
   });
 
@@ -38,31 +38,32 @@
   };
 
   async function validateReferralCode() {
-    const currentCode = code;
-    if (currentCode.length !== 16) return;
+    if (referralValidationHandle) clearTimeout(referralValidationHandle);
 
-    try {
-      isValidatingCode = true;
-      referralCodeValid = false;
-      codeValidated = false;
+    referralValidationHandle = setTimeout(async () => {
+      referralValidationHandle = undefined;
 
-      const validated = await auth.validateReferralCode(currentCode);
+      const currentCode = code;
+      if (currentCode.length < 3 || currentCode.length > 20) return;
 
-      if (code !== currentCode) return;
+      try {
+        referralCodeValid = false;
+        codeValidated = false;
 
-      referralCodeValid = validated;
-      codeValidated = true;
-    } catch (error) {
-      console.error('Failed to validate referral code:', error);
-      if (code !== currentCode) return;
+        const validated = await auth.validateReferralCode(currentCode);
 
-      referralCodeValid = false;
-      codeValidated = true;
-    } finally {
-      if (code === currentCode) {
-        isValidatingCode = false;
+        if (code !== currentCode) return;
+
+        referralCodeValid = validated;
+        codeValidated = true;
+      } catch (error) {
+        console.error('Failed to validate referral code:', error);
+        if (code !== currentCode) return;
+
+        referralCodeValid = false;
+        codeValidated = true;
       }
-    }
+    }, REFERRAL_CODE_DEBOUNCE_MS);
   }
 </script>
 
@@ -73,24 +74,22 @@
     class:red-border={!code || !referralCodeValid}
     type="text"
     placeholder="A11A7528D9C82915"
-    minlength="16"
-    maxlength="16"
+    minlength="3"
+    maxlength="20"
     bind:value={code}
     required
   />
 
-  {#if code.length === 16}
-    {#if isValidatingCode}
-      <p class="validation gray">Checking referral code...</p>
-    {:else if codeValidated}
+  {#if code.length >= 3 && code.length <= 20}
+    {#if codeValidated}
       {#if referralCodeValid}
-        <p class="validation green">Referral code is valid</p>
+        <p class="validation green-txt">Referral code is valid</p>
       {:else}
         <p class="validation">Referral code is invalid</p>
       {/if}
     {/if}
   {:else if code}
-    <p class="validation">Code should contain 16 characters</p>
+    <p class="validation">Code should contain 3-20 characters</p>
   {/if}
 
   <div class="flex-row gap-8">

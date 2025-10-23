@@ -92,30 +92,42 @@
 
   let termsAccepted: boolean = false;
   let newsletterSignup: boolean = false;
+  const REFERRAL_CODE_DEBOUNCE_MS = 500;
+  let referralValidationHandle: ReturnType<typeof setTimeout> | undefined;
 
   $: isFormValid = mandatoryFields && termsAccepted && referralCodeValid;
 
-  // Validate referral code when length is 16 characters
-  $: if (referralCode.length === 8) validateReferralCode();
-  $: if (referralCode.length < 8) referralCodeValid = false;
+  // Validate referral code when length is between 3 and 20 characters
+  $: if (referralCode.length >= 3 && referralCode.length <= 20)
+    validateReferralCode();
+  $: if (referralCode.length < 3) referralCodeValid = false;
 
   async function validateReferralCode() {
-    const currentCode = referralCode;
-    if (currentCode.length !== 8) return;
-
-    try {
-      referralCodeValid = false;
-      const validated = await authentication.validateReferralCode(currentCode);
-
-      if (referralCode !== currentCode) return;
-
-      referralCodeValid = validated;
-    } catch (error) {
-      console.error('Failed to validate referral code:', error);
-      if (referralCode !== currentCode) return;
-
-      referralCodeValid = false;
+    if (referralValidationHandle) {
+      clearTimeout(referralValidationHandle);
     }
+
+    referralValidationHandle = setTimeout(async () => {
+      referralValidationHandle = undefined;
+
+      const currentCode = referralCode;
+      if (currentCode.length < 3 || currentCode.length > 20) return;
+
+      try {
+        referralCodeValid = false;
+        const validated =
+          await authentication.validateReferralCode(currentCode);
+
+        if (referralCode !== currentCode) return;
+
+        referralCodeValid = validated;
+      } catch (error) {
+        console.error('Failed to validate referral code:', error);
+        if (referralCode !== currentCode) return;
+
+        referralCodeValid = false;
+      }
+    }, REFERRAL_CODE_DEBOUNCE_MS);
   }
 
   // Sign up user with Email and Referral Code
@@ -356,21 +368,21 @@ a11y-no-static-element-interactions-->
               type="text"
               id="user-ref-code"
               placeholder="A11A7528D9C82915"
-              minlength="16"
-              maxlength="16"
+              minlength="3"
+              maxlength="20"
               bind:value={referralCode}
               required
             />
           </div>
 
-          {#if referralCode.length === 16}
+          {#if referralCode.length >= 3 && referralCode.length <= 20}
             {#if referralCodeValid}
               <p class="validation green-txt">Referral code is valid</p>
             {:else}
               <p class="validation">Referral code is invalid</p>
             {/if}
           {:else if referralCode}
-            <p class="validation">Code should contain 16 characters</p>
+            <p class="validation">Code should contain 3-20 characters</p>
           {:else}
             <p class="validation">Enter your referral code.</p>
           {/if}

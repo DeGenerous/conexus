@@ -1,7 +1,8 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 
 export const showModal = writable<boolean>(false);
 export const showProfile = writable<boolean>(false);
+export const playOptions = writable<boolean | 'dont_show_again'>(false);
 
 // MODAL HANDLING
 

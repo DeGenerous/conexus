@@ -137,8 +137,3 @@ type DashboardStoryInfo = {
   started_at: Date;
   last_step_at: Date;
 };
-
-type PreferredSetup = {
-  settings: 'personal' | 'default';
-  theme?: 'personal' | 'default';
-};

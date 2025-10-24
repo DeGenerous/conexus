@@ -2,17 +2,29 @@
   import { onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
 
-  import { GetCache, TERMS_KEY } from '@constants/cache';
+  import {
+    GetCache,
+    SetCache,
+    TERMS_KEY,
+    PLAY_OPTIONS_KEY,
+  } from '@constants/cache';
   import { blankImage, serveUrl } from '@constants/media';
   import { ensureMessage, referralWarning } from '@constants/modal';
   import { NAV_ROUTES } from '@constants/routes';
   import CoNexusGame from '@lib/story';
   import CoNexusApp from '@lib/view';
   import { story, game } from '@stores/conexus.svelte';
-  import openModal, { showProfile } from '@stores/modal.svelte';
+  import openModal, {
+    modal,
+    showModal,
+    showProfile,
+    playOptions,
+    resetModal,
+  } from '@stores/modal.svelte';
   import detectIOS from '@utils/ios-device';
   import { userState, getCurrentUser } from '@utils/route-guard';
   import { navContext } from '@stores/navigation.svelte';
+  import { getPersonalSetup } from '@stores/account.svelte';
 
   import Bookmark from '@components/utils/Bookmark.svelte';
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
@@ -84,19 +96,66 @@
     }
   };
 
+  const retrieveSettings = (): StorySettingSelector => {
+    const cachedSetup = getPersonalSetup();
+    if (cachedSetup) {
+      return cachedSetup.settings === 'personal' ? 'account' : 'topic';
+    } else return 'topic';
+  };
+
+  const retrievePlayMode = (): PlayMode => {
+    const cachedSetup = getPersonalSetup();
+    if (cachedSetup) {
+      return cachedSetup.play_mode || 'play_limited';
+    } else return 'play_limited';
+  };
+
+  const launchStory = () => {
+    if (!activeTopic) return;
+    conexusGame.start(
+      activeTopic.id,
+      retrieveSettings(),
+      retrievePlayMode(),
+      handleSetMedia,
+    );
+  };
+
+  const startGame = () => {
+    if (!isReferred) {
+      openModal(
+        referralWarning,
+        'Proceed',
+        () => (window.location.href = '/referral'),
+      );
+      return;
+    }
+
+    const showPlayOptions = GetCache<boolean>(PLAY_OPTIONS_KEY);
+    if (showPlayOptions) {
+      launchStory();
+      return;
+    }
+
+    $showModal = true;
+    $playOptions = true;
+    modal.button =
+      retrievePlayMode() === 'play_limited'
+        ? 'Play: 1 credit'
+        : 'Play: 3 credits';
+    modal.buttonFunc = () => {
+      if ($playOptions === 'dont_show_again') {
+        SetCache(PLAY_OPTIONS_KEY, true);
+      }
+      launchStory();
+      resetModal();
+    };
+  };
+
   const restartGame = () => {
     game.background_image = null;
     game.background_music = null;
     $story = null;
-    setTimeout(() => {
-      activeTopic &&
-        conexusGame.start(
-          activeTopic.id,
-          'topic',
-          'play_limited',
-          handleSetMedia,
-        );
-    });
+    setTimeout(launchStory);
   };
 
   onMount(async () => {
@@ -231,26 +290,7 @@
                     glow={true}
                   />
                 {:else}
-                  <button
-                    class="button-glowing"
-                    onclick={() => {
-                      if (!isReferred) {
-                        openModal(
-                          referralWarning,
-                          'Proceed',
-                          () => (window.location.href = '/referral'),
-                        );
-                        return;
-                      }
-                      activeTopic &&
-                        conexusGame.start(
-                          activeTopic.id,
-                          'topic',
-                          'play_limited',
-                          handleSetMedia,
-                        );
-                    }}
-                  >
+                  <button class="button-glowing" onclick={startGame}>
                     PLAY NOW
                   </button>
                 {/if}

@@ -9,10 +9,10 @@
     defaultPromptSettings,
     arePromptSettingsEqual,
   } from '@stores/dream.svelte';
-  import { GetCache, SetCache, PERSONAL_SETUP_KEY } from '@constants/cache';
   import openModal from '@stores/modal.svelte';
   import { ensureMessage } from '@constants/modal';
   import { customFont, customStyling } from '@stores/customization.svelte';
+  import { getPersonalSetup, setPersonalSetup } from '@stores/account.svelte';
 
   import Dropdown from '@components/utils/Dropdown.svelte';
   import TopicSettings from '@components/dashboard/common/TopicSettings.svelte';
@@ -22,8 +22,9 @@
 
   const account: Account = new Account();
 
-  let preferredSettings = $state<'personal' | 'default'>('default');
-  // let preferredTheme = $state<'personal' | 'default'>('default');
+  let preferredSettings = $state<SettingMode>('default');
+  // let preferredTheme = $state<SettingMode>('default');
+  let playMode = $state<PlayMode>('play_unlimited');
 
   const table = true; // for Dropdown styling
   const options = [
@@ -49,21 +50,20 @@
                 : 0.75;
   });
 
-  const setPersonalSetup = () => {
-    SetCache<PreferredSetup>(PERSONAL_SETUP_KEY, {
+  const updatePersonalSetup = () =>
+    setPersonalSetup({
       settings: preferredSettings,
       // theme: preferredTheme,
+      play_mode: playMode,
     });
-  };
 
   onMount(async () => {
-    const cachedSetup = GetCache<PreferredSetup>(PERSONAL_SETUP_KEY);
+    const cachedSetup = getPersonalSetup();
     if (cachedSetup) {
-      preferredSettings = cachedSetup.settings;
-      // preferredTheme = cachedSetup.theme;
-    } else {
-      setPersonalSetup();
-    }
+      preferredSettings = cachedSetup.settings || 'default';
+      // preferredTheme = cachedSetup.theme || 'default';
+      playMode = cachedSetup.play_mode || 'play_unlimited';
+    } else updatePersonalSetup();
 
     const settings = await account.getPromptSettings();
     if (settings) {
@@ -114,7 +114,7 @@
           class:active={preferredSettings === 'personal'}
           onclick={() => {
             preferredSettings = 'personal';
-            setPersonalSetup();
+            updatePersonalSetup();
           }}
         >
           Personal
@@ -124,7 +124,7 @@
           class:active={preferredSettings === 'default'}
           onclick={() => {
             preferredSettings = 'default';
-            setPersonalSetup();
+            updatePersonalSetup();
           }}
         >
           Default
@@ -149,7 +149,7 @@
           class:active={preferredTheme === 'personal'}
           onclick={() => {
             preferredTheme = 'personal';
-            setPersonalSetup();
+            updatePersonalSetup();
           }}
         >
           Personal
@@ -159,7 +159,7 @@
           class:active={preferredTheme === 'default'}
           onclick={() => {
             preferredTheme = 'default';
-            setPersonalSetup();
+            updatePersonalSetup();
           }}
         >
           Default
@@ -176,6 +176,41 @@
       </p>
     </div>
   </div> -->
+
+  <div class="flex-row">
+    <h4>Play Mode</h4>
+    <div class="container">
+      <span class="flex-row">
+        <button
+          class="void-btn dream-radio-btn"
+          class:active={playMode === 'play_limited'}
+          onclick={() => {
+            playMode = 'play_limited';
+            updatePersonalSetup();
+          }}
+        >
+          Text-only
+        </button>
+        <button
+          class="void-btn dream-radio-btn"
+          class:active={playMode === 'play_unlimited'}
+          onclick={() => {
+            playMode = 'play_unlimited';
+            updatePersonalSetup();
+          }}
+        >
+          With Media
+        </button>
+      </span>
+      <p>
+        {#if playMode === 'play_limited'}
+          Story cost: <strong>1 credit</strong>. No images or audio.
+        {:else}
+          Story cost: <strong>3 credits</strong>. Images and audio on each step.
+        {/if}
+      </p>
+    </div>
+  </div>
 </section>
 
 <Dropdown name="Personal Settings" table={true}>
@@ -290,6 +325,10 @@
     p {
       @include white-txt(0.5);
       @include font(caption);
+
+      strong {
+        @include white-txt(0.65);
+      }
     }
   }
 

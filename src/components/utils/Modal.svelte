@@ -3,11 +3,17 @@
   import { onMount } from 'svelte';
   import { GetCache, SetCache, TERMS_KEY } from '@constants/cache';
 
-  import { modal, showModal, resetModal } from '@stores/modal.svelte';
+  import {
+    modal,
+    showModal,
+    resetModal,
+    playOptions,
+  } from '@stores/modal.svelte';
   import { themeSettingsModal } from '@stores/customization.svelte';
   import { NAV_ROUTES } from '@constants/routes';
 
   import ThemeSettings from '@components/utils/ThemeSettings.svelte';
+  import PlayOptions from '@components/utils/PlayOptions.svelte';
 
   let dialog: HTMLDialogElement;
 
@@ -25,6 +31,7 @@
     dialog.classList.add('dialog-fade-out'); // animation before close
     $showModal = false;
     if ($themeSettingsModal) $themeSettingsModal = false;
+    if ($playOptions) $playOptions = false;
     resetModal();
     setTimeout(() => dialog?.close(), 300);
   };
@@ -79,6 +86,11 @@
       <h3>Theme Preferences</h3>
       <h5>Use the default look or create your own custom theme.</h5>
       <ThemeSettings {closeDialog} />
+    {/if}
+
+    <!-- PLAY MODE -->
+    {#if $playOptions}
+      <PlayOptions />
     {/if}
 
     <span class="flex">

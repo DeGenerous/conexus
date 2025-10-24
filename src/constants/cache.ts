@@ -12,6 +12,7 @@ export const TTL_YEAR = TTL_DAY * 365; // 1 year
 export const IOS_KEY = 'ios_device'; // to hide some unsupported UI
 
 export const GAME_INSTRUCTIONS_KEY = 'show_instructions';
+export const PLAY_OPTIONS_KEY = 'show_play_options';
 export const ONBOARDING_KEY = 'onboarded';
 
 // Step customization
@@ -91,6 +92,7 @@ function saveImportantAndClearCache() {
   // saving important values
   const cookieConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
   const gameInstructions = localStorage.getItem(GAME_INSTRUCTIONS_KEY);
+  const playOptions = localStorage.getItem(PLAY_OPTIONS_KEY);
   const onboarded = localStorage.getItem(ONBOARDING_KEY);
   const musicVolume = localStorage.getItem(VOLUME_KEY('music'));
   const voiceVolume = localStorage.getItem(VOLUME_KEY('voice'));
@@ -115,6 +117,7 @@ function saveImportantAndClearCache() {
   if (cookieConsent) localStorage.setItem(COOKIE_CONSENT_KEY, cookieConsent);
   if (gameInstructions)
     localStorage.setItem(GAME_INSTRUCTIONS_KEY, gameInstructions);
+  if (playOptions) localStorage.setItem(PLAY_OPTIONS_KEY, playOptions);
   if (onboarded) localStorage.setItem(ONBOARDING_KEY, onboarded);
   if (musicVolume) localStorage.setItem(VOLUME_KEY('music'), musicVolume);
   if (voiceVolume) localStorage.setItem(VOLUME_KEY('voice'), voiceVolume);

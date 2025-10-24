@@ -86,7 +86,6 @@
   // Check if user made any differences in customization, or just some THEME-object is used
   const anyThemeMatched = (): boolean =>
     $customThemes.some((theme) => {
-      console.log('matching', theme);
       return compareCurrentTheme(theme);
     });
 

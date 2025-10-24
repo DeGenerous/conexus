@@ -19,12 +19,11 @@
   import ThemeSettings from '@components/utils/ThemeSettings.svelte';
   import StylingController from '@components/utils/StylingController.svelte';
   import SelectorSVG from '@components/icons/Selector.svelte';
-  import Selector from '@components/icons/Selector.svelte';
 
   const account: Account = new Account();
 
-  let preferredSettings = $state<'personal' | 'default'>('personal');
-  let preferredTheme = $state<'personal' | 'default'>('personal');
+  let preferredSettings = $state<'personal' | 'default'>('default');
+  // let preferredTheme = $state<'personal' | 'default'>('default');
 
   const table = true; // for Dropdown styling
   const options = [
@@ -50,17 +49,20 @@
                 : 0.75;
   });
 
-  const setPersonalSetup = () =>
-    SetCache(PERSONAL_SETUP_KEY, {
+  const setPersonalSetup = () => {
+    SetCache<PreferredSetup>(PERSONAL_SETUP_KEY, {
       settings: preferredSettings,
-      theme: preferredTheme,
+      // theme: preferredTheme,
     });
+  };
 
   onMount(async () => {
     const cachedSetup = GetCache<PreferredSetup>(PERSONAL_SETUP_KEY);
     if (cachedSetup) {
       preferredSettings = cachedSetup.settings;
-      preferredTheme = cachedSetup.theme;
+      // preferredTheme = cachedSetup.theme;
+    } else {
+      setPersonalSetup();
     }
 
     const settings = await account.getPromptSettings();
@@ -109,6 +111,41 @@
       <span class="flex-row">
         <button
           class="void-btn dream-radio-btn"
+          class:active={preferredSettings === 'personal'}
+          onclick={() => {
+            preferredSettings = 'personal';
+            setPersonalSetup();
+          }}
+        >
+          Personal
+        </button>
+        <button
+          class="void-btn dream-radio-btn"
+          class:active={preferredSettings === 'default'}
+          onclick={() => {
+            preferredSettings = 'default';
+            setPersonalSetup();
+          }}
+        >
+          Default
+        </button>
+      </span>
+      <p>
+        {#if preferredSettings === 'personal'}
+          Use your profile’s settings, overriding the story’s defaults.
+        {:else}
+          Play with author defaults, personal preferences will not be applied.
+        {/if}
+      </p>
+    </div>
+  </div>
+
+  <!-- <div class="flex-row">
+    <h4>Preferred Theme</h4>
+    <div class="container">
+      <span class="flex-row">
+        <button
+          class="void-btn dream-radio-btn"
           class:active={preferredTheme === 'personal'}
           onclick={() => {
             preferredTheme = 'personal';
@@ -130,35 +167,6 @@
       </span>
       <p>
         {#if preferredTheme === 'personal'}
-          Use your profile’s settings, overriding the story’s defaults.
-        {:else}
-          Play with author defaults, personal preferences will not be applied.
-        {/if}
-      </p>
-    </div>
-  </div>
-
-  <!-- <div class="flex-row">
-    <h4>Preferred Theme</h4>
-    <div class="container">
-      <span class="flex-row">
-        <button
-          class="void-btn dream-radio-btn"
-          class:active={preferredSettings === 'personal'}
-          onclick={() => (preferredSettings = 'personal')}
-        >
-          Personal
-        </button>
-        <button
-          class="void-btn dream-radio-btn"
-          class:active={preferredSettings === 'default'}
-          onclick={() => (preferredSettings = 'default')}
-        >
-          Default
-        </button>
-      </span>
-      <p>
-        {#if preferredSettings === 'personal'}
           Apply your saved theme (colors, fonts, spacing) to all stories you
           play until you switch back.
         {:else}

@@ -233,14 +233,6 @@
       )
       .map(({ category_id, order }) => ({ category_id, order }));
 
-    console.log('[Collections] Category order updated', {
-      sectionId,
-      categories: updated.map(({ category_id, category_order }) => ({
-        category_id,
-        category_order,
-      })),
-    });
-
     await persistCategoryOrder('sections', sectionId, updates, () =>
       refreshSectionCategories(sectionId),
     );

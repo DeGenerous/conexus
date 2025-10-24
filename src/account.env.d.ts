@@ -140,5 +140,5 @@ type DashboardStoryInfo = {
 
 type PreferredSetup = {
   settings: 'personal' | 'default';
-  theme: 'personal' | 'default';
+  theme?: 'personal' | 'default';
 };

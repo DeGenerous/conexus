@@ -114,8 +114,6 @@ export default class Topic {
       return [];
     }
 
-    console.log(data);
-
     return data || [];
   }
 

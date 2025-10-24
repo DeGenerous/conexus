@@ -26,7 +26,6 @@
   const fetchUnfinishedStories = async (range: DurationEnum) => {
     SetCache(UNFINISHED_STORIES_RANGE_KEY, range);
     unfinishedStories = await account.getUserStories(range);
-    console.log(unfinishedStories);
   };
 
   $effect(() => {

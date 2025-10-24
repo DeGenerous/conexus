@@ -95,6 +95,7 @@
     }
 
     topic = await topicManager.getTopicManager(topic_id);
+    console.log(topic);
 
     if (!topic || !topic.topic || !topic.topic_prompt || !topic.categories) {
       window.location.href = NAV_ROUTES.MANAGE;

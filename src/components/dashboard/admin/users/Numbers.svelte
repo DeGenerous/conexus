@@ -24,7 +24,6 @@
 
   onMount(async () => {
     roles = await admin.fetchRoles();
-    console.log(roles);
   });
 
   const getEndDate = () => {

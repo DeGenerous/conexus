@@ -63,10 +63,9 @@
 
   onMount(async () => {
     user = await getCurrentUser(true);
-    console.log(user);
-
     roles = await account.fetchRoles();
-    console.log(roles);
+
+    console.log(user);
 
     userRole = roles.find((role) => role.name === user?.role_name) || null;
 

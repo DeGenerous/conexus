@@ -27,6 +27,7 @@
   import QuitSVG from '@components/icons/Quit.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
   import DiscordBtn from '@components/icons/Discord.svelte';
+  import LoadingSVG from '@components/icons/Loading.svelte';
 
   export let activeTab: string = 'Dashboard';
 
@@ -72,6 +73,7 @@
   let signInWithEmail: boolean; // go to SIGN IN WITH EMAIL window if TRUE
   let loginMail: string = '';
   let loginPassword: string = '';
+  let isSignInLoading: boolean = false;
 
   // SIGN UP FORM WINDOW
 
@@ -82,6 +84,7 @@
   let password: string = '';
   let confirmPassword: string = '';
   let email: string = '';
+  let isSignupLoading: boolean = false;
 
   $: mandatoryFields =
     regexpEmail.test(email) &&
@@ -131,20 +134,63 @@
   }
 
   // Sign up user with Email and Referral Code
-  const referralSignup = async (event: Event) => {
-    event.preventDefault(); // prevent page reload by form
-    await authentication.signup({
-      first_name: first_name.trim(),
-      last_name: last_name.trim(),
-      email: email.trim(),
-      password,
-      referred: referralCodeValid,
-      referral_code: referralCode,
-      newsletter: newsletterSignup,
-    });
-    SetCache(TERMS_KEY, termsAccepted); // temp for terms modal
+  const referralSignup = async (event?: Event) => {
+    event?.preventDefault(); // prevent page reload by form
+    if (isSignupLoading || !isFormValid) return;
+
+    isSignupLoading = true;
+
+    try {
+      await authentication.signup({
+        first_name: first_name.trim(),
+        last_name: last_name.trim(),
+        email: email.trim(),
+        password,
+        referred: referralCodeValid,
+        referral_code: referralCode,
+        newsletter: newsletterSignup,
+      });
+      SetCache(TERMS_KEY, termsAccepted); // temp for terms modal
+    } finally {
+      isSignupLoading = false;
+    }
+  };
+
+  const handleEmailSignin = async (event?: Event) => {
+    event?.preventDefault();
+    if (isSignInLoading || !(loginMail && loginPassword)) return;
+
+    isSignInLoading = true;
+
+    try {
+      await authentication.signin({
+        email: loginMail,
+        password: loginPassword,
+      });
+    } finally {
+      isSignInLoading = false;
+    }
+  };
+
+  const handleEnterKey = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (signUp && isFormValid && !isSignupLoading) {
+        void referralSignup();
+      } else if (
+        !signUp &&
+        signInWithEmail &&
+        loginMail &&
+        loginPassword &&
+        !isSignInLoading
+      ) {
+        void handleEmailSignin();
+      }
+    }
   };
 </script>
+
+<svelte:window on:keydown={handleEnterKey} />
 
 <ProfileSVG {activeTab} {user} />
 
@@ -204,13 +250,9 @@ a11y-no-static-element-interactions-->
 
             <DoorSVG
               state="inside"
-              text="Sign in"
-              disabled={!(loginMail && loginPassword)}
-              onclick={() =>
-                authentication.signin({
-                  email: loginMail,
-                  password: loginPassword,
-                })}
+              text={isSignInLoading ? 'Signing in...' : 'Sign in'}
+              disabled={!(loginMail && loginPassword) || isSignInLoading}
+              onclick={handleEmailSignin}
             />
             <a href="/reset-password">Forgot password?</a>
             <a
@@ -426,9 +468,17 @@ a11y-no-static-element-interactions-->
               </label>
             </span>
           </div>
-          <button on:click={referralSignup} disabled={!isFormValid}
-            >Create account</button
+          <button
+            on:click={referralSignup}
+            disabled={!isFormValid || isSignupLoading}
           >
+            {#if isSignupLoading}
+              <LoadingSVG />
+              Creating account...
+            {:else}
+              Create account
+            {/if}
+          </button>
         </form>
 
         <hr />

@@ -1,18 +1,21 @@
 <script lang="ts">
-  import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
   import { toastStore } from '@stores/toast.svelte';
+  import { isAdmin } from '@stores/account.svelte';
 
+  import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
 
-  let { isAdmin, isCreator, topic_categories, handleCategoryChange } = $props<{
-    isAdmin: boolean;
-    isCreator: boolean;
+  let {
+    topic_categories,
+    handleCategoryChange,
+  }: {
     topic_categories: TopicCategory[];
     handleCategoryChange: (
       categoryId: string,
       method: 'add' | 'remove',
+      name?: string,
     ) => Promise<void>;
-  }>();
+  } = $props();
 
   let selectedSectionId = $state<string>('');
 
@@ -81,7 +84,7 @@
       errorCategories: string,
       categories: Category[],
     )}
-      {#if isAdmin}
+      {#if $isAdmin}
         {#if loadingSections}
           <p class="validation green-txt">Loading sections...</p>
         {:else if errorSections}
@@ -105,7 +108,7 @@
         <p class="validation">{errorCategories}</p>
       {:else}
         {@const availableCategories = categories.filter(
-          (c) => !topic_categories.some((tc: Category) => tc.id === c.id),
+          (c) => !topic_categories.some((tc: TopicCategory) => tc.id === c.id),
         )}
         <select
           bind:value={selectedCategoryId}
@@ -115,13 +118,13 @@
             );
             selectedCategoryName = selected ? selected.name : '';
           }}
-          disabled={(isAdmin && !selectedSectionId) ||
+          disabled={($isAdmin && !selectedSectionId) ||
             !availableCategories.length}
         >
           <option value="" hidden disabled>
             {#if availableCategories.length > 0}
               Select category
-            {:else if isAdmin && !selectedSectionId}
+            {:else if $isAdmin && !selectedSectionId}
               No section selected
             {:else if !loadingCategories}
               No categories found

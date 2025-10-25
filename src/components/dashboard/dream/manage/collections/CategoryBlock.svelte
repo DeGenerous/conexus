@@ -5,15 +5,14 @@
   import { NAV_ROUTES } from '@constants/routes';
   import Topics from '@lib/topics';
   import { toastStore } from '@stores/toast.svelte';
+  import { isAdmin } from '@stores/account.svelte';
 
   import SelectorSVG from '@components/icons/Selector.svelte';
 
   let {
-    isAdmin,
     category,
     topicManager,
   }: {
-    isAdmin: boolean;
     category: CollectionCategory;
     topicManager: Topics;
   } = $props();
@@ -302,7 +301,7 @@
                 readonly
               />
             </span>
-            {#if isAdmin}
+            {#if $isAdmin}
               <button
                 use:tippy={{
                   content: 'Toggle availability',

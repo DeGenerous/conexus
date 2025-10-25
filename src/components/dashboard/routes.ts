@@ -17,11 +17,11 @@ export const DASHBOARD_LINKS: Linking[] = [
   },
   {
     name: 'Dream',
-    intended: 'creator',
+    intended: 'player',
     children: [
       {
         name: 'New',
-        intended: 'creator',
+        intended: 'player',
         children: DREAM_ROUTES.NEW.map((route) => ({
           name: route.name,
           path: route.path,
@@ -29,7 +29,7 @@ export const DASHBOARD_LINKS: Linking[] = [
       },
       {
         name: 'Manage',
-        intended: 'creator',
+        intended: 'player',
         children: DREAM_ROUTES.MANAGE.map((route) => ({
           name: route.name,
           path: route.path,
@@ -39,7 +39,7 @@ export const DASHBOARD_LINKS: Linking[] = [
   },
   {
     name: 'Admin',
-    intended: 'all',
+    intended: 'admin',
     children: ADMIN_ROUTES.map((route) => ({
       name: route.name,
       path: route.path,

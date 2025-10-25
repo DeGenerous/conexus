@@ -216,7 +216,7 @@ type DashboardPathLink = {
   children?: never;
 };
 
-type DashboardParentLinkDisplay = 'all' | 'admin' | 'creator';
+type DashboardParentLinkDisplay = 'all' | 'admin' | 'player';
 
 // A "parent" link — has children, no path
 type DashboardParentLink = {

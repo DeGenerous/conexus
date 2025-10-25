@@ -2,15 +2,15 @@
 import { wrap } from 'svelte-spa-router/wrap';
 import type { SvelteComponent } from 'svelte';
 
-import { ensureCreator, ensureAdmin } from '@utils/route-guard'; // your role checkers
+import { checkUserRoles, ensureAdmin } from '@utils/route-guard'; // your role checkers
 
-export function creatorGuard(component: typeof SvelteComponent) {
+export function playerGuard(component: typeof SvelteComponent) {
   let isAdmin = false;
-  let isCreator = false;
+  let isPlayer = false;
 
-  ensureCreator().then(({ isAdmin: admin, isCreator: creator }) => {
+  checkUserRoles().then(({ isAdmin: admin, isPlayer: player }) => {
     isAdmin = admin;
-    isCreator = creator;
+    isPlayer = player;
   });
 
   return wrap({
@@ -18,7 +18,7 @@ export function creatorGuard(component: typeof SvelteComponent) {
     conditions: [],
     props: {
       isAdmin,
-      isCreator,
+      isPlayer,
     },
   });
 }

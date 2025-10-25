@@ -1,18 +1,16 @@
 <script lang="ts">
   import { link } from 'svelte-spa-router';
 
+  import { isAdmin, isPlayer } from '@stores/account.svelte';
+
   import SidebarLink from '@components/dashboard/SidebarLink.svelte';
 
   let {
-    isAdmin,
-    isCreator,
     item,
     expanded,
     toggleExpand,
     activePath,
   }: {
-    isAdmin: boolean;
-    isCreator: boolean;
     item: Linking;
     expanded: Set<string>;
     toggleExpand: (name: string) => void;
@@ -34,9 +32,9 @@
         // Leaf link → check intended audience
         switch (item.intended) {
           case 'admin':
-            return isAdmin;
-          case 'creator':
-            return isAdmin || isCreator;
+            return $isAdmin;
+          case 'player':
+            return $isAdmin || $isPlayer;
           default:
             return true;
         }
@@ -51,9 +49,9 @@
       case 'all':
         return true;
       case 'admin':
-        return isAdmin;
-      case 'creator':
-        return isAdmin || isCreator;
+        return $isAdmin;
+      case 'player':
+        return $isAdmin || $isPlayer;
       default:
         return false;
     }
@@ -82,8 +80,6 @@
           {#each item.children as child}
             <li>
               <SidebarLink
-                {isAdmin}
-                {isCreator}
                 item={child}
                 {expanded}
                 {toggleExpand}

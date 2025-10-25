@@ -4,7 +4,6 @@
 
   import CoNexusGame from '@lib/story';
   import { story, game } from '@stores/conexus.svelte';
-  import { ensureCreator } from '@utils/route-guard';
 
   import LoadingSVG from '@components/icons/Loading.svelte';
   import SelectorSVG from '@components/icons/Selector.svelte';
@@ -27,8 +26,6 @@
   });
 
   onMount(async () => {
-    await ensureCreator();
-
     // ensure we start the demo with a clean slate
     $story = null;
     game.background_image = null;

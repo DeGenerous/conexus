@@ -2,31 +2,18 @@
   import { onMount } from 'svelte';
   import Router, { type WrappedComponent } from 'svelte-spa-router';
 
-  import { userState } from '@utils/route-guard';
-
+  import { checkUserRoles } from '@utils/route-guard';
+  import { ensureSigned } from '@utils/route-guard';
   import { profileRoutes } from '@components/dashboard/profile';
   import { dreamRoutes } from '@components/dashboard/dream';
   import { adminRoutes } from '@components/dashboard/admin';
   import { omnihubRoutes } from '@components/dashboard/omnihub';
-
   import { DASHBOARD_LINKS, buildRoutes } from '@components/dashboard/routes';
+
   import Sidebar from '@components/dashboard/Sidebar.svelte';
 
-  let signedIn = $state(false);
-  let isAdmin = $state<boolean>(false);
-  let isCreator = $state<boolean>(false);
-
-  onMount(async () => {
-    signedIn = await userState('signed');
-    if (!signedIn) {
-      window.location.href =
-        '/login?redirect=' + encodeURIComponent(window.location.pathname);
-      return;
-    }
-
-    isAdmin = await userState('admin');
-    isCreator = await userState('creator');
-  });
+  onMount(ensureSigned);
+  onMount(checkUserRoles);
 
   const componentMap: Record<string, WrappedComponent> = {
     ...profileRoutes,
@@ -38,7 +25,7 @@
   const routes = buildRoutes(DASHBOARD_LINKS, componentMap);
 </script>
 
-<Sidebar {isAdmin} {isCreator} />
+<Sidebar />
 
 <div class="dashboard-content pad-24 blur fade-in">
   <span class="placeholder"></span>

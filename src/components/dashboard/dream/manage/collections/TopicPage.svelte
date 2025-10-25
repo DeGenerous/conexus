@@ -7,7 +7,8 @@
   import TopicManagement from '@lib/topics';
   import openModal from '@stores/modal.svelte';
   import { ensureMessage } from '@constants/modal';
-  import { userState } from '@utils/route-guard';
+  import { checkUserRoles, ensurePlayer } from '@utils/route-guard';
+  import { isAdmin } from '@stores/account.svelte';
   import {
     promptSettings,
     resetSettings,
@@ -33,9 +34,6 @@
   } = $props();
 
   let topicManager = new TopicManagement();
-
-  let isAdmin = $state<boolean>(false);
-  let isCreator = $state<boolean>(false);
 
   let topic = $state<Nullable<TopicManager>>(null);
 
@@ -86,13 +84,8 @@
   onMount(async () => {
     if ($story || game.loading) window.location.reload(); // ensure clean state
 
-    isAdmin = await userState('admin');
-    isCreator = await userState('creator');
-
-    if (!isAdmin && !isCreator) {
-      window.location.href = NAV_ROUTES.MANAGE;
-      return;
-    }
+    await ensurePlayer(NAV_ROUTES.MANAGE);
+    await checkUserRoles();
 
     topic = await topicManager.getTopicManager(topic_id);
     console.log(topic);
@@ -256,7 +249,7 @@
       <!-- KEY BUTTONS -->
       {#key topic}
         <span class="flex-row flex-wrap">
-          {#if isAdmin}
+          {#if $isAdmin}
             <button
               class:green-btn={topic_availability}
               class:red-btn={!topic_availability}
@@ -281,7 +274,7 @@
           >
             {topic_visibility === 'public' ? 'Public' : 'Private'}
           </button>
-          {#if isAdmin}
+          {#if $isAdmin}
             <button
               class="rose-btn"
               use:tippy={{ content: 'Download story file', animation: 'scale' }}
@@ -344,12 +337,7 @@
 
       <hr />
 
-      <ExploreCategory
-        {isAdmin}
-        {isCreator}
-        {topic_categories}
-        {handleCategoryChange}
-      />
+      <ExploreCategory {topic_categories} {handleCategoryChange} />
 
       <hr />
 
@@ -359,7 +347,7 @@
       <hr />
 
       <!-- NFT RESTRICTIONS -->
-      {#if isAdmin}
+      {#if $isAdmin}
         <NftGating {topic_gates} {handleGatingChange} />
       {/if}
     </section>

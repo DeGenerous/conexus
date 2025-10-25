@@ -73,6 +73,7 @@ const Drafts = {
     const draft = await topic.getDraft(id);
     if (!draft) {
       toastStore.show('Draft not found', 'error');
+      ClearCache(CURRENT_DRAFT_KEY);
       return;
     }
 

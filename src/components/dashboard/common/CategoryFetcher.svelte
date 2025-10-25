@@ -4,7 +4,8 @@
 
   import CategoryView from '@lib/category';
   import AppView from '@lib/view';
-  import { userState } from '@utils/route-guard';
+  import { checkUserRoles } from '@utils/route-guard';
+  import { isAdmin, isPlayer } from '@stores/account.svelte';
 
   let {
     selectedSectionId = $bindable(),
@@ -25,9 +26,6 @@
     >;
   } = $props();
 
-  let isAdmin = $state<boolean>(false);
-  let isCreator = $state<boolean>(false);
-
   let categoryView = new CategoryView();
   let appView = new AppView();
 
@@ -41,7 +39,7 @@
 
   // Fetch sections for admins
   async function fetchSections() {
-    if (!isAdmin) return;
+    if (!$isAdmin) return;
     loadingSections = true;
     errorSections = '';
     try {
@@ -58,7 +56,7 @@
     loadingCategories = true;
     errorCategories = '';
     try {
-      categories = isAdmin
+      categories = $isAdmin
         ? await categoryView.listAdminCategories(selectedSectionId)
         : await categoryView.listCreatorCategories();
     } catch {
@@ -70,25 +68,24 @@
 
   // expose a refresh hook to parents so they can trigger category reloads on demand
   fetchCategories = async () => {
-    if (isAdmin && selectedSectionId) {
+    if ($isAdmin && selectedSectionId) {
       await fetchCategoriesBase();
-    } else if (isCreator) {
+    } else if ($isPlayer) {
       await fetchCategoriesBase();
     }
   };
 
   // Initial load
   onMount(async () => {
-    isAdmin = await userState('admin');
-    isCreator = await userState('creator');
+    await checkUserRoles();
 
-    if (isAdmin) await fetchSections();
-    else if (isCreator) await fetchCategoriesBase();
+    if ($isAdmin) await fetchSections();
+    else if ($isPlayer) await fetchCategoriesBase();
   });
 
   // When admin changes section, fetch categories
   $effect(() => {
-    if (isAdmin && selectedSectionId) fetchCategoriesBase();
+    if ($isAdmin && selectedSectionId) fetchCategoriesBase();
   });
 </script>
 

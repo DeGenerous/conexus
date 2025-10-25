@@ -6,7 +6,8 @@
   import Topics from '@lib/topics';
   import CategoryView from '@lib/category';
   import { toastStore } from '@stores/toast.svelte';
-  import { ensureCreator, getCurrentUser } from '@utils/route-guard';
+  import { checkUserRoles, getCurrentUser } from '@utils/route-guard';
+  import { isAdmin, isPlayer } from '@stores/account.svelte';
 
   import CategoryBlock from '@components/dashboard/dream/manage/collections/CategoryBlock.svelte';
   import Dropdown from '@components/utils/Dropdown.svelte';
@@ -14,8 +15,6 @@
   const topicManager = new Topics();
   const categoryManager = new CategoryView();
 
-  let isAdmin = $state<boolean>(false);
-  let isCreator = $state<boolean>(false);
   let userID = $state<string>('');
 
   let page = $state(1);
@@ -28,16 +27,12 @@
   // Load initial collections for the active role
   onMount(async () => {
     const user = await getCurrentUser();
+    await checkUserRoles();
 
-    const { isAdmin: is_admin, isCreator: is_creator } = await ensureCreator();
-
-    isAdmin = is_admin;
-    isCreator = is_creator;
-
-    if (isAdmin) {
+    if ($isAdmin) {
       sections = await topicManager.getSectionCollection(page, pageSize);
       creators = await topicManager.getCreatorCollection(page, pageSize);
-    } else if (isCreator) {
+    } else if ($isPlayer) {
       userID = user?.id ?? '';
       creatorCategories = await topicManager.getCreatorCategoryCollection(
         userID,
@@ -104,7 +99,7 @@
     };
   }
 
-  function ensureCreatorCategoryItems(creator: CollectionCreator) {
+  function checkUserRolesCategoryItems(creator: CollectionCreator) {
     creatorCategoryItems = {
       ...creatorCategoryItems,
       [creator.creator_id]:
@@ -154,7 +149,7 @@
         );
       }
       if (creator) {
-        ensureCreatorCategoryItems(creator);
+        checkUserRolesCategoryItems(creator);
       }
     }
     expandedCreators = newSet;
@@ -423,7 +418,7 @@
 </script>
 
 <!-- Admin collections management -->
-{#if isAdmin}
+{#if $isAdmin}
   <div class="dream-container">
     <div class="flex-row">
       <h4>Scope</h4>
@@ -479,7 +474,7 @@
               >
                 {#each getCreatorCategoryItems(creator.creator_id, creator.categories) as category (category.id)}
                   <div class="category-draggable">
-                    <CategoryBlock {isAdmin} {category} {topicManager} />
+                    <CategoryBlock {category} {topicManager} />
                   </div>
                 {/each}
               </div>
@@ -520,7 +515,7 @@
             >
               {#each getSectionCategoryItems(section.section_id, section.categories) as category (category.id)}
                 <div class="category-draggable">
-                  <CategoryBlock {isAdmin} {category} {topicManager} />
+                  <CategoryBlock {category} {topicManager} />
                 </div>
               {/each}
             </div>
@@ -536,7 +531,7 @@
 {/if}
 
 <!-- Creator-only category management -->
-{#if isCreator && !isAdmin}
+{#if $isPlayer && !$isAdmin}
   {#if creatorCategories && creatorCategories.length > 0}
     <div
       class="category-dnd-zone flex"
@@ -555,7 +550,7 @@
     >
       {#each getCreatorCategoryItems(CREATOR_SELF_KEY, creatorCategories) as category (category.id)}
         <div class="category-draggable">
-          <CategoryBlock {isAdmin} {category} {topicManager} />
+          <CategoryBlock {category} {topicManager} />
         </div>
       {/each}
     </div>

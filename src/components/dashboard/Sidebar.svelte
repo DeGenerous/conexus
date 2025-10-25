@@ -3,20 +3,11 @@
   import { location } from 'svelte-spa-router';
 
   import Authentication from '@lib/authentication.ts';
-
   import { DASHBOARD_LINKS } from '@components/dashboard/routes';
-  import SidebarLink from '@components/dashboard/SidebarLink.svelte';
 
+  import SidebarLink from '@components/dashboard/SidebarLink.svelte';
   import BurgerSVG from '@components/icons/Burger.svelte';
   import DoorSVG from '@components/icons/Door.svelte';
-
-  let {
-    isAdmin,
-    isCreator,
-  }: {
-    isAdmin: boolean;
-    isCreator: boolean;
-  } = $props();
 
   const authentication: Authentication = new Authentication();
 
@@ -131,8 +122,6 @@
 
   <nav class="flex gap-8">
     <SidebarLink
-      {isAdmin}
-      {isCreator}
       item={{
         name: 'Dashboard',
         path: '/dashboard',
@@ -142,14 +131,7 @@
       {activePath}
     />
     {#each DASHBOARD_LINKS as item}
-      <SidebarLink
-        {isAdmin}
-        {isCreator}
-        {item}
-        {expanded}
-        {toggleExpand}
-        {activePath}
-      />
+      <SidebarLink {item} {expanded} {toggleExpand} {activePath} />
     {/each}
     <DoorSVG
       state="outside"

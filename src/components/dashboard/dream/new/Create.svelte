@@ -15,7 +15,8 @@
   } from '@stores/dream.svelte';
   import openModal from '@stores/modal.svelte';
   import generatePrompt from '@utils/prompt';
-  import { ensureCreator } from '@utils/route-guard';
+  import { checkUserRoles } from '@utils/route-guard';
+  import { isAdmin } from '@stores/account.svelte';
   import Drafts from '@utils/story-drafts';
 
   import Characters from '@components/dashboard/dream/new/create/Characters.svelte';
@@ -27,7 +28,6 @@
 
   const topic = new Topic();
 
-  let isAdmin = $state(false);
   let selectedSectionId = $state('');
   let lastSavedAgo = $state<string>('unsaved');
 
@@ -115,10 +115,7 @@
     let destroyed = false;
     let isInitialFingerprintRun = true;
 
-    void (async () => {
-      const resp = await ensureCreator();
-      if (!destroyed) isAdmin = resp.isAdmin;
-    })();
+    checkUserRoles();
 
     void (async () => {
       const draftID = GetCache<string>(CURRENT_DRAFT_KEY);
@@ -208,7 +205,7 @@
       errorCategories: string,
       categories: Category[],
     )}
-      {#if isAdmin}
+      {#if $isAdmin}
         <div class="input-container">
           <label for="sections">
             {#if loadingSections}
@@ -251,12 +248,12 @@
           id="category"
           class:red-border={!$storyData.category_id && categories.length > 0}
           bind:value={$storyData.category_id}
-          disabled={isAdmin && !selectedSectionId}
+          disabled={$isAdmin && !selectedSectionId}
         >
           <option value="" disabled hidden>
             {#if categories.length > 0}
               Select category
-            {:else if isAdmin && !selectedSectionId}
+            {:else if $isAdmin && !selectedSectionId}
               No section selected
             {:else if !loadingCategories}
               No categories found

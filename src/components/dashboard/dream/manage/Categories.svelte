@@ -1,6 +1,9 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import CategoryView from '@lib/category';
-  import { ensureCreator } from '@utils/route-guard';
+  import { checkUserRoles } from '@utils/route-guard';
+  import { isAdmin } from '@stores/account.svelte';
   import { toastStore } from '@stores/toast.svelte';
 
   import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
@@ -8,14 +11,6 @@
   let categoryView = new CategoryView();
 
   let selectedSectionId = $state('');
-
-  let isAdmin = $state(false);
-
-  $effect(() => {
-    ensureCreator().then(({ isAdmin: admin }) => {
-      isAdmin = admin;
-    });
-  });
 
   let fetchCategories = $state<() => Promise<void>>();
 
@@ -29,13 +24,15 @@
 
   let addingCategory = $state(false);
 
+  onMount(checkUserRoles);
+
   async function addCategory() {
     if (!newCategoryName.trim()) return;
 
     addingCategory = true;
 
     try {
-      if (isAdmin) {
+      if ($isAdmin) {
         if (!selectedSectionId) {
           toastStore.show('Please select a section first.', 'error');
           return;
@@ -86,7 +83,7 @@
       errorCategories: string,
       categories: Category[],
     )}
-      {#if isAdmin}
+      {#if $isAdmin}
         <h4>
           {#if loadingSections}
             Loading sections...

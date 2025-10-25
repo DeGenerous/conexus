@@ -78,6 +78,9 @@ type AccountError = {
   changePassword?: Nullable<string>;
 } | null;
 
+// For Route Guards
+type UserState = 'signed' | 'admin' | 'player' | 'guest' | 'referred';
+
 /* V2 */
 
 type DurationEnum =

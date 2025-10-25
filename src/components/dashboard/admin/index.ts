@@ -1,5 +1,5 @@
 import type { SvelteComponent } from 'svelte';
-import wrap from 'svelte-spa-router/wrap';
+import { adminGuard } from '@components/dashboard/guard';
 
 import AdminManagementUsers from './Users.svelte';
 import AdminManagementStories from './Stories.svelte';
@@ -26,6 +26,6 @@ export const ADMIN_ROUTES = [
 export const adminRoutes = Object.fromEntries(
   ADMIN_ROUTES.map((r) => [
     r.path,
-    wrap({ component: r.component as unknown as typeof SvelteComponent }),
+    adminGuard(r.component as unknown as typeof SvelteComponent),
   ]),
 );

@@ -48,8 +48,14 @@ export async function ensureAdmin(path = '/dashboard'): Promise<void> {
 
 // Check if route is protected for Players
 export async function ensurePlayer(path = '/dashboard'): Promise<void> {
-  if (!(await userState('player')) || !(await userState('admin')))
+  const [player, admin] = await Promise.all([
+    userState('player'),
+    userState('admin'),
+  ]);
+
+  if (!(player || admin)) {
     redirectTo(path);
+  }
 }
 
 // Check if route is protected for Guests

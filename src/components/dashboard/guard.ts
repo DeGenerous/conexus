@@ -2,24 +2,25 @@
 import { wrap } from 'svelte-spa-router/wrap';
 import type { SvelteComponent } from 'svelte';
 
-import { checkUserRoles, ensureAdmin } from '@utils/route-guard'; // your role checkers
+import { checkUserRoles, redirectTo } from '@utils/route-guard';
+
+const DASHBOARD_FALLBACK = '/dashboard';
 
 export function playerGuard(component: typeof SvelteComponent) {
-  let isAdmin = false;
-  let isPlayer = false;
-
-  checkUserRoles().then(({ isAdmin: admin, isPlayer: player }) => {
-    isAdmin = admin;
-    isPlayer = player;
-  });
-
   return wrap({
     component,
-    conditions: [],
-    props: {
-      isAdmin,
-      isPlayer,
-    },
+    conditions: [
+      async () => {
+        const { isAdmin, isPlayer } = await checkUserRoles(DASHBOARD_FALLBACK);
+        const allowed = isAdmin || isPlayer;
+
+        if (!allowed) {
+          redirectTo(DASHBOARD_FALLBACK);
+        }
+
+        return allowed;
+      },
+    ],
   });
 }
 
@@ -28,12 +29,14 @@ export function adminGuard(component: typeof SvelteComponent) {
     component,
     conditions: [
       async () => {
-        await ensureAdmin(); // throws or redirects if not admin
-        return true;
+        const { isAdmin } = await checkUserRoles(DASHBOARD_FALLBACK);
+
+        if (!isAdmin) {
+          redirectTo(DASHBOARD_FALLBACK);
+        }
+
+        return isAdmin;
       },
     ],
-    props: {
-      role: 'admin',
-    },
   });
 }

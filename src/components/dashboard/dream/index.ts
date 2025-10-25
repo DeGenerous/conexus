@@ -1,5 +1,5 @@
 import type { SvelteComponent } from 'svelte';
-import wrap from 'svelte-spa-router/wrap';
+import { playerGuard } from '@components/dashboard/guard';
 
 import DreamCreate from './new/Create.svelte';
 import DreamDrafts from './new/Drafts.svelte';
@@ -35,10 +35,10 @@ export const DREAM_ROUTES = {
 };
 
 export const dreamRoutes = Object.fromEntries(
-  Object.entries(DREAM_ROUTES).flatMap(([key, routes]) =>
+  Object.entries(DREAM_ROUTES).flatMap(([, routes]) =>
     routes.map(({ path, component }) => [
       path,
-      wrap({ component: component as unknown as typeof SvelteComponent }),
+      playerGuard(component as unknown as typeof SvelteComponent),
     ]),
   ),
 );

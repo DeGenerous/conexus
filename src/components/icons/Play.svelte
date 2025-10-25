@@ -4,14 +4,14 @@
     disabled = false,
     text = '',
     voidBtn = true,
-    glowing = false,
+    cta = false,
     color = 'green',
   }: {
     onclick: () => void;
     disabled?: boolean;
     text?: string;
     voidBtn?: boolean;
-    glowing?: boolean;
+    cta?: boolean;
     color?: string;
   } = $props();
 
@@ -22,7 +22,7 @@
   class="flex-row"
   class:void-btn={voidBtn}
   class:blur={!voidBtn}
-  class:button-glowing={glowing}
+  class:cta
   class:green={color === 'green'}
   class:white={color === 'white'}
   {onclick}

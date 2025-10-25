@@ -144,6 +144,21 @@
   }
 }
 
+@keyframes live-border {
+  0% {
+    --cta-angle: 0deg;
+    --cta-sweep: 180deg;
+  }
+  50% {
+    --cta-angle: 360deg;
+    --cta-sweep: 360deg;
+  }
+  100% {
+    --cta-angle: 0deg;
+    --cta-sweep: 180deg;
+  }
+}
+
 @keyframes transparent-glowing {
   0% {
     background-color: rgba(51, 226, 230, 0.1);

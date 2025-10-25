@@ -290,9 +290,7 @@
                     glow={true}
                   />
                 {:else}
-                  <button class="button-glowing" onclick={startGame}>
-                    PLAY NOW
-                  </button>
+                  <button class="cta" onclick={startGame}> PLAY NOW </button>
                 {/if}
                 <Share />
                 {#if userID}

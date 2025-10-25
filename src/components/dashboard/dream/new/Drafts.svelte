@@ -80,7 +80,7 @@
   {:else}
     <h4>Your drafts will be there</h4>
     <button
-      class="button-glowing"
+      class="cta"
       onclick={() => open('/dashboard#/dream/create', '_self')}
     >
       Create a Dream

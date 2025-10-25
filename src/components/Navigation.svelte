@@ -222,7 +222,7 @@
             }}
             text="Watch 30-sec Intro"
             voidBtn={false}
-            glowing={true}
+            cta={true}
             color="white"
           />
         </span>

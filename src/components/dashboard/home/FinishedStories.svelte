@@ -62,7 +62,9 @@
     {#each finishedStories as topic}
       <a
         class="tile gray-tile"
-        href="/c/CommunityPicks/{topic.topic_id}?title={topic.name}"
+        href="/{topic.creator
+          ? 'c'
+          : 's'}/{topic.route_name}/{topic.topic_id}?title={topic.name}"
       >
         <img
           loading="lazy"

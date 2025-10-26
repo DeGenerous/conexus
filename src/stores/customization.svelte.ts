@@ -24,8 +24,6 @@ import {
 import {
   GetCache,
   SetCache,
-  ClearCache,
-  THEMES_KEY,
   FONT_KEY,
   STYLING_KEY,
 } from '@constants/cache';

@@ -4,18 +4,24 @@
   import { getPersonalSetup, setPersonalSetup } from '@stores/account.svelte';
   import { modal, playOptions } from '@stores/modal.svelte';
 
-  let preferredSettings = $state<SettingMode>('default');
-  // let preferredTheme = $state<SettingMode>('default');
-  let playMode = $state<PlayMode>('play_unlimited');
+  let preferredSettings = $state<SettingMode | null>(null);
+  // let preferredTheme = $state<SettingMode | null>(null);
+  let playMode = $state<PlayMode | null>(null);
 
   let dontShowAgain = $state<boolean>(false);
 
   const updatePersonalSetup = () =>
     setPersonalSetup({
-      settings: preferredSettings,
-      // theme: preferredTheme,
-      play_mode: playMode,
+      settings: preferredSettings!,
+      // theme: preferredTheme!,
+      play_mode: playMode!,
     });
+
+  $effect(() => {
+    if (preferredSettings || playMode) {
+      updatePersonalSetup();
+    }
+  })
 
   $effect(() => {
     modal.button =

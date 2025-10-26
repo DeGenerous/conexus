@@ -3,6 +3,7 @@
 
   import { getPersonalSetup, setPersonalSetup } from '@stores/account.svelte';
   import { modal, playOptions } from '@stores/modal.svelte';
+  import { isGuest } from '@stores/account.svelte';
 
   let preferredSettings = $state<SettingMode | null>(null);
   // let preferredTheme = $state<SettingMode | null>(null);
@@ -21,7 +22,7 @@
     if (preferredSettings || playMode) {
       updatePersonalSetup();
     }
-  })
+  });
 
   $effect(() => {
     modal.button =
@@ -76,7 +77,9 @@
       <h5>Play Mode</h5>
       <select bind:value={playMode}>
         <option value="play_limited">Text-only</option>
-        <option value="play_unlimited">With Media</option>
+        {#if !$isGuest}
+          <option value="play_unlimited">With Media</option>
+        {/if}
       </select>
       <p>
         {#if playMode === 'play_limited'}

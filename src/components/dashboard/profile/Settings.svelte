@@ -13,6 +13,8 @@
   import { ensureMessage } from '@constants/modal';
   import { customFont, customStyling } from '@stores/customization.svelte';
   import { getPersonalSetup, setPersonalSetup } from '@stores/account.svelte';
+  import { checkUserRoles } from '@utils/route-guard';
+  import { isGuest } from '@stores/account.svelte';
 
   import Dropdown from '@components/utils/Dropdown.svelte';
   import TopicSettings from '@components/dashboard/common/TopicSettings.svelte';
@@ -58,6 +60,8 @@
     });
 
   onMount(async () => {
+    await checkUserRoles();
+
     const cachedSetup = getPersonalSetup();
     if (cachedSetup) {
       preferredSettings = cachedSetup.settings || 'default';
@@ -198,6 +202,7 @@
             playMode = 'play_unlimited';
             updatePersonalSetup();
           }}
+          disabled={$isGuest}
         >
           With Media
         </button>

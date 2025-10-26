@@ -21,12 +21,7 @@ import {
   romanticThemeFont,
   romanticThemeStyling,
 } from '@constants/customization';
-import {
-  GetCache,
-  SetCache,
-  FONT_KEY,
-  STYLING_KEY,
-} from '@constants/cache';
+import { GetCache, SetCache, FONT_KEY, STYLING_KEY } from '@constants/cache';
 
 export const themeSettingsModal = writable<boolean>(false);
 

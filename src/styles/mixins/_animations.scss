@@ -149,12 +149,12 @@
     --cta-angle: 0deg;
     --cta-sweep: 180deg;
   }
-  50% {
-    --cta-angle: 360deg;
+  100% {
+    --cta-angle: 180deg;
     --cta-sweep: 360deg;
   }
   100% {
-    --cta-angle: 0deg;
+    --cta-angle: 360deg;
     --cta-sweep: 180deg;
   }
 }

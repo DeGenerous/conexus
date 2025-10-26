@@ -8,6 +8,11 @@ export const restoreDraft = (title: string) => `
   <p>Open “${title}” in the creator with all fields prefilled.</p>
 `;
 
+export const disableAccountWarning = `
+  <h4>Disable User Account?</h4>
+  <p>This is a soft delete. The user loses access immediately. Data stays in the database and can be restored later.</p>
+`;
+
 export const referralWarning = `
   <h4>This World Opens with a Code</h4>
   <p>To play stories and build your world, you'll need a referral code. It’s not about keeping people out — it’s about inviting the right people in.</p>

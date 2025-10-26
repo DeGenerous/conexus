@@ -1,14 +1,12 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
   import AdminApp from '@lib/admin';
 
   import TopUsers from '@components/dashboard/admin/users/TopUsers.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
 
-  const admin: AdminApp = new AdminApp();
+  let { roles }: { roles: TenantRole[] } = $props();
 
-  let roles = $state<TenantRole[]>([]);
+  const admin: AdminApp = new AdminApp();
 
   let userCount = $state<number>(0);
   let fetchingUserCount = $state<boolean>(false);
@@ -21,10 +19,6 @@
 
   let walletGrowth = $state<number>(0);
   let fetchingWalletGrowth = $state<boolean>(false);
-
-  onMount(async () => {
-    roles = await admin.fetchRoles();
-  });
 
   const getEndDate = () => {
     const today = new Date();

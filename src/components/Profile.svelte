@@ -63,8 +63,24 @@
     $showProfile = false;
   };
 
+  const openSignupWindow = () => {
+    $showProfile = true;
+    signUp = true;
+  };
+
+  const searchForReferralCodeInURL = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get('ref');
+    if (refCode) {
+      referralCode = refCode;
+      setTimeout(() => openSignupWindow(), 300);
+    }
+  };
+
   onMount(async () => {
     user = await getCurrentUser();
+
+    if (!user) searchForReferralCodeInURL();
   });
 
   // NON-SIGNED WINDOWS

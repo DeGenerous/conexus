@@ -623,6 +623,12 @@
           Subscribe to Newsletter
         </button>
       {/if}
+
+      {#if user?.created_at}
+        <p class="transparent-white-txt">
+          Joined {new Date(user.created_at).toLocaleDateString()}
+        </p>
+      {/if}
     </Dropdown>
   {/if}
 

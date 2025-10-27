@@ -21,6 +21,7 @@ type User = {
   tenant_id?: string;
   email_confirmed?: boolean;
   is_oauth?: boolean;
+  created_at?: string;
   referral_code?: string;
   credits: number;
   bonus?: number;

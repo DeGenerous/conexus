@@ -11,7 +11,7 @@
   const PAGE_SIZE = 50;
 
   let accounts = $state<AccountRow[]>([]);
-  let totalCount = $state<number | null>(null);
+  let totalCount = $state<number>(0);
 
   let page = $state<number>(0);
   let fetching = $state<boolean>(false);
@@ -37,14 +37,24 @@
         const batch = Array.isArray(users)
           ? (users as AccountRow[]).map((user) => ({ ...user }))
           : ([] as AccountRow[]);
-        totalCount = count;
-        page = nextPage;
 
+        if (typeof count === 'number') {
+          totalCount += count;
+        }
+
+        if (!batch.length) {
+          allLoaded = true;
+          return;
+        }
+
+        page = nextPage;
         accounts = nextPage === 1 ? batch : [...accounts, ...batch];
 
-        if (accounts.length >= count || batch.length < PAGE_SIZE) {
+        if (batch.length < PAGE_SIZE) {
           allLoaded = true;
         }
+      } else {
+        allLoaded = true;
       }
     } finally {
       hasLoaded = true;
@@ -57,7 +67,7 @@
 
     // reset pagination state
     accounts = [];
-    totalCount = null;
+    totalCount = 0;
     page = 0;
     allLoaded = false;
     hasLoaded = false;
@@ -135,7 +145,7 @@
 </script>
 
 <section class="flex">
-  {#if totalCount === null}
+  {#if !totalCount}
     <button onclick={fetchAllUsers} disabled={fetching}>
       {#if fetching && !hasLoaded}
         Fetching Users...

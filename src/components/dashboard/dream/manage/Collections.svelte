@@ -30,8 +30,8 @@
     await checkUserRoles();
 
     if ($isAdmin) {
-      sections = await topicManager.getSectionCollection(page, pageSize);
-      creators = await topicManager.getCreatorCollection(page, pageSize);
+      sections = await topicManager.getSectionCollection(page, pageSize, true);
+      creators = await topicManager.getCreatorCollection(page, pageSize, true);
     } else if ($isPlayer) {
       userID = user?.id ?? '';
       creatorCategories = await topicManager.getCreatorCategoryCollection(
@@ -146,6 +146,7 @@
           id,
           1,
           pageSize,
+          true,
         );
       }
       if (creator) {

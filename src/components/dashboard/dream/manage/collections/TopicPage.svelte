@@ -7,6 +7,7 @@
   import TopicManagement from '@lib/topics';
   import openModal from '@stores/modal.svelte';
   import { ensureMessage } from '@constants/modal';
+  import { navContext } from '@stores/navigation.svelte';
   import { checkUserRoles, ensurePlayer } from '@utils/route-guard';
   import { isAdmin } from '@stores/account.svelte';
   import {
@@ -94,6 +95,8 @@
       window.location.href = NAV_ROUTES.MANAGE;
       return;
     }
+
+    navContext.clear();
 
     setUpSettings(topic.topic_prompt_settings);
 

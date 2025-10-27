@@ -45,7 +45,7 @@
   // Pull the latest topics for this category and cache them for other views
   async function fetchTopicCollection(
     categoryId: string,
-    refresh: boolean = false,
+    refresh: boolean = true,
   ) {
     workingCategory.topics = await topicManager.getTopicCollection(
       categoryId,

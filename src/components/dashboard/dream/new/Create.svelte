@@ -162,6 +162,7 @@
       generatePrompt($storyData, $promptSettings, promptData),
     );
     if (!topic_id) return;
+    if ($currentDraft?.id) Drafts.delete($currentDraft.id);
 
     const storyLink = `/dashboard/topic/${topic_id}`;
     openModal(

@@ -557,6 +557,12 @@
     </div>
   {:else}
     <p class="validation">No categories found</p>
+    <button
+      class="button-glowing"
+      onclick={() => open('/dashboard#/dream/manage/categories', '_self')}
+    >
+      Create Category
+    </button>
   {/if}
 {/if}
 

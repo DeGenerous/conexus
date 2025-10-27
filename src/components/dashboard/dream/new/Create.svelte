@@ -457,7 +457,7 @@
     Reset Data
   </button>
   <button class="green-btn blur" onclick={generateStory} disabled={!validation}>
-    Create a DREAM
+    Create a DREAM: 10 Credits
   </button>
 </div>
 

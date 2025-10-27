@@ -1,6 +1,4 @@
 <script lang="ts">
-  let { data = true }: { data: string | boolean } = $props();
-
   let svgFocus = $state<boolean>(false);
 </script>
 
@@ -13,7 +11,7 @@
   stroke-linecap="round"
 >
   <defs>
-    <mask id="copy-checkmark-{data}">
+    <mask id="copy-checkmark">
       <rect
         x="-45"
         y="-60"
@@ -26,13 +24,7 @@
     </mask>
   </defs>
   <path d="M 40 -67 L 40 -90 L -90 -90 L -90 60 L -52 60" fill="none" />
-  <rect
-    x="-45"
-    y="-60"
-    width="130"
-    height="150"
-    mask="url(#copy-checkmark-{data})"
-  />
+  <rect x="-45" y="-60" width="130" height="150" mask="url(#copy-checkmark)" />
 </svg>
 
 <style lang="scss">

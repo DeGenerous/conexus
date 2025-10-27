@@ -352,7 +352,6 @@
       width: 100%;
       padding-inline: 1rem;
       text-align: left;
-      white-space: pre-wrap;
       color: inherit;
       text-shadow: inherit;
 

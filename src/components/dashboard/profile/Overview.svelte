@@ -47,7 +47,10 @@
   let subscribedToNewsletter = $state<boolean>(false);
 
   let editingUsername = $state<boolean>(false);
-  let usernameInput = $state<string>('player_12345');
+  let usernameInput = $state<string>('');
+
+  let editingRefCode = $state<boolean>(false);
+  let refCodeInput = $state<string>('');
 
   let editingBio = $state<boolean>(false);
   let bioInput = $state<string>('');
@@ -72,6 +75,7 @@
     checkSubscription();
 
     usernameInput = user?.username || '';
+    refCodeInput = user?.referral_code || '';
     bioInput = user?.avatar_bio || '';
     avatarUrl = user?.avatar_url || '';
     avatarFileId = user?.avatar_file_id || '';
@@ -117,12 +121,36 @@
     editPasswordConfirm = '';
   };
 
+  // Referral code
+
   const copyRefCode = (code: string) => {
     let codeBtn = document.getElementById(code) as HTMLButtonElement;
     navigator.clipboard.writeText(code);
     codeBtn.classList.add('copied'); // animation
     setTimeout(() => codeBtn.classList.remove('copied'), 600);
     toastStore.show('Copied to clipboard: ' + code);
+  };
+
+  const resetRefCode = () => {
+    editingRefCode = false;
+    refCodeInput = user?.referral_code || '';
+  };
+
+  const changeRefCode = async () => {
+    if (user?.referral_code === refCodeInput) {
+      editingRefCode = false;
+      return;
+    }
+    try {
+      // await account.changeReferralCode(refCodeInput);
+
+      console.log('Changing ref code to:', refCodeInput);
+      resetRefCode();
+
+      editingRefCode = false;
+    } catch (error) {
+      resetRefCode();
+    }
   };
 
   // Web3 wallets
@@ -300,51 +328,74 @@
 
     {#if user.email_confirmed}
       {#await account.getReferralCode() then refCode}
-        {#if refCode !== null}
-          {#if refCode.usage_count >= refCode.max_usage}
-            <h4 class="text-glowing">
-              🏆 You've unlocked all {refCode.max_usage} referrals 🚀
-            </h4>
-            <p class="text-glowing">
-              Your early support won't go unnoticed. Stay tuned for updates.
-            </p>
-          {:else}
-            <div class="flex-row">
-              <h4>Referral Code</h4>
-              <div class="container">
+        <div class="flex-row">
+          <h4>Referral Code</h4>
+          <div class="ref-code-wrapper container">
+            {#if refCode !== null}
+              {#if refCode.usage_count >= refCode.max_usage}
+                <span class="flex">
+                  <h5 class="text-glowing">
+                    🏆 You've unlocked all {refCode.max_usage} referrals 🚀
+                  </h5>
+                  <p class="text-glowing">
+                    Your early support won't go unnoticed. Stay tuned for
+                    updates.
+                  </p>
+                </span>
+              {:else}
+                <h5>Referrals: {refCode.usage_count}</h5>
+                {#if editingRefCode}
+                  <CloseSVG onclick={resetRefCode} />
+                {/if}
+                <input
+                  bind:value={refCodeInput}
+                  type="text"
+                  placeholder="Enter referral code"
+                  size={refCodeInput.length + 1}
+                  minlength="3"
+                  maxlength="20"
+                  disabled={!editingRefCode}
+                />
+                {#if editingRefCode}
+                  <SaveSVG
+                    onclick={changeRefCode}
+                    disabled={refCode.code === refCodeInput ||
+                      refCodeInput.length < 3}
+                  />
+                {:else}
+                  <EditSVG bind:editing={editingRefCode} />
+                {/if}
                 <button
-                  class="void-btn small-green-tile gap"
+                  class="void-btn flex"
                   id={refCode.code}
                   onclick={() => copyRefCode(refCode.code)}
                   aria-label="Copy code {refCode.code}"
                 >
-                  <h5>Referrals: {refCode.usage_count}</h5>
-                  <p>{refCode.code}</p>
-                  <CopySVG data={refCode.code} />
+                  <CopySVG />
                 </button>
-              </div>
-            </div>
-          {/if}
-        {:else}
-          <button
-            class="green-btn"
-            onclick={() => {
-              if (!user?.referred) {
-                openModal(
-                  referralActivationNotice,
-                  'Proceed',
-                  () => (window.location.href = '/referral'),
-                );
-                return;
-              }
-              account
-                .generateReferralCode()
-                .then(() => window.location.reload());
-            }}
-          >
-            Get referral code
-          </button>
-        {/if}
+              {/if}
+            {:else}
+              <button
+                class="green-btn"
+                onclick={() => {
+                  if (!user?.referred) {
+                    openModal(
+                      referralActivationNotice,
+                      'Proceed',
+                      () => (window.location.href = '/referral'),
+                    );
+                    return;
+                  }
+                  account
+                    .generateReferralCode()
+                    .then(() => window.location.reload());
+                }}
+              >
+                Generate referral code
+              </button>
+            {/if}
+          </div>
+        </div>
       {/await}
     {/if}
 

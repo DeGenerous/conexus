@@ -90,14 +90,26 @@ type Web3Signin = {
 
 type Section = {
   id?: string;
-  name: string;
+  name?: string;
   description?: string;
 };
 
 type Creator = {
   id: string;
-  username: string;
-  avatar_url: string;
+  username?: string;
+  avatar_url?: string;
+  avatar_bio?: string;
+  avatar_file_id?: string;
+};
+
+type Explorer = {
+  id: string;
+  name?: string;
+  description?: string;
+  username?: string;
+  avatar_url?: string;
+  avatar_bio?: string;
+  avatar_file_id?: string;
 };
 
 type Genre = {
@@ -198,7 +210,7 @@ type OnchainAttribute = {
 };
 
 type NavItem = {
-  name: string;
+  name?: string;
   link?: string;
   action?: () => void;
 };

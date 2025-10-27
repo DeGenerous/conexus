@@ -4,6 +4,7 @@
 
   import CoNexusApp from '@lib/view';
   import { navContext } from '@stores/navigation.svelte';
+  import { blankImage, serveUrl } from '@constants/media';
 
   import Category from '@components/Category.svelte';
   import SearchAndGenre from '@components/Filters.svelte';
@@ -22,6 +23,7 @@
 
   let currExplorerId = $state<string>('');
 
+  let explorer = $state<Explorer | null>(null);
   let sections = $state<Section[]>([]);
   let categories = $state<SectionCategoryTopics[]>([]);
   let genres = $state<Genre[]>([]);
@@ -72,22 +74,23 @@
   };
 
   onMount(async () => {
-    sections = await app.getSections();
-    if (sections.map((s) => s.name).includes(name)) {
-      navContext.setContext({
-        items: sections.map((s) => ({ name: s.name, link: `/s/${s.name}` })),
-        index: sections.findIndex((s) => s.name === name),
-      });
-    }
-
     try {
-      let explorer: Section | Creator | null = null;
-
       if (intended === 's') {
-        explorer = await app.getSection(name);
+        sections = await app.getSections();
+        if (sections.map((s) => s.name).includes(name)) {
+          navContext.setContext({
+            items: sections.map((s) => ({
+              name: s.name,
+              link: `/s/${s.name}`,
+            })),
+            index: sections.findIndex((s) => s.name === name),
+          });
+        }
+        explorer = (await app.getSection(name)) as Explorer;
       } else if (intended === 'c') {
-        explorer = await app.getCreator(name);
+        explorer = (await app.getCreator(name)) as Explorer;
       }
+      console.log(explorer);
 
       if (!explorer || !explorer.id) {
         window.location.href = '/404';
@@ -96,23 +99,17 @@
 
       currExplorerId = explorer.id;
 
-      if (intended === 's') {
-        await fetchCategories();
+      await fetchCategories();
 
-        const data = await app.getGenres();
-        genres = data.sort((a, b) => a.name.localeCompare(b.name));
+      const data = await app.getGenres();
+      genres = data.sort((a, b) => a.name.localeCompare(b.name));
 
-        // Fallback message if no categories found
-        setTimeout(() => {
-          if (categories.length === 0) {
-            showNoCategoriesMessage = true;
-          }
-        }, 2000);
-      }
-
-      if (intended === 'c') {
-        await fetchCategories();
-      }
+      // Fallback message if no categories found
+      setTimeout(() => {
+        if (categories.length === 0) {
+          showNoCategoriesMessage = true;
+        }
+      }, 2000);
 
       // If intended === 'c', you can later add creator-specific setup here
     } catch (error) {
@@ -186,6 +183,21 @@
   });
 </script>
 
+{#if intended === 'c' && explorer}
+  <div class="explorer-bio flex">
+    <img
+      class="pfp round"
+      src={explorer.avatar_file_id
+        ? serveUrl(explorer.avatar_file_id)
+        : explorer.avatar_url
+          ? `/api/${encodeURIComponent(explorer.avatar_url)}`
+          : blankImage}
+      alt="Creator PFP"
+    />
+    <p>{explorer.avatar_bio}</p>
+  </div>
+{/if}
+
 <SearchAndGenre {name} {intended} {genres} {getTopics} {categories} />
 
 <section class="flex" onscroll={handleScroll}>
@@ -215,3 +227,15 @@
 {/if}
 
 <Links section_name={name} />
+
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
+
+  .pfp {
+    @include gray-border;
+
+    @include respond-up(tablet) {
+      width: 20rem;
+    }
+  }
+</style>

@@ -1,14 +1,32 @@
 <script lang="ts">
   import { NAV_ROUTES } from '@constants/routes';
+  import { getCurrentUser } from '@utils/route-guard';
 
   import UnfinishedStories from '@components/dashboard/home/UnfinishedStories.svelte';
   import FinishedStories from '@components/dashboard/home/FinishedStories.svelte';
+  import { onMount } from 'svelte';
+
+  let user = $state<Nullable<User>>(null);
+
+  onMount(async () => {
+    user = await getCurrentUser();
+  });
 </script>
 
 <p>
   Your command center for CoNexus. Return to ongoing stories, scan recent
   activity, and branch to resources and settings.
 </p>
+
+{#if user?.username}
+  <a
+    class="button-anchor button-glowing"
+    href="/c/{user.username}"
+    target="_self"
+  >
+    Go to your section
+  </a>
+{/if}
 
 <UnfinishedStories />
 <FinishedStories />

@@ -178,7 +178,6 @@ button:not(.void-btn),
   border-width: var(--cta-border-width) !important;
   border-style: solid !important;
   border-color: transparent !important;
-  border-radius: inherit;
   background-image:
     radial-gradient($bright-blue, $blue),
     conic-gradient(

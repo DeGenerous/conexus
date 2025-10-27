@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Authentication from '@lib/authentication';
   import { showProfile } from '@stores/modal.svelte';
 
   let {
@@ -8,6 +9,8 @@
     activeTab: string;
     user: Nullable<User>;
   } = $props();
+
+  let authentication: Authentication = new Authentication();
 
   let svgFocus = $state<boolean>(false);
 </script>
@@ -62,12 +65,27 @@
         href="/dashboard#/profile/bookmarks"
         target="_self">Bookmarks</a
       >
-      <a class="nohover-link" href="/dashboard#/profile/settings" target="_self"
-        >Settings</a
+      <a
+        class="nohover-link"
+        href="/dashboard#/profile/settings"
+        target="_self"
       >
-      <a class="nohover-link" href="/dashboard#/omnihub" target="_self"
-        >OmniHub</a
+        Settings
+      </a>
+      <a class="nohover-link" href="/dashboard#/omnihub" target="_self">
+        OmniHub
+      </a>
+      <a
+        class="nohover-link"
+        href="/"
+        target="_self"
+        onclick={(event) => {
+          event.preventDefault();
+          authentication.logout();
+        }}
       >
+        Sign Out
+      </a>
     </span>
   {/if}
 </button>

@@ -66,6 +66,7 @@ type CategoryTopic = {
   sort_order: number;
   genres?: string[];
   available: boolean;
+  visibility: 'public' | 'private';
   tile_file_url?: string;
   topic_gates?: TopicGates[];
 };

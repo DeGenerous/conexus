@@ -66,6 +66,7 @@ type StepData = {
   image?: string;
   image_type?: ImageType;
   tts?: Blob;
+  task_id: string;
 };
 
 type GameData = {

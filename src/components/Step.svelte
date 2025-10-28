@@ -31,6 +31,7 @@
   import { ensureMessage, gameRulesModal } from '@constants/modal';
   import isColorLight from '@utils/brightness';
   import { getCurrentUser } from '@utils/route-guard';
+  import { isGuest } from '@stores/account.svelte';
 
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
@@ -252,12 +253,8 @@
     });
   }
 
-  let isGuest: boolean = false;
-
   onMount(() => {
-    getCurrentUser().then((u) => {
-      if (u?.role_name === 'Guest') isGuest = true;
-    });
+    getCurrentUser();
 
     const stepImage = document.getElementById('step-image') as HTMLImageElement;
     pictureKeyframe = new KeyframeEffect(
@@ -326,7 +323,7 @@ a11y_no_noninteractive_element_interactions -->
     style:cursor={game.loading ? 'wait' : 'default'}
     on:pointerdown={handleWrapperPointer}
   >
-    {#if !isGuest}
+    {#if !$isGuest && step.task_id !== ""}
       <ImageDisplay
         {width}
         {zoom}
@@ -594,7 +591,7 @@ a11y_no_noninteractive_element_interactions -->
       on:click|stopPropagation
     >
       <Slider type="music" />
-      {#if !isGuest}
+      {#if !$isGuest && step.task_id !== ""}
         <Slider type="voice" />
       {/if}
     </section>

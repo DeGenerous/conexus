@@ -377,6 +377,7 @@ export default class CoNexus {
    */
   async #setStepData(data: GameData, task_id?: string): Promise<void> {
     this.step_data = data;
+    this.step_data.task_id = task_id || '';
     this.maxStep = Math.max(this.maxStep, data.step);
 
     console.log('set step data');

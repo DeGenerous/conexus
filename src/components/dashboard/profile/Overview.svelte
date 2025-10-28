@@ -142,11 +142,7 @@
       return;
     }
     try {
-      // await account.changeReferralCode(refCodeInput);
-
-      console.log('Changing ref code to:', refCodeInput);
-      resetRefCode();
-
+      await account.changeReferralCode(refCodeInput);
       editingRefCode = false;
     } catch (error) {
       resetRefCode();

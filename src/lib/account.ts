@@ -207,6 +207,23 @@ class Account {
   }
 
   /**
+   * Change the user's referral code.
+   * @param code - The new referral code to set.
+   * @returns A promise that resolves to a boolean indicating success.
+   */
+  async changeReferralCode(code: string): Promise<boolean> {
+    const { status, message } = await this.api.changeReferralCode(code);
+
+    if (status === 'error') {
+      api_error(message);
+      return false;
+    }
+
+    toastStore.show(message || 'Referral code changed successfully', 'info');
+    return true;
+  }
+
+  /**
    * Subscribe the user to the newsletter.
    * @param email The email address to subscribe.
    */

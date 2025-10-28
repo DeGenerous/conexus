@@ -136,6 +136,15 @@ export default class AccountAPI extends Fetcher {
   }
 
   /**
+   * Change the user's referral code.
+   * @param code - The new referral code to set.
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   */
+  async changeReferralCode(code: string) {
+    return this.request(`${this.group}/change-referral-code?new_code=${code}`);
+  }
+
+  /**
    * Subscribe the user to the newsletter.
    * @param email - The email address to subscribe.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.

@@ -511,7 +511,7 @@
           `Delete story: ${topic_name}`,
           async () => {
             await topicManager.deleteTopic(topic_id);
-            window.location.href = '/dashboard/dream/manage/';
+            window.location.href = '/dashboard#/dream/manage/collections';
           },
         )}
     >

@@ -323,7 +323,7 @@ a11y_no_noninteractive_element_interactions -->
     style:cursor={game.loading ? 'wait' : 'default'}
     on:pointerdown={handleWrapperPointer}
   >
-    {#if !$isGuest && step.task_id !== ""}
+    {#if !$isGuest && step.task_id !== ''}
       <ImageDisplay
         {width}
         {zoom}
@@ -591,7 +591,7 @@ a11y_no_noninteractive_element_interactions -->
       on:click|stopPropagation
     >
       <Slider type="music" />
-      {#if !$isGuest && step.task_id !== ""}
+      {#if !$isGuest && step.task_id !== ''}
         <Slider type="voice" />
       {/if}
     </section>

@@ -10,6 +10,12 @@
     prevItem,
     nextItem,
   } from '@stores/navigation.svelte';
+  import {
+    getCurrentUser,
+    checkUserRoles,
+    redirectTo,
+  } from '@utils/route-guard';
+  import { user, approvedTester } from '@stores/account.svelte';
 
   import Profile from '@components/Profile.svelte';
   import Background from '@components/utils/Background.svelte';
@@ -33,6 +39,26 @@
     activeTab: string;
     arrow: string;
   } = $props();
+
+  let isTestingEnv = $derived<boolean>(
+    import.meta.env.PUBLIC_ENV === 'testing',
+  );
+
+  const checkIfTesterApproved = async (): Promise<void> => {
+    const approved = await Promise.resolve(true); // Simulate API response
+    $approvedTester = approved;
+    if (!approved) redirectTo('/login'); // redirect to auth page
+  };
+
+  const initializeUser = async (): Promise<void> => {
+    $user = await getCurrentUser();
+    if ($user !== null) await checkUserRoles();
+
+    if (isTestingEnv) checkIfTesterApproved();
+  };
+
+  // Get user and roles on every page load
+  onMount(initializeUser);
 
   let hiddenHeader = $state<boolean>(false);
   let showIntro = $state<boolean>(false);
@@ -234,7 +260,11 @@
     <Onboarding />
   {/if}
 
-  <nav class="flex-row" class:hide={hiddenHeader}>
+  <nav
+    class="flex-row"
+    class:hide={hiddenHeader}
+    class:disabled={!$approvedTester}
+  >
     <BackArrowPCNav {arrow} />
 
     <BackArrow href={arrow} hideForPCs={true} />
@@ -355,6 +385,10 @@
       &.hide {
         transform: translateY(-100%);
       }
+    }
+
+    &.disabled {
+      cursor: not-allowed;
     }
   }
 </style>

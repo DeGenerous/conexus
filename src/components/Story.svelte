@@ -22,11 +22,7 @@
     resetModal,
   } from '@stores/modal.svelte';
   import detectIOS from '@utils/ios-device';
-  import {
-    userState,
-    getCurrentUser,
-    checkUserRoles,
-  } from '@utils/route-guard';
+  import { getCurrentUser, userState } from '@utils/route-guard';
   import { navContext } from '@stores/navigation.svelte';
   import { getPersonalSetup } from '@stores/account.svelte';
 
@@ -164,7 +160,6 @@
 
   onMount(async () => {
     const user = await getCurrentUser();
-    checkUserRoles();
     userID = user?.id;
     isReferred = await userState('referred');
 

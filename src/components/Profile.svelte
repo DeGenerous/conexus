@@ -4,7 +4,8 @@
 
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import Authentication from '@lib/authentication';
-  import { accountError } from '@stores/account.svelte';
+  import { getCurrentUser } from '@utils/route-guard';
+  import { accountError, approvedTester } from '@stores/account.svelte';
   import { showProfile } from '@stores/modal.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';
   import {
@@ -17,7 +18,6 @@
     regexpSpecialCharCheck,
     regexpRestrictedCharsCheck,
   } from '@constants/regexp';
-  import { getCurrentUser } from '@utils/route-guard';
   import { SetCache, TERMS_KEY } from '@constants/cache';
   import { NAV_ROUTES } from '@constants/routes';
 
@@ -33,8 +33,6 @@
 
   const authentication: Authentication = new Authentication();
 
-  let user: Nullable<User> = null;
-
   let dialog: HTMLDialogElement;
 
   $: if (dialog && $showProfile) {
@@ -46,6 +44,10 @@
     // Back to the LOGIN OPTIONS
     signUp = false;
     signInWithEmail = false;
+  }
+
+  $: if (!$approvedTester && $showProfile) {
+    dialog.close();
   }
 
   const handleBackArrow = () => {
@@ -78,8 +80,7 @@
   };
 
   onMount(async () => {
-    user = await getCurrentUser();
-
+    const user = await getCurrentUser();
     if (!user) searchForReferralCodeInURL();
   });
 
@@ -208,7 +209,7 @@
 
 <svelte:window on:keydown={handleEnterKey} />
 
-<ProfileSVG {activeTab} {user} />
+<ProfileSVG {activeTab} />
 
 <!-- svelte-ignore
 a11y-click-events-have-key-events

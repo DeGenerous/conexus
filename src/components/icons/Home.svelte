@@ -1,10 +1,13 @@
 <script lang="ts">
+  import { approvedTester } from '@stores/account.svelte';
+
   let { activeTab = 'Home' }: { activeTab: string } = $props();
 </script>
 
 <a
   class="navigation-tab"
   class:active={activeTab === 'Home'}
+  class:inactive={!$approvedTester}
   href="/"
   target="_self"
   draggable="false"
@@ -30,7 +33,3 @@
   </svg>
   <p>Home</p>
 </a>
-
-<style lang="scss">
-  @use '/src/styles/mixins' as *;
-</style>

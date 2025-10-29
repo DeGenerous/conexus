@@ -12,7 +12,9 @@ export async function getCurrentUser(
 
 export function redirectTo(path: string) {
   if (typeof window !== 'undefined') {
-    window.location.href = path;
+    if (window.location.pathname !== path) {
+      window.location.href = path;
+    }
   }
 }
 

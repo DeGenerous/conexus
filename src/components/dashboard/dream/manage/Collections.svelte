@@ -6,7 +6,7 @@
   import Topics from '@lib/topics';
   import CategoryView from '@lib/category';
   import { toastStore } from '@stores/toast.svelte';
-  import { checkUserRoles, getCurrentUser } from '@utils/route-guard';
+  import { getCurrentUser } from '@utils/route-guard';
   import { isAdmin, isPlayer } from '@stores/account.svelte';
 
   import CategoryBlock from '@components/dashboard/dream/manage/collections/CategoryBlock.svelte';
@@ -26,13 +26,11 @@
 
   // Load initial collections for the active role
   onMount(async () => {
-    const user = await getCurrentUser();
-    await checkUserRoles();
-
     if ($isAdmin) {
       sections = await topicManager.getSectionCollection(page, pageSize, true);
       creators = await topicManager.getCreatorCollection(page, pageSize, true);
     } else if ($isPlayer) {
+      const user = await getCurrentUser();
       userID = user?.id ?? '';
       creatorCategories = await topicManager.getCreatorCategoryCollection(
         userID,

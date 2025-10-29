@@ -30,7 +30,6 @@
   } from '@stores/customization.svelte';
   import { ensureMessage, gameRulesModal } from '@constants/modal';
   import isColorLight from '@utils/brightness';
-  import { getCurrentUser } from '@utils/route-guard';
   import { isGuest } from '@stores/account.svelte';
 
   import Slider from '@components/music/Slider.svelte';
@@ -254,8 +253,6 @@
   }
 
   onMount(() => {
-    getCurrentUser();
-
     const stepImage = document.getElementById('step-image') as HTMLImageElement;
     pictureKeyframe = new KeyframeEffect(
       stepImage,

@@ -6,7 +6,11 @@ import { GetCache, SetCache, PERSONAL_SETUP_KEY } from '@constants/cache';
 
 export const accountError = writable<AccountError>(null);
 
+export const user = writable<Nullable<User>>(null);
+export const approvedTester = writable<boolean>(true);
+
 export const isAdmin = writable<boolean>(false);
+export const isCreator = writable<boolean>(false);
 export const isPlayer = writable<boolean>(false);
 export const isGuest = writable<boolean>(false);
 

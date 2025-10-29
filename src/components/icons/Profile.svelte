@@ -1,14 +1,9 @@
 <script lang="ts">
   import Authentication from '@lib/authentication';
   import { showProfile } from '@stores/modal.svelte';
+  import { user, approvedTester } from '@stores/account.svelte';
 
-  let {
-    activeTab,
-    user,
-  }: {
-    activeTab: string;
-    user: Nullable<User>;
-  } = $props();
+  let { activeTab }: { activeTab: string } = $props();
 
   let authentication: Authentication = new Authentication();
 
@@ -18,11 +13,12 @@
 <a
   class="navigation-tab dashboard-tab"
   class:active={activeTab === 'Dashboard'}
+  class:inactive={!$approvedTester}
   id="profile-icon"
   aria-label="Profile"
   href="/dashboard#/dashboard"
   onclick={(event) => {
-    if (!user) {
+    if (!$user) {
       event.preventDefault();
       $showProfile = true;
     }
@@ -41,21 +37,22 @@
 
 <button
   class="void-btn credits-tab flex-row gap-8 transition"
+  class:disabled={!$approvedTester}
   onpointerover={() => (svgFocus = true)}
   onpointerout={() => (svgFocus = false)}
   onclick={() => {
-    if (!user) $showProfile = true;
+    if (!$user) $showProfile = true;
   }}
 >
   <h4>
-    {#if user}
-      Credits: {user.credits}
+    {#if $user}
+      Credits: {$user.credits}
     {:else}
       Sign In
     {/if}
   </h4>
 
-  {#if activeTab !== 'Dashboard' && user}
+  {#if activeTab !== 'Dashboard' && $user}
     <span class="flex transition" class:visible={svgFocus}>
       <a class="nohover-link" href="/dashboard#/profile/overview" target="_self"
         >Profile</a
@@ -102,6 +99,11 @@
     border-radius: 0.5rem;
     color: $cyan;
     @include cyan(0.1);
+
+    &.disabled {
+      pointer-events: none;
+      cursor: not-allowed;
+    }
 
     h4 {
       font-size: 28px;

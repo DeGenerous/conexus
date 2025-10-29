@@ -19,7 +19,7 @@ const footerText = [
 ---
 
 <Layout {...meta}>
-  <Menu client:load />
+  <Menu client:idle />
   <footer class="mobile-text-wrapper">
     {footerText.map((text: any) => <p>{text}</p>)}
   </footer>

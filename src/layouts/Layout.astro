@@ -146,16 +146,16 @@ const absoluteImageURL = image.startsWith('http')
     </script>
   </head>
   <body>
-    <ToastContainer client:load />
+    <ToastContainer client:idle />
 
     <main>
       <Navigation {header} {subheading} activeTab={nav} {arrow} client:load />
       <slot />
     </main>
 
-    <Modal client:load />
+    <Modal client:idle />
 
-    <CookieBanner client:load />
+    <CookieBanner client:idle />
   </body>
 </html>
 

@@ -1,17 +1,22 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  export let message: string = '';
-  export let type: 'info' | 'error' = 'info';
-  export let duration: number = 10000;
-  export let onClose = () => {};
+  let {
+    message = '',
+    type = 'info',
+    duration = 10000,
+    onClose = () => {},
+  }: {
+    message: string;
+    type: 'info' | 'error';
+    duration: number;
+    onClose: () => void;
+  } = $props();
 
-  let fading: number;
-  let hide: boolean = false;
+  let fading = $state<number>(1);
+  let hide = $state<boolean>(false);
 
   const closeToast = () => {
-    // randomise the exit direction so stacked toasts don’t all slide the same way
     fading = Math.random();
     setTimeout(() => {
       if (onClose) onClose();
@@ -37,7 +42,7 @@
   class:fading-left={fading < 0.5}
   class:fading-right={fading >= 0.5}
   class:hide
-  on:click={closeToast}
+  onclick={closeToast}
   type="button"
   aria-live={type === 'error' ? 'assertive' : 'polite'}
 >

@@ -1,4 +1,3 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
   import { GetCache, SetCache, TERMS_KEY } from '@constants/cache';
@@ -15,26 +14,28 @@
   import ThemeSettings from '@components/utils/ThemeSettings.svelte';
   import PlayOptions from '@components/utils/PlayOptions.svelte';
 
-  let dialog: HTMLDialogElement;
+  let dialog = $state<HTMLDialogElement | null>(null);
 
-  let termsAccepted: boolean = false;
-
-  // mirror the store flag onto the <dialog> element manually so we can play the fade-out animation before closing
-  $: if (dialog && $showModal) {
-    dialog.classList.remove('dialog-fade-out');
-    dialog.showModal();
-  } else if (dialog) {
-    closeDialog();
-  }
+  let termsAccepted = $state<boolean>(false);
 
   const closeDialog = () => {
-    dialog.classList.add('dialog-fade-out'); // animation before close
+    dialog?.classList.add('dialog-fade-out');
     $showModal = false;
     if ($themeSettingsModal) $themeSettingsModal = false;
     if ($playOptions) $playOptions = false;
     resetModal();
     setTimeout(() => dialog?.close(), 300);
   };
+
+  $effect(() => {
+    if (!dialog) return;
+    if ($showModal) {
+      dialog.classList.remove('dialog-fade-out');
+      dialog.showModal();
+    } else if (dialog.open) {
+      closeDialog();
+    }
+  });
 
   const checkTermsAccepted = () => {
     termsAccepted = GetCache<boolean>(TERMS_KEY) || false;
@@ -65,19 +66,29 @@
     }
   };
 
+  const handleBackdropClick = (event: MouseEvent) => {
+    if (event.target === event.currentTarget) {
+      closeDialog();
+    }
+  };
+
+  const stopPropagation = (event: Event) => {
+    event.stopPropagation();
+  };
+
   onMount(checkTermsAccepted);
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <dialog
   class="blur"
   bind:this={dialog}
-  on:close={closeDialog}
-  on:click|self={closeDialog}
+  onclose={closeDialog}
+  onclick={handleBackdropClick}
   aria-label="Modal"
   aria-modal="true"
 >
-  <div class="flex" on:click|stopPropagation>
+  <div class="flex" onclick={stopPropagation} role="dialog" tabindex="-1">
     <!-- DYNAMIC CONTENT PROVIDED BY openModal() FUNCTION -->
     {@html modal.content}
 
@@ -95,7 +106,7 @@
 
     <span class="flex">
       <!-- DEFAULT CLOSE BUTTON ON EVERY MODAL -->
-      <button class="red-btn" on:click={() => ($showModal = false)}>
+      <button class="red-btn" onclick={() => ($showModal = false)}>
         {#if termsAccepted}
           Close
         {:else}
@@ -105,7 +116,7 @@
 
       <!-- SECOND OPTIONAL BUTTON IF NEEDED -->
       {#if modal.button}
-        <button class={modal.buttonClass} on:click={modal.buttonFunc}>
+        <button class={modal.buttonClass} onclick={modal.buttonFunc}>
           {modal.button}
         </button>
       {/if}

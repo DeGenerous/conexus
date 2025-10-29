@@ -1,4 +1,3 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
 
@@ -29,39 +28,45 @@
   import DiscordBtn from '@components/icons/Discord.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
 
-  export let activeTab: string = 'Dashboard';
+  let { activeTab = 'Dashboard' }: { activeTab: string } = $props();
 
   const authentication: Authentication = new Authentication();
+  const REFERRAL_CODE_DEBOUNCE_MS = 500;
 
-  let dialog: HTMLDialogElement;
+  let dialog = $state<HTMLDialogElement | null>(null);
 
-  $: if (dialog && $showProfile) {
-    dialog.classList.remove('dialog-fade-out');
-    dialog.showModal();
-  } else if (dialog) {
-    dialog.classList.add('dialog-fade-out'); // animation before close
-    setTimeout(() => dialog.close(), 300);
-    // Back to the LOGIN OPTIONS
+  const resetAuthViewState = () => {
     signUp = false;
     signInWithEmail = false;
-  }
+  };
 
-  $: if (!$approvedTester && $showProfile) {
-    dialog.close();
-  }
+  $effect(() => {
+    if (!dialog) return;
+    if ($showProfile) {
+      dialog.classList.remove('dialog-fade-out');
+      dialog.showModal();
+    } else {
+      dialog.classList.add('dialog-fade-out');
+      setTimeout(() => dialog?.close(), 300);
+      resetAuthViewState();
+    }
+  });
+
+  $effect(() => {
+    if (!$approvedTester && $showProfile) {
+      dialog?.close();
+    }
+  });
 
   const handleBackArrow = () => {
     if (signUp) {
-      // Back from SIGN UP window
       signUp = false;
       return;
     }
     if (signInWithEmail) {
-      // Back from SIGN IN WITH EMAIL window
       signInWithEmail = false;
       return;
     }
-    // Close dialog if already on LOGIN OPTIONS window
     $showProfile = false;
   };
 
@@ -86,41 +91,46 @@
 
   // NON-SIGNED WINDOWS
 
-  let signUp: boolean; // go to SIGN UP window if TRUE
-  let signInWithEmail: boolean; // go to SIGN IN WITH EMAIL window if TRUE
-  let loginMail: string = '';
-  let loginPassword: string = '';
-  let isSignInLoading: boolean = false;
+  let signUp = $state<boolean>(false); // go to SIGN UP window if TRUE
+  let signInWithEmail = $state<boolean>(false); // go to SIGN IN WITH EMAIL window if TRUE
+  let loginMail = $state<string>('');
+  let loginPassword = $state<string>('');
+  let isSignInLoading = $state<boolean>(false);
 
   // SIGN UP FORM WINDOW
 
-  let referralCode: string = '';
-  let referralCodeValid: boolean = false;
-  let first_name: string = '';
-  let last_name: string = '';
-  let password: string = '';
-  let confirmPassword: string = '';
-  let email: string = '';
-  let isSignupLoading: boolean = false;
+  let referralCode = $state<string>('');
+  let referralCodeValid = $state<boolean>(false);
+  let first_name = $state<string>('');
+  let last_name = $state<string>('');
+  let password = $state<string>('');
+  let confirmPassword = $state<string>('');
+  let email = $state<string>('');
+  let isSignupLoading = $state<boolean>(false);
 
-  $: mandatoryFields =
+  const mandatoryFields = $derived<boolean>(
     regexpEmail.test(email) &&
-    first_name.trim() &&
-    last_name.trim() &&
-    regexpPasswordValidation.test(password) &&
-    password == confirmPassword;
+      first_name.trim().length > 0 &&
+      last_name.trim().length > 0 &&
+      regexpPasswordValidation.test(password) &&
+      password === confirmPassword,
+  );
 
-  let termsAccepted: boolean = false;
-  let newsletterSignup: boolean = false;
-  const REFERRAL_CODE_DEBOUNCE_MS = 500;
+  let termsAccepted = $state<boolean>(false);
+  let newsletterSignup = $state<boolean>(false);
   let referralValidationHandle: ReturnType<typeof setTimeout> | undefined;
 
-  $: isFormValid = mandatoryFields && termsAccepted && referralCodeValid;
+  const isFormValid = $derived<boolean>(
+    mandatoryFields && termsAccepted && referralCodeValid,
+  );
 
-  // Validate referral code when length is between 3 and 20 characters
-  $: if (referralCode.length >= 3 && referralCode.length <= 20)
-    validateReferralCode();
-  $: if (referralCode.length < 3) referralCodeValid = false;
+  $effect(() => {
+    if (referralCode.length >= 3 && referralCode.length <= 20) {
+      void validateReferralCode();
+    } else if (referralCode.length < 3) {
+      referralCodeValid = false;
+    }
+  });
 
   async function validateReferralCode() {
     if (referralValidationHandle) {
@@ -150,9 +160,8 @@
     }, REFERRAL_CODE_DEBOUNCE_MS);
   }
 
-  // Sign up user with Email and Referral Code
   const referralSignup = async (event?: Event) => {
-    event?.preventDefault(); // prevent page reload by form
+    event?.preventDefault();
     if (isSignupLoading || !isFormValid) return;
 
     isSignupLoading = true;
@@ -167,7 +176,7 @@
         referral_code: referralCode,
         newsletter: newsletterSignup,
       });
-      SetCache(TERMS_KEY, termsAccepted); // temp for terms modal
+      SetCache(TERMS_KEY, termsAccepted);
     } finally {
       isSignupLoading = false;
     }
@@ -205,24 +214,32 @@
       }
     }
   };
+
+  const closeOnBackdropClick = (event: MouseEvent) => {
+    if (event.target === event.currentTarget) {
+      $showProfile = false;
+    }
+  };
+
+  const stopPropagation = (event: Event) => {
+    event.stopPropagation();
+  };
 </script>
 
-<svelte:window on:keydown={handleEnterKey} />
+<svelte:window onkeydown={handleEnterKey} />
 
 <ProfileSVG {activeTab} />
 
-<!-- svelte-ignore
-a11y-click-events-have-key-events
-a11y-no-static-element-interactions-->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <dialog
   class="blur"
   bind:this={dialog}
-  on:close={() => ($showProfile = false)}
-  on:click|self={() => ($showProfile = false)}
+  onclose={() => ($showProfile = false)}
+  onclick={closeOnBackdropClick}
   aria-label="Profile"
   aria-modal="true"
 >
-  <div on:click|stopPropagation>
+  <div onclick={stopPropagation} role="dialog" tabindex="-1">
     <header class="flex">
       <QuitSVG onclick={handleBackArrow} />
       <CloseSVG onclick={() => ($showProfile = false)} />
@@ -274,7 +291,7 @@ a11y-no-static-element-interactions-->
             <a href="/reset-password">Forgot password?</a>
             <a
               href="/"
-              on:click={(event) => {
+              onclick={(event) => {
                 event.preventDefault();
                 signUp = true;
               }}>Create account</a
@@ -285,7 +302,7 @@ a11y-no-static-element-interactions-->
           <div class="sign-options flex">
             <button
               class="sign-button"
-              on:click={() => {
+              onclick={() => {
                 authentication.googleSignin();
               }}
             >
@@ -299,7 +316,7 @@ a11y-no-static-element-interactions-->
 
             <button
               class="sign-button"
-              on:click={() => {
+              onclick={() => {
                 signInWithEmail = true;
               }}
             >
@@ -312,7 +329,7 @@ a11y-no-static-element-interactions-->
           <h4>Don't have an account yet?</h4>
           <button
             class="sign-button"
-            on:click={() => {
+            onclick={() => {
               signUp = true;
             }}
           >
@@ -459,7 +476,7 @@ a11y-no-static-element-interactions-->
               <input
                 type="checkbox"
                 id="terms"
-                on:change={(event: any) => {
+                onchange={(event: any) => {
                   termsAccepted = event.target?.checked;
                 }}
               />
@@ -476,7 +493,7 @@ a11y-no-static-element-interactions-->
               <input
                 type="checkbox"
                 id="newsletter"
-                on:change={(event: any) => {
+                onchange={(event: any) => {
                   newsletterSignup = event.target?.checked;
                 }}
               />
@@ -486,7 +503,7 @@ a11y-no-static-element-interactions-->
             </span>
           </div>
           <button
-            on:click={referralSignup}
+            onclick={referralSignup}
             disabled={!isFormValid || isSignupLoading}
           >
             {#if isSignupLoading}

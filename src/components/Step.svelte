@@ -1,4 +1,3 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
@@ -24,8 +23,6 @@
     themeSettingsModal,
     customFont,
     customStyling,
-    updateFont,
-    updateStyling,
     getStoredCustomization,
   } from '@stores/customization.svelte';
   import { ensureMessage, gameRulesModal } from '@constants/modal';
@@ -48,29 +45,36 @@
   import ResetSVG from '@components/icons/Reset.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
 
-  export let topic_name: string;
-  export let restartGame: () => void;
+  let {
+    topic_name,
+    restartGame,
+  }: {
+    topic_name: string;
+    restartGame: () => void;
+  } = $props();
 
-  let width: number;
-  let height: number;
+  let width = $state<number>(0);
+  let height = $state<number>(0);
 
-  let zoom: number = 1;
+  let zoom = $state<number>(1);
+  let showCustomization = $state<boolean>(false);
 
-  let showCustomization: boolean = false;
-
-  $: step = $story?.step_data as StepData;
+  const step = $derived<StepData>($story?.step_data as StepData);
 
   // CONTROL BAR
 
-  let hiddenControls: boolean = false;
-  let activeControlPanel: Nullable<StepController> = null;
-  $: if (hiddenControls) activeControlPanel = null; // reset active control panel too
+  let hiddenControls = $state<boolean>(false);
+  let activeControlPanel = $state<Nullable<StepController>>(null);
+
+  $effect(() => {
+    if (hiddenControls) activeControlPanel = null;
+  });
 
   const DESKTOP_BREAKPOINT = 1024;
-  $: isDesktop = width >= DESKTOP_BREAKPOINT;
+  const isDesktop = $derived<boolean>(width >= DESKTOP_BREAKPOINT);
 
   const switchController = (controller: StepController) => {
-    if (activeControlPanel == controller) {
+    if (activeControlPanel === controller) {
       activeControlPanel = null;
       return;
     }
@@ -81,9 +85,8 @@
     () => {},
   );
 
-  // Hide control bar for PC
   const hideControlsAfterDelay = () => {
-    if (!isDesktop) return; // min width for PC
+    if (!isDesktop) return;
     clearTimeout(hiddenControlsTimeout);
     hiddenControlsTimeout = setTimeout(() => {
       hiddenControls = true;
@@ -100,11 +103,10 @@
     clearTimeout(hiddenControlsTimeout);
   };
 
-  // Hide control bar for Mobiles
-  function handleWrapperPointer(e: PointerEvent) {
-    // Ignore taps that start on the control bar or any panel
+  const handleWrapperPointer = (event: PointerEvent) => {
+    const target = event.target as HTMLElement;
     if (
-      (e.target as HTMLElement).closest(
+      target.closest(
         'nav, section.step-controller, section.sound-controller,' +
           'section.styling-controller, section.scale-controller',
       )
@@ -112,73 +114,68 @@
       return;
     }
 
-    if ((e.target as HTMLElement).tagName === 'BUTTON') return;
+    if (target.tagName === 'BUTTON') return;
 
-    // Close panel if one is open
     if (activeControlPanel) {
       activeControlPanel = null;
       return;
     }
 
-    if (isDesktop) return; // desktop keeps old logic
+    if (isDesktop) return;
 
-    // Toggle the bar itself
     hiddenControls = !hiddenControls;
-  }
-
-  // ZOOM
-
-  const toggleZoom = () => {
-    if (zoom === 1) zoom = 0.5;
-    else zoom = 1;
   };
 
-  // calculate option selector size based on font size
-  let selectorSize: number = 1.5; // rem
-  $: if ($customFont)
-    selectorSize =
-      $customFont.accentSize === 'h4'
-        ? 1.75
-        : $customFont.accentSize === 'h5'
-          ? 1.5
-          : $customFont.accentSize === 'body'
-            ? 1.25
-            : $customFont.accentSize === 'small'
-              ? 1
-              : 0.75;
+  const toggleZoom = () => {
+    zoom = zoom === 1 ? 0.5 : 1;
+  };
 
-  // reactive updatement of BG storages
-  $: conexusBG.opacity = $customStyling ? $customStyling.bgPictureOpacity : 50;
-  $: conexusBG.color = $customStyling ? $customStyling.bgColor : '#000000';
+  const selectorSize = $derived.by<number>(() => {
+    if (!$customFont) return 1.5;
+    switch ($customFont.accentSize) {
+      case 'h4':
+        return 1.75;
+      case 'h5':
+        return 1.5;
+      case 'body':
+        return 1.25;
+      case 'small':
+        return 1;
+      default:
+        return 0.75;
+    }
+  });
 
-  // SCALE CUSTOMIZATION
+  $effect(() => {
+    conexusBG.opacity = $customStyling ? $customStyling.bgPictureOpacity : 50;
+  });
 
-  let customScale: CustomScale = null;
+  $effect(() => {
+    conexusBG.color = $customStyling ? $customStyling.bgColor : '#000000';
+  });
+
+  let customScale = $state<CustomScale | null>(null);
 
   const updateScale = (reset: Nullable<'reset'> = null) => {
     if (reset) customScale = defaultScale;
-    SetCache(SCALE_KEY, customScale);
+    if (customScale) SetCache(SCALE_KEY, customScale);
   };
 
-  // update SCALE in localStorage after every change
-  $: customScale && updateScale();
-
-  // THEME SETTINGS
+  $effect(() => {
+    if (customScale) updateScale();
+  });
 
   const openThemeSettings = () => {
     $showModal = true;
     $themeSettingsModal = true;
   };
 
-  // KEYBOARD CONTROLS
-
-  let activeOptionNumber: number = 0;
-  let focusedOption: Nullable<number> = null;
+  let activeOptionNumber = $state<number>(0);
+  let focusedOption = $state<Nullable<number>>(null);
 
   const blurActiveBtn = () => {
-    if (document.activeElement!.tagName == 'BUTTON') {
-      const activeOption = document.activeElement as HTMLButtonElement;
-      activeOption.blur();
+    if (document.activeElement?.tagName === 'BUTTON') {
+      (document.activeElement as HTMLButtonElement).blur();
     }
   };
 
@@ -195,7 +192,6 @@
       }
       case 'ArrowLeft': {
         if (step.step !== 1) {
-          // load PREV step and blur focused button if it is
           $story?.loadStep(step.step - 1);
           blurActiveBtn();
           activeOptionNumber = 0;
@@ -204,7 +200,6 @@
       }
       case 'ArrowRight': {
         if (step.step !== $story?.maxStep) {
-          // load NEXT step and blur focused button if it is
           $story?.loadStep(step.step + 1);
           blurActiveBtn();
           activeOptionNumber = 0;
@@ -213,44 +208,35 @@
       }
       case 'ArrowUp': {
         if (step.step !== $story?.maxStep || game.loading) return;
-        event.preventDefault(); // prevent scroll
-        // get PREV (TOP) option ID if step is not last
+        event.preventDefault();
         if ($story?.step_data?.ended) activeOptionNumber = 0;
         else if (activeOptionNumber !== 0) activeOptionNumber--;
-        const activeOption = document.getElementById(
-          `option-${activeOptionNumber}`,
-        );
-        activeOption?.focus();
+        document.getElementById(`option-${activeOptionNumber}`)?.focus();
         break;
       }
       case 'ArrowDown': {
         if (step.step !== $story?.maxStep || game.loading) return;
-        event.preventDefault(); // prevent scroll
-        // get NEXT (BOTTOM) option ID if step is not last
+        event.preventDefault();
         if ($story?.step_data?.ended) activeOptionNumber = 0;
         else if (activeOptionNumber !== step.options.length - 1)
           activeOptionNumber++;
-        const activeOption = document.getElementById(
-          `option-${activeOptionNumber}`,
-        );
-        activeOption?.focus();
+        document.getElementById(`option-${activeOptionNumber}`)?.focus();
         break;
       }
     }
   };
 
-  // SCROLL ANIMATION ON IMAGE LOAD
+  let pictureKeyframe: KeyframeEffect | null = null;
+  let pictureAnimation: Animation | null = null;
 
-  let pictureKeyframe: KeyframeEffect;
-  let pictureAnimation: Animation;
-
-  $: if (step.image) {
+  $effect(() => {
+    if (!step?.image || !pictureAnimation) return;
     pictureAnimation.play();
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
     });
-  }
+  });
 
   onMount(() => {
     const stepImage = document.getElementById('step-image') as HTMLImageElement;
@@ -269,25 +255,19 @@
     );
     pictureAnimation = new Animation(pictureKeyframe, document.timeline);
 
-    // GET CUSTOMIZATION FROM THE localStorage
     getStoredCustomization();
 
     const storedScale = GetCache<CustomScale>(SCALE_KEY);
     if (storedScale) customScale = storedScale;
     else updateScale('reset');
 
-    // SHOW HOW TO PLAY INSTRUCTIONS
-
-    // min width for PC
     if (isDesktop) {
       const dontShowInstructions = GetCache(GAME_INSTRUCTIONS_KEY);
-      // Show instructions if no stored value
       if (!dontShowInstructions) {
         setTimeout(
           () =>
             openModal(gameRulesModal, "Don't show again", () => {
               SetCache(GAME_INSTRUCTIONS_KEY, 'dont_show');
-              // Hide control panel after 3s delay
               hideControlsAfterDelay();
             }),
           600,
@@ -297,10 +277,14 @@
       }
     }
   });
+
+  const stopPropagation = (event: Event) => {
+    event.stopPropagation();
+  };
 </script>
 
 <svelte:window
-  on:keydown={handleKeyDown}
+  onkeydown={handleKeyDown}
   bind:innerWidth={width}
   bind:innerHeight={height}
 />
@@ -318,7 +302,7 @@ a11y_no_noninteractive_element_interactions -->
     style:font-style={$customFont.italic ? 'italic' : ''}
     style:color={$customFont.baseColor}
     style:cursor={game.loading ? 'wait' : 'default'}
-    on:pointerdown={handleWrapperPointer}
+    onpointerdown={handleWrapperPointer}
   >
     {#if !$isGuest && step.task_id !== ''}
       <ImageDisplay
@@ -412,15 +396,13 @@ a11y_no_noninteractive_element_interactions -->
         style:width="{width >= DESKTOP_BREAKPOINT ? 100 * zoom : 95}%"
         style:zoom
       >
-        <button
-          id="option-0"
-          class="void-btn menu-option"
-          on:click={restartGame}>Start a new story</button
+        <button id="option-0" class="void-btn menu-option" onclick={restartGame}
+          >Start a new story</button
         >
         <button
           id="option-1"
           class="void-btn menu-option"
-          on:click={() => (window.location.href = '/')}
+          onclick={() => (window.location.href = '/')}
           >Return to main menu</button
         >
       </div>
@@ -446,23 +428,23 @@ a11y_no_noninteractive_element_interactions -->
             class:active-option={step.choice && step.choice - 1 === i}
             style:font-family={$customFont.family}
             disabled={game.loading || step.step !== $story?.maxStep}
-            on:click={() => {
+            onclick={() => {
               $story?.nextStep(i + 1);
               if (activeOptionNumber !== 0) activeOptionNumber = 0;
             }}
-            on:pointerover={() => {
+            onpointerover={() => {
               if (!game.loading && step.step == $story?.maxStep) {
                 focusedOption = i;
               }
               blurActiveBtn();
             }}
-            on:pointerout={() => {
+            onpointerout={() => {
               if (!game.loading && step.step == $story?.maxStep) {
                 focusedOption = null;
               }
             }}
-            on:focus={() => (focusedOption = i)}
-            on:blur={() => (focusedOption = null)}
+            onfocus={() => (focusedOption = i)}
+            onblur={() => (focusedOption = null)}
           >
             {#if $customStyling.optionSelector}
               <SelectorSVG
@@ -481,12 +463,14 @@ a11y_no_noninteractive_element_interactions -->
     {/if}
 
     <!-- CONTROL PANEL -->
+    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
     <nav
       class="flex-row blur transition shad-behind pad-8"
       class:hidden={hiddenControls}
-      on:pointerenter={cancelHide}
-      on:pointerleave={hideControlsAfterDelay}
-      on:click|stopPropagation
+      onpointerenter={cancelHide}
+      onpointerleave={hideControlsAfterDelay}
+      onclick={stopPropagation}
+      tabindex="-1"
     >
       <span class="flex-row">
         <QuitSVG onclick={() => window.location.reload()} voidBtn={true} />
@@ -534,17 +518,19 @@ a11y_no_noninteractive_element_interactions -->
 
     <div
       id="controls-placeholder"
-      on:pointerenter={showControls}
-      on:pointerleave={hideControlsAfterDelay}
+      onpointerenter={showControls}
+      onpointerleave={hideControlsAfterDelay}
     ></div>
 
     <!-- STEP CONTROLLER -->
     <section
       class="step-controller"
       class:visible={activeControlPanel == 'step'}
-      on:pointerenter={cancelHide}
-      on:pointerleave={hideControlsAfterDelay}
-      on:click|stopPropagation
+      onpointerenter={cancelHide}
+      onpointerleave={hideControlsAfterDelay}
+      onclick={stopPropagation}
+      role="toolbar"
+      tabindex="-1"
     >
       <div class="transparent-container flex-row">
         <SwitchSVG
@@ -583,9 +569,11 @@ a11y_no_noninteractive_element_interactions -->
     <section
       class="sound-controller"
       class:visible={activeControlPanel == 'sound'}
-      on:pointerenter={cancelHide}
-      on:pointerleave={hideControlsAfterDelay}
-      on:click|stopPropagation
+      onpointerenter={cancelHide}
+      onpointerleave={hideControlsAfterDelay}
+      onclick={stopPropagation}
+      role="toolbar"
+      tabindex="-1"
     >
       <Slider type="music" />
       {#if !$isGuest && step.task_id !== ''}
@@ -597,9 +585,11 @@ a11y_no_noninteractive_element_interactions -->
     <section
       class="styling-controller"
       class:visible={activeControlPanel == 'styling'}
-      on:pointerenter={cancelHide}
-      on:pointerleave={hideControlsAfterDelay}
-      on:click|stopPropagation
+      onpointerenter={cancelHide}
+      onpointerleave={hideControlsAfterDelay}
+      onclick={stopPropagation}
+      role="toolbar"
+      tabindex="-1"
     >
       <span class="custom-themes flex">
         {#if isColorLight($customStyling.bgColor)}
@@ -620,13 +610,13 @@ a11y_no_noninteractive_element_interactions -->
           />
         {/if}
 
-        <button class="purple-btn" on:click={openThemeSettings}>
+        <button class="purple-btn" onclick={openThemeSettings}>
           Manage Themes 🧩
         </button>
 
         <button
           class:active-btn={showCustomization}
-          on:click={() => (showCustomization = !showCustomization)}
+          onclick={() => (showCustomization = !showCustomization)}
         >
           Customize look 🎨
         </button>
@@ -641,9 +631,11 @@ a11y_no_noninteractive_element_interactions -->
     <section
       class="scale-controller"
       class:visible={activeControlPanel == 'scale'}
-      on:pointerenter={cancelHide}
-      on:pointerleave={hideControlsAfterDelay}
-      on:click|stopPropagation
+      onpointerenter={cancelHide}
+      onpointerleave={hideControlsAfterDelay}
+      onclick={stopPropagation}
+      role="toolbar"
+      tabindex="-1"
     >
       {#if zoom !== 1}
         <p class="zoom-hint validation green-txt">
@@ -729,7 +721,7 @@ a11y_no_noninteractive_element_interactions -->
             content: "Press 'Z' to toggle zoom",
             animation: 'scale',
           }}
-          on:click={toggleZoom}
+          onclick={toggleZoom}
         >
           {#if zoom === 1}
             Zoom out

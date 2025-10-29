@@ -23,7 +23,6 @@
   } from '@stores/modal.svelte';
   import detectIOS from '@utils/ios-device';
   import { getCurrentUser, userState } from '@utils/route-guard';
-  import { navContext } from '@stores/navigation.svelte';
   import { getPersonalSetup } from '@stores/account.svelte';
 
   import Bookmark from '@components/utils/Bookmark.svelte';
@@ -162,8 +161,6 @@
     const user = await getCurrentUser();
     userID = user?.id;
     isReferred = await userState('referred');
-
-    navContext.clear();
 
     await fetchTopicData(userID);
 

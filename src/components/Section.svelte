@@ -3,7 +3,6 @@
   import { onMount } from 'svelte';
 
   import CoNexusApp from '@lib/view';
-  import { navContext } from '@stores/navigation.svelte';
   import { blankImage, serveUrl } from '@constants/media';
 
   import Category from '@components/Category.svelte';
@@ -76,16 +75,6 @@
   onMount(async () => {
     try {
       if (intended === 's') {
-        sections = await app.getSections();
-        if (sections.map((s) => s.name).includes(name)) {
-          navContext.setContext({
-            items: sections.map((s) => ({
-              name: s.name,
-              link: `/s/${s.name}`,
-            })),
-            index: sections.findIndex((s) => s.name === name),
-          });
-        }
         explorer = (await app.getSection(name)) as Explorer;
       } else if (intended === 'c') {
         explorer = (await app.getCreator(name)) as Explorer;

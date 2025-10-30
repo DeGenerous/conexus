@@ -1,5 +1,10 @@
 import Account from '@lib/account';
-import { isAdmin, isPlayer, isGuest } from '@stores/account.svelte';
+import {
+  isAdmin,
+  isPlayer,
+  isGuest,
+  approvedTester,
+} from '@stores/account.svelte';
 import { ClearCache } from '@constants/cache';
 
 // Get the user object
@@ -86,3 +91,9 @@ export async function checkUserRoles(
     isGuest: _isGuest,
   };
 }
+
+export const checkIfTesterApproved = async (): Promise<void> => {
+  const approved = await Promise.resolve(true); // Simulate API response
+  approvedTester.set(approved);
+  if (!approved) redirectTo('/login'); // redirect to auth page
+};

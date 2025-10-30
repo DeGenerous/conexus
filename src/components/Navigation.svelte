@@ -15,7 +15,7 @@
   import {
     getCurrentUser,
     checkUserRoles,
-    redirectTo,
+    checkIfTesterApproved,
   } from '@utils/route-guard';
   import { user, approvedTester } from '@stores/account.svelte';
 
@@ -45,12 +45,6 @@
   let isTestingEnv = $derived<boolean>(
     import.meta.env.PUBLIC_ENV === 'testing',
   );
-
-  const checkIfTesterApproved = async (): Promise<void> => {
-    const approved = await Promise.resolve(true); // Simulate API response
-    $approvedTester = approved;
-    if (!approved) redirectTo('/login'); // redirect to auth page
-  };
 
   const initializeUser = async (): Promise<void> => {
     $user = await getCurrentUser();

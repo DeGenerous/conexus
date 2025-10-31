@@ -240,7 +240,7 @@
       ),
       'Delete',
       async () => {
-        await Promise.resolve(true);
+        await Promise.resolve(); // delete account API call
         redirectTo('/');
       },
     );

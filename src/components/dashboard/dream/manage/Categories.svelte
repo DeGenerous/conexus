@@ -1,14 +1,18 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
+  import AppView from '@lib/view';
   import CategoryView from '@lib/category';
   import { checkUserRoles } from '@utils/route-guard';
   import { isAdmin } from '@stores/account.svelte';
   import { toastStore } from '@stores/toast.svelte';
+  import openModal from '@stores/modal.svelte';
+  import { ensureMessage } from '@constants/modal';
 
   import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
 
+  let view = new AppView();
   let categoryView = new CategoryView();
 
   let selectedSectionId = $state('');
@@ -27,7 +31,7 @@
 
   onMount(checkUserRoles);
 
-  async function addCategory() {
+  const addCategory = async () => {
     if (!newCategoryName.trim()) return;
 
     addingCategory = true;
@@ -59,7 +63,28 @@
     } finally {
       addingCategory = false;
     }
-  }
+  };
+
+  const deleteCategory = async (category: Category) => {
+    console.log('delete category', category);
+    openModal(
+      ensureMessage(`delete the category "${category.name}"`),
+      'Delete',
+      async () => {
+        const topics = await view.getCategoryTopics(category.id!, 1, 1);
+        console.log(topics.length);
+        if (topics.length > 0) {
+          console.log('cannot delete category with topics');
+          toastStore.show(
+            'Cannot delete category with existing topics. Please remove all topics first.',
+            'error',
+          );
+          return;
+        }
+        await Promise.resolve(); // delete category API call
+      },
+    );
+  };
 
   const onkeypress = (event: KeyboardEvent) => {
     if (event.key !== 'Enter' || event.repeat) return;
@@ -119,9 +144,13 @@
       </h4>
       <div class="container">
         {#if categories.length > 0}
-          {#each categories as { name }}
-            <button class="void-btn small-tile">
-              <p>{name}</p>
+          {#each categories as category (category.id)}
+            <button class="void-btn small-blue-tile">
+              <p>{category.name}</p>
+              <!-- <CloseSVG
+                onclick={() => deleteCategory(category)}
+                voidBtn={true}
+              /> -->
             </button>
           {/each}
         {:else}

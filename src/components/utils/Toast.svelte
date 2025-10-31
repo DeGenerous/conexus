@@ -13,7 +13,7 @@
     onClose: () => void;
   } = $props();
 
-  let fading = $state<number>(1);
+  let fading = $state<number | null>(null);
   let hide = $state<boolean>(false);
 
   const closeToast = () => {
@@ -39,8 +39,8 @@
   class="void-btn flex-row pad round blur"
   class:info={type === 'info'}
   class:error={type !== 'info'}
-  class:fading-left={fading < 0.5}
-  class:fading-right={fading >= 0.5}
+  class:fading-left={fading && fading < 0.5}
+  class:fading-right={fading && fading >= 0.5}
   class:hide
   onclick={closeToast}
   type="button"

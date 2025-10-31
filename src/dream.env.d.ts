@@ -126,11 +126,6 @@ type DraftData = {
   prompt_settings: PromptSettings;
 };
 
-// type DraftPayload = {
-//   title: string;
-//   data: DraftData;
-// }
-
 type DraftPayload = DraftData & {
   id?: string; // uuid v4
   created_at?: Date; // epoch ms

@@ -10,12 +10,8 @@ type AvailableStandards = 'erc20' | 'erc721';
 type AvailableNetworks =
   | 'ethereum-mainnet'
   | 'ethereum-goerli'
-  | 'polygon-mainnet'
-  | 'polygon-mumbai'
-  | 'arbitrum-one'
-  | 'arbitrum-goerli'
-  | 'optimism-mainnet'
-  | 'optimism-goerli';
+  | 'base-mainnet'
+  | 'base-goerli';
 
 type CollectionBase = {
   address: string;

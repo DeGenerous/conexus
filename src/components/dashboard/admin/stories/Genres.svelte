@@ -35,6 +35,7 @@
   };
 
   const onkeypress = (event: KeyboardEvent) => {
+    console.log('keypress', event);
     if (event.key !== 'Enter' || event.repeat) return;
     if (!newGenreName) return;
     const activeInput = document.activeElement as HTMLElement;

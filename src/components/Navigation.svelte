@@ -99,10 +99,12 @@
     else if (document.fullscreenElement) document.exitFullscreen();
   });
 
-  const onkeydown = (event: KeyboardEvent) => {
+  const onkeypress = (event: KeyboardEvent) => {
     if (event.repeat) return;
-    if (document.activeElement?.tagName !== 'BODY') return;
-    if (event.key === 'f') game.fullscreen = !game.fullscreen;
+    if (event.key === 'f') {
+      if (document.activeElement?.tagName === 'BODY')
+        game.fullscreen = !game.fullscreen;
+    }
   };
 
   // PC-Hide
@@ -173,7 +175,7 @@
   // onMount(startOnboarding);
 </script>
 
-<svelte:window {onkeydown} {onscroll} />
+<svelte:window {onkeypress} {onscroll} />
 
 {#if $story === null || ($story !== null && activeTab === 'Demo')}
   {#if header}

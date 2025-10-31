@@ -7,6 +7,7 @@
   import { toastStore } from '@stores/toast.svelte';
 
   import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
+  import CloseSVG from '@components/icons/Close.svelte';
 
   let categoryView = new CategoryView();
 
@@ -15,7 +16,7 @@
   let fetchCategories = $state<() => Promise<void>>();
 
   let newCategoryName = $state<string>('');
-  let newCategoryDescription = $state<string>('');
+  // let newCategoryDescription = $state<string>('');
   let newCategorySortOrder = $state<number>(0);
 
   $effect(() => {

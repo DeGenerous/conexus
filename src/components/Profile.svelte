@@ -200,8 +200,8 @@
 
   const handleEnterKey = (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
-      event.preventDefault();
       if (signUp && isFormValid && !isSignupLoading) {
+        event.preventDefault();
         void referralSignup();
       } else if (
         !signUp &&
@@ -210,6 +210,7 @@
         loginPassword &&
         !isSignInLoading
       ) {
+        event.preventDefault();
         void handleEmailSignin();
       }
     }
@@ -226,7 +227,7 @@
   };
 </script>
 
-<svelte:window onkeydown={handleEnterKey} />
+<svelte:window onkeypress={handleEnterKey} />
 
 <ProfileSVG {activeTab} />
 

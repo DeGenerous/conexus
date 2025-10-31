@@ -35,24 +35,30 @@ jobs:
             echo "DEPLOY_BRANCH=develop" >> $GITHUB_ENV
           fi
 
-      - name: Deploy
-        run: |
-          set -e
-          DEPLOY_ENV=$(cat $GITHUB_ENV | grep DEPLOY_ENV | cut -d '=' -f2)
-          DEPLOY_BRANCH=$(cat $GITHUB_ENV | grep DEPLOY_BRANCH | cut -d '=' -f2)
+      - name: Deploy with Docker Compose
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            set -e
+            DEPLOY_ENV=$(cat $GITHUB_ENV | grep DEPLOY_ENV | cut -d '=' -f2)
+            DEPLOY_BRANCH=$(cat $GITHUB_ENV | grep DEPLOY_BRANCH | cut -d '=' -f2)
 
-          cd ~/apps/conexus/$DEPLOY_ENV
+            cd ~/apps/conexus/$DEPLOY_ENV
 
-          # Pull the latest changes
-          git fetch --all
-          git checkout $DEPLOY_BRANCH
-          git pull origin $DEPLOY_BRANCH
+            # Pull the latest changes
+            git fetch --all
+            git checkout $DEPLOY_BRANCH
+            git pull origin $DEPLOY_BRANCH
 
-          # Build and deploy using Docker Compose
-          docker-compose build
-          docker-compose down --remove-orphans
-          docker-compose up -d
+            # Build and deploy using Docker Compose
+            docker-compose build
+            docker-compose down --remove-orphans
+            docker-compose up -d
 
-          docker image prune -f || true
+            docker image prune -f || true
 
-          echo "🎉 Deployment completed successfully for $DEPLOY_ENV environment"
+            echo "🎉 Deployment completed successfully for $DEPLOY_ENV environment"

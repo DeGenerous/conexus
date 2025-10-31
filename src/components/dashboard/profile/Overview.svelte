@@ -16,7 +16,7 @@
   import { accountError } from '@stores/account.svelte';
   import openModal from '@stores/modal.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';
-  import { getCurrentUser } from '@utils/route-guard';
+  import { getCurrentUser, redirectTo } from '@utils/route-guard';
   import { referralActivationNotice } from '@constants/modal';
   import { toastStore } from '@stores/toast.svelte';
   import { blankImage, serveUrl } from '@constants/media';
@@ -26,11 +26,9 @@
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import Dropdown from '@components/utils/Dropdown.svelte';
 
-  import DoorSVG from '@components/icons/Door.svelte';
   import EyeSVG from '@components/icons/Eye.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
-  import ResetSVG from '@components/icons/Reset.svelte';
   import CopySVG from '@components/icons/Copy.svelte';
   import EditSVG from '@components/icons/Edit.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
@@ -232,6 +230,20 @@
       isUploadingAvatar = false;
       input.value = '';
     }
+  };
+
+  // Delete account (not used currently)
+  const deleteAccount = async () => {
+    openModal(
+      ensureMessage(
+        'delete your account permanently, without the possibility of recovery',
+      ),
+      'Delete',
+      async () => {
+        await Promise.resolve(true);
+        redirectTo('/');
+      },
+    );
   };
 </script>
 
@@ -624,6 +636,10 @@
           Joined {new Date(user.created_at).toLocaleDateString()}
         </p>
       {/if}
+
+      <!-- <button class="red-btn" onclick={deleteAccount}>
+        Delete Account
+      </button> -->
     </Dropdown>
   {/if}
 

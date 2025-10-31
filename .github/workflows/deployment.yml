@@ -31,25 +31,23 @@ jobs:
             echo "DEPLOY_ENV=staging" >> $GITHUB_ENV
             echo "DEPLOY_BRANCH=staging" >> $GITHUB_ENV
           elif [[ "${GITHUB_REF}" == "refs/heads/develop" ]]; then
-            echo "DEPLOY_ENV=develop" >> $GITHUB_ENV
+            echo "DEPLOY_ENV=development" >> $GITHUB_ENV
             echo "DEPLOY_BRANCH=develop" >> $GITHUB_ENV
           fi
 
       - name: Deploy
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }} # switched from password to SSH key like backend
-          port: ${{ secrets.PORT }}
-          script: |
-            set -e
-            DEPLOY_ENV=${{ env.DEPLOY_ENV }}
-            DEPLOY_BRANCH=${{ env.DEPLOY_BRANCH }}
+        run: |
+          set -e
+          DEPLOY_ENV=$(cat $GITHUB_ENV | grep DEPLOY_ENV | cut -d '=' -f2)
+          DEPLOY_BRANCH=$(cat $GITHUB_ENV | grep DEPLOY_BRANCH | cut -d '=' -f2)
 
-            cd ~/apps/conexus
-            git fetch --all
-            git checkout $DEPLOY_BRANCH
-            git pull origin $DEPLOY_BRANCH
+          cd ~/apps/conexus/$DEPLOY_ENV
 
-            ./reload.sh reload $DEPLOY_ENV
+          # Pull the latest changes
+          git fetch --all
+          git checkout $DEPLOY_BRANCH
+          git pull origin $DEPLOY_BRANCH
+
+          # Build and deploy using Docker Compose
+          docker-compose down
+          docker-compose up --build -d

@@ -1,32 +1,48 @@
 # Builder Stage
 FROM node:23-alpine AS builder
 
-# Install dependencies required for `node-gyp`
-RUN apk add --no-cache python3 make g++
+# Install dependencies required for `node-gyp` and pnpm
+RUN apk add --no-cache python3 make g++ && \
+    npm install -g pnpm
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json to the working directory
-COPY package.json ./
-
-# Copy the pnpm-lock.yaml if you are using pnpm
-COPY pnpm-lock.yaml ./
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
-# copy public files
-COPY public ./app/public
-
-# Copy the rest of the application code to the working directory
+# Copy source code
 COPY . .
 
-# Build the Next.js application
+# Build the application
 RUN pnpm run build
 
-ENV HOST=0.0.0.0
+# Production Stage
+FROM node:23-alpine AS runner
 
-# Start the Next.js application
-# CMD ["npm", "start"]
+# Install pnpm in runner stage
+RUN npm install -g pnpm
+
+WORKDIR /app
+
+# Copy built application
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/node_modules ./node_modules
+
+# Set environment variables
+ENV HOST=0.0.0.0
+ENV PORT=4321
+
+# Expose port
+EXPOSE 4321
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:4321/ || exit 1
+
+# Start the application
 CMD ["node", "./dist/server/entry.mjs"]

@@ -1,3 +1,4 @@
+/** @jsxImportSource react */
 import React, { useMemo } from 'react';
 
 import {
@@ -163,14 +164,25 @@ const Web3Provider: React.FC<Web3Props> = ({ linking = false, children }) => {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitAuthenticationProvider
+        {/* <RainbowKitAuthenticationProvider
           adapter={authenticationAdapter}
           status={AUTHENTICATION_STATUS}
         >
           <RainbowKitProvider modalSize="wide" theme={rkTheme}>
             {children}
           </RainbowKitProvider>
-        </RainbowKitAuthenticationProvider>
+        </RainbowKitAuthenticationProvider> */}
+        <RainbowKitAuthenticationProvider
+          adapter={authenticationAdapter}
+          status={AUTHENTICATION_STATUS}
+          children={
+            <RainbowKitProvider
+              modalSize="wide"
+              theme={rkTheme}
+              children={children}
+            ></RainbowKitProvider>
+          }
+        ></RainbowKitAuthenticationProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
@@ -179,7 +191,7 @@ const Web3Provider: React.FC<Web3Props> = ({ linking = false, children }) => {
 const RainbowConnect = (linking: boolean, title: string) => {
   return (
     <Web3Provider linking={linking}>
-      <ConnectButton.Custom>
+      {/* <ConnectButton.Custom>
         {({
           account,
           chain,
@@ -252,7 +264,81 @@ const RainbowConnect = (linking: boolean, title: string) => {
             </div>
           );
         }}
-      </ConnectButton.Custom>
+      </ConnectButton.Custom> */}
+      <ConnectButton.Custom
+        children={({
+          account,
+          chain,
+          openAccountModal,
+          openChainModal,
+          openConnectModal,
+          authenticationStatus,
+          mounted,
+        }) => {
+          // Note: If your app doesn't use authentication, you
+          // can remove all 'authenticationStatus' checks
+          const ready = mounted && authenticationStatus !== 'loading';
+          const connected =
+            ready &&
+            account &&
+            chain &&
+            (!authenticationStatus || authenticationStatus === 'authenticated');
+          return (
+            <div
+              {...(!ready && {
+                'aria-hidden': true,
+              })}
+            >
+              {(() => {
+                if (!connected) {
+                  return (
+                    <button
+                      className={
+                        title == 'with Web3 wallet' ? 'sign-button' : ''
+                      }
+                      onClick={openConnectModal}
+                      type="button"
+                    >
+                      <img src="/icons/wallet.png" alt="Google" />
+                      <p>{title}</p>
+                    </button>
+                  );
+                }
+                if (chain.unsupported) {
+                  return (
+                    <button onClick={openChainModal} type="button">
+                      Wrong network
+                    </button>
+                  );
+                }
+                return (
+                  <div>
+                    <button onClick={openChainModal} type="button">
+                      {chain.hasIcon && (
+                        <div>
+                          {chain.iconUrl && (
+                            <img
+                              alt={chain.name ?? 'Chain icon'}
+                              src={chain.iconUrl}
+                            />
+                          )}
+                        </div>
+                      )}
+                      {chain.name}
+                    </button>
+                    <button onClick={openAccountModal} type="button">
+                      {account.displayName}
+                      {account.displayBalance
+                        ? ` (${account.displayBalance})`
+                        : ''}
+                    </button>
+                  </div>
+                );
+              })()}
+            </div>
+          );
+        }}
+      ></ConnectButton.Custom>
     </Web3Provider>
   );
 };

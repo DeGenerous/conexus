@@ -89,7 +89,7 @@ export default class Topic {
    * @param category_id - The category identifier for context.
    */
   async processDraftDocument(file: File, category_id: string): Promise<void> {
-    const { status, message, data } = await this.api.draftDocument(
+    const { status, message } = await this.api.draftDocument(
       file,
       category_id,
     );
@@ -165,7 +165,7 @@ export default class Topic {
    * @param body - The new draft payload.
    */
   async updateDraft(id: string, body: DraftPayload): Promise<void> {
-    const { status, message, data } = await this.api.updateDraft(id, body);
+    const { status, message } = await this.api.updateDraft(id, body);
 
     if (status === 'error') {
       api_error(message);
@@ -180,7 +180,7 @@ export default class Topic {
    * @param id - The draft identifier to delete.
    */
   async deleteDraft(id: string): Promise<void> {
-    const { status, message, data } = await this.api.deleteDraft(id);
+    const { status, message } = await this.api.deleteDraft(id);
 
     if (status === 'error') {
       api_error(message);
@@ -715,7 +715,7 @@ export default class Topic {
     file_id: string,
     media_type: MediaType,
   ): Promise<void> {
-    const { status, message, data } = await this.api.deleteMediaFile(
+    const { status, message } = await this.api.deleteMediaFile(
       topic_id,
       file_id,
       media_type,

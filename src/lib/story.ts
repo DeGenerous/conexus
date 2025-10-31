@@ -172,7 +172,7 @@ export default class CoNexus {
     );
 
     if (status === 'error') {
-      this.#rollbackCredits(continuable.topic_id);
+      this.#rollbackCredits();
       this.delete(continuable.story_id);
       api_error(message);
       game.loading = false;
@@ -335,9 +335,8 @@ export default class CoNexus {
 
   /**
    * Restore credits when a story continuation fails.
-   * @param topic_id - The topic identifier tied to the story.
    */
-  async #rollbackCredits(topic_id: string): Promise<void> {
+  async #rollbackCredits(): Promise<void> {
     const { status, message } = await this.api.restoreCredit();
 
     if (status === 'error') {

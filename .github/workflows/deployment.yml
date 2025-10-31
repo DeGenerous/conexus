@@ -49,5 +49,10 @@ jobs:
           git pull origin $DEPLOY_BRANCH
 
           # Build and deploy using Docker Compose
-          docker-compose down
-          docker-compose up --build -d
+          docker-compose build
+          docker-compose down --remove-orphans
+          docker-compose up -d
+
+          docker image prune -f || true
+
+          echo "🎉 Deployment completed successfully for $DEPLOY_ENV environment"

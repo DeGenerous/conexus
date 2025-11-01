@@ -18,6 +18,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/develop'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -44,21 +45,25 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             set -e
-            DEPLOY_ENV=$(cat $GITHUB_ENV | grep DEPLOY_ENV | cut -d '=' -f2)
-            DEPLOY_BRANCH=$(cat $GITHUB_ENV | grep DEPLOY_BRANCH | cut -d '=' -f2)
+            
+            DEPLOY_ENV=${{ env.DEPLOY_ENV }}
+            DEPLOY_BRANCH=${{ env.DEPLOY_BRANCH }}
 
             cd ~/apps/conexus/$DEPLOY_ENV
 
             # Pull the latest changes
-            git fetch --all
+            echo "📥 Pulling latest changes from $DEPLOY_BRANCH..."
             git checkout $DEPLOY_BRANCH
             git pull origin $DEPLOY_BRANCH
 
             # Build and deploy using Docker Compose
+            echo "🛠️ Building and deploying Docker containers..."
             docker-compose build
             docker-compose down --remove-orphans
             docker-compose up -d
 
+            # Cleanup old images (optional)
+            echo "🧹 Cleaning up old Docker images..."
             docker image prune -f || true
 
             echo "🎉 Deployment completed successfully for $DEPLOY_ENV environment"

@@ -250,7 +250,6 @@ const RainbowConnect = (linking: boolean, title: string) => {
           );
         }}
       </ConnectButton.Custom>
-      
     </Web3Provider>
   );
 };

@@ -89,10 +89,7 @@ export default class Topic {
    * @param category_id - The category identifier for context.
    */
   async processDraftDocument(file: File, category_id: string): Promise<void> {
-    const { status, message } = await this.api.draftDocument(
-      file,
-      category_id,
-    );
+    const { status, message } = await this.api.draftDocument(file, category_id);
 
     if (status === 'error') {
       api_error(message);

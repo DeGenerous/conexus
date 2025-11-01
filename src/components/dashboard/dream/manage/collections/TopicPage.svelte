@@ -557,16 +557,6 @@
     }
   }
 
-  .edit-wrapper {
-    flex-flow: row wrap;
-    gap: 1rem;
-
-    @include respond-up(small-desktop) {
-      flex-direction: column;
-      align-items: flex-end;
-    }
-  }
-
   #description:disabled,
   #prompt:disabled,
   #image-prompt:disabled {

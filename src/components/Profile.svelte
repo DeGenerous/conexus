@@ -17,7 +17,6 @@
     regexpSpecialCharCheck,
     regexpRestrictedCharsCheck,
   } from '@constants/regexp';
-  import { SetCache, TERMS_KEY } from '@constants/cache';
   import { NAV_ROUTES } from '@constants/routes';
 
   import ProfileSVG from '@components/icons/Profile.svelte';
@@ -176,7 +175,6 @@
         referral_code: referralCode,
         newsletter: newsletterSignup,
       });
-      SetCache(TERMS_KEY, termsAccepted);
     } finally {
       isSignupLoading = false;
     }

@@ -46,8 +46,6 @@ export const GENRES_KEY = 'genres';
 
 export const ROLES_KEY = 'roles';
 
-export const TERMS_KEY = 'terms_accepted'; // temp for terms modal
-
 /* -------------------------------------------------------------------- */
 // 1 DAY
 /* -------------------------------------------------------------------- */
@@ -103,7 +101,6 @@ function saveImportantAndClearCache() {
   const customScale = localStorage.getItem(SCALE_KEY);
   const currentDraft = localStorage.getItem(CURRENT_DRAFT_KEY);
   const user = localStorage.getItem(USER_KEY); // save user object too
-  const termsAccepted = localStorage.getItem(TERMS_KEY); // temp for terms modal
   const genres = localStorage.getItem(GENRES_KEY);
   const roles = localStorage.getItem(ROLES_KEY);
   const unfinishedStoriesRange = localStorage.getItem(
@@ -128,7 +125,6 @@ function saveImportantAndClearCache() {
   if (customScale) localStorage.setItem(SCALE_KEY, customScale);
   if (currentDraft) localStorage.setItem(CURRENT_DRAFT_KEY, currentDraft);
   if (user) localStorage.setItem(USER_KEY, user);
-  if (termsAccepted) localStorage.setItem(TERMS_KEY, termsAccepted); // temp
   if (genres) localStorage.setItem(GENRES_KEY, genres);
   if (roles) localStorage.setItem(ROLES_KEY, roles);
   if (unfinishedStoriesRange)

@@ -70,8 +70,6 @@ type SubscriptionStatus = {
   } | null;
 };
 
-// temporary storage for all Profile errors
-// until we move it to the separate page
 type AccountError = {
   signin?: Nullable<string>;
   signup?: Nullable<string>;

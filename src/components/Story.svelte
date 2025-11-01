@@ -5,7 +5,6 @@
   import {
     GetCache,
     SetCache,
-    TERMS_KEY,
     PLAY_OPTIONS_KEY,
   } from '@constants/cache';
   import { blankImage, serveUrl } from '@constants/media';
@@ -52,8 +51,6 @@
 
   let userID = $state<string | undefined>(undefined);
   let isReferred = $state<boolean>(false);
-
-  let termsAccepted = $state<boolean>(false); // temp for terms modal
 
   const conexusGame: CoNexusGame = new CoNexusGame();
   const view: CoNexusApp = new CoNexusApp();
@@ -163,8 +160,6 @@
     isReferred = await userState('referred');
 
     await fetchTopicData(userID);
-
-    termsAccepted = GetCache<boolean>(TERMS_KEY) || false; // temp for terms modal
   });
 
   // CONTINUE SHAPING section
@@ -324,7 +319,7 @@
                   </p>
                 </span>
                 <PlaySVG
-                  disabled={game.loading || !termsAccepted}
+                  disabled={game.loading}
                   onclick={() => {
                     conexusGame.continue(
                       {

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { GetCache, SetCache, TERMS_KEY } from '@constants/cache';
+  import { GetCache, SetCache } from '@constants/cache';
 
   import {
     modal,
@@ -15,8 +15,6 @@
   import PlayOptions from '@components/utils/PlayOptions.svelte';
 
   let dialog = $state<HTMLDialogElement | null>(null);
-
-  let termsAccepted = $state<boolean>(false);
 
   const closeDialog = () => {
     dialog?.classList.add('dialog-fade-out');
@@ -37,35 +35,6 @@
     }
   });
 
-  const checkTermsAccepted = () => {
-    termsAccepted = GetCache<boolean>(TERMS_KEY) || false;
-    if (!termsAccepted) {
-      $showModal = true;
-      modal.content = `
-        <h4>Terms of Service</h4>
-        <p>
-          To continue using CoNexus, you must review and accept the updated 
-          <a href=${NAV_ROUTES.TERMS} target="_blank" rel="noopener noreferrer"
-          >Terms of Service</a
-          >.
-        </p>
-        <p>The updated Terms take effect on 12 September 2025.</p>
-        <p>
-          By clicking <b>Accept</b>, you acknowledge that you have read and agree to the <b>Terms of Service</b>.
-        </p>
-        <p>
-          If you do not agree, click <b>Decline</b> to exit the app.
-        </p>
-      `;
-      modal.button = 'Accept';
-      modal.buttonClass = 'green-btn';
-      modal.buttonFunc = () => {
-        SetCache(TERMS_KEY, true);
-        window.location.reload();
-      };
-    }
-  };
-
   const handleBackdropClick = (event: MouseEvent) => {
     if (event.target === event.currentTarget) {
       closeDialog();
@@ -75,8 +44,6 @@
   const stopPropagation = (event: Event) => {
     event.stopPropagation();
   };
-
-  onMount(checkTermsAccepted);
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -107,11 +74,7 @@
     <span class="flex">
       <!-- DEFAULT CLOSE BUTTON ON EVERY MODAL -->
       <button class="red-btn" onclick={() => ($showModal = false)}>
-        {#if termsAccepted}
-          Close
-        {:else}
-          Decline
-        {/if}
+        Close
       </button>
 
       <!-- SECOND OPTIONAL BUTTON IF NEEDED -->

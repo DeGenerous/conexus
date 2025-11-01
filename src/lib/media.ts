@@ -1,6 +1,6 @@
 // import { IMAGE_UPLOAD_DIR, MUSIC_UPLOAD_DIR } from '@/config';
 
-import { serveUrl } from '@constants/media';
+import { serveUrl, blankImage } from '@constants/media';
 import { tracks } from '@constants/tracks';
 import { MediaAPI } from '@service/v1';
 import { toastStore } from '@stores/toast.svelte';
@@ -127,11 +127,9 @@ class MediaManager {
     topid_id: number,
     media_type: MediaType,
   ): Promise<string> {
-    const blankPicture: string = '/blank.avif'; // temp
-
     const images = await this.fetchMedia(topid_id, media_type);
     if (images.length === 0) {
-      return blankPicture;
+      return blankImage;
     }
 
     return serveUrl(images[0]);

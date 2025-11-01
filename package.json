@@ -39,6 +39,7 @@
     "@metamask/sdk": "0.33.0",
     "@rainbow-me/rainbowkit": "2.2.8",
     "@tanstack/react-query": "5.85.3",
+    "@types/react": "^19.2.2",
     "astro-compress": "^2.3.8",
     "astro-seo": "^0.8.4",
     "comlink": "4.4.2",

@@ -78,7 +78,7 @@ export default class NotificationService {
    * @param id - The notification identifier to mark as read.
    */
   async markRead(id: string) {
-    const { status, message, data } = await this.api.markNotificationRead(id);
+    const { status, message } = await this.api.markNotificationRead(id);
     if (status === 'error') {
       console.error(message || 'Unknown error occurred');
       return;

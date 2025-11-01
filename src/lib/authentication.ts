@@ -89,7 +89,7 @@ export default class Authentication {
    * @returns A promise that resolves to a boolean indicating whether the code is valid.
    */
   async validateReferralCode(code: string): Promise<boolean> {
-    const { status, message } = await this.api.validateReferralCode(code);
+    const { status } = await this.api.validateReferralCode(code);
 
     if (status === 'error') {
       // api_error(message || 'Unknown error occurred');

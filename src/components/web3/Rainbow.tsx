@@ -1,3 +1,4 @@
+/** @jsxImportSource react */
 import React, { useMemo } from 'react';
 
 import {
@@ -54,10 +55,6 @@ const Web3Provider: React.FC<Web3Props> = ({ linking = false, children }) => {
     () => new AuthenticationAPI(import.meta.env.PUBLIC_BACKEND),
     [],
   );
-  // const accountAPI = useMemo(
-  //   () => new AccountAPI(import.meta.env.PUBLIC_BACKEND),
-  //   [],
-  // );
 
   const authenticationAdapter = useMemo(
     () =>

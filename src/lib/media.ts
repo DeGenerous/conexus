@@ -94,7 +94,7 @@ class MediaManager {
   ) {
     // const KEY = `${MEDIA_CACHE_KEY}_${topic_id}_${media_type}`;
 
-    const { status, message, data, error } = await this.mediaAPI.DeleteFile(
+    const { status, message, error } = await this.mediaAPI.DeleteFile(
       topic_id,
       file_id,
       media_type,

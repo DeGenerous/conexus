@@ -17,6 +17,7 @@ dist
 
 Dockerfile
 Makefile
+docker-compose.yml
 
 *.log
 

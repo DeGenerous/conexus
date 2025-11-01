@@ -4,9 +4,9 @@ services:
   conexus:
     build:
       context: .
-    container_name: '${NAME:-conexus}-container-${NODE_ENV:-dev}'
+    container_name: "${NAME:-conexus}-container-${NODE_ENV:-dev}"
     ports:
-      - '${FRONTEND_PORT:-4323}:4321'
+      - "${FRONTEND_PORT:-4323}:4321"
     env_file:
       - .env
     environment:
@@ -14,15 +14,7 @@ services:
       - PORT=4321
     restart: unless-stopped
     healthcheck:
-      test:
-        [
-          'CMD',
-          'wget',
-          '--no-verbose',
-          '--tries=1',
-          '--spider',
-          'http://localhost:4321/',
-        ]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4321/"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -30,4 +22,4 @@ services:
 
 networks:
   default:
-    name: '${NAME:-conexus}-network-${NODE_ENV:-dev}'
+    name: "${NAME:-conexus}-network-${NODE_ENV:-dev}"

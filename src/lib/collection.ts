@@ -126,7 +126,7 @@ class Collection {
    * @param request - The gate payload to send.
    */
   async createERC20TokenGate(request: GateERC20Request): Promise<void> {
-    const { status, message, data } =
+    const { status, message } =
       await this.api.createERC20TokenGate(request);
 
     if (status === 'error') {
@@ -142,7 +142,7 @@ class Collection {
    * @param request - The gate payload to send.
    */
   async createERC721NFTGate(request: GateERC721NFTRequest): Promise<void> {
-    const { status, message, data } =
+    const { status, message } =
       await this.api.createERC721NFTGate(request);
 
     if (status === 'error') {
@@ -158,7 +158,7 @@ class Collection {
    * @param request - The gate payload to send.
    */
   async createERC721ClassGate(request: GateERC721ClassRequest): Promise<void> {
-    const { status, message, data } =
+    const { status, message } =
       await this.api.createERC721ClassGate(request);
 
     if (status === 'error') {

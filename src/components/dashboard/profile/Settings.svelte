@@ -24,6 +24,7 @@
 
   const account: Account = new Account();
 
+  let originalSettings = $state<PromptSettings | null>(null);
   let preferredSettings = $state<SettingMode>('default');
   // let preferredTheme = $state<SettingMode>('default');
   let playMode = $state<PlayMode>('play_unlimited');
@@ -69,18 +70,15 @@
       playMode = cachedSetup.play_mode || 'play_unlimited';
     } else updatePersonalSetup();
 
-    const settings = await account.getPromptSettings();
-    if (settings) {
-      promptSettings.set(settings);
+    originalSettings = await account.getPromptSettings();
+    if (originalSettings) {
+      promptSettings.set({ ...originalSettings });
     }
   });
 
-  const compareSettings = $derived(() => {
-    const originalSettings = defaultPromptSettings(); // TEMP: change to personal settings when available
-    if (!originalSettings) return true;
-
-    return arePromptSettingsEqual($promptSettings, originalSettings);
-  });
+  const compareSettings = $derived.by(() =>
+    arePromptSettingsEqual($promptSettings, originalSettings),
+  );
 
   const saveChanges = async () => {
     await account.createOrUpdatePromptSettings($promptSettings);
@@ -89,7 +87,7 @@
   const resetPromptSettings = () => {
     openModal(ensureMessage('reset your personal settings'), 'Reset', () => {
       resetSettings();
-      saveChanges();
+      // saveChanges();
     });
   };
 
@@ -232,7 +230,7 @@
         <button
           class="green-btn"
           onclick={saveChanges}
-          disabled={compareSettings()}
+          disabled={compareSettings}
         >
           Save Settings
         </button>

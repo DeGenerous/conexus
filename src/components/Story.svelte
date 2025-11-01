@@ -2,11 +2,7 @@
   import { onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
 
-  import {
-    GetCache,
-    SetCache,
-    PLAY_OPTIONS_KEY,
-  } from '@constants/cache';
+  import { GetCache, SetCache, PLAY_OPTIONS_KEY } from '@constants/cache';
   import { blankImage, serveUrl } from '@constants/media';
   import { ensureMessage, referralWarning } from '@constants/modal';
   import { NAV_ROUTES } from '@constants/routes';

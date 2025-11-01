@@ -1,6 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
+  import openModal from '@stores/modal.svelte';
+  import { ensureMessage } from '@constants/modal';
+
   import Collection from '@lib/collection';
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
@@ -137,6 +140,17 @@
       resetInput(field, id);
     }
   };
+
+  const deleteCollection = async (id: string) => {
+    openModal(
+      ensureMessage('delete this collection permanently'),
+      'Delete',
+      async () => {
+        await collection.deleteCollection(id);
+        collections = collections.filter((col) => col.id !== id);
+      },
+    );
+  };
 </script>
 
 {#each collections as collection (collection.id)}
@@ -266,13 +280,14 @@
         disabled={!inputs.purchase_link[collection.id!].editing}
       ></textarea>
     </div>
+
+    <button class="red-btn" onclick={() => deleteCollection(collection.id!)}>
+      Delete Collection
+    </button>
   </section>
 {/each}
 
-<p>
-  TODO: listCollections createERC20Collection createERC721Collection
-  updateCollection deleteCollection
-</p>
+<p>TODO: createERC20Collection createERC721Collection</p>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

@@ -13,5 +13,6 @@
 </script>
 
 <p>
-  TODO: listGates createERC20TokenGate createERC721NFTGate createERC721ClassGate deleteGate
+  TODO: listGates createERC20TokenGate createERC721NFTGate createERC721ClassGate
+  deleteGate
 </p>

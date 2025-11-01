@@ -10,9 +10,7 @@
     'Infinitely unique. Never repeatable.',
   ];
 
-  const prioritizeCommunityPicks = <T extends { name: string }>(
-    sections: T[],
-  ): T[] => {
+  const prioritizeCommunityPicks = (sections: Section[]): Section[] => {
     const targetIndex = sections.findIndex(
       (section) => section.name === 'Community Picks',
     );
@@ -70,6 +68,7 @@
 
     @include respond-up(tablet) {
       width: auto;
+      flex-wrap: nowrap;
 
       & > div {
         gap: 1.5rem;

@@ -216,7 +216,7 @@
   </div>
 </section>
 
-<Dropdown name="Personal Settings" table={true}>
+<Dropdown name="Personal Settings" {table}>
   <TopicSettings nostyling={true}>
     {#snippet children()}
       <span class="flex-row flex-wrap">

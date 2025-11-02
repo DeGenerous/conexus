@@ -1,10 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
+  import Collection from '@lib/collection';
   import openModal from '@stores/modal.svelte';
   import { ensureMessage } from '@constants/modal';
 
-  import Collection from '@lib/collection';
+  import AddCollection from './AddCollection.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
   import EditSVG from '@components/icons/Edit.svelte';
@@ -287,7 +288,7 @@
   </section>
 {/each}
 
-<p>TODO: createERC20Collection createERC721Collection</p>
+<AddCollection />
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

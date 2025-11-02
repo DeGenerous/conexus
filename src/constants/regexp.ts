@@ -11,3 +11,10 @@ export const regexpLowercaseLetterCheck: RegExp = /(?=.*[a-z])/;
 export const regexpNumberCheck: RegExp = /(?=.*\d)/;
 export const regexpSpecialCharCheck: RegExp = /[.,@$!%*#?&]/;
 export const regexpRestrictedCharsCheck: RegExp = /^[a-z\d.,@$!%*#?&]+$/i;
+
+export const regexpWeb3Address: RegExp = /^0x[a-fA-F0-9]{40}$/;
+
+export const regexpURI: RegExp =
+  /^[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
+export const regexpURIwithProtocol: RegExp =
+  /^(http|https):\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;

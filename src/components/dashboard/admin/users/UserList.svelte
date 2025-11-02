@@ -259,6 +259,10 @@
         justify-content: space-between;
       }
 
+      .controls {
+        flex: none;
+      }
+
       @include mobile-only {
         flex-wrap: wrap;
         row-gap: 0.5rem;

@@ -147,8 +147,12 @@
       ensureMessage('delete this collection permanently'),
       'Delete',
       async () => {
-        await collection.deleteCollection(id);
-        collections = collections.filter((col) => col.id !== id);
+        try {
+          await collection.deleteCollection(id);
+          collections = collections.filter((col) => col.id !== id);
+        } catch (error) {
+          console.error('Error deleting collection:', error);
+        }
       },
     );
   };

@@ -1,5 +1,6 @@
 <script lang="ts">
   import Collection from '@lib/collection';
+  import { regexpWeb3Address } from '@constants/regexp';
 
   import Dropdown from '@components/utils/Dropdown.svelte';
 
@@ -43,10 +44,19 @@
     }
   });
 
-  let validation = $derived(false);
+  let validation = $derived(
+    base.name &&
+      regexpWeb3Address.test(base.address) &&
+      base.symbol.startsWith('$') &&
+      base.symbol.length > 1,
+  );
 
-  const createCollection = () => {
-    // Call the API to create a new collection
+  const createCollection = async () => {
+    if (base.standard === 'erc20') {
+      await collection.createERC20Collection({ base, erc20 });
+    } else if (base.standard === 'erc721') {
+      await collection.createERC721Collection({ base, erc721 });
+    }
   };
 </script>
 
@@ -56,6 +66,7 @@
       <div class="collection-name input-container">
         <label for="name">Name</label>
         <input
+          class:red-border={!base.name}
           id="name"
           type="text"
           bind:value={base.name}
@@ -66,10 +77,11 @@
       <div class="collection-address input-container">
         <label for="address">Contract Address</label>
         <input
+          class:red-border={!regexpWeb3Address.test(base.address)}
           id="address"
           type="text"
           bind:value={base.address}
-          placeholder="E.g. 0x0000000000000000000000000000000000000000"
+          placeholder="0x0000000000000000000000000000000000000000"
         />
       </div>
     </div>
@@ -80,6 +92,8 @@
         <div class="collection-symbol input-container">
           <label for="symbol">Symbol</label>
           <input
+            class:red-border={!base.symbol.startsWith('$') ||
+              base.symbol.length < 2}
             id="symbol"
             type="text"
             bind:value={base.symbol}

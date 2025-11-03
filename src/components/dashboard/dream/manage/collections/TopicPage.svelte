@@ -344,10 +344,10 @@
       <!-- GENRES -->
       <GenreTags {topic_genres} {handleGenreChange} />
 
-      <hr />
-
       <!-- NFT RESTRICTIONS -->
       {#if $isAdmin}
+        <hr />
+
         <NftGating {topic_gates} {handleGatingChange} />
       {/if}
     </section>

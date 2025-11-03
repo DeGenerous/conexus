@@ -17,5 +17,7 @@ export const api_error = (error: string, display: boolean = true) => {
     toastStore.show(error || 'Unknown error occurred', 'error');
   }
 
+  throw new Error(error);
+
   // TODO: Send to sentry
 };

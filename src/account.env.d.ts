@@ -58,18 +58,6 @@ type ReferralSignUp = SignUp & {
   newsletter: boolean;
 };
 
-type SubscriptionStatus = {
-  is_active: boolean;
-  subscribed_at: {
-    Time: Date;
-    Valid: boolean;
-  } | null;
-  unsubscribed_at: {
-    Time: Date;
-    Valid: boolean;
-  } | null;
-};
-
 type AccountError = {
   signin?: Nullable<string>;
   signup?: Nullable<string>;
@@ -103,15 +91,13 @@ type DashboardTopic = {
   creator?: boolean;
 };
 
-type AccountNotificationData = {
-  href?: string;
-};
-
 type AccountNotification = {
   id: string;
   title: string;
   body: string;
-  data?: AccountNotificationData;
+  data?: {
+    href?: string;
+  };
   read_at: string | null;
 };
 

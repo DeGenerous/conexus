@@ -38,23 +38,6 @@ type Collection = CollectionCategory & {
 
 type MediaType = 'background' | 'description' | 'tile' | 'audio' | 'video';
 
-type ThumbnailTopic = {
-  id: string;
-  name: string;
-  genres: string;
-  description: string;
-};
-
-type ViewTopic = {
-  id: string;
-  category_id: string;
-  image_prompt: string;
-  prompt_id: string;
-  prompt: string;
-  media_folder_id?: string;
-  available: string;
-} & ThumbnailTopic;
-
 /* V2 */
 
 type TenantRole = {

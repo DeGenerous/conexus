@@ -69,20 +69,6 @@ type CreatePrompt = {
   prompt: string;
 };
 
-// interface DraftPayload {
-//   id?: string; // uuid v4
-//   title: string; // copy of storyData.name (or "Untitled")
-//   schema?: const;
-//   data: {
-//     storyData: StoryData;
-//     promptSettings: PromptSettings;
-//     openPrompt: string;
-//     tablePrompt: TablePrompt;
-//   };
-//   created_at: Date; // epoch ms
-//   updated_at: Date; // epoch ms
-// }
-
 type ImageType = 'url' | 'base64';
 
 /* V2 */

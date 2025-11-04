@@ -1,39 +1,6 @@
 /// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
 
-type TopicInSection = {
-  id: number;
-  name: string;
-};
-
-type CategoryInSection = {
-  id: number;
-  name: string;
-  order: number;
-  topic_count: number;
-  topics: TopicInSection[];
-};
-
-type TopicView = {
-  id: string;
-  name: string;
-  genres?: string;
-  gates?: TopicGate[]; // ?
-};
-
-type TopicThumbnail = {
-  description: string;
-  description_file_id?: string;
-  video_file_id?: string;
-} & TopicView;
-
-type TopicInCategory = {
-  order: number;
-  available: boolean;
-  category_id: number;
-  tile_file_id?: string;
-} & TopicView;
-
 type TopicSortOrder = 'name' | 'category';
 
 /* V2 */

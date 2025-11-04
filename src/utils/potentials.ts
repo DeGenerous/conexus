@@ -9,7 +9,7 @@ import {
   potentialsPower,
   userRank,
 } from '@stores/omnihub.svelte';
-import getRankByPotentials from '@constants/ranks';
+import { getRankByPotentials } from '@constants/curation';
 
 const getNftNumbers = async (wallet: string): Promise<number[]> => {
   const json = await fetch(`https://api.dgrslabs.ink/nft/owner/${wallet}`);

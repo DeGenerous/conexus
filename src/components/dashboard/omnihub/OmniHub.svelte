@@ -4,6 +4,7 @@
   import Curation from '@lib/curation';
   import { NAV_ROUTES } from '@constants/routes';
   import { normalizeMeta } from '@utils/potentials';
+  import { POTENTIALS_COLLECTION_ID } from '@constants/curation';
 
   import NFTSection from '@components/dashboard/omnihub/NFTs.svelte';
 
@@ -28,7 +29,7 @@
   }
 
   onMount(async () => {
-    const data = await curation.omnihub('00000000-0000-0000-0000-000000000001');
+    const data = await curation.omnihub(POTENTIALS_COLLECTION_ID);
 
     if (!data) {
       loading = false;

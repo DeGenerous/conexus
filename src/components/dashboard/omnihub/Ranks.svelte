@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ranks } from '@constants/ranks';
+  import { ranks } from '@constants/curation';
 
   let { userRank }: { userRank: Nullable<string> } = $props();
 

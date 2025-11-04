@@ -10,7 +10,7 @@
   } from '@constants/cache';
   import { navContext } from '@stores/navigation.svelte';
   import { type NFT } from '@stores/omnihub.svelte';
-  import { attributes } from '@constants/attributes';
+  import { attributes } from '@constants/curation';
   import { NAV_ROUTES } from '@constants/routes';
 
   import Votes from '@components/dashboard/omnihub/Votes.svelte';

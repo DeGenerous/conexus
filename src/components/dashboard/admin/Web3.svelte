@@ -5,7 +5,6 @@
   import Collection from '@lib/collection';
 
   import Collections from '@components/dashboard/admin/web3/Collections.svelte';
-  import Gates from '@components/dashboard/admin/web3/Gates.svelte';
 
   const admin = new AdminApp();
   const collection = new Collection();
@@ -19,11 +18,4 @@
 
 <h3>Collections & Gates</h3>
 
-<!-- <p>
-  TODO: createNewContract deleteContract createNewTokenGate createNewClassGate
-  getAllGates getGate deleteGate
-</p> -->
-
 <Collections />
-
-<Gates />

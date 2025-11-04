@@ -5,7 +5,9 @@
   import openModal from '@stores/modal.svelte';
   import { ensureMessage } from '@constants/modal';
 
-  import AddCollection from './AddCollection.svelte';
+  import Gates from '@components/dashboard/admin/web3/Gates.svelte';
+  import AddCollection from '@components/dashboard/admin/web3/AddCollection.svelte';
+  import AddGate from '@components/dashboard/admin/web3/AddGate.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
   import EditSVG from '@components/icons/Edit.svelte';
@@ -160,6 +162,8 @@
 
 <AddCollection />
 
+<AddGate {collections} />
+
 {#each collections as collection (collection.id)}
   <section class="dream-container fade-in">
     <div class="flex-row">
@@ -287,6 +291,8 @@
         disabled={!inputs.purchase_link[collection.id!].editing}
       ></textarea>
     </div>
+
+    <Gates collection_id={collection.id!} />
 
     <button class="red-btn" onclick={() => deleteCollection(collection.id!)}>
       Delete Collection

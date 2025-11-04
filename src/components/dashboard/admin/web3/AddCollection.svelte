@@ -66,7 +66,7 @@
       <div class="collection-name input-container">
         <label for="name">Name</label>
         <input
-          class:red-border={!base.name}
+          class:red-border={!base.name.trim()}
           id="name"
           type="text"
           bind:value={base.name}

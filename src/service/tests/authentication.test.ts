@@ -16,78 +16,94 @@ describe('AuthenticationAPI', () => {
     mockRequest.mockReset();
   });
 
-  it('should call request with correct params for signin', async () => {
-    const email = 'test@example.com';
-    const password = 'password123';
-    await api.signin(email, password);
-    expect(api.request).toHaveBeenCalledWith('/auth/signin', {
+  it('signin posts credentials', async () => {
+    await api.signin('user@test.com', 'secret');
+    expect(mockRequest).toHaveBeenCalledWith('/auth/signin', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email: 'user@test.com', password: 'secret' }),
     });
   });
 
-  it('should call request with correct params for signup', async () => {
-    const user = {
-      email: 'test@example.com',
-      password: 'pass',
-      referralCode: 'ABC123',
-    };
-    await api.signup(user as any);
-    expect(api.request).toHaveBeenCalledWith('/auth/signup', {
+  it('signup posts payload', async () => {
+    const payload = { email: 'user@test.com' } as any;
+    await api.signup(payload);
+    expect(mockRequest).toHaveBeenCalledWith('/auth/signup', {
       method: 'POST',
-      body: JSON.stringify(user),
+      body: JSON.stringify(payload),
     });
   });
 
-  it('should call request with correct params for validateReferralCode', async () => {
-    const code = 'REFCODE';
-    await api.validateReferralCode(code);
-    expect(api.request).toHaveBeenCalledWith(
-      `/account/validate-referral-code?code=${code}`,
+  it('validateReferralCode issues query request', async () => {
+    await api.validateReferralCode('CODE');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/validate-referral-code?code=CODE',
     );
   });
 
-  it('should call request with correct params for forgotPassword', async () => {
-    const email = 'forgot@example.com';
-    await api.forgotPassword(email);
-    expect(api.request).toHaveBeenCalledWith('/auth/forgot-password', {
+  it('forgotPassword posts email', async () => {
+    await api.forgotPassword('user@test.com');
+    expect(mockRequest).toHaveBeenCalledWith('/auth/forgot-password', {
       method: 'POST',
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email: 'user@test.com' }),
     });
   });
 
-  it('should call request with correct params for resetPassword', async () => {
-    const email = 'reset@example.com';
-    const token = 'token123';
-    const password = 'newpass';
-    await api.resetPassword(email, token, password);
-    expect(api.request).toHaveBeenCalledWith('/auth/reset-password', {
+  it('resetPassword posts token and password', async () => {
+    await api.resetPassword('user@test.com', 'token', 'newpass');
+    expect(mockRequest).toHaveBeenCalledWith('/auth/reset-password', {
       method: 'POST',
-      body: JSON.stringify({ email, token, password }),
+      body: JSON.stringify({
+        email: 'user@test.com',
+        token: 'token',
+        password: 'newpass',
+      }),
     });
   });
 
-  it('should call request with correct params for googleSignin', async () => {
+  it('googleSignin fetches OAuth URL', async () => {
     await api.googleSignin();
-    expect(api.request).toHaveBeenCalledWith('/auth/google-signin');
+    expect(mockRequest).toHaveBeenCalledWith('/auth/google-signin');
   });
 
-  it('should call request with correct params for web3Getnonce', async () => {
+  it('web3Getnonce fetches nonce', async () => {
     await api.web3Getnonce();
-    expect(api.request).toHaveBeenCalledWith('/auth/web3-get-nonce');
+    expect(mockRequest).toHaveBeenCalledWith('/auth/web3-get-nonce');
   });
 
-  it('should call request with correct params for web3WalletSignin', async () => {
-    const signin = { address: '0x123', signature: 'sig', nonce: 'nonce' };
-    await api.web3WalletSignin(signin as any);
-    expect(api.request).toHaveBeenCalledWith('/auth/web3-wallet-signin', {
+  it('web3WalletSignin posts signin payload', async () => {
+    const signin = { address: '0x0', signature: 'sig', nonce: 'nonce' } as any;
+    await api.web3WalletSignin(signin);
+    expect(mockRequest).toHaveBeenCalledWith('/auth/web3-wallet-signin', {
+      method: 'POST',
+      body: JSON.stringify(signin),
+    });
+
+    mockRequest.mockClear();
+    await api.web3WalletSignin(signin, true);
+    expect(mockRequest).toHaveBeenCalledWith('/auth/web3-wallet-link', {
       method: 'POST',
       body: JSON.stringify(signin),
     });
   });
 
-  it('should call request with correct params for logout', async () => {
+  it('web3SelectWallet posts wallet address', async () => {
+    await api.web3SelectWallet('0xabc');
+    expect(mockRequest).toHaveBeenCalledWith('/auth/web3-select-wallet', {
+      method: 'POST',
+      body: JSON.stringify({ wallet: '0xabc' }),
+    });
+  });
+
+  it('web3UnlinkWallet posts wallet address', async () => {
+    await api.web3UnlinkWallet('0xabc');
+    expect(mockRequest).toHaveBeenCalledWith('/auth/web3-unlink-wallet', {
+      method: 'POST',
+      body: JSON.stringify({ wallet: '0xabc' }),
+    });
+  });
+
+  it('logout hits signout endpoint', async () => {
     await api.logout();
-    expect(api.request).toHaveBeenCalledWith('/auth/logout');
+    expect(mockRequest).toHaveBeenCalledWith('/auth/signout');
   });
 });

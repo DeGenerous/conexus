@@ -4,183 +4,256 @@ import AccountAPI from '../account';
 
 const mockRequest = vi.fn();
 
-class MockFetcher extends AccountAPI {
+class MockAccountAPI extends AccountAPI {
   request = mockRequest;
 }
 
 describe('AccountAPI', () => {
-  let api: MockFetcher;
+  let api: MockAccountAPI;
 
   beforeEach(() => {
-    api = new MockFetcher();
-    mockRequest.mockClear();
+    api = new MockAccountAPI();
+    mockRequest.mockReset();
   });
 
-  it('calls me() with token', async () => {
-    const token = 'abc123';
-    await api.me(false, token);
-    expect(api.request).toHaveBeenCalledWith('/account/me', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-  });
-
-  it('calls me() without token', async () => {
+  it('me includes optional token and refresh flag', async () => {
     await api.me();
-    expect(api.request).toHaveBeenCalledWith('/account/me', {
+    expect(mockRequest).toHaveBeenCalledWith('/account/me', {
       headers: {},
     });
+
+    mockRequest.mockClear();
+    await api.me(true, 'token123');
+    expect(mockRequest).toHaveBeenCalledWith('/account/me?refresh=true', {
+      headers: { Authorization: 'Bearer token123' },
+    });
   });
 
-  it('calls confirmEmail()', async () => {
-    await api.confirmEmail('token123');
-    expect(api.request).toHaveBeenCalledWith(
-      '/account/confirm-email?token=token123',
-    );
+  it('confirmEmail hits confirm endpoint', async () => {
+    await api.confirmEmail('tok');
+    expect(mockRequest).toHaveBeenCalledWith('/account/confirm-email?token=tok');
   });
 
-  it('calls changePassword()', async () => {
-    const oldPwd = 'old',
-      newPwd = 'new';
-    await api.changePassword(oldPwd, newPwd);
-    const call = vi.mocked(api.request).mock.calls[0];
-    expect(call[0]).toBe('/account/change-password');
-    expect(call[1].method).toBe('POST');
-    expect(call[1].body instanceof FormData).toBe(true);
+  it('changePassword posts form data', async () => {
+    await api.changePassword('old', 'new');
+    const [url, options] = mockRequest.mock.calls[0];
+    expect(url).toBe('/account/change-password');
+    expect(options.method).toBe('POST');
+    expect(options.body).toBeInstanceOf(FormData);
   });
 
-  it('calls changeUsername()', async () => {
+  it('changeUsername sends query param', async () => {
     await api.changeUsername('newuser');
-    expect(api.request).toHaveBeenCalledWith(
+    expect(mockRequest).toHaveBeenCalledWith(
       '/account/change-username?new_username=newuser',
     );
   });
 
-  it('calls changeAvatar() with image_url and file', async () => {
-    const file = new File([''], 'avatar.png');
-    await api.changeAvatar('http://img', file);
-    const call = mockRequest.mock.calls[0];
-    expect(call[0]).toBe('/account/change-avatar');
-    expect(call[1].method).toBe('POST');
-    expect(call[1].body instanceof FormData).toBe(true);
+  it('changeAvatar posts optional payload', async () => {
+    const file = new File(['avatar'], 'avatar.png');
+    await api.changeAvatar('https://img', file);
+    const [url, options] = mockRequest.mock.calls[0];
+    expect(url).toBe('/account/change-avatar');
+    expect(options.method).toBe('POST');
+    expect(options.body).toBeInstanceOf(FormData);
   });
 
-  it('calls createReferralCodes()', async () => {
-    await api.createReferralCodes();
-    expect(api.request).toHaveBeenCalledWith('/account/new-referral-code');
+  it('changeBio posts JSON body', async () => {
+    await api.changeBio('Hello world');
+    expect(mockRequest).toHaveBeenCalledWith('/account/change-bio', {
+      method: 'POST',
+      body: JSON.stringify({ bio: 'Hello world' }),
+    });
   });
 
-  it('calls getReferralCode()', async () => {
+  it('createReferralCodes hits expected endpoint', async () => {
+    mockRequest.mockResolvedValue({ status: 'success' });
+    const result = await api.createReferralCodes();
+    expect(mockRequest).toHaveBeenCalledWith('/account/new-referral-code');
+    expect(result).toEqual({ status: 'success' });
+  });
+
+  it('getReferralCode fetches referral data', async () => {
     await api.getReferralCode();
-    expect(api.request).toHaveBeenCalledWith('/account/get-referral-code');
+    expect(mockRequest).toHaveBeenCalledWith('/account/get-referral-code');
   });
 
-  it('calls useReferralCode()', async () => {
-    await api.useReferralCode('ref123');
-    const call = mockRequest.mock.calls[0];
-    expect(call[0]).toBe('/account/use-referral-code');
-    expect(call[1].method).toBe('POST');
-    expect(call[1].body instanceof FormData).toBe(true);
+  it('useReferralCode posts form data', async () => {
+    await api.useReferralCode('CODE');
+    const [url, options] = mockRequest.mock.calls[0];
+    expect(url).toBe('/account/use-referral-code');
+    expect(options.method).toBe('POST');
+    expect(options.body).toBeInstanceOf(FormData);
   });
 
-  it('calls subscribeNewsletter()', async () => {
-    await api.subscribeNewsletter('test@email.com');
-    expect(api.request).toHaveBeenCalledWith(
-      '/account/subscribe-newsletter?email=test@email.com',
+  it('changeReferralCode updates query parameter', async () => {
+    await api.changeReferralCode('NEWCODE');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/change-referral-code?new_code=NEWCODE',
     );
   });
 
-  it('calls unsubscribeNewsletter()', async () => {
-    await api.unsubscribeNewsletter('test@email.com');
-    expect(api.request).toHaveBeenCalledWith(
-      '/account/unsubscribe-newsletter?email=test@email.com',
+  it('newsletter helpers call correct endpoints', async () => {
+    await api.subscribeNewsletter('mail@test.com');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/subscribe-newsletter?email=mail@test.com',
+    );
+
+    mockRequest.mockClear();
+    await api.unsubscribeNewsletter('mail@test.com');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/unsubscribe-newsletter?email=mail@test.com',
+    );
+
+    mockRequest.mockClear();
+    await api.isSubscribed('mail@test.com');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/is-subscribed-newsletter?email=mail@test.com',
     );
   });
 
-  it('calls isSubscribed()', async () => {
-    await api.isSubscribed('test@email.com');
-    expect(api.request).toHaveBeenCalledWith(
-      '/account/is-subscribed-newsletter?email=test@email.com',
+  it('bookmark folder helpers hit the right endpoints', async () => {
+    await api.createBookmarkFolder('Folder');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/new-bookmark-folder?name=Folder',
     );
-  });
 
-  it('calls createBookmarkFolder()', async () => {
-    await api.createBookmarkFolder('folder1');
-    expect(api.request).toHaveBeenCalledWith(
-      '/account/new-bookmark-folder?name=folder1',
-    );
-  });
-
-  it('calls getBookmarkFolders()', async () => {
+    mockRequest.mockClear();
     await api.getBookmarkFolders();
-    expect(api.request).toHaveBeenCalledWith('/account/get-bookmark-folders');
-  });
+    expect(mockRequest).toHaveBeenCalledWith('/account/get-bookmark-folders');
 
-  it('calls getFolderBookmarks()', async () => {
-    await api.getFolderBookmarks('folderId');
-    expect(api.request).toHaveBeenCalledWith(
-      '/account/get-bookmark-folder-topics/folderId',
+    mockRequest.mockClear();
+    await api.getFolderBookmarks('folder-1');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/get-folder-bookmarks/folder-1',
+    );
+
+    mockRequest.mockClear();
+    await api.deleteBookmarkFolder('folder-1');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/delete-bookmark-folder/folder-1',
+      { method: 'DELETE' },
     );
   });
 
-  it('calls createBookmarkTag()', async () => {
-    await api.createBookmarkTag('tag1');
-    expect(api.request).toHaveBeenCalledWith(
-      '/account/new-bookmark-tag?name=tag1',
+  it('bookmark tag helpers hit correct endpoints', async () => {
+    await api.createBookmarkTag('tag');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/new-bookmark-tag?name=tag',
     );
-  });
 
-  it('calls getBookmarkTags()', async () => {
+    mockRequest.mockClear();
     await api.getBookmarkTags();
-    expect(api.request).toHaveBeenCalledWith('/account/get-bookmark-tags');
-  });
+    expect(mockRequest).toHaveBeenCalledWith('/account/get-bookmark-tags');
 
-  it('calls getTagBookmarks()', async () => {
-    await api.getTagBookmarks('tagId');
-    expect(api.request).toHaveBeenCalledWith(
-      '/account/get-bookmark-tag-topics/tagId',
+    mockRequest.mockClear();
+    await api.getTagBookmarks('tag-id');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/get-tag-bookmarks/tag-id',
     );
   });
 
-  it('calls bookmarkTopic()', async () => {
-    const bookmark = { id: 'b1' } as any;
+  it('bookmark CRUD uses correct payloads', async () => {
+    const bookmark = { topic_id: 'topic-1' } as any;
     await api.bookmarkTopic(bookmark);
-    expect(api.request).toHaveBeenCalledWith('/account/bookmark-topic', {
+    expect(mockRequest).toHaveBeenCalledWith('/account/bookmark-topic', {
       method: 'POST',
       body: JSON.stringify(bookmark),
     });
-  });
 
-  it('calls getBookmark()', async () => {
-    await api.getBookmark('b1');
-    expect(api.request).toHaveBeenCalledWith('/account/get-bookmark/b1');
-  });
+    mockRequest.mockClear();
+    await api.getBookmark('bookmark-1');
+    expect(mockRequest).toHaveBeenCalledWith('/account/get-bookmark/bookmark-1');
 
-  it('calls getBookmarks()', async () => {
+    mockRequest.mockClear();
     await api.getBookmarks();
-    expect(api.request).toHaveBeenCalledWith('/account/get-bookmarks');
+    expect(mockRequest).toHaveBeenCalledWith('/account/get-bookmarks');
+
+    mockRequest.mockClear();
+    await api.checkBookmark('topic-1');
+    expect(mockRequest).toHaveBeenCalledWith('/account/check-bookmark/topic-1');
+
+    mockRequest.mockClear();
+    await api.updateBookmark('bookmark-1', { name: 'Updated' });
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/update-bookmark/bookmark-1',
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ name: 'Updated' }),
+      },
+    );
+
+    mockRequest.mockClear();
+    await api.deleteBookmark('bookmark-1');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/delete-bookmark/bookmark-1',
+      {
+        method: 'DELETE',
+      },
+    );
   });
 
-  it('calls updateBookmark()', async () => {
-    await api.updateBookmark('b1', { name: 'updated' });
-    expect(api.request).toHaveBeenCalledWith('/account/update-bookmark/b1', {
-      method: 'PATCH',
-      body: JSON.stringify({ name: 'updated' }),
-    });
-  });
-
-  it('calls deleteBookmark()', async () => {
-    await api.deleteBookmark('b1');
-    expect(api.request).toHaveBeenCalledWith('/account/delete-bookmark/b1', {
-      method: 'DELETE',
-    });
-  });
-
-  it('calls getStories()', async () => {
-    const filter: UserStoriesFilter = { ended: false, duration: '1 DAY' };
+  it('getStories posts provided filter', async () => {
+    const filter = { ended: false } as any;
     await api.getStories(filter);
-    expect(api.request).toHaveBeenCalledWith('/account/stories', {
+    expect(mockRequest).toHaveBeenCalledWith('/account/stories', {
       method: 'POST',
       body: JSON.stringify(filter),
     });
+  });
+
+  it('streak posts action payload', async () => {
+    await api.streak('login', true);
+    expect(mockRequest).toHaveBeenCalledWith('/account/streak', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'login', restore: true }),
+    });
+  });
+
+  it('prompt settings helper posts and fetches correctly', async () => {
+    const settings = { language: 'en' } as any;
+    await api.createOrUpdatePromptSettings(settings);
+    expect(mockRequest).toHaveBeenCalledWith('/account/prompt-settings', {
+      method: 'POST',
+      body: JSON.stringify(settings),
+    });
+
+    mockRequest.mockClear();
+    await api.getPromptSettings();
+    expect(mockRequest).toHaveBeenCalledWith('/account/prompt-settings');
+  });
+
+  it('custom theme helper posts and fetches correctly', async () => {
+    const theme = { primary: '#fff' } as any;
+    await api.createOrUpdateCustomTheme(theme);
+    expect(mockRequest).toHaveBeenCalledWith('/account/custom-theme', {
+      method: 'POST',
+      body: JSON.stringify(theme),
+    });
+
+    mockRequest.mockClear();
+    await api.getCustomTheme();
+    expect(mockRequest).toHaveBeenCalledWith('/account/custom-theme');
+  });
+
+  it('notification inbox and read helpers use correct endpoints', async () => {
+    await api.notificationInbox(1, 10);
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/notification/inbox?page=1&pageSize=10',
+    );
+
+    mockRequest.mockClear();
+    await api.markNotificationRead('notif-1');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/notification/notif-1/read',
+      {
+        method: 'POST',
+      },
+    );
+  });
+
+  it('getRoles proxies to admin endpoint', async () => {
+    await api.getRoles();
+    expect(mockRequest).toHaveBeenCalledWith('/admin/roles', { method: 'GET' });
   });
 });

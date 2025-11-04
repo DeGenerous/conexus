@@ -1,67 +1,99 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import CategoryAPI from '../category';
 
-// Mock Category type
 const mockRequest = vi.fn();
 
-// Mock Fetcher base class
-class MockFetcher extends CategoryAPI {
+class MockCategoryAPI extends CategoryAPI {
   request = mockRequest;
 }
 
 describe('CategoryAPI', () => {
-  let api: MockFetcher;
-
-  const category: Category = {
-    name: 'Test Category',
-    description: 'Test Description',
+  let api: MockCategoryAPI;
+  const category = {
+    name: 'Category',
+    description: 'Description',
     dashboard_sort_order: 1,
-  };
+  } as any;
 
   beforeEach(() => {
-    api = new MockFetcher();
-    api.request.mockClear();
+    api = new MockCategoryAPI();
+    mockRequest.mockReset();
   });
 
-  it('createAdminCategory calls request with correct args', async () => {
-    await api.createAdminCategory('section1', category);
-    expect(api.request).toHaveBeenCalledWith('/category/admin/section1', {
+  it('createAdminCategory posts payload', async () => {
+    await api.createAdminCategory('section-1', category);
+    expect(mockRequest).toHaveBeenCalledWith('/category/admin/section-1', {
       method: 'POST',
       body: JSON.stringify(category),
     });
   });
 
-  it('listAdminCategories calls request with correct args', async () => {
-    await api.listAdminCategories('section2');
-    expect(api.request).toHaveBeenCalledWith('/category/admin/section2');
+  it('listAdminCategories fetches section categories', async () => {
+    await api.listAdminCategories('section-2');
+    expect(mockRequest).toHaveBeenCalledWith('/category/admin/section-2');
   });
 
-  // it('updateAdminCategory calls request with correct args', async () => {
-  //   await api.updateAdminCategory('cat123', category);
-  //   expect(api.request).toHaveBeenCalledWith('/category/admin/cat123', {
-  //     method: 'PUT',
-  //     body: JSON.stringify(category),
-  //   });
-  // });
-
-  it('createCreatorCategory calls request with correct args', async () => {
+  it('createCreatorCategory posts payload', async () => {
     await api.createCreatorCategory(category);
-    expect(api.request).toHaveBeenCalledWith('/category/creator', {
+    expect(mockRequest).toHaveBeenCalledWith('/category/creator', {
       method: 'POST',
       body: JSON.stringify(category),
     });
   });
 
-  it('listCreatorCategories calls request with correct args', async () => {
+  it('listCreatorCategories fetches creator categories', async () => {
     await api.listCreatorCategories();
-    expect(api.request).toHaveBeenCalledWith('/category/creator');
+    expect(mockRequest).toHaveBeenCalledWith('/category/creator');
   });
 
-  // it('updateCreatorCategory calls request with correct args', async () => {
-  //   await api.updateCreatorCategory('cat456', category);
-  //   expect(api.request).toHaveBeenCalledWith('/category/creator/cat456', {
-  //     method: 'PUT',
-  //     body: JSON.stringify(category),
-  //   });
-  // });
+  it('updateAdmin category field helpers post payloads', async () => {
+    await api.updateAdminCategoryName('cat-1', 'New');
+    expect(mockRequest).toHaveBeenCalledWith('/category/admin/cat-1/name', {
+      method: 'PUT',
+      body: JSON.stringify({ name: 'New' }),
+    });
+
+    mockRequest.mockClear();
+    await api.updateAdminCategoryDescription('cat-1', 'New description');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/category/admin/cat-1/description',
+      {
+        method: 'PUT',
+        body: JSON.stringify({ description: 'New description' }),
+      },
+    );
+
+    mockRequest.mockClear();
+    await api.updateAdminCategoryOrder('cat-1', 5);
+    expect(mockRequest).toHaveBeenCalledWith('/category/admin/cat-1/order', {
+      method: 'PUT',
+      body: JSON.stringify({ dashboard_sort_order: 5 }),
+    });
+  });
+
+  it('updateCreator category field helpers post payloads', async () => {
+    await api.updateCreatorCategoryName('cat-2', 'New');
+    expect(mockRequest).toHaveBeenCalledWith('/category/creator/cat-2/name', {
+      method: 'PUT',
+      body: JSON.stringify({ name: 'New' }),
+    });
+
+    mockRequest.mockClear();
+    await api.updateCreatorCategoryDescription('cat-2', 'New description');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/category/creator/cat-2/description',
+      {
+        method: 'PUT',
+        body: JSON.stringify({ description: 'New description' }),
+      },
+    );
+
+    mockRequest.mockClear();
+    await api.updateCreatorCategoryOrder('cat-2', 7);
+    expect(mockRequest).toHaveBeenCalledWith('/category/creator/cat-2/order', {
+      method: 'PUT',
+      body: JSON.stringify({ dashboard_sort_order: 7 }),
+    });
+  });
 });

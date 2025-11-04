@@ -17,6 +17,9 @@ format:
 preview:
 	$(PKG_MGR) run preview
 
+test:
+	$(PKG_MGR) vitest run
+
 clean:
 	rm -rf node_modules .astro dist
 

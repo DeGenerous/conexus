@@ -16,32 +16,38 @@ describe('AdminAPI', () => {
     mockRequest.mockReset();
   });
 
-  it('listAccounts calls correct endpoint', async () => {
-    mockRequest.mockResolvedValue({ accounts: [], count: 0 });
-    await api.listAccounts(1, 10);
+  it('listAccounts queries accounts endpoint', async () => {
+    await api.listAccounts(2, 25);
     expect(mockRequest).toHaveBeenCalledWith(
-      '/admin/accounts?page=1&page_size=10',
+      '/admin/accounts?page=2&page_size=25',
     );
   });
 
-  it('changeRole calls correct endpoint and payload', async () => {
-    await api.changeRole('acc123', 'role456');
+  it('getRoles performs GET request', async () => {
+    await api.getRoles();
+    expect(mockRequest).toHaveBeenCalledWith('/admin/roles', {
+      method: 'GET',
+    });
+  });
+
+  it('changeRole sends patch body', async () => {
+    await api.changeRole('account-1', 'role-2');
     expect(mockRequest).toHaveBeenCalledWith('/admin/accounts/change-role', {
       method: 'PATCH',
-      body: JSON.stringify({ account_id: 'acc123', new_role_id: 'role456' }),
+      body: JSON.stringify({ account_id: 'account-1', new_role_id: 'role-2' }),
     });
   });
 
-  it('disableAccount calls correct endpoint and payload', async () => {
-    await api.disableAccount('acc123');
+  it('disableAccount sends patch payload', async () => {
+    await api.disableAccount('account-1');
     expect(mockRequest).toHaveBeenCalledWith('/admin/accounts/disable', {
       method: 'PATCH',
-      body: JSON.stringify({ account_id: 'acc123' }),
+      body: JSON.stringify({ account_id: 'account-1' }),
     });
   });
 
-  it('createSection calls correct endpoint and payload', async () => {
-    const section = { name: 'Section1' } as any;
+  it('createSection posts JSON body', async () => {
+    const section = { name: 'Section' } as any;
     await api.createSection(section);
     expect(mockRequest).toHaveBeenCalledWith('/admin/sections', {
       method: 'POST',
@@ -49,15 +55,15 @@ describe('AdminAPI', () => {
     });
   });
 
-  it('deleteSection calls correct endpoint', async () => {
-    await api.deleteSection('sec123');
-    expect(mockRequest).toHaveBeenCalledWith('/admin/sections/sec123', {
+  it('deleteSection hits delete endpoint', async () => {
+    await api.deleteSection('section-1');
+    expect(mockRequest).toHaveBeenCalledWith('/admin/sections/section-1', {
       method: 'DELETE',
     });
   });
 
-  it('createGenre calls correct endpoint and payload', async () => {
-    const genre = { name: 'Genre1' } as any;
+  it('createGenre posts JSON body', async () => {
+    const genre = { name: 'Genre' } as any;
     await api.createGenre(genre);
     expect(mockRequest).toHaveBeenCalledWith('/admin/genres', {
       method: 'POST',
@@ -65,91 +71,78 @@ describe('AdminAPI', () => {
     });
   });
 
-  it('deleteGenre calls correct endpoint', async () => {
-    await api.deleteGenre('gen123');
-    expect(mockRequest).toHaveBeenCalledWith('/admin/genres/gen123', {
+  it('deleteGenre deletes genre', async () => {
+    await api.deleteGenre('genre-1');
+    expect(mockRequest).toHaveBeenCalledWith('/admin/genres/genre-1', {
       method: 'DELETE',
     });
   });
 
-  it('accountCount calls correct endpoint and payload', async () => {
+  it('metric count endpoints post payloads', async () => {
     const filter = { foo: 'bar' } as any;
+
     await api.accountCount(filter);
-    expect(mockRequest).toHaveBeenCalledWith('/admin/metrics/count/account', {
+    expect(mockRequest).toHaveBeenCalledWith('/admin/metrics/count/accounts', {
       method: 'POST',
       body: JSON.stringify(filter),
     });
-  });
 
-  it('walletCount calls correct endpoint and payload', async () => {
-    const filter = { foo: 'bar' } as any;
+    mockRequest.mockClear();
     await api.walletCount(filter);
-    expect(mockRequest).toHaveBeenCalledWith('/admin/metrics/count/wallet', {
+    expect(mockRequest).toHaveBeenCalledWith('/admin/metrics/count/wallets', {
       method: 'POST',
       body: JSON.stringify(filter),
     });
-  });
 
-  it('topicCount calls correct endpoint and payload', async () => {
-    const filter = { foo: 'bar' } as any;
+    mockRequest.mockClear();
     await api.topicCount(filter);
-    expect(mockRequest).toHaveBeenCalledWith('/admin/metrics/count/topic', {
+    expect(mockRequest).toHaveBeenCalledWith('/admin/metrics/count/topics', {
       method: 'POST',
       body: JSON.stringify(filter),
     });
-  });
 
-  it('storyCount calls correct endpoint and payload', async () => {
-    const filter = { foo: 'bar' } as any;
+    mockRequest.mockClear();
     await api.storyCount(filter);
-    expect(mockRequest).toHaveBeenCalledWith('/admin/metrics/count/story', {
+    expect(mockRequest).toHaveBeenCalledWith('/admin/metrics/count/stories', {
       method: 'POST',
       body: JSON.stringify(filter),
     });
   });
 
-  it('accountGrowth calls correct endpoint and payload', async () => {
+  it('metric growth endpoints post payloads', async () => {
     const filter = { foo: 'bar' } as any;
+
     await api.accountGrowth(filter);
-    expect(mockRequest).toHaveBeenCalledWith('/admin/metrics/growth/account', {
+    expect(mockRequest).toHaveBeenCalledWith('/admin/metrics/growth/accounts', {
       method: 'POST',
       body: JSON.stringify(filter),
     });
-  });
 
-  it('walletGrowth calls correct endpoint and payload', async () => {
-    const filter = { foo: 'bar' } as any;
+    mockRequest.mockClear();
     await api.walletGrowth(filter);
-    expect(mockRequest).toHaveBeenCalledWith('/admin/metrics/growth/wallet', {
+    expect(mockRequest).toHaveBeenCalledWith('/admin/metrics/growth/wallets', {
       method: 'POST',
       body: JSON.stringify(filter),
     });
-  });
 
-  it('topicGrowth calls correct endpoint and payload', async () => {
-    const filter = { foo: 'bar' } as any;
+    mockRequest.mockClear();
     await api.topicGrowth(filter);
-    expect(mockRequest).toHaveBeenCalledWith('/admin/metrics/growth/topic', {
+    expect(mockRequest).toHaveBeenCalledWith('/admin/metrics/growth/topics', {
       method: 'POST',
       body: JSON.stringify(filter),
     });
-  });
 
-  it('storyGrowth calls correct endpoint and payload', async () => {
-    const filter = { foo: 'bar' } as any;
+    mockRequest.mockClear();
     await api.storyGrowth(filter);
-    expect(mockRequest).toHaveBeenCalledWith('/admin/metrics/growth/story', {
+    expect(mockRequest).toHaveBeenCalledWith('/admin/metrics/growth/stories', {
       method: 'POST',
       body: JSON.stringify(filter),
     });
   });
 
-  it('accountTopN calls correct endpoint and payload', async () => {
-    const filter: TopNMetricFilter = {
-      n: 5,
-      start_date: '2023-01-01',
-      end_date: '2023-12-31',
-    };
+  it('top N endpoints post payloads', async () => {
+    const filter = { n: 5 } as any;
+
     await api.accountTopN(filter);
     expect(mockRequest).toHaveBeenCalledWith(
       '/admin/metrics/top-n/active-accounts',
@@ -158,14 +151,8 @@ describe('AdminAPI', () => {
         body: JSON.stringify(filter),
       },
     );
-  });
 
-  it('topicTopN calls correct endpoint and payload', async () => {
-    const filter: TopNMetricFilter = {
-      n: 5,
-      start_date: '2023-01-01',
-      end_date: '2023-12-31',
-    };
+    mockRequest.mockClear();
     await api.topicTopN(filter);
     expect(mockRequest).toHaveBeenCalledWith(
       '/admin/metrics/top-n/played-topics',

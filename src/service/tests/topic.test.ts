@@ -4,279 +4,261 @@ import TopicAPI from '../topic';
 
 const mockRequest = vi.fn();
 
-class MockFetcher extends TopicAPI {
+class MockTopicAPI extends TopicAPI {
   request = mockRequest;
 }
 
-// describe('TopicAPI', () => {
-//   let api: MockFetcher;
+describe('TopicAPI', () => {
+  let api: MockTopicAPI;
 
-//   beforeEach(() => {
-//     api = new MockFetcher();
-//     mockRequest.mockClear();
-//   });
+  beforeEach(() => {
+    api = new MockTopicAPI();
+    mockRequest.mockReset();
+  });
 
-//   it('should create a new topic', async () => {
-//     mockRequest.mockResolvedValue('topic123');
-//     const req: TopicRequest = {
-//       name: 'Test Topic',
-//       description: 'Test Description',
-//       category_id: 'cat1',
-//       available: true,
-//       visibility: 'public',
-//       prompt: 'Test prompt',
-//       image_prompt: 'Test image prompt',
-//       settings: {
-//         image_style: 'default',
-//         language: 'en',
-//         interactivity: 'min',
-//         difficulty: 'min',
-//         length: 'min',
-//         reading_style: 'normal',
-//         kids_mode: 'no',
-//       },
-//     };
-//     const result = await api.new(req);
-//     expect(api.request).toHaveBeenCalledWith('/topic/new', {
-//       method: 'POST',
-//       body: JSON.stringify(req),
-//     });
-//     expect(result).toBe('topic123');
-//   });
+  it('creates and submits topics', async () => {
+    const payload = { name: 'Topic' } as any;
+    await api.new(payload);
+    expect(mockRequest).toHaveBeenCalledWith('/topic/new', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
 
-//   it('should get topic manager data', async () => {
-//     const manager: TopicManager = {
-//       topic: {
-//         id: '1',
-//         name: 'Test Topic',
-//         description: 'Test Description',
-//         available: true,
-//         visibility: 'public',
-//         media_folder_id: 'folder1',
-//       },
-//       topic_prompt: {
-//         id: 'tp1',
-//         prompt: 'Test prompt',
-//         image_prompt: 'Test image prompt',
-//       },
-//       topic_prompt_settings: {
-//         image_style: 'default',
-//         language: 'en',
-//         interactivity: 'min',
-//         difficulty: 'min',
-//         length: 'min',
-//         reading_style: 'normal',
-//         kids_mode: 'no',
-//       },
-//       categories: [],
-//       genres: [],
-//       gates: [],
-//       media_files: [],
-//     };
-//     mockRequest.mockResolvedValue(manager);
-//     const result = await api.topicManager('1');
-//     expect(api.request).toHaveBeenCalledWith('/topic/manager/1');
-//     expect(result).toEqual(manager);
-//   });
+    mockRequest.mockClear();
+    await api.submit('topic-1');
+    expect(mockRequest).toHaveBeenCalledWith('/govern/submit-topic/topic-1');
+  });
 
-//   it('should add a category to a topic', async () => {
-//     mockRequest.mockResolvedValue({});
-//     await api.addCategory('t1', 'c1', 2);
-//     expect(api.request).toHaveBeenCalledWith('/topic/add-category', {
-//       method: 'PATCH',
-//       body: JSON.stringify({
-//         topic_id: 't1',
-//         category_id: 'c1',
-//         sort_order: 2,
-//       }),
-//     });
-//   });
+  it('deletes topics with payload', async () => {
+    await api.delete('topic-1');
+    expect(mockRequest).toHaveBeenCalledWith('/topic/delete', {
+      method: 'DELETE',
+      body: JSON.stringify({ topic_id: 'topic-1' }),
+    });
+  });
 
-//   it('should change category sort order', async () => {
-//     await api.changeTopicSortOrder('t1', 'c1', 3);
-//     expect(api.request).toHaveBeenCalledWith('/topic/change-sortorder', {
-//       method: 'PATCH',
-//       body: JSON.stringify({
-//         topic_id: 't1',
-//         category_id: 'c1',
-//         sort_order: 3,
-//       }),
-//     });
-//   });
+  it('fetches collection listings', async () => {
+    await api.sectionCollection(2, 25, true);
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/topic/collection-section?page=2&page_size=25&refresh=true',
+    );
 
-//   it('should remove a category from a topic', async () => {
-//     await api.removeCategory('t1', 'c1');
-//     expect(api.request).toHaveBeenCalledWith('/topic/remove-category', {
-//       method: 'PATCH',
-//       body: JSON.stringify({ topic_id: 't1', category_id: 'c1' }),
-//     });
-//   });
+    mockRequest.mockClear();
+    await api.creatorCollection(3, 12, false);
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/topic/collection-creator?page=3&page_size=12&refresh=false',
+    );
 
-//   it('should add a genre to a topic', async () => {
-//     await api.addGenre('t1', 'g1');
-//     expect(api.request).toHaveBeenCalledWith('/topic/add-genre', {
-//       method: 'PATCH',
-//       body: JSON.stringify({ topic_id: 't1', genre_id: 'g1' }),
-//     });
-//   });
+    mockRequest.mockClear();
+    await api.sectionCategoryCollection('section-1', 4, 10, true);
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/topic/collection-category/section/section-1?page=4&page_size=10&refresh=true',
+    );
 
-//   it('should remove a genre from a topic', async () => {
-//     await api.removeGenre('t1', 'g1');
-//     expect(api.request).toHaveBeenCalledWith('/topic/remove-genre', {
-//       method: 'PATCH',
-//       body: JSON.stringify({ topic_id: 't1', genre_id: 'g1' }),
-//     });
-//   });
+    mockRequest.mockClear();
+    await api.creatorCategoryCollection('creator-1', 5, 8, false);
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/topic/collection-category/creator/creator-1?page=5&page_size=8&refresh=false',
+    );
 
-//   it('should add a gate to a topic', async () => {
-//     await api.addGate('t1', 'g1');
-//     expect(api.request).toHaveBeenCalledWith('/topic/add-gate', {
-//       method: 'PATCH',
-//       body: JSON.stringify({ topic_id: 't1', gate_id: 'g1' }),
-//     });
-//   });
+    mockRequest.mockClear();
+    await api.topicCollection('category-1', 6, 9, true);
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/topic/collection-topic/category-1?page=6&page_size=9&refresh=true',
+    );
+  });
 
-//   it('should remove a gate from a topic', async () => {
-//     await api.removeGate('t1', 'g1');
-//     expect(api.request).toHaveBeenCalledWith('/topic/remove-gate', {
-//       method: 'PATCH',
-//       body: JSON.stringify({ topic_id: 't1', gate_id: 'g1' }),
-//     });
-//   });
+  it('fetches topic manager data', async () => {
+    await api.topicManager('topic-1');
+    expect(mockRequest).toHaveBeenCalledWith('/topic/manager/topic-1');
+  });
 
-//   it('should upload a file to a topic', async () => {
-//     const file = new File(['content'], 'test.png');
-//     mockRequest.mockResolvedValue(['file1']);
-//     const result = await api.uploadFile('tp1', 'tile', file);
-//     expect(api.request).toHaveBeenCalledWith(
-//       '/topic/upload-media',
-//       expect.objectContaining({
-//         method: 'POST',
-//         body: expect.any(FormData),
-//       }),
-//     );
-//     expect(result).toEqual(['file1']);
-//   });
+  it('manages categories on topics', async () => {
+    await api.addCategory('topic-1', 'cat-1', 3);
+    expect(mockRequest).toHaveBeenCalledWith('/topic/add-category', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        topic_id: 'topic-1',
+        category_id: 'cat-1',
+        sort_order: 3,
+      }),
+    });
 
-//   it('should delete a media file from a topic', async () => {
-//     await api.deleteMediaFile('tp1', 'file1', 'tile');
-//     expect(api.request).toHaveBeenCalledWith('/topic/delete-media', {
-//       method: 'DELETE',
-//       body: JSON.stringify({
-//         topic_id: 'tp1',
-//         file_id: 'file1',
-//         media_type: 'tile',
-//       }),
-//     });
-//   });
+    mockRequest.mockClear();
+    await api.changeTopicSortOrder('topic-1', 'cat-1', 4);
+    expect(mockRequest).toHaveBeenCalledWith('/topic/change-sortorder', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        topic_id: 'topic-1',
+        category_id: 'cat-1',
+        sort_order: 4,
+      }),
+    });
 
-//   it('should create a new draft', async () => {
-//     const draft: DraftPayload = {
-//       title: 'Draft',
-//       data: {
-//         story_data: {} as StoryData,
-//         prompt_settings: {} as PromptSettings,
-//         open_prompt: '',
-//         table_prompt: {} as TablePrompt,
-//       }, // Provide appropriate mock data as per your DraftPayload type
-//     };
-//     mockRequest.mockResolvedValue('draft1');
-//     const result = await api.newDraft(draft);
-//     expect(api.request).toHaveBeenCalledWith('/topic/drafts', {
-//       method: 'POST',
-//       body: JSON.stringify(draft),
-//     });
-//     expect(result).toBe('draft1');
-//   });
+    mockRequest.mockClear();
+    await api.removeCategory('topic-1', 'cat-1');
+    expect(mockRequest).toHaveBeenCalledWith('/topic/remove-category', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        topic_id: 'topic-1',
+        category_id: 'cat-1',
+      }),
+    });
+  });
 
-//   it('should get a draft by ID', async () => {
-//     const draft: DraftPayload = {
-//       id: 'd1',
-//       title: 'Draft',
-//       data: {
-//         story_data: {} as StoryData,
-//         prompt_settings: {} as PromptSettings,
-//         open_prompt: '',
-//         table_prompt: {} as TablePrompt,
-//       },
-//       created_at: new Date(),
-//       updated_at: new Date(),
-//     };
-//     mockRequest.mockResolvedValue(draft);
-//     const result = await api.getDraft('d1');
-//     expect(api.request).toHaveBeenCalledWith('/topic/drafts/d1', {
-//       method: 'GET',
-//     });
-//     expect(result).toEqual(draft);
-//   });
+  it('manages genres on topics', async () => {
+    await api.addGenre('topic-1', 'genre-1');
+    expect(mockRequest).toHaveBeenCalledWith('/topic/add-genre', {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id: 'topic-1', genre_id: 'genre-1' }),
+    });
 
-//   it('should get all drafts', async () => {
-//     const drafts: DraftPayload[] = [
-//       {
-//         id: 'd1',
-//         title: 'Draft',
-//         data: {
-//           story_data: {} as StoryData,
-//           prompt_settings: {} as PromptSettings,
-//           open_prompt: '',
-//           table_prompt: {} as TablePrompt,
-//         },
-//         created_at: new Date(),
-//         updated_at: new Date(),
-//       },
-//     ];
-//     mockRequest.mockResolvedValue(drafts);
-//     const result = await api.getDrafts();
-//     expect(api.request).toHaveBeenCalledWith('/topic/drafts', {
-//       method: 'GET',
-//     });
-//     expect(result).toEqual(drafts);
-//   });
+    mockRequest.mockClear();
+    await api.removeGenre('topic-1', 'genre-1');
+    expect(mockRequest).toHaveBeenCalledWith('/topic/remove-genre', {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id: 'topic-1', genre_id: 'genre-1' }),
+    });
+  });
 
-//   it('should search drafts', async () => {
-//     const drafts: DraftPayload[] = [
-//       {
-//         id: 'd1',
-//         title: 'Draft',
-//         data: {
-//           story_data: {} as StoryData,
-//           prompt_settings: {} as PromptSettings,
-//           open_prompt: '',
-//           table_prompt: {} as TablePrompt,
-//         },
-//         created_at: new Date(),
-//         updated_at: new Date(),
-//       },
-//     ];
-//     mockRequest.mockResolvedValue(drafts);
-//     const result = await api.searchDrafts('test', 1, 10);
-//     expect(api.request).toHaveBeenCalledWith(
-//       '/topic/drafts/search?query=test&page=1&page_size=10',
-//     );
-//     expect(result).toEqual(drafts);
-//   });
+  it('manages gates on topics', async () => {
+    await api.addGate('topic-1', 'gate-1');
+    expect(mockRequest).toHaveBeenCalledWith('/topic/add-gate', {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id: 'topic-1', gate_id: 'gate-1' }),
+    });
 
-//   it('should update a draft by ID', async () => {
-//     const draft: DraftPayload = {
-//       title: 'Updated',
-//       data: {
-//         story_data: {} as StoryData,
-//         prompt_settings: {} as PromptSettings,
-//         open_prompt: '',
-//         table_prompt: {} as TablePrompt,
-//       },
-//     };
-//     await api.updateDraft('d1', draft);
-//     expect(api.request).toHaveBeenCalledWith('/topic/drafts/d1', {
-//       method: 'PUT',
-//       body: JSON.stringify(draft),
-//     });
-//   });
+    mockRequest.mockClear();
+    await api.removeGate('topic-1', 'gate-1');
+    expect(mockRequest).toHaveBeenCalledWith('/topic/remove-gate', {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id: 'topic-1', gate_id: 'gate-1' }),
+    });
+  });
 
-//   it('should delete a draft by ID', async () => {
-//     await api.deleteDraft('d1');
-//     expect(api.request).toHaveBeenCalledWith('/topic/drafts/d1', {
-//       method: 'DELETE',
-//     });
-//   });
-// });
+  it('updates topic metadata fields', async () => {
+    await api.changeName('topic-1', 'New name');
+    expect(mockRequest).toHaveBeenCalledWith('/topic/change-name', {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id: 'topic-1', new_name: 'New name' }),
+    });
+
+    mockRequest.mockClear();
+    await api.changeDescription('topic-1', 'New description');
+    expect(mockRequest).toHaveBeenCalledWith('/topic/change-description', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        topic_id: 'topic-1',
+        new_description: 'New description',
+      }),
+    });
+
+    mockRequest.mockClear();
+    await api.changeAvailability('topic-1', true);
+    expect(mockRequest).toHaveBeenCalledWith('/topic/change-availability', {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id: 'topic-1', availability: true }),
+    });
+
+    mockRequest.mockClear();
+    await api.changeVisibility('topic-1', 'public');
+    expect(mockRequest).toHaveBeenCalledWith('/topic/change-visibility', {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id: 'topic-1', visibility: 'public' }),
+    });
+  });
+
+  it('edits prompts and settings', async () => {
+    await api.editPrompt('topic-1', 'Prompt');
+    expect(mockRequest).toHaveBeenCalledWith('/topic/edit-prompt', {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id: 'topic-1', new_prompt: 'Prompt' }),
+    });
+
+    mockRequest.mockClear();
+    await api.editImagePrompt('topic-1', 'Image prompt');
+    expect(mockRequest).toHaveBeenCalledWith('/topic/edit-image-prompt', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        topic_id: 'topic-1',
+        new_image_prompt: 'Image prompt',
+      }),
+    });
+
+    mockRequest.mockClear();
+    const settings = { language: 'en' } as any;
+    await api.editPromptSettings('topic-1', settings);
+    expect(mockRequest).toHaveBeenCalledWith('/topic/edit-prompt-settings', {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id: 'topic-1', settings }),
+    });
+  });
+
+  it('uploads and deletes media files', async () => {
+    const file = new File(['image'], 'image.png');
+    await api.uploadFile('topic-1', 'cover' as any, file);
+    const [uploadUrl, uploadOptions] = mockRequest.mock.calls[0];
+    expect(uploadUrl).toBe('/topic/upload-media');
+    expect(uploadOptions.method).toBe('POST');
+    expect(uploadOptions.body).toBeInstanceOf(FormData);
+
+    mockRequest.mockClear();
+    await api.deleteMediaFile('topic-1', 'file-1', 'cover' as any);
+    expect(mockRequest).toHaveBeenCalledWith('/topic/delete-media', {
+      method: 'DELETE',
+      body: JSON.stringify({
+        topic_id: 'topic-1',
+        file_id: 'file-1',
+        media_type: 'cover',
+      }),
+    });
+  });
+
+  it('handles draft lifecycle', async () => {
+    const draft = { title: 'Draft' } as any;
+    await api.newDraft(draft);
+    expect(mockRequest).toHaveBeenCalledWith('/topic/drafts', {
+      method: 'POST',
+      body: JSON.stringify(draft),
+    });
+
+    mockRequest.mockClear();
+    const file = new File(['doc'], 'doc.txt');
+    await api.draftDocument(file, 'cat-1');
+    const [draftUrl, draftOptions] = mockRequest.mock.calls[0];
+    expect(draftUrl).toBe('/topic/drafts/draft-document');
+    expect(draftOptions.method).toBe('POST');
+    expect(draftOptions.body).toBeInstanceOf(FormData);
+
+    mockRequest.mockClear();
+    await api.getDraft('draft-1');
+    expect(mockRequest).toHaveBeenCalledWith('/topic/drafts/draft-1', {
+      method: 'GET',
+    });
+
+    mockRequest.mockClear();
+    await api.getDrafts();
+    expect(mockRequest).toHaveBeenCalledWith('/topic/drafts', {
+      method: 'GET',
+    });
+
+    mockRequest.mockClear();
+    await api.searchDrafts('query', 2, 10);
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/topic/drafts/search?query=query&page=2&page_size=10',
+    );
+
+    mockRequest.mockClear();
+    await api.updateDraft('draft-1', draft);
+    expect(mockRequest).toHaveBeenCalledWith('/topic/drafts/draft-1', {
+      method: 'PUT',
+      body: JSON.stringify(draft),
+    });
+
+    mockRequest.mockClear();
+    await api.deleteDraft('draft-1');
+    expect(mockRequest).toHaveBeenCalledWith('/topic/drafts/draft-1', {
+      method: 'DELETE',
+    });
+  });
+});

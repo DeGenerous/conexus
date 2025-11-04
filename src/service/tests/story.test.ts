@@ -32,6 +32,16 @@ describe('StoryAPI', () => {
     expect(result).toBe(mockResponse);
   });
 
+  it('calls demo with correct topic id', async () => {
+    const mockResponse = { story: { id: 'demo' }, task_id: 'demo-task' };
+    mockRequest.mockResolvedValue(mockResponse);
+
+    const result = await api.demo('topic-demo');
+
+    expect(api.request).toHaveBeenCalledWith('/story/demo/topic-demo');
+    expect(result).toBe(mockResponse);
+  });
+
   it('calls delete with correct params', async () => {
     const mockResponse = { success: true };
     mockRequest.mockResolvedValue(mockResponse);

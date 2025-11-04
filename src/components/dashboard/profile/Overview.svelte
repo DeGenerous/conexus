@@ -56,6 +56,9 @@
   let isUploadingAvatar = $state<boolean>(false);
   let avatarInputEl = $state<HTMLInputElement | undefined>();
 
+  const formatMiB = (bytes: number) =>
+    `${(bytes / 1_048_576).toFixed(1).replace(/\.0$/, '')} MiB`;
+
   const checkSubscription = async () => {
     if (!user?.email) return;
     subscribedToNewsletter = await account.subscriptionStatus(user?.email);
@@ -186,11 +189,6 @@
 
   const triggerAvatarPicker = () => avatarInputEl?.click();
 
-  // const refreshUserAvatar = async () => {
-  //   user = await getCurrentUser(true);
-  //   avatarUrl = user?.avatar_url || '';
-  // };
-
   const handleAvatarUpload = async (event: Event) => {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
@@ -210,7 +208,9 @@
         try {
           const avif = await toAvif(nextFile);
           if (avif.size > MEDIA_RULES.description.maxBytes) {
-            throw new Error('Converted image is larger than 1.5 MiB');
+            throw new Error(
+              `Converted image is larger than ${formatMiB(MEDIA_RULES.description.maxBytes)}`,
+            );
           }
           upload = new File([avif], nextFile.name.replace(/\.\w+$/, '.avif'), {
             type: 'image/avif',
@@ -221,8 +221,8 @@
         }
       }
 
+      console.log('Uploading media file:', upload);
       await account.changeAvatar(undefined, upload);
-      // await refreshUserAvatar();
       window.location.reload();
     } catch (error) {
       console.error('Failed to upload avatar:', error);

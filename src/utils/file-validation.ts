@@ -38,14 +38,14 @@ const MiB = 1_048_576;
 /* Slot‑specific constraints */
 export const MEDIA_RULES: Record<MediaType, MediaRule> = {
   /* images ----------------------------------------------------------- */
-  description: { mime: GENERIC_IMAGE, maxBytes: 1.5 * MiB, maxFiles: 1 },
-  tile: { mime: GENERIC_IMAGE, maxBytes: 1.5 * MiB, maxFiles: 1 },
-  background: { mime: GENERIC_IMAGE, maxBytes: 1.5 * MiB, maxFiles: 3 },
+  description: { mime: GENERIC_IMAGE, maxBytes: 3 * MiB, maxFiles: 1 },
+  tile: { mime: GENERIC_IMAGE, maxBytes: 3 * MiB, maxFiles: 1 },
+  background: { mime: GENERIC_IMAGE, maxBytes: 3 * MiB, maxFiles: 3 },
 
   /* video ------------------------------------------------------------ */
   video: {
     mime: /^video\/mp4$/i,
-    maxBytes: 10 * MiB,
+    maxBytes: 15 * MiB,
     maxFiles: 1,
     magic: [
       // ISO‑BMFF “ftyp” box starts at byte 4 (‘ftyp’/‘isom’/… acceptable)
@@ -56,7 +56,7 @@ export const MEDIA_RULES: Record<MediaType, MediaRule> = {
   /* audio ------------------------------------------------------------ */
   audio: {
     mime: /^audio\/mpeg$/i,
-    maxBytes: 6 * MiB,
+    maxBytes: 10 * MiB,
     maxFiles: 3,
     magic: [
       // MP3 frame sync

@@ -35,6 +35,17 @@
   const ondragleave = () => (dragover = null);
   const ondragover = (type: string) => (dragover = type);
 
+  const formatMiB = (bytes: number) =>
+    `${(bytes / 1_048_576).toFixed(1).replace(/\.0$/, '')} MiB`;
+
+  const slotLimitLabel: Record<MediaType, string> = {
+    description: formatMiB(MEDIA_RULES.description.maxBytes),
+    tile: formatMiB(MEDIA_RULES.tile.maxBytes),
+    background: formatMiB(MEDIA_RULES.background.maxBytes),
+    video: formatMiB(MEDIA_RULES.video.maxBytes),
+    audio: formatMiB(MEDIA_RULES.audio.maxBytes),
+  };
+
   // map UI ‘MediaType’ → slot key
   // map backend media types to the individual slot buckets we track in local rune state
   const typeToSlot = {
@@ -107,7 +118,9 @@
           try {
             const avif = await toAvif(f);
             if (avif.size > MEDIA_RULES[slot].maxBytes) {
-              throw new Error('Converted image is larger than 1.5 MiB');
+              throw new Error(
+                `Converted image is larger than ${slotLimitLabel[slot]}`,
+              );
             }
             upload = new File([avif], f.name.replace(/\.\w+$/, '.avif'), {
               type: 'image/avif',
@@ -118,6 +131,7 @@
           }
         }
 
+        console.log('Uploading media file:', upload);
         const [id] = await handleMediaUpload(slot, upload);
         if (!id) continue;
 
@@ -201,7 +215,7 @@
               📁 Drop image here or click to upload
               <br />
               <br />
-              ⚠️ Only &lt1.5MB
+              ⚠️ Max {slotLimitLabel.description}
             </label>
             <input
               id="description-upload"
@@ -246,7 +260,7 @@
               📁 Drop image here or click to upload
               <br />
               <br />
-              ⚠️ Only &lt1.5MB
+              ⚠️ Max {slotLimitLabel.tile}
             </label>
             <input
               id="tile-upload"
@@ -295,7 +309,7 @@
               📁 Drop video here or click to upload
               <br />
               <br />
-              ⚠️ Only &lt10MB MP4 files
+              ⚠️ Max {slotLimitLabel.video} MP4 files
             </label>
             <input
               id="video-upload"
@@ -341,7 +355,7 @@
                 📁 Drop image(s) here or click to upload
                 <br />
                 <br />
-                ⚠️ Only &lt1.5MB
+                ⚠️ Max {slotLimitLabel.background}
                 <br />
                 <br />
                 Up to 3 files
@@ -397,7 +411,7 @@
               <label for="audio-upload">
                 📁 Drop audio file(s) here or click to upload
                 <br /><br />
-                ⚠️ Only &lt6 MB MP3 files — up to 3 total
+                ⚠️ Max {slotLimitLabel.audio} MP3 files — up to 3 total
               </label>
               <input
                 id="audio-upload"

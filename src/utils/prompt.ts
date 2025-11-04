@@ -189,13 +189,6 @@ function generatePrompt(
 
   const storyPrompt = setUpPrompt();
 
-  // const fullStory: CreatePrompt = {
-  //   topic: props.name.trim(),
-  //   description: props.description,
-  //   image_prompt: imagePrompt,
-  //   category: props.category_id,
-  //   prompt: storySettings + storyPrompt,
-  // };
   const fullStory: TopicRequest = {
     name: props.name.trim(),
     description: props.description,

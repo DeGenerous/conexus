@@ -158,6 +158,8 @@
   };
 </script>
 
+<AddCollection />
+
 {#each collections as collection (collection.id)}
   <section class="dream-container fade-in">
     <div class="flex-row">
@@ -291,8 +293,6 @@
     </button>
   </section>
 {/each}
-
-<AddCollection />
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

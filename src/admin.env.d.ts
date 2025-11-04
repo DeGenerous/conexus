@@ -68,32 +68,6 @@ type TenantRole = {
   publish_topic_cost: number;
 };
 
-type Contract = {
-  id?: string;
-  address: string;
-  name: string;
-  chain_id: number;
-  standard: 'erc20' | 'erc721';
-  purchase_link: string;
-  symbol?: string;
-  description?: string;
-  logo_url?: string;
-  explorer_url?: string;
-  owner_url?: string;
-  data_url?: string;
-  image_url?: string;
-  abi?: object;
-  created_at?: string;
-  updated_at?: string;
-};
-
-type Gate = {
-  id?: string;
-  name: string;
-  contract_id: string;
-  type: 'token' | 'class';
-} & (TokenGate | ClassGate);
-
 // Metric Filters
 
 type BaseMetricFilter = {

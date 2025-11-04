@@ -85,31 +85,6 @@ type CreatePrompt = {
 
 type ImageType = 'url' | 'base64';
 
-type ClassGate = {
-  id?: number;
-  class_name?: string;
-  token_id_min?: number;
-  token_id_max?: number;
-  created_at?: Date;
-};
-
-type SupportedContracts =
-  | 'Potential'
-  | 'Ark'
-  | 'Moonsign'
-  | 'Apes'
-  | 'Anyone'
-  | 'All';
-
-type TopicNFTGate = {
-  topic_id: string;
-  contract_name: SupportedContracts;
-  class_id?: number;
-  token_ids?: number[];
-  amount?: number;
-  created_at?: Date;
-};
-
 /* V2 */
 
 type DraftView = {
@@ -185,7 +160,7 @@ type TopicManager = {
   topic_prompt: TopicPrompt;
   topic_prompt_settings: PromptSettings;
   categories: TopicCategory[];
-  gates: Gate[];
+  gates: TopicGate[];
   genres: TopicGenre[];
   media_files: TopicMediaFile[];
 };

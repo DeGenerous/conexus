@@ -9,7 +9,7 @@
     topic_gates,
     handleGatingChange,
   }: {
-    topic_gates: Gate[];
+    topic_gates: any[];
     handleGatingChange: (
       gate_id: string,
       method: 'add' | 'remove',
@@ -19,7 +19,7 @@
   let collection: Collection = new Collection();
 
   let allCollections = $state<any>([]);
-  let allGates = $state<Gate[]>([]);
+  let allGates = $state<any[]>([]);
   let newGateId = $state('');
 
   const fetchGates = async () => {

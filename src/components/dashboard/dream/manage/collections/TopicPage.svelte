@@ -49,7 +49,7 @@
 
   let topic_categories = $state<TopicCategory[]>([]);
   let topic_genres = $state<TopicGenre[]>([]);
-  let topic_gates = $state<Gate[]>([]);
+  let topic_gates = $state<TopicGate[]>([]);
 
   let nameDraft = $state<string>('');
   let descriptionDraft = $state<string>('');

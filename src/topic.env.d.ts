@@ -14,17 +14,11 @@ type CategoryInSection = {
   topics: TopicInSection[];
 };
 
-type NFTGate = {
-  contract_name: SupportedContracts;
-  class_name?: string;
-  amount?: number;
-};
-
 type TopicView = {
   id: string;
   name: string;
   genres?: string;
-  nft_gate?: NFTGate[];
+  gates?: TopicGate[]; // ?
 };
 
 type TopicThumbnail = {
@@ -44,7 +38,7 @@ type TopicSortOrder = 'name' | 'category';
 
 /* V2 */
 
-type TopicGates = {
+type TopicGate = {
   gate_id: string;
   name: string;
   gate_kind: GateKind;
@@ -68,7 +62,7 @@ type CategoryTopic = {
   available: boolean;
   visibility: 'public' | 'private';
   tile_file_url?: string;
-  topic_gates?: TopicGates[];
+  topic_gates?: TopicGate[];
 };
 
 type SectionCategoryTopics = {
@@ -97,6 +91,6 @@ type TopicPage = {
   description_file_url?: string;
   video_file_url?: string;
   audio_file_url?: string;
-  topic_gates?: TopicGates[];
+  topic_gates?: TopicGate[];
   unfinished_stories?: UnfinishedStory[];
 };

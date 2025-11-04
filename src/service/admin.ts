@@ -1,4 +1,4 @@
-import Fetcher from '../fetcher';
+import Fetcher from './fetcher';
 
 export default class AdminAPI extends Fetcher {
   protected group: string = '/admin';

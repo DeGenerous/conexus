@@ -1,5 +1,5 @@
 import { api_error } from '@errors/index';
-import GovernAPI from '@service/v2/govern';
+import GovernAPI from '@service/curation';
 
 /**
  * Handles governance and curation related operations.

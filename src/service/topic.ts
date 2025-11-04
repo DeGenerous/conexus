@@ -1,4 +1,4 @@
-import Fetcher from '../fetcher';
+import Fetcher from './fetcher';
 
 /**
  * The API class for handling topic-related requests

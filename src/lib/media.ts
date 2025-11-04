@@ -2,7 +2,7 @@
 
 import { serveUrl, blankImage } from '@constants/media';
 import { tracks } from '@constants/tracks';
-import { MediaAPI } from '@service/v1';
+import MediaAPI from '@service/media';
 import { toastStore } from '@stores/toast.svelte';
 import { game } from '@stores/conexus.svelte';
 

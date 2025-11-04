@@ -9,7 +9,7 @@ import {
 } from '@constants/cache';
 import { serveUrl } from '@constants/media';
 import { api_error } from '@errors/index';
-import ViewAPI from '@service/v2/view';
+import ViewAPI from '@service/view';
 import { availableGenres } from '@stores/view.svelte';
 
 /**

@@ -10,7 +10,7 @@ import {
   SetCache,
 } from '@constants/cache';
 import { api_error } from '@errors/index';
-import AccountAPI from '@service/v2/account';
+import AccountAPI from '@service/account';
 import { toastStore } from '@stores/toast.svelte';
 
 import NotificationService from './notification';

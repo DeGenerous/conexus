@@ -1,5 +1,5 @@
 import { api_error } from '@errors/index';
-import AdminAPI from '@service/v2/admin';
+import AdminAPI from '@service/admin';
 import { toastStore } from '@stores/toast.svelte';
 import {
   GetCache,

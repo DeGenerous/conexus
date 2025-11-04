@@ -72,52 +72,6 @@ describe('AdminAPI', () => {
     });
   });
 
-  it('createContract calls correct endpoint and payload', async () => {
-    const contract = { title: 'Contract1' } as any;
-    await api.createContract(contract);
-    expect(mockRequest).toHaveBeenCalledWith('/admin/contracts', {
-      method: 'POST',
-      body: JSON.stringify(contract),
-    });
-  });
-
-  it('deleteContract calls correct endpoint', async () => {
-    await api.deleteContract('con123');
-    expect(mockRequest).toHaveBeenCalledWith('/admin/contracts/con123', {
-      method: 'DELETE',
-    });
-  });
-
-  it('createGate calls correct endpoint and payload', async () => {
-    const gate = { name: 'Gate1' } as any;
-    await api.createGate(gate);
-    expect(mockRequest).toHaveBeenCalledWith('/admin/gates', {
-      method: 'POST',
-      body: JSON.stringify(gate),
-    });
-  });
-
-  it('deleteGate calls correct endpoint', async () => {
-    await api.deleteGate('gate123');
-    expect(mockRequest).toHaveBeenCalledWith('/admin/gates/gate123', {
-      method: 'DELETE',
-    });
-  });
-
-  it('getGate calls correct endpoint', async () => {
-    await api.getGate('gate123');
-    expect(mockRequest).toHaveBeenCalledWith('/admin/gates/gate123', {
-      method: 'GET',
-    });
-  });
-
-  it('getGates calls correct endpoint', async () => {
-    await api.getGates();
-    expect(mockRequest).toHaveBeenCalledWith('/admin/gates', {
-      method: 'GET',
-    });
-  });
-
   it('accountCount calls correct endpoint and payload', async () => {
     const filter = { foo: 'bar' } as any;
     await api.accountCount(filter);

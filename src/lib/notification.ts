@@ -1,4 +1,4 @@
-import type AccountAPI from '@service/v2/account';
+import type AccountAPI from '@service/account';
 import { unread, notifications } from '@stores/notification.svelte';
 
 /**

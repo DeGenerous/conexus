@@ -1,5 +1,5 @@
 import { api_error } from '@errors/index';
-import CategoryAPI from '@service/v2/category';
+import CategoryAPI from '@service/category';
 import { toastStore } from '@stores/toast.svelte';
 
 /**

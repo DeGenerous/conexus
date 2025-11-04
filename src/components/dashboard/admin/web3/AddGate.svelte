@@ -1,11 +1,8 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
   import Collection from '@lib/collection';
+  import { POTENTIALS_COLLECTION_ID } from '@constants/curation';
 
   import Dropdown from '@components/utils/Dropdown.svelte';
-
-  const DEFAULT_COLLECTION_ID = '00000000-0000-0000-0000-000000000001';
 
   const collection = new Collection();
 
@@ -17,7 +14,7 @@
 
   let base = $state<GateBase>({
     name: '',
-    collection_id: DEFAULT_COLLECTION_ID,
+    collection_id: POTENTIALS_COLLECTION_ID,
     gate_kind: 'erc721_token',
   });
 
@@ -219,7 +216,7 @@
         <label for="collection-id">Collection</label>
         <select id="collection-id" bind:value={base.collection_id}>
           {#if !collections.length}
-            <option value={DEFAULT_COLLECTION_ID}>Default Collection</option>
+            <option value={POTENTIALS_COLLECTION_ID}>Default Collection</option>
           {/if}
           {#each collections as item (item.id)}
             <option value={item.id}>
@@ -272,12 +269,15 @@
             <textarea
               id="erc721-token-ids"
               bind:value={erc721_token.specific_token_ids}
-              class:red-border={!tokenIdsAreValid(erc721_token.specific_token_ids)}
+              class:red-border={!tokenIdsAreValid(
+                erc721_token.specific_token_ids,
+              )}
               disabled={classRangeReady}
               placeholder="Comma-separated list, e.g. 1, 5, 6, 10"
             ></textarea>
             <p class="helper-text">
-              Leave blank to allow any token ID. Filling values disables range inputs.
+              Leave blank to allow any token ID. Filling values disables range
+              inputs.
             </p>
           </div>
           <div class="range-container">
@@ -289,11 +289,9 @@
                 min="1"
                 step="1"
                 bind:value={erc721_class.token_id_min}
-                class:red-border={
-                  !tokenIdsProvided &&
+                class:red-border={!tokenIdsProvided &&
                   erc721_class.token_id_min.trim().length > 0 &&
-                  !isPositiveInteger(erc721_class.token_id_min)
-                }
+                  !isPositiveInteger(erc721_class.token_id_min)}
                 disabled={tokenIdsProvided}
                 placeholder="E.g. 1"
               />
@@ -306,20 +304,19 @@
                 min="1"
                 step="1"
                 bind:value={erc721_class.token_id_max}
-                class:red-border={
-                  !tokenIdsProvided &&
+                class:red-border={!tokenIdsProvided &&
                   erc721_class.token_id_max.trim().length > 0 &&
                   (!isPositiveInteger(erc721_class.token_id_max) ||
                     (classRangeReady &&
                       Number(erc721_class.token_id_min) >
-                        Number(erc721_class.token_id_max)))
-                }
+                        Number(erc721_class.token_id_max)))}
                 disabled={tokenIdsProvided}
                 placeholder="E.g. 10000"
               />
             </div>
             <p class="helper-text">
-              Provide both values to gate by range. Doing so disables token ID input.
+              Provide both values to gate by range. Doing so disables token ID
+              input.
             </p>
           </div>
         {/if}

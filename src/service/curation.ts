@@ -1,4 +1,4 @@
-import Fetcher from '../fetcher';
+import Fetcher from './fetcher';
 
 export default class GovernAPI extends Fetcher {
   protected group: string = '/govern';

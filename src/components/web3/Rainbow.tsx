@@ -19,7 +19,7 @@ import { mainnet, base } from 'wagmi/chains';
 import { SetCache, USER_KEY, TTL_HOUR } from '@constants/cache';
 import { assetsURL } from '@constants/media';
 import { NAV_ROUTES } from '@constants/routes';
-import AuthenticationAPI from '@service/v2/authentication';
+import AuthenticationAPI from '@service/authentication';
 
 import '@rainbow-me/rainbowkit/styles.css';
 

@@ -1,4 +1,4 @@
-import Fetcher from '../fetcher';
+import Fetcher from './fetcher';
 
 /**
  * AgentAPI provides methods for interacting with agent-related endpoints.

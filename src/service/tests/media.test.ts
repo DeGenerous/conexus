@@ -41,7 +41,11 @@ describe('MediaAPI', () => {
     await api.DeleteFile(1, 'file-1', 'cover' as any);
     expect(mockRequest).toHaveBeenCalledWith('/media/delete-media', {
       method: 'DELETE',
-      body: JSON.stringify({ topic_id: 1, file_id: 'file-1', media_type: 'cover' }),
+      body: JSON.stringify({
+        topic_id: 1,
+        file_id: 'file-1',
+        media_type: 'cover',
+      }),
     });
   });
 

@@ -654,25 +654,25 @@ export default class Topic {
    * @param topic_id - The topic identifier.
    * @param category_id - The target category identifier.
    */
-  async moveTopic(topic_id: string, category_id: string): Promise<void> {
-    await this.addTopicToCategory(topic_id, category_id);
-  }
+  // async moveTopic(topic_id: string, category_id: string): Promise<void> {
+  //   await this.addTopicToCategory(topic_id, category_id);
+  // }
 
   /**
    * Move a category into a different section.
    * @param category_id - The category identifier.
    * @param section_id - The destination section identifier.
    */
-  async moveCategory(category_id: string, section_id: string): Promise<void> {
-    // const { message, data } = await this.api.moveCategory(category_id, section_id);
+  // async moveCategory(category_id: string, section_id: string): Promise<void> {
+  //   // const { message, data } = await this.api.moveCategory(category_id, section_id);
 
-    // if (!data) {
-    //   api_error(message);
-    //   return;
-    // }
+  //   // if (!data) {
+  //   //   api_error(message);
+  //   //   return;
+  //   // }
 
-    toastStore.show(`Category moved to section ${section_id}`, 'info');
-  }
+  //   toastStore.show(`Category moved to section ${section_id}`, 'info');
+  // }
 
   /**
    * Upload a media file for a topic.

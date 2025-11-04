@@ -31,7 +31,9 @@ describe('AccountAPI', () => {
 
   it('confirmEmail hits confirm endpoint', async () => {
     await api.confirmEmail('tok');
-    expect(mockRequest).toHaveBeenCalledWith('/account/confirm-email?token=tok');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/confirm-email?token=tok',
+    );
   });
 
   it('changePassword posts form data', async () => {
@@ -163,7 +165,9 @@ describe('AccountAPI', () => {
 
     mockRequest.mockClear();
     await api.getBookmark('bookmark-1');
-    expect(mockRequest).toHaveBeenCalledWith('/account/get-bookmark/bookmark-1');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/get-bookmark/bookmark-1',
+    );
 
     mockRequest.mockClear();
     await api.getBookmarks();

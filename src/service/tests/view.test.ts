@@ -77,7 +77,7 @@ describe('ViewAPI', () => {
     });
 
     mockRequest.mockClear();
-    await api.searchSectionForTopic('section-2', 'robot', 'popular', 4, 12, 2);
+    await api.searchSectionForTopic('section-2', 'robot', 'name', 4, 12, 2);
     expect(mockRequest).toHaveBeenCalledWith('/topic/search', {
       method: 'POST',
       body: JSON.stringify({
@@ -114,7 +114,7 @@ describe('ViewAPI', () => {
   });
 
   it('sectionGenreTopics posts with section context', async () => {
-    await api.sectionGenreTopics('section-1', 'genre-1', 2, 8, 'popular');
+    await api.sectionGenreTopics('section-1', 'genre-1', 2, 8, 'name');
     expect(mockRequest).toHaveBeenCalledWith('/topic/genre-topics', {
       method: 'POST',
       body: JSON.stringify({
@@ -129,7 +129,7 @@ describe('ViewAPI', () => {
   });
 
   it('creatorGenreTopics posts with creator context', async () => {
-    await api.creatorGenreTopics('account-1', 'genre-1', 3, 9, 'popular');
+    await api.creatorGenreTopics('account-1', 'genre-1', 3, 9, 'name');
     expect(mockRequest).toHaveBeenCalledWith('/topic/genre-topics', {
       method: 'POST',
       body: JSON.stringify({

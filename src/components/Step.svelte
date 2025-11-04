@@ -3,7 +3,7 @@
   import { tippy } from 'svelte-tippy';
 
   import { story, game } from '@stores/conexus.svelte';
-  import conexusBG from '@stores/background.svelte';
+  import { conexusBG } from '@stores/conexus.svelte';
   import {
     GetCache,
     SetCache,

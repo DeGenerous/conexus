@@ -1,5 +1,5 @@
 <script lang="ts">
-  import conexusBG from '@stores/background.svelte';
+  import { conexusBG } from '@stores/conexus.svelte';
   import { story, game } from '@stores/conexus.svelte';
   import { pcBG, mobileBG } from '@constants/media';
 

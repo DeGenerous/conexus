@@ -501,7 +501,7 @@
     <Media bind:topic_media_files {handleMediaUpload} {handleDeleteMedia} />
 
     <button
-      class="red-btn blur"
+      class="red-btn"
       onclick={() =>
         openModal(
           ensureMessage('delete this story'),

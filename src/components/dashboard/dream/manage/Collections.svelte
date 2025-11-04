@@ -556,7 +556,7 @@
   {:else}
     <p class="validation">No categories found</p>
     <button
-      class="button-glowing"
+      class="cta"
       onclick={() => open('/dashboard#/dream/manage/categories', '_self')}
     >
       Create Category

@@ -13,7 +13,7 @@
 </script>
 
 <button
-  class="filter blur"
+  class="filter"
   class:sorting
   class:active-btn={sorting}
   {onclick}

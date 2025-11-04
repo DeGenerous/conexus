@@ -28,7 +28,7 @@
           </strong>
         </h5>
         <a
-          class="button-anchor button-glowing blur"
+          class="button-anchor cta"
           href={NAV_ROUTES.GOVERNANCE_HUB}
           target="_blank"
         >
@@ -76,7 +76,7 @@
   {:else}
     <span class="flex-row flex-wrap">
       <h5 class="text-glowing">See How You Shaped the Saga:</h5>
-      <button class="button-glowing" onclick={getVotingHistory}>
+      <button class="cta" onclick={getVotingHistory}>
         Check Voting History
       </button>
     </span>

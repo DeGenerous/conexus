@@ -12,11 +12,7 @@
 </p>
 
 {#if $user?.username}
-  <a
-    class="button-anchor button-glowing"
-    href="/c/{$user.username}"
-    target="_self"
-  >
+  <a class="button-anchor cta" href="/c/{$user.username}" target="_self">
     Go to your section
   </a>
 {/if}

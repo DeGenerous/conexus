@@ -21,7 +21,7 @@ button:not(.void-btn),
   text-transform: uppercase;
   letter-spacing: 1px;
   @include white-txt;
-  @include blue(0.75);
+  @include blue;
   @include cyan-border(0.5);
 
   @include respond-up(small-desktop) {
@@ -33,7 +33,7 @@ button:not(.void-btn),
   &:active:not(&:disabled),
   &:focus-visible:not(&:disabled) {
     @include cyan(1, text);
-    @include blue(0.9, bg, bright);
+    @include blue(1, bg, bright);
     @include box-glow;
     @include scale;
     @include cyan-border;

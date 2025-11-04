@@ -17,7 +17,6 @@
   class:void-btn={voidBtn}
   class:dark
   class:hider
-  class:blur={hider}
   {onclick}
   aria-label="Close"
 >

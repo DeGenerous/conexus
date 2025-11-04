@@ -21,7 +21,6 @@
 <button
   class="flex-row"
   class:void-btn={voidBtn}
-  class:blur={!voidBtn}
   class:cta
   class:green={color === 'green'}
   class:white={color === 'white'}

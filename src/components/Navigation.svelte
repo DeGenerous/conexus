@@ -186,7 +186,7 @@
       {:else if header}
         {#if $prevItem}
           <button
-            class="flex-row fade-in blur"
+            class="flex-row fade-in"
             class:inactive={!$prevItem}
             onclick={() => navigateTo($prevItem)}
             disabled={!$prevItem}
@@ -211,7 +211,7 @@
         <h1>{header}</h1>
         {#if $nextItem}
           <button
-            class="flex-row fade-in blur"
+            class="flex-row fade-in"
             class:inactive={!$nextItem}
             onclick={() => navigateTo($nextItem)}
             disabled={!$nextItem}

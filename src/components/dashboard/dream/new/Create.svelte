@@ -450,13 +450,13 @@
 
 <div class="flex-row flex-wrap">
   <button
-    class="red-btn blur"
+    class="red-btn"
     onclick={() =>
       openModal(ensureMessage('reset all data'), 'Reset', clearAllData)}
   >
     Reset Data
   </button>
-  <button class="green-btn blur" onclick={generateStory} disabled={!validation}>
+  <button class="green-btn" onclick={generateStory} disabled={!validation}>
     Create a DREAM: 10 Credits
   </button>
 </div>

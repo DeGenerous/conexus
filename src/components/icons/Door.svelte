@@ -4,32 +4,31 @@
     onclick = () => {},
     disabled = false,
     text = '',
-    glow = false,
+    cta = false,
     voidBtn = false,
   }: {
     state: 'inside' | 'outside';
     onclick: () => void | Promise<void>;
     disabled?: boolean;
     text: string;
-    glow?: boolean;
+    cta?: boolean;
     voidBtn?: boolean;
   } = $props();
 </script>
 
 <button
-  class="blur"
-  class:button-glowing={glow}
+  class:cta
   class:void-btn={voidBtn}
   class:flex-row={voidBtn}
   type="button"
   {onclick}
   onpointerover={() => {
-    if (!glow) return;
-    document.getElementById('profile-icon')?.classList.add('profile-hover');
+    // if (!cta) return;
+    // document.getElementById('profile-icon')?.classList.add('profile-hover');
   }}
   onpointerout={() => {
-    if (!glow) return;
-    document.getElementById('profile-icon')?.classList.remove('profile-hover');
+    // if (!cta) return;
+    // document.getElementById('profile-icon')?.classList.remove('profile-hover');
   }}
   {disabled}
 >

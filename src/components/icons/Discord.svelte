@@ -4,11 +4,7 @@
   let { text = 'Discord' }: { text?: string } = $props();
 </script>
 
-<a
-  class="button-anchor blur purple-btn"
-  href={NAV_ROUTES.DISCORD}
-  target="_blank"
->
+<a class="button-anchor purple-btn" href={NAV_ROUTES.DISCORD} target="_blank">
   <img src="/icons/discord.png" alt="Discord" />
   {text}
 </a>

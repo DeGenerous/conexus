@@ -275,7 +275,7 @@
                     onclick={() => {
                       $showProfile = true;
                     }}
-                    glow={true}
+                    cta={true}
                   />
                 {:else}
                   <button class="cta" onclick={startGame}> PLAY NOW </button>

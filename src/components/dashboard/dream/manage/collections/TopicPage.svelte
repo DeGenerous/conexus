@@ -15,7 +15,6 @@
     isPromptSettingsDefault,
     arePromptSettingsEqual,
   } from '@stores/dream.svelte';
-  import { story, game } from '@stores/conexus.svelte';
 
   import ExploreCategory from '@components/dashboard/dream/manage/collections/AddTopicCategory.svelte';
   import GenreTags from '@components/dashboard/dream/manage/collections/GenreTags.svelte';
@@ -82,8 +81,6 @@
   };
 
   onMount(async () => {
-    if ($story || game.loading) window.location.reload(); // ensure clean state
-
     await ensurePlayer(NAV_ROUTES.MANAGE);
     await checkUserRoles();
 
@@ -284,10 +281,10 @@
             </button>
           {/if}
           <a
-            class="button-anchor purple-btn"
+            class="button-anchor cta"
             href="/dashboard/topic/{topic_id}/demo?demoID={topic_id}&demoName={topic_name}"
           >
-            Play Demo
+            Play Now
           </a>
         </span>
       {/key}

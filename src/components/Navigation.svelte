@@ -177,7 +177,7 @@
 
 <svelte:window {onkeypress} {onscroll} />
 
-{#if $story === null || ($story !== null && activeTab === 'Demo')}
+{#if $story === null}
   {#if header}
     <header class="flex-row" class:mobile-home-header={header === 'CoNexus'}>
       {#if header === 'CoNexus'}

@@ -19,8 +19,3 @@
     console.log('gates', gates);
   });
 </script>
-
-<p>
-  TODO: listGates createERC20TokenGate createERC721NFTGate createERC721ClassGate
-  deleteGate
-</p>

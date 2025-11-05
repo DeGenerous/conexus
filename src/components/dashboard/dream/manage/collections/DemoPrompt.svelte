@@ -4,18 +4,26 @@
 
   import CoNexusGame from '@lib/story';
   import { story, game } from '@stores/conexus.svelte';
+  import { redirectTo } from '@utils/route-guard';
+  import { NAV_ROUTES } from '@constants/routes';
+  import detectIOS from '@utils/ios-device';
 
+  import Step from '@components/Step.svelte';
+  import Tts from '@components/music/Tts.svelte';
+  import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
-  import SelectorSVG from '@components/icons/Selector.svelte';
 
   const conexusGame = new CoNexusGame();
 
-  let promptId = $state<string | null>(null);
-  let topicName = $state<string | null>(null);
+  let topic_id = $state<string | null>(null);
+  let topic_name = $state<string>('');
 
   let demoStarted = $state(false);
   let focusedOption = $state<Nullable<number>>(null);
   let demoError = $state<string | null>(null);
+
+  let init = $state<boolean>(true); // initial loading state
+  let exit = $state<boolean>(false); // exit state
 
   const step = $derived<Nullable<StepData>>($story?.step_data ?? null);
 
@@ -32,14 +40,14 @@
     game.background_music = null;
 
     const urlParams = new URLSearchParams(window.location.search);
-    promptId = urlParams.get('demoID');
-    topicName = urlParams.get('demoName');
+    topic_id = urlParams.get('demoID');
+    topic_name = urlParams.get('demoName') || '';
 
-    if (!promptId) {
+    if (!topic_id) {
       window.history.back();
     }
 
-    if (promptId && topicName) {
+    if (topic_id && topic_name) {
       startDemo();
     }
   });
@@ -50,14 +58,15 @@
   };
 
   const startDemo = async () => {
-    if (!promptId || game.loading) return;
+    if (!topic_id || game.loading) return;
 
     demoError = null;
     demoStarted = true;
     $story = null;
+    init = false; // disable initial loading
 
     try {
-      await conexusGame.demo(promptId, setDemoMedia);
+      await conexusGame.demo(topic_id, setDemoMedia);
 
       if (!$story) {
         demoError = 'We could not load that demo. Please try again.';
@@ -70,35 +79,42 @@
     }
   };
 
-  const handleResponse = async (choice: number) => {
-    if (game.loading) return;
-    focusedOption = null;
-    await $story?.nextStep(choice);
-  };
-
-  const stopDemo = () => {
+  const quitGame = () => {
+    exit = true; // reset to initial loading state
     demoStarted = false;
     $story = null;
     game.background_image = null;
     game.background_music = null;
+    redirectTo(NAV_ROUTES.EXPLORE(topic_id || ''));
+  };
+
+  const restartGame = () => {
+    game.background_image = null;
+    game.background_music = null;
+    $story = null;
+    setTimeout(startDemo);
   };
 </script>
 
-{#if game.loading && !step}
+{#if (game.loading || init || exit) && !step}
   <section class="dream-container fade-in">
     <h5>Experience how your prompt comes to life.</h5>
     <div class="container">
-      {#if !demoStarted}
-        {#if demoError}
-          <p class="validation">{demoError}</p>
-        {:else}
-          <h4>Loading story data...</h4>
-        {/if}
+      {#if demoError}
+        <p class="validation">{demoError}</p>
       {:else}
         <span class="flex-row">
           <LoadingSVG />
           <h4 class="text-glowing fade-in">
-            Preparing a demo for {topicName}...
+            {#if !demoStarted}
+              {#if init}
+                Loading story data...
+              {:else if exit}
+                Exiting demo...
+              {/if}
+            {:else}
+              Preparing a demo for {topic_name}...
+            {/if}
           </h4>
         </span>
       {/if}
@@ -113,72 +129,12 @@
     <button onclick={() => window.location.reload()}>Try again</button>
   </div>
 {:else}
-  <section class="demo-step dream-container">
-    {#if step.title}
-      <h4>{step.title}</h4>
-    {/if}
+  {#if !detectIOS()}
+    <BackgroundMusic />
+  {/if}
+  <Tts />
 
-    <article class="container round-8">
-      {step.story}
-    </article>
-
-    <div class="options container">
-      {#if !step.ended}
-        {#each step.options as option, i}
-          <button
-            id="option-{i}"
-            class="void-btn flex-row"
-            disabled={game.loading}
-            onclick={() => handleResponse(i + 1)}
-            onpointerover={() => {
-              if (!game.loading) {
-                focusedOption = i;
-              }
-            }}
-            onpointerout={() => {
-              if (!game.loading) {
-                focusedOption = null;
-              }
-            }}
-            onfocus={() => (focusedOption = i)}
-            onblur={() => (focusedOption = null)}
-          >
-            <SelectorSVG
-              focused={focusedOption === i}
-              disabled={game.loading}
-              hideForMobiles={true}
-            />
-            {option}
-          </button>
-        {/each}
-      {:else}
-        <button
-          class="void-btn menu-option"
-          onclick={startDemo}
-          disabled={game.loading}
-        >
-          Run Demo Again
-        </button>
-        <button
-          class="void-btn menu-option"
-          onclick={stopDemo}
-          disabled={game.loading}
-        >
-          Exit Demo
-        </button>
-      {/if}
-    </div>
-
-    <div class="step flex-row">
-      <h5>{topicName}</h5>
-      <span class="flex-row">
-        {#if game.loading}
-          <LoadingSVG />
-        {/if}
-        <h5>Step {step.step}</h5>
-      </span>
-    </div>
-  </section>
+  <Step {topic_name} {restartGame} {quitGame} />
 {/if}
 
 <style lang="scss">
@@ -195,61 +151,6 @@
 
       h4 {
         width: auto;
-      }
-    }
-
-    &.demo-step {
-      h4 {
-        @include cyan(1, text);
-      }
-
-      article {
-        text-align: left;
-        white-space: pre-wrap;
-        @include white-txt;
-      }
-
-      .options {
-        flex-direction: column;
-        align-items: flex-start;
-
-        @include respond-up(small-desktop) {
-          width: 100%;
-        }
-
-        button {
-          width: 100%;
-          justify-content: flex-start;
-          text-align: left;
-          fill: $cyan;
-          stroke: $cyan;
-          color: $cyan;
-          @include font(h5);
-
-          &:hover:not(&:disabled),
-          &:active:not(&:disabled),
-          &:focus:not(&:disabled) {
-            filter: hue-rotate(30deg) saturate(200%);
-          }
-
-          &:disabled {
-            opacity: 0.25;
-          }
-
-          &.menu-option {
-            text-align: center;
-          }
-        }
-      }
-
-      .step {
-        width: 100%;
-        justify-content: space-between;
-
-        h5 {
-          text-shadow: none;
-          @include white-txt;
-        }
       }
     }
   }

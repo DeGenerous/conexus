@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import { tippy } from 'svelte-tippy';
 
   import { story, game } from '@stores/conexus.svelte';
@@ -48,9 +48,11 @@
   let {
     topic_name,
     restartGame,
+    quitGame = () => window.location.reload(),
   }: {
     topic_name: string;
     restartGame: () => void;
+    quitGame?: () => void;
   } = $props();
 
   let width = $state<number>(0);
@@ -60,6 +62,12 @@
   let showCustomization = $state<boolean>(false);
 
   const step = $derived<StepData>($story?.step_data as StepData);
+
+  const exitGame = () => {
+    $story = null;
+    game.background_image = null;
+    game.background_music = null;
+  };
 
   // CONTROL BAR
 
@@ -276,7 +284,16 @@
         hideControlsAfterDelay();
       }
     }
+
+    const handleBeforeUnload = () => exitGame();
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
   });
+
+  onDestroy(exitGame);
 
   const stopPropagation = (event: Event) => {
     event.stopPropagation();
@@ -473,7 +490,7 @@ a11y_no_noninteractive_element_interactions -->
       tabindex="-1"
     >
       <span class="flex-row">
-        <QuitSVG onclick={() => window.location.reload()} voidBtn={true} />
+        <QuitSVG onclick={quitGame} voidBtn={true} />
         <h5 class="title">{topic_name.trim()}</h5>
       </span>
       <div class="controls flex-row">

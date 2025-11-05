@@ -298,12 +298,20 @@ export default class CoNexus {
     if (data.status === 'ready') {
       const url = `${import.meta.env.PUBLIC_BACKEND}${data.url}`;
 
-      this.step_data.image = url;
-      this.step_data.image_type = 'url';
+      // this.step_data.image = url;
+      // this.step_data.image_type = 'url';
 
+      this.step_data = {
+        ...this.step_data,
+        image: url,
+        image_type: 'url',
+      };
+
+      
       console.log('image status is generated (#generateImageStatus)');
-
-      story.set(this);
+      
+      // story.set(this);
+      story.set({ ...this });
       return;
     }
   }

@@ -177,7 +177,7 @@
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                View Collection: {collection.name}
+                View Collection<strong>: {collection.name}</strong>
               </a>
             </span>
 
@@ -333,6 +333,10 @@
     }
 
     @include mobile-only {
+      a strong {
+        display: none;
+      }
+
       p {
         max-width: 50vw;
         overflow: hidden;

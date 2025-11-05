@@ -118,8 +118,4 @@ type GateResponse = {
   created_at: string;
   updated_at: string;
 } & GateBase &
-  (GateERC20 | GateERC721);
-
-type UpdateGateRequest = {
-  name?: string;
-} & (Partial<GateERC20> | Partial<GateERC721>);
+  (GateERC20 & GateERC721);

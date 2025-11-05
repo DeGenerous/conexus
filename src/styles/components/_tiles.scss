@@ -410,6 +410,18 @@
   }
 }
 
+.orange-tile {
+  @extend .tile;
+  @include orange(0.85);
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus-visible:not(&:disabled) {
+    @include orange(1, bg, bright);
+    @include dark-red(1, text);
+  }
+}
+
 .gray-tile {
   @extend .tile;
   @include gray(0.25);

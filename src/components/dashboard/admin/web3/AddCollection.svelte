@@ -237,6 +237,11 @@
 
     <button onclick={createCollection} disabled={!validation}>
       Create Collection
+      {#if base.standard === 'erc20'}
+        (ERC20)
+      {:else if base.standard === 'erc721'}
+        (ERC721)
+      {/if}
     </button>
   </section>
 </Dropdown>

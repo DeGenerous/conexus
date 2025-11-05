@@ -32,13 +32,7 @@
   });
 
   const isPositiveInteger = (value: string) => {
-    const trimmed = value.trim();
-
-    if (!trimmed) {
-      return false;
-    }
-
-    const parsed = Number(trimmed);
+    const parsed = Number(value);
     return Number.isInteger(parsed) && parsed > 0;
   };
 
@@ -66,19 +60,12 @@
   );
 
   let classRangeProvided = $derived(
-    Boolean(
-      erc721_class.token_id_min.trim().length ||
-        erc721_class.token_id_max.trim().length,
-    ),
-  );
-
-  let classRangeReady = $derived(
-    erc721_class.token_id_min.trim().length > 0 &&
-      erc721_class.token_id_max.trim().length > 0,
+    Number(erc721_class.token_id_min) > 0 &&
+      Number(erc721_class.token_id_max) > 0,
   );
 
   let classRangeValid = $derived.by(() => {
-    if (!classRangeReady) {
+    if (!classRangeProvided) {
       return false;
     }
 
@@ -90,23 +77,20 @@
     }
 
     return (
-      Number(erc721_class.token_id_min) <= Number(erc721_class.token_id_max)
+      Number(erc721_class.token_id_min) < Number(erc721_class.token_id_max)
     );
   });
 
   $effect(() => {
     if (tokenIdsProvided) {
-      if (
-        erc721_class.token_id_min.trim().length > 0 ||
-        erc721_class.token_id_max.trim().length > 0
-      ) {
+      if (erc721_class.token_id_min || erc721_class.token_id_max) {
         erc721_class = { token_id_min: '', token_id_max: '' };
       }
     }
   });
 
   $effect(() => {
-    if (classRangeReady && erc721_token.specific_token_ids) {
+    if (classRangeProvided && erc721_token.specific_token_ids) {
       erc721_token = { specific_token_ids: '' };
     }
   });
@@ -220,7 +204,7 @@
           {/if}
           {#each collections as item (item.id)}
             <option value={item.id}>
-              {item.name ?? 'Unnamed Collection'} ({item.id})
+              {item.name ?? 'Unnamed Collection'} - ID: {item.id}
             </option>
           {/each}
         </select>
@@ -235,21 +219,21 @@
           class:active={base.gate_kind === 'erc20_token'}
           onclick={() => (base.gate_kind = 'erc20_token')}
         >
-          ERC-20 Token
+          ERC-20 (Fungible Token)
         </button>
         <button
           class="void-btn dream-radio-btn"
           class:active={base.gate_kind === 'erc721_token'}
           onclick={() => (base.gate_kind = 'erc721_token')}
         >
-          ERC-721
+          ERC-721 (NFT)
         </button>
       </div>
     </div>
 
     <div class="flex-row">
       <h4>Configuration</h4>
-      <div class="container">
+      <div class="configuration container">
         {#if base.gate_kind === 'erc20_token'}
           <div class="input-container">
             <label for="erc20-min-amount">Minimum Amount</label>
@@ -272,15 +256,11 @@
               class:red-border={!tokenIdsAreValid(
                 erc721_token.specific_token_ids,
               )}
-              disabled={classRangeReady}
+              disabled={classRangeProvided}
               placeholder="Comma-separated list, e.g. 1, 5, 6, 10"
             ></textarea>
-            <p class="helper-text">
-              Leave blank to allow any token ID. Filling values disables range
-              inputs.
-            </p>
           </div>
-          <div class="range-container">
+          <span class="range-wrapper flex">
             <div class="input-container">
               <label for="token-id-min">Token ID Min</label>
               <input
@@ -290,7 +270,7 @@
                 step="1"
                 bind:value={erc721_class.token_id_min}
                 class:red-border={!tokenIdsProvided &&
-                  erc721_class.token_id_min.trim().length > 0 &&
+                  erc721_class.token_id_min &&
                   !isPositiveInteger(erc721_class.token_id_min)}
                 disabled={tokenIdsProvided}
                 placeholder="E.g. 1"
@@ -305,26 +285,27 @@
                 step="1"
                 bind:value={erc721_class.token_id_max}
                 class:red-border={!tokenIdsProvided &&
-                  erc721_class.token_id_max.trim().length > 0 &&
+                  erc721_class.token_id_max &&
                   (!isPositiveInteger(erc721_class.token_id_max) ||
-                    (classRangeReady &&
+                    (classRangeProvided &&
                       Number(erc721_class.token_id_min) >
                         Number(erc721_class.token_id_max)))}
                 disabled={tokenIdsProvided}
                 placeholder="E.g. 10000"
               />
             </div>
-            <p class="helper-text">
-              Provide both values to gate by range. Doing so disables token ID
-              input.
-            </p>
-          </div>
+          </span>
         {/if}
       </div>
     </div>
 
     <button class="orange-btn" onclick={createGate} disabled={!validation}>
       Create Gate
+      {#if base.gate_kind === 'erc721_token'}
+        (ERC721{#if classRangeProvided}&nbsp;Class{/if})
+      {:else if base.gate_kind === 'erc20_token'}
+        (ERC20)
+      {/if}
     </button>
   </section>
 </Dropdown>
@@ -341,7 +322,15 @@
         justify-content: space-around;
       }
 
-      @include respond-up(small-desktop) {
+      &.configuration {
+        flex-direction: column;
+      }
+
+      @include respond-up(large-desktop) {
+        .range-wrapper {
+          flex-direction: row;
+        }
+
         .gate-name {
           width: auto;
 
@@ -351,7 +340,13 @@
         }
 
         .gate-collection {
-          width: auto;
+          width: 100%;
+          max-width: 40rem;
+
+          select {
+            width: 100%;
+            max-width: none;
+          }
         }
       }
 
@@ -360,22 +355,22 @@
       }
     }
 
-    .range-container {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
+    // .range-container {
+    //   display: flex;
+    //   flex-direction: column;
+    //   gap: 1rem;
 
-      @include respond-up(tablet) {
-        flex-direction: row;
-        align-items: flex-start;
-      }
-    }
+    //   @include respond-up(tablet) {
+    //     flex-direction: row;
+    //     align-items: flex-start;
+    //   }
+    // }
 
-    .helper-text {
-      font-size: 0.75rem;
-      margin-top: 0.5rem;
-      opacity: 0.75;
-      max-width: 25rem;
-    }
+    // .helper-text {
+    //   font-size: 0.75rem;
+    //   margin-top: 0.5rem;
+    //   opacity: 0.75;
+    //   max-width: 25rem;
+    // }
   }
 </style>

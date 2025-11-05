@@ -162,7 +162,7 @@
 
 <AddCollection />
 
-<!-- <AddGate {collections} /> -->
+<AddGate {collections} />
 
 {#each collections as collection (collection.id)}
   <section class="dream-container fade-in">

@@ -307,9 +307,8 @@ export default class CoNexus {
         image_type: 'url',
       };
 
-      
       console.log('image status is generated (#generateImageStatus)');
-      
+
       story.set(this);
       // story.set({ ...this });
       return;

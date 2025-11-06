@@ -150,5 +150,10 @@
 
   div .container {
     justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  span {
+    width: 100%;
   }
 </style>

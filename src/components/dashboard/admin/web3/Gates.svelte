@@ -51,12 +51,7 @@
           ERC721 Class
         {/if}
       </p>
-      {#if
-        gate.specific_token_ids ||
-        gate.token_id_min ||
-        gate.token_id_max ||
-        gate.min_amount
-      }
+      {#if gate.specific_token_ids || gate.token_id_min || gate.token_id_max || gate.min_amount}
         <span class="tile-data">
           {#if gate.gate_kind === 'erc20_token'}
             <p>Minimum Amount:</p>

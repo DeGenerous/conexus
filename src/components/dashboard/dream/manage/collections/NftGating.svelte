@@ -2,8 +2,10 @@
   import { onMount } from 'svelte';
 
   import Collection from '@lib/collection';
+  import { toastStore } from '@stores/toast.svelte';
 
   import CloseSVG from '@components/icons/Close.svelte';
+  import { availableGenres } from '@stores/view.svelte';
 
   let {
     topic_gates,
@@ -18,42 +20,77 @@
 
   let collection: Collection = new Collection();
 
-  let allCollections = $state<any>([]);
-  let allGates = $state<any[]>([]);
-  let newGateId = $state('');
+  let allCollections = $state<Partial<CollectionResponse>[]>([]);
+  let collectionGates = $state<Partial<GateResponse>[]>([]);
 
-  const fetchGates = async () => {
+  let selectedCollectionId = $state<string>('');
+  let selectedGateId = $state<string>('');
+
+  let errorGates = $state<string>('');
+
+  onMount(async () => {
     allCollections = await collection.listCollections();
-    // console.log(allCollections)
-  };
+  });
 
-  onMount(fetchGates);
+  $effect(() => {
+    if (!selectedCollectionId) {
+      return;
+    }
+    (async () => {
+      try {
+        errorGates = '';
+        collectionGates = await collection.listGates(selectedCollectionId!);
+      } catch (error) {
+        console.error('Error fetching gates:', error);
+        errorGates = 'Error fetching gates for the selected collection.';
+      }
+    })();
+  });
 
-  async function handleRemoveGating(gate_id?: string) {
-    if (!gate_id) return;
-
-    topic_gates = topic_gates.filter((gate) => gate.id !== gate_id);
-
-    const gateToRemove = allGates.find((g) => g.id === gate_id);
-    if (!gateToRemove || !gateToRemove.id) return;
-
-    await handleGatingChange(gateToRemove.id, 'remove');
-  }
-
-  async function handleAddGating() {
-    if (newGateId === '') return;
-
-    if (topic_gates.some((tg) => tg.id === newGateId)) {
+  async function handleRemoveGating(id?: string) {
+    if (!id) {
+      toastStore.show('Unable to remove gate: missing ID', 'error');
       return;
     }
 
-    const newGate = allGates.find((g) => g.id === newGateId);
+    const gateToRemove = collectionGates.find((g) => g.id === id);
+    if (!gateToRemove || !gateToRemove.id) {
+      toastStore.show('Unable to remove gate: gate not found', 'error');
+      return;
+    }
 
-    if (!newGate || !newGate.id) return;
+    try {
+      await handleGatingChange(gateToRemove.id, 'remove');
+      topic_gates = topic_gates.filter((gate) => gate.gate_id !== id);
+    } catch (error) {
+      console.error('Error removing gate:', error);
+    }
+  }
 
-    handleGatingChange(newGate.id, 'add').then(fetchGates);
+  async function handleAddGating() {
+    if (selectedGateId === '') {
+      toastStore.show('Please select a gate to add', 'error');
+      return;
+    }
 
-    newGateId = '';
+    if (topic_gates.some((tg) => tg.gate_id === selectedGateId)) {
+      toastStore.show('This gate is already added', 'error');
+      return;
+    }
+
+    const newGate = collectionGates.find((g) => g.id === selectedGateId);
+    if (!newGate || !newGate.id) {
+      toastStore.show('Selected gate not found', 'error');
+      return;
+    }
+
+    try {
+      await handleGatingChange(newGate.id, 'add');
+      topic_gates = [...topic_gates, newGate];
+      selectedGateId = '';
+    } catch (error) {
+      console.error('Error adding gate:', error);
+    }
   }
 </script>
 
@@ -62,53 +99,76 @@
   <div class="container">
     {#if topic_gates && topic_gates.length > 0}
       {#each topic_gates as gate}
-        {#if 'type' in gate}
-          <button class="void-btn small-orange-tile">
-            <p>
-              {gate.name}
-            </p>
-            <CloseSVG
-              onclick={() => handleRemoveGating(gate.id)}
-              voidBtn={true}
-              dark={true}
-            />
-          </button>
-        {/if}
+        <button class="void-btn small-orange-tile">
+          <p>
+            {gate.name}
+          </p>
+          <CloseSVG
+            onclick={() => handleRemoveGating(gate.gate_id)}
+            voidBtn={true}
+            dark={true}
+          />
+        </button>
       {/each}
     {:else}
-      <p class="validation">No NFT restriction selected</p>
+      <p class="validation">No Web3 restriction selected</p>
     {/if}
   </div>
 </div>
 
-<div class="add-gating flex-row">
-  <select bind:value={newGateId}>
-    <option value="" hidden disabled>Select</option>
-    {#each allGates as gate}
-      <option value={gate.id}>{gate.name} type: {gate.type}</option>
+<span class="flex-row flex-wrap">
+  <select bind:value={selectedCollectionId}>
+    <option value="" hidden disabled>Select Collection</option>
+    {#each allCollections as collection}
+      <option value={collection.id}>{collection.name}</option>
     {/each}
   </select>
 
-  <button class="orange-btn" onclick={handleAddGating} disabled={!newGateId}
-    >Gate Story</button
+  {#if errorGates}
+    <p class="validation red-txt">{errorGates}</p>
+  {:else}
+    {@const availableGates = collectionGates.filter(
+      (c) => !topic_gates.some((tc: TopicGate) => tc.gate_id === c.id),
+    )}
+    <select
+      bind:value={selectedGateId}
+      disabled={!selectedCollectionId || availableGates.length === 0}
+    >
+      <option value="" hidden disabled>
+        {#if !selectedCollectionId}
+          No Collection Selected
+        {:else if availableGates.length === 0}
+          No Available Gates
+        {:else}
+          Select Gate
+        {/if}
+      </option>
+      {#if availableGates.length}
+        {#each availableGates as gate}
+          <option value={gate.id}>{gate.name}</option>
+        {/each}
+      {/if}
+    </select>
+  {/if}
+
+  <button
+    class="orange-btn"
+    onclick={handleAddGating}
+    disabled={!selectedGateId}
   >
-</div>
+    Gate Story
+  </button>
+</span>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .container {
-    flex-wrap: wrap;
+  div .container {
     justify-content: center;
-
-    // @include respond-up(tablet) {
-    //   &.classes {
-    //     justify-content: space-around;
-    //   }
-    // }
+    flex-wrap: wrap;
   }
 
-  .add-gating {
-    justify-content: center;
+  span {
+    width: 100%;
   }
 </style>

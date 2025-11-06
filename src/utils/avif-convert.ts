@@ -17,5 +17,21 @@ async function init() {
 /** Convert any image file → AVIF Blob (quality set in worker). */
 export async function toAvif(file: File) {
   if (!workerApi) workerApi = await init();
-  return workerApi.encodeAvif(await file.arrayBuffer());
+  const avif = await workerApi.encodeAvif(await file.arrayBuffer());
+  console.info(
+    '[media] AVIF conversion',
+    `${file.name}: ${formatBytes(file.size)} → ${formatBytes(avif.size)}`,
+  );
+  return avif;
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return '0 B';
+  const units = ['B', 'KB', 'MB', 'GB'];
+  const idx = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    units.length - 1,
+  );
+  const value = bytes / Math.pow(1024, idx);
+  return `${value >= 10 || idx === 0 ? value.toFixed(0) : value.toFixed(1)} ${units[idx]}`;
 }

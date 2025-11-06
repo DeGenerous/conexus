@@ -1,5 +1,6 @@
 <script lang="ts">
   import { blankImage, serveUrl } from '@constants/media';
+  import { resolveRenderableImage } from '@utils/file-validation';
 
   import LockSVG from '@components/icons/Lock.svelte';
 
@@ -16,6 +17,31 @@
   } = $props();
 
   const topicName: string = topic ? topic.name.trim() : '';
+
+  let tileImage = $state<string>(blankImage);
+
+  // Resolve the topic tile image to a safe, renderable source
+  $effect(() => {
+    const currentTopic = topic;
+    if (!currentTopic) {
+      tileImage = blankImage;
+      return;
+    }
+
+    const candidate = serveUrl(currentTopic.tile_file_url);
+    let cancelled = false;
+
+    tileImage = candidate;
+
+    (async () => {
+      const safe = await resolveRenderableImage(candidate);
+      if (!cancelled) tileImage = safe;
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  });
 
   const listTopicGates = (topic: CategoryTopic) => {
     return (
@@ -68,7 +94,7 @@
   >
     <img
       loading="lazy"
-      src={serveUrl(topic.tile_file_url) ?? blankImage}
+      src={tileImage}
       alt={topicName}
       draggable="false"
       height="1024"

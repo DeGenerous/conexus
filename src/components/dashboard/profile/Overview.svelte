@@ -20,7 +20,11 @@
   import { referralActivationNotice } from '@constants/modal';
   import { toastStore } from '@stores/toast.svelte';
   import { blankImage, serveUrl } from '@constants/media';
-  import { MEDIA_RULES, validateFiles } from '@utils/file-validation';
+  import {
+    MEDIA_RULES,
+    validateFiles,
+    resolveRenderableImage,
+  } from '@utils/file-validation';
   import { toAvif } from '@utils/avif-convert';
 
   import WalletConnect from '@components/web3/WalletConnect.svelte';
@@ -55,6 +59,7 @@
   let avatarFileId = $state<string>('');
   let isUploadingAvatar = $state<boolean>(false);
   let avatarInputEl = $state<HTMLInputElement | undefined>();
+  let avatarImage = $state<string>(blankImage);
 
   const formatMiB = (bytes: number) =>
     `${(bytes / 1_048_576).toFixed(1).replace(/\.0$/, '')} MiB`;
@@ -189,6 +194,31 @@
 
   const triggerAvatarPicker = () => avatarInputEl?.click();
 
+  // Keep the displayed avatar resilient to missing or broken files
+  $effect(() => {
+    const fileId = avatarFileId.trim();
+    const externalUrl = avatarUrl.trim();
+
+    const candidate = fileId
+      ? serveUrl(fileId)
+      : externalUrl
+        ? `/api/${encodeURIComponent(externalUrl)}`
+        : blankImage;
+
+    let cancelled = false;
+
+    avatarImage = candidate;
+
+    (async () => {
+      const safe = await resolveRenderableImage(candidate);
+      if (!cancelled) avatarImage = safe;
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  });
+
   const handleAvatarUpload = async (event: Event) => {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
@@ -248,15 +278,7 @@
 </script>
 
 {#if user}
-  <img
-    class="pfp round"
-    src={avatarFileId
-      ? serveUrl(avatarFileId)
-      : avatarUrl
-        ? `/api/${encodeURIComponent(avatarUrl)}`
-        : blankImage}
-    alt="PFP"
-  />
+  <img class="pfp round" src={avatarImage} alt="PFP" />
   <button
     onclick={triggerAvatarPicker}
     disabled={isUploadingAvatar}

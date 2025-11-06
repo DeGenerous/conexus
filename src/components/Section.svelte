@@ -3,6 +3,7 @@
 
   import CoNexusApp from '@lib/view';
   import { blankImage, serveUrl } from '@constants/media';
+  import { resolveRenderableImage } from '@utils/file-validation';
 
   import Category from '@components/Category.svelte';
   import SearchAndGenre from '@components/Filters.svelte';
@@ -30,6 +31,36 @@
   let loading = $state<boolean>(false);
   let allLoaded = $state<boolean>(false); // Prevent further requests when empty response
   let showNoCategoriesMessage = $state<boolean>(false);
+
+  let explorerImage = $state<string>(blankImage);
+
+  // Prefetch explorer portrait and swap to placeholder on failure
+  $effect(() => {
+    const currentExplorer = explorer;
+    if (!currentExplorer) {
+      explorerImage = blankImage;
+      return;
+    }
+
+    const candidate = currentExplorer.avatar_file_id
+      ? serveUrl(currentExplorer.avatar_file_id)
+      : currentExplorer.avatar_url
+        ? `/api/${encodeURIComponent(currentExplorer.avatar_url)}`
+        : blankImage;
+
+    let cancelled = false;
+
+    explorerImage = candidate;
+
+    (async () => {
+      const safe = await resolveRenderableImage(candidate);
+      if (!cancelled) explorerImage = safe;
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  });
 
   // incremental loader; each call pulls the next page and appends while respecting the cache for sections
   const fetchCategories = async () => {
@@ -173,15 +204,7 @@
 
 {#if intended === 'c' && explorer}
   <div class="explorer-bio flex">
-    <img
-      class="pfp round"
-      src={explorer.avatar_file_id
-        ? serveUrl(explorer.avatar_file_id)
-        : explorer.avatar_url
-          ? `/api/${encodeURIComponent(explorer.avatar_url)}`
-          : blankImage}
-      alt="Creator PFP"
-    />
+    <img class="pfp round" src={explorerImage} alt="Creator PFP" />
     <p>{explorer.avatar_bio}</p>
   </div>
 {/if}

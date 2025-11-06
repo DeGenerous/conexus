@@ -1,11 +1,14 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { serveUrl } from '@constants/media';
-  import { validateFiles } from '@utils/file-validation';
+  import { blankImage, serveUrl } from '@constants/media';
+  import {
+    validateFiles,
+    MEDIA_RULES,
+    resolveRenderableImage,
+  } from '@utils/file-validation';
   import { toastStore } from '@stores/toast.svelte';
   import { toAvif } from '@utils/avif-convert';
-  import { MEDIA_RULES } from '@utils/file-validation';
 
   let {
     topic_media_files = $bindable(),
@@ -27,6 +30,9 @@
   let tile = $state<string | null>(null);
   let audio = $state<string[]>([]);
   let video = $state<string | null>(null);
+  let descriptionPreview = $state<string>(blankImage);
+  let tilePreview = $state<string>(blankImage);
+  let backgroundSources = $state<Record<string, string>>({});
 
   let tooMuchFiles = $state<boolean>(false);
 
@@ -64,6 +70,82 @@
     video: () => (video ? 1 : 0),
     audio: () => audio.length,
   };
+
+  // Derive live preview for the description slot
+  $effect(() => {
+    const fileId = description;
+    if (!fileId) {
+      descriptionPreview = blankImage;
+      return;
+    }
+
+    let cancelled = false;
+
+    const candidate = serveUrl(fileId);
+    descriptionPreview = candidate;
+
+    (async () => {
+      const safe = await resolveRenderableImage(candidate);
+      if (!cancelled) descriptionPreview = safe;
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  });
+
+  // Derive live preview for the tile slot
+  $effect(() => {
+    const fileId = tile;
+    if (!fileId) {
+      tilePreview = blankImage;
+      return;
+    }
+
+    let cancelled = false;
+
+    const candidate = serveUrl(fileId);
+    tilePreview = candidate;
+
+    (async () => {
+      const safe = await resolveRenderableImage(candidate);
+      if (!cancelled) tilePreview = safe;
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  });
+
+  // Keep background previews in sync when files are added/removed
+  $effect(() => {
+    const ids = backgrounds.slice();
+    if (!ids.length) {
+      backgroundSources = {};
+      return;
+    }
+
+    let cancelled = false;
+
+    backgroundSources = Object.fromEntries(ids.map((id) => [id, serveUrl(id)]));
+
+    (async () => {
+      const entries = await Promise.all(
+        ids.map(async (id) => {
+          const safe = await resolveRenderableImage(serveUrl(id));
+          return [id, safe] as const;
+        }),
+      );
+
+      if (!cancelled) {
+        backgroundSources = Object.fromEntries(entries);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  });
 
   // Fetch stored media on load
   const loadMedia = async () => {
@@ -190,7 +272,7 @@
         {#if description}
           <span class="content flex" role="button" tabindex="0">
             <img
-              src={serveUrl(description)}
+              src={descriptionPreview}
               alt="Description"
               class="preview"
               draggable="false"
@@ -235,7 +317,7 @@
         {#if tile}
           <span class="content flex" role="button" tabindex="0">
             <img
-              src={serveUrl(tile)}
+              src={tilePreview}
               alt="Tile"
               class="preview"
               draggable="false"
@@ -332,7 +414,11 @@
           {#if backgrounds.length}
             {#each backgrounds as bg}
               <span class="content flex" role="button" tabindex="0">
-                <img src={serveUrl(bg)} alt="Background" draggable="false" />
+                <img
+                  src={backgroundSources[bg] ?? blankImage}
+                  alt="Background"
+                  draggable="false"
+                />
                 <button
                   class="red-btn"
                   onclick={() => handleDelete(bg, 'background')}

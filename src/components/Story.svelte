@@ -32,6 +32,7 @@
   import LockSVG from '@components/icons/Lock.svelte';
   import PlaySVG from '@components/icons/Play.svelte';
   import { toastStore } from '@stores/toast.svelte';
+  import { resolveRenderableImage } from '@utils/file-validation';
 
   let {
     section_name,
@@ -69,6 +70,36 @@
 
   let videoError = $state<boolean>(false);
   let imageError = $state<boolean>(false);
+  let descriptionImage = $state<string>(blankImage);
+
+  // Keep the story hero image valid across topic transitions
+  $effect(() => {
+    const topic = activeTopic;
+    const fileId = topic?.description_file_url ?? null;
+
+    if (!fileId) {
+      descriptionImage = blankImage;
+      imageError = false;
+      return;
+    }
+
+    const candidate = serveUrl(fileId);
+    let cancelled = false;
+
+    descriptionImage = candidate;
+
+    (async () => {
+      const safe = await resolveRenderableImage(candidate);
+      if (!cancelled) {
+        descriptionImage = safe;
+        imageError = safe === blankImage;
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  });
 
   // fetch the complete topic page payload plus unfinished stories for the current user
   const fetchTopicData = async (user_id: string | undefined): Promise<void> => {
@@ -243,13 +274,14 @@
           {:else}
             <img
               class="round-8 transparent-glowing"
-              src={imageError
-                ? blankImage
-                : serveUrl(activeTopic.description_file_url ?? blankImage)}
+              src={descriptionImage}
               alt={activeTopic.name ?? 'Default image'}
               draggable="false"
               width="1024"
-              onerror={() => (imageError = true)}
+              onerror={() => {
+                imageError = true;
+                descriptionImage = blankImage;
+              }}
             />
           {/if}
           <div class="flex">

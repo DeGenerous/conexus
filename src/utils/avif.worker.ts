@@ -5,7 +5,8 @@ import { encode } from '@jsquash/avif';
 
 /* ─────────── Config ─────────── */
 const MAX_LONG_EDGE = 2000; // px
-const QUALITY = 0.35; // 0‑1  (0.35 → quality 35%)
+const QUALITY = 0.25; // 0‑1  (lower = smaller files)
+const SUBSAMPLE = 1; // 0 = 4:4:4, 1 = 4:2:0 in lib defaults
 
 /* ───────── Down‑scale helper ───────── */
 async function downscale(img: ImageBitmap): Promise<ImageBitmap> {
@@ -48,6 +49,7 @@ async function encodeAvif(src: ArrayBuffer): Promise<Blob> {
   const avifBuffer = await encode(data, {
     quality: Math.round(QUALITY * 100), // jsQuash scale 0‑100
     speed: 6, // trade‑off quality / cpu
+    subsample: SUBSAMPLE,
   });
 
   return new Blob([avifBuffer], { type: 'image/avif' });

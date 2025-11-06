@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
 
   import { blankImage, serveUrl } from '@constants/media';
+  import { resolveRenderableImage } from '@utils/file-validation';
   import Account from '@lib/account';
   import { toastStore } from '@stores/toast.svelte';
   import openModal from '@stores/modal.svelte';
@@ -27,6 +28,7 @@
   let topics = $state<Bookmark[]>([]);
   let newFolderName = $state('');
   // let newTagName = $state('');
+  let bookmarkImages = $state<Record<string, string>>({});
 
   let openedTitle = $state<string>('Topics');
 
@@ -82,6 +84,54 @@
       openFolder(general.id, general.name);
     }
   };
+
+  // Build a cache of safe image URLs for the currently open folder
+  $effect(() => {
+    const list = topics;
+    if (!list.length) {
+      bookmarkImages = {};
+      return;
+    }
+
+    let cancelled = false;
+
+    bookmarkImages = Object.fromEntries(
+      list.map((topic) => {
+        const key = String(topic.id ?? topic.topic_id);
+        const candidate = serveUrl(topic.tile_file_url);
+        return [key, candidate] as const;
+      }),
+    );
+
+    (async () => {
+      const entries = await Promise.all(
+        list.map(async (topic) => {
+          const key = String(topic.id ?? topic.topic_id);
+          const candidate = serveUrl(topic.tile_file_url);
+          const safe = await resolveRenderableImage(candidate);
+          return { key, candidate, safe };
+        }),
+      );
+
+      if (!cancelled) {
+        const overrides = entries.filter(
+          ({ candidate, safe }) => safe !== candidate,
+        );
+        if (overrides.length) {
+          bookmarkImages = {
+            ...bookmarkImages,
+            ...Object.fromEntries(
+              overrides.map(({ key, safe }) => [key, safe] as const),
+            ),
+          };
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  });
 
   async function removeFolder(folder: BookmarkFolder) {
     if (!folder.id) {
@@ -257,7 +307,7 @@
       >
         <img
           loading="lazy"
-          src={serveUrl(topic.tile_file_url) ?? blankImage}
+          src={bookmarkImages[String(topic.id ?? topic.topic_id)] ?? blankImage}
           alt={topic.name}
           draggable="false"
           height="1024"

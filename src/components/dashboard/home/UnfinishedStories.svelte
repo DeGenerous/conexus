@@ -8,10 +8,12 @@
     SetCache,
     UNFINISHED_STORIES_RANGE_KEY,
   } from '@constants/cache';
+  import { resolveRenderableImage } from '@utils/file-validation';
 
   let account: Account = new Account();
 
   let unfinishedStories = $state<UserStoriesMetric[] | null>(null);
+  let tileImages = $state<Record<string, string>>({});
 
   let timeRanges: DurationEnum[] = [
     '1 DAY',
@@ -30,6 +32,53 @@
 
   $effect(() => {
     if (selectedRange) fetchUnfinishedStories(selectedRange);
+  });
+
+  // Map unfinished topics to guarded preview URLs
+  $effect(() => {
+    const topics = unfinishedStories;
+    if (!topics) {
+      tileImages = {};
+      return;
+    }
+
+    let cancelled = false;
+
+    tileImages = Object.fromEntries(
+      topics.map((topic) => {
+        const key = String(topic.topic_id);
+        const candidate = serveUrl(topic.tile_file_url);
+        return [key, candidate] as const;
+      }),
+    );
+
+    (async () => {
+      const entries = await Promise.all(
+        topics.map(async (topic) => {
+          const key = String(topic.topic_id);
+          const candidate = serveUrl(topic.tile_file_url);
+          const safe = await resolveRenderableImage(candidate);
+          return { key, candidate, safe };
+        }),
+      );
+      if (!cancelled) {
+        const overrides = entries.filter(
+          ({ candidate, safe }) => safe !== candidate,
+        );
+        if (overrides.length) {
+          tileImages = {
+            ...tileImages,
+            ...Object.fromEntries(
+              overrides.map(({ key, safe }) => [key, safe] as const),
+            ),
+          };
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   });
 
   onMount(() => {
@@ -68,7 +117,7 @@
       >
         <img
           loading="lazy"
-          src={serveUrl(topic.tile_file_url) ?? blankImage}
+          src={tileImages[String(topic.topic_id)] ?? blankImage}
           alt={topic.name}
           draggable="false"
           height="1024"

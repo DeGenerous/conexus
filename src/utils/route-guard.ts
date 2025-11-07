@@ -1,4 +1,5 @@
 import Account from '@lib/account';
+import Environment from '@lib/environment';
 import {
   isAdmin,
   isPlayer,
@@ -93,7 +94,8 @@ export async function checkUserRoles(
 }
 
 export const checkIfTesterApproved = async (): Promise<void> => {
-  const approved = await Promise.resolve(true); // Simulate API response
-  approvedTester.set(approved);
+  const environment = new Environment();
+  const approved = await environment.isTester();
+  approvedTester.set(Boolean(approved));
   if (!approved) redirectTo('/login'); // redirect to auth page
 };

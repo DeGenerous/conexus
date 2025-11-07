@@ -8,6 +8,7 @@
   import { toastStore } from '@stores/toast.svelte';
   import { getCurrentUser } from '@utils/route-guard';
   import { isAdmin, isPlayer } from '@stores/account.svelte';
+  import { registerPullRefresh } from '@stores/view.svelte';
 
   import CategoryBlock from '@components/dashboard/dream/manage/collections/CategoryBlock.svelte';
   import Dropdown from '@components/utils/Dropdown.svelte';
@@ -23,26 +24,30 @@
   let sections = $state<CollectionSection[]>([]);
   let creators = $state<CollectionCreator[]>([]);
   let creatorCategories = $state<CollectionCategory[]>([]);
+  // token that invalidates all expanded topic lists when incremented
+  let topicsRefreshToken = $state(0);
 
-  // Load initial collections for the active role
-  onMount(async () => {
-    if ($isAdmin) {
-      sections = await topicManager.getSectionCollection(page, pageSize, true);
-      creators = await topicManager.getCreatorCollection(page, pageSize, true);
-    } else if ($isPlayer) {
-      const user = await getCurrentUser();
-      userID = user?.id ?? '';
-      creatorCategories = await topicManager.getCreatorCategoryCollection(
-        userID,
-        page,
-        pageSize,
-        true,
-      );
-      creatorCategoryItems = {
-        ...creatorCategoryItems,
-        [CREATOR_SELF_KEY]: createCategoryItems(creatorCategories ?? []),
-      };
-    }
+  // hydrate initial datasets for the active role and register pull refresh
+  onMount(() => {
+    let cancelled = false;
+
+    (async () => {
+      if ($isAdmin) {
+        await loadAdminCollections();
+      } else if ($isPlayer) {
+        await loadPlayerCollections();
+      }
+
+      if (!cancelled && ($isAdmin || $isPlayer)) {
+        installPullToRefresh();
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      detachPullRefresh?.();
+      detachPullRefresh = null;
+    };
   });
 
   let adminToggle = $state<'sections' | 'creators'>('sections');
@@ -57,6 +62,106 @@
   let sectionReordering = $state<Set<string>>(new Set());
   let creatorReordering = $state<Set<string>>(new Set());
   const CREATOR_SELF_KEY = 'creator-self';
+  let detachPullRefresh: Nullable<() => void> = null;
+  // emit a new token whenever any topic mutation completes
+  const bumpTopicsRefresh = () => {
+    topicsRefreshToken += 1;
+  };
+
+  // keep section drag mirrors aligned with the latest server payload
+  const pruneSectionCategoryItems = (sectionList: CollectionSection[]) => {
+    const next: Record<string, DraggableCategory[]> = {};
+    sectionList.forEach((section) => {
+      const existing = sectionCategoryItems[section.section_id];
+      if (existing) next[section.section_id] = existing;
+    });
+    sectionCategoryItems = next;
+  };
+
+  // keep creator drag mirrors aligned with the latest server payload
+  const pruneCreatorCategoryItems = (creatorList: CollectionCreator[]) => {
+    const next: Record<string, DraggableCategory[]> = {};
+    creatorList.forEach((creator) => {
+      const existing = creatorCategoryItems[creator.creator_id];
+      if (existing) next[creator.creator_id] = existing;
+    });
+    if (creatorCategoryItems[CREATOR_SELF_KEY]) {
+      next[CREATOR_SELF_KEY] = creatorCategoryItems[CREATOR_SELF_KEY];
+    }
+    creatorCategoryItems = next;
+  };
+
+  // fetch account id only when needed so creator dashboards can lazy load
+  async function ensureUserIdentifier(refresh = false): Promise<string> {
+    if (!userID || refresh) {
+      const user = await getCurrentUser(refresh);
+      userID = user?.id ?? '';
+    }
+    return userID;
+  }
+
+  // shared loader for admin tabs (sections + creators)
+  async function loadAdminCollections(refresh = false) {
+    const [sectionData, creatorData] = await Promise.all([
+      topicManager.getSectionCollection(page, pageSize, refresh),
+      topicManager.getCreatorCollection(page, pageSize, refresh),
+    ]);
+
+    sections = sectionData ?? [];
+    creators = creatorData ?? [];
+
+    pruneSectionCategoryItems(sections);
+    pruneCreatorCategoryItems(creators);
+
+    if (refresh) {
+      const sectionRefreshes = Array.from(expandedSections).map((id) =>
+        refreshSectionCategories(id),
+      );
+      const creatorRefreshes = Array.from(expandedCreators).map((id) =>
+        refreshCreatorCategories(id),
+      );
+      await Promise.all([...sectionRefreshes, ...creatorRefreshes]);
+      bumpTopicsRefresh();
+    }
+  }
+
+  // shared loader for creator-only dashboard
+  async function loadPlayerCollections(refresh = false) {
+    const id = await ensureUserIdentifier(refresh);
+    if (!id) return;
+
+    creatorCategories =
+      (await topicManager.getCreatorCategoryCollection(
+        id,
+        page,
+        pageSize,
+        refresh,
+      )) ?? [];
+
+    creatorCategoryItems = {
+      ...creatorCategoryItems,
+      [CREATOR_SELF_KEY]: createCategoryItems(creatorCategories ?? []),
+    };
+    if (refresh) bumpTopicsRefresh();
+  }
+
+  // unregister existing handler so other routes can attach theirs
+  // expose manual cache bust via pull-to-refresh gesture
+  const installPullToRefresh = () => {
+    detachPullRefresh?.();
+
+    const callback = async () => {
+      if ($isAdmin) {
+        await loadAdminCollections(true);
+      } else if ($isPlayer) {
+        await loadPlayerCollections(true);
+      }
+    };
+
+    detachPullRefresh = registerPullRefresh(callback);
+  };
+  // called by child blocks after any topic-level mutation
+  const handleTopicMutated = () => bumpTopicsRefresh();
 
   // Track which sections/creators are currently persisting their new order
   function setSectionReordering(sectionId: string, active: boolean) {
@@ -121,7 +226,6 @@
             id,
             1,
             pageSize,
-            true,
           );
         }
         ensureSectionCategoryItems(section);
@@ -144,7 +248,6 @@
           id,
           1,
           pageSize,
-          true,
         );
       }
       if (creator) {
@@ -473,7 +576,12 @@
               >
                 {#each getCreatorCategoryItems(creator.creator_id, creator.categories) as category (category.id)}
                   <div class="category-draggable">
-                    <CategoryBlock {category} {topicManager} />
+                    <CategoryBlock
+                      {category}
+                      {topicManager}
+                      {topicsRefreshToken}
+                      onTopicMutated={handleTopicMutated}
+                    />
                   </div>
                 {/each}
               </div>
@@ -514,7 +622,12 @@
             >
               {#each getSectionCategoryItems(section.section_id, section.categories) as category (category.id)}
                 <div class="category-draggable">
-                  <CategoryBlock {category} {topicManager} />
+                  <CategoryBlock
+                    {category}
+                    {topicManager}
+                    {topicsRefreshToken}
+                    onTopicMutated={handleTopicMutated}
+                  />
                 </div>
               {/each}
             </div>
@@ -549,7 +662,12 @@
     >
       {#each getCreatorCategoryItems(CREATOR_SELF_KEY, creatorCategories) as category (category.id)}
         <div class="category-draggable">
-          <CategoryBlock {category} {topicManager} />
+          <CategoryBlock
+            {category}
+            {topicManager}
+            {topicsRefreshToken}
+            onTopicMutated={handleTopicMutated}
+          />
         </div>
       {/each}
     </div>

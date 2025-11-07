@@ -12,17 +12,29 @@
   let {
     category,
     topicManager,
+    topicsRefreshToken = 0,
+    onTopicMutated,
   }: {
     category: CollectionCategory;
     topicManager: Topics;
+    topicsRefreshToken?: number;
+    onTopicMutated?: () => void;
   } = $props();
+  // parent passes shared refresh token + notifier so all categories stay in sync
 
   // Local mirror of the category to support optimistic updates during DnD
   let workingCategory = $state<CollectionCategory>(category);
   let expandedCategories = $state<Set<string>>(new Set());
   let isReordering = $state(false);
+  let lastRefreshToken = $state(topicsRefreshToken ?? 0);
+  // true when an external mutation happened while collapsed, forcing a reload next open
+  let needsForcedRefresh = $state(false);
 
   type DraggableTopic = CollectionTopic & { id: string };
+  const notifyTopicsChanged = () => {
+    // inform parent so sibling blocks refresh their copies too
+    onTopicMutated?.();
+  };
 
   function createTopicItems(
     topics: CollectionTopic[] = workingCategory.topics ?? [],
@@ -42,10 +54,10 @@
     topicItems = createTopicItems(topics);
   }
 
-  // Pull the latest topics for this category and cache them for other views
+  // lazily load topics unless a mutation explicitly asks for fresh data
   async function fetchTopicCollection(
     categoryId: string,
-    refresh: boolean = true,
+    refresh: boolean = false,
   ) {
     workingCategory.topics = await topicManager.getTopicCollection(
       categoryId,
@@ -55,6 +67,9 @@
     );
     workingCategory.topic_count = workingCategory.topics?.length ?? 0;
     syncTopicItems(workingCategory.topics ?? []);
+    if (refresh) {
+      needsForcedRefresh = false;
+    }
   }
 
   // keep a mutable working copy in sync with new props so drag/optimistic edits don't fight parent updates
@@ -104,6 +119,19 @@
     }
   });
 
+  // watch for global refresh tokens and keep this block in sync
+  $effect(() => {
+    const token = topicsRefreshToken ?? 0;
+    if (token === lastRefreshToken) return;
+    lastRefreshToken = token;
+
+    if (expandedCategories.has(workingCategory.category_id)) {
+      void fetchTopicCollection(workingCategory.category_id, true);
+    } else {
+      needsForcedRefresh = true;
+    }
+  });
+
   async function toggleExpandCategory(categoryId: string) {
     if (workingCategory.topic_count === 0) return;
     const newSet = new Set(expandedCategories);
@@ -112,8 +140,10 @@
     } else {
       newSet.add(categoryId);
 
-      // load topics if not already loaded
-      fetchTopicCollection(categoryId);
+      const forceRefresh = needsForcedRefresh;
+      // load topics if not already loaded or when marked stale
+      await fetchTopicCollection(categoryId, forceRefresh);
+      needsForcedRefresh = false;
     }
     expandedCategories = newSet;
   }
@@ -131,6 +161,7 @@
   ) {
     event.preventDefault();
     await topicManager.changeAvailability(topic_id, available);
+    notifyTopicsChanged();
     await fetchTopicCollection(workingCategory.category_id, true);
   }
 
@@ -141,17 +172,18 @@
   ) {
     event.preventDefault();
     await topicManager.changeVisibility(topic_id, visibility);
+    notifyTopicsChanged();
     await fetchTopicCollection(workingCategory.category_id, true);
   }
 
   async function submitTopic(event: Event, topic_id: string) {
     event.preventDefault();
     await topicManager.submitTopic(topic_id);
+    notifyTopicsChanged();
     await fetchTopicCollection(workingCategory.category_id, true);
   }
 
   // commit reordering changes sequentially so we can bail out and refresh if any update fails
-  // Commit reordering changes sequentially so we can bail out and refresh if any update fails
   async function persistTopicOrder(
     categoryId: string,
     updates: { topic_id: string; order: number }[],
@@ -182,6 +214,7 @@
       }
 
       toastStore.show('Topic order updated', 'info');
+      notifyTopicsChanged();
     } finally {
       isReordering = false;
     }

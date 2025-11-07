@@ -36,6 +36,7 @@
   import CopySVG from '@components/icons/Copy.svelte';
   import EditSVG from '@components/icons/Edit.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
+  import { registerPullRefresh } from '@stores/view.svelte';
 
   // SIGNED IN USER PROFILE
 
@@ -60,6 +61,7 @@
   let isUploadingAvatar = $state<boolean>(false);
   let avatarInputEl = $state<HTMLInputElement | undefined>();
   let avatarImage = $state<string>(blankImage);
+  let detachPullRefresh: Nullable<() => void> = null;
 
   const formatMiB = (bytes: number) =>
     `${(bytes / 1_048_576).toFixed(1).replace(/\.0$/, '')} MiB`;
@@ -69,21 +71,48 @@
     subscribedToNewsletter = await account.subscriptionStatus(user?.email);
   };
 
-  onMount(async () => {
-    user = await getCurrentUser(true);
-    roles = await account.fetchRoles();
+  // hook pull-to-refresh so users can force a fresh profile fetch
+  const installPullToRefresh = () => {
+    detachPullRefresh?.();
+    detachPullRefresh = registerPullRefresh(async () => {
+      await hydrateProfile(true);
+    });
+  };
 
-    console.log(user);
+  // central loader that keeps user, roles, and subscription in sync
+  async function hydrateProfile(refresh = false) {
+    const [nextUser, nextRoles] = await Promise.all([
+      getCurrentUser(refresh),
+      account.fetchRoles(refresh),
+    ]);
+
+    user = nextUser;
+    roles = nextRoles;
 
     userRole = roles.find((role) => role.name === user?.role_name) || null;
 
-    checkSubscription();
+    await checkSubscription();
 
     usernameInput = user?.username || '';
     refCodeInput = user?.referral_code || '';
     bioInput = user?.avatar_bio || '';
     avatarUrl = user?.avatar_url || '';
     avatarFileId = user?.avatar_file_id || '';
+  }
+
+  onMount(() => {
+    let cancelled = false;
+
+    (async () => {
+      await hydrateProfile();
+      if (!cancelled) installPullToRefresh();
+    })();
+
+    return () => {
+      cancelled = true;
+      detachPullRefresh?.();
+      detachPullRefresh = null;
+    };
   });
 
   // Username

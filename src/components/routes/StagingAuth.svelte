@@ -20,7 +20,5 @@
     placeholder="Enter your email"
     bind:value={inputEmail}
   />
-  <button onclick={verifyEmail} disabled={!emailValid}>
-    Verify Email
-  </button>
+  <button onclick={verifyEmail} disabled={!emailValid}> Verify Email </button>
 </div>

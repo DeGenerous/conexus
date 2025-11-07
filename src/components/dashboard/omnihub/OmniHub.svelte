@@ -5,6 +5,7 @@
   import { NAV_ROUTES } from '@constants/routes';
   import { normalizeMeta } from '@utils/potentials';
   import { POTENTIALS_COLLECTION_ID } from '@constants/curation';
+  import { registerPullRefresh } from '@stores/view.svelte';
 
   import NFTSection from '@components/dashboard/omnihub/NFTs.svelte';
 
@@ -17,6 +18,7 @@
   let potentials = $state<Array<NFT>>([]);
   let potentialsPower = $state<number>(0);
   let userRank = $state<Nullable<string>>(null);
+  let detachPullRefresh: Nullable<() => void> = null;
 
   function nftTileToNFT(nfts: NFTTile[]): Array<NFT> {
     return nfts.map((nft) => ({
@@ -28,10 +30,25 @@
     }));
   }
 
-  onMount(async () => {
-    const data = await curation.omnihub(POTENTIALS_COLLECTION_ID);
+  // allow users to manually bust the cached omnihub payload
+  const installPullToRefresh = () => {
+    detachPullRefresh?.();
+    detachPullRefresh = registerPullRefresh(async () => {
+      await loadOmniHub(true);
+    });
+  };
+
+  // central fetcher so both initial mount and pull-to-refresh share logic
+  async function loadOmniHub(refresh = false) {
+    if (!refresh) loading = true;
+    noWalletDetected = false;
+
+    const data = await curation.omnihub(POTENTIALS_COLLECTION_ID, refresh);
 
     if (!data) {
+      potentials = [];
+      potentialsPower = 0;
+      userRank = null;
       loading = false;
       noWalletDetected = true;
       return;
@@ -47,10 +64,32 @@
           ? potentialsMeta.total_level
           : 0;
         userRank = potentialsMeta.rank ? potentialsMeta.rank : null;
+      } else {
+        potentialsPower = 0;
+        userRank = null;
       }
+    } else {
+      potentials = [];
+      potentialsPower = 0;
+      userRank = null;
     }
 
     loading = false;
+  }
+
+  onMount(() => {
+    let cancelled = false;
+
+    (async () => {
+      await loadOmniHub();
+      if (!cancelled) installPullToRefresh();
+    })();
+
+    return () => {
+      cancelled = true;
+      detachPullRefresh?.();
+      detachPullRefresh = null;
+    };
   });
 </script>
 

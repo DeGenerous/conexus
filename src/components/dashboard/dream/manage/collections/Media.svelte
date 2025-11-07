@@ -196,17 +196,17 @@
         let upload = f;
 
         if (shouldConvertToAvif(slot, f)) {
-          toastStore.show(`Converting ${f.name} to AVIF format…`);
+          toastStore.show(`Uploading ${f.name} file…`);
           try {
-            const avif = await toAvif(f);
-            if (avif.size > MEDIA_RULES[slot].maxBytes) {
+            const { file: converted } = await toAvif(f, {
+              maxBytes: MEDIA_RULES[slot].maxBytes,
+            });
+            if (converted.size > MEDIA_RULES[slot].maxBytes) {
               throw new Error(
                 `Converted image is larger than ${slotLimitLabel[slot]}`,
               );
             }
-            upload = new File([avif], f.name.replace(/\.\w+$/, '.avif'), {
-              type: 'image/avif',
-            });
+            upload = converted;
           } catch (err) {
             toastStore.show(String(err), 'error');
             continue; // skip this file

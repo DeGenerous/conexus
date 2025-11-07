@@ -234,17 +234,19 @@
       let upload = nextFile;
 
       if (shouldConvertAvatar(nextFile)) {
-        toastStore.show(`Converting ${nextFile.name} to AVIF format…`);
+        toastStore.show(`Uploading ${nextFile.name} file…`);
         try {
-          const avif = await toAvif(nextFile);
-          if (avif.size > MEDIA_RULES.description.maxBytes) {
+          const { file: converted } = await toAvif(nextFile, {
+            maxBytes: MEDIA_RULES.description.maxBytes,
+          });
+          if (converted.size > MEDIA_RULES.description.maxBytes) {
             throw new Error(
-              `Converted image is larger than ${formatMiB(MEDIA_RULES.description.maxBytes)}`,
+              `Converted image is larger than ${formatMiB(
+                MEDIA_RULES.description.maxBytes,
+              )}`,
             );
           }
-          upload = new File([avif], nextFile.name.replace(/\.\w+$/, '.avif'), {
-            type: 'image/avif',
-          });
+          upload = converted;
         } catch (err) {
           toastStore.show(String(err), 'error');
           return;

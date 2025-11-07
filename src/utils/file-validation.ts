@@ -46,7 +46,7 @@ export const MEDIA_RULES: Record<MediaType, MediaRule> = {
   /* video ------------------------------------------------------------ */
   video: {
     mime: /^video\/mp4$/i,
-    maxBytes: 15 * MiB,
+    maxBytes: 10 * MiB,
     maxFiles: 1,
     magic: [
       // ISO‑BMFF “ftyp” box starts at byte 4 (‘ftyp’/‘isom’/… acceptable)

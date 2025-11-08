@@ -92,6 +92,7 @@
     userRole = roles.find((role) => role.name === user?.role_name) || null;
 
     await checkSubscription();
+    await fetchReferralCode();
 
     usernameInput = user?.username || '';
     refCodeInput = user?.referral_code || '';
@@ -130,6 +131,7 @@
     try {
       await account.changeUsername(usernameInput);
       editingUsername = false;
+      await hydrateProfile(true);
     } catch (error) {
       resetUsername();
     }
@@ -157,6 +159,8 @@
 
   // Referral code
 
+  let refCode = $state<Nullable<ReferralCode>>(null);
+
   const copyRefCode = (code: string) => {
     let codeBtn = document.getElementById(code) as HTMLButtonElement;
     navigator.clipboard.writeText(code);
@@ -181,6 +185,23 @@
     } catch (error) {
       resetRefCode();
     }
+  };
+
+  const fetchReferralCode = async () => {
+    refCode = await account.getReferralCode();
+  };
+
+  const handleGenerateReferralCode = async () => {
+    if (!user?.referred) {
+      openModal(
+        referralActivationNotice,
+        'Proceed',
+        () => (window.location.href = '/referral'),
+      );
+      return;
+    }
+    await account.generateReferralCode();
+    await hydrateProfile(true);
   };
 
   // Web3 wallets
@@ -284,7 +305,7 @@
 
       console.log('Uploading media file:', upload);
       await account.changeAvatar(undefined, upload);
-      window.location.reload();
+      await hydrateProfile(true);
     } catch (error) {
       console.error('Failed to upload avatar:', error);
     } finally {
@@ -387,76 +408,58 @@
     </div>
 
     {#if user.email_confirmed}
-      {#await account.getReferralCode() then refCode}
-        <div class="flex-row">
-          <h4>Referral Code</h4>
-          <div class="ref-code-wrapper container">
-            {#if refCode !== null}
-              {#if refCode.usage_count >= refCode.max_usage}
-                <span class="flex">
-                  <h5 class="text-glowing">
-                    🏆 You've unlocked all {refCode.max_usage} referrals 🚀
-                  </h5>
-                  <p class="text-glowing">
-                    Your early support won't go unnoticed. Stay tuned for
-                    updates.
-                  </p>
-                </span>
-              {:else}
-                <h5>Referrals: {refCode.usage_count}</h5>
-                {#if editingRefCode}
-                  <CloseSVG onclick={resetRefCode} />
-                {/if}
-                <input
-                  bind:value={refCodeInput}
-                  type="text"
-                  placeholder="Enter referral code"
-                  size={refCodeInput.length + 1}
-                  minlength="3"
-                  maxlength="20"
-                  disabled={!editingRefCode}
-                />
-                {#if editingRefCode}
-                  <SaveSVG
-                    onclick={changeRefCode}
-                    disabled={refCode.code === refCodeInput ||
-                      refCodeInput.length < 3}
-                  />
-                {:else}
-                  <EditSVG bind:editing={editingRefCode} />
-                {/if}
-                <button
-                  class="void-btn flex"
-                  id={refCode.code}
-                  onclick={() => copyRefCode(refCode.code)}
-                  aria-label="Copy code {refCode.code}"
-                >
-                  <CopySVG />
-                </button>
-              {/if}
+      <div class="flex-row">
+        <h4>Referral Code</h4>
+        <div class="ref-code-wrapper container">
+          {#if refCode}
+            {#if refCode.usage_count >= refCode.max_usage}
+              <span class="flex">
+                <h5 class="text-glowing">
+                  🏆 You've unlocked all {refCode.max_usage} referrals 🚀
+                </h5>
+                <p class="text-glowing">
+                  Your early support won't go unnoticed. Stay tuned for updates.
+                </p>
+              </span>
             {:else}
+              <h5>Referrals: {refCode.usage_count}</h5>
+              {#if editingRefCode}
+                <CloseSVG onclick={resetRefCode} />
+              {/if}
+              <input
+                bind:value={refCodeInput}
+                type="text"
+                placeholder="Enter referral code"
+                size={refCodeInput.length + 1}
+                minlength="3"
+                maxlength="20"
+                disabled={!editingRefCode}
+              />
+              {#if editingRefCode}
+                <SaveSVG
+                  onclick={changeRefCode}
+                  disabled={refCode.code === refCodeInput ||
+                    refCodeInput.length < 3}
+                />
+              {:else}
+                <EditSVG bind:editing={editingRefCode} />
+              {/if}
               <button
-                class="green-btn"
-                onclick={() => {
-                  if (!user?.referred) {
-                    openModal(
-                      referralActivationNotice,
-                      'Proceed',
-                      () => (window.location.href = '/referral'),
-                    );
-                    return;
-                  }
-                  account
-                    .generateReferralCode()
-                    .then(() => window.location.reload());
-                }}
+                class="void-btn flex"
+                id={refCode.code}
+                onclick={() => copyRefCode(refCode?.code!)}
+                aria-label="Copy code {refCode.code}"
               >
-                Generate referral code
+                <CopySVG />
               </button>
             {/if}
-          </div>
+          {:else}
+            <button class="green-btn" onclick={handleGenerateReferralCode}>
+              Generate referral code
+            </button>
+          {/if}
         </div>
-      {/await}
+      </div>
     {/if}
 
     <div class="flex-row">
@@ -478,6 +481,7 @@
                 }
                 await account.changeBio(bioInput);
                 editingBio = false;
+                await hydrateProfile(true);
               }}
               disabled={user?.avatar_bio === bioInput}
             />

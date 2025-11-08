@@ -18,7 +18,7 @@
 
   import ExploreCategory from '@components/dashboard/dream/manage/collections/AddTopicCategory.svelte';
   import GenreTags from '@components/dashboard/dream/manage/collections/GenreTags.svelte';
-  import NftGating from '@components/dashboard/dream/manage/collections/NftGating.svelte';
+  import Gating from '@components/dashboard/dream/manage/collections/Gating.svelte';
   import TopicSettings from '@components/dashboard/common/TopicSettings.svelte';
   import Media from '@components/dashboard/dream/manage/collections/Media.svelte';
 
@@ -345,7 +345,7 @@
       {#if $isAdmin}
         <hr />
 
-        <NftGating {topic_gates} {handleGatingChange} />
+        <Gating {topic_gates} {handleGatingChange} />
       {/if}
     </section>
 

@@ -11,7 +11,7 @@
     topic_gates,
     handleGatingChange,
   }: {
-    topic_gates: any[];
+    topic_gates: TopicGate[] | undefined;
     handleGatingChange: (
       gate_id: string,
       method: 'add' | 'remove',
@@ -61,7 +61,7 @@
 
     try {
       await handleGatingChange(gateToRemove.id, 'remove');
-      topic_gates = topic_gates.filter((gate) => gate.gate_id !== id);
+      topic_gates = topic_gates?.filter((gate) => gate.gate_id !== id);
     } catch (error) {
       console.error('Error removing gate:', error);
     }
@@ -73,7 +73,7 @@
       return;
     }
 
-    if (topic_gates.some((tg) => tg.gate_id === selectedGateId)) {
+    if (topic_gates?.some((tg) => tg.gate_id === selectedGateId)) {
       toastStore.show('This gate is already added', 'error');
       return;
     }
@@ -86,7 +86,7 @@
 
     try {
       await handleGatingChange(newGate.id, 'add');
-      topic_gates = [...topic_gates, newGate];
+      topic_gates = [...(topic_gates ?? []), newGate as TopicGate];
       selectedGateId = '';
     } catch (error) {
       console.error('Error adding gate:', error);
@@ -128,7 +128,7 @@
     <p class="validation red-txt">{errorGates}</p>
   {:else}
     {@const availableGates = collectionGates.filter(
-      (c) => !topic_gates.some((tc: TopicGate) => tc.gate_id === c.id),
+      (c) => !topic_gates?.some((tc: TopicGate) => tc.gate_id === c.id),
     )}
     <select
       bind:value={selectedGateId}

@@ -63,33 +63,30 @@ export default class CoNexus {
       mode,
     );
 
-    if (!data) {
-      if (status === 'error') {
-        if (message.match(ERROR_REQUIRED_TOKEN)) {
-          const errorMessage: string[] = message.split('. ');
-
-          const errorTitle = errorMessage[0];
-          const nftLinks = errorMessage[1];
-
-          openModal(`
-            <h4>${errorTitle}</h4>
-            <p>${nftLinks}</p>
-          `);
-        } else if (message.match(ERROR_OUT_OF_CREDITS)) {
-          const errorMessage: string[] = message.split(', ');
-
-          const errorTitle = errorMessage[0];
-          const outOfCredits = errorMessage[1];
-
-          openModal(`
-            <h4>${errorTitle}</h4>
-            <p>${outOfCredits.charAt(0).toUpperCase() + outOfCredits.slice(1)}</p>
-          `);
-        }
-        api_error(message);
-      }
-
+    if (status === 'error' || !data) {
       game.loading = false;
+      if (message.match(ERROR_REQUIRED_TOKEN)) {
+        const errorMessage: string[] = message.split('. ');
+
+        const errorTitle = errorMessage[0];
+        const nftLinks = errorMessage[1];
+
+        openModal(`
+          <h4>${errorTitle}</h4>
+          <p>${nftLinks}</p>
+        `);
+      } else if (message.match(ERROR_OUT_OF_CREDITS)) {
+        const errorMessage: string[] = message.split(', ');
+
+        const errorTitle = errorMessage[0];
+        const outOfCredits = errorMessage[1];
+
+        openModal(`
+          <h4>${errorTitle}</h4>
+          <p>${outOfCredits.charAt(0).toUpperCase() + outOfCredits.slice(1)}</p>
+        `);
+      }
+      api_error(message);
       return;
     }
 

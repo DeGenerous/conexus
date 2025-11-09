@@ -489,6 +489,14 @@ html {
       animation-duration: 36s !important;
     }
 
+    @include mobile-only {
+      width: 100vw;
+      margin-inline: -1.5rem;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
+
     input:not(input[type='range']),
     textarea,
     select {

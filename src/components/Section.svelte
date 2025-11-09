@@ -203,7 +203,7 @@
 </script>
 
 {#if intended === 'c' && explorer}
-  <div class="explorer-bio flex">
+  <div class="explorer-bio flex pad-inline">
     <img class="pfp round" src={explorerImage} alt="Creator PFP" />
     <p>{explorer.avatar_bio}</p>
   </div>

@@ -24,6 +24,7 @@
   class:cta
   class:green={color === 'green'}
   class:white={color === 'white'}
+  class:fixed-width={text === ''}
   {onclick}
   onpointerover={() => {
     if (!disabled) svgFocus = true;
@@ -56,6 +57,10 @@
   button {
     width: auto;
     fill: none;
+
+    &.fixed-width {
+      width: 2rem;
+    }
 
     &:hover:not(&:disabled),
     &:active:not(&:disabled),

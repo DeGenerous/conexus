@@ -761,10 +761,8 @@ a11y_no_noninteractive_element_interactions -->
 
   // GENERAL STEP STYLING
   .step-wrapper {
-    margin-top: -2rem;
-
     @include respond-up(small-desktop) {
-      margin-bottom: 4rem;
+      margin-block: -4rem 4rem;
     }
 
     * {

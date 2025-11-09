@@ -169,7 +169,7 @@
   }
 
   .kids-mode {
-    padding-block: 0.5rem;
+    padding: 0.5rem;
     @include deep-green(0.5);
 
     label {

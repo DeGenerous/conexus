@@ -43,14 +43,24 @@
     if (!refresh) loading = true;
     noWalletDetected = false;
 
-    const data = await curation.omnihub(POTENTIALS_COLLECTION_ID, refresh);
-
-    if (!data) {
+    const resetData = () => {
       potentials = [];
       potentialsPower = 0;
       userRank = null;
       loading = false;
-      noWalletDetected = true;
+    };
+
+    let data: Nullable<OmnihubData> = null;
+
+    try {
+      data = await curation.omnihub(POTENTIALS_COLLECTION_ID, refresh);
+    } catch (error) {
+      resetData();
+      return;
+    }
+
+    if (!data) {
+      resetData();
       return;
     }
 
@@ -160,7 +170,7 @@
     background-size: contain;
 
     > img {
-      width: 20rem;
+      width: min(20rem, 100%);
     }
 
     > div {

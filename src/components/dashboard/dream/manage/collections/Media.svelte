@@ -583,7 +583,8 @@
       }
 
       .audio-content {
-        min-width: 20rem;
+        min-width: min(20rem, 100%);
+        width: 100%;
         height: unset;
 
         @include respond-up(small-desktop) {

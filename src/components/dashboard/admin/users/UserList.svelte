@@ -264,11 +264,18 @@
       }
 
       @include mobile-only {
+        width: 100vw;
+        margin-inline: -1.5rem;
         flex-wrap: wrap;
         row-gap: 0.5rem;
 
         .user-data {
           justify-content: center;
+        }
+
+        &:first-of-type {
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
         }
       }
     }

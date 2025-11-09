@@ -15,7 +15,7 @@
   } = $props();
 
   // Gesture settings
-  const MIN_VISUAL_DISTANCE = 6;
+  const MIN_VISUAL_DISTANCE = 2;
   const RESUME_DELAY_MS = 600;
   const TOP_SETTLE_MS = 1200;
 

@@ -31,6 +31,8 @@
   onMount(() => {
     let cancelled = false;
 
+    startDragPolicyWatchers();
+
     (async () => {
       if ($isAdmin) {
         await loadAdminCollections();
@@ -47,6 +49,10 @@
       cancelled = true;
       detachPullRefresh?.();
       detachPullRefresh = null;
+      detachPointerChange?.();
+      detachPointerChange = null;
+      detachResizeListener?.();
+      detachResizeListener = null;
     };
   });
 
@@ -61,11 +67,61 @@
   let creatorCategoryItems = $state<Record<string, DraggableCategory[]>>({});
   let sectionReordering = $state<Set<string>>(new Set());
   let creatorReordering = $state<Set<string>>(new Set());
+  let disableDragInteractions = $state(false);
   const CREATOR_SELF_KEY = 'creator-self';
   let detachPullRefresh: Nullable<() => void> = null;
+  let detachPointerChange: Nullable<() => void> = null;
+  let detachResizeListener: Nullable<() => void> = null;
   // emit a new token whenever any topic mutation completes
   const bumpTopicsRefresh = () => {
     topicsRefreshToken += 1;
+  };
+
+  // Disable drag-and-drop on small/touch devices so inputs handle ordering
+  const evaluateDragPolicy = () => {
+    if (typeof window === 'undefined') return;
+    const pointerMatches =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(pointer: coarse)').matches;
+    const widthMatches = window.innerWidth < 768;
+    disableDragInteractions = pointerMatches || widthMatches;
+  };
+
+  // Recalculate drag policy whenever pointer capabilities or viewport size change
+  const startDragPolicyWatchers = () => {
+    if (typeof window === 'undefined') return;
+    evaluateDragPolicy();
+
+    const pointerQuery =
+      typeof window.matchMedia === 'function'
+        ? window.matchMedia('(pointer: coarse)')
+        : null;
+    const handlePointerChange = () => evaluateDragPolicy();
+    if (pointerQuery) {
+      if (typeof pointerQuery.addEventListener === 'function') {
+        pointerQuery.addEventListener('change', handlePointerChange);
+        detachPointerChange = () =>
+          pointerQuery.removeEventListener('change', handlePointerChange);
+      } else {
+        pointerQuery.addListener(handlePointerChange);
+        detachPointerChange = () =>
+          pointerQuery.removeListener(handlePointerChange);
+      }
+    }
+
+    const handleResize = () => evaluateDragPolicy();
+    window.addEventListener('resize', handleResize);
+    detachResizeListener = () =>
+      window.removeEventListener('resize', handleResize);
+  };
+
+  // Centralized cache-busting hook shared with pull-to-refresh + manual reorders
+  const refreshCollections = async () => {
+    if ($isAdmin) {
+      await loadAdminCollections(true);
+    } else if ($isPlayer) {
+      await loadPlayerCollections(true);
+    }
   };
 
   // keep section drag mirrors aligned with the latest server payload
@@ -149,16 +205,7 @@
   // expose manual cache bust via pull-to-refresh gesture
   const installPullToRefresh = () => {
     detachPullRefresh?.();
-
-    const callback = async () => {
-      if ($isAdmin) {
-        await loadAdminCollections(true);
-      } else if ($isPlayer) {
-        await loadPlayerCollections(true);
-      }
-    };
-
-    detachPullRefresh = registerPullRefresh(callback);
+    detachPullRefresh = registerPullRefresh(refreshCollections);
   };
   // called by child blocks after any topic-level mutation
   const handleTopicMutated = () => bumpTopicsRefresh();
@@ -191,6 +238,53 @@
       ...category,
       id: category.category_id,
     }));
+  }
+
+  // Utility that repositions a category inside a list while keeping ordering contiguous
+  function reorderCategoryList(
+    items: DraggableCategory[],
+    categoryId: string,
+    requestedOrder: number,
+  ): DraggableCategory[] | null {
+    if (!items || items.length === 0) return null;
+    const currentIndex = items.findIndex(
+      (category) => category.category_id === categoryId,
+    );
+    if (currentIndex === -1) return null;
+
+    const clampedOrder = Math.min(
+      Math.max(Math.round(requestedOrder), 1),
+      items.length,
+    );
+    if (currentIndex === clampedOrder - 1) return null;
+
+    const working = items.map((category) => ({ ...category }));
+    const [moved] = working.splice(currentIndex, 1);
+    working.splice(clampedOrder - 1, 0, moved);
+
+    return working.map((category, index) => ({
+      ...category,
+      category_order: index + 1,
+    }));
+  }
+
+  // Produces the minimal mutation payload for the backend by diffing previous order
+  function diffCategoryOrders(
+    previous: CollectionCategory[],
+    updated: DraggableCategory[],
+  ) {
+    return updated
+      .map(({ category_id, category_order }) => {
+        const previousOrder = previous.find(
+          (category) => category.category_id === category_id,
+        )?.category_order;
+        return { category_id, order: category_order, previousOrder };
+      })
+      .filter(
+        ({ order, previousOrder }) =>
+          previousOrder === undefined || order !== previousOrder,
+      )
+      .map(({ category_id, order }) => ({ category_id, order }));
   }
 
   function ensureSectionCategoryItems(section: CollectionSection) {
@@ -317,18 +411,7 @@
         : section,
     );
 
-    const updates = updated
-      .map(({ category_id, category_order }) => {
-        const previousOrder = previousCategories.find(
-          (category) => category.category_id === category_id,
-        )?.category_order;
-        return { category_id, order: category_order, previousOrder };
-      })
-      .filter(
-        ({ order, previousOrder }) =>
-          previousOrder === undefined || order !== previousOrder,
-      )
-      .map(({ category_id, order }) => ({ category_id, order }));
+    const updates = diffCategoryOrders(previousCategories, updated);
 
     await persistCategoryOrder('sections', sectionId, updates, () =>
       refreshSectionCategories(sectionId),
@@ -385,18 +468,95 @@
       creatorCategories = updated.map(({ id, ...rest }) => ({ ...rest }));
     }
 
-    const updates = updated
-      .map(({ category_id, category_order }) => {
-        const previousOrder = previousCategories.find(
-          (category) => category.category_id === category_id,
-        )?.category_order;
-        return { category_id, order: category_order, previousOrder };
-      })
-      .filter(
-        ({ order, previousOrder }) =>
-          previousOrder === undefined || order !== previousOrder,
-      )
-      .map(({ category_id, order }) => ({ category_id, order }));
+    const updates = diffCategoryOrders(previousCategories, updated);
+
+    const onFailure =
+      context === 'admin'
+        ? () => refreshCreatorCategories(creatorKey)
+        : () => refreshStandaloneCreatorCategories();
+
+    await persistCategoryOrder('creators', creatorKey, updates, onFailure);
+  }
+
+  // Invoked when a category order input changes within an admin section view
+  async function handleManualSectionCategoryOrder(
+    sectionId: string,
+    categoryId: string,
+    requestedOrder: number,
+  ) {
+    if (sectionReordering.has(sectionId)) return;
+    const section = sections.find((item) => item.section_id === sectionId);
+    const previousCategories = (section?.categories ?? []).map((category) => ({
+      ...category,
+    }));
+
+    const items = getSectionCategoryItems(sectionId, section?.categories);
+    const updated = reorderCategoryList(items, categoryId, requestedOrder);
+    if (!updated) return;
+
+    sectionCategoryItems = {
+      ...sectionCategoryItems,
+      [sectionId]: updated,
+    };
+
+    sections = sections.map((item) =>
+      item.section_id === sectionId
+        ? {
+            ...item,
+            categories: updated.map(({ id, ...rest }) => ({ ...rest })),
+          }
+        : item,
+    );
+
+    const updates = diffCategoryOrders(previousCategories, updated);
+    if (updates.length === 0) return;
+
+    await persistCategoryOrder('sections', sectionId, updates, () =>
+      refreshSectionCategories(sectionId),
+    );
+  }
+
+  // Invoked when a category order input changes within creator lists (admin/self)
+  async function handleManualCreatorCategoryOrder(
+    creatorKey: string,
+    categoryId: string,
+    requestedOrder: number,
+    context: 'admin' | 'self' = 'admin',
+  ) {
+    if (creatorReordering.has(creatorKey)) return;
+    const fallbackCategories =
+      context === 'admin'
+        ? (creators.find((creator) => creator.creator_id === creatorKey)
+            ?.categories ?? [])
+        : creatorCategories;
+    const sourceCategories = fallbackCategories.map((category) => ({
+      ...category,
+    }));
+
+    const items = getCreatorCategoryItems(creatorKey, fallbackCategories);
+    const updated = reorderCategoryList(items, categoryId, requestedOrder);
+    if (!updated) return;
+
+    creatorCategoryItems = {
+      ...creatorCategoryItems,
+      [creatorKey]: updated,
+    };
+
+    if (context === 'admin') {
+      creators = creators.map((creator) =>
+        creator.creator_id === creatorKey
+          ? {
+              ...creator,
+              categories: updated.map(({ id, ...rest }) => ({ ...rest })),
+            }
+          : creator,
+      );
+    } else {
+      creatorCategories = updated.map(({ id, ...rest }) => ({ ...rest }));
+    }
+
+    const updates = diffCategoryOrders(sourceCategories, updated);
+    if (updates.length === 0) return;
 
     const onFailure =
       context === 'admin'
@@ -461,6 +621,7 @@
     }
 
     toastStore.show('Category order updated', 'info');
+    await refreshCollections();
   }
 
   // Admin: re-fetch a single section's categories to resync after failures
@@ -563,7 +724,9 @@
                   ),
                   type: `creator-categories-${creator.creator_id}`,
                   dropFromOthersDisabled: true,
-                  dragDisabled: creatorReordering.has(creator.creator_id),
+                  dragDisabled:
+                    disableDragInteractions ||
+                    creatorReordering.has(creator.creator_id),
                 }}
                 onconsider={(event) =>
                   handleCreatorCategoryConsider(creator.creator_id, event)}
@@ -580,6 +743,25 @@
                       {category}
                       {topicManager}
                       {topicsRefreshToken}
+                      disableDrag={disableDragInteractions}
+                      categoryOrderDisabled={creatorReordering.has(
+                        creator.creator_id,
+                      )}
+                      maxCategoryOrder={Math.max(
+                        1,
+                        getCreatorCategoryItems(
+                          creator.creator_id,
+                          creator.categories,
+                        ).length,
+                      )}
+                      requestGlobalRefresh={refreshCollections}
+                      onManualCategoryOrderChange={(order) =>
+                        handleManualCreatorCategoryOrder(
+                          creator.creator_id,
+                          category.category_id,
+                          order,
+                          'admin',
+                        )}
                       onTopicMutated={handleTopicMutated}
                     />
                   </div>
@@ -613,7 +795,9 @@
                 ),
                 type: `categories-${section.section_id}`,
                 dropFromOthersDisabled: true,
-                dragDisabled: sectionReordering.has(section.section_id),
+                dragDisabled:
+                  disableDragInteractions ||
+                  sectionReordering.has(section.section_id),
               }}
               onconsider={(event) =>
                 handleCategoryConsider(section.section_id, event)}
@@ -626,6 +810,24 @@
                     {category}
                     {topicManager}
                     {topicsRefreshToken}
+                    disableDrag={disableDragInteractions}
+                    categoryOrderDisabled={sectionReordering.has(
+                      section.section_id,
+                    )}
+                    maxCategoryOrder={Math.max(
+                      1,
+                      getSectionCategoryItems(
+                        section.section_id,
+                        section.categories,
+                      ).length,
+                    )}
+                    requestGlobalRefresh={refreshCollections}
+                    onManualCategoryOrderChange={(order) =>
+                      handleManualSectionCategoryOrder(
+                        section.section_id,
+                        category.category_id,
+                        order,
+                      )}
                     onTopicMutated={handleTopicMutated}
                   />
                 </div>
@@ -653,7 +855,8 @@
         items: getCreatorCategoryItems(CREATOR_SELF_KEY, creatorCategories),
         type: `creator-categories-${CREATOR_SELF_KEY}`,
         dropFromOthersDisabled: true,
-        dragDisabled: creatorReordering.has(CREATOR_SELF_KEY),
+        dragDisabled:
+          disableDragInteractions || creatorReordering.has(CREATOR_SELF_KEY),
       }}
       onconsider={(event) =>
         handleCreatorCategoryConsider(CREATOR_SELF_KEY, event)}
@@ -666,6 +869,21 @@
             {category}
             {topicManager}
             {topicsRefreshToken}
+            disableDrag={disableDragInteractions}
+            categoryOrderDisabled={creatorReordering.has(CREATOR_SELF_KEY)}
+            maxCategoryOrder={Math.max(
+              1,
+              getCreatorCategoryItems(CREATOR_SELF_KEY, creatorCategories)
+                .length,
+            )}
+            requestGlobalRefresh={refreshCollections}
+            onManualCategoryOrderChange={(order) =>
+              handleManualCreatorCategoryOrder(
+                CREATOR_SELF_KEY,
+                category.category_id,
+                order,
+                'self',
+              )}
             onTopicMutated={handleTopicMutated}
           />
         </div>

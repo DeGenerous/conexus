@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onDestroy } from 'svelte';
   import { dndzone, type DndEvent } from 'svelte-dnd-action';
   import { tippy } from 'svelte-tippy';
 
@@ -9,16 +10,28 @@
 
   import SelectorSVG from '@components/icons/Selector.svelte';
 
+  const INPUT_DEBOUNCE_MS = 1200;
+
   let {
     category,
     topicManager,
     topicsRefreshToken = 0,
     onTopicMutated,
+    disableDrag = false,
+    categoryOrderDisabled = false,
+    maxCategoryOrder = 1,
+    onManualCategoryOrderChange,
+    requestGlobalRefresh,
   }: {
     category: CollectionCategory;
     topicManager: Topics;
     topicsRefreshToken?: number;
     onTopicMutated?: () => void;
+    disableDrag?: boolean;
+    categoryOrderDisabled?: boolean;
+    maxCategoryOrder?: number;
+    onManualCategoryOrderChange?: (order: number) => void;
+    requestGlobalRefresh?: () => Promise<void>; // allows parent to force a cache-busting refresh
   } = $props();
   // parent passes shared refresh token + notifier so all categories stay in sync
 
@@ -46,12 +59,37 @@
   }
 
   let topicItems = $state<DraggableTopic[]>(createTopicItems());
+  let topicOrderDrafts = $state<Record<string, string>>({});
+  let categoryOrderDraft = $derived(String(workingCategory.category_order ?? 1));
+  let categoryOrderTimer: ReturnType<typeof setTimeout> | null = null;
+  const topicOrderTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
+  // Shared helper to keep orders within the legal bounds
+  const clamp = (value: number, min: number, max: number) =>
+    Math.min(Math.max(Math.round(value), min), max);
+
+  // Keep a text-friendly copy of every topic order so inputs stay in sync while typing
+  function syncTopicOrderDrafts(
+    items: DraggableTopic[] = topicItems,
+    force = false,
+  ) {
+    const next: Record<string, string> = {};
+    items.forEach((topic, index) => {
+      const fallback = String(topic.order ?? index + 1);
+      next[topic.topic_id] =
+        !force && topicOrderDrafts[topic.topic_id] !== undefined
+          ? topicOrderDrafts[topic.topic_id]
+          : fallback;
+    });
+    topicOrderDrafts = next;
+  }
 
   // Refresh the draggable items array anytime the source topics change
   function syncTopicItems(
     topics: CollectionTopic[] = workingCategory.topics ?? [],
   ) {
     topicItems = createTopicItems(topics);
+    syncTopicOrderDrafts(topicItems, true);
   }
 
   // lazily load topics unless a mutation explicitly asks for fresh data
@@ -119,6 +157,10 @@
     }
   });
 
+  $effect(() => {
+    categoryOrderDraft = String(workingCategory.category_order ?? 1);
+  });
+
   // watch for global refresh tokens and keep this block in sync
   $effect(() => {
     const token = topicsRefreshToken ?? 0;
@@ -153,6 +195,116 @@
     const input = event.target as HTMLInputElement;
     input.select();
   };
+
+  function clearCategoryOrderTimer() {
+    if (categoryOrderTimer) {
+      clearTimeout(categoryOrderTimer);
+      categoryOrderTimer = null;
+    }
+  }
+
+  // Debounced handler for the category order input
+  const handleCategoryOrderInput = (event: Event) => {
+    if (!onManualCategoryOrderChange) return;
+    const input = event.currentTarget as HTMLInputElement;
+    categoryOrderDraft = input.value;
+
+    const value = Number(input.value);
+    if (input.value === '' || Number.isNaN(value)) {
+      clearCategoryOrderTimer();
+      return;
+    }
+
+    clearCategoryOrderTimer();
+    categoryOrderTimer = setTimeout(() => {
+      categoryOrderTimer = null;
+      const maxOrder = Math.max(1, maxCategoryOrder);
+      const normalized = clamp(value, 1, maxOrder);
+      categoryOrderDraft = String(normalized);
+      onManualCategoryOrderChange?.(normalized);
+    }, INPUT_DEBOUNCE_MS);
+  };
+
+  function clearTopicOrderTimer(topicId: string) {
+    const timer = topicOrderTimers.get(topicId);
+    if (timer) {
+      clearTimeout(timer);
+      topicOrderTimers.delete(topicId);
+    }
+  }
+
+  // Debounced handler for the per-topic order inputs
+  const handleTopicOrderInput = (topicId: string, event: Event) => {
+    const input = event.currentTarget as HTMLInputElement;
+    topicOrderDrafts = {
+      ...topicOrderDrafts,
+      [topicId]: input.value,
+    };
+
+    const value = Number(input.value);
+    if (input.value === '' || Number.isNaN(value)) {
+      clearTopicOrderTimer(topicId);
+      return;
+    }
+
+    clearTopicOrderTimer(topicId);
+    const timer = setTimeout(() => {
+      topicOrderTimers.delete(topicId);
+      const total = Math.max(1, topicItems.length);
+      const normalized = clamp(value, 1, total);
+      topicOrderDrafts = {
+        ...topicOrderDrafts,
+        [topicId]: String(normalized),
+      };
+      void applyTopicOrderChange(topicId, normalized);
+    }, INPUT_DEBOUNCE_MS);
+    topicOrderTimers.set(topicId, timer);
+  };
+
+  // Applies a manual reorder for a specific topic, mirroring the drag logic
+  async function applyTopicOrderChange(topicId: string, targetOrder: number) {
+    if (isReordering) return;
+    const items = [...topicItems];
+    const currentIndex = items.findIndex((topic) => topic.topic_id === topicId);
+    if (currentIndex === -1) return;
+
+    const total = items.length;
+    const clampedOrder = clamp(targetOrder, 1, total);
+    if (currentIndex === clampedOrder - 1) return;
+
+    const previousTopics = (workingCategory.topics ?? []).map((topic) => ({
+      ...topic,
+    }));
+
+    const [moved] = items.splice(currentIndex, 1);
+    items.splice(clampedOrder - 1, 0, moved);
+
+    const updated = items.map((item, index) => ({
+      ...item,
+      order: index + 1,
+    }));
+
+    topicItems = updated;
+    workingCategory.topics = updated.map(({ id, ...rest }) => ({ ...rest }));
+    workingCategory.topic_count = workingCategory.topics?.length ?? 0;
+    syncTopicOrderDrafts(updated, true);
+
+    const updates = updated
+      .map(({ topic_id, order }) => {
+        const previousOrder = previousTopics.find(
+          (topic) => topic.topic_id === topic_id,
+        )?.order;
+        return { topic_id, order, previousOrder };
+      })
+      .filter(
+        ({ order, previousOrder }) =>
+          previousOrder === undefined || order !== previousOrder,
+      )
+      .map(({ topic_id, order }) => ({ topic_id, order }));
+
+    await persistTopicOrder(workingCategory.category_id, updates);
+    await fetchTopicCollection(workingCategory.category_id, true);
+  }
 
   async function toggleAvailability(
     event: Event,
@@ -215,6 +367,8 @@
 
       toastStore.show('Topic order updated', 'info');
       notifyTopicsChanged();
+      // Refresh the parent collections so cached payloads don't reinsert stale ordering
+      await requestGlobalRefresh?.();
     } finally {
       isReordering = false;
     }
@@ -261,6 +415,12 @@
 
     await persistTopicOrder(workingCategory.category_id, updates);
   }
+
+  onDestroy(() => {
+    clearCategoryOrderTimer();
+    topicOrderTimers.forEach((timer) => clearTimeout(timer));
+    topicOrderTimers.clear();
+  });
 </script>
 
 <button
@@ -282,11 +442,13 @@
       <input
         id="category-order-{workingCategory.category_id}"
         type="number"
-        value={workingCategory.category_order}
+        value={categoryOrderDraft}
         onclick={selectInput}
+        oninput={handleCategoryOrderInput}
         min="1"
-        max="99"
-        readonly
+        max={Math.max(1, maxCategoryOrder)}
+        inputmode="numeric"
+        disabled={categoryOrderDisabled || !onManualCategoryOrderChange}
       />
     </span>
     <h4>{workingCategory.category_name}</h4>
@@ -313,7 +475,7 @@
       use:dndzone={{
         items: topicItems,
         type: `topics-${workingCategory.category_id}`,
-        dragDisabled: isReordering,
+        dragDisabled: disableDrag || isReordering,
       }}
       onconsider={handleTopicsConsider}
       onfinalize={handleTopicsFinalize}
@@ -327,11 +489,14 @@
               <input
                 id="story-order-{topic.topic_id}"
                 type="number"
-                value={topic.order}
+                value={topicOrderDrafts[topic.topic_id] ?? String(topic.order)}
                 onclick={selectInput}
+                oninput={(event) =>
+                  handleTopicOrderInput(topic.topic_id, event)}
                 min="1"
-                max="99"
-                readonly
+                max={topicItems.length}
+                inputmode="numeric"
+                disabled={isReordering}
               />
             </span>
             {#if $isAdmin}

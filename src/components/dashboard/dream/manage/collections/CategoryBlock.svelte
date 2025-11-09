@@ -60,7 +60,9 @@
 
   let topicItems = $state<DraggableTopic[]>(createTopicItems());
   let topicOrderDrafts = $state<Record<string, string>>({});
-  let categoryOrderDraft = $derived(String(workingCategory.category_order ?? 1));
+  let categoryOrderDraft = $derived(
+    String(workingCategory.category_order ?? 1),
+  );
   let categoryOrderTimer: ReturnType<typeof setTimeout> | null = null;
   const topicOrderTimers = new Map<string, ReturnType<typeof setTimeout>>();
 

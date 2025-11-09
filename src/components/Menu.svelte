@@ -64,13 +64,9 @@
       flex-wrap: wrap;
       gap: 1rem;
       padding-inline: 0;
-    }
 
-    @include respond-up(tablet) {
-      width: auto;
-      flex-wrap: nowrap;
-
-      & > div {
+      @include respond-up(tablet) {
+        flex-wrap: nowrap;
         gap: 1.5rem;
       }
     }

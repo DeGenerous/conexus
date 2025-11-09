@@ -120,7 +120,7 @@
     <BurgerSVG expanded={sidebarOpen} />
   </button>
 
-  <nav class="flex gap-8">
+  <nav class="flex gap-8 vert-scrollbar">
     <SidebarLink
       item={{
         name: 'Dashboard',

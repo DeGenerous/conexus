@@ -44,39 +44,25 @@
   });
 
   const listTopicGates = (topic: CategoryTopic) => {
-    return (
-      topic.topic_gates
-        ?.map((gate) => {
-          const type = gate.gate_kind;
+    return topic.topic_gates
+      ?.map((gate) => {
+        const type = gate.gate_kind;
 
-          switch (type) {
-            case 'erc20_token':
-              return `${gate.min_amount ?? 0} ${gate.collection_name?.toUpperCase() || gate.collection_name}`;
+        switch (type) {
+          case 'erc20_token':
+            return `${gate.min_amount!} $${gate.collection_name.toUpperCase()}`;
 
-            case 'erc721_token':
-              if (gate.specific_token_ids?.length) {
-                const ids = gate.specific_token_ids
-                  .map((id) => `#${id}`)
-                  .join(', ');
-                return `NFTs: ${ids} (${gate.collection_name})`;
-              }
-              return gate.collection_name ?? 'Unknown NFT';
+          case 'erc721_token':
+            return gate.collection_name;
 
-            case 'erc1155_token':
-              return `${gate.min_amount ?? 1} × ${gate.collection_name}`;
+          case 'erc721_class':
+            return gate.collection_name;
 
-            case 'erc721_class':
-              return `${gate.collection_name} (Class)`;
-
-            case 'erc1155_class':
-              return `${gate.collection_name} (Class)`;
-
-            default:
-              return gate.collection_name || gate.name || 'Unknown Gate';
-          }
-        })
-        .join(', ') ?? ''
-    );
+          default:
+            return gate.collection_name || gate.name || 'Unknown Gate';
+        }
+      })
+      .join(', ');
   };
 </script>
 

@@ -368,7 +368,7 @@
         <section
           class="flex gating blur pad-8 gap-8 mar-auto round-12 wavy-mask-left-right"
         >
-          <div class="flex-row">
+          <div class="flex-row gap">
             <LockSVG />
             <h5>Only available to holders of:</h5>
           </div>
@@ -378,53 +378,18 @@
                 <a
                   href={gate.purchase_link || NAV_ROUTES.WIKI}
                   target="_blank"
-                  class="gate-link"
+                  class="gate-link nohover-link"
                   class:inactive-link={!gate.purchase_link}
-                  onclick={(event) => {
-                    if (gate.purchase_link) return;
-                    if (
-                      !confirm(
-                        'This collection is no longer available. Would you like to explore the wiki for more details?',
-                      )
-                    ) {
-                      event.preventDefault();
-                    }
-                  }}
                   use:tippy={{ content: 'Check details', animation: 'scale' }}
                 >
                   {#if gate.gate_kind === 'erc20_token'}
-                    {gate.min_amount ?? 0}
-                    {gate.collection_name?.toUpperCase()}
+                    {gate.min_amount!}
+                    ${gate.collection_name?.toUpperCase()}
                   {:else if gate.gate_kind === 'erc721_token'}
-                    {#if gate.specific_token_ids?.length}
-                      NFTs:
-                      {#each gate.specific_token_ids as id, i}
-                        <span class="nft-id"
-                          >#{id}{i < gate.specific_token_ids.length - 1
-                            ? ', '
-                            : ''}</span
-                        >
-                      {/each}
-                      <span class="erc721 glow">
-                        ({gate.name || gate.collection_name})
-                      </span>
-                    {:else}
-                      <span class="erc721 glow">
-                        {gate.name || gate.collection_name}
-                      </span>
-                    {/if}
-                  {:else if gate.gate_kind === 'erc1155_token'}
-                    {gate.min_amount ?? 1} × {gate.name || gate.collection_name}
+                    {gate.collection_name || gate.name}
+                    (NFTs: #{gate.specific_token_ids?.join(', #')})
                   {:else if gate.gate_kind === 'erc721_class'}
-                    <span class="erc721 glow">
-                      {gate.name || gate.collection_name} (Class)
-                    </span>
-                  {:else if gate.gate_kind === 'erc1155_class'}
-                    <span class="erc1155 glow">
-                      {gate.name || gate.collection_name} (Class)
-                    </span>
-                  {:else}
-                    {gate.name || gate.collection_name || 'Unknown Gate'}
+                    {gate.collection_name} ({gate.name})
                   {/if}
                 </a>
               {/if}
@@ -647,14 +612,7 @@
         }
 
         &.inactive-link {
-          cursor: help;
-
-          &:hover,
-          &:active,
-          &:focus-visible {
-            text-decoration: underline $deep-orange;
-            color: $deep-orange;
-          }
+          pointer-events: none;
         }
       }
     }
@@ -669,28 +627,5 @@
       width: calc(100% - 200px);
       max-width: 87.5rem;
     }
-  }
-
-  // TODO: Check all this styling
-  .gate-link {
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.5rem;
-  }
-
-  .erc721.glow,
-  .erc1155.glow {
-    border: 1px solid #7f5af0; /* purple for NFT */
-    box-shadow: 0 0 6px #7f5af0;
-    border-radius: 0.375rem;
-    padding: 0.15rem 0.35rem;
-    margin-inline: 0.15rem;
-  }
-
-  .nft-id {
-    background: rgba(127, 90, 240, 0.15);
-    border-radius: 0.25rem;
-    padding: 0 0.25rem;
-    margin-inline: 0.15rem;
-    font-weight: 500;
   }
 </style>

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
+  import Account from '@lib/account';
   import {
     customThemes,
     customFont,
@@ -22,6 +23,8 @@
     table?: boolean;
   } = $props();
 
+  const account = new Account();
+
   // update FONT in localStorage after every change
   $effect(() => {
     $customFont && updateFont();
@@ -39,6 +42,14 @@
     }
 
     getStoredCustomization();
+
+    // console.log('Custom font and styling:', $customFont, $customStyling);
+    // account.createOrUpdateCustomTheme({
+    //   name: 'User Theme',
+    //   font: $customFont,
+    //   styling: $customStyling,
+    // });
+    // account.getCustomTheme();
   });
 
   let selectedTheme = $state<Nullable<number>>(null);

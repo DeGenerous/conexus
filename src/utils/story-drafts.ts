@@ -70,10 +70,21 @@ const Drafts = {
   },
 
   async restore(id: string): Promise<void> {
-    const draft = await topic.getDraft(id);
+    let draft: Nullable<DraftPayload>;
+
+    try {
+      draft = await topic.getDraft(id);
+    } catch (error) {
+      toastStore.show('Failed to restore draft', 'error');
+      ClearCache(CURRENT_DRAFT_KEY);
+      this.create();
+      return;
+    }
+
     if (!draft) {
       toastStore.show('Draft not found', 'error');
       ClearCache(CURRENT_DRAFT_KEY);
+      this.create();
       return;
     }
 

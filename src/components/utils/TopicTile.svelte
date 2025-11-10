@@ -44,25 +44,27 @@
   });
 
   const listTopicGates = (topic: CategoryTopic) => {
-    return topic.topic_gates
-      ?.map((gate) => {
-        const type = gate.gate_kind;
+    return Array.from(
+      new Set(
+        topic.topic_gates?.map((gate) => {
+          const type = gate.gate_kind;
 
-        switch (type) {
-          case 'erc20_token':
-            return `${gate.min_amount!} $${gate.collection_name.toUpperCase()}`;
+          switch (type) {
+            case 'erc20_token':
+              return `${gate.min_amount!} $${gate.collection_name.toUpperCase()}`;
 
-          case 'erc721_token':
-            return gate.collection_name;
+            case 'erc721_token':
+              return gate.collection_name;
 
-          case 'erc721_class':
-            return gate.collection_name;
+            case 'erc721_class':
+              return gate.collection_name;
 
-          default:
-            return gate.collection_name || gate.name || 'Unknown Gate';
-        }
-      })
-      .join(', ');
+            default:
+              return gate.collection_name || gate.name || 'Unknown Gate';
+          }
+        }),
+      ),
+    ).join(', ');
   };
 </script>
 

@@ -338,6 +338,10 @@
       fill: $soft-white;
     }
 
+    p {
+      white-space: wrap;
+    }
+
     @include respond-up(tablet) {
       display: flex;
     }

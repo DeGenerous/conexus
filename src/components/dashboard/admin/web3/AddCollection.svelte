@@ -52,10 +52,15 @@
   );
 
   const createCollection = async () => {
-    if (base.standard === 'erc20') {
-      await collection.createERC20Collection({ base, erc20 });
-    } else if (base.standard === 'erc721') {
-      await collection.createERC721Collection({ base, erc721 });
+    try {
+      if (base.standard === 'erc20') {
+        await collection.createERC20Collection({ base, erc20 });
+      } else if (base.standard === 'erc721') {
+        await collection.createERC721Collection({ base, erc721 });
+      }
+      window.location.reload();
+    } catch (error) {
+      console.error('Error creating collection:', error);
     }
   };
 </script>

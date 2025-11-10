@@ -40,7 +40,7 @@
     const raw = value.trim();
 
     if (!raw) {
-      return true;
+      return false;
     }
 
     const tokens = raw
@@ -153,33 +153,54 @@
       gate_kind: base.gate_kind,
     } as GateBase;
 
-    if (base.gate_kind === 'erc20_token') {
-      await collection.createERC20TokenGate({
-        ...payloadBase,
-        min_amount: Number(erc20_token.min_amount),
-        gate_kind: 'erc20_token',
-      });
-    } else {
-      if (classRangeValid) {
-        await collection.createERC721ClassGate({
+    try {
+      if (base.gate_kind === 'erc20_token') {
+        await collection.createERC20TokenGate({
           ...payloadBase,
-          gate_kind: 'erc721_class',
-          token_id_min: Number(erc721_class.token_id_min),
-          token_id_max: Number(erc721_class.token_id_max),
+          min_amount: Number(erc20_token.min_amount),
+          gate_kind: 'erc20_token',
         });
       } else {
-        const tokens = parseTokenIds(erc721_token.specific_token_ids);
+        if (classRangeValid) {
+          await collection.createERC721ClassGate({
+            ...payloadBase,
+            gate_kind: 'erc721_class',
+            token_id_min: Number(erc721_class.token_id_min),
+            token_id_max: Number(erc721_class.token_id_max),
+          });
+        } else {
+          const tokens = parseTokenIds(erc721_token.specific_token_ids);
 
-        await collection.createERC721NFTGate({
-          ...payloadBase,
-          gate_kind: 'erc721_token',
-          specific_token_ids: tokens.length > 0 ? tokens : undefined,
-        });
+          await collection.createERC721NFTGate({
+            ...payloadBase,
+            gate_kind: 'erc721_token',
+            specific_token_ids: tokens.length > 0 ? tokens : undefined,
+          });
+        }
+      }
+
+      resetGateData();
+      window.location.reload();
+    } catch (error) {
+      console.error('Error creating gate:', error);
+    }
+  };
+
+  $effect(() => {
+    if (base.collection_id) {
+      const collectionType = collections.find(
+        (col) => col.id === base.collection_id,
+      )?.standard;
+      if (collectionType === 'erc20' && base.gate_kind !== 'erc20_token') {
+        base.gate_kind = 'erc20_token';
+      } else if (
+        collectionType === 'erc721' &&
+        base.gate_kind === 'erc20_token'
+      ) {
+        base.gate_kind = 'erc721_token';
       }
     }
-
-    resetGateData();
-  };
+  });
 </script>
 
 <Dropdown name="Add New Gate" table={true}>
@@ -212,26 +233,6 @@
     </div>
 
     <div class="flex-row">
-      <h4>Gate Kind</h4>
-      <div class="radio container">
-        <button
-          class="void-btn dream-radio-btn"
-          class:active={base.gate_kind === 'erc20_token'}
-          onclick={() => (base.gate_kind = 'erc20_token')}
-        >
-          ERC-20 (Fungible Token)
-        </button>
-        <button
-          class="void-btn dream-radio-btn"
-          class:active={base.gate_kind === 'erc721_token'}
-          onclick={() => (base.gate_kind = 'erc721_token')}
-        >
-          ERC-721 (NFT)
-        </button>
-      </div>
-    </div>
-
-    <div class="flex-row">
       <h4>Configuration</h4>
       <div class="configuration container">
         {#if base.gate_kind === 'erc20_token'}
@@ -255,7 +256,7 @@
               bind:value={erc721_token.specific_token_ids}
               class:red-border={!tokenIdsAreValid(
                 erc721_token.specific_token_ids,
-              )}
+              ) && tokenIdsProvided}
               disabled={classRangeProvided}
               placeholder="Comma-separated list, e.g. 1, 5, 6, 10"
             ></textarea>
@@ -302,7 +303,7 @@
     <button class="orange-btn" onclick={createGate} disabled={!validation}>
       Create Gate
       {#if base.gate_kind === 'erc721_token'}
-        (ERC721{#if classRangeProvided}&nbsp;Class{/if})
+        (ERC721)
       {:else if base.gate_kind === 'erc20_token'}
         (ERC20)
       {/if}
@@ -317,10 +318,6 @@
     .container {
       justify-content: center;
       flex-wrap: wrap;
-
-      &.radio {
-        justify-content: space-around;
-      }
 
       &.configuration {
         flex-direction: column;

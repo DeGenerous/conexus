@@ -117,5 +117,6 @@ type GateResponse = {
   id: string;
   created_at: string;
   updated_at: string;
-} & GateBase &
-  (GateERC20 & GateERC721);
+  erc20?: GateERC20;
+  erc721?: GateERC721;
+} & GateBase;

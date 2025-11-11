@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import Account from '@lib/account';
   import {
     customThemes,
     customFont,
@@ -9,8 +8,11 @@
     updateFont,
     updateStyling,
     getStoredCustomization,
+    persistCustomThemesCache,
+    persistActiveTheme,
+    STANDARD_THEME_COUNT,
   } from '@stores/customization.svelte';
-  import { GetCache, SetCache, ClearCache, THEMES_KEY } from '@constants/cache';
+  import { GetCache, THEMES_KEY } from '@constants/cache';
 
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
@@ -22,8 +24,6 @@
     closeDialog?: () => void;
     table?: boolean;
   } = $props();
-
-  const account = new Account();
 
   // update FONT in localStorage after every change
   $effect(() => {
@@ -38,40 +38,40 @@
   onMount(() => {
     const storedThemes = GetCache<Nullable<CustomTheme[]>>(THEMES_KEY);
     if (storedThemes && storedThemes.length) {
-      $customThemes = $customThemes.slice(0, 9).concat(storedThemes);
+      $customThemes = $customThemes
+        .slice(0, STANDARD_THEME_COUNT)
+        .concat(storedThemes);
     }
 
     getStoredCustomization();
-
-    // console.log('Custom font and styling:', $customFont, $customStyling);
-    // account.createOrUpdateCustomTheme({
-    //   name: 'User Theme',
-    //   font: $customFont,
-    //   styling: $customStyling,
-    // });
-    // account.getCustomTheme();
   });
 
   let selectedTheme = $state<Nullable<number>>(null);
   let newThemeName = $state<string>('CUSTOM THEME');
 
   // Set up current customization from the stored THEME-object
-  const applyTheme = () => {
-    $customFont = structuredClone($customThemes[selectedTheme!].font);
-    $customStyling = structuredClone($customThemes[selectedTheme!].styling);
+  const applyTheme = async () => {
+    if (!selectedTheme) return;
+
+    const theme = $customThemes[selectedTheme];
+    $customFont = structuredClone(theme.font);
+    $customStyling = structuredClone(theme.styling);
+    await persistActiveTheme(theme.standard ? theme.name : 'Custom Theme');
     selectedTheme = null;
     closeDialog();
   };
 
   // Add current customization as a THEME-object to the array and cache everything
-  const handleAddTheme = () => {
+  const handleAddTheme = async () => {
     $customThemes[$customThemes.length] = {
       name: newThemeName,
       font: structuredClone($customFont),
       styling: structuredClone($customStyling),
     };
+    $customThemes = $customThemes; // force re-render;
     newThemeName = 'CUSTOM THEME';
-    cacheCustomThemes();
+    persistCustomThemesCache();
+    await persistActiveTheme('Custom Theme');
   };
 
   // Check if current customization settings are similar to some THEME-object
@@ -99,14 +99,6 @@
     $customThemes.some((theme) => {
       return compareCurrentTheme(theme);
     });
-
-  // Cache only custom themes, first two THEME-objects we provide by default (dark/light)
-  const cacheCustomThemes = () => {
-    ClearCache(THEMES_KEY);
-    if ($customThemes.length === 9) return; // we have 9 standard themes
-
-    SetCache(THEMES_KEY, $customThemes.slice(9));
-  };
 </script>
 
 <ul
@@ -137,7 +129,7 @@
             event.stopPropagation();
             $customThemes.splice(index, 1);
             $customThemes = $customThemes; // force re-render;
-            cacheCustomThemes();
+            persistCustomThemesCache();
           }}
         />
       {/if}

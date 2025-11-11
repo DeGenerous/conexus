@@ -24,6 +24,7 @@
     customFont,
     customStyling,
     getStoredCustomization,
+    persistActiveTheme,
   } from '@stores/customization.svelte';
   import { ensureMessage, gameRulesModal } from '@constants/modal';
   import isColorLight from '@utils/brightness';
@@ -176,6 +177,16 @@
   const openThemeSettings = () => {
     $showModal = true;
     $themeSettingsModal = true;
+  };
+
+  const applyQuickTheme = async (
+    font: CustomFont,
+    styling: CustomStyling,
+    name: string,
+  ) => {
+    $customFont = structuredClone(font);
+    $customStyling = structuredClone(styling);
+    await persistActiveTheme(name);
   };
 
   let activeOptionNumber = $state<number>(0);
@@ -611,18 +622,18 @@ a11y_no_noninteractive_element_interactions -->
       <span class="custom-themes flex">
         {#if isColorLight($customStyling.bgColor)}
           <ResetSVG
-            onclick={() => {
-              $customFont = defaultFont;
-              $customStyling = defaultStyling;
-            }}
+            onclick={() =>
+              applyQuickTheme(defaultFont, defaultStyling, 'DARK (default)')}
             text="Apply DARK Theme"
           />
         {:else}
           <ResetSVG
-            onclick={() => {
-              $customFont = lightThemeFont;
-              $customStyling = lightThemeStyling;
-            }}
+            onclick={() =>
+              applyQuickTheme(
+                lightThemeFont,
+                lightThemeStyling,
+                'LIGHT (default)',
+              )}
             text="Apply LIGHT Theme"
           />
         {/if}

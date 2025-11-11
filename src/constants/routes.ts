@@ -7,7 +7,7 @@ export const NAV_ROUTES = {
   GOVERNANCE_HUB: 'https://governance.dgrslabs.ink',
   LOREDEX: 'https://loredex.dgrslabs.ink',
   TERMS: 'https://dgrslabs.ink/terms-of-service',
-  SUPPORT: 'mailto:support@dgrslabs.ink',
+  SUPPORT: 'mailto:contact@dgrslabs.ink',
   WIKI: 'https://degenerousdao.gitbook.io/wiki',
   DISCORD: 'https://dgrslabs.ink/join',
   TWITTER: (encodedMessage: string, encodedURI: string) =>

@@ -259,6 +259,8 @@
                 type="email"
                 id="user-mail"
                 placeholder="Enter your email"
+                name="signin-email"
+                aria-label="Sign in email"
                 autocomplete="email"
                 required
               />
@@ -270,6 +272,8 @@
                 type={passwordVisible.login ? 'text' : 'password'}
                 id="user-password"
                 placeholder="Enter your password"
+                name="signin-password"
+                aria-label="Sign in password"
                 autocomplete="current-password"
                 minlength="8"
                 required
@@ -348,6 +352,9 @@
               type="email"
               id="new-user-mail"
               placeholder="Enter email"
+              name="signup-email"
+              aria-label="Sign up email"
+              autocomplete="email"
               bind:value={email}
               required
             />
@@ -365,6 +372,9 @@
               placeholder="Enter password"
               minlength="8"
               type={passwordVisible.signup ? 'text' : 'password'}
+              name="signup-password"
+              aria-label="Create password"
+              autocomplete="new-password"
               bind:value={password}
               required
             />
@@ -375,6 +385,9 @@
               password !== confirmPassword}
             id="confirm-new-user-password"
             placeholder="Confirm password"
+            name="signup-password-confirm"
+            aria-label="Confirm password"
+            autocomplete="new-password"
             bind:value={confirmPassword}
             required
             type={passwordVisible.signup ? 'text' : 'password'}
@@ -423,6 +436,9 @@
               type="text"
               id="user-first-name"
               placeholder="Enter First name"
+              name="first-name"
+              aria-label="First name"
+              autocomplete="given-name"
               bind:value={first_name}
             />
           </div>
@@ -433,6 +449,9 @@
               type="text"
               id="user-last-name"
               placeholder="Enter Last name"
+              name="last-name"
+              aria-label="Last name"
+              autocomplete="family-name"
               bind:value={last_name}
             />
           </div>
@@ -445,6 +464,9 @@
               placeholder="A11A7528D9C82915"
               minlength="3"
               maxlength="20"
+              name="referral-code"
+              aria-label="Referral code"
+              autocomplete="off"
               bind:value={referralCode}
               required
             />
@@ -475,6 +497,8 @@
               <input
                 type="checkbox"
                 id="terms"
+                name="terms"
+                aria-label="Accept terms of service"
                 onchange={(event: any) => {
                   termsAccepted = event.target?.checked;
                 }}
@@ -492,6 +516,8 @@
               <input
                 type="checkbox"
                 id="newsletter"
+                name="newsletter"
+                aria-label="Subscribe to newsletter"
                 onchange={(event: any) => {
                   newsletterSignup = event.target?.checked;
                 }}

@@ -571,6 +571,9 @@
               class:red-border={!editOldPassword}
               type={passwordVisible.edit ? 'text' : 'password'}
               placeholder="Enter old password"
+              name="current-password"
+              aria-label="Current password"
+              autocomplete="current-password"
               bind:value={editOldPassword}
             />
           </div>
@@ -586,6 +589,9 @@
               class:red-border={!regexpPasswordValidation.test(editPassword)}
               type={passwordVisible.edit ? 'text' : 'password'}
               placeholder="Provide new password"
+              name="new-password"
+              aria-label="New password"
+              autocomplete="new-password"
               bind:value={editPassword}
             />
             <EyeSVG visibility="edit" />
@@ -595,6 +601,10 @@
               editPassword !== editPasswordConfirm}
             type={passwordVisible.edit ? 'text' : 'password'}
             placeholder="Confirm new password"
+            id="confirm-new-password"
+            name="new-password-confirm"
+            aria-label="Confirm new password"
+            autocomplete="new-password"
             bind:value={editPasswordConfirm}
           />
 

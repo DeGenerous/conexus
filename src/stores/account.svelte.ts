@@ -7,6 +7,8 @@ import { GetCache, SetCache, PERSONAL_SETUP_KEY } from '@constants/cache';
 export const accountError = writable<AccountError>(null);
 
 export const user = writable<Nullable<User>>(null);
+
+export const developerMode = writable<boolean>(false);
 export const approvedTester = writable<boolean>(true);
 
 export const isAdmin = writable<boolean>(false);

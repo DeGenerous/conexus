@@ -18,7 +18,7 @@
   } from '@stores/modal.svelte';
   import detectIOS from '@utils/ios-device';
   import { getCurrentUser, userState } from '@utils/route-guard';
-  import { getPersonalSetup } from '@stores/account.svelte';
+  import { getPersonalSetup, developerMode } from '@stores/account.svelte';
 
   import Bookmark from '@components/utils/Bookmark.svelte';
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
@@ -144,7 +144,7 @@
   };
 
   const startGame = () => {
-    if (!isReferred) {
+    if (!isReferred && !$developerMode) {
       openModal(
         referralWarning,
         'Proceed',

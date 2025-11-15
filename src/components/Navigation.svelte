@@ -17,7 +17,7 @@
     checkUserRoles,
     checkIfTesterApproved,
   } from '@utils/route-guard';
-  import { user, approvedTester } from '@stores/account.svelte';
+  import { user, developerMode, approvedTester } from '@stores/account.svelte';
   import { handlePullRefresh } from '@stores/view.svelte';
 
   import Profile from '@components/Profile.svelte';
@@ -44,6 +44,11 @@
     arrow: string;
   } = $props();
 
+  let isDevelopmentEnv = $derived<boolean>(
+    import.meta.env.PUBLIC_ENV === 'local' ||
+      import.meta.env.PUBLIC_ENV === 'development',
+  );
+
   let isTestingEnv = $derived<boolean>(
     import.meta.env.PUBLIC_ENV === 'testing',
   );
@@ -51,6 +56,8 @@
   const initializeUser = async (): Promise<void> => {
     $user = await getCurrentUser();
     if ($user !== null) await checkUserRoles();
+
+    if (isDevelopmentEnv) $developerMode = true;
 
     if (isTestingEnv) checkIfTesterApproved();
   };

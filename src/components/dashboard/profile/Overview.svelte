@@ -13,7 +13,7 @@
   } from '@constants/regexp';
   import Account from '@lib/account';
   import Authentication from '@lib/authentication';
-  import { accountError } from '@stores/account.svelte';
+  import { accountError, developerMode } from '@stores/account.svelte';
   import openModal from '@stores/modal.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';
   import { getCurrentUser, redirectTo } from '@utils/route-guard';
@@ -192,7 +192,7 @@
   };
 
   const handleGenerateReferralCode = async () => {
-    if (!user?.referred) {
+    if (!user?.referred && !$developerMode) {
       openModal(
         referralActivationNotice,
         'Proceed',
@@ -407,7 +407,7 @@
       </div>
     </div>
 
-    {#if user.email_confirmed}
+    {#if user.email_confirmed || $developerMode}
       <div class="flex-row">
         <h4>Referral Code</h4>
         <div class="ref-code-wrapper container">

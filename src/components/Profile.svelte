@@ -4,7 +4,11 @@
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import Authentication from '@lib/authentication';
   import { getCurrentUser } from '@utils/route-guard';
-  import { accountError, approvedTester } from '@stores/account.svelte';
+  import {
+    accountError,
+    developerMode,
+    approvedTester,
+  } from '@stores/account.svelte';
   import { showProfile } from '@stores/modal.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';
   import {
@@ -120,7 +124,7 @@
   let referralValidationHandle: ReturnType<typeof setTimeout> | undefined;
 
   const isFormValid = $derived<boolean>(
-    mandatoryFields && termsAccepted && referralCodeValid,
+    mandatoryFields && termsAccepted && (referralCodeValid || $developerMode),
   );
 
   $effect(() => {

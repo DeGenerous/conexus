@@ -174,7 +174,7 @@ export async function isRenderableImage(url: string): Promise<boolean> {
       resolve(true);
     };
 
-    probe.onerror = (event) => {
+    probe.onerror = (event: Event) => {
       cleanup();
       console.warn('[media] Image failed to load:', url, event);
       resolve(false);

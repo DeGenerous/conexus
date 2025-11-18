@@ -11,9 +11,29 @@ export default class CollectionAPI extends Fetcher {
     });
   }
 
+  async updateERC20Collection(
+    collection_id: string,
+    request: CreateERC20CollectionRequest,
+  ) {
+    return this.request(`${this.group}/erc20/${collection_id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(request),
+    });
+  }
+
   async createERC721Collection(request: CreateERC721CollectionRequest) {
     return this.request(`${this.group}/nft`, {
       method: 'POST',
+      body: JSON.stringify(request),
+    });
+  }
+
+  async updateERC721Collection(
+    collection_id: string,
+    request: CreateERC721CollectionRequest,
+  ) {
+    return this.request(`${this.group}/nft/${collection_id}`, {
+      method: 'PATCH',
       body: JSON.stringify(request),
     });
   }

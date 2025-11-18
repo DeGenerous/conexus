@@ -36,6 +36,26 @@ export default class AccountAPI extends Fetcher {
   }
 
   /**
+   * Disable Account
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   */
+  async disableAccount() {
+    return this.request(`${this.group}/disable`, {
+      method: 'DELETE',
+    });
+  }
+
+  /**
+   * Delete Account
+   * @returns A promise that resolves to an APIResponse containing the response data or an error.
+   */
+  async deleteAccount() {
+    return this.request(`${this.group}/delete`, {
+      method: 'DELETE',
+    });
+  }
+
+  /**
    * Confirm the user's email address.
    * @param token - The confirmation token.
    * @returns A promise that resolves to an APIResponse containing the response data or an error.

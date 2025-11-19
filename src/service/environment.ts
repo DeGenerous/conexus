@@ -1,8 +1,8 @@
 import Fetcher from './fetcher';
 
 export default class EnvironmentAPI extends Fetcher {
-  protected group: string = '/testing';
-  protected testingGroup: string = `${this.group}/accept_invites`;
+  protected group: string = '/environment';
+  protected testingGroup: string = `${this.group}/testing`;
 
   /**
    * Logs in a user with the given email.

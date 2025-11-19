@@ -21,10 +21,7 @@
     editing: boolean;
   };
 
-  type InputField = keyof Pick<
-    UpdateCollectionRequest,
-    'name' | 'description' | 'logo_uri' | 'purchase_link'
-  >;
+  type InputField = 'name' | 'description' | 'logo_uri' | 'purchase_link';
 
   type InputMap = Record<string, InputEntry>;
 
@@ -107,7 +104,124 @@
     };
   };
 
-  const changeInput = async (field: InputField, id: string) => {
+  const toOptionalString = (value: unknown): string | undefined => {
+    if (typeof value === 'string') {
+      return value;
+    }
+
+    if (typeof value === 'number') {
+      return value.toString();
+    }
+
+    return undefined;
+  };
+
+  const buildBasePayload = (
+    collection: Partial<CollectionResponse>,
+    standard: AvailableStandards,
+  ): CollectionBase | null => {
+    const { address, chain_id, symbol } = collection;
+    const name = collection.name;
+
+    if (
+      !address ||
+      typeof chain_id !== 'number' ||
+      typeof name !== 'string' ||
+      typeof symbol !== 'string'
+    ) {
+      console.error('Missing base collection data for update', {
+        id: collection.id,
+        standard,
+      });
+      return null;
+    }
+
+    return {
+      address,
+      chain_id,
+      standard,
+      name,
+      purchase_link: toOptionalString(collection.purchase_link),
+      symbol,
+      description: toOptionalString(collection.description),
+      logo_uri: toOptionalString(collection.logo_uri),
+      rpc_uri: toOptionalString(collection.rpc_uri),
+      block_explorer_uri: toOptionalString(collection.block_explorer_uri),
+      network: collection.network,
+      abi: toOptionalString(collection.abi),
+    };
+  };
+
+  // Compose the backend's create-style payload before sending updates.
+  const buildPayload = (
+    collection: Partial<CollectionResponse>,
+    standard: AvailableStandards,
+  ): CreateERC20CollectionRequest | CreateERC721CollectionRequest | null => {
+    const base = buildBasePayload(collection, standard);
+
+    if (!base) {
+      return null;
+    }
+
+    if (standard === 'erc20') {
+      const erc20Details = collection as Partial<CollectionERC20>;
+
+      if (typeof erc20Details.decimals !== 'number') {
+        console.error('Missing ERC20 decimals for update', {
+          id: collection.id,
+        });
+        return null;
+      }
+
+      return {
+        base,
+        erc20: {
+          decimals: erc20Details.decimals,
+          total_supply: toOptionalString(erc20Details.total_supply),
+        },
+      };
+    }
+
+    const erc721Details = collection as Partial<CollectionERC721>;
+
+    return {
+      base,
+      erc721: {
+        token_id_uri:
+          typeof erc721Details.token_id_uri === 'string'
+            ? erc721Details.token_id_uri
+            : undefined,
+        token_id_parser:
+          typeof erc721Details.token_id_parser === 'string'
+            ? erc721Details.token_id_parser
+            : undefined,
+        metadata_uri:
+          typeof erc721Details.metadata_uri === 'string'
+            ? erc721Details.metadata_uri
+            : undefined,
+        metadata_parser:
+          typeof erc721Details.metadata_parser === 'string'
+            ? erc721Details.metadata_parser
+            : undefined,
+        image_uri:
+          typeof erc721Details.image_uri === 'string'
+            ? erc721Details.image_uri
+            : undefined,
+        token_id_type:
+          erc721Details.token_id_type === 'number' ||
+          erc721Details.token_id_type === 'string'
+            ? erc721Details.token_id_type
+            : undefined,
+        total_supply: toOptionalString(erc721Details.total_supply),
+      },
+    };
+  };
+
+  const changeInput = async (
+    field: InputField,
+    id: string,
+    standard: AvailableStandards,
+  ) => {
     const fieldState = inputs[field];
     const entry = fieldState[id];
 
@@ -115,10 +229,36 @@
       return;
     }
 
-    const payload = { [field]: entry.value } as UpdateCollectionRequest;
+    const targetCollection = collections.find((col) => col.id === id);
+
+    if (!targetCollection) {
+      return;
+    }
+
+    const updatedCollection = {
+      ...targetCollection,
+      [field]: entry.value,
+    };
+
+    const payload = buildPayload(updatedCollection, standard);
+
+    if (!payload) {
+      return;
+    }
 
     try {
-      await collection.updateCollection(id, payload);
+      console.log(standard);
+      if (standard === 'erc721') {
+        await collection.updateERC721Collection(
+          id,
+          payload as CreateERC721CollectionRequest,
+        );
+      } else if (standard === 'erc20') {
+        await collection.updateERC20Collection(
+          id,
+          payload as CreateERC20CollectionRequest,
+        );
+      }
 
       collections = collections.map((col) =>
         col.id === id
@@ -202,7 +342,8 @@
           />
           {#if inputs.name[collection.id!].editing}
             <SaveSVG
-              onclick={() => changeInput('name', collection.id!)}
+              onclick={() =>
+                changeInput('name', collection.id!, collection.standard!)}
               disabled={collection.name === inputs.name[collection.id!].value}
             />
           {:else}
@@ -221,7 +362,12 @@
               onclick={() => resetInput('description', collection.id!)}
             />
             <SaveSVG
-              onclick={() => changeInput('description', collection.id!)}
+              onclick={() =>
+                changeInput(
+                  'description',
+                  collection.id!,
+                  collection.standard!,
+                )}
               disabled={collection.description ===
                 inputs.description[collection.id!].value}
             />
@@ -247,7 +393,8 @@
           {#if inputs.logo_uri[collection.id!].editing}
             <CloseSVG onclick={() => resetInput('logo_uri', collection.id!)} />
             <SaveSVG
-              onclick={() => changeInput('logo_uri', collection.id!)}
+              onclick={() =>
+                changeInput('logo_uri', collection.id!, collection.standard!)}
               disabled={collection.logo_uri ===
                 inputs.logo_uri[collection.id!].value}
             />
@@ -273,7 +420,12 @@
               onclick={() => resetInput('purchase_link', collection.id!)}
             />
             <SaveSVG
-              onclick={() => changeInput('purchase_link', collection.id!)}
+              onclick={() =>
+                changeInput(
+                  'purchase_link',
+                  collection.id!,
+                  collection.standard!,
+                )}
               disabled={collection.purchase_link ===
                 inputs.purchase_link[collection.id!].value}
             />

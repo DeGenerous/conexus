@@ -33,6 +33,28 @@ class Collection {
   }
 
   /**
+   * Update an existing ERC-20 collection.
+   * @param collection_id - The identifier of the collection to update.
+   * @param request - The update payload to send.
+   */
+  async updateERC20Collection(
+    collection_id: string,
+    request: CreateERC20CollectionRequest,
+  ): Promise<void> {
+    const { status, message } = await this.api.updateERC20Collection(
+      collection_id,
+      request,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || 'Collection updated successfully', 'info');
+  }
+
+  /**
    * Create a new ERC-721 collection using the provided details.
    * @param request - The collection payload to send.
    */
@@ -47,6 +69,28 @@ class Collection {
     }
 
     toastStore.show(message || 'Collection created successfully', 'info');
+  }
+
+  /**
+   * Update an existing ERC-20 collection.
+   * @param collection_id - The identifier of the collection to update.
+   * @param request - The update payload to send.
+   */
+  async updateERC721Collection(
+    collection_id: string,
+    request: CreateERC721CollectionRequest,
+  ): Promise<void> {
+    const { status, message } = await this.api.updateERC721Collection(
+      collection_id,
+      request,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || 'Collection updated successfully', 'info');
   }
 
   /**
@@ -118,6 +162,7 @@ class Collection {
       return false;
     }
 
+    toastStore.show(message || 'Collection deleted successfully', 'info');
     return true;
   }
 
@@ -211,6 +256,7 @@ class Collection {
       return false;
     }
 
+    toastStore.show(message || 'Gate deleted successfully', 'info');
     return true;
   }
 }

@@ -28,6 +28,8 @@ docker-compose.yml
 bun.lockb
 package-lock.json
 pnpm-lock.yaml
+.pre-commit-config.yaml
+
 # astro.config.mjs
 
 README.md

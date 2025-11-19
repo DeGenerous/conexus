@@ -149,4 +149,5 @@ type TopicManager = {
   gates: TopicGate[];
   genres: TopicGenre[];
   media_files: TopicMediaFile[];
+  creator: boolean;
 };

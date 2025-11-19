@@ -763,6 +763,7 @@
                           'admin',
                         )}
                       onTopicMutated={handleTopicMutated}
+                      creator={true}
                     />
                   </div>
                 {/each}

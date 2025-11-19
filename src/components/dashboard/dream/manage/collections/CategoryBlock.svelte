@@ -22,6 +22,7 @@
     maxCategoryOrder = 1,
     onManualCategoryOrderChange,
     requestGlobalRefresh,
+    creator = false,
   }: {
     category: CollectionCategory;
     topicManager: Topics;
@@ -32,6 +33,7 @@
     maxCategoryOrder?: number;
     onManualCategoryOrderChange?: (order: number) => void;
     requestGlobalRefresh?: () => Promise<void>; // allows parent to force a cache-busting refresh
+    creator?: boolean; // whether category belongs to creator
   } = $props();
   // parent passes shared refresh token + notifier so all categories stay in sync
 
@@ -526,22 +528,24 @@
             >
               {topic.visibility === 'public' ? 'Submitted' : 'Submit'}
             </button> -->
-            <button
-              use:tippy={{
-                content: 'Toggle visibility',
-                animation: 'scale',
-              }}
-              class:green-btn={topic.visibility === 'public'}
-              class:red-btn={topic.visibility === 'private'}
-              onclick={(event) =>
-                toggleVisibility(
-                  event,
-                  topic.topic_id,
-                  topic.visibility === 'public' ? 'private' : 'public',
-                )}
-            >
-              {topic.visibility === 'public' ? 'Public' : 'Private'}
-            </button>
+            {#if creator}
+              <button
+                use:tippy={{
+                  content: 'Toggle visibility',
+                  animation: 'scale',
+                }}
+                class:green-btn={topic.visibility === 'public'}
+                class:red-btn={topic.visibility === 'private'}
+                onclick={(event) =>
+                  toggleVisibility(
+                    event,
+                    topic.topic_id,
+                    topic.visibility === 'public' ? 'private' : 'public',
+                  )}
+              >
+                {topic.visibility === 'public' ? 'Public' : 'Private'}
+              </button>
+            {/if}
           </div>
         </a>
       {/each}

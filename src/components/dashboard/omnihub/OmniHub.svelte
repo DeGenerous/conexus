@@ -5,7 +5,7 @@
   import { NAV_ROUTES } from '@constants/routes';
   import { normalizeMeta } from '@utils/potentials';
   import { POTENTIALS_COLLECTION_ID } from '@constants/curation';
-  import { registerPullRefresh } from '@stores/view.svelte';
+  import { usePullRefreshContext } from '@utils/pull-refresh';
 
   import NFTSection from '@components/dashboard/omnihub/NFTs.svelte';
 
@@ -19,6 +19,7 @@
   let potentialsPower = $state<number>(0);
   let userRank = $state<Nullable<string>>(null);
   let detachPullRefresh: Nullable<() => void> = null;
+  const pullRefresh = usePullRefreshContext();
 
   function nftTileToNFT(nfts: NFTTile[]): Array<NFT> {
     return nfts.map((nft) => ({
@@ -33,9 +34,10 @@
   // allow users to manually bust the cached omnihub payload
   const installPullToRefresh = () => {
     detachPullRefresh?.();
-    detachPullRefresh = registerPullRefresh(async () => {
-      await loadOmniHub(true);
-    });
+    detachPullRefresh =
+      pullRefresh?.register(async () => {
+        await loadOmniHub(true);
+      }) ?? null;
   };
 
   // central fetcher so both initial mount and pull-to-refresh share logic

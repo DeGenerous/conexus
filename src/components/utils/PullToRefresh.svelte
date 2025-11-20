@@ -1,293 +1,340 @@
 <script lang="ts">
-  import { onDestroy, onMount } from 'svelte';
-
+  import { onDestroy, type Snippet } from 'svelte';
   import { toastStore } from '@stores/toast.svelte';
-  import { handlePullRefresh } from '@stores/view.svelte';
-
-  import Arrow from '@components/icons/Arrow.svelte';
 
   let {
+    children,
     threshold = 80,
     maxDistance = 120,
+    refresh,
   }: {
+    children: Snippet;
     threshold?: number;
     maxDistance?: number;
+    refresh?: () => Promise<void> | void;
   } = $props();
 
-  // Gesture settings
-  const MIN_VISUAL_DISTANCE = 2;
-  const RESUME_DELAY_MS = 600;
-  const TOP_SETTLE_MS = 1200;
+  // --- CONFIG ---
+  const RESISTANCE_FACTOR = 2.5;
+  const INDICATOR_HEIGHT = 60;
+  const WHEEL_FACTOR = 0.5;
+  const COOLDOWN_MS = 500; // Time before another refresh can start
 
-  let dragDistance = $state(0);
-  let isPulling = $state(false);
-  let isLoading = $state(false);
-  let hasTriggered = $state(false);
+  // --- STATE ---
+  let host_element = $state<HTMLElement | undefined>();
+  let content_element = $state<HTMLElement | undefined>();
 
-  let activePointerId: number | null = null;
-  let startY = 0;
-  let releaseTimer: ReturnType<typeof setTimeout> | null = null;
-  let cooldownUntil = 0;
+  let is_pulling = $state(false);
+  let is_refreshing = $state(false);
+  let is_post_refresh = $state(false);
+  let drag_start_y = $state(0);
+  let drag_distance = $state(0);
+  let last_refresh_time = $state(0);
+  let wheel_timeout: ReturnType<typeof setTimeout> | undefined;
 
-  let hasCrossedThreshold = false;
-  let topReady = false;
-  let topReadyTimer: ReturnType<typeof setTimeout> | null = null;
-
-  // Progress clamps against whichever is larger: threshold or maxDistance
-  const effectiveMaxDistance = $derived(Math.max(threshold, maxDistance));
-
-  // Expose normalized progress for styling.
-  const progress = $derived(
-    isLoading ? 1 : Math.min(dragDistance / effectiveMaxDistance, 1),
-  );
-
-  // Keep UI hidden until the pull is meaningful or we're actively refreshing
-  const showIndicator = $derived(
-    isLoading || dragDistance >= MIN_VISUAL_DISTANCE,
-  );
-
-  const getTimestamp = () =>
-    typeof performance !== 'undefined' ? performance.now() : Date.now();
-
-  const armTopReady = () => {
-    if (topReady || topReadyTimer) return;
-    topReadyTimer = setTimeout(() => {
-      topReadyTimer = null;
-      topReady = true;
-    }, TOP_SETTLE_MS);
-  };
-
-  const clearTopReady = () => {
-    if (topReadyTimer) {
-      clearTimeout(topReadyTimer);
-      topReadyTimer = null;
-    }
-    topReady = false;
-  };
-
-  // Debounce to avoid spamming reset logic
-  const clearReleaseTimer = () => {
-    if (releaseTimer !== null) {
-      clearTimeout(releaseTimer);
-      releaseTimer = null;
-    }
-  };
-
-  const scheduleRelease = () => {
-    clearReleaseTimer();
-    releaseTimer = setTimeout(() => {
-      releaseTimer = null;
-      if (isLoading || hasTriggered) return;
-      if (dragDistance > 0) resetState();
-    }, 150);
-  };
-
-  const canStartPull = () => {
-    if (isLoading || hasTriggered) return false;
-    if (getTimestamp() < cooldownUntil) return false;
-    if (!topReady) return false;
-    if (document.documentElement.classList.contains('no-scroll')) return false;
-    if (window.scrollY > 0) return false;
-    return true;
-  };
-
-  const updateDragDistance = (distance: number) => {
-    const clamped = Math.max(0, Math.min(distance, effectiveMaxDistance));
-    dragDistance = clamped;
-    const crossed = clamped >= threshold;
-    if (crossed) hasCrossedThreshold = true;
-    else if (clamped <= threshold * 0.5) hasCrossedThreshold = false;
-    return crossed;
-  };
-
-  // Resets every bit of transient state, then re-arms top-ready if we are still at 0
-  const resetState = () => {
-    clearReleaseTimer();
-    hasCrossedThreshold = false;
-    isPulling = false;
-    hasTriggered = false;
-    dragDistance = 0;
-    activePointerId = null;
-    startY = 0;
-    if (!isLoading && window.scrollY <= 0) {
-      armTopReady();
-    } else if (!isLoading) {
-      clearTopReady();
-    }
-  };
-
-  // Called once the gesture commits and we need to invoke the refresh callback
-  const beginRefresh = () => {
-    if (hasTriggered || isLoading) return;
-    clearReleaseTimer();
-    clearTopReady();
-    hasTriggered = true;
-    isPulling = false;
-    activePointerId = null;
-    dragDistance = effectiveMaxDistance;
-    isLoading = true;
-    hasCrossedThreshold = false;
-
-    queueMicrotask(async () => {
-      try {
-        await $handlePullRefresh?.();
-      } catch (error) {
-        console.error('[PullToRefresh] Refresh failed:', error);
-        toastStore.show('Refresh failed. Please try again.', 'error');
-      } finally {
-        isLoading = false;
-        resetState();
-        cooldownUntil = getTimestamp() + RESUME_DELAY_MS;
-      }
-    });
-  };
-
-  // Pointer (touch/mouse) gesture handlers
-
-  const handlePointerDown = (event: PointerEvent) => {
-    if (activePointerId !== null || !canStartPull()) return;
-    if (!event.isPrimary) return;
-    if (event.pointerType === 'mouse' && event.button !== 0) return;
-
-    clearTopReady();
-    activePointerId = event.pointerId;
-    startY = event.clientY;
-    dragDistance = 0;
-    hasCrossedThreshold = false;
-    isPulling = true;
-  };
-
-  const handlePointerMove = (event: PointerEvent) => {
-    if (!isPulling || event.pointerId !== activePointerId) return;
-
-    const deltaY = event.clientY - startY;
-    if (deltaY <= 0) {
-      updateDragDistance(0);
-      return;
+  // --- DERIVED STATE ---
+  const can_start_pull = () => {
+    // Check if we're in a browser context.
+    if (typeof window === 'undefined') {
+      return false;
     }
 
-    if (event.cancelable) event.preventDefault();
-    const crossed = updateDragDistance(deltaY);
-    if (crossed && !hasTriggered) beginRefresh();
-  };
-
-  const handlePointerEnd = (event: PointerEvent) => {
-    if (event.pointerId !== activePointerId) return;
-
-    activePointerId = null;
-    if (hasCrossedThreshold && !hasTriggered) beginRefresh();
-    else resetState();
-  };
-
-  // Wheel gesture handler (desktop touchpads / scroll wheels)
-
-  const handleWheel = (event: WheelEvent) => {
-    if (isLoading) return;
-
-    if (event.deltaY < 0) {
-      if (!isPulling) {
-        if (!canStartPull()) return;
-        isPulling = true;
-        hasCrossedThreshold = false;
-        dragDistance = 0;
-        clearTopReady();
-      }
-
-      if (event.cancelable) event.preventDefault();
-
-      const increment = Math.abs(event.deltaY) * 0.4;
-      const crossed = updateDragDistance(dragDistance + increment);
-      if (crossed && !hasTriggered) beginRefresh();
-      else if (!hasTriggered) scheduleRelease();
-      return;
+    // Don't allow pull if a refresh is disabled, already in progress, or on cooldown.
+    if (
+      !refresh ||
+      is_refreshing ||
+      Date.now() - last_refresh_time < COOLDOWN_MS
+    ) {
+      return false;
     }
 
-    if (!hasTriggered && !isLoading && isPulling) resetState();
+    // The pull-to-refresh action should only be possible when scrolled to the very top of the page.
+    return window.scrollY <= 0;
   };
 
-  // Track whether the document is scrolled to the top
-  const handleScroll = () => {
-    if (window.scrollY <= 0) {
-      if (!isPulling && !isLoading) armTopReady();
-    } else {
-      clearTopReady();
-      if (isPulling && !hasTriggered) resetState();
-    }
-  };
+  const pull_progress = $derived(Math.min(1, drag_distance / threshold));
 
-  onMount(() => {
-    const wheelListener = (event: WheelEvent) => handleWheel(event);
-
-    if (window.scrollY <= 0) armTopReady();
-
-    window.addEventListener('pointerdown', handlePointerDown, {
-      passive: true,
-    });
-    window.addEventListener('pointermove', handlePointerMove, {
-      passive: false,
-    });
-    window.addEventListener('pointerup', handlePointerEnd, { passive: true });
-    window.addEventListener('pointercancel', handlePointerEnd, {
-      passive: true,
-    });
-    window.addEventListener('wheel', wheelListener, { passive: false });
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener('pointerdown', handlePointerDown);
-      window.removeEventListener('pointermove', handlePointerMove);
-      window.removeEventListener('pointerup', handlePointerEnd);
-      window.removeEventListener('pointercancel', handlePointerEnd);
-      window.removeEventListener('wheel', wheelListener);
-      window.removeEventListener('scroll', handleScroll);
-    };
+  const message = $derived.by(() => {
+    if (is_post_refresh) return 'Data refreshed';
+    if (is_refreshing) return 'Refreshing...';
+    if (pull_progress >= 1) return 'Release to refresh';
+    return 'Pull to refresh';
   });
 
+  // --- LOGIC ---
+  const on_pointer_down = (e: PointerEvent) => {
+    if (!can_start_pull() || !e.isPrimary) return;
+    is_pulling = true;
+    drag_start_y = e.clientY;
+  };
+
+  const on_pointer_move = (e: PointerEvent) => {
+    if (!is_pulling) return;
+    const delta_y = e.clientY - drag_start_y;
+
+    // Stop pulling if the user scrolls up
+    if (delta_y < 0) {
+      is_pulling = false;
+      return;
+    }
+
+    // Only prevent default if we are pulling down. This allows for vertical scrolling
+    // to be initiated and not be hijacked by the pull-to-refresh.
+    if (delta_y > 0) {
+      e.preventDefault();
+    }
+
+    const resisted_delta = delta_y / RESISTANCE_FACTOR;
+    drag_distance = Math.min(maxDistance, resisted_delta);
+    if (drag_distance >= threshold && !is_refreshing) {
+      trigger_refresh();
+    }
+  };
+
+  const on_pointer_up = (e: PointerEvent) => {
+    if (!is_pulling) return;
+    if (!is_refreshing) {
+      drag_distance = 0;
+    }
+    is_pulling = false;
+  };
+
+  const on_wheel = (e: WheelEvent) => {
+    if (!can_start_pull() || e.deltaY >= 0) return;
+
+    e.preventDefault();
+
+    const new_dist = drag_distance + Math.abs(e.deltaY) * WHEEL_FACTOR;
+    drag_distance = Math.min(maxDistance, new_dist);
+
+    clearTimeout(wheel_timeout);
+    wheel_timeout = setTimeout(() => {
+      if (!is_refreshing) drag_distance = 0;
+    }, 300);
+
+    if (drag_distance >= threshold && !is_refreshing) {
+      trigger_refresh();
+    }
+  };
+
+  const trigger_refresh = async () => {
+    if (!refresh) return;
+    if (is_refreshing) return;
+
+    is_refreshing = true;
+    is_pulling = false;
+    drag_distance = INDICATOR_HEIGHT;
+
+    try {
+      await refresh();
+      // toastStore.show('Data refreshed successfully');
+      is_post_refresh = true;
+    } catch (err) {
+      console.error('Pull to refresh failed', err);
+      toastStore.show('Refresh failed', 'error');
+    } finally {
+      setTimeout(() => {
+        is_refreshing = false;
+        is_post_refresh = false;
+        drag_distance = 0;
+        last_refresh_time = Date.now();
+      }, 1000);
+    }
+  };
+
   onDestroy(() => {
-    // Clear timers so they don't leak if the component unmounts mid-gesture.
-    clearReleaseTimer();
-    clearTopReady();
+    clearTimeout(wheel_timeout);
   });
 </script>
 
-<div
-  class="flex gap-8 fade-in"
-  aria-live="polite"
-  aria-busy={isLoading}
-  aria-hidden={progress === 0}
-  style:transform="translate(-50%, {progress * 3 * 100}%)"
-  style:color="hsl(120, {progress * 2 * 100}%, 50%)"
-  style:opacity={showIndicator ? '1' : '0'}
->
-  <p>Pull Down to Refresh</p>
-  <Arrow />
-</div>
+<section bind:this={host_element} onwheel={on_wheel}>
+  <div
+    class="indicator-area"
+    aria-hidden="true"
+    style:height="{INDICATOR_HEIGHT}px"
+  >
+    <div
+      class="indicator-content"
+      style:opacity={pull_progress > 0 || is_refreshing ? 1 : 0}
+    >
+      <div
+        class="spinner"
+        class:is-refreshing={is_refreshing}
+        class:is-post-refresh={is_post_refresh}
+      >
+        {#if is_post_refresh}
+          <div class="checkmark">✓</div>
+        {:else}
+          <svg viewBox="0 0 32 32">
+            <circle
+              class="progress-track"
+              r="14"
+              cx="16"
+              cy="16"
+              fill="none"
+              stroke-width="3"
+            />
+            <circle
+              class="progress-value"
+              r="14"
+              cx="16"
+              cy="16"
+              fill="none"
+              stroke-width="3"
+              stroke-dasharray={2 * Math.PI * 14}
+              stroke-dashoffset={(1 - pull_progress) * (2 * Math.PI * 14)}
+              transform="rotate(-90 16 16)"
+            />
+          </svg>
+          <div class="arrow">↓</div>
+        {/if}
+      </div>
+      <p class="message" class:is-post-refresh={is_post_refresh}>{message}</p>
+    </div>
+  </div>
+
+  <div
+    class="content-wrapper flex"
+    bind:this={content_element}
+    onpointerdown={on_pointer_down}
+    onpointermove={on_pointer_move}
+    onpointerup={on_pointer_up}
+    onpointercancel={on_pointer_up}
+    style:transform="translateY({drag_distance}px)"
+    style:transition-duration={is_pulling || is_refreshing ? '0s' : '0.3s'}
+  >
+    {@render children()}
+  </div>
+</section>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  div {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translate(-50%, 0);
-    z-index: 1000;
-    pointer-events: none;
-    transition:
-      transform 0.15s ease,
-      opacity 0.3s ease,
-      color 0.15s linear;
-    @include green(1, text);
+  section {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    padding-inline: 1.5rem;
 
-    @starting-style {
-      transform: translate(-50%, -100%);
+    .indicator-area {
+      position: absolute;
+      top: 1rem;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+      transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      z-index: 999;
+
+      .indicator-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(0, 0, 0, 0.25);
+        padding: 8px 16px;
+        border-radius: 24px;
+        backdrop-filter: blur(10px);
+        transition: opacity 0.3s ease;
+
+        .spinner {
+          position: relative;
+          width: 28px;
+          height: 28px;
+          display: grid;
+          place-items: center;
+          transition: transform 0.3s ease;
+
+          &.is-refreshing .arrow {
+            opacity: 0;
+          }
+          &.is-refreshing .progress-value {
+            animation: dash 1.5s ease-in-out infinite;
+          }
+
+          &.is-post-refresh .checkmark {
+            animation: check-pop-in 0.3s ease-out;
+          }
+
+          svg {
+            position: absolute;
+          }
+          .progress-track {
+            stroke: rgba(255, 255, 255, 0.1);
+          }
+          .progress-value {
+            stroke: #ffffff;
+            transition: stroke-dashoffset 0.1s linear;
+          }
+
+          .arrow {
+            font-size: 12px;
+            color: white;
+            transition:
+              transform 0.2s ease-out,
+              opacity 0.2s ease;
+          }
+
+          .checkmark {
+            font-size: 20px;
+            color: rgb(0, 185, 55);
+          }
+        }
+
+        .message {
+          font-size: 14px;
+          color: rgba(255, 255, 255, 0.9);
+          margin: 0;
+          white-space: nowrap;
+
+          &.is-post-refresh {
+            color: rgb(0, 185, 55);
+          }
+        }
+      }
     }
 
-    p {
-      text-transform: uppercase;
-      font-weight: bold;
-      color: inherit;
-      @include font(caption);
+    .content-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      padding-block: 1.5rem;
+      touch-action: pan-y;
+      will-change: transform;
+      transition-property: transform;
+      transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+  }
+
+  @keyframes dash {
+    0% {
+      stroke-dasharray: 1, 88;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 44, 44;
+      stroke-dashoffset: -22px;
+    }
+    100% {
+      stroke-dasharray: 88, 1;
+      stroke-dashoffset: -87px;
+    }
+  }
+
+  @keyframes check-pop-in {
+    0% {
+      transform: scale(0.5);
+      opacity: 0;
+    }
+    80% {
+      transform: scale(1.1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
     }
   }
 </style>

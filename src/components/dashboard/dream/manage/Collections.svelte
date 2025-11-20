@@ -8,7 +8,7 @@
   import { toastStore } from '@stores/toast.svelte';
   import { getCurrentUser } from '@utils/route-guard';
   import { isAdmin, isPlayer } from '@stores/account.svelte';
-  import { registerPullRefresh } from '@stores/view.svelte';
+  import { usePullRefreshContext } from '@utils/pull-refresh';
 
   import CategoryBlock from '@components/dashboard/dream/manage/collections/CategoryBlock.svelte';
   import Dropdown from '@components/utils/Dropdown.svelte';
@@ -70,6 +70,7 @@
   let disableDragInteractions = $state(false);
   const CREATOR_SELF_KEY = 'creator-self';
   let detachPullRefresh: Nullable<() => void> = null;
+  const pullRefresh = usePullRefreshContext();
   let detachPointerChange: Nullable<() => void> = null;
   let detachResizeListener: Nullable<() => void> = null;
   // emit a new token whenever any topic mutation completes
@@ -205,7 +206,7 @@
   // expose manual cache bust via pull-to-refresh gesture
   const installPullToRefresh = () => {
     detachPullRefresh?.();
-    detachPullRefresh = registerPullRefresh(refreshCollections);
+    detachPullRefresh = pullRefresh?.register(refreshCollections) ?? null;
   };
   // called by child blocks after any topic-level mutation
   const handleTopicMutated = () => bumpTopicsRefresh();

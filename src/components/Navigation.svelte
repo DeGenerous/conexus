@@ -18,7 +18,6 @@
     checkIfTesterApproved,
   } from '@utils/route-guard';
   import { user, developerMode, approvedTester } from '@stores/account.svelte';
-  import { handlePullRefresh } from '@stores/view.svelte';
 
   import Profile from '@components/Profile.svelte';
   import Background from '@components/utils/Background.svelte';
@@ -30,7 +29,6 @@
   import CloseSVG from '@components/icons/Close.svelte';
   import ConexusLogo from '@components/icons/ConexusLogo.svelte';
   import BackArrowPCNav from '@components/utils/BackArrowPCNav.svelte';
-  import PullToRefresh from '@components/utils/PullToRefresh.svelte';
 
   let {
     header = '',
@@ -296,10 +294,6 @@
 
     <Profile {activeTab} />
   </nav>
-
-  {#if $handlePullRefresh !== null}
-    <PullToRefresh />
-  {/if}
 {/if}
 
 <Background />

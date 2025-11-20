@@ -36,7 +36,7 @@
   import CopySVG from '@components/icons/Copy.svelte';
   import EditSVG from '@components/icons/Edit.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
-  import { registerPullRefresh } from '@stores/view.svelte';
+  import { usePullRefreshContext } from '@utils/pull-refresh';
 
   // SIGNED IN USER PROFILE
 
@@ -62,6 +62,7 @@
   let avatarInputEl = $state<HTMLInputElement | undefined>();
   let avatarImage = $state<string>(blankImage);
   let detachPullRefresh: Nullable<() => void> = null;
+  const pullRefresh = usePullRefreshContext();
 
   const formatMiB = (bytes: number) =>
     `${(bytes / 1_048_576).toFixed(1).replace(/\.0$/, '')} MiB`;
@@ -74,9 +75,10 @@
   // hook pull-to-refresh so users can force a fresh profile fetch
   const installPullToRefresh = () => {
     detachPullRefresh?.();
-    detachPullRefresh = registerPullRefresh(async () => {
-      await hydrateProfile(true);
-    });
+    detachPullRefresh =
+      pullRefresh?.register(async () => {
+        await hydrateProfile(true);
+      }) ?? null;
   };
 
   // central loader that keeps user, roles, and subscription in sync

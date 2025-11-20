@@ -12,6 +12,9 @@ export default class EnvironmentAPI extends Fetcher {
   async login(email: string) {
     return this.request<null>(
       `${this.testingGroup}/login?email=${encodeURIComponent(email)}`,
+      {
+        method: 'POST',
+      },
     );
   }
 

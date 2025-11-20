@@ -3,7 +3,6 @@
   import tippy, { type Instance } from 'tippy.js';
 
   import CoNexusApp from '@lib/view';
-  import { navContext } from '@stores/navigation.svelte';
   import { GetCache, SetCache, ONBOARDING_KEY } from '@constants/cache';
   import { trailerURL } from '@constants/media';
   import { story, game } from '@stores/conexus.svelte';
@@ -76,21 +75,6 @@
       item.action();
     }
   };
-
-  onMount(async () => {
-    const sections = await app.getSections();
-    if (sections.map((s) => s.name).includes(header)) {
-      navContext.setContext({
-        items: sections.map((s) => ({
-          name: s.name,
-          link: `/s/${s.name}`,
-        })),
-        index: sections.findIndex((s) => s.name === header),
-      });
-    } else if (header !== 'Portrait') {
-      if ($navContext) navContext.clear();
-    }
-  });
 
   // FULLSCREEN
 

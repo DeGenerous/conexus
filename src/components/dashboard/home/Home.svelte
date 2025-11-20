@@ -20,8 +20,8 @@
 <UnfinishedStories />
 <FinishedStories />
 
-<footer class="flex">
-  <h5>Report bugs or ask for help</h5>
+<footer class="flex gap-8">
+  <h5>Report bugs or seek help</h5>
   <div class="flex-row gap">
     <a href={NAV_ROUTES.SUPPORT}>Support</a>
     <span aria-hidden="true">|</span>
@@ -40,5 +40,9 @@
     width: 100%;
     margin-top: auto;
     @include white-txt;
+
+    h5 {
+      @include font(body);
+    }
   }
 </style>

@@ -749,7 +749,10 @@
       {/if}
     </Dropdown>
   {:else}
-    <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
+    <span class="dream-container flex-row flex-wrap gap">
+      <h5>For extra features and rewards:</h5>
+      <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
+    </span>
   {/if}
 {:else}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />

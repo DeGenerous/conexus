@@ -314,7 +314,7 @@
     }
   };
 
-  // Delete account (not used currently)
+  // Delete account
   const deleteAccount = async () => {
     openModal(
       ensureMessage(
@@ -322,8 +322,12 @@
       ),
       'Delete',
       async () => {
-        await Promise.resolve(); // delete account API call
-        redirectTo('/');
+        try {
+          await account.deleteAccount();
+          await authentication.logout(); // TODO: remove it once deleteAccount handles logout internally
+        } catch (error) {
+          console.error('Failed to delete account:', error);
+        }
       },
     );
   };
@@ -704,9 +708,7 @@
         </p>
       {/if}
 
-      <!-- <button class="red-btn" onclick={deleteAccount}>
-        Delete Account
-      </button> -->
+      <button class="red-btn" onclick={deleteAccount}> Delete Account </button>
     </Dropdown>
   {/if}
 

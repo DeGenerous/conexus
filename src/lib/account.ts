@@ -629,6 +629,20 @@ class Account {
 
     return data || [];
   }
+
+  /**
+   * Deletes the user's account.
+   */
+  async deleteAccount(): Promise<void> {
+    const { status, message } = await this.api.deleteAccount();
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || 'Account deleted successfully', 'info');
+  }
 }
 
 export default Account;

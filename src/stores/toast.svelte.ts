@@ -14,36 +14,35 @@ function createToastStore() {
   const { subscribe, update } = writable<Toast[]>([]);
   const timers = new Map<number, ReturnType<typeof setTimeout>>();
 
-  const remove = (id: number) =>
+  const close = (id: number) => {
+    const timeout = timers.get(id);
+    if (timeout) {
+      clearTimeout(timeout);
+      timers.delete(id);
+    }
     update((toasts) => toasts.filter((toast) => toast.id !== id));
+  };
 
   return {
     subscribe,
     show: (
       message: string,
       type: ToastType = 'info',
-      duration: number = 10000,
+      duration: number = 4000,
     ) => {
       const id = Date.now();
       update((toasts) => [...toasts, { id, message, type, duration }]);
 
       const timeout = setTimeout(() => {
         timers.delete(id);
-        remove(id);
+        close(id);
       }, duration);
 
       timers.set(id, timeout);
 
       return id;
     },
-    close: (id: number) => {
-      const timeout = timers.get(id);
-      if (timeout) {
-        clearTimeout(timeout);
-        timers.delete(id);
-      }
-      remove(id);
-    },
+    close,
   };
 }
 

@@ -233,7 +233,7 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        background: rgba(0, 0, 0, 0.25);
+        background: $dark-blue;
         padding: 8px 16px;
         border-radius: 24px;
         backdrop-filter: blur(10px);

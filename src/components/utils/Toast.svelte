@@ -1,108 +1,73 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { cubicOut } from 'svelte/easing';
 
   let {
     message = '',
     type = 'info',
-    duration = 10000,
     onClose = () => {},
   }: {
     message: string;
     type: 'info' | 'error';
-    duration: number;
     onClose: () => void;
   } = $props();
 
-  let fading = $state<number | null>(null);
-  let hide = $state<boolean>(false);
-
-  const closeToast = () => {
-    fading = Math.random();
-    setTimeout(() => {
-      if (onClose) onClose();
-      hide = true;
-    }, 600);
-  };
-
-  onMount(() => {
-    const timer = setTimeout(() => {
-      closeToast();
-    }, duration - 600);
-
-    return () => {
-      clearTimeout(timer);
+  function liquidGlass(node: HTMLElement, { duration }: { duration: number }) {
+    return {
+      duration,
+      css: (t: number) => {
+        const eased = cubicOut(t);
+        return `
+          transform: scale(${eased * 0.5 + 0.5}, ${eased}) translateY(${(1 - eased) * -150}px);
+          opacity: ${eased};
+        `;
+      },
     };
-  });
+  }
 </script>
 
-<button
-  class="void-btn flex-row pad round blur"
-  class:info={type === 'info'}
-  class:error={type !== 'info'}
-  class:fading-left={fading && fading < 0.5}
-  class:fading-right={fading && fading >= 0.5}
-  class:hide
-  onclick={closeToast}
-  type="button"
-  aria-live={type === 'error' ? 'assertive' : 'polite'}
->
-  <p>{@html message}</p>
-</button>
+<div class="toast-wrapper" transition:liquidGlass={{ duration: 400 }}>
+  <button
+    class="void-btn flex-row pad round blur"
+    class:info={type === 'info'}
+    class:error={type !== 'info'}
+    onclick={onClose}
+    type="button"
+    aria-live={type === 'error' ? 'assertive' : 'polite'}
+  >
+    <p>{@html message}</p>
+  </button>
+</div>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  button {
+  .toast-wrapper {
+    will-change: transform, opacity;
     pointer-events: auto;
+  }
+
+  button {
+    background-color: $dark-blue;
     max-width: 100%;
     width: fit-content;
     margin-inline: auto;
-
-    transition: all 0.6s ease;
-    opacity: 1;
-
+    @include white-txt;
     @include white-txt(1);
-    @include box-shadow;
 
     &.info {
-      @include green(0.75);
+      @include green-border(0.75);
+      @include dark-green;
     }
 
     &.error {
-      @include red(0.75);
-    }
-
-    &.fading-left {
-      opacity: 0;
-      transform: translate(-200%, 50%) scaleY(0.5) skew(15deg, -15deg);
-    }
-
-    &.fading-right {
-      opacity: 0;
-      transform: translate(200%, 50%) scaleY(0.5) skew(-15deg, 15deg);
-    }
-
-    &.hide {
-      display: none;
-    }
-
-    @starting-style {
-      opacity: 0;
-      transform: translateY(-300%) scale(0.75);
+      @include red-border(0.75);
+      @include dark-red;
     }
 
     &:hover,
     &:active,
     &:focus-visible {
-      @include box-shadow(deep);
-
-      &.info {
-        @include green;
-      }
-
-      &.error {
-        @include red;
-      }
+      @include bright;
     }
   }
 </style>

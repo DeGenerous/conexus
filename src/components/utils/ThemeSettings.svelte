@@ -46,19 +46,14 @@
     getStoredCustomization();
   });
 
-  let selectedTheme = $state<Nullable<number>>(null);
   let newThemeName = $state<string>('CUSTOM THEME');
 
   // Set up current customization from the stored THEME-object
-  const applyTheme = async () => {
-    if (!selectedTheme) return;
-
-    const theme = $customThemes[selectedTheme];
+  const applyTheme = async (inputTheme: number) => {
+    const theme = $customThemes[inputTheme];
     $customFont = structuredClone(theme.font);
     $customStyling = structuredClone(theme.styling);
     await persistActiveTheme(theme.standard ? theme.name : 'Custom Theme');
-    selectedTheme = null;
-    closeDialog();
   };
 
   // Add current customization as a THEME-object to the array and cache everything
@@ -112,12 +107,8 @@
       id="theme-{index}"
       class="theme-option void-btn small-purple-tile small-tile-addon"
       class:standard
-      class:selected={selectedTheme === index}
       class:active={compareCurrentTheme($customThemes[index])}
-      onclick={() => {
-        if (selectedTheme === index) selectedTheme = null;
-        else selectedTheme = index;
-      }}
+      onclick={() => applyTheme(index)}
     >
       <h4>{index + 1}</h4>
       <p>{name}</p>
@@ -157,18 +148,6 @@
       />
     </div>
   {/if}
-
-  <hr />
-
-  <button
-    onclick={applyTheme}
-    disabled={selectedTheme === null ||
-      compareCurrentTheme($customThemes[selectedTheme!])}
-  >
-    {selectedTheme === null
-      ? 'Apply Theme'
-      : 'Apply Theme: ' + $customThemes[selectedTheme!].name}
-  </button>
 </ul>
 
 <style lang="scss">
@@ -183,18 +162,6 @@
       h4 {
         width: auto;
         color: $dark-blue;
-      }
-
-      &.selected {
-        background-color: $deep-green !important;
-
-        h4 {
-          color: $dark-green;
-        }
-
-        &::after {
-          content: 'Selected';
-        }
       }
 
       &.active {

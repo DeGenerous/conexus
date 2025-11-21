@@ -255,10 +255,11 @@
         class:text-shad={$customFont.shadow}
         style:font-style={$customFont.italic ? 'italic' : ''}
         style:color={$customFont.accentColor}
+        style:font-family={$customFont.family}
       >
         Preview Step
       </h4>
-      <article>
+      <article style:font-family={$customFont.family}>
         This neutral passage exists only to preview your theme. It has no plot,
         only layout and rhythm. Scan spacing, contrast, and hierarchy across
         headings, paragraphs, inline emphasis, and controls. Adjust type,
@@ -269,6 +270,7 @@
         class="options {$customFont.accentSize}-font"
         class:text-shad={$customFont.shadow}
         class:transparent-container={$customStyling.optionsContainer}
+        style:font-family={$customFont.family}
         style:font-style={$customFont.italic ? 'italic' : ''}
         style:color={$customFont.accentColor}
         style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
@@ -278,6 +280,7 @@
           <button
             id="option-0"
             class="void-btn flex-row gap-8"
+            style:font-family={$customFont.family}
             onpointerover={() => {
               focusedOption = i;
               blurActiveBtn();

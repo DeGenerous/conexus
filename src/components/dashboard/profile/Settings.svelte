@@ -82,12 +82,13 @@
 
   const saveChanges = async () => {
     await account.createOrUpdatePromptSettings($promptSettings);
+    originalSettings = await account.getPromptSettings();
   };
 
   const resetPromptSettings = () => {
     openModal(ensureMessage('reset your personal settings'), 'Reset', () => {
       resetSettings();
-      // saveChanges();
+      saveChanges();
     });
   };
 

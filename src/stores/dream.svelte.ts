@@ -26,9 +26,12 @@ export const arePromptSettingsEqual = (
   a: Nullable<PromptSettings>,
   b: Nullable<PromptSettings>,
 ): boolean => {
-  if (!a || !b) {
+  if (!a && !b) {
     return false;
   }
+
+  if (!b) b = DEFAULT_PROMPT_SETTINGS;
+  if (!a) a = DEFAULT_PROMPT_SETTINGS;
 
   return (
     a.image_style === b.image_style &&

@@ -104,7 +104,7 @@
 
 <div class="tiles-collection dashboard-collection">
   {#if !unfinishedStories}
-    <h5 class="empty-title flex text-glowing">
+    <h5 class="empty-title flex soft-white-txt">
       Your unfinished stories will be there
     </h5>
   {:else}

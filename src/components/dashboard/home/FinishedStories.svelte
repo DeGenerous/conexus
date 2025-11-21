@@ -103,7 +103,7 @@
 
 <div class="tiles-collection dashboard-collection">
   {#if !finishedStories}
-    <h5 class="empty-title flex text-glowing">
+    <h5 class="empty-title flex soft-white-txt">
       Your finished stories will be there
     </h5>
   {:else}

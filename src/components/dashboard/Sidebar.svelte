@@ -149,7 +149,7 @@
     position: fixed;
     inset: 0;
     background: $transparent-black;
-    z-index: 900;
+    z-index: 99;
     transform: none !important;
 
     @include respond-up(small-desktop) {
@@ -163,7 +163,7 @@
     width: min(85vw, 320px);
     max-width: 320px;
     height: 100dvh;
-    z-index: 1000;
+    z-index: 100;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
 

@@ -26,6 +26,7 @@
     resolveRenderableImage,
   } from '@utils/file-validation';
   import { toAvif } from '@utils/avif-convert';
+  import convertDate from '@utils/date-converter';
 
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import Dropdown from '@components/utils/Dropdown.svelte';
@@ -706,7 +707,7 @@
 
       {#if user?.created_at}
         <p class="transparent-white-txt">
-          Joined {new Date(user.created_at).toLocaleDateString()}
+          Joined {convertDate(user.created_at, false)}
         </p>
       {/if}
 

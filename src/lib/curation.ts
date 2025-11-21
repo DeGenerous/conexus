@@ -30,7 +30,7 @@ class Curation {
     );
 
     if (status === 'error') {
-      api_error(message);
+      api_error(message, false); // TEMP: hide toast
       return null;
     }
 

@@ -522,7 +522,8 @@ class Account {
       return null;
     }
 
-    toastStore.show(message || 'Stories retrieved successfully', 'info');
+    // TEMP: hide toast
+    //toastStore.show(message || 'Stories retrieved successfully', 'info');
 
     return data || null;
   }

@@ -598,7 +598,7 @@ class Account {
     const { status, message, data } = await this.api.getCustomTheme();
 
     if (status === 'error') {
-      api_error(message);
+      api_error(message, false); // TEMP: hide toast
       return null;
     }
 

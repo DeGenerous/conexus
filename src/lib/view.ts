@@ -356,17 +356,20 @@ export default class AppView {
    * @param topic_id - The topic identifier.
    * @param page - The page number to request.
    * @param pageSize - The number of neighbors per page.
+   * @param category_id - (Optional) The category identifier to filter neighbors.
    * @returns A list of neighboring topics or an empty array on failure.
    */
   async getTopicNeighbors(
     topic_id: string,
     page: number,
     pageSize: number,
+    category_id?: string,
   ): Promise<TopicNeighbor[]> {
     const { status, message, data } = await this.api.topicNeighbors(
       topic_id,
       page,
       pageSize,
+      category_id,
     );
 
     if (status === 'error') {
@@ -386,7 +389,8 @@ export default class AppView {
   async getTopicPage(
     topic_id: string,
     account_id?: string,
-  ): Promise<TopicPage | null> {
+    category_id?: string,
+  ): Promise<{ topic: TopicPage | null; neighbors: TopicNeighbor[] }> {
     const { status, message, data } = await this.api.topicView(
       topic_id,
       account_id,
@@ -394,10 +398,17 @@ export default class AppView {
 
     if (status === 'error') {
       api_error(message);
-      return null;
+      return { topic: null, neighbors: [] };
     }
 
-    return data || null;
+    let neighbors: TopicNeighbor[] = [];
+
+    if (data && category_id) {
+      // get neighbors within the specified category
+      neighbors = await this.getTopicNeighbors(topic_id, 1, 10, category_id);
+    }
+
+    return { topic: data || null, neighbors };
   }
 
   /**

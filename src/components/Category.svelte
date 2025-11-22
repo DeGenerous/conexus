@@ -134,6 +134,7 @@
         <TopicTile
           {name}
           {intended}
+          category_id={category.id}
           bind:topic={sortedTopics[i]}
           bind:loading
         />

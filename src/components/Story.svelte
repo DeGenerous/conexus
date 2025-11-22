@@ -40,11 +40,13 @@
     username,
     topic_id,
     topic_name,
+    category_id,
   }: {
     section_name?: string;
     username?: string;
     topic_id: string;
     topic_name: string;
+    category_id?: string;
   } = $props();
 
   let userID = $state<string | undefined>(undefined);
@@ -106,9 +108,14 @@
   const fetchTopicData = async (user_id: string | undefined): Promise<void> => {
     try {
       inFlight = true;
-      const topic = await view.getTopicPage(topic_id, user_id);
-      activeTopic = topic;
-      unfinishedStories = topic?.unfinished_stories || [];
+      const topicPageData = await view.getTopicPage(
+        topic_id,
+        user_id,
+        category_id,
+      );
+      activeTopic = topicPageData.topic;
+      unfinishedStories = topicPageData.topic?.unfinished_stories || [];
+      neighborTopics = topicPageData.neighbors;
     } catch (error) {
       toastStore.show(
         'Failed to fetch story, please try again or contact support',

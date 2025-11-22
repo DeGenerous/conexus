@@ -6,6 +6,7 @@ import Layout from '@layouts/Layout.astro';
 const { section_name, topic_id } = Astro.params;
 
 const topic_name = Astro.url.searchParams.get('title');
+const category_id = Astro.url.searchParams.get('category');
 
 if (!topic_id) {
   Astro.redirect('/404');
@@ -27,5 +28,5 @@ const meta = {
 ---
 
 <Layout story={topic_name} {...meta}>
-  <Story {section_name} {topic_id} {topic_name} client:idle />
+  <Story {section_name} {topic_id} {topic_name} {category_id} client:idle />
 </Layout>

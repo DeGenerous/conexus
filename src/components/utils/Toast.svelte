@@ -55,19 +55,23 @@
     @include white-txt(1);
 
     &.info {
-      @include green-border(0.75);
-      @include dark-green;
+      @include green(0.85);
     }
 
     &.error {
-      @include red-border(0.75);
-      @include dark-red;
+      @include red(0.85);
     }
 
     &:hover,
     &:active,
     &:focus-visible {
-      @include bright;
+      &.info {
+        @include green;
+      }
+
+      &.error {
+        @include red;
+      }
     }
   }
 </style>

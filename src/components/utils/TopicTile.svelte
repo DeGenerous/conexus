@@ -13,7 +13,7 @@
   }: {
     name: string;
     intended: 's' | 'c';
-    category_id: string;
+    category_id?: string;
     topic: Nullable<CategoryTopic>;
     loading: boolean;
   } = $props();
@@ -80,7 +80,7 @@
   <a
     class="tile"
     class:gated-story={topic.topic_gates && topic.topic_gates.length > 0}
-    href="/{intended}/{name}/{topic.id}?title={topic.name}&category={category_id}"
+    href="/{intended}/{name}/{topic.id}?title={topic.name}{category_id ? `&category=${category_id}` : ''}"
   >
     <img
       loading="lazy"

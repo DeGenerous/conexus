@@ -234,14 +234,26 @@ export default class ViewAPI extends Fetcher {
    * Retrieves the details of a specific topic.
    * @param topic_id The ID of the topic to retrieve.
    * @param account_id The ID of the account making the request.
+   * @param category_id (Optional) The ID of the category to filter neighbors.
+   * @param page The page number to retrieve.
+   * @param pageSize The number of topics per page.
    * @returns A promise that resolves to the TopicPage object.
    */
-  async topicView(topic_id: string, account_id?: string) {
-    return this.request<TopicPage>(`${this.topicGroup}/view/${topic_id}`, {
-      headers: {
-        'X-Requester-ID': account_id || '',
+  async topicView(
+    topic_id: string,
+    account_id?: string,
+    category_id?: string,
+    page: number = 1,
+    pageSize: number = 5,
+  ) {
+    return this.request<{ topic: TopicPage; neighbors: TopicNeighbor[] }>(
+      `${this.topicGroup}/view/${topic_id}?category_id=${category_id || ''}&page=${page}&page_size=${pageSize}`,
+      {
+        headers: {
+          'X-Requester-ID': account_id || '',
+        },
       },
-    });
+    );
   }
 
   async getFile(topic_id: string, media_type: MediaType) {

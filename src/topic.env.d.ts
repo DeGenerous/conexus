@@ -48,6 +48,9 @@ type UnfinishedStory = {
 type TopicNeighbor = {
   topic_id: string;
   topic_name: string;
+  sort_order: number;
+  prev_topic_id?: string;
+  next_topic_id?: string;
 };
 
 type TopicPage = {
@@ -60,4 +63,5 @@ type TopicPage = {
   audio_file_url?: string;
   topic_gates?: TopicGate[];
   unfinished_stories?: UnfinishedStory[];
+  sort_order: number;
 };

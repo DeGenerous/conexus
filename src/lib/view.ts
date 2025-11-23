@@ -390,10 +390,15 @@ export default class AppView {
     topic_id: string,
     account_id?: string,
     category_id?: string,
+    page: number = 1,
+    pageSize: number = 5,
   ): Promise<{ topic: TopicPage | null; neighbors: TopicNeighbor[] }> {
     const { status, message, data } = await this.api.topicView(
       topic_id,
       account_id,
+      category_id,
+      page,
+      pageSize,
     );
 
     if (status === 'error') {
@@ -401,14 +406,7 @@ export default class AppView {
       return { topic: null, neighbors: [] };
     }
 
-    let neighbors: TopicNeighbor[] = [];
-
-    if (data && category_id) {
-      // get neighbors within the specified category
-      neighbors = await this.getTopicNeighbors(topic_id, 1, 10, category_id);
-    }
-
-    return { topic: data || null, neighbors };
+    return data || { topic: null, neighbors: [] };
   }
 
   /**

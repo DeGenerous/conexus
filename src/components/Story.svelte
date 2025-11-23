@@ -20,6 +20,8 @@
   import { getCurrentUser, userState } from '@utils/route-guard';
   import { getPersonalSetup, developerMode } from '@stores/account.svelte';
   import convertDate from '@utils/date-converter';
+  import { resolveRenderableImage } from '@utils/file-validation';
+  import { navContext } from '@stores/navigation.svelte';
 
   import Bookmark from '@components/utils/Bookmark.svelte';
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
@@ -32,8 +34,6 @@
   import LoadingSVG from '@components/icons/Loading.svelte';
   import LockSVG from '@components/icons/Lock.svelte';
   import PlaySVG from '@components/icons/Play.svelte';
-  import { toastStore } from '@stores/toast.svelte';
-  import { resolveRenderableImage } from '@utils/file-validation';
 
   let {
     section_name,
@@ -69,7 +69,6 @@
   let inFlight = $state<boolean>(false);
   let activeTopic = $state<Nullable<TopicPage>>(null);
   let unfinishedStories = $state<UnfinishedStory[]>([]);
-  let neighborTopics = $state<TopicNeighbor[]>([]);
 
   let videoError = $state<boolean>(false);
   let imageError = $state<boolean>(false);
@@ -115,12 +114,20 @@
       );
       activeTopic = topicPageData.topic;
       unfinishedStories = topicPageData.topic?.unfinished_stories || [];
-      neighborTopics = topicPageData.neighbors;
+      let neighborTopics: TopicNeighbor[] = topicPageData.neighbors;
+
+      // Set up nav context
+      navContext.setContext({
+        items: neighborTopics.map((t) => ({
+          name: `${t.topic_name}`,
+          link: `/${section_name ? 's' : 'c'}/${
+            section_name || username
+          }/${t.topic_id}?title=${t.topic_name}&category=${category_id}`,
+        })),
+        index: neighborTopics.findIndex((t) => t.topic_id === topic_id),
+      });
     } catch (error) {
-      toastStore.show(
-        'Failed to fetch story, please try again or contact support',
-        'error',
-      );
+      console.error('Error fetching topic data:', error);
       activeTopic = null;
     } finally {
       inFlight = false;
@@ -204,11 +211,6 @@
       ({ story_id: id }) => id !== story_id,
     );
   }
-
-  // Browse other topics from this category
-  const browseOtherTopics = async () => {
-    neighborTopics = await view.getTopicNeighbors(topic_id, 1, 20);
-  };
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -389,29 +391,6 @@
       <p class="description transparent-container white-txt text-shad">
         {activeTopic.description}
       </p>
-
-      {#if !neighborTopics.length}
-        <button onclick={browseOtherTopics}>
-          Explore More Stories From This Category
-        </button>
-      {:else}
-        <ul
-          class="other-topics transparent-container flex-row flex-wrap fade-in"
-        >
-          {#each neighborTopics as neighbor}
-            <li>
-              <a
-                class="small-tile small-blue-tile"
-                href="/{section_name
-                  ? 's'
-                  : 'c'}/{section_name}/{neighbor.topic_id}?title={neighbor.topic_name}"
-              >
-                <p>{neighbor.topic_name}</p>
-              </a>
-            </li>
-          {/each}
-        </ul>
-      {/if}
     {/if}
   {/if}
 {:else}
@@ -606,8 +585,7 @@
     }
   }
 
-  .description,
-  .other-topics {
+  .description {
     width: calc(100% - 3rem);
     max-width: 68rem;
 

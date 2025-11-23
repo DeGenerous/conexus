@@ -199,6 +199,9 @@
             <p>{$prevItem?.name}</p>
           </button>
         {/if}
+        {#if !$prevItem && $nextItem}
+          <button style:visibility="hidden">Placeholder</button>
+        {/if}
         <h1>{header}</h1>
         {#if $nextItem}
           <button
@@ -224,6 +227,9 @@
               <rect x="-30" y="-25" width="100" height="50" rx="5" />
             </svg>
           </button>
+        {/if}
+        {#if $prevItem && !$nextItem}
+          <button style:visibility="hidden">Placeholder</button>
         {/if}
       {/if}
     </header>

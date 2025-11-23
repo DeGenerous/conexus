@@ -80,7 +80,9 @@
   <a
     class="tile"
     class:gated-story={topic.topic_gates && topic.topic_gates.length > 0}
-    href="/{intended}/{name}/{topic.id}?title={topic.name}{category_id ? `&category=${category_id}` : ''}"
+    href="/{intended}/{name}/{topic.id}?title={topic.name}{category_id
+      ? `&category=${category_id}`
+      : ''}"
   >
     <img
       loading="lazy"

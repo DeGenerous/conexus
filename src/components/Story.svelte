@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
 
   import { GetCache, SetCache, PLAY_OPTIONS_KEY } from '@constants/cache';
@@ -103,6 +103,29 @@
     };
   });
 
+  const applyNavContext = (neighbors: TopicNeighbor[]) => {
+    if (!neighbors || neighbors.length < 2) {
+      navContext.clear();
+      return;
+    }
+
+    const index = neighbors.findIndex((t) => t.topic_id === topic_id);
+    if (index < 0) {
+      navContext.clear();
+      return;
+    }
+
+    navContext.setContext({
+      items: neighbors.map((t) => ({
+        name: `${t.topic_name}`,
+        link: `/${section_name ? 's' : 'c'}/${
+          section_name || username
+        }/${t.topic_id}?title=${t.topic_name}&category=${category_id}`,
+      })),
+      index,
+    });
+  };
+
   // fetch the complete topic page payload plus unfinished stories for the current user
   const fetchTopicData = async (user_id: string | undefined): Promise<void> => {
     try {
@@ -114,20 +137,10 @@
       );
       activeTopic = topicPageData.topic;
       unfinishedStories = topicPageData.topic?.unfinished_stories || [];
-      let neighborTopics: TopicNeighbor[] = topicPageData.neighbors;
-
-      // Set up nav context
-      navContext.setContext({
-        items: neighborTopics.map((t) => ({
-          name: `${t.topic_name}`,
-          link: `/${section_name ? 's' : 'c'}/${
-            section_name || username
-          }/${t.topic_id}?title=${t.topic_name}&category=${category_id}`,
-        })),
-        index: neighborTopics.findIndex((t) => t.topic_id === topic_id),
-      });
+      applyNavContext(topicPageData.neighbors);
     } catch (error) {
       console.error('Error fetching topic data:', error);
+      navContext.clear();
       activeTopic = null;
     } finally {
       inFlight = false;
@@ -202,6 +215,10 @@
     isReferred = await userState('referred');
 
     await fetchTopicData(userID);
+  });
+
+  onDestroy(() => {
+    navContext.clear();
   });
 
   // CONTINUE SHAPING section

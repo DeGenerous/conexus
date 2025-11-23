@@ -17,27 +17,22 @@ function createNavContext() {
 
   /** Derived helpers that Navigation.svelte can consume */
   const prev = derived({ subscribe }, (ctx) =>
-    ctx
-      ? ctx.index > 0
-        ? ctx.items[ctx.index - 1]
-        : ctx.items[ctx.items.length - 1]
-      : null,
+    ctx && ctx.index > 0 ? ctx.items[ctx.index - 1] : null,
   );
 
   const next = derived({ subscribe }, (ctx) =>
-    ctx
-      ? ctx.index < ctx.items.length - 1
-        ? ctx.items[ctx.index + 1]
-        : ctx.items[0]
-      : null,
+    ctx && ctx.index < ctx.items.length - 1 ? ctx.items[ctx.index + 1] : null,
   );
 
-  return { subscribe, setContext, clear, prev, next };
+  const hasContext = derived({ subscribe }, (ctx) => !!ctx);
+
+  return { subscribe, setContext, clear, prev, next, hasContext };
 }
 
 export const navContext = createNavContext();
 
 export const prevItem = navContext.prev;
 export const nextItem = navContext.next;
+export const hasNavContext = navContext.hasContext;
 
 export const highlightCommunityPicks = writable<boolean>(false);

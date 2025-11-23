@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
 
   import {
     GetCache,
@@ -45,6 +45,10 @@
 
     // console.log(potential);
     loading = false;
+  });
+
+  onDestroy(() => {
+    navContext.clear();
   });
 </script>
 

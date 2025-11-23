@@ -392,10 +392,6 @@ export default class Topic {
       return null;
     }
 
-    if (!response.data) {
-      return null;
-    }
-
     const successMessage =
       response.message || `Category sort order changed for topic ${topic_id}`;
 

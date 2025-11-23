@@ -371,8 +371,8 @@
 
       toastStore.show('Topic order updated', 'info');
       notifyTopicsChanged();
-      // Refresh the parent collections so cached payloads don't reinsert stale ordering
-      await requestGlobalRefresh?.();
+      // // Refresh the parent collections so cached payloads don't reinsert stale ordering
+      // await requestGlobalRefresh?.();
     } finally {
       isReordering = false;
     }

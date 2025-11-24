@@ -5,7 +5,7 @@ import type { ManifestOptions } from 'vite-plugin-pwa';
  * Defines the default SEO configuration for the website.
  */
 export const seoConfig = {
-  baseURL: 'https://conexus.degenerousdao.com', // Change this to your website's base URL.
+  baseURL: 'https://conexus.ink', // Change this to your website's base URL.
   title: 'CoNexus - AI Storytelling', // Change this to your website's title.
   description:
     'CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.',

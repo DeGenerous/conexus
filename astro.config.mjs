@@ -99,7 +99,7 @@ export default defineConfig({
               },
             }
           : undefined,
-      allowedHosts: ['conexus.ink', 'test.conexus.ink'],
+      allowedHosts: ['conexus.ink', 'test.conexus.ink', 'dev.conexus.ink'],
     },
     worker: {
       format: 'es',

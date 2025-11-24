@@ -2,7 +2,7 @@ export const NAV_ROUTES = {
   // General links
   MEDIA: 'https://media.dgrslabs.ink',
   LOGO: 'https://media.dgrslabs.ink/assets/logo.png',
-  CONEXUS: 'https://conexus.degenerousdao.com',
+  CONEXUS: 'https://conexus.ink',
   WEBSITE: 'https://dgrslabs.ink/',
   GOVERNANCE_HUB: 'https://governance.dgrslabs.ink',
   LOREDEX: 'https://loredex.dgrslabs.ink',

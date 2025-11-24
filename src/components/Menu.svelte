@@ -58,6 +58,7 @@
 
   section {
     width: clamp(250px, 95%, 80rem);
+    margin: 0;
 
     & > div {
       width: 100%;

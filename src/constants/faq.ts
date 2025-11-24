@@ -9,7 +9,7 @@ const frequentlyAskedQuestions: {
     question: 'How do I start?',
     answer: `
       <p>
-        You can start by visiting <a href=${NAV_ROUTES.CONEXUS}>conexus.degenerousdao.com</a> and choosing one of three sign-in options:
+        You can start by visiting <a href=${NAV_ROUTES.CONEXUS}>conexus.ink</a> and choosing one of three sign-in options:
       </p>
       <ul class="default-ul" flex>
         <li>

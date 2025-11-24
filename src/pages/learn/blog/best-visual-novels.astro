@@ -50,7 +50,11 @@ const meta = {
           ({ name, bestFor, platform, pricing, description, url }) => {
             return (
               <a
-                class={name === 'CoNexus' ? 'card green-card' : 'card'}
+                class={
+                  name === 'CoNexus'
+                    ? 'nohover-link card green-card'
+                    : 'nohover-link card'
+                }
                 href={url}
               >
                 <h4>{name}</h4>

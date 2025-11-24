@@ -5,7 +5,7 @@
 
 <section class="blog-pages">
   {#each blogPosts as { url, title, description }}
-    <a href="/learn/blog/{url}">
+    <a class="nohover-link" href="/learn/blog/{url}">
       <img class="shad-behind" src="{blogURL}/{url}.jpeg" alt={title} />
       <article>
         <h5>{title}</h5>

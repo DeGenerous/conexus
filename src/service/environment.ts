@@ -24,7 +24,7 @@ export default class EnvironmentAPI extends Fetcher {
    * @returns A promise that resolves to a participation ID.
    */
   async isTester() {
-    return this.request<string>(`${this.testingGroup}/tester/`);
+    return this.request<string>(`${this.testingGroup}/tester`);
   }
 
   /**

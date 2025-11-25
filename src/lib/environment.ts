@@ -1,5 +1,6 @@
 import { api_error } from '@errors/index';
 import EnvironmentAPI from '@service/environment';
+import { redirectTo } from '@utils/route-guard';
 
 /**
  * Provides read-only helpers for fetching view data and caching responses.
@@ -40,7 +41,8 @@ export default class Environment {
       return;
     }
 
-    return data;
+    redirectTo('/');
+    return;
   }
 
   /**
@@ -48,15 +50,15 @@ export default class Environment {
    * @param tester_id The tester ID of the user to check.
    * @returns A promise that resolves to participation ID or null.
    */
-  async isTester(): Promise<null | string> {
+  async isTester(): Promise<boolean> {
     const { status, message, data } = await this.api.isTester();
 
     if (status === 'error') {
-      api_error(message);
-      return null;
+      // api_error(message); // do not throw error
+      return false;
     }
 
-    return data || null;
+    return true;
   }
 
   /**

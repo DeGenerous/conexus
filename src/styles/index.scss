@@ -116,6 +116,11 @@ ol:not(.default-ol) {
   @include text-shadow;
 }
 
+body, html {
+  /* Prevents the standard chrome pull-to-refresh visual */
+  overscroll-behavior-y: none; 
+}
+
 /* GENERAL STYLING */
 
 a {
@@ -173,7 +178,6 @@ a {
 }
 
 html {
-  overscroll-behavior-y: contain; // Prevents native browser pull-to-refresh
   text-align: center;
   padding-block: 1.5rem 5.5rem;
   letter-spacing: 0.025rem;

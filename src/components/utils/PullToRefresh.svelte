@@ -18,7 +18,7 @@
   const RESISTANCE_FACTOR = 2.5;
   const INDICATOR_HEIGHT = 60;
   const WHEEL_FACTOR = 0.5;
-  const COOLDOWN_MS = 500; // Time before another refresh can start
+  const COOLDOWN_MS = 500;
 
   // --- STATE ---
   let host_element = $state<HTMLElement | undefined>();
@@ -33,25 +33,6 @@
   let wheel_timeout: ReturnType<typeof setTimeout> | undefined;
 
   // --- DERIVED STATE ---
-  const can_start_pull = () => {
-    // Check if we're in a browser context.
-    if (typeof window === 'undefined') {
-      return false;
-    }
-
-    // Don't allow pull if a refresh is disabled, already in progress, or on cooldown.
-    if (
-      !refresh ||
-      is_refreshing ||
-      Date.now() - last_refresh_time < COOLDOWN_MS
-    ) {
-      return false;
-    }
-
-    // The pull-to-refresh action should only be possible when scrolled to the very top of the page.
-    return window.scrollY <= 0;
-  };
-
   const pull_progress = $derived(Math.min(1, drag_distance / threshold));
 
   const message = $derived.by(() => {
@@ -61,44 +42,104 @@
     return 'Pull to refresh';
   });
 
-  // --- LOGIC ---
-  const on_pointer_down = (e: PointerEvent) => {
-    if (!can_start_pull() || !e.isPrimary) return;
-    is_pulling = true;
-    drag_start_y = e.clientY;
+  const can_start_pull = () => {
+    if (typeof window === 'undefined') return false;
+    // Block if disabled, refreshing, on cooldown, or NOT at the top of the page
+    if (
+      !refresh ||
+      is_refreshing ||
+      Date.now() - last_refresh_time < COOLDOWN_MS ||
+      window.scrollY > 0
+    ) {
+      return false;
+    }
+    return true;
   };
 
-  const on_pointer_move = (e: PointerEvent) => {
-    if (!is_pulling) return;
-    const delta_y = e.clientY - drag_start_y;
+  // --- INTERACTION LOGIC ---
 
-    // Stop pulling if the user scrolls up
+  // 1. Start the interaction on the element
+  const on_pointer_down = (e: PointerEvent) => {
+    if (!can_start_pull() || !e.isPrimary) return;
+    
+    is_pulling = true;
+    drag_start_y = e.clientY;
+
+    // 2. Attach WINDOW listeners dynamically.
+    // 'passive: false' is CRITICAL for touchmove to allow preventDefault()
+    window.addEventListener('touchmove', on_window_touch_move, { passive: false });
+    window.addEventListener('touchend', on_window_touch_end);
+    
+    // Mouse fallback listeners
+    window.addEventListener('pointermove', on_window_pointer_move);
+    window.addEventListener('pointerup', on_window_pointer_up);
+  };
+
+  // 3. Handle Mobile Touch (Active Listener)
+  const on_window_touch_move = (e: TouchEvent) => {
+    if (!is_pulling) return;
+    
+    const y = e.touches[0].clientY;
+    const delta_y = y - drag_start_y;
+
+    // A. User is scrolling content UP (pushing finger up)
     if (delta_y < 0) {
-      is_pulling = false;
+      // Abort our custom pull, let the browser scroll naturally
+      finish_pull(); 
       return;
     }
 
-    // Only prevent default if we are pulling down. This allows for vertical scrolling
-    // to be initiated and not be hijacked by the pull-to-refresh.
-    if (delta_y > 0) {
-      e.preventDefault();
-    }
-
-    const resisted_delta = delta_y / RESISTANCE_FACTOR;
-    drag_distance = Math.min(maxDistance, resisted_delta);
-    if (drag_distance >= threshold && !is_refreshing) {
-      trigger_refresh();
+    // B. User is pulling DOWN and we are at the top
+    if (delta_y > 0 && window.scrollY <= 0) {
+      // THIS stops the native reload!
+      if (e.cancelable) e.preventDefault(); 
+      
+      const resisted_delta = delta_y / RESISTANCE_FACTOR;
+      drag_distance = Math.min(maxDistance, resisted_delta);
     }
   };
 
-  const on_pointer_up = (e: PointerEvent) => {
+  // 4. Handle PC Mouse
+  const on_window_pointer_move = (e: PointerEvent) => {
+    // Avoid conflict with touch events
+    if (e.pointerType === 'touch') return; 
+    
     if (!is_pulling) return;
-    if (!is_refreshing) {
-      drag_distance = 0;
+    const delta_y = e.clientY - drag_start_y;
+
+    if (delta_y > 0 && window.scrollY <= 0) {
+      e.preventDefault();
+      drag_distance = Math.min(maxDistance, delta_y / RESISTANCE_FACTOR);
+    } else {
+      finish_pull();
     }
-    is_pulling = false;
   };
 
+  const finish_pull = () => {
+    if (is_pulling) {
+      if (drag_distance >= threshold && !is_refreshing) {
+        trigger_refresh();
+      } else {
+        drag_distance = 0;
+      }
+      is_pulling = false;
+    }
+    cleanup_listeners();
+  };
+
+  // Wrappers for event binding
+  const on_window_touch_end = () => finish_pull();
+  const on_window_pointer_up = () => finish_pull();
+
+  const cleanup_listeners = () => {
+    if (typeof window === 'undefined') return;
+    window.removeEventListener('touchmove', on_window_touch_move);
+    window.removeEventListener('touchend', on_window_touch_end);
+    window.removeEventListener('pointermove', on_window_pointer_move);
+    window.removeEventListener('pointerup', on_window_pointer_up);
+  };
+
+  // --- MOUSE WHEEL LOGIC (PC) ---
   const on_wheel = (e: WheelEvent) => {
     if (!can_start_pull() || e.deltaY >= 0) return;
 
@@ -117,17 +158,16 @@
     }
   };
 
+  // --- REFRESH LOGIC ---
   const trigger_refresh = async () => {
-    if (!refresh) return;
-    if (is_refreshing) return;
-
+    if (!refresh || is_refreshing) return;
+    
     is_refreshing = true;
     is_pulling = false;
     drag_distance = INDICATOR_HEIGHT;
 
     try {
       await refresh();
-      // toastStore.show('Data refreshed successfully');
       is_post_refresh = true;
     } catch (err) {
       console.error('Pull to refresh failed', err);
@@ -144,6 +184,7 @@
 
   onDestroy(() => {
     clearTimeout(wheel_timeout);
+    cleanup_listeners();
   });
 </script>
 
@@ -193,13 +234,14 @@
     </div>
   </div>
 
+  <!-- 
+    Updated: Removed onpointermove/up from here. 
+    Only onpointerdown starts the logic.
+  -->
   <div
     class="content-wrapper flex"
     bind:this={content_element}
     onpointerdown={on_pointer_down}
-    onpointermove={on_pointer_move}
-    onpointerup={on_pointer_up}
-    onpointercancel={on_pointer_up}
     style:transform="translateY({drag_distance}px)"
     style:transition-duration={is_pulling || is_refreshing ? '0s' : '0.3s'}
   >
@@ -301,7 +343,8 @@
       width: 100%;
       height: 100%;
       padding-block: 1.5rem;
-      touch-action: pan-y;
+      /* Vital for mobile: allows standard vertical scroll when we aren't pulling */
+      touch-action: pan-y; 
       will-change: transform;
       transition-property: transform;
       transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);

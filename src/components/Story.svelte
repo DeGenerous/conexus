@@ -28,6 +28,7 @@
   import Tts from '@components/music/Tts.svelte';
   import Step from '@components/Step.svelte';
   import Share from '@components/utils/Share.svelte';
+  import PullToRefresh from '@components/utils/PullToRefresh.svelte';
 
   import DeleteSVG from '@components/icons/Delete.svelte';
   import DoorSVG from '@components/icons/Door.svelte';
@@ -127,13 +128,19 @@
   };
 
   // fetch the complete topic page payload plus unfinished stories for the current user
-  const fetchTopicData = async (user_id: string | undefined): Promise<void> => {
+  const fetchTopicData = async (
+    user_id: string | undefined,
+    refresh = false,
+  ): Promise<void> => {
     try {
       inFlight = true;
       const topicPageData = await view.getTopicPage(
         topic_id,
         user_id,
         category_id,
+        1,
+        5,
+        refresh,
       );
       activeTopic = topicPageData.topic;
       unfinishedStories = topicPageData.topic?.unfinished_stories || [];
@@ -228,196 +235,205 @@
       ({ story_id: id }) => id !== story_id,
     );
   }
+
+  const refreshTopic = async () => {
+    const user = await getCurrentUser(true);
+    userID = user?.id;
+    navContext.clear();
+    await fetchTopicData(userID, true);
+  };
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-{#if $story === null}
-  {#if inFlight}
-    <div class="story-wrapper flex">
-      <section class="story container">
-        <span class="fake-img loading-animation round-8"></span>
-
-        <div class="flex">
-          <span
-            class="loading-animation default-genres genres round-8 pad-8 pad-inline"
-          ></span>
-
-          <span class="buttons flex-row flex-wrap">
-            <button disabled>PLAY NOW</button>
-            <Share disabled={true} />
-          </span>
-        </div>
-      </section>
-    </div>
-  {:else if activeTopic}
-    {#if activeTopic === null}
-      <div class="container">
-        <h4 class="red-txt">Story not found...</h4>
-        <p class="soft-white-txt">
-          The story you are looking for does not exist.
-        </p>
-      </div>
-    {:else}
-      <div
-        class="story-wrapper flex"
-        style:cursor={game.loading ? 'progress' : ''}
-      >
+<PullToRefresh refresh={refreshTopic}>
+  {#if $story === null}
+    {#if inFlight}
+      <div class="story-wrapper flex">
         <section class="story container">
-          {#if activeTopic.video_file_url && !videoError}
-            <video
-              class="round-8 transparent-glowing"
-              controls
-              autoplay
-              loop
-              muted
-              onerror={() => (videoError = true)}
-            >
-              <source
-                src={serveUrl(activeTopic.video_file_url)}
-                type="video/mp4"
-              />
-              <track kind="captions" />
-            </video>
-          {:else}
-            <img
-              class="round-8 transparent-glowing"
-              src={descriptionImage}
-              alt={activeTopic.name ?? 'Default image'}
-              draggable="false"
-              width="1024"
-              onerror={() => {
-                imageError = true;
-                descriptionImage = blankImage;
-              }}
-            />
-          {/if}
+          <span class="fake-img loading-animation round-8"></span>
+
           <div class="flex">
-            {#if activeTopic.genres && activeTopic.genres.length > 0}
-              <span class="genres round-8 pad-8 transparent-glowing">
-                <p class="text-glowing">
-                  {activeTopic.genres.join(', ').toUpperCase()}
-                </p>
-              </span>
-            {/if}
+            <span
+              class="loading-animation default-genres genres round-8 pad-8 pad-inline"
+            ></span>
 
             <span class="buttons flex-row flex-wrap">
-              {#if game.loading}
-                <span class="flex-row gap-8">
-                  <LoadingSVG />
-                  <button disabled>LOADING</button>
-                </span>
-              {:else}
-                {#if !userID}
-                  <DoorSVG
-                    state="inside"
-                    text="play now"
-                    onclick={() => {
-                      $showProfile = true;
-                    }}
-                    cta={true}
-                  />
-                {:else}
-                  <button class="cta" onclick={startGame}> PLAY NOW </button>
-                {/if}
-                <Share />
-                {#if userID}
-                  <Bookmark user_id={userID} topic_id={activeTopic.id} />
-                {/if}
-              {/if}
+              <button disabled>PLAY NOW</button>
+              <Share disabled={true} />
             </span>
           </div>
         </section>
-
-        {#if unfinishedStories.length}
-          <section
-            class="unfinished-stories transparent-container vert-scrollbar"
-          >
-            <h5 class="text-glowing">
-              Continue Shaping: {unfinishedStories.length}
-            </h5>
-            {#each unfinishedStories as continuable}
-              <div class="small-tile" role="button" tabindex="0">
-                <DeleteSVG
-                  disabled={game.loading}
-                  onclick={() => {
-                    openModal(
-                      ensureMessage('delete this story'),
-                      `Delete story: ${topic_name}`,
-                      () => DeleteStory(continuable.story_id),
-                    );
-                  }}
+      </div>
+    {:else if activeTopic}
+      {#if activeTopic === null}
+        <div class="container">
+          <h4 class="red-txt">Story not found...</h4>
+          <p class="soft-white-txt">
+            The story you are looking for does not exist.
+          </p>
+        </div>
+      {:else}
+        <div
+          class="story-wrapper flex"
+          style:cursor={game.loading ? 'progress' : ''}
+        >
+          <section class="story container">
+            {#if activeTopic.video_file_url && !videoError}
+              <video
+                class="round-8 transparent-glowing"
+                controls
+                autoplay
+                loop
+                muted
+                onerror={() => (videoError = true)}
+              >
+                <source
+                  src={serveUrl(activeTopic.video_file_url)}
+                  type="video/mp4"
                 />
-                <span class="flex">
-                  <p>{convertDate(continuable.created_at)}</p>
-                  <p class="story-id">
-                    {continuable.story_id.split('-')[0]}
+                <track kind="captions" />
+              </video>
+            {:else}
+              <img
+                class="round-8 transparent-glowing"
+                src={descriptionImage}
+                alt={activeTopic.name ?? 'Default image'}
+                draggable="false"
+                width="1024"
+                onerror={() => {
+                  imageError = true;
+                  descriptionImage = blankImage;
+                }}
+              />
+            {/if}
+            <div class="flex">
+              {#if activeTopic.genres && activeTopic.genres.length > 0}
+                <span class="genres round-8 pad-8 transparent-glowing">
+                  <p class="text-glowing">
+                    {activeTopic.genres.join(', ').toUpperCase()}
                   </p>
                 </span>
-                <PlaySVG
-                  disabled={game.loading}
-                  onclick={() => {
-                    conexusGame.continue(
-                      {
-                        topic_id: activeTopic?.id!,
-                        story_id: continuable.story_id,
-                      },
-                      handleSetMedia,
-                    );
-                  }}
-                />
-              </div>
-            {/each}
+              {/if}
+
+              <span class="buttons flex-row flex-wrap">
+                {#if game.loading}
+                  <span class="flex-row gap-8">
+                    <LoadingSVG />
+                    <button disabled>LOADING</button>
+                  </span>
+                {:else}
+                  {#if !userID}
+                    <DoorSVG
+                      state="inside"
+                      text="play now"
+                      onclick={() => {
+                        $showProfile = true;
+                      }}
+                      cta={true}
+                    />
+                  {:else}
+                    <button class="cta" onclick={startGame}> PLAY NOW </button>
+                  {/if}
+                  <Share />
+                  {#if userID}
+                    <Bookmark user_id={userID} topic_id={activeTopic.id} />
+                  {/if}
+                {/if}
+              </span>
+            </div>
+          </section>
+
+          {#if unfinishedStories.length}
+            <section
+              class="unfinished-stories transparent-container vert-scrollbar"
+            >
+              <h5 class="text-glowing">
+                Continue Shaping: {unfinishedStories.length}
+              </h5>
+              {#each unfinishedStories as continuable}
+                <div class="small-tile" role="button" tabindex="0">
+                  <DeleteSVG
+                    disabled={game.loading}
+                    onclick={() => {
+                      openModal(
+                        ensureMessage('delete this story'),
+                        `Delete story: ${topic_name}`,
+                        () => DeleteStory(continuable.story_id),
+                      );
+                    }}
+                  />
+                  <span class="flex">
+                    <p>{convertDate(continuable.created_at)}</p>
+                    <p class="story-id">
+                      {continuable.story_id.split('-')[0]}
+                    </p>
+                  </span>
+                  <PlaySVG
+                    disabled={game.loading}
+                    onclick={() => {
+                      conexusGame.continue(
+                        {
+                          topic_id: activeTopic?.id!,
+                          story_id: continuable.story_id,
+                        },
+                        handleSetMedia,
+                      );
+                    }}
+                  />
+                </div>
+              {/each}
+            </section>
+          {/if}
+        </div>
+
+        {#if activeTopic.topic_gates && activeTopic.topic_gates.length > 0}
+          <section
+            class="flex gating blur pad-8 gap-8 mar-auto round-12 wavy-mask-left-right"
+          >
+            <div class="flex-row gap">
+              <LockSVG />
+              <h5>Only available to holders of:</h5>
+            </div>
+            <span class="flex-row pad-8 pad-inline round-8">
+              {#each activeTopic.topic_gates as gate}
+                {#if gate}
+                  <a
+                    href={gate.purchase_link || NAV_ROUTES.WIKI}
+                    target="_blank"
+                    class="gate-link nohover-link"
+                    class:inactive-link={!gate.purchase_link}
+                    use:tippy={{ content: 'Check details', animation: 'scale' }}
+                  >
+                    {#if gate.gate_kind === 'erc20_token'}
+                      {gate.min_amount!}
+                      ${gate.collection_name?.toUpperCase()}
+                    {:else if gate.gate_kind === 'erc721_token'}
+                      {gate.collection_name || gate.name}
+                      (NFTs: #{gate.specific_token_ids?.join(', #')})
+                    {:else if gate.gate_kind === 'erc721_class'}
+                      {gate.collection_name} ({gate.name})
+                    {/if}
+                  </a>
+                {/if}
+              {/each}
+            </span>
           </section>
         {/if}
-      </div>
 
-      {#if activeTopic.topic_gates && activeTopic.topic_gates.length > 0}
-        <section
-          class="flex gating blur pad-8 gap-8 mar-auto round-12 wavy-mask-left-right"
-        >
-          <div class="flex-row gap">
-            <LockSVG />
-            <h5>Only available to holders of:</h5>
-          </div>
-          <span class="flex-row pad-8 pad-inline round-8">
-            {#each activeTopic.topic_gates as gate}
-              {#if gate}
-                <a
-                  href={gate.purchase_link || NAV_ROUTES.WIKI}
-                  target="_blank"
-                  class="gate-link nohover-link"
-                  class:inactive-link={!gate.purchase_link}
-                  use:tippy={{ content: 'Check details', animation: 'scale' }}
-                >
-                  {#if gate.gate_kind === 'erc20_token'}
-                    {gate.min_amount!}
-                    ${gate.collection_name?.toUpperCase()}
-                  {:else if gate.gate_kind === 'erc721_token'}
-                    {gate.collection_name || gate.name}
-                    (NFTs: #{gate.specific_token_ids?.join(', #')})
-                  {:else if gate.gate_kind === 'erc721_class'}
-                    {gate.collection_name} ({gate.name})
-                  {/if}
-                </a>
-              {/if}
-            {/each}
-          </span>
-        </section>
+        <p class="description transparent-container white-txt text-shad">
+          {activeTopic.description}
+        </p>
       {/if}
-
-      <p class="description transparent-container white-txt text-shad">
-        {activeTopic.description}
-      </p>
     {/if}
-  {/if}
-{:else}
-  {#if !detectIOS()}
-    <BackgroundMusic />
-  {/if}
-  <Tts />
+  {:else}
+    {#if !detectIOS()}
+      <BackgroundMusic />
+    {/if}
+    <Tts />
 
-  <Step {topic_name} {restartGame} />
-{/if}
+    <Step {topic_name} {restartGame} />
+  {/if}
+</PullToRefresh>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

@@ -6,6 +6,7 @@
   import { resolveRenderableImage } from '@utils/file-validation';
 
   import Category from '@components/Category.svelte';
+  import PullToRefresh from '@components/utils/PullToRefresh.svelte';
   import SearchAndGenre from '@components/Filters.svelte';
   import SpotifyIframe from '@components/music/SpotifyIframe.svelte';
   import Links from '@components/utils/Links.svelte';
@@ -31,8 +32,10 @@
   let loading = $state<boolean>(false);
   let allLoaded = $state<boolean>(false); // Prevent further requests when empty response
   let showNoCategoriesMessage = $state<boolean>(false);
+  let filtersResetKey = $state<number>(0);
 
   let explorerImage = $state<string>(blankImage);
+  let categoriesContainer = $state<HTMLElement | undefined>();
 
   // Prefetch explorer portrait and swap to placeholder on failure
   $effect(() => {
@@ -63,7 +66,7 @@
   });
 
   // incremental loader; each call pulls the next page and appends while respecting the cache for sections
-  const fetchCategories = async () => {
+  const fetchCategories = async (refresh = false) => {
     if (!name || loading || allLoaded) return;
     loading = true;
 
@@ -75,6 +78,7 @@
           name,
           categories.length + 1,
           pageSize,
+          refresh,
         );
         break;
       case 'c':
@@ -82,6 +86,7 @@
           currExplorerId,
           categories.length + 1,
           pageSize,
+          refresh,
         );
         break;
       default:
@@ -102,14 +107,21 @@
     }
   };
 
-  onMount(async () => {
+  const hydrateSection = async (refresh = false) => {
     try {
+      observer?.disconnect();
+      categories = [];
+      allLoaded = false;
+      showNoCategoriesMessage = false;
+      loading = false;
+      filtersResetKey += 1;
+      if (categoriesContainer) categoriesContainer.scrollTo({ top: 0 });
+
       if (intended === 's') {
         explorer = (await app.getSection(name)) as Explorer;
       } else if (intended === 'c') {
         explorer = (await app.getCreator(name)) as Explorer;
       }
-      console.log(explorer);
 
       if (!explorer || !explorer.id) {
         window.location.href = '/404';
@@ -118,9 +130,9 @@
 
       currExplorerId = explorer.id;
 
-      await fetchCategories();
+      await fetchCategories(refresh);
 
-      const data = await app.getGenres();
+      const data = await app.getGenres(refresh);
       genres = data.sort((a, b) => a.name.localeCompare(b.name));
 
       // Fallback message if no categories found
@@ -129,7 +141,14 @@
           showNoCategoriesMessage = true;
         }
       }, 2000);
+    } catch (error) {
+      console.error('Error loading section:', error);
+    }
+  };
 
+  onMount(async () => {
+    try {
+      await hydrateSection();
       // If intended === 'c', you can later add creator-specific setup here
     } catch (error) {
       console.error('Error on mount:', error);
@@ -200,44 +219,52 @@
   $effect(() => {
     if (categories.length > 0) setTimeout(observeLastCategory, 500);
   });
+
+  const refreshSection = async () => {
+    await hydrateSection(true);
+  };
 </script>
 
-{#if intended === 'c' && explorer}
-  <div class="explorer-bio flex pad-inline">
-    <img class="pfp round" src={explorerImage} alt="Creator PFP" />
-    <p>{explorer.avatar_bio}</p>
-  </div>
-{/if}
-
-<SearchAndGenre {name} {intended} {genres} {getTopics} {categories} />
-
-<section class="flex" onscroll={handleScroll}>
-  {#if categories.length > 0}
-    {#each categories as category (category.id)}
-      <div class="category flex">
-        <Category {name} {intended} {category} />
-      </div>
-    {/each}
-
-    {#if loading}
-      <h5>Loading more categories...</h5>
-    {/if}
-  {:else if showNoCategoriesMessage}
-    <h5>No categories found for this section.</h5>
-  {:else}
-    <Category {name} {intended} category={null} />
+<PullToRefresh refresh={refreshSection}>
+  {#if intended === 'c' && explorer}
+    <div class="explorer-bio flex pad-inline">
+      <img class="pfp round" src={explorerImage} alt="Creator PFP" />
+      <p>{explorer.avatar_bio}</p>
+    </div>
   {/if}
-</section>
 
-{#if categories.length === 0 && !loading && !showNoCategoriesMessage}
-  <h5>Loading categories...</h5>
-{/if}
+  {#key filtersResetKey}
+    <SearchAndGenre {name} {intended} {genres} {getTopics} {categories} />
+  {/key}
 
-{#if intended === 's' && name === 'Dischordian Saga'}
-  <SpotifyIframe />
-{/if}
+  <section class="flex" bind:this={categoriesContainer} onscroll={handleScroll}>
+    {#if categories.length > 0}
+      {#each categories as category (category.id)}
+        <div class="category flex">
+          <Category {name} {intended} {category} />
+        </div>
+      {/each}
 
-<Links section_name={name} />
+      {#if loading}
+        <h5>Loading more categories...</h5>
+      {/if}
+    {:else if showNoCategoriesMessage}
+      <h5>No categories found for this section.</h5>
+    {:else}
+      <Category {name} {intended} category={null} />
+    {/if}
+  </section>
+
+  {#if categories.length === 0 && !loading && !showNoCategoriesMessage}
+    <h5>Loading categories...</h5>
+  {/if}
+
+  {#if intended === 's' && name === 'Dischordian Saga'}
+    <SpotifyIframe />
+  {/if}
+
+  <Links section_name={name} />
+</PullToRefresh>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

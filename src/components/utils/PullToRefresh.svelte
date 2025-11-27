@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, type Snippet } from 'svelte';
+  import { onDestroy, onMount, type Snippet } from 'svelte';
   import { toastStore } from '@stores/toast.svelte';
 
   let {
@@ -17,8 +17,9 @@
   // --- CONFIG ---
   const RESISTANCE_FACTOR = 2.5;
   const INDICATOR_HEIGHT = 60;
-  const WHEEL_FACTOR = 0.5;
+  const WHEEL_FACTOR = 0.4; // Slightly reduced from 0.5 to make it feel heavier
   const COOLDOWN_MS = 500;
+  const MOMENTUM_SAFETY_MS = 1200; // Time to wait after hitting top before wheel works
 
   // --- STATE ---
   let host_element = $state<HTMLElement | undefined>();
@@ -32,6 +33,10 @@
   let last_refresh_time = $state(0);
   let wheel_timeout: ReturnType<typeof setTimeout> | undefined;
 
+  // New state for scroll safety
+  let is_wheel_safe = $state(true);
+  let safety_timeout: ReturnType<typeof setTimeout> | undefined;
+
   // --- DERIVED STATE ---
   const pull_progress = $derived(Math.min(1, drag_distance / threshold));
 
@@ -44,7 +49,6 @@
 
   const can_start_pull = () => {
     if (typeof window === 'undefined') return false;
-    // Block if disabled, refreshing, on cooldown, or NOT at the top of the page
     if (
       !refresh ||
       is_refreshing ||
@@ -56,52 +60,58 @@
     return true;
   };
 
+  // --- SCROLL SAFETY LOGIC (Fix for PC Momentum) ---
+  const on_window_scroll = () => {
+    const at_top = window.scrollY <= 0;
+
+    if (!at_top) {
+      // If we are NOT at the top, wheel pull is definitely unsafe
+      is_wheel_safe = false;
+      clearTimeout(safety_timeout);
+    } else if (!is_wheel_safe) {
+      // We just arrived at the top.
+      // Wait for momentum to settle before enabling wheel pull.
+      clearTimeout(safety_timeout);
+      safety_timeout = setTimeout(() => {
+        is_wheel_safe = true;
+      }, MOMENTUM_SAFETY_MS);
+    }
+  };
+
   // --- INTERACTION LOGIC ---
 
-  // 1. Start the interaction on the element
   const on_pointer_down = (e: PointerEvent) => {
+    // Pointer down is deliberate (requires a click/tap), so it ignores is_wheel_safe
     if (!can_start_pull() || !e.isPrimary) return;
     
     is_pulling = true;
     drag_start_y = e.clientY;
 
-    // 2. Attach WINDOW listeners dynamically.
-    // 'passive: false' is CRITICAL for touchmove to allow preventDefault()
     window.addEventListener('touchmove', on_window_touch_move, { passive: false });
     window.addEventListener('touchend', on_window_touch_end);
-    
-    // Mouse fallback listeners
     window.addEventListener('pointermove', on_window_pointer_move);
     window.addEventListener('pointerup', on_window_pointer_up);
   };
 
-  // 3. Handle Mobile Touch (Active Listener)
   const on_window_touch_move = (e: TouchEvent) => {
     if (!is_pulling) return;
     
     const y = e.touches[0].clientY;
     const delta_y = y - drag_start_y;
 
-    // A. User is scrolling content UP (pushing finger up)
     if (delta_y < 0) {
-      // Abort our custom pull, let the browser scroll naturally
       finish_pull(); 
       return;
     }
 
-    // B. User is pulling DOWN and we are at the top
     if (delta_y > 0 && window.scrollY <= 0) {
-      // THIS stops the native reload!
       if (e.cancelable) e.preventDefault(); 
-      
       const resisted_delta = delta_y / RESISTANCE_FACTOR;
       drag_distance = Math.min(maxDistance, resisted_delta);
     }
   };
 
-  // 4. Handle PC Mouse
   const on_window_pointer_move = (e: PointerEvent) => {
-    // Avoid conflict with touch events
     if (e.pointerType === 'touch') return; 
     
     if (!is_pulling) return;
@@ -127,7 +137,6 @@
     cleanup_listeners();
   };
 
-  // Wrappers for event binding
   const on_window_touch_end = () => finish_pull();
   const on_window_pointer_up = () => finish_pull();
 
@@ -141,8 +150,10 @@
 
   // --- MOUSE WHEEL LOGIC (PC) ---
   const on_wheel = (e: WheelEvent) => {
-    if (!can_start_pull() || e.deltaY >= 0) return;
+    // Added !is_wheel_safe check here
+    if (!can_start_pull() || e.deltaY >= 0 || !is_wheel_safe) return;
 
+    // Even if safe, we prevent default to stop browser bounce
     e.preventDefault();
 
     const new_dist = drag_distance + Math.abs(e.deltaY) * WHEEL_FACTOR;
@@ -158,7 +169,6 @@
     }
   };
 
-  // --- REFRESH LOGIC ---
   const trigger_refresh = async () => {
     if (!refresh || is_refreshing) return;
     
@@ -182,9 +192,21 @@
     }
   };
 
+  onMount(() => {
+    if (typeof window !== 'undefined') {
+      // Check initial state
+      is_wheel_safe = window.scrollY <= 0;
+      window.addEventListener('scroll', on_window_scroll, { passive: true });
+    }
+  });
+
   onDestroy(() => {
     clearTimeout(wheel_timeout);
+    clearTimeout(safety_timeout);
     cleanup_listeners();
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('scroll', on_window_scroll);
+    }
   });
 </script>
 
@@ -234,10 +256,6 @@
     </div>
   </div>
 
-  <!-- 
-    Updated: Removed onpointermove/up from here. 
-    Only onpointerdown starts the logic.
-  -->
   <div
     class="content-wrapper flex"
     bind:this={content_element}
@@ -254,7 +272,7 @@
 
   section {
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     height: 100%;
     width: 100%;
     padding-inline: 1.5rem;
@@ -342,6 +360,7 @@
       position: relative;
       width: 100%;
       height: 100%;
+      justify-content: flex-start;
       padding-block: 1.5rem;
       /* Vital for mobile: allows standard vertical scroll when we aren't pulling */
       touch-action: pan-y; 

@@ -26,16 +26,18 @@ export default class ViewAPI extends Fetcher {
    * Retrieves a list of sections.
    * @returns A promise that resolves to an array of Section objects.
    */
-  async sections() {
-    return this.request<Section[]>(`${this.adminGroup}/sections`);
+  async sections(refresh: boolean = false) {
+    return this.request<Section[]>(
+      `${this.adminGroup}/sections?refresh=${refresh}`,
+    );
   }
 
   /**
    * Retrieves a list of genres.
    * @returns A promise that resolves to an array of Genre objects.
    */
-  async genres() {
-    return this.request<Genre[]>(`${this.adminGroup}/genres`);
+  async genres(refresh: boolean = false) {
+    return this.request<Genre[]>(`${this.adminGroup}/genres?refresh=${refresh}`);
   }
 
   /**
@@ -57,9 +59,14 @@ export default class ViewAPI extends Fetcher {
    * @param pageSize The number of topics per page.
    * @returns A promise that resolves to an array of Topic objects.
    */
-  async categoryTopics(category_id: string, page: number, pageSize: number) {
+  async categoryTopics(
+    category_id: string,
+    page: number,
+    pageSize: number,
+    refresh: boolean = false,
+  ) {
     return this.request<CategoryTopic[]>(
-      `${this.topicGroup}/category-topics/${category_id}?page=${page}&page_size=${pageSize}`,
+      `${this.topicGroup}/category-topics/${category_id}?page=${page}&page_size=${pageSize}&refresh=${refresh}`,
     );
   }
 
@@ -70,9 +77,14 @@ export default class ViewAPI extends Fetcher {
    * @param pageSize The number of topics per page.
    * @returns A promise that resolves to an array of Topic objects.
    */
-  async sectionTopics(section_id: string, page: number, pageSize: number) {
+  async sectionTopics(
+    section_name: string,
+    page: number,
+    pageSize: number,
+    refresh: boolean = false,
+  ) {
     return this.request<SectionCategoryTopics[]>(
-      `${this.topicGroup}/section-topics/${section_id}?page=${page}&page_size=${pageSize}`,
+      `${this.topicGroup}/section-topics/${section_name}?page=${page}&page_size=${pageSize}&refresh=${refresh}`,
     );
   }
 
@@ -114,9 +126,14 @@ export default class ViewAPI extends Fetcher {
    * @param pageSize The number of topics per page.
    * @returns A promise that resolves to an array of Topic objects.
    */
-  async creatorTopics(account_id: string, page: number, pageSize: number) {
+  async creatorTopics(
+    account_id: string,
+    page: number,
+    pageSize: number,
+    refresh: boolean = false,
+  ) {
     return this.request<SectionCategoryTopics[]>(
-      `${this.topicGroup}/creator-topics/${account_id}?page=${page}&page_size=${pageSize}`,
+      `${this.topicGroup}/creator-topics/${account_id}?page=${page}&page_size=${pageSize}&refresh=${refresh}`,
     );
   }
 
@@ -224,9 +241,10 @@ export default class ViewAPI extends Fetcher {
     page: number,
     pageSize: number,
     category_id?: string,
+    refresh: boolean = false,
   ) {
     return this.request<TopicNeighbor[]>(
-      `${this.topicGroup}/neighbors/${topic_id}?page=${page}&page_size=${pageSize}${category_id ? `&category_id=${category_id}` : ''}`,
+      `${this.topicGroup}/neighbors/${topic_id}?page=${page}&page_size=${pageSize}${category_id ? `&category_id=${category_id}` : ''}&refresh=${refresh}`,
     );
   }
 
@@ -245,9 +263,10 @@ export default class ViewAPI extends Fetcher {
     category_id?: string,
     page: number = 1,
     pageSize: number = 5,
+    refresh: boolean = false,
   ) {
     return this.request<{ topic: TopicPage; neighbors: TopicNeighbor[] }>(
-      `${this.topicGroup}/view/${topic_id}?category_id=${category_id || ''}&page=${page}&page_size=${pageSize}`,
+      `${this.topicGroup}/view/${topic_id}?category_id=${category_id || ''}&page=${page}&page_size=${pageSize}&refresh=${refresh}`,
       {
         headers: {
           'X-Requester-ID': account_id || '',

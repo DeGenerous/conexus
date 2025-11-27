@@ -25,10 +25,13 @@ export default class AdminAPI extends Fetcher {
    * Fetches all roles.
    * @returns A promise that resolves to the success status of the operation.
    */
-  async getRoles() {
-    return this.request<TenantRole[]>(`${this.group}/roles`, {
-      method: 'GET',
-    });
+  async getRoles(refresh: boolean = false) {
+    return this.request<TenantRole[]>(
+      `${this.group}/roles?refresh=${refresh}`,
+      {
+        method: 'GET',
+      },
+    );
   }
 
   /**

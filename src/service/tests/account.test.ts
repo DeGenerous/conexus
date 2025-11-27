@@ -224,7 +224,9 @@ describe('AccountAPI', () => {
 
     mockRequest.mockClear();
     await api.getPromptSettings();
-    expect(mockRequest).toHaveBeenCalledWith('/account/prompt-settings');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/prompt-settings?refresh=false',
+    );
   });
 
   it('custom theme helper posts and fetches correctly', async () => {
@@ -237,7 +239,9 @@ describe('AccountAPI', () => {
 
     mockRequest.mockClear();
     await api.getCustomTheme();
-    expect(mockRequest).toHaveBeenCalledWith('/account/custom-theme');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/account/custom-theme?refresh=false',
+    );
   });
 
   it('notification inbox and read helpers use correct endpoints', async () => {
@@ -258,6 +262,8 @@ describe('AccountAPI', () => {
 
   it('getRoles proxies to admin endpoint', async () => {
     await api.getRoles();
-    expect(mockRequest).toHaveBeenCalledWith('/admin/roles', { method: 'GET' });
+    expect(mockRequest).toHaveBeenCalledWith('/admin/roles?refresh=false', {
+      method: 'GET',
+    });
   });
 });

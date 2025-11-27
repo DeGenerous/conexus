@@ -25,7 +25,7 @@ describe('AdminAPI', () => {
 
   it('getRoles performs GET request', async () => {
     await api.getRoles();
-    expect(mockRequest).toHaveBeenCalledWith('/admin/roles', {
+    expect(mockRequest).toHaveBeenCalledWith('/admin/roles?refresh=false', {
       method: 'GET',
     });
   });

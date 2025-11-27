@@ -368,8 +368,10 @@ export default class AccountAPI extends Fetcher {
    * Get prompt settings.
    * @returns A promise that resolves to the prompt settings or an error.
    */
-  async getPromptSettings() {
-    return this.request<PromptSettings>(`${this.group}/prompt-settings`);
+  async getPromptSettings(refresh: boolean = false) {
+    return this.request<PromptSettings>(
+      `${this.group}/prompt-settings?refresh=${refresh}`,
+    );
   }
 
   /**
@@ -388,8 +390,10 @@ export default class AccountAPI extends Fetcher {
    * Get the custom theme.
    * @returns A promise that resolves to the custom theme or an error.
    */
-  async getCustomTheme() {
-    return this.request<CustomTheme>(`${this.group}/custom-theme`);
+  async getCustomTheme(refresh: boolean = false) {
+    return this.request<CustomTheme>(
+      `${this.group}/custom-theme?refresh=${refresh}`,
+    );
   }
 
   async notificationInbox(page: number, pageSize: number) {
@@ -406,8 +410,8 @@ export default class AccountAPI extends Fetcher {
     });
   }
 
-  async getRoles() {
-    return this.request<TenantRole[]>(`/admin/roles`, {
+  async getRoles(refresh: boolean = false) {
+    return this.request<TenantRole[]>(`/admin/roles?refresh=${refresh}`, {
       method: 'GET',
     });
   }

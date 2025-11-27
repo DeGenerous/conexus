@@ -2,9 +2,7 @@ import {
   USER_KEY,
   REFERRAL_CODE_KEY,
   SUBSCRIPTION_STATUS_KEY,
-  ROLES_KEY,
   TTL_SHORT,
-  TTL_MONTH,
   ClearCache,
   GetCache,
   SetCache,
@@ -563,8 +561,9 @@ class Account {
    * Retrieve the user's saved prompt settings.
    * @returns The prompt settings or null if unavailable.
    */
-  async getPromptSettings(): Promise<PromptSettings | null> {
-    const { status, message, data } = await this.api.getPromptSettings();
+  async getPromptSettings(refresh: boolean = false): Promise<PromptSettings | null> {
+    const { status, message, data } =
+      await this.api.getPromptSettings(refresh);
 
     if (status === 'error') {
       api_error(message);
@@ -594,8 +593,9 @@ class Account {
    * Retrieve the user's custom theme configuration.
    * @returns The stored custom theme or null if not set.
    */
-  async getCustomTheme(): Promise<CustomTheme | null> {
-    const { status, message, data } = await this.api.getCustomTheme();
+  async getCustomTheme(refresh: boolean = false): Promise<CustomTheme | null> {
+    const { status, message, data } =
+      await this.api.getCustomTheme(refresh);
 
     if (status === 'error') {
       api_error(message, false); // TEMP: hide toast
@@ -610,22 +610,11 @@ class Account {
    * @returns The list of roles, or an empty array on failure.
    */
   async fetchRoles(refresh: boolean = false): Promise<TenantRole[]> {
-    if (refresh) ClearCache(ROLES_KEY);
-
-    const cached = GetCache<TenantRole[]>(ROLES_KEY);
-    if (cached) {
-      return cached;
-    }
-
-    const { status, message, data } = await this.api.getRoles();
+    const { status, message, data } = await this.api.getRoles(refresh);
 
     if (status === 'error') {
       api_error(message);
       return [];
-    }
-
-    if (data) {
-      SetCache(ROLES_KEY, data, TTL_MONTH);
     }
 
     return data || [];

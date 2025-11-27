@@ -1,12 +1,4 @@
-import {
-  GENRES_KEY,
-  TTL_MONTH,
-  SECTIONS_KEY,
-  TTL_DAY,
-  GetCache,
-  SetCache,
-  ClearCache,
-} from '@constants/cache';
+import { ClearCache } from '@constants/cache';
 import { serveUrl } from '@constants/media';
 import { api_error } from '@errors/index';
 import ViewAPI from '@service/view';
@@ -74,21 +66,14 @@ export default class AppView {
    * Get Sections
    * @returns {Promise<Section[]>} A list of sections for the tenant
    */
-  async getSections(): Promise<Section[]> {
-    const cachedData = GetCache<Section[]>(SECTIONS_KEY);
-    if (cachedData) {
-      return cachedData;
-    }
+  async getSections(refresh: boolean = false): Promise<Section[]> {
+    if (refresh) ClearCache('view');
 
-    const { status, message, data } = await this.api.sections();
+    const { status, message, data } = await this.api.sections(refresh);
 
     if (status === 'error') {
       api_error(message);
       return [];
-    }
-
-    if (data) {
-      SetCache(SECTIONS_KEY, data, TTL_DAY);
     }
 
     return data || [];
@@ -99,14 +84,9 @@ export default class AppView {
    * @returns A list of genres or an empty array on failure.
    */
   async getGenres(refresh: boolean = false): Promise<Genre[]> {
-    if (refresh) ClearCache(GENRES_KEY);
+    if (refresh) ClearCache('view');
 
-    const cachedData = GetCache<Genre[]>(GENRES_KEY);
-    if (cachedData) {
-      return cachedData;
-    }
-
-    const { status, message, data } = await this.api.genres();
+    const { status, message, data } = await this.api.genres(refresh);
 
     if (status === 'error') {
       api_error(message);
@@ -114,7 +94,6 @@ export default class AppView {
     }
 
     if (data) {
-      SetCache(GENRES_KEY, data, TTL_MONTH);
       availableGenres.splice(0, availableGenres.length, ...data); // Update state
     }
 
@@ -131,11 +110,13 @@ export default class AppView {
     category_id: string,
     page: number,
     pageSize: number,
+    refresh: boolean = false,
   ): Promise<CategoryTopic[]> {
     const { status, message, data } = await this.api.categoryTopics(
       category_id,
       page,
       pageSize,
+      refresh,
     );
 
     if (status === 'error') {
@@ -166,14 +147,16 @@ export default class AppView {
    * @returns A sorted list of section category topics.
    */
   async getSectionCategoryTopics(
-    section_id: string,
+    section_name: string,
     page: number,
     pageSize: number,
+    refresh: boolean = false,
   ): Promise<SectionCategoryTopics[]> {
     const { status, message, data } = await this.api.sectionTopics(
-      section_id,
+      section_name,
       page,
       pageSize,
+      refresh,
     );
 
     if (status === 'error') {
@@ -267,11 +250,13 @@ export default class AppView {
     creator_id: string,
     page: number,
     pageSize: number,
+    refresh: boolean = false,
   ): Promise<SectionCategoryTopics[]> {
     const { status, message, data } = await this.api.creatorTopics(
       creator_id,
       page,
       pageSize,
+      refresh,
     );
 
     if (status === 'error') {
@@ -364,12 +349,14 @@ export default class AppView {
     page: number,
     pageSize: number,
     category_id?: string,
+    refresh: boolean = false,
   ): Promise<TopicNeighbor[]> {
     const { status, message, data } = await this.api.topicNeighbors(
       topic_id,
       page,
       pageSize,
       category_id,
+      refresh,
     );
 
     if (status === 'error') {
@@ -392,6 +379,7 @@ export default class AppView {
     category_id?: string,
     page: number = 1,
     pageSize: number = 5,
+    refresh: boolean = false,
   ): Promise<{ topic: TopicPage | null; neighbors: TopicNeighbor[] }> {
     const { status, message, data } = await this.api.topicView(
       topic_id,
@@ -399,6 +387,7 @@ export default class AppView {
       category_id,
       page,
       pageSize,
+      refresh,
     );
 
     if (status === 'error') {

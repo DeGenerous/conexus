@@ -42,20 +42,6 @@ export const DS_VOTING_HISTORY_KEY = (id: string) => `ds_voting_history[${id}]`;
 
 export const COOKIE_CONSENT_KEY = 'cookie_consent';
 
-export const GENRES_KEY = 'genres';
-
-export const ROLES_KEY = 'roles';
-
-/* -------------------------------------------------------------------- */
-// 1 DAY
-/* -------------------------------------------------------------------- */
-
-// Cache all sections
-export const SECTIONS_KEY = 'sections';
-
-// Cache all categories from all sections together
-export const CATEGORIES_KEY = 'categories';
-
 /* -------------------------------------------------------------------- */
 // 1 HOUR
 /* -------------------------------------------------------------------- */
@@ -84,8 +70,6 @@ const authKeys = [
   SELECTED_POTENTIAL_KEY,
 ];
 
-const viewKeys = [SECTIONS_KEY, CATEGORIES_KEY, GENRES_KEY];
-
 function saveImportantAndClearCache() {
   // saving important values
   const cookieConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
@@ -101,8 +85,6 @@ function saveImportantAndClearCache() {
   const customScale = localStorage.getItem(SCALE_KEY);
   const currentDraft = localStorage.getItem(CURRENT_DRAFT_KEY);
   const user = localStorage.getItem(USER_KEY); // save user object too
-  const genres = localStorage.getItem(GENRES_KEY);
-  const roles = localStorage.getItem(ROLES_KEY);
   const unfinishedStoriesRange = localStorage.getItem(
     UNFINISHED_STORIES_RANGE_KEY,
   );
@@ -125,8 +107,6 @@ function saveImportantAndClearCache() {
   if (customScale) localStorage.setItem(SCALE_KEY, customScale);
   if (currentDraft) localStorage.setItem(CURRENT_DRAFT_KEY, currentDraft);
   if (user) localStorage.setItem(USER_KEY, user);
-  if (genres) localStorage.setItem(GENRES_KEY, genres);
-  if (roles) localStorage.setItem(ROLES_KEY, roles);
   if (unfinishedStoriesRange)
     localStorage.setItem(UNFINISHED_STORIES_RANGE_KEY, unfinishedStoriesRange);
   if (finishedStoriesRange)
@@ -167,9 +147,6 @@ export const ClearCache = (
   switch (key) {
     case 'auth':
       removeCacheKeys(authKeys);
-      break;
-    case 'view':
-      removeCacheKeys(viewKeys);
       break;
     case 'full':
       saveImportantAndClearCache();

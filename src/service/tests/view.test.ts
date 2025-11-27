@@ -32,12 +32,12 @@ describe('ViewAPI', () => {
 
   it('sections fetches list', async () => {
     await api.sections();
-    expect(mockRequest).toHaveBeenCalledWith('/admin/sections');
+    expect(mockRequest).toHaveBeenCalledWith('/admin/sections?refresh=false');
   });
 
   it('genres fetches list', async () => {
     await api.genres();
-    expect(mockRequest).toHaveBeenCalledWith('/admin/genres');
+    expect(mockRequest).toHaveBeenCalledWith('/admin/genres?refresh=false');
   });
 
   it('searchGenre posts query payload', async () => {
@@ -51,14 +51,14 @@ describe('ViewAPI', () => {
   it('categoryTopics passes pagination params', async () => {
     await api.categoryTopics('category-1', 3, 15);
     expect(mockRequest).toHaveBeenCalledWith(
-      '/topic/category-topics/category-1?page=3&page_size=15',
+      '/topic/category/category-1?page=3&page_size=15&refresh=false',
     );
   });
 
   it('sectionTopics passes pagination params', async () => {
     await api.sectionTopics('section-1', 2, 25);
     expect(mockRequest).toHaveBeenCalledWith(
-      '/topic/section-topics/section-1?page=2&page_size=25',
+      '/topic/section/section-1/topics?page=2&page_size=25&refresh=false',
     );
   });
 
@@ -94,7 +94,7 @@ describe('ViewAPI', () => {
   it('creatorTopics passes pagination params', async () => {
     await api.creatorTopics('account-1', 5, 20);
     expect(mockRequest).toHaveBeenCalledWith(
-      '/topic/creator-topics/account-1?page=5&page_size=20',
+      '/topic/creator/account-1/topics?page=5&page_size=20&refresh=false',
     );
   });
 
@@ -146,21 +146,27 @@ describe('ViewAPI', () => {
   it('topicNeighbors requests neighbor data', async () => {
     await api.topicNeighbors('topic-1', 2, 6);
     expect(mockRequest).toHaveBeenCalledWith(
-      '/topic/neighbors/topic-1?page=2&page_size=6',
+      '/topic/topic-1/neighbors?page=2&page_size=6&refresh=false',
     );
   });
 
   it('topicView sends requester header when provided', async () => {
     await api.topicView('topic-1', 'account-1');
-    expect(mockRequest).toHaveBeenCalledWith('/topic/view/topic-1', {
-      headers: { 'X-Requester-ID': 'account-1' },
-    });
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/topic/topic-1?category_id=&page=1&page_size=5&refresh=false',
+      {
+        headers: { 'X-Requester-ID': 'account-1' },
+      },
+    );
 
     mockRequest.mockClear();
     await api.topicView('topic-2');
-    expect(mockRequest).toHaveBeenCalledWith('/topic/view/topic-2', {
-      headers: { 'X-Requester-ID': '' },
-    });
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/topic/topic-2?category_id=&page=1&page_size=5&refresh=false',
+      {
+        headers: { 'X-Requester-ID': '' },
+      },
+    );
   });
 
   it('getFile forwards parameters', async () => {

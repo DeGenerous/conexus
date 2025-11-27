@@ -40,31 +40,31 @@ describe('TopicAPI', () => {
   it('fetches collection listings', async () => {
     await api.sectionCollection(2, 25, true);
     expect(mockRequest).toHaveBeenCalledWith(
-      '/topic/collection-section?page=2&page_size=25&refresh=true',
+      '/topic/sections?page=2&page_size=25&refresh=true',
     );
 
     mockRequest.mockClear();
     await api.creatorCollection(3, 12, false);
     expect(mockRequest).toHaveBeenCalledWith(
-      '/topic/collection-creator?page=3&page_size=12&refresh=false',
+      '/topic/creators?page=3&page_size=12&refresh=false',
     );
 
     mockRequest.mockClear();
     await api.sectionCategoryCollection('section-1', 4, 10, true);
     expect(mockRequest).toHaveBeenCalledWith(
-      '/topic/collection-category/section/section-1?page=4&page_size=10&refresh=true',
+      '/topic/sections/section-1/categories?page=4&page_size=10&refresh=true',
     );
 
     mockRequest.mockClear();
     await api.creatorCategoryCollection('creator-1', 5, 8, false);
     expect(mockRequest).toHaveBeenCalledWith(
-      '/topic/collection-category/creator/creator-1?page=5&page_size=8&refresh=false',
+      '/topic/creators/creator-1/categories?page=5&page_size=8&refresh=false',
     );
 
     mockRequest.mockClear();
     await api.topicCollection('category-1', 6, 9, true);
     expect(mockRequest).toHaveBeenCalledWith(
-      '/topic/collection-topic/category-1?page=6&page_size=9&refresh=true',
+      '/topic/categories/category-1/topics?page=6&page_size=9&refresh=true',
     );
   });
 

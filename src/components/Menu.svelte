@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import CoNexusApp from '@lib/view';
+  import { checkIfTesterApproved } from '@utils/route-guard';
 
   import MenuTile from '@components/utils/MenuTile.svelte';
 
@@ -25,12 +27,54 @@
 
     return reordered;
   };
+
+  let sections = $state<Section[]>([]);
+  let sectionsLoading = $state<boolean>(true);
+  let sectionError = $state<string>('');
+
+  let isTestingEnv = $derived<boolean>(
+    import.meta.env.PUBLIC_ENV === 'testing',
+  );
+
+  onMount(async () => {
+    try {
+      if (isTestingEnv) checkIfTesterApproved();
+      sections = await app.getSections();
+    } catch (error) {
+      sectionError = (error as Error).message;
+    } finally {
+      sectionsLoading = false;
+    }
+  });
 </script>
 
 <section class="container fade-in dark-glowing">
   <h5>{menuText[0]}</h5>
 
-  {#await app.getSections()}
+  {#if sectionsLoading}
+    <!-- Loading -->
+    <div class="flex-row">
+      {#each Array(3) as _, index}
+        <div class="loading-menu-tile" class:big-menu-tile={index === 0}>
+          <div class="loading-animation"></div>
+          <span class="loading-animation"></span>
+        </div>
+      {/each}
+    </div>
+  {:else if sectionError}
+    <!-- Error -->
+    <p class="validation">Failed to fetch story sections...</p>
+    <p class="validation">Error: {sectionError}</p>
+  {:else}
+    <!-- Success -->
+    <div class="flex-row">
+      {#each prioritizeCommunityPicks(sections) as section, i (section.id ?? `section-${i}`)}
+        <MenuTile {section} />
+      {/each}
+    </div>
+  {/if}
+
+  <!-- {#await app.getSections()}
     <div class="flex-row">
       {#each Array(3) as _, index}
         <div class="loading-menu-tile" class:big-menu-tile={index === 0}>
@@ -48,7 +92,7 @@
   {:catch error}
     <p class="validation">Failed to fetch story sections...</p>
     <p class="validation">Error: {error.message}</p>
-  {/await}
+  {/await} -->
 
   <h5>{menuText[1]}</h5>
 </section>

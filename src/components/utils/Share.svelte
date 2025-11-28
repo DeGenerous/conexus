@@ -1,7 +1,9 @@
 <script lang="ts">
   import { tippy } from 'svelte-tippy';
 
+  import { NAV_ROUTES } from '@constants/routes';
   import { toastStore } from '@stores/toast.svelte';
+
   import CopySVG from '@components/icons/Copy.svelte';
 
   let {
@@ -31,16 +33,19 @@
         toastStore.show('Copied — now share it with the world!');
         break;
       case 'discord':
-        const shareUrlDiscord = `https://dgrslabs.ink/join`;
+        const shareUrlDiscord = NAV_ROUTES.DISCORD;
         await navigator.clipboard.writeText(window.location.href);
         window.open(shareUrlDiscord, '_blank');
         break;
       case 'twitter':
-        const shareUrlTwitter = `https://twitter.com/intent/tweet?text=${encodedMessage}&url=${encodedURI}`;
+        const shareUrlTwitter = NAV_ROUTES.TWITTER(encodedMessage, encodedURI);
         window.open(shareUrlTwitter, '_blank');
         break;
       case 'facebook':
-        const shareUrlFacebook = `https://www.facebook.com/sharer/sharer.php?u=${encodedURI}&quote=${encodedMessage}`;
+        const shareUrlFacebook = NAV_ROUTES.FACEBOOK(
+          encodedMessage,
+          encodedURI,
+        );
         window.open(shareUrlFacebook, '_blank');
         break;
     }
@@ -57,7 +62,7 @@
   </p>
 
   <span
-    class="flex-row pad-inline round-8 shad"
+    class="flex-row pad-inline round-8"
     class:loading-animation={disabled}
     class:transparent-glowing={!disabled}
   >
@@ -131,7 +136,7 @@
 
         &:hover:not(&:disabled),
         &:active:not(&:disabled),
-        &:focus:not(&:disabled) {
+        &:focus-visible:not(&:disabled) {
           @include scale(0.9);
           @include bright;
         }

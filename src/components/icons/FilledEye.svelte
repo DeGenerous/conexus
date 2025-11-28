@@ -50,7 +50,7 @@
 
     &:hover,
     &:active,
-    &:focus {
+    &:focus-visible {
       fill: $cyan;
       stroke: $cyan;
       @include scale;

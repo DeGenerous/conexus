@@ -49,7 +49,7 @@
     stroke: $light-blue;
 
     &:hover,
-    &:focus,
+    &:focus-visible,
     &:active {
       fill: $cyan;
       stroke: $cyan;

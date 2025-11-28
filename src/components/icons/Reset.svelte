@@ -44,7 +44,7 @@
 
     &:hover,
     &:active,
-    &:focus {
+    &:focus-visible {
       fill: $cyan;
       stroke: $cyan;
       color: $cyan;

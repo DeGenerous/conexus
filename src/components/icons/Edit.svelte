@@ -45,7 +45,7 @@
 
     &:hover:not(&:disabled),
     &:active:not(&:disabled),
-    &:focus:not(&:disabled) {
+    &:focus-visible:not(&:disabled) {
       stroke: $cyan;
       @include scale;
       @include bright;

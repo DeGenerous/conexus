@@ -1,355 +1,467 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { tippy } from 'svelte-tippy';
 
-  import { serveUrl } from '@constants/media';
-  import { contractGetter } from '@constants/contracts';
-  import MediaManager from '@lib/media';
+  import { GetCache, SetCache, PLAY_OPTIONS_KEY } from '@constants/cache';
+  import { blankImage, serveUrl } from '@constants/media';
+  import { ensureMessage, referralWarning } from '@constants/modal';
+  import { NAV_ROUTES } from '@constants/routes';
   import CoNexusGame from '@lib/story';
+  import CoNexusApp from '@lib/view';
   import { story, game } from '@stores/conexus.svelte';
-  import { navContext } from '@stores/navigation.svelte';
-  import { GetCache, SECTION_CATEGORIES_KEY, TERMS_KEY } from '@constants/cache';
+  import openModal, {
+    modal,
+    showModal,
+    showProfile,
+    playOptions,
+    resetModal,
+  } from '@stores/modal.svelte';
   import detectIOS from '@utils/ios-device';
-  import openModal, { showProfile } from '@stores/modal.svelte';
-  import { deleteUnfinishedModal, referralWarning } from '@constants/modal';
-  import { userState } from '@utils/route-guard';
+  import { getCurrentUser, userState } from '@utils/route-guard';
+  import { getPersonalSetup, developerMode } from '@stores/account.svelte';
+  import convertDate from '@utils/date-converter';
+  import { resolveRenderableImage } from '@utils/file-validation';
+  import { navContext } from '@stores/navigation.svelte';
 
+  import Bookmark from '@components/utils/Bookmark.svelte';
   import BackgroundMusic from '@components/music/BackgroundMusic.svelte';
   import Tts from '@components/music/Tts.svelte';
   import Step from '@components/Step.svelte';
+  import Share from '@components/utils/Share.svelte';
+  import PullToRefresh from '@components/utils/PullToRefresh.svelte';
+
   import DeleteSVG from '@components/icons/Delete.svelte';
-  import PlaySVG from '@components/icons/Play.svelte';
+  import DoorSVG from '@components/icons/Door.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
   import LockSVG from '@components/icons/Lock.svelte';
-  import DoorSVG from '@components/icons/Door.svelte';
-  import Share from '@components/utils/Share.svelte';
+  import PlaySVG from '@components/icons/Play.svelte';
 
-  export let section: string;
-  export let story_name: string;
+  let {
+    section_name,
+    username,
+    topic_id,
+    topic_name,
+    category_id,
+  }: {
+    section_name?: string;
+    username?: string;
+    topic_id: string;
+    topic_name: string;
+    category_id?: string;
+  } = $props();
 
-  let scroll: number;
-  let isLogged: boolean = false;
-  let isReferred: boolean = false;
-
-  let termsAccepted: boolean = false; // temp for terms modal
+  let userID = $state<string | undefined>(undefined);
+  let isReferred = $state<boolean>(false);
 
   const conexusGame: CoNexusGame = new CoNexusGame();
-  const media: MediaManager = new MediaManager();
+  const view: CoNexusApp = new CoNexusApp();
 
-  const handleSetMedia = async (topic_id: number) => {
-    await media.setBackgroundImage(topic_id);
-    await media.playBackgroundMusic(topic_id);
+  // hydrate the shared stores with whatever background assets this topic exposes
+  const handleSetMedia = async (topic_id: string) => {
+    const [image, audio] = await Promise.all([
+      view.setBackgroundImage(topic_id),
+      view.playBackgroundMusic(topic_id),
+    ]);
+
+    if (image) game.background_image = image;
+    if (audio) game.background_music = audio;
   };
 
-  let activeTopic: Nullable<TopicThumbnail> = null;
+  let inFlight = $state<boolean>(false);
+  let activeTopic = $state<Nullable<TopicPage>>(null);
+  let unfinishedStories = $state<UnfinishedStory[]>([]);
+
+  let videoError = $state<boolean>(false);
+  let imageError = $state<boolean>(false);
+  let descriptionImage = $state<string>(blankImage);
+
+  // Keep the story hero image valid across topic transitions
+  $effect(() => {
+    const topic = activeTopic;
+    const fileId = topic?.description_file_url ?? null;
+
+    if (!fileId) {
+      descriptionImage = blankImage;
+      imageError = false;
+      return;
+    }
+
+    const candidate = serveUrl(fileId);
+    let cancelled = false;
+
+    descriptionImage = candidate;
+
+    (async () => {
+      const safe = await resolveRenderableImage(candidate);
+      if (!cancelled) {
+        descriptionImage = safe;
+        imageError = safe === blankImage;
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  });
+
+  const applyNavContext = (neighbors: TopicNeighbor[]) => {
+    if (!neighbors || neighbors.length < 2) {
+      navContext.clear();
+      return;
+    }
+
+    const index = neighbors.findIndex((t) => t.topic_id === topic_id);
+    if (index < 0) {
+      navContext.clear();
+      return;
+    }
+
+    navContext.setContext({
+      items: neighbors.map((t) => ({
+        name: `${t.topic_name}`,
+        link: `/${section_name ? 's' : 'c'}/${
+          section_name || username
+        }/${t.topic_id}?title=${t.topic_name}&category=${category_id}`,
+      })),
+      index,
+    });
+  };
+
+  // fetch the complete topic page payload plus unfinished stories for the current user
+  const fetchTopicData = async (
+    user_id: string | undefined,
+    refresh = false,
+  ): Promise<void> => {
+    try {
+      inFlight = true;
+      const topicPageData = await view.getTopicPage(
+        topic_id,
+        user_id,
+        category_id,
+        1,
+        5,
+        refresh,
+      );
+      activeTopic = topicPageData.topic;
+      unfinishedStories = topicPageData.topic?.unfinished_stories || [];
+      applyNavContext(topicPageData.neighbors);
+    } catch (error) {
+      console.error('Error fetching topic data:', error);
+      navContext.clear();
+      activeTopic = null;
+    } finally {
+      inFlight = false;
+    }
+  };
+
+  const retrieveSettings = (): StorySettingSelector => {
+    const cachedSetup = getPersonalSetup();
+    if (cachedSetup) {
+      return cachedSetup.settings === 'personal' ? 'account' : 'topic';
+    } else return 'topic';
+  };
+
+  const retrievePlayMode = (): PlayMode => {
+    const cachedSetup = getPersonalSetup();
+    if (cachedSetup) {
+      return cachedSetup.play_mode || 'play_limited';
+    } else return 'play_limited';
+  };
+
+  const launchStory = () => {
+    if (!activeTopic) return;
+    conexusGame.start(
+      activeTopic.id,
+      retrieveSettings(),
+      retrievePlayMode(),
+      handleSetMedia,
+    );
+  };
+
+  const startGame = () => {
+    if (!isReferred && !$developerMode) {
+      openModal(
+        referralWarning,
+        'Proceed',
+        () => (window.location.href = '/referral'),
+      );
+      return;
+    }
+
+    const showPlayOptions = GetCache<boolean>(PLAY_OPTIONS_KEY);
+    if (showPlayOptions) {
+      launchStory();
+      return;
+    }
+
+    $showModal = true;
+    $playOptions = true;
+    modal.button =
+      retrievePlayMode() === 'play_limited'
+        ? 'Play: 1 credit'
+        : 'Play: 3 credits';
+    modal.buttonFunc = () => {
+      if ($playOptions === 'dont_show_again') {
+        SetCache(PLAY_OPTIONS_KEY, true);
+      }
+      launchStory();
+      resetModal();
+    };
+  };
 
   const restartGame = () => {
     game.background_image = null;
     game.background_music = null;
     $story = null;
-    setTimeout(() => {
-      activeTopic &&
-        conexusGame.startGame(activeTopic.name, activeTopic.id, handleSetMedia);
-    });
+    setTimeout(launchStory);
   };
 
   onMount(async () => {
-    isLogged = await userState();
+    const user = await getCurrentUser();
+    userID = user?.id;
     isReferred = await userState('referred');
 
-    // Get all topics in SECTION from the localStorage
-    const storedTopics = GetCache<CategoryInSection[]>(
-      SECTION_CATEGORIES_KEY(section),
-    )
-      ?.map((category: CategoryInSection) => category.topics)
-      .flat();
-    if (storedTopics) {
-      navContext.setContext({
-        items: storedTopics.map(({ topic_name, topic_order }) => ({
-          name: topic_name,
-          link: `/sections/${section}/${topic_name}?id=${topic_order}`,
-        })),
-        index: storedTopics.findIndex(
-          (topic) => topic.topic_name === story_name,
-        ),
-      });
-    }
+    await fetchTopicData(userID);
+  });
 
-    termsAccepted = GetCache<boolean>(TERMS_KEY) || false; // temp for terms modal
+  onDestroy(() => {
+    navContext.clear();
   });
 
   // CONTINUE SHAPING section
-
-  let deletedStories: string[] = []; // temp storage before reload for immediate removal
-  let noUnfinishedStoriesLeft: boolean = false;
-
   async function DeleteStory(story_id: any) {
-    try {
-      await conexusGame.delete(story_id);
-      deletedStories[deletedStories.length] = story_id; // hide deleted story from user
-      await conexusGame.storyContinuables(story_name!).then((continuables) => {
-        // Hide CINTINUE SHAPING section if no unfinished stories left
-        if (continuables.length == 0) noUnfinishedStoriesLeft = true;
-      });
-    } catch (error) {
-      console.error('Failed to delete story: ' + error);
-    }
+    await conexusGame.delete(story_id);
+    unfinishedStories = unfinishedStories.filter(
+      ({ story_id: id }) => id !== story_id,
+    );
   }
 
-  // Calculate story creation date to show on CONTINUE button
-  const convertDate = (date: string | Date) => {
-    if (!date) return 'CORRUPTED';
-    date = new Date(date);
-
-    let minutes = String(date.getMinutes());
-    let hours = String(date.getHours());
-
-    let day = String(date.getDate());
-    let month = String(date.getMonth() + 1);
-    let year = String(date.getFullYear());
-
-    if (Number(minutes) < 10) minutes = '0' + minutes;
-    if (Number(hours) < 10) hours = '0' + hours;
-    if (Number(day) < 10) day = '0' + day;
-    if (Number(month) < 10) month = '0' + month;
-
-    return `${day}.${month}.${year.slice(2)} ${hours}:${minutes}`;
+  const refreshTopic = async () => {
+    const user = await getCurrentUser(true);
+    userID = user?.id;
+    navContext.clear();
+    await fetchTopicData(userID, true);
   };
 </script>
 
-<svelte:window bind:scrollY={scroll} />
-
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-{#if $story === null}
-  {#await conexusGame.getTopic(section, story_name)}
-    <div class="story-wrapper flex">
-      <section class="story container">
-        <span class="fake-img loading-animation round-8"></span>
+<PullToRefresh refresh={refreshTopic}>
+  {#if $story === null}
+    {#if inFlight}
+      <div class="story-wrapper flex">
+        <section class="story container">
+          <span class="fake-img loading-animation round-8"></span>
 
-        <div class="flex">
-          <span
-            class="loading-animation default-genres genres round-8 pad-8 pad-inline shad"
-          ></span>
+          <div class="flex">
+            <span
+              class="loading-animation default-genres genres round-8 pad-8 pad-inline"
+            ></span>
 
-          <span class="buttons flex-row flex-wrap">
-            <button disabled>PLAY NOW</button>
-            <Share disabled={true} />
-          </span>
-        </div>
-      </section>
-    </div>
-  {:then topic: TopicThumbnail}
-    <div
-      class="story-wrapper flex"
-      style:cursor={game.loading ? 'progress' : ''}
-    >
-      <section class="story container">
-        {#if topic?.video_file_id}
-          <video
-            class="round-8 transparent-glowing"
-            controls
-            autoplay
-            loop
-            muted
-          >
-            <source src={serveUrl(topic?.video_file_id)} type="video/mp4" />
-            <track kind="captions" />
-          </video>
-        {:else}
-          <img
-            class="round-8 transparent-glowing"
-            src={serveUrl(topic?.description_file_id)}
-            alt={topic?.name}
-            draggable="false"
-            width="1024"
-          />
-        {/if}
-        <div class="flex">
-          {#if topic.genres}
-            <span class="genres round-8 pad-8 shad transparent-glowing">
-              <p class="text-glowing">{topic.genres.toUpperCase()}</p>
+            <span class="buttons flex-row flex-wrap">
+              <button disabled>PLAY NOW</button>
+              <Share disabled={true} />
             </span>
-          {/if}
-
-          <span class="buttons flex-row flex-wrap">
-            {#if game.loading}
-              <span class="flex-row gap-8">
-                <LoadingSVG />
-                <button disabled>LOADING</button>
-              </span>
-            {:else}
-              {#if !isLogged}
-                <DoorSVG
-                  state="inside"
-                  text="play now"
-                  onclick={() => {
-                    $showProfile = true;
-                  }}
-                  glow={true}
-                />
-              {:else}
-                <button
-                  class="button-glowing"
-                  on:click={() => {
-                    if (!isReferred) {
-                      openModal(
-                        referralWarning,
-                        'Proceed',
-                        () => (window.location.href = '/referral'),
-                      );
-                      return;
-                    }
-                    activeTopic = topic;
-                    topic &&
-                      conexusGame.startGame(
-                        topic.name,
-                        topic.id,
-                        handleSetMedia,
-                      );
-                  }}
-                  disabled={!termsAccepted}
-                >
-                  PLAY NOW
-                </button>
-              {/if}
-              <Share />
-            {/if}
-          </span>
+          </div>
+        </section>
+      </div>
+    {:else if activeTopic}
+      {#if activeTopic === null}
+        <div class="container">
+          <h4 class="red-txt">Story not found...</h4>
+          <p class="soft-white-txt">
+            The story you are looking for does not exist.
+          </p>
         </div>
-      </section>
+      {:else}
+        <div
+          class="story-wrapper flex"
+          style:cursor={game.loading ? 'progress' : ''}
+        >
+          <section class="story container">
+            {#if activeTopic.video_file_url && !videoError}
+              <video
+                class="round-8 transparent-glowing"
+                controls
+                autoplay
+                loop
+                muted
+                onerror={() => (videoError = true)}
+              >
+                <source
+                  src={serveUrl(activeTopic.video_file_url)}
+                  type="video/mp4"
+                />
+                <track kind="captions" />
+              </video>
+            {:else}
+              <img
+                class="round-8 transparent-glowing"
+                src={descriptionImage}
+                alt={activeTopic.name ?? 'Default image'}
+                draggable="false"
+                width="1024"
+                onerror={() => {
+                  imageError = true;
+                  descriptionImage = blankImage;
+                }}
+              />
+            {/if}
+            <div class="flex">
+              {#if activeTopic.genres && activeTopic.genres.length > 0}
+                <span class="genres round-8 pad-8 transparent-glowing">
+                  <p class="text-glowing">
+                    {activeTopic.genres.join(', ').toUpperCase()}
+                  </p>
+                </span>
+              {/if}
 
-      {#if isLogged}
-        {#await conexusGame.storyContinuables(story_name!) then continuables: ContinuableStory[]}
-          {#if continuables.length > 0 && !noUnfinishedStoriesLeft}
+              <span class="buttons flex-row flex-wrap">
+                {#if game.loading}
+                  <span class="flex-row gap-8">
+                    <LoadingSVG />
+                    <button disabled>LOADING</button>
+                  </span>
+                {:else}
+                  {#if !userID}
+                    <DoorSVG
+                      state="inside"
+                      text="play now"
+                      onclick={() => {
+                        $showProfile = true;
+                      }}
+                      cta={true}
+                    />
+                  {:else}
+                    <button class="cta" onclick={startGame}> PLAY NOW </button>
+                  {/if}
+                  <Share />
+                  {#if userID}
+                    <Bookmark user_id={userID} topic_id={activeTopic.id} />
+                  {/if}
+                {/if}
+              </span>
+            </div>
+          </section>
+
+          {#if unfinishedStories.length}
             <section
               class="unfinished-stories transparent-container vert-scrollbar"
             >
               <h5 class="text-glowing">
-                Continue Shaping: {continuables.length - deletedStories.length}
+                Continue Shaping: {unfinishedStories.length}
               </h5>
-              {#each continuables as continuable}
-                {#if !deletedStories.includes(continuable.story_id)}
-                  <div class="small-tile" role="button" tabindex="0">
-                    <DeleteSVG
-                      disabled={game.loading}
-                      onclick={() =>
-                        openModal(
-                          deleteUnfinishedModal,
-                          `Delete story: ${continuable.category}`,
-                          () => DeleteStory(continuable.story_id),
-                        )}
-                    />
-                    <span class="flex">
-                      <p>{convertDate(continuable.created!)}</p>
-                      <p class="story-id">
-                        {continuable.story_id.split('-')[0]}
-                      </p>
-                    </span>
-                    <PlaySVG
-                      disabled={game.loading || !termsAccepted}
-                      onclick={() => {
-                        activeTopic = topic;
-                        conexusGame.continueGame(continuable, handleSetMedia);
-                      }}
-                    />
-                  </div>
-                {/if}
+              {#each unfinishedStories as continuable}
+                <div class="small-tile" role="button" tabindex="0">
+                  <DeleteSVG
+                    disabled={game.loading}
+                    onclick={() => {
+                      openModal(
+                        ensureMessage('delete this story'),
+                        `Delete story: ${topic_name}`,
+                        () => DeleteStory(continuable.story_id),
+                      );
+                    }}
+                  />
+                  <span class="flex">
+                    <p>{convertDate(continuable.created_at)}</p>
+                    <p class="story-id">
+                      {continuable.story_id.split('-')[0]}
+                    </p>
+                  </span>
+                  <PlaySVG
+                    disabled={game.loading}
+                    onclick={() => {
+                      conexusGame.continue(
+                        {
+                          topic_id: activeTopic?.id!,
+                          story_id: continuable.story_id,
+                        },
+                        handleSetMedia,
+                      );
+                    }}
+                  />
+                </div>
               {/each}
             </section>
           {/if}
-        {:catch}
-          <section class="unfinished-stories transparent-container">
-            <p class="validation">Failed to fetch unfinished stories...</p>
-          </section>
-        {/await}
-      {/if}
-    </div>
-
-    {#if topic.nft_gate && topic.nft_gate.length > 0}
-      <section
-        class="flex gating blur pad-8 gap-8 mar-auto round-12 shad wavy-mask-left-right"
-      >
-        <div class="flex-row">
-          <LockSVG />
-          <h5>Only available to holders of:</h5>
         </div>
-        <span class="flex-row pad-8 pad-inline round-8">
-          {#each topic.nft_gate as { contract_name, class_name, amount }}
-            {#if contractGetter(contract_name)}
-              {#await Promise.resolve(contractGetter(contract_name)) then contract}
-                <a
-                  href={contract.link ||
-                    'https://degenerousdao.gitbook.io/wiki'}
-                  class:inactive-link={!contract.link}
-                  target="_blank"
-                  on:click={(event) => {
-                    if (contract.link) return;
-                    if (
-                      !confirm(
-                        'This collection is no longer available. Would you like to explore the wiki for more details?',
-                      )
-                    )
-                      event.preventDefault();
-                  }}
-                  use:tippy={{ content: 'Check details', animation: 'scale' }}
-                >
-                  {#if amount && amount > 0}
-                    {amount} ${contract.name.toUpperCase()}
-                  {:else if class_name}
-                    {contract.name} ({class_name})
-                  {:else}
-                    {contract.name}
-                  {/if}
-                </a>
-              {/await}
-            {/if}
-          {/each}
-        </span>
-      </section>
+
+        {#if activeTopic.topic_gates && activeTopic.topic_gates.length > 0}
+          <section
+            class="flex gating blur pad-8 gap-8 mar-auto round-12 wavy-mask-left-right"
+          >
+            <div class="flex-row gap">
+              <LockSVG />
+              <h5>Only available to holders of:</h5>
+            </div>
+            <span class="flex-row pad-8 pad-inline round-8">
+              {#each activeTopic.topic_gates as gate}
+                {#if gate}
+                  <a
+                    href={gate.purchase_link || NAV_ROUTES.WIKI}
+                    target="_blank"
+                    class="gate-link nohover-link"
+                    class:inactive-link={!gate.purchase_link}
+                    use:tippy={{ content: 'Check details', animation: 'scale' }}
+                  >
+                    {#if gate.gate_kind === 'erc20_token'}
+                      {gate.min_amount!}
+                      ${gate.collection_name?.toUpperCase()}
+                    {:else if gate.gate_kind === 'erc721_token'}
+                      {gate.collection_name || gate.name}
+                      (NFTs: #{gate.specific_token_ids?.join(', #')})
+                    {:else if gate.gate_kind === 'erc721_class'}
+                      {gate.collection_name} ({gate.name})
+                    {/if}
+                  </a>
+                {/if}
+              {/each}
+            </span>
+          </section>
+        {/if}
+
+        <p class="description transparent-container white-txt text-shad">
+          {activeTopic.description}
+        </p>
+      {/if}
     {/if}
+  {:else}
+    {#if !detectIOS()}
+      <BackgroundMusic />
+    {/if}
+    <Tts />
 
-    <p class="description transparent-container white-txt text-shad">
-      {topic.description}
-    </p>
-  {:catch}
-    <div class="container">
-      <h4 class="red-txt">Failed to fetch story...</h4>
-      <p class="soft-white-txt">Please try again or contact support.</p>
-    </div>
-  {/await}
-{:else}
-  {#if !detectIOS()}
-    <BackgroundMusic />
+    <Step {topic_name} {restartGame} />
   {/if}
-  <Tts />
-
-  <Step {story_name} {restartGame} />
-{/if}
+</PullToRefresh>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
   .story-wrapper {
-    margin-top: 1rem;
+    width: 100vw;
+    padding-inline: 1.5rem;
+
+    @include respond-up(full-hd) {
+      flex-direction: row;
+    }
 
     .story {
-      width: 90%;
-      max-width: 50rem;
-      min-width: 250px;
+      width: 100%;
+      max-width: 68rem;
+      margin-inline: unset;
 
       img,
       .fake-img {
         width: 100%;
         height: 25rem;
-        @include box-shadow;
+        object-fit: cover;
         @include cyan(0.1);
       }
 
       video {
         max-width: 100%;
         max-height: 25rem;
-        @include box-shadow;
 
         @include respond-up(tablet) {
           min-height: 20rem;
@@ -359,13 +471,9 @@
       div {
         width: 100%;
 
-        span {
-          width: 100%;
-        }
-
         .genres {
+          width: 100%;
           @include cyan(0.1);
-          @include font(small);
 
           p {
             padding: 0;
@@ -374,40 +482,50 @@
           }
 
           &.default-genres {
-            min-width: 20rem;
+            width: 100%;
             min-height: 2.2rem;
           }
         }
-      }
 
-      @include respond-up(tablet) {
-        div {
+        .buttons {
+          width: 100%;
+
+          button {
+            width: 100%;
+          }
+        }
+
+        @include respond-up(small-desktop) {
           flex-direction: row;
           justify-content: space-between;
-          gap: 1rem;
-          flex: none;
 
-          span {
-            max-width: 100%;
+          .genres {
             width: auto;
+
+            &.default-genres {
+              width: 10rem;
+            }
           }
 
           .buttons {
-            justify-content: flex-end;
+            width: auto;
             flex-direction: row-reverse;
             flex: none;
+
+            button {
+              width: auto;
+            }
           }
         }
-      }
-
-      @include respond-up(small-desktop) {
-        max-width: 68rem;
-        width: auto;
       }
     }
 
     .unfinished-stories {
+      width: 100%;
+      max-width: 68rem;
+      margin-inline: unset;
       overflow-x: hidden !important;
+      flex: none;
 
       h5 {
         width: 100%;
@@ -439,46 +557,30 @@
 
       @include respond-up(tablet) {
         flex-flow: row wrap;
-        width: 90%;
-        max-width: 50rem;
 
         div {
           width: auto;
         }
       }
 
-      @include respond-up(small-desktop) {
-        max-width: 68rem;
-      }
-    }
-
-    @include respond-up(large-desktop) {
-      flex-direction: row;
-
-      .story {
-        margin-inline: unset;
-      }
-
-      .unfinished-stories {
-        margin-inline: unset;
+      @include respond-up(full-hd) {
         align-items: flex-start;
         width: 18rem;
         max-height: 30.5rem;
         overflow: auto;
 
-        @include respond-up(full-hd) {
-          width: 36rem;
-        }
+        // @include respond-up(full-hd) {
+        //   width: 36rem;
+        // }
 
-        @include respond-up(quad-hd) {
-          width: 52rem;
-        }
+        // @include respond-up(quad-hd) {
+        //   width: 52rem;
+        // }
       }
     }
   }
 
   .gating {
-    margin-top: 1rem;
     width: 100%;
     max-width: 50rem;
     stroke: $dark-red;
@@ -504,27 +606,25 @@
 
         &:hover:not(&.inactive-link),
         &:active:not(&.inactive-link),
-        &:focus:not(&.inactive-link) {
+        &:focus-visible:not(&.inactive-link) {
           text-decoration: underline $orange;
           color: $bright-orange;
         }
 
         &.inactive-link {
-          cursor: help;
-
-          &:hover,
-          &:active,
-          &:focus {
-            text-decoration: underline $deep-orange;
-            color: $deep-orange;
-          }
+          pointer-events: none;
         }
       }
     }
   }
 
   .description {
-    margin-top: 1rem;
-    width: clamp(250px, 95%, 90rem);
+    width: calc(100% - 3rem);
+    max-width: 68rem;
+
+    @include respond-up(full-hd) {
+      width: calc(100% - 200px);
+      max-width: 87.5rem;
+    }
   }
 </style>

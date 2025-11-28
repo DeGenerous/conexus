@@ -1,15 +1,18 @@
+import { NAV_ROUTES } from './routes';
+
 export const blankImage = '/blank.avif';
 
 export const pcBG = '/conexusBG.avif';
 export const mobileBG = '/mobileBG.webp';
 export const defaultBG = '/defaultBG.avif';
 
-export const serveUrl = (path?: string) => {
-  if (!path) return blankImage;
-  return `/api/media/serve/${path}`;
+// helper to convert a stored media id into an API URL (falls back to a placeholder)
+export const serveUrl = (file_id?: string) => {
+  if (!file_id) return blankImage;
+  return `/api/media/serve/${file_id}`;
 };
 
-export const mediaURL = 'https://media.dgrslabs.ink';
+export const mediaURL = NAV_ROUTES.MEDIA;
 
 export const assetsURL = `${mediaURL}/assets`;
 

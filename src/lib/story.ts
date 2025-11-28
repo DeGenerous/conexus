@@ -1,92 +1,122 @@
 import { ERROR_REQUIRED_TOKEN, ERROR_OUT_OF_CREDITS } from '@constants/error';
 import { api_error } from '@errors/index';
-import Account from '@lib/account';
-import { GameAPI } from '@service/routes';
+import StoryAPI from '@service/story';
 import { story, game } from '@stores/conexus.svelte';
 import { toastStore } from '@stores/toast.svelte';
 import openModal from '@stores/modal.svelte';
+import { getCurrentUser } from '@utils/route-guard';
 
-class CoNexusGame extends GameAPI {
-  // Properties
-  private static instance: CoNexusGame;
+/**
+ * Orchestrates interactive story sessions and syncs game state with the backend.
+ */
+export default class CoNexus {
+  protected api: StoryAPI;
+  private static instance: CoNexus;
 
   step_data: GameData; // The data for the current step of the story.
   maxStep: number = 0; // The maximum step number of the story.
 
-  // Constructor
-  constructor(data?: GameData) {
-    super(import.meta.env.PUBLIC_BACKEND);
+  /**
+   * Create a new story session manager.
+   * @param data - Optional initial game data to bootstrap with.
+   * @param task_id - Optional task identifier for pending assets.
+   */
+  constructor(data?: GameData, task_id?: string) {
+    this.api = new StoryAPI(import.meta.env.PUBLIC_BACKEND);
 
-    // this.#id = id;
     this.step_data = {} as GameData;
     if (data) {
-      this.#setStepData(data); // ✅ Works now
+      this.#setStepData(data, task_id); // ✅ Works now
     }
   }
 
-  static getInstance(): CoNexusGame {
-    if (!CoNexusGame.instance) {
-      CoNexusGame.instance = new CoNexusGame();
+  /**
+   * Get or create the global CoNexus instance.
+   * @returns The shared CoNexus instance.
+   */
+  static getInstance(): CoNexus {
+    if (!CoNexus.instance) {
+      CoNexus.instance = new CoNexus();
     }
-    return CoNexusGame.instance;
+    return CoNexus.instance;
   }
 
-  // TODO: change to topic_id later
-  async getTopic(section: string, topic: string): Promise<TopicThumbnail> {
-    const { data, error } = await this.topicByName(section, topic);
-
-    if (!data) {
-      if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error fetching topic', 'error');
-      }
-      throw new Error('Error fetching topic');
-    }
-
-    return data;
-  }
-
-  async storyContinuables(topic: string): Promise<ContinuableStory[]> {
-    const { data, error } = await this.continuablesByTopic(topic);
-
-    if (!data) {
-      if (error) {
-        api_error(error);
-      }
-      return [];
-    }
-
-    return data;
-  }
-
-  async delete(story_id: string): Promise<void> {
-    const { data, error } = await this.deleteStory(story_id);
-
-    if (error) {
-      api_error(error);
-    }
-
-    toastStore.show(data?.message || 'Story deleted', 'info');
-  }
-
-  /* GAME */
-
-  // Start New Game
-  async startGame(
-    story_name: string,
-    topic_id: number,
-    setMedia: (topic_id: number) => Promise<void>,
+  /**
+   * Start a new game
+   * @param topic_id  The ID of the topic to start the game for
+   * @param storySettings The settings for the story
+   * @param mode The play mode for the story, either 'play_limited' or 'play_unlimited'
+   * @param setMedia A function to set the media for the story
+   * @returns {Promise<void>} A promise that resolves when the game is started
+   */
+  async start(
+    topic_id: string,
+    storySettings: StorySettingSelector = 'topic',
+    mode: PlayMode = 'play_limited',
+    setMedia: (topic_id: string) => Promise<void>,
   ): Promise<void> {
-    //TODO: change all story_name to topic_id
     game.loading = true;
 
-    const { data, error } = await this.start(story_name, topic_id);
+    const { status, message, data } = await this.api.start(
+      topic_id,
+      storySettings,
+      mode,
+    );
+
+    if (status === 'error' || !data) {
+      game.loading = false;
+      if (message.match(ERROR_REQUIRED_TOKEN)) {
+        const errorMessage: string[] = message.split('. ');
+
+        const errorTitle = errorMessage[0];
+        const nftLinks = errorMessage[1];
+
+        openModal(`
+          <h4>${errorTitle}</h4>
+          <p>${nftLinks}</p>
+        `);
+      } else if (message.match(ERROR_OUT_OF_CREDITS)) {
+        const errorMessage: string[] = message.split(', ');
+
+        const errorTitle = errorMessage[0];
+        const outOfCredits = errorMessage[1];
+
+        openModal(`
+          <h4>${errorTitle}</h4>
+          <p>${outOfCredits.charAt(0).toUpperCase() + outOfCredits.slice(1)}</p>
+        `);
+      }
+      api_error(message);
+      return;
+    }
+
+    await getCurrentUser(true);
+
+    await setMedia(topic_id);
+
+    game.loading = false;
+
+    await this.#setStory(data);
+  }
+
+  /**
+   * Demo a new game
+   * @param topic_id  The ID of the topic to start the game for
+   * @param setMedia A function to set the media for the story
+   * @returns {Promise<void>} A promise that resolves when the game is started
+   */
+  async demo(
+    topic_id: string,
+    setMedia: (topic_id: string) => Promise<void>,
+  ): Promise<void> {
+    game.loading = true;
+
+    const { status, message, data } = await this.api.demo(topic_id);
 
     if (!data) {
-      if (error) {
-        if (error.message.match(ERROR_REQUIRED_TOKEN)) {
-          const errorMessage: string[] = error.message.split('. ');
+      if (status === 'error') {
+        if (message.match(ERROR_REQUIRED_TOKEN)) {
+          const errorMessage: string[] = message.split('. ');
 
           const errorTitle = errorMessage[0];
           const nftLinks = errorMessage[1];
@@ -95,8 +125,8 @@ class CoNexusGame extends GameAPI {
             <h4>${errorTitle}</h4>
             <p>${nftLinks}</p>
           `);
-        } else if (error.message.match(ERROR_OUT_OF_CREDITS)) {
-          const errorMessage: string[] = error.message.split(', ');
+        } else if (message.match(ERROR_OUT_OF_CREDITS)) {
+          const errorMessage: string[] = message.split(', ');
 
           const errorTitle = errorMessage[0];
           const outOfCredits = errorMessage[1];
@@ -105,216 +135,198 @@ class CoNexusGame extends GameAPI {
             <h4>${errorTitle}</h4>
             <p>${outOfCredits.charAt(0).toUpperCase() + outOfCredits.slice(1)}</p>
           `);
-        } else api_error(error);
-      } else {
-        toastStore.show('Error starting game', 'error');
+        }
+        api_error(message);
       }
+
+      game.loading = false;
+      return;
+    }
+
+    await getCurrentUser(true);
+
+    await setMedia(topic_id);
+
+    game.loading = false;
+
+    await this.#setStory(data);
+  }
+
+  /**
+   * Continue a pre-existing story
+   * @param continuable The story to continue
+   * @param setMedia A function to set the media for the story
+   * @returns A promise that resolves when the story is continued
+   */
+  async continue(
+    continuable: ContinuableStory,
+    setMedia: (topic_id: string) => Promise<void>,
+  ): Promise<void> {
+    game.loading = true;
+
+    const { status, message, data } = await this.api.continue(
+      continuable.story_id,
+    );
+
+    if (status === 'error') {
+      this.#rollbackCredits();
+      this.delete(continuable.story_id);
+      api_error(message);
+      game.loading = false;
+      return;
+    }
+
+    if (!data) {
+      game.loading = false;
+      return;
+    }
+
+    await getCurrentUser(true);
+
+    // Set background image and music
+    await setMedia(continuable.topic_id);
+
+    game.loading = false;
+    await this.#setStory(data);
+  }
+
+  /**
+   * Submit a choice for the current game step and advance the story.
+   * @param choice - The option index selected by the player.
+   */
+  async nextStep(choice: number): Promise<void> {
+    game.loading = true;
+
+    // Start new game
+    const { status, message, data } = await this.api.respond(
+      this.step_data.id,
+      choice,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      game.loading = false;
+      return;
+    }
+
+    if (!data) {
       game.loading = false;
       return;
     }
 
     game.loading = false;
-
-    // refresh user
-    await Account.getUser();
-
-    await setMedia(topic_id);
-
-    await this.#setStepData(data); // ✅ Use this instead of new instance
+    await this.#setStory(data);
   }
 
-  // Continue pre-existing game
-  async continueGame(
-    continuable: ContinuableStory,
-    setMedia: (topic_id: number) => Promise<void>,
-  ): Promise<void> {
+  /**
+   * Load a specific step of the story
+   * @param step_id The ID of the step to load
+   * @returns A promise that resolves when the step is loaded
+   */
+  async loadStep(step: number): Promise<void> {
     game.loading = true;
+    const { status, message, data } = await this.api.step(
+      this.step_data.id,
+      step,
+    );
 
-    // Start new game
-    const { data, error } = await this.continue(continuable.story_id);
-
-    if (!data) {
-      if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error continuing game', 'error');
-      }
+    if (status === 'error') {
+      api_error(message);
       game.loading = false;
       return;
     }
 
-    // Set background image and music
-    await setMedia(continuable.topic_id);
-
-    // Set step data
-    await this.#setStepData(data);
-  }
-
-  // Respond to the current game step
-  async nextStep(choice: number): Promise<void> {
-    // set store loading to true
-    game.loading = true;
-
-    // Start new game
-    const { data, error } = await this.respond(this.step_data.id, choice);
-
     if (!data) {
-      if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error playing game', 'error');
-      }
-      return;
-    }
-
-    // Set step data
-    await this.#setStepData(data);
-  }
-
-  // Load the specified step of the game
-  async loadGameStep(step: number): Promise<void> {
-    const { data, error } = await this.loadStep(this.step_data.id, step);
-
-    if (!data) {
-      if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error loading game step', 'error');
-      }
+      game.loading = false;
       return;
     }
 
     console.log('step is loaded');
     console.log('incoming step ID: ', this.step_data.id);
-    console.log('returned step ID: ', data.id);
+    console.log('returned step ID: ', data.story.id);
     console.log(this);
 
-    this.step_data = data;
-    story.set(this);
-
-    await this.#loadGameStepImage(step);
+    game.loading = false;
+    await this.#setStory(data);
   }
 
-  /* Media */
+  /**
+   * Delete a story
+   * @param story_id The ID of the story to delete
+   */
+  async delete(story_id: string): Promise<void> {
+    const { status, message } = await this.api.delete(story_id);
 
-  // Load the specified step image
-  async #loadGameStepImage(step: number): Promise<void> {
-    const { data, error } = await this.loadStepImage(this.step_data.id, step);
+    if (status === 'error') {
+      api_error(message);
+    }
 
-    if (!data) {
-      if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error loading game step image', 'error');
-      }
+    toastStore.show(message || 'Story deleted', 'info');
+  }
+
+  /**
+   * Generate image status
+   * @param task_id The ID of the image generation task
+   * @returns A promise that resolves when the image status is generated
+   */
+  async #generateImageStatus(task_id: string): Promise<void> {
+    const { status, message, data } = await this.api.imageStatus(
+      this.step_data.id,
+      task_id,
+    );
+
+    if (status === 'error') {
+      api_error(message);
       return;
     }
 
-    this.step_data.image = data.image;
-    this.step_data.image_type = data.type;
-
-    console.log('loaded step image (#loadGameStepImage)');
-    console.log(this);
-
-    story.set(this);
-  }
-
-  // Generate image for current step v1
-  async #image(): Promise<void> {
-    const { data, error } = await this.image(this.step_data.id);
-
     if (!data) {
-      if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error getting image', 'error');
-      }
       return;
     }
 
-    this.step_data.image = data.image;
-    this.step_data.image_type = data.type;
+    // check data.status
+    if (data.status === 'pending') {
+      // Wait 5 seconds before retrying
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      await this.#generateImageStatus(task_id);
+      return;
+    }
 
-    console.log('image is ready (#image)');
-    console.log(this);
+    if (data.status === 'ready') {
+      const url = `${import.meta.env.PUBLIC_BACKEND}${data.url}`;
 
-    story.set(this);
-  }
+      // this.step_data.image = url;
+      // this.step_data.image_type = 'url';
 
-  // Generate image for current step v2
-  async #generateImage(): Promise<void> {
-    try {
-      const { data } = await this.imageV2(this.step_data.id);
+      this.step_data = {
+        ...this.step_data,
+        image: url,
+        image_type: 'url',
+      };
 
-      if (!data) {
-        this.#image();
-        return;
-      }
+      console.log('image status is generated (#generateImageStatus)');
 
-      if ('job_id' in data) {
-        // wait 3 seconds before checking status
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        await this.#generateImageStatus(data.job_id);
-      }
-
-      if ('image' in data) {
-        this.step_data.image = data.image;
-        this.step_data.image_type = data.type;
-
-        console.log('image is generated (#generateImage)');
-        console.log(this);
-
-        story.set(this);
-      }
-    } catch (error) {
-      console.error('Error in #generateImage:', error);
-      this.#image();
+      story.set(this);
+      // story.set({ ...this });
+      return;
     }
   }
 
-  // Generate image status v2
-  async #generateImageStatus(job_id: string): Promise<void> {
-    try {
-      const { data } = await this.imageStatusV2(this.step_data.id, job_id);
-
-      if (!data) {
-        this.#image();
-        return;
-      }
-
-      if (data.status === 'pending') {
-        // Wait 5 seconds before retrying
-        await new Promise((resolve) => setTimeout(resolve, 10000));
-        await this.#generateImageStatus(job_id);
-        return;
-      }
-
-      if (data.status === 'ready') {
-        this.step_data.image = data.image;
-        this.step_data.image_type = data.type;
-
-        console.log('image status is generated (#generateImageStatus)');
-        console.log(this);
-
-        story.set(this);
-        return;
-      }
-
-      this.#image();
-    } catch (error) {
-      console.error('Error in #generateImageStatus:', error);
-      this.#image();
-    }
-  }
-
-  // Text to speech
+  /**
+   * Convert text to speech
+   * @returns A promise that resolves when the TTS is ready
+   */
   async #textToSpeech(): Promise<void> {
-    const { data, error } = await this.getTTS(this.step_data.id);
+    const { status, message, data } = await this.api.tts(this.step_data.id);
+
+    if (status === 'error') {
+      api_error(message);
+      game.loading = false;
+      return;
+    }
 
     if (!data) {
-      if (error) {
-        api_error(error);
-      }
+      game.loading = false;
       return;
     }
 
@@ -325,10 +337,50 @@ class CoNexusGame extends GameAPI {
     story.set(this);
   }
 
+  /**
+   * Restore credits when a story continuation fails.
+   */
+  async #rollbackCredits(): Promise<void> {
+    const { status, message } = await this.api.restoreCredit();
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    // return to topic page
+    // window.location.href = `/topic/${topic_id}`; // TODO: Change to topic page
+    window.location.reload();
+
+    toastStore.show(message || 'Credits rolled back', 'info');
+  }
+
   /* Helper */
 
-  async #setStepData(data: GameData): Promise<void> {
+  /**
+   * Set the story data and the task id
+   * @param data The story data and task id to set
+   */
+  async #setStory(data: { story: GameData; task_id: string }): Promise<void> {
+    // Set step data
+    await this.#setStepData(data.story, data.task_id);
+
+    // Wait for image generation
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    if (data.task_id !== '') {
+      await this.#generateImageStatus(data.task_id);
+    }
+  }
+
+  /**
+   * Update local state for the currently active step and trigger media preparation.
+   * @param data - The step data returned from the API.
+   * @param task_id - Optional task identifier for pending assets.
+   */
+  async #setStepData(data: GameData, task_id?: string): Promise<void> {
     this.step_data = data;
+    this.step_data.task_id = task_id || '';
     this.maxStep = Math.max(this.maxStep, data.step);
 
     console.log('set step data');
@@ -339,8 +391,8 @@ class CoNexusGame extends GameAPI {
     story.set(this);
     game.loading = false;
 
-    await Promise.all([this.#generateImage(), this.#textToSpeech()]);
+    if (task_id !== '') {
+      await Promise.all([this.#textToSpeech()]);
+    }
   }
 }
-
-export default CoNexusGame;

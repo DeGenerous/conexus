@@ -144,6 +144,21 @@
   }
 }
 
+@keyframes live-border {
+  0% {
+    --cta-angle: 0deg;
+    --cta-sweep: 180deg;
+  }
+  100% {
+    --cta-angle: 180deg;
+    --cta-sweep: 360deg;
+  }
+  100% {
+    --cta-angle: 360deg;
+    --cta-sweep: 180deg;
+  }
+}
+
 @keyframes transparent-glowing {
   0% {
     background-color: rgba(51, 226, 230, 0.1);
@@ -204,6 +219,17 @@
   }
 }
 
+@keyframes progress-bar {
+  0% {
+    width: 100%;
+    background-color: green;
+  }
+  100% {
+    width: 0%;
+    background-color: red;
+  }
+}
+
 // General definitions
 
 :global(.loading-animation) {
@@ -216,7 +242,7 @@
     rgba(51, 226, 230, 0)
   );
   background-size: 500% auto;
-  animation: shimmer 2s ease-in-out infinite;
+  animation: shimmer 2s ease infinite;
 }
 
 :global(.shimmer) {
@@ -234,7 +260,7 @@
 }
 
 :global(.fade-in) {
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease;
 
   // Fallback if no support
   opacity: 1;
@@ -249,7 +275,7 @@
 }
 
 :global(.waving) {
-  animation: waving 6s ease-in-out infinite;
+  animation: waving 6s ease infinite;
 }
 
 :global(.button-glowing) {
@@ -277,9 +303,13 @@
 }
 
 :global(.pulse-animation) {
-  animation: pulse-animation 6s ease-in-out infinite;
+  animation: pulse-animation 6s ease infinite;
 }
 
 :global(.scaling) {
-  animation: scaling 15s ease-in-out infinite;
+  animation: scaling 15s ease infinite;
+}
+
+:global(.progress-bar span) {
+  animation: progress-bar 10s linear forwards;
 }

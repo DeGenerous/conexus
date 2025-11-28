@@ -59,7 +59,7 @@
     }
 
     &:hover,
-    &:focus,
+    &:focus-visible,
     &:active {
       fill: $cyan;
       @include scale;

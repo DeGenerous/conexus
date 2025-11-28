@@ -24,3 +24,9 @@ $breakpoints: (
     @warn "Breakpoint `#{$breakpoint}` not found.";
   }
 }
+
+@mixin mobile-only {
+  @media (max-width: 768px) {
+    @content;
+  }
+}

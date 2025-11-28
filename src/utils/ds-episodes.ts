@@ -1,5 +1,10 @@
 import contract from '@lib/contract';
-import { GetCache, SELECTED_POTENTIAL_KEY } from '@constants/cache';
+import {
+  GetCache,
+  SetCache,
+  SELECTED_POTENTIAL_KEY,
+  DS_VOTING_HISTORY_KEY,
+} from '@constants/cache';
 import {
   type NFT,
   episodes,
@@ -7,15 +12,12 @@ import {
   loadingStatus,
 } from '@stores/omnihub.svelte';
 
-const fetchEpisodes = async (): Promise<StoryNode[][]> => {
+// Pull both v1/v2 saga episodes from chain, enrich with vote info, and cache them in the Omnihub stores
+const fetchEpisodes = async (nftNumber: number): Promise<StoryNode[][]> => {
   loadingStatus.set('Loading Season 1 Episode 1...');
   episodes.set([]);
 
-  const cachedPotential = GetCache<NFT>(SELECTED_POTENTIAL_KEY);
-  let nftNumber: number = Number(cachedPotential?.id);
-  // console.log('Selected Potential: ' + nftNumber);
-
-  // Season 1 episodes
+  // Season 1 episodes (legacy contract)
   const s1Nodes: StoryNode[] = [];
   const s1Count = await (await contract('v1')).getStoryNodesCount();
   for (let i = 0; i < s1Count; i++) {
@@ -54,7 +56,7 @@ const fetchEpisodes = async (): Promise<StoryNode[][]> => {
     if (vote > 0) s1Nodes[s1Nodes.length - 1].vote = vote;
   }
 
-  // Season 2 episodes
+  // Season 2 episodes (current contract)
   const s2Nodes: StoryNode[] = [];
   const s2Count = await (await contract()).getStoryNodesCount();
   for (let i = 0; i < s2Count; i++) {
@@ -104,8 +106,21 @@ const getVote = async (
 };
 
 export const getVotingHistory = async () => {
+  const cachedVotes = GetCache<StoryNode[][]>(
+    DS_VOTING_HISTORY_KEY(
+      String(GetCache<NFT>(SELECTED_POTENTIAL_KEY)?.token_id),
+    ),
+  );
+  if (cachedVotes) {
+    episodes.set(cachedVotes);
+    totalEpisodes.set(30);
+    return;
+  }
+
   try {
-    await fetchEpisodes()
+    const cachedPotential = GetCache<NFT>(SELECTED_POTENTIAL_KEY);
+    let nftNumber: number = Number(cachedPotential?.token_id);
+    await fetchEpisodes(nftNumber)
       .then((votes) =>
         votes.map((season) => season.filter((episode) => episode.vote)),
       )
@@ -125,6 +140,11 @@ export const getVotingHistory = async () => {
 
         // console.log(memories);
         episodes.set(memories);
+        SetCache(
+          DS_VOTING_HISTORY_KEY(String(nftNumber)),
+          memories,
+          1000 * 60 * 60 * 24 * 30, // 30 days
+        );
       });
     loadingStatus.set(null);
   } catch (error) {

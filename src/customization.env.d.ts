@@ -3,7 +3,7 @@
 
 type StepController = 'scale' | 'styling' | 'sound' | 'step';
 
-type FontSizes = 'caption' | 'small' | 'body' | 'h5' | 'h4';
+type FontSizes = 'caption' | 'small' | 'body' | 'h5' | 'h4'; // not used
 
 type CustomFont = Nullable<{
   family: string;

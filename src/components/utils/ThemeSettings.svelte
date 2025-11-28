@@ -5,49 +5,73 @@
     customThemes,
     customFont,
     customStyling,
-  } from '@stores/modal.svelte';
-  import { GetCache, SetCache, ClearCache, THEMES_KEY } from '@constants/cache';
+    updateFont,
+    updateStyling,
+    getStoredCustomization,
+    persistCustomThemesCache,
+    persistActiveTheme,
+    STANDARD_THEME_COUNT,
+  } from '@stores/customization.svelte';
+  import { GetCache, THEMES_KEY } from '@constants/cache';
 
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
 
   let {
     closeDialog = () => {},
+    table = false,
   }: {
-    closeDialog: () => void;
+    closeDialog?: () => void;
+    table?: boolean;
   } = $props();
+
+  // update FONT in localStorage after every change
+  $effect(() => {
+    $customFont && updateFont();
+  });
+
+  // update STYLING in localStorage after every change
+  $effect(() => {
+    $customStyling && updateStyling();
+  });
 
   onMount(() => {
     const storedThemes = GetCache<Nullable<CustomTheme[]>>(THEMES_KEY);
     if (storedThemes && storedThemes.length) {
-      $customThemes = $customThemes.slice(0, 9).concat(storedThemes);
+      $customThemes = $customThemes
+        .slice(0, STANDARD_THEME_COUNT)
+        .concat(storedThemes);
     }
+
+    getStoredCustomization();
   });
 
-  let selectedTheme = $state<Nullable<number>>(null);
   let newThemeName = $state<string>('CUSTOM THEME');
 
   // Set up current customization from the stored THEME-object
-  const applyTheme = () => {
-    $customFont = structuredClone($customThemes[selectedTheme!].font);
-    $customStyling = structuredClone($customThemes[selectedTheme!].styling);
-    selectedTheme = null;
-    closeDialog();
+  const applyTheme = async (inputTheme: number) => {
+    const theme = $customThemes[inputTheme];
+    $customFont = structuredClone(theme.font);
+    $customStyling = structuredClone(theme.styling);
+    await persistActiveTheme(theme.standard ? theme.name : 'Custom Theme');
   };
 
   // Add current customization as a THEME-object to the array and cache everything
-  const handleAddTheme = () => {
+  const handleAddTheme = async () => {
     $customThemes[$customThemes.length] = {
       name: newThemeName,
       font: structuredClone($customFont),
       styling: structuredClone($customStyling),
     };
+    $customThemes = $customThemes; // force re-render;
     newThemeName = 'CUSTOM THEME';
-    cacheCustomThemes();
+    persistCustomThemesCache();
+    await persistActiveTheme('Custom Theme');
   };
 
   // Check if current customization settings are similar to some THEME-object
   const compareCurrentTheme = (theme: CustomTheme): boolean => {
+    if (!$customFont || !$customStyling) return false;
     return (
       $customFont!.family === theme.font!.family &&
       $customFont!.baseSize === theme.font!.baseSize &&
@@ -70,31 +94,21 @@
     $customThemes.some((theme) => {
       return compareCurrentTheme(theme);
     });
-
-  // Cache only custom themes, first two THEME-objects we provide by default (dark/light)
-  const cacheCustomThemes = () => {
-    ClearCache(THEMES_KEY);
-    if ($customThemes.length === 9) return; // we have 9 standard themes
-
-    SetCache(THEMES_KEY, $customThemes.slice(9));
-  };
 </script>
 
-<h3>Theme Preferences</h3>
-<h5>Use the default look or create your own custom theme.</h5>
-
-<ul class="custom-themes transparent-container">
+<ul
+  class="custom-themes"
+  class:transparent-container={!table}
+  class:flex={table}
+  class:table
+>
   {#each $customThemes as { name, standard }, index}
     <button
       id="theme-{index}"
       class="theme-option void-btn small-purple-tile small-tile-addon"
       class:standard
-      class:selected={selectedTheme === index}
       class:active={compareCurrentTheme($customThemes[index])}
-      onclick={() => {
-        if (selectedTheme === index) selectedTheme = null;
-        else selectedTheme = index;
-      }}
+      onclick={() => applyTheme(index)}
     >
       <h4>{index + 1}</h4>
       <p>{name}</p>
@@ -106,7 +120,7 @@
             event.stopPropagation();
             $customThemes.splice(index, 1);
             $customThemes = $customThemes; // force re-render;
-            cacheCustomThemes();
+            persistCustomThemesCache();
           }}
         />
       {/if}
@@ -134,18 +148,6 @@
       />
     </div>
   {/if}
-
-  <hr />
-
-  <button
-    onclick={applyTheme}
-    disabled={selectedTheme === null ||
-      compareCurrentTheme($customThemes[selectedTheme!])}
-  >
-    {selectedTheme === null
-      ? 'Apply Theme'
-      : 'Apply Theme: ' + $customThemes[selectedTheme!].name}
-  </button>
 </ul>
 
 <style lang="scss">
@@ -153,23 +155,13 @@
 
   .custom-themes {
     width: 100%;
-    flex-flow: row wrap;
+    flex-direction: row;
+    flex-wrap: wrap;
 
     .theme-option {
       h4 {
+        width: auto;
         color: $dark-blue;
-      }
-
-      &.selected {
-        background-color: $deep-green !important;
-
-        h4 {
-          color: $dark-green;
-        }
-
-        &::after {
-          content: 'Selected';
-        }
       }
 
       &.active {
@@ -184,10 +176,15 @@
 
     .add-theme {
       width: 100%;
+      justify-content: center;
     }
 
     @include respond-up(tablet) {
       width: auto;
+    }
+
+    &.table {
+      margin-top: 1.5rem;
     }
   }
 </style>

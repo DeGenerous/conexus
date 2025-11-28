@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { blankImage } from '@constants/media';
+  import { resolveRenderableImage } from '@utils/file-validation';
+
   let {
     width,
     zoom,
@@ -23,18 +26,36 @@
 
   // Watch for changes in image props
   $effect(() => {
-    if (image) {
-      if (image_type === 'url') {
-        imageSrc = image;
-        isLoading = true; // Ensure loader shows until image loads
-      } else {
-        imageSrc = `data:image/png;base64,${image}`;
-        isLoading = false; // Base64 images load instantly
-      }
-    } else {
-      imageSrc = ''; // Reset image source when null
+    let cancelled = false;
+
+    console.log('ImageDisplay received image:', image);
+
+    if (!image) {
+      imageSrc = blankImage; // reset the source if null
       isLoading = true;
+      return () => {
+        cancelled = true;
+      };
     }
+
+    if (image_type === 'url') {
+      // Validate remote URLs before binding them to the <img>
+      imageSrc = image;
+      isLoading = false;
+      (async () => {
+        const safeSrc = await resolveRenderableImage(image);
+        if (!cancelled) {
+          if (safeSrc !== image) imageSrc = safeSrc;
+        }
+      })();
+    } else {
+      imageSrc = `data:image/png;base64,${image}`;
+      isLoading = false; // Base64 images load instantly
+    }
+
+    return () => {
+      cancelled = true;
+    };
   });
 
   function handleImageLoad() {
@@ -43,7 +64,8 @@
 
   function handleImageError() {
     console.error('Image failed to load:', imageSrc);
-    isLoading = true; // Keep the loader if the image fails
+    imageSrc = blankImage;
+    isLoading = false;
   }
 </script>
 
@@ -53,6 +75,7 @@
   onclick={() => (fullWidthImage = !fullWidthImage)}
   class:slim={!fullWidthImage}
   style:box-shadow={boxShadow ? '' : 'none'}
+  style:border={boxShadow ? 'none' : ''}
   style:max-width="{imageWidth}px"
   style={width < 768 ? '' : `height: ${imageHeight}px`}
   style:zoom
@@ -77,6 +100,7 @@
 
   .transparent-container {
     padding: 0 !important;
+    @include box-shadow;
 
     span {
       position: relative;
@@ -91,7 +115,7 @@
     }
 
     img {
-      max-height: inherit;
+      max-height: 100%;
       height: 100%;
       border-radius: inherit;
     }

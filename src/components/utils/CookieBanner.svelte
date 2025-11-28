@@ -61,22 +61,26 @@
 
 {#if showBanner}
   <div class="opaque-container fade-in">
-    <h5 class="white-txt">
-      We use cookies to provide you with a better service.
-    </h5>
-    <p class="soft-white-txt">
-      By continuing to use this website, you consent to the use of cookies as
-      described in our
-      <a
-        href="https://docs.google.com/document/d/1kkIY-86y2LtoM4IXzp80E5H7Op1YSezw8nPBG1AQ2uo/edit?usp=sharing"
-        target="_blank">Privacy Policy</a
-      >.
-    </p>
-    <div class="flex-row">
+    <div class="flex">
+      <h5 class="white-txt">
+        We use cookies to provide you with a better service.
+      </h5>
+      <p class="soft-white-txt">
+        By continuing to use this website, you consent to the use of cookies as
+        described in our
+        <a
+          href="https://docs.google.com/document/d/1kkIY-86y2LtoM4IXzp80E5H7Op1YSezw8nPBG1AQ2uo/edit?usp=sharing"
+          target="_blank">Privacy Policy</a
+        >.
+      </p>
+    </div>
+    <div class="consent-buttons flex-row">
       <button class="green-btn" onclick={() => acceptCookies(true)}
         >Accept all</button
       >
-      <button onclick={() => acceptCookies(false)}>Essential only</button>
+      <button class="red-btn" onclick={() => acceptCookies(false)}
+        >Essential only</button
+      >
     </div>
   </div>
 {/if}
@@ -90,10 +94,38 @@
     bottom: 5rem;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 1000;
 
     @include respond-up(small-desktop) {
       bottom: 1rem;
-      max-width: 75rem;
+      max-width: 80rem;
+      flex-direction: row;
+      justify-content: space-between;
+
+      div {
+        gap: 1rem;
+        text-align: left;
+        align-items: flex-start;
+
+        @include respond-up(large-desktop) {
+          &:not(.consent-buttons) {
+            gap: 0.5rem;
+          }
+        }
+      }
+
+      .consent-buttons {
+        flex-direction: column;
+        align-items: flex-end;
+
+        button {
+          white-space: nowrap;
+        }
+
+        @include respond-up(large-desktop) {
+          flex-direction: row;
+        }
+      }
     }
   }
 </style>

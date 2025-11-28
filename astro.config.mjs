@@ -93,13 +93,13 @@ export default defineConfig({
                 changeOrigin: true,
                 secure: false,
                 rewrite: (path) => path.replace(/^\/api/, ''),
+                headers: {
+                  'X-API-KEY': import.meta.env.VITE_API_KEY,
+                },
               },
             }
           : undefined,
-      allowedHosts: [
-        'conexus.degenerousdao.com',
-        'conexus-test.degenerousdao.com',
-      ],
+      allowedHosts: ['conexus.ink', 'test.conexus.ink', 'dev.conexus.ink'],
     },
     worker: {
       format: 'es',

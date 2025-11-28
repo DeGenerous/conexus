@@ -1,0 +1,32 @@
+---
+import Story from '@components/Story.svelte';
+import { mediaURL } from '@constants/media';
+import Layout from '@layouts/Layout.astro';
+
+const { username, topic_id } = Astro.params;
+
+const topic_name = Astro.url.searchParams.get('title');
+const category_id = Astro.url.searchParams.get('category');
+
+if (!topic_id) {
+  Astro.redirect('/404');
+}
+
+const storyName = topic_name?.replace(/%20/g, ' ');
+const storyImage = storyName?.toLocaleLowerCase().replace(/[^a-z0-9]/g, '');
+
+const meta = {
+  title: `${storyName} | CoNexus`,
+  image:
+    `${mediaURL}/conexus-categories/images/${storyImage}/description/description.avif` ||
+    '/favicon.ico',
+  url: `${import.meta.env.PUBLIC_FRONTEND}/c/${username}/${topic_id}?title=${topic_name}`,
+  nav: storyName,
+  header: storyName,
+  arrow: './',
+};
+---
+
+<Layout story={topic_name} {...meta}>
+  <Story {username} {topic_id} {topic_name} {category_id} client:idle />
+</Layout>

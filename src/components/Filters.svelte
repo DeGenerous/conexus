@@ -1,41 +1,49 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { toastStore } from '@stores/toast.svelte';
 
-  import StoryTile from '@components/utils/StoryTile.svelte';
+  import TopicTile from '@components/utils/TopicTile.svelte';
   import GenreSelect from '@components/utils/GenreFilter.svelte';
   import SearchSection from '@components/utils/SearchFilter.svelte';
 
   import SortingSVG from '@components/icons/Sorting.svelte';
 
-  export let categories: CategoryInSection[] = [];
-  export let section: string;
-  export let genres: Genre[] = [];
-  export let getTopics: (
-    text: string,
-    which: 'search' | 'genre',
-    page?: number,
-    pageSize?: number,
-    sort_order?: TopicSortOrder,
-  ) => Promise<TopicInCategory[]>;
+  let {
+    name,
+    intended,
+    categories,
+    genres,
+    getTopics,
+  }: {
+    name: string;
+    intended: 's' | 'c';
+    categories: SectionCategoryTopics[];
+    genres: Genre[];
+    getTopics: (
+      text: string,
+      which: 'search' | 'genre',
+      page?: number,
+      pageSize?: number,
+      sort_order?: TopicSortOrder,
+    ) => Promise<CategoryTopic[]>;
+  } = $props();
 
-  let filteredTopics: TopicInCategory[] = [];
-  let sortedTopics: TopicInCategory[] = [];
+  let filteredTopics = $state<CategoryTopic[]>([]);
+  let sortedTopics = $state<CategoryTopic[]>([]);
 
-  let searchField: string = ''; // search INPUT value
-  let activeGenre: string; // genres SELECT value
+  let searchField = $state<string>(''); // search INPUT value
+  let activeGenre = $state<string>(''); // genres SELECT value
 
-  let page: number = 1;
-  let pageSize: number = 10;
+  let page = $state<number>(1);
+  let pageSize = $state<number>(10);
 
-  let isSearching = false;
-  let isSorting = false;
-  let isEndReached = false; // no more topics to load if TRUE
+  let isSearching = $state<boolean>(false);
+  let isSorting = $state<boolean>(false);
+  let isEndReached = $state<boolean>(false); // no more topics to load if TRUE
 
   let activeMode: 'genre' | 'search' | null = null;
 
-  let search_sort_order: TopicSortOrder = 'name';
-  let genre_sort_order: TopicSortOrder = 'category';
+  let search_sort_order = $state<TopicSortOrder>('name');
+  let genre_sort_order = $state<TopicSortOrder>('category');
 
   let debounceTimeout: NodeJS.Timeout | null = null;
 
@@ -103,10 +111,15 @@
     isSorting = false;
   };
 
-  $: if (activeGenre) {
-    searchField = '';
-    resetAndFetch({ text: activeGenre, mode: 'genre' });
-  }
+  let prevGenre = '';
+
+  $effect(() => {
+    if (activeGenre && activeGenre !== prevGenre) {
+      prevGenre = activeGenre;
+      searchField = '';
+      resetAndFetch({ text: activeGenre, mode: 'genre' });
+    }
+  });
 
   // SEARCH
 
@@ -133,7 +146,7 @@
 
   // SORTING
 
-  function applySorting(data: TopicInCategory[]) {
+  function applySorting(data: CategoryTopic[]) {
     return isSorting ? sortByName(data) : sortByOrder(data);
   }
 
@@ -142,8 +155,8 @@
     else sortedTopics = sortByOrder([...filteredTopics]);
   };
 
-  function sortByName(data: TopicInCategory[]) {
-    return data.sort((a: TopicInCategory, b: TopicInCategory) => {
+  function sortByName(data: CategoryTopic[]) {
+    return data.sort((a: CategoryTopic, b: CategoryTopic) => {
       const firstTopic = a.name.toLowerCase().trim();
       const secondTopic = b.name.toLowerCase().trim();
       // Sorting all topics in the category alphabetically
@@ -153,10 +166,10 @@
     });
   }
 
-  function sortByOrder(data: TopicInCategory[]) {
-    return data.sort((a: TopicInCategory, b: TopicInCategory) => {
-      if (a.order < b.order) return -1;
-      if (a.order > b.order) return 1;
+  function sortByOrder(data: CategoryTopic[]) {
+    return data.sort((a: CategoryTopic, b: CategoryTopic) => {
+      if (a.sort_order < b.sort_order) return -1;
+      if (a.sort_order > b.sort_order) return 1;
       return 0;
     });
   }
@@ -194,7 +207,7 @@
 </section>
 
 {#if filteredTopics.length > 0}
-  <div class="collection-header">
+  <div class="collection-header fade-in">
     <h2 class="text-glowing">Filtered Stories</h2>
     <SortingSVG
       sorting={isSorting}
@@ -205,13 +218,18 @@
       hideForMobiles={true}
     />
   </div>
-  <div class="tiles-collection filtered-tiles" on:scroll={handleScroll}>
+  <div class="tiles-collection filtered-tiles fade-in" onscroll={handleScroll}>
     {#key sortedTopics}
-      {#each sortedTopics as topic}
-        <StoryTile {section} bind:topic bind:loading={isSearching} />
+      {#each sortedTopics as topic, i}
+        <TopicTile
+          {name}
+          {intended}
+          bind:topic={sortedTopics[i]}
+          bind:loading={isSearching}
+        />
       {/each}
       {#if !isEndReached && isSearching}
-        <StoryTile {section} topic={null} loading={isSearching} />
+        <TopicTile {name} {intended} topic={null} loading={isSearching} />
       {/if}
     {/key}
   </div>

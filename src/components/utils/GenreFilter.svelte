@@ -15,13 +15,13 @@
   } = $props();
 </script>
 
-<div class="flex-row blur pad-8 shad" class:active={activeGenre}>
+<div class="flex-row blur pad-8" class:active={activeGenre}>
   {#if activeGenre}
     <ResetSVG onclick={resetGenres} />
   {:else}
     <FilterSVG />
   {/if}
-  <select bind:value={activeGenre} {disabled}>
+  <select class:active={activeGenre} bind:value={activeGenre} {disabled}>
     <option value="" selected={true} disabled hidden>Select genre</option>
     {#each genres as genre (genre.id)}
       <option value={genre.name}>{genre.name}</option>
@@ -35,7 +35,13 @@
   div {
     gap: 0.5rem;
     width: 100%;
-    @include light-blue(0.5);
+    transition: background-color 0.3s ease;
+    @include blue(0.75);
+    @include gray-border;
+
+    &.active {
+      @include deep-green;
+    }
 
     select {
       width: 100%;

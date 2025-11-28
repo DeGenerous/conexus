@@ -1,88 +1,22 @@
-// import { get } from 'svelte/store';
+function toNumber(value: unknown): number | undefined {
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string') {
+    const parsed = parseInt(value, 10);
+    return isNaN(parsed) ? undefined : parsed;
+  }
+  return undefined;
+}
 
-import { getCurrentUser } from './route-guard';
-import {
-  GetCache,
-  SetCache,
-  POTENTIALS_KEY,
-  TTL_SHORT,
-} from '@constants/cache';
-import {
-  type NFT,
-  nftTile,
-  potentials,
-  potentialsPower,
-  userRank,
-} from '@stores/omnihub.svelte';
-import getRankByPotentials from '@constants/ranks';
-
-const getNftNumbers = async (wallet: string): Promise<number[]> => {
-  const json = await fetch(`https://api.dgrslabs.ink/nft/owner/${wallet}`);
-  const data = await json.json();
-  const nftNumbers = data.ownedNfts?.map((nft: any) => +nft.tokenId);
-  return nftNumbers;
-};
-
-const getUserNFTs = async (): Promise<number[]> => {
-  const user = await getCurrentUser();
-  const { wallets } = user!;
-  const allWallets = wallets
-    ?.filter((wallet) => !wallet.faux)
-    .map(({ wallet }) => wallet);
-
-  // Prevent further steps if there is no NFTs
-  if (!allWallets?.length) return [];
-
-  const nftNumbers: number[] = (
-    await Promise.all(allWallets!.map((wallet) => getNftNumbers(wallet)))
-  )
-    .filter((numbers) => numbers.length)
-    .flat();
-
-  return nftNumbers;
-};
-
-// Returns TRUE if there is any NFTs detected, - FALSE otherwise
-const getNFTs = async (): Promise<boolean> => {
-  let NFTs: NFT[] = [];
-  let totalPower: number = 0;
-
-  const cachedPotentials = GetCache<NFT[]>(POTENTIALS_KEY);
-  if (cachedPotentials) {
-    NFTs = cachedPotentials;
-    cachedPotentials.map((nft) => {
-      totalPower += Number(nft.level);
-    });
-  } else {
-    const metadata: any = [];
-    const nftNumbers: number[] = await getUserNFTs();
-
-    // Prevent further steps if there is no NFTs
-    if (!nftNumbers.length) return false;
-
-    for (let i = 0; i < nftNumbers.length; i++) {
-      const response = await fetch(
-        `https://api.dgrslabs.ink/nft/data/${nftNumbers[i]}`,
-      );
-      metadata[i] = await response.json();
-      const potential = new nftTile(metadata, i);
-      NFTs.push(potential);
-      totalPower += Number(potential.level);
-    }
-
-    SetCache(POTENTIALS_KEY, NFTs, TTL_SHORT);
+export function normalizeMeta(data: OmnihubData): PotentialMeta | undefined {
+  if (data.nft) {
+    const meta = data.nft.meta_data ?? {};
+    return {
+      rank: typeof meta['rank'] === 'string' ? meta['rank'] : undefined,
+      nft_count: toNumber(meta['nft_count']),
+      total_level: toNumber(meta['total_level']),
+    };
   }
 
-  if (NFTs.length) {
-    potentials.set(NFTs);
-    potentialsPower.set(totalPower);
-    userRank.set(getRankByPotentials(NFTs.length));
-
-    // console.log(get(potentials));
-    return true;
-  }
-
-  return false;
-};
-
-export default getNFTs;
+  // tokens might have different meta later
+  return undefined;
+}

@@ -1,20 +1,19 @@
 <script lang="ts">
-  import tippy, { type Instance } from 'tippy.js';
+  import tippy from 'tippy.js';
 
-  import { mediaURL } from '@constants/media';
+  import { mediaURL, blankImage } from '@constants/media';
   import { highlightCommunityPicks } from '@stores/navigation.svelte';
 
   let { section }: { section: Section } = $props();
 
   // sectionImage is the name of the section but remove the spaces
-  const imageName: string = section.name.replace(/\s/g, '');
+  const imageName: string = section.name!.replace(/\s/g, '');
 
   const sectionImage: string = `${mediaURL}/conexus-sections/${imageName.toLocaleLowerCase()}.avif`;
 
-  const blankPicture: string = '/blank.avif'; // temp
-
   $effect(() => {
     if (section.name === 'Community Picks' && $highlightCommunityPicks) {
+      // spotlight the curated section during onboarding by calling tippy manually instead of on hover
       const instance = tippy(
         document.querySelector('.highlighted-menu-tile')!,
         {
@@ -34,10 +33,10 @@
   class:highlighted-menu-tile={section.name === 'Community Picks' &&
     $highlightCommunityPicks}
   id={section.name}
-  href="/sections/{section.name}"
+  href="/s/{section.name}"
 >
   <img
-    src={sectionImage ?? blankPicture}
+    src={sectionImage ?? blankImage}
     alt={section.name}
     width="1024"
     height="1024"

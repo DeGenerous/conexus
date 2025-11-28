@@ -7,9 +7,10 @@ const { token } = Astro.params;
 const meta = {
   nav: 'Verify Email',
   header: 'Email Verification',
+  arrow: '/',
 };
 ---
 
 <Layout {...meta}>
-  <VerifyEmail token={token} client:load />
+  <VerifyEmail token={token} client:idle />
 </Layout>

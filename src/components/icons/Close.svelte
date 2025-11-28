@@ -17,7 +17,6 @@
   class:void-btn={voidBtn}
   class:dark
   class:hider
-  class:blur={hider}
   {onclick}
   aria-label="Close"
 >
@@ -41,7 +40,7 @@
 
     &:active,
     &:hover,
-    &:focus {
+    &:focus-visible {
       stroke: $dark-red;
 
       svg {
@@ -55,7 +54,7 @@
 
       &:active,
       &:hover,
-      &:focus {
+      &:focus-visible {
         stroke: $red;
       }
     }

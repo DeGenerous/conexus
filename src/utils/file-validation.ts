@@ -6,6 +6,7 @@
  ***************************************************************************/
 
 import { toastStore } from '@stores/toast.svelte';
+import { blankImage } from '@constants/media';
 
 /* -------------------------------------------------------------------- */
 /* Types                                                                */
@@ -38,9 +39,9 @@ const MiB = 1_048_576;
 /* Slot‑specific constraints */
 export const MEDIA_RULES: Record<MediaType, MediaRule> = {
   /* images ----------------------------------------------------------- */
-  description: { mime: GENERIC_IMAGE, maxBytes: 1.5 * MiB, maxFiles: 1 },
-  tile: { mime: GENERIC_IMAGE, maxBytes: 1.5 * MiB, maxFiles: 1 },
-  background: { mime: GENERIC_IMAGE, maxBytes: 1.5 * MiB, maxFiles: 3 },
+  description: { mime: GENERIC_IMAGE, maxBytes: 3 * MiB, maxFiles: 1 },
+  tile: { mime: GENERIC_IMAGE, maxBytes: 3 * MiB, maxFiles: 1 },
+  background: { mime: GENERIC_IMAGE, maxBytes: 3 * MiB, maxFiles: 3 },
 
   /* video ------------------------------------------------------------ */
   video: {
@@ -56,7 +57,7 @@ export const MEDIA_RULES: Record<MediaType, MediaRule> = {
   /* audio ------------------------------------------------------------ */
   audio: {
     mime: /^audio\/mpeg$/i,
-    maxBytes: 6 * MiB,
+    maxBytes: 10 * MiB,
     maxFiles: 3,
     magic: [
       // MP3 frame sync
@@ -140,4 +141,71 @@ async function checkMagic(file: File, tests: MagicSig[]): Promise<boolean> {
     if (pattern.every((b, i) => b === slice[i])) return true;
   }
   return false;
+}
+
+/**
+ * Quick client-side guard to ensure an image URL renders successfully.
+ *
+ * @param url candidate image source
+ * @returns resolves `true` when the image can load, `false` otherwise
+ */
+export async function isRenderableImage(url: string): Promise<boolean> {
+  if (!url || !url.trim()) {
+    console.warn('[media] Skipping blank image source.');
+    return false;
+  }
+
+  if (typeof window === 'undefined' || typeof Image === 'undefined') {
+    // Avoid SSR crashes; caller should supply a fallback
+    console.warn('[media] Image guard unavailable in non-browser context.');
+    return false;
+  }
+
+  return new Promise((resolve) => {
+    const probe = new Image();
+
+    const cleanup = () => {
+      probe.onload = null;
+      probe.onerror = null;
+    };
+
+    probe.onload = () => {
+      cleanup();
+      resolve(true);
+    };
+
+    probe.onerror = (event: Event) => {
+      cleanup();
+      console.warn('[media] Image failed to load:', url, event);
+      resolve(false);
+    };
+
+    probe.src = url;
+  });
+}
+
+/**
+ * Resolve a potentially unsafe image source to a renderable URL.
+ *
+ * @param url       candidate image URL (absolute, relative, data/blob)
+ * @param fallback  optional placeholder to use when the candidate cannot load
+ */
+export async function resolveRenderableImage(
+  url: string | null | undefined,
+  fallback: string = blankImage,
+): Promise<string> {
+  const candidate = url?.trim();
+  if (!candidate) return fallback;
+  if (candidate === fallback) return fallback;
+  if (candidate.startsWith('data:') || candidate.startsWith('blob:')) {
+    return candidate;
+  }
+
+  if (typeof window === 'undefined' || typeof Image === 'undefined') {
+    // No browser APIs available, continue with the provided placeholder
+    return fallback;
+  }
+
+  const ok = await isRenderableImage(candidate);
+  return ok ? candidate : fallback;
 }

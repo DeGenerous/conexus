@@ -1,3 +1,4 @@
+/** @jsxImportSource react */
 import React, { useMemo } from 'react';
 
 import {
@@ -17,17 +18,16 @@ import { mainnet, base } from 'wagmi/chains';
 
 import { SetCache, USER_KEY, TTL_HOUR } from '@constants/cache';
 import { assetsURL } from '@constants/media';
-import { authenticated } from '@stores/account.svelte';
-import { AccountAPI, AuthAPI } from '@service/routes';
+import { NAV_ROUTES } from '@constants/routes';
+import AuthenticationAPI from '@service/authentication';
 
 import '@rainbow-me/rainbowkit/styles.css';
 
 const wagmiConfig = getDefaultConfig({
-  appName: 'Degenerous DAO',
+  appName: 'DGRS LABS',
   appIcon: `${assetsURL}/logo.png`,
-  appUrl: 'https://conexus.degenerousdao.com', // prod
-  // appUrl: 'http://localhost:4321', // dev
-  projectId: '0b8a3fac6220753a719b9aeceb8f19fb',
+  appUrl: import.meta.env.PUBLIC_FRONTEND,
+  projectId: import.meta.env.PUBLIC_WAGMI_PROJECT_ID,
   chains: [mainnet, base],
   ssr: false, // If your dApp uses server side rendering (SSR)
   pollingInterval: 12000, // How often (in ms) to poll for updates
@@ -52,11 +52,7 @@ const Web3Provider: React.FC<Web3Props> = ({ linking = false, children }) => {
   let AUTHENTICATION_STATUS: AuthenticationStatus = 'unauthenticated';
 
   const authAPI = useMemo(
-    () => new AuthAPI(import.meta.env.PUBLIC_BACKEND),
-    [],
-  );
-  const accountAPI = useMemo(
-    () => new AccountAPI(import.meta.env.PUBLIC_BACKEND),
+    () => new AuthenticationAPI(import.meta.env.PUBLIC_BACKEND),
     [],
   );
 
@@ -64,16 +60,21 @@ const Web3Provider: React.FC<Web3Props> = ({ linking = false, children }) => {
     () =>
       createAuthenticationAdapter({
         getNonce: async () => {
-          const { data, error } = await authAPI.web3Getnonce();
+          const { status, message, data } = await authAPI.web3Getnonce();
 
-          if (!data) {
-            console.error('Failed to fetch nonce:', error);
-            throw new Error('Failed to fetch nonce');
+          switch (status) {
+            case 'error':
+              console.error('Failed to fetch nonce:', message);
+              throw new Error('Failed to fetch nonce');
+            case 'success':
+              if (!data) {
+                console.error('Failed to fetch nonce:', message);
+                throw new Error('Failed to fetch nonce');
+              }
+              return data;
+            default:
+              throw new Error('Unknown error occurred');
           }
-
-          AUTHENTICATION_STATUS = 'loading';
-
-          return data.nonce;
         },
 
         createMessage: ({ nonce, address, chainId }) => {
@@ -94,8 +95,7 @@ const Web3Provider: React.FC<Web3Props> = ({ linking = false, children }) => {
               nonce,
               address,
               chainId,
-              statement:
-                'Welcome to CoNexus! Click to sign in and accept the Terms of Service: https://dgrslabs.ink/terms-of-service',
+              statement: `Welcome to CoNexus! Click to sign in and accept the Terms of Service: ${NAV_ROUTES.TERMS}`,
               domain: window.location.host,
               uri: window.location.origin,
               version: '1',
@@ -107,50 +107,51 @@ const Web3Provider: React.FC<Web3Props> = ({ linking = false, children }) => {
         },
 
         verify: async ({ message, signature }) => {
-          let resp: APIResponse<{ user: User }>;
+          let resp: APIResponse<User>;
 
-          if (linking) {
-            resp = await accountAPI.web3WalletLink({
+          resp = await authAPI.web3WalletSignin(
+            {
               message,
               signature,
-            });
-          } else {
-            resp = await authAPI.web3WalletSignin({
-              message,
-              signature,
-            });
+            },
+            linking,
+          );
+
+          const { status, message: apiMessage, data } = resp;
+
+          switch (status) {
+            case 'error':
+              console.error('Failed to verify signature:', apiMessage);
+              AUTHENTICATION_STATUS = 'unauthenticated';
+              return false;
+            case 'success':
+              if (!data) {
+                console.error('Failed to verify signature:', apiMessage);
+                AUTHENTICATION_STATUS = 'unauthenticated';
+                return false;
+              }
+              SetCache(USER_KEY, data, TTL_HOUR);
+              AUTHENTICATION_STATUS = 'authenticated';
+              window.location.reload();
+              return true;
+            default:
+              throw new Error('Unknown error occurred');
           }
-
-          const { data, error } = resp;
-
-          if (!data) {
-            console.error('Failed to verify signature:', error?.details);
-            AUTHENTICATION_STATUS = 'unauthenticated';
-            return false;
-          }
-
-          SetCache(USER_KEY, data.user, TTL_HOUR);
-
-          authenticated.set(data.user);
-
-          AUTHENTICATION_STATUS = 'authenticated';
-
-          window.location.reload();
-
-          return true;
         },
 
         signOut: async () => {
-          const { data, error } = await accountAPI.logout();
+          const { status, message } = await authAPI.logout();
 
-          if (!data) {
-            console.error('Failed to sign out:', error);
-            return;
+          switch (status) {
+            case 'error':
+              console.error('Failed to sign out:', message);
+              return;
+            case 'success':
+              AUTHENTICATION_STATUS = 'unauthenticated';
+              window.location.reload();
+            default:
+              console.error('Unknown error occurred while signing out');
           }
-
-          authenticated.set(null);
-
-          AUTHENTICATION_STATUS = 'unauthenticated';
         },
       }),
     [linking],

@@ -1,6 +1,9 @@
 ---
+import { ClientRouter } from 'astro:transitions';
+
 import { SEO } from 'astro-seo';
 import { seoConfig } from '../../utils/seoConfig';
+import { NAV_ROUTES } from '@constants/routes';
 
 import ToastContainer from '@components/utils/ToastContainer.svelte';
 import Modal from '@components/utils/Modal.svelte';
@@ -15,8 +18,7 @@ type LayoutProps = {
   header?: string;
   subheading?: string;
   nav?: string;
-  arrow?: boolean;
-  story?: string;
+  arrow?: string;
   title?: string;
   ogTitle?: string;
   description?: string;
@@ -33,15 +35,14 @@ const {
   header,
   subheading,
   nav,
-  arrow,
-  story,
+  arrow = 'back',
   title = 'CoNexus | AI Storytelling',
   description = 'CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.',
   image = `${assetsURL}/og.jpeg`,
   imageWidth = 480,
   imageHeight = 480,
   imageType = 'image/jpeg',
-  url = 'https://conexus.degenerousdao.com/',
+  url = NAV_ROUTES.CONEXUS,
   type = 'website',
 
   ogTitle,
@@ -54,7 +55,7 @@ const absoluteImageURL = image.startsWith('http')
   : `${seoConfig.baseURL}${image}`;
 ---
 
-<html lang="en">
+<html lang="en" transition:name="root" transition:animate="none">
   <head>
     <meta charset="utf-8" />
     <meta name="description" content={description} />
@@ -64,6 +65,8 @@ const absoluteImageURL = image.startsWith('http')
       name="robots"
       content={disableIndexing ? 'noindex, nofollow' : 'index, follow'}
     />
+
+    <ClientRouter />
 
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link type="text/plain" rel="author" href="/humans.txt" />
@@ -143,22 +146,16 @@ const absoluteImageURL = image.startsWith('http')
     </script>
   </head>
   <body>
-    <ToastContainer client:load />
+    <ToastContainer client:idle />
 
-    <Navigation
-      {header}
-      {subheading}
-      activeTab={nav}
-      {arrow}
-      storyName={story}
-      client:load
-    />
+    <main>
+      <Navigation {header} {subheading} activeTab={nav} {arrow} client:load />
+      <slot />
+    </main>
 
-    <slot />
+    <Modal client:idle />
 
-    <Modal client:load />
-
-    <CookieBanner client:load />
+    <CookieBanner client:idle />
   </body>
 </html>
 

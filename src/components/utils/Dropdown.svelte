@@ -3,19 +3,32 @@
 
   import SelectorSVG from '@components/icons/Selector.svelte';
 
-  let { children, name }: { children: Snippet; name: string } = $props();
+  let {
+    children,
+    name,
+    dropdownFunc = null,
+    table = false,
+  }: {
+    children: Snippet;
+    name: string;
+    dropdownFunc?: Nullable<() => void>;
+    table?: boolean;
+  } = $props();
 
   let isOpen = $state(false);
 
   const toggleDropdown = () => {
+    // fire optional hook so parents can lazy-load content the moment the drawer opens
     isOpen = !isOpen;
+    dropdownFunc?.();
   };
 </script>
 
-<section class="dream-container">
+<section class="dream-container" class:collapsed={!isOpen} class:table>
   <button
     class="void-btn flex-row"
     class:active={isOpen}
+    aria-expanded={isOpen}
     onclick={toggleDropdown}
   >
     <h4>{name}</h4>
@@ -28,7 +41,7 @@
     />
   </button>
   {#if isOpen}
-    <div class="container transition">
+    <div class="transition" class:container={!table}>
       {@render children()}
     </div>
   {/if}
@@ -37,7 +50,7 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  section {
+  .dream-container {
     button {
       width: 100%;
       justify-content: space-between;
@@ -60,7 +73,7 @@
       }
 
       &:hover,
-      &:focus {
+      &:focus-visible {
         @include bright;
       }
     }
@@ -76,6 +89,15 @@
       @starting-style {
         opacity: 0.75;
         filter: brightness(75%);
+      }
+    }
+
+    &.table {
+      div {
+        background-color: transparent !important;
+        border: none;
+        border-radius: 0;
+        animation: none !important;
       }
     }
   }

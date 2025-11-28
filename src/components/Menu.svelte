@@ -9,11 +9,25 @@
     'A new world of endless possibilities awaits you.',
     'Infinitely unique. Never repeatable.',
   ];
+
+  const prioritizeCommunityPicks = (sections: Section[]): Section[] => {
+    const targetIndex = sections.findIndex(
+      (section) => section.name === 'Community Picks',
+    );
+
+    if (targetIndex <= 0) {
+      return sections;
+    }
+
+    const reordered = [...sections];
+    const [target] = reordered.splice(targetIndex, 1);
+    reordered.unshift(target);
+
+    return reordered;
+  };
 </script>
 
-<section
-  class="flex blur pad round transparent-dark-bg shad-inset-glow fade-in dark-glowing"
->
+<section class="container fade-in dark-glowing">
   <h5>{menuText[0]}</h5>
 
   {#await app.getSections()}
@@ -27,7 +41,7 @@
     </div>
   {:then sections}
     <div class="flex-row">
-      {#each sections as section, i (section.id ?? `section-${i}`)}
+      {#each prioritizeCommunityPicks(sections) as section, i (section.id ?? `section-${i}`)}
         <MenuTile {section} />
       {/each}
     </div>
@@ -44,20 +58,17 @@
 
   section {
     width: clamp(250px, 95%, 80rem);
+    margin: 0;
 
     & > div {
       width: 100%;
       flex-wrap: wrap;
+      gap: 1rem;
       padding-inline: 0;
-    }
-  }
 
-  @include respond-up(tablet) {
-    section {
-      width: auto;
-
-      & > div {
-        padding-inline: 1rem;
+      @include respond-up(tablet) {
+        flex-wrap: nowrap;
+        gap: 1.5rem;
       }
     }
   }

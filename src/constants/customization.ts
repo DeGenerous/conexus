@@ -1,3 +1,4 @@
+// Default and preset theme definitions for the story player customisation UI
 export const defaultFont: CustomFont = {
   family: 'Verdana',
   baseSize: 'body',

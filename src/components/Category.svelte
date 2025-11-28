@@ -1,47 +1,36 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
 
   import CoNexusApp from '@lib/view';
-  import {
-    SetCache,
-    GetCache,
-    CATEGORY_TOPICS_KEY,
-    TTL_HOUR,
-  } from '@constants/cache';
 
-  import StoryTile from '@components/utils/StoryTile.svelte';
+  import TopicTile from '@components/utils/TopicTile.svelte';
   import SortingSVG from '@components/icons/Sorting.svelte';
 
-  export let category: CategoryInSection | null = null;
-  export let section: string = '';
+  let {
+    name,
+    intended,
+    category,
+  }: {
+    name: string;
+    intended: 's' | 'c'; // section or creator
+    category: SectionCategoryTopics | null;
+  } = $props();
 
   const view = new CoNexusApp();
 
-  let topics: TopicInCategory[] = [];
+  let topics = $state<CategoryTopic[]>([]);
 
-  let isSorting: boolean = false;
-  let sortedTopics: TopicInCategory[] = [];
+  let isSorting = $state<boolean>(false);
+  let sortedTopics = $state<CategoryTopic[]>([]);
 
-  let pageSize: number = 10;
-  let total: number = 0;
-  let loading: boolean = false;
-  let isEndReached: boolean = false;
+  let pageSize = $state<number>(10);
+  let total = $state<number>(0);
+  let loading = $state<boolean>(false);
+  let isEndReached = $state<boolean>(false);
 
+  // load topics page-by-page and persist them so revisiting the category instantly restores the scroller
   const fetchTopics = async () => {
     if (!category || loading || isEndReached) return;
-
-    const cachedTopics = GetCache<TopicInCategory[]>(
-      CATEGORY_TOPICS_KEY(category.name),
-    );
-    if (cachedTopics) {
-      topics = cachedTopics;
-      sortedTopics = applySorting(topics);
-      if (topics.length === category.topic_count) {
-        isEndReached = true;
-        return;
-      }
-    }
 
     loading = true;
 
@@ -55,7 +44,6 @@
     if (response && response.length > 0) {
       topics = [...topics, ...response];
       total += response.length;
-      SetCache(CATEGORY_TOPICS_KEY(category.name), topics, TTL_HOUR);
     }
 
     // Stop fetching when we've loaded all topics
@@ -74,7 +62,7 @@
 
   // SORTING
 
-  function applySorting(data: TopicInCategory[]) {
+  function applySorting(data: CategoryTopic[]) {
     return isSorting ? sortByName(data) : sortByOrder(data);
   }
 
@@ -83,8 +71,8 @@
     else sortedTopics = sortByOrder(topics);
   };
 
-  function sortByName(data: TopicInCategory[]) {
-    return data.sort((a: TopicInCategory, b: TopicInCategory) => {
+  function sortByName(data: CategoryTopic[]) {
+    return data.sort((a: CategoryTopic, b: CategoryTopic) => {
       const firstTopic = a.name.toLowerCase().trim();
       const secondTopic = b.name.toLowerCase().trim();
       // Sorting all topics in the category alphabetically
@@ -94,10 +82,10 @@
     });
   }
 
-  function sortByOrder(data: TopicInCategory[]) {
-    return data.sort((a: TopicInCategory, b: TopicInCategory) => {
-      if (a.order < b.order) return -1;
-      if (a.order > b.order) return 1;
+  function sortByOrder(data: CategoryTopic[]) {
+    return data.sort((a: CategoryTopic, b: CategoryTopic) => {
+      if (a.sort_order < b.sort_order) return -1;
+      if (a.sort_order > b.sort_order) return 1;
       return 0;
     });
   }
@@ -105,7 +93,7 @@
   // A.K.A. INTERSECTION OBSERVER
 
   const handleScroll = (event: Event) => {
-    if (!category || !section || loading || isEndReached) return;
+    if (!category || !name || loading || isEndReached) return;
 
     const target = event.target as HTMLElement;
     // Load next page if user scrolls to the end of collection
@@ -115,15 +103,15 @@
   };
 </script>
 
-<div class="collection-header">
-  {#if !category || !section}
+<div class="collection-header fade-in">
+  {#if !category || !name}
     <h2>Loading stories...</h2>
   {:else}
     <h2>{category.name}</h2>
   {/if}
   <SortingSVG
     sorting={isSorting}
-    disabled={!category || !section}
+    disabled={!category || !name}
     onclick={() => {
       isSorting = !isSorting;
       handleSorting();
@@ -132,8 +120,8 @@
   />
 </div>
 
-<div class="tiles-collection" on:scroll={handleScroll}>
-  {#if !category || !section}
+<div class="tiles-collection fade-in" onscroll={handleScroll}>
+  {#if !category || !name}
     {#each Array(Math.floor(Math.random() * 3) + 3) as _}
       <div class="loading-tile">
         <div class="loading-animation"></div>
@@ -142,8 +130,14 @@
     {/each}
   {:else}
     {#key sortedTopics}
-      {#each sortedTopics as topic}
-        <StoryTile {section} bind:topic bind:loading />
+      {#each sortedTopics as topic, i}
+        <TopicTile
+          {name}
+          {intended}
+          category_id={category.id}
+          bind:topic={sortedTopics[i]}
+          bind:loading
+        />
       {/each}
     {/key}
   {/if}

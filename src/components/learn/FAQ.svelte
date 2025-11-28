@@ -15,6 +15,11 @@
   @use '/src/styles/mixins' as *;
 
   section {
+    width: 100%;
     color: $soft-white;
+
+    @include respond-up(tablet) {
+      padding-inline: 1.5rem;
+    }
   }
 </style>

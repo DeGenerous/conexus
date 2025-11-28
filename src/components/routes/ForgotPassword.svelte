@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Account from '@lib/account';
+  import Authentication from '@lib/authentication';
   import { regexpEmail } from '@constants/regexp';
 
-  const acct: Account = new Account();
+  const auth: Authentication = new Authentication();
 
   let email = $state<string>('');
 
@@ -24,7 +24,7 @@
   {/if}
 
   <button
-    onclick={() => acct.forgotPassword(email)}
+    onclick={() => auth.forgotPassword(email)}
     disabled={!email || !emailValidation}
   >
     Send Verification Link

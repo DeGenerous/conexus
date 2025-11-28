@@ -4,28 +4,31 @@
     onclick = () => {},
     disabled = false,
     text = '',
-    glow = false,
+    cta = false,
+    voidBtn = false,
   }: {
     state: 'inside' | 'outside';
     onclick: () => void | Promise<void>;
     disabled?: boolean;
     text: string;
-    glow?: boolean;
+    cta?: boolean;
+    voidBtn?: boolean;
   } = $props();
 </script>
 
 <button
-  class="blur"
-  class:button-glowing={glow}
+  class:cta
+  class:void-btn={voidBtn}
+  class:flex-row={voidBtn}
   type="button"
   {onclick}
   onpointerover={() => {
-    if (!glow) return;
-    document.getElementById('profile-icon')?.classList.add('profile-hover');
+    // if (!cta) return;
+    // document.getElementById('profile-icon')?.classList.add('profile-hover');
   }}
   onpointerout={() => {
-    if (!glow) return;
-    document.getElementById('profile-icon')?.classList.remove('profile-hover');
+    // if (!cta) return;
+    // document.getElementById('profile-icon')?.classList.remove('profile-hover');
   }}
   {disabled}
 >
@@ -142,19 +145,40 @@
   @use '/src/styles/mixins' as *;
 
   button {
-    stroke: $soft-white;
+    stroke: currentColor;
 
     &:hover,
     &:active,
-    &:focus {
-      stroke: $cyan;
-
+    &:focus-visible {
       .outside-door path {
         transform: translateX(-7.5%);
       }
 
       .inside-door path {
         transform: translateX(10%);
+      }
+    }
+
+    &.void-btn {
+      justify-content: flex-start;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+      transition:
+        background 0.3s ease,
+        color 0.3s ease;
+      @include light-blue(1, text);
+
+      svg {
+        width: 1rem;
+      }
+
+      &:hover,
+      &:active,
+      &:focus-visible {
+        @include red(1, text);
+        @include red(0.1);
+        @include bright;
       }
     }
   }

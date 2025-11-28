@@ -4,14 +4,14 @@
     disabled = false,
     text = '',
     voidBtn = true,
-    glowing = false,
+    cta = false,
     color = 'green',
   }: {
     onclick: () => void;
     disabled?: boolean;
     text?: string;
     voidBtn?: boolean;
-    glowing?: boolean;
+    cta?: boolean;
     color?: string;
   } = $props();
 
@@ -21,10 +21,10 @@
 <button
   class="flex-row"
   class:void-btn={voidBtn}
-  class:blur={!voidBtn}
-  class:button-glowing={glowing}
+  class:cta
   class:green={color === 'green'}
   class:white={color === 'white'}
+  class:fixed-width={text === ''}
   {onclick}
   onpointerover={() => {
     if (!disabled) svgFocus = true;
@@ -58,9 +58,13 @@
     width: auto;
     fill: none;
 
+    &.fixed-width {
+      width: 2rem;
+    }
+
     &:hover:not(&:disabled),
     &:active:not(&:disabled),
-    &:focus:not(&:disabled) {
+    &:focus-visible:not(&:disabled) {
       @include scale;
       @include bright;
     }
@@ -91,7 +95,7 @@
 
       &:hover:not(&:disabled),
       &:active:not(&:disabled),
-      &:focus:not(&:disabled) {
+      &:focus-visible:not(&:disabled) {
         stroke: $cyan;
 
         svg > polygon {

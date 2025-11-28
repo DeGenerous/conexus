@@ -1,14 +1,14 @@
 <script lang="ts">
+  import { NAV_ROUTES } from '@constants/routes';
+
   import DiscordBtn from '@components/icons/Discord.svelte';
 
-  let { section = '' }: { section: string } = $props();
+  let { section_name = '' }: { section_name: string } = $props();
 </script>
 
-{#if section == 'Community Picks' || section == 'Dischordian Saga'}
-  <section
-    class="flex pad mar-inline round blur shad-inset-glow transparent-glowing"
-  >
-    {#if section == 'Community Picks'}
+{#if section_name == 'Community Picks' || section_name == 'Dischordian Saga'}
+  <section class="transparent-container">
+    {#if section_name == 'Community Picks'}
       <div class="flex-row">
         <h5>Join the community:</h5>
         <DiscordBtn />
@@ -16,28 +16,30 @@
     {:else}
       <div class="flex-row">
         <h5>Explore more:</h5>
-        <button
-          onclick={() =>
-            window.open('https://loredex.dgrslabs.ink/', '_blank')}
-        >
+        <a class="button-anchor" href={NAV_ROUTES.LOREDEX} target="_blank">
           Loredex
-        </button>
+        </a>
       </div>
       <div class="flex-row">
         <h5>Influence the storyline:</h5>
-        <button
-          onclick={() =>
-            window.open('https://governance.dgrslabs.ink/', '_blank')}
+        <a
+          class="button-anchor"
+          href={NAV_ROUTES.GOVERNANCE_HUB}
+          target="_blank"
         >
           Governance Hub
-        </button>
+        </a>
       </div>
     {/if}
   </section>
 {/if}
 
-<style>
-  h5 {
-    text-align: right;
+<style lang="scss">
+  .transparent-container {
+    width: auto;
+
+    h5 {
+      text-align: right;
+    }
   }
 </style>

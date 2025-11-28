@@ -4,7 +4,6 @@
   import CoNexusApp from '@lib/view';
   import { blankImage, serveUrl } from '@constants/media';
   import { resolveRenderableImage } from '@utils/file-validation';
-  import { redirectTo } from '@utils/route-guard';
 
   import Category from '@components/Category.svelte';
   import PullToRefresh from '@components/utils/PullToRefresh.svelte';
@@ -144,10 +143,6 @@
       }, 2000);
     } catch (error) {
       console.error('Error loading section:', error);
-      if (error.message === 'You shall not pass!') {
-        redirectTo('/login');
-        return;
-      }
     }
   };
 

@@ -5,36 +5,32 @@ name: CoNexus CI/CD
 
 on:
   push:
-    branches:
-      - main
-      - staging
-      - develop
+    branches: [main, staging, develop]
   pull_request:
-    branches:
-      - main
-      - staging
-      - develop
+    branches: [main, staging, develop]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/develop'
+    if: github.ref_name == 'main' || github.ref_name == 'staging' || github.ref_name == 'develop'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set branch-specific environment
         run: |
-          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
-            echo "DEPLOY_ENV=production" >> $GITHUB_ENV
-            echo "DEPLOY_BRANCH=main" >> $GITHUB_ENV
-          elif [[ "${GITHUB_REF}" == "refs/heads/staging" ]]; then
-            echo "DEPLOY_ENV=staging" >> $GITHUB_ENV
-            echo "DEPLOY_BRANCH=staging" >> $GITHUB_ENV
-          elif [[ "${GITHUB_REF}" == "refs/heads/develop" ]]; then
-            echo "DEPLOY_ENV=development" >> $GITHUB_ENV
-            echo "DEPLOY_BRANCH=develop" >> $GITHUB_ENV
-          fi
+          case "${GITHUB_REF_NAME}" in
+            main)
+              echo "DEPLOY_ENV=production" >> $GITHUB_ENV
+              ;;
+            staging)
+              echo "DEPLOY_ENV=staging" >> $GITHUB_ENV
+              ;;
+            develop)
+              echo "DEPLOY_ENV=development" >> $GITHUB_ENV
+              ;;
+          esac
+          echo "DEPLOY_BRANCH=${GITHUB_REF_NAME}" >> $GITHUB_ENV
 
       - name: Deploy with Docker Compose
         uses: appleboy/ssh-action@v1.0.3
@@ -53,13 +49,13 @@ jobs:
 
             # Pull the latest changes
             echo "📥 Pulling latest changes from $DEPLOY_BRANCH..."
+            git fetch origin
             git checkout $DEPLOY_BRANCH
             git pull origin $DEPLOY_BRANCH
 
             # Build and deploy using Docker Compose
             echo "🛠️ Building and deploying Docker containers..."
             docker compose build
-            docker compose down --remove-orphans
             docker compose up -d
 
             # Cleanup old images (optional)

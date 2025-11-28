@@ -8,6 +8,11 @@ export const api_error = (error: string, display: boolean = true) => {
       return;
     }
 
+    // Ignore 'You shall not pass!' errors
+    if (error.includes('You shall not pass!')) {
+      return;
+    }
+
     if (error.includes('Unauthorized access')) {
       // ClearCache('auth');
       // toastStore.show('Unauthorized access, please login again', 'error');

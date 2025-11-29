@@ -116,9 +116,10 @@ ol:not(.default-ol) {
   @include text-shadow;
 }
 
-body, html {
+body,
+html {
   /* Prevents the standard chrome pull-to-refresh visual */
-  overscroll-behavior-y: none; 
+  overscroll-behavior-y: none;
 }
 
 /* GENERAL STYLING */

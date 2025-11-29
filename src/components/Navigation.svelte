@@ -1,10 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import CoNexusApp from '@lib/view';
   import { trailerURL } from '@constants/media';
   import { story, game } from '@stores/conexus.svelte';
-  import { prevItem, nextItem } from '@stores/navigation.svelte';
   import {
     getCurrentUser,
     checkUserRoles,
@@ -139,13 +137,7 @@
         <h1 class="sr-only">CoNexus</h1>
         <ConexusLogo />
       {:else}
-        {#if arrow}
-          <BackArrow href={arrow} />
-        {/if}
         <h1>{header}</h1>
-        {#if arrow}
-          <BackArrow href={arrow} hidden={true} />
-        {/if}
       {/if}
     </header>
   {/if}
@@ -204,12 +196,12 @@
     padding-inline: 1.5rem;
     padding-inline: 1.5rem;
 
-    h1 {
-      width: 100%;
+      h1 {
+        width: 100%;
+      }
     }
 
-    @include mobile-only {
-      height: 4rem;
+    &.mobile-home-header {
       position: sticky;
       top: 0;
       justify-content: center;

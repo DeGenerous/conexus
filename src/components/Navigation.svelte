@@ -1,16 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import tippy, { type Instance } from 'tippy.js';
 
   import CoNexusApp from '@lib/view';
-  import { GetCache, SetCache, ONBOARDING_KEY } from '@constants/cache';
   import { trailerURL } from '@constants/media';
   import { story, game } from '@stores/conexus.svelte';
-  import {
-    highlightCommunityPicks,
-    prevItem,
-    nextItem,
-  } from '@stores/navigation.svelte';
+  import { prevItem, nextItem } from '@stores/navigation.svelte';
   import {
     getCurrentUser,
     checkUserRoles,
@@ -118,52 +112,6 @@
       ticking = false;
     });
   };
-
-  // ONBOARDING
-
-  // let tippyInstance: Instance;
-  // const startOnboarding = () =>
-  //   setTimeout(() => {
-  //     const isOnboarded = GetCache(ONBOARDING_KEY);
-  //     if (isOnboarded) return;
-
-  //     onboarding = true;
-
-  //     // Show the tooltip
-  //     const intro = document.getElementById('intro') as HTMLSpanElement;
-
-  //     tippyInstance = tippy(intro, {
-  //       content: 'Meet CoNexus in 30 seconds',
-  //       trigger: 'manual',
-  //       placement: 'bottom',
-  //       hideOnClick: false,
-  //     });
-
-  //     tippyInstance.show();
-
-  //     // Disable scroll
-  //     window.scrollTo({
-  //       top: 0,
-  //       behavior: 'smooth',
-  //     });
-  //     setTimeout(() => document.documentElement.classList.add('no-scroll'));
-  //   });
-
-  // const finishOnboarding = () => {
-  //   SetCache(ONBOARDING_KEY, true);
-  //   onboarding = false;
-
-  //   // Update the store to apply highlighted styling
-  //   $highlightCommunityPicks = true;
-
-  //   // Destroy the tooltip
-  //   tippyInstance.destroy();
-
-  //   // Enable scroll
-  //   document.documentElement.classList.remove('no-scroll');
-  // };
-
-  // onMount(startOnboarding);
 </script>
 
 <svelte:window {onkeypress} {onscroll} />
@@ -253,10 +201,7 @@
       {#if header === 'CoNexus'}
         <span class="intro-wrapper flex" id="intro">
           <PlaySVG
-            onclick={() => {
-              showIntro = true;
-              // if (onboarding) finishOnboarding();
-            }}
+            onclick={() => (showIntro = true)}
             text="Watch 30-sec Intro"
             voidBtn={false}
             cta={true}

@@ -98,7 +98,7 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  section.container {
+  section {
     width: 95%;
     max-width: unset;
     margin: 0;
@@ -112,10 +112,6 @@
         flex-wrap: nowrap;
         gap: 1.5rem;
       }
-    }
-
-    @include respond-up(large-desktop) {
-      width: 78rem;
     }
 
     @include respond-up(large-desktop) {

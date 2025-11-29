@@ -1,3 +1,5 @@
+import { NAV_ROUTES } from '@constants/routes';
+
 // Micro-templates for modals rendered through the global modal store
 export const ensureMessage = (message: string = 'remove this') => `
   <h4>Are you sure you want to ${message}?</h4>
@@ -10,7 +12,7 @@ export const restoreDraft = (title: string) => `
 
 export const createDream = `
   <h4>Before You Create</h4>
-  <p>Creating a story costs 10 credits and must comply with our <a href="#">Content Policy</a>. By creating a story, you agree to these terms.</p>
+  <p>Creating a story costs 10 credits and must comply with our <a href="${NAV_ROUTES.COPYRIGHT_POLICY}" target="_blank">Content Policy</a>. By creating a story, you agree to these terms.</p>
 `;
 
 export const disableAccountWarning = `

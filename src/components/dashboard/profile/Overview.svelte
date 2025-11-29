@@ -27,9 +27,11 @@
   } from '@utils/file-validation';
   import { toAvif } from '@utils/avif-convert';
   import convertDate from '@utils/date-converter';
+  import { usePullRefreshContext } from '@utils/pull-refresh';
 
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import Dropdown from '@components/utils/Dropdown.svelte';
+  import FooterLinks from '@components/dashboard/common/FooterLinks.svelte';
 
   import EyeSVG from '@components/icons/Eye.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
@@ -37,7 +39,6 @@
   import CopySVG from '@components/icons/Copy.svelte';
   import EditSVG from '@components/icons/Edit.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
-  import { usePullRefreshContext } from '@utils/pull-refresh';
 
   // SIGNED IN USER PROFILE
 
@@ -758,6 +759,8 @@
 {:else}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {/if}
+
+<FooterLinks legal={true} />
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

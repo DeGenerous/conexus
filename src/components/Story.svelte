@@ -29,6 +29,7 @@
   import Step from '@components/Step.svelte';
   import Share from '@components/utils/Share.svelte';
   import PullToRefresh from '@components/utils/PullToRefresh.svelte';
+  import SwitchArrows from '@components/utils/SwitchArrows.svelte';
 
   import DeleteSVG from '@components/icons/Delete.svelte';
   import DoorSVG from '@components/icons/Door.svelte';
@@ -265,6 +266,7 @@
         </section>
       </div>
     {:else if activeTopic}
+      <SwitchArrows />
       {#if activeTopic === null}
         <div class="container">
           <h4 class="red-txt">Story not found...</h4>

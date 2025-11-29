@@ -170,14 +170,11 @@
 
   const copyRefCode = (code: string) => {
     let codeBtn = document.getElementById(code) as HTMLButtonElement;
-    const origin =
-      typeof window !== 'undefined' && window.location && window.location.origin
-        ? window.location.origin
-        : '';
-    const refLink = `${origin}/?ref=${code}`;
+    const refLink = `${window.location.origin}/?ref=${code}`;
     navigator.clipboard.writeText(refLink);
     codeBtn.classList.add('copied'); // animation
     setTimeout(() => codeBtn.classList.remove('copied'), 600);
+    toastStore.show('Referral link copied to clipboard');
     toastStore.show('Referral link copied to clipboard');
   };
 

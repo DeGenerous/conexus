@@ -1,8 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
+  import CoNexusApp from '@lib/view';
   import { trailerURL } from '@constants/media';
   import { story, game } from '@stores/conexus.svelte';
+  import { prevItem, nextItem } from '@stores/navigation.svelte';
   import {
     getCurrentUser,
     checkUserRoles,
@@ -140,7 +142,6 @@
       {#if header === 'CoNexus'}
         <span class="intro-wrapper flex" id="intro">
           <PlaySVG
-            onclick={() => (showIntro = true)}
             onclick={() => (showIntro = true)}
             text="Watch 30-sec Intro"
             voidBtn={false}

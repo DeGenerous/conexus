@@ -751,7 +751,7 @@
     </Dropdown>
   {:else}
     <span class="dream-container flex-row flex-wrap gap">
-      <h5>For extra features and rewards:</h5>
+      <h5>For OmniHub access, extra features, and rewards:</h5>
       <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
     </span>
   {/if}

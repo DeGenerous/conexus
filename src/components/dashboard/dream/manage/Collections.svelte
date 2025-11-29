@@ -887,6 +887,7 @@
                 'self',
               )}
             onTopicMutated={handleTopicMutated}
+            creator={true}
           />
         </div>
       {/each}

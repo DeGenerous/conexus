@@ -511,7 +511,7 @@
 
   {#if user.email && user.first_name}
     <Dropdown name="Account">
-      {#if user.role_name === 'Admin'}
+      <!-- {#if user.role_name === 'Admin'}
         <h3 style:color="gold">👑 You are Admin 👑</h3>
       {/if}
       <ul class="user-roles flex-row flex-wrap">
@@ -537,7 +537,7 @@
             </li>
           {/if}
         {/each}
-      </ul>
+      </ul> -->
 
       <form class="flex">
         <div class="input-container">
@@ -770,45 +770,45 @@
     }
   }
 
-  .user-roles {
-    li {
-      padding: 1rem 0.5rem;
-      gap: 1rem;
-      border-radius: 1rem;
-      @include navy(0.75);
-      @include gray-border;
+  // .user-roles {
+  //   li {
+  //     padding: 1rem 0.5rem;
+  //     gap: 1rem;
+  //     border-radius: 1rem;
+  //     @include navy(0.75);
+  //     @include gray-border;
 
-      h4 {
-        width: auto;
-      }
+  //     h4 {
+  //       width: auto;
+  //     }
 
-      span {
-        align-items: flex-start;
-        gap: 0.5rem;
-        padding: 0.5rem;
-        border-radius: 0.5rem;
-        background-color: $transparent-black;
-        @include white-txt;
-        @include box-shadow(soft, inset);
+  //     span {
+  //       align-items: flex-start;
+  //       gap: 0.5rem;
+  //       padding: 0.5rem;
+  //       border-radius: 0.5rem;
+  //       background-color: $transparent-black;
+  //       @include white-txt;
+  //       @include box-shadow(soft, inset);
 
-        p {
-          @include red(0.75, text);
+  //       p {
+  //         @include red(0.75, text);
 
-          &.allowed {
-            @include green(0.9, text);
-          }
-        }
-      }
+  //         &.allowed {
+  //           @include green(0.9, text);
+  //         }
+  //       }
+  //     }
 
-      &.active {
-        @include deep-green(0.75);
+  //     &.active {
+  //       @include deep-green(0.75);
 
-        span {
-          @include dark-green;
-        }
-      }
-    }
-  }
+  //       span {
+  //         @include dark-green;
+  //       }
+  //     }
+  //   }
+  // }
 
   .dream-container {
     div {

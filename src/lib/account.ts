@@ -561,9 +561,10 @@ class Account {
    * Retrieve the user's saved prompt settings.
    * @returns The prompt settings or null if unavailable.
    */
-  async getPromptSettings(refresh: boolean = false): Promise<PromptSettings | null> {
-    const { status, message, data } =
-      await this.api.getPromptSettings(refresh);
+  async getPromptSettings(
+    refresh: boolean = false,
+  ): Promise<PromptSettings | null> {
+    const { status, message, data } = await this.api.getPromptSettings(refresh);
 
     if (status === 'error') {
       api_error(message);
@@ -594,8 +595,7 @@ class Account {
    * @returns The stored custom theme or null if not set.
    */
   async getCustomTheme(refresh: boolean = false): Promise<CustomTheme | null> {
-    const { status, message, data } =
-      await this.api.getCustomTheme(refresh);
+    const { status, message, data } = await this.api.getCustomTheme(refresh);
 
     if (status === 'error') {
       api_error(message, false); // TEMP: hide toast

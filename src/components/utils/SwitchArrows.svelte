@@ -4,7 +4,7 @@
   const navigateTo = (item: Nullable<NavItem>) => {
     if (!item) return;
     if (item.link) {
-      window.location.href = item.link;
+      window.location.href = item.link; // or `location.href = item.link`
     } else if (item.action) {
       item.action();
     }

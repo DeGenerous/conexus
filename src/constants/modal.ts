@@ -8,6 +8,11 @@ export const restoreDraft = (title: string) => `
   <p>Open “${title}” in the creator with all fields prefilled.</p>
 `;
 
+export const createDream = `
+  <h4>Before You Create</h4>
+  <p>Creating a story costs 10 credits and must comply with our <a href="#">Content Policy</a>. By creating a story, you agree to these terms.</p>
+`;
+
 export const disableAccountWarning = `
   <h4>Disable User Account?</h4>
   <p>This is a soft delete. The user loses access immediately. Data stays in the database and can be restored later.</p>

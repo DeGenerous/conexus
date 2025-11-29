@@ -3,7 +3,11 @@
   import { derived } from 'svelte/store';
 
   import { GetCache, CURRENT_DRAFT_KEY } from '@constants/cache';
-  import { ensureMessage, openStoryManage } from '@constants/modal';
+  import {
+    ensureMessage,
+    openStoryManage,
+    createDream,
+  } from '@constants/modal';
   import Topic from '@lib/topics';
   import {
     storyData,
@@ -41,7 +45,7 @@
   let validation = $derived(
     $storyData.name &&
       $storyData.description &&
-      $storyData.description.length > 100 &&
+      $storyData.description.length >= 50 &&
       $storyData.image_prompt.length <= 1400 &&
       $storyData.category_id,
   );
@@ -177,6 +181,10 @@
     clearAllData();
     lastSavedAgo = 'unsaved';
   };
+
+  const createStory = () => {
+    openModal(createDream, 'Create Dream', generateStory);
+  };
 </script>
 
 <!-- DRAFT SAVING -->
@@ -285,7 +293,7 @@
     <label for="description">Description</label>
     <textarea
       id="description"
-      class:red-border={$storyData.description.length < 100}
+      class:red-border={$storyData.description.length < 50}
       placeholder="Describe the central premise, key themes, the main character's emotional journey ahead, and what kicks off the plot. Focus on what’s at stake, what makes the world unique, and why this story matters - make users want to see more."
       rows="3"
       bind:value={$storyData.description}
@@ -295,9 +303,9 @@
     ></textarea>
   </div>
 
-  {#if $storyData.description && $storyData.description.length < 100}
+  {#if $storyData.description && $storyData.description.length < 50}
     <p class="validation">
-      Description should be longer, enter {100 - $storyData.description.length} more
+      Description should be longer, enter {50 - $storyData.description.length} more
       characters
     </p>
   {/if}
@@ -456,7 +464,7 @@
   >
     Reset Data
   </button>
-  <button class="green-btn" onclick={generateStory} disabled={!validation}>
+  <button class="green-btn" onclick={createStory} disabled={!validation}>
     Create a DREAM: 10 Credits
   </button>
 </div>

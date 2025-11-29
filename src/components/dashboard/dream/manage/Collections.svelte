@@ -770,7 +770,7 @@
                 {/each}
               </div>
             {:else}
-              <p class="validation">No categories found</p>
+              <p class="validation">No story categories found</p>
             {/if}
           {/if}
         </Dropdown>
@@ -836,13 +836,13 @@
               {/each}
             </div>
           {:else}
-            <p class="validation">No categories found</p>
+            <p class="validation">No story categories found</p>
           {/if}
         {/if}
       </Dropdown>
     {/each}
   {:else}
-    <p class="validation">No categories found</p>
+    <p class="validation">No story categories found</p>
   {/if}
 {/if}
 
@@ -893,12 +893,12 @@
       {/each}
     </div>
   {:else}
-    <p class="validation">No categories found</p>
+    <p class="validation">No story categories found, pull down to refresh</p>
     <button
       class="cta"
       onclick={() => open('/dashboard#/dream/manage/categories', '_self')}
     >
-      Create Category
+      Create your first story category
     </button>
   {/if}
 {/if}

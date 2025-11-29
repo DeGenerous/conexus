@@ -139,7 +139,7 @@
         {:else if errorCategories}
           {errorCategories}
         {:else}
-          Categories: {categories.length}
+          Story Categories: {categories.length}
         {/if}
       </h4>
       <div class="container">
@@ -154,7 +154,7 @@
             </button>
           {/each}
         {:else}
-          <p class="validation">No categories found</p>
+          <p class="validation">No story categories found</p>
         {/if}
       </div>
     {/snippet}
@@ -167,7 +167,7 @@
     <input
       id="new-category-name"
       bind:value={newCategoryName}
-      placeholder="Enter New Category Name"
+      placeholder="New Category Name"
     />
   </span>
   <!-- <span class="input-container">
@@ -178,7 +178,7 @@
       placeholder="Enter New Category Description"
     />
   </span> -->
-  <span class="input-container">
+  <!-- <span class="input-container">
     <label for="new-category-sort-order">Sort Order</label>
     <input
       id="new-category-sort-order"
@@ -186,7 +186,7 @@
       bind:value={newCategorySortOrder}
       placeholder="Enter New Category Sort Order"
     />
-  </span>
+  </span> -->
 
   <button onclick={addCategory} disabled={!newCategoryName || addingCategory}>
     {#if addingCategory}

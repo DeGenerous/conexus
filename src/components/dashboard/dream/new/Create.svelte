@@ -22,6 +22,7 @@
   import { checkUserRoles } from '@utils/route-guard';
   import { isAdmin } from '@stores/account.svelte';
   import Drafts from '@utils/story-drafts';
+  import { redirectTo } from '@utils/route-guard';
 
   import Characters from '@components/dashboard/dream/new/create/Characters.svelte';
   import Scenario from '@components/dashboard/dream/new/create/Scenario.svelte';
@@ -257,7 +258,7 @@
           id="category"
           class:red-border={!$storyData.category_id && categories.length > 0}
           bind:value={$storyData.category_id}
-          disabled={$isAdmin && !selectedSectionId}
+          disabled={($isAdmin && !selectedSectionId) || !categories.length}
         >
           <option value="" disabled hidden>
             {#if categories.length > 0}
@@ -273,6 +274,15 @@
           {/each}
         </select>
       </div>
+
+      {#if !categories.length && !loadingCategories && !$isAdmin}
+        <button
+          class="cta"
+          onclick={() => redirectTo('/dashboard#/dream/manage/categories')}
+        >
+          Create your first story category
+        </button>
+      {/if}
     {/snippet}
   </CategoryFetcher>
 

@@ -1,28 +1,14 @@
 <script lang="ts">
   import { NAV_ROUTES } from '@constants/routes';
-  import { COOKIE_CONSENT_KEY, ClearCache } from '@constants/cache';
 
   let { legal = false }: { legal?: boolean } = $props();
-
-  const resetCookies = () => {
-    ClearCache(COOKIE_CONSENT_KEY);
-    window.location.reload();
-  };
 </script>
 
 <footer class="flex gap-8">
   {#if legal}
     <h5>Legal information and data</h5>
     <div class="flex-row flex-wrap gap">
-      <a
-        href="/"
-        onclick={(event) => {
-          event.preventDefault();
-          resetCookies();
-        }}
-      >
-        Cookie Settings
-      </a>
+      <a href="/">Cookie Settings</a>
       <span aria-hidden="true">|</span>
       <a href={NAV_ROUTES.TERMS}>Terms of Service</a>
       <span aria-hidden="true">|</span>

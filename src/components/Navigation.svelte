@@ -19,7 +19,6 @@
   import PlaySVG from '@components/icons/Play.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
   import ConexusLogo from '@components/icons/ConexusLogo.svelte';
-  import BackArrowPCNav from '@components/utils/BackArrowPCNav.svelte';
 
   let {
     header = '',
@@ -111,7 +110,13 @@
         <h1 class="sr-only">CoNexus</h1>
         <ConexusLogo />
       {:else}
+        {#if arrow}
+          <BackArrow href={arrow} />
+        {/if}
         <h1>{header}</h1>
+        {#if arrow}
+          <BackArrow href={arrow} hidden={true} />
+        {/if}
       {/if}
     </header>
   {/if}
@@ -154,10 +159,6 @@
     class:hide={hiddenHeader}
     class:disabled={!$approvedTester}
   >
-    <!-- <BackArrowPCNav {arrow} /> -->
-
-    <!-- <BackArrow href={arrow} hideForPCs={true} /> -->
-
     <HomeSVG {activeTab} />
 
     <Profile {activeTab} />

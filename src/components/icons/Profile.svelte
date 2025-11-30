@@ -92,7 +92,7 @@
   class:inactive={!$approvedTester}
   class:nopadding={!!$user}
   aria-label="Profile"
-  href={$user ? `/c/${$user.username!}` : '/dashboard#/dashboard'}
+  href={$user ? `/c/${$user.username ?? 'unknown'}` : '/dashboard#/dashboard'}
   onclick={(event) => {
     if (!$user) {
       event.preventDefault();

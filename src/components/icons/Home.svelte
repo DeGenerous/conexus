@@ -6,6 +6,7 @@
 
 <a
   class="home-mobile navigation-tab"
+  class="home-mobile navigation-tab"
   class:active={activeTab === 'Home'}
   class:inactive={!$approvedTester}
   href="/"
@@ -119,6 +120,7 @@
       &:focus-visible {
         fill: $cyan;
         @include dark-blue;
+        @include scale;
       }
 
       @include respond-up('small-desktop') {

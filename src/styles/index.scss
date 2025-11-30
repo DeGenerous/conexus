@@ -399,7 +399,8 @@ html {
     stroke: $white;
     @include white-txt;
 
-    svg {
+    svg,
+    img {
       width: 2rem;
     }
 
@@ -443,10 +444,6 @@ html {
       opacity: 1;
       font-weight: 500;
       @include light-blue(1, text);
-
-      &.dashboard-tab {
-        margin-left: auto;
-      }
 
       &.active {
         @include cyan;

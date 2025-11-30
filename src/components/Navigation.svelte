@@ -154,9 +154,9 @@
     class:hide={hiddenHeader}
     class:disabled={!$approvedTester}
   >
-    <BackArrowPCNav {arrow} />
+    <!-- <BackArrowPCNav {arrow} /> -->
 
-    <BackArrow href={arrow} hideForPCs={true} />
+    <!-- <BackArrow href={arrow} hideForPCs={true} /> -->
 
     <HomeSVG {activeTab} />
 
@@ -228,7 +228,6 @@
     position: fixed;
     bottom: 0;
     width: 100vw;
-    justify-content: space-between;
     gap: 0;
     z-index: 100;
     border-top: 1px solid $transparent-gray;

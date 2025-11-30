@@ -22,14 +22,6 @@
   class:flex-row={voidBtn}
   type="button"
   {onclick}
-  onpointerover={() => {
-    // if (!cta) return;
-    // document.getElementById('profile-icon')?.classList.add('profile-hover');
-  }}
-  onpointerout={() => {
-    // if (!cta) return;
-    // document.getElementById('profile-icon')?.classList.remove('profile-hover');
-  }}
   {disabled}
 >
   {#if state === 'outside'}

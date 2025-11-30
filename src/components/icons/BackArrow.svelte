@@ -1,20 +1,10 @@
 <script lang="ts">
-  let {
-    href,
-    hideForMobiles = false,
-    hideForPCs = false,
-  }: {
-    href: string;
-    hideForMobiles?: boolean;
-    hideForPCs?: boolean;
-  } = $props();
+  let { href, hidden = false }: { href: string; hidden?: boolean } = $props();
 </script>
 
 <a
-  class="navigation-tab"
-  class:inactive={!href}
-  class:pc-only={hideForMobiles}
-  class:mobile-only={hideForPCs}
+  class="nohover-link"
+  class:hidden
   href={href === 'back' ? 'javascript:window.history.back()' : href}
   aria-label="Back arrow"
 >
@@ -25,29 +15,35 @@
       "
       stroke-width="4"
       stroke-linejoin="round"
+      fill="CurrentColor"
     />
   </svg>
-  <p>Back</p>
 </a>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
   a {
-    &.mobile-only {
-      display: flex;
+    @include cyan(1, text);
 
-      @include respond-up('small-desktop') {
-        display: none;
+    svg {
+      width: 2rem;
+    }
+
+    @include respond-up('small-desktop') {
+      svg {
+        width: 3rem;
       }
     }
 
-    &.pc-only {
-      display: none;
+    &:hover,
+    &:active,
+    &:focus-visible {
+      @include light-blue(1, text);
+    }
 
-      @include respond-up('small-desktop') {
-        display: flex;
-      }
+    &.hidden {
+      visibility: hidden;
     }
   }
 </style>

@@ -3,7 +3,7 @@
   import { showProfile } from '@stores/modal.svelte';
   import { user, approvedTester } from '@stores/account.svelte';
   import { redirectTo } from '@utils/route-guard';
-  import { blankImage, serveUrl } from '@constants/media';
+  import { blankImage } from '@constants/media';
   import { resolveRenderableImage } from '@utils/file-validation';
   import { getAvatarInitial } from '@utils/avatar';
 

@@ -119,7 +119,6 @@
       &:focus-visible {
         fill: $cyan;
         @include dark-blue;
-        @include scale;
       }
 
       @include respond-up('small-desktop') {

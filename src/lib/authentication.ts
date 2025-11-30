@@ -1,4 +1,4 @@
-import { USER_KEY, TTL_HOUR, SetCache, ClearCache } from '@constants/cache';
+import { USER_KEY, TTL_SHORT, SetCache, ClearCache } from '@constants/cache';
 import { api_error } from '@errors/index';
 import AuthenticationAPI from '@service/authentication';
 import { accountError } from '@stores/account.svelte';
@@ -57,7 +57,7 @@ export default class Authentication {
       return;
     }
 
-    SetCache(USER_KEY, data, TTL_HOUR);
+    SetCache(USER_KEY, data, TTL_SHORT);
     window.location.reload();
   }
 
@@ -79,7 +79,7 @@ export default class Authentication {
       return;
     }
 
-    SetCache(USER_KEY, data, TTL_HOUR);
+    SetCache(USER_KEY, data, TTL_SHORT);
     window.location.reload();
   }
 
@@ -154,7 +154,7 @@ export default class Authentication {
     }
 
     accountError.set(null);
-    SetCache(USER_KEY, data, TTL_HOUR);
+    SetCache(USER_KEY, data, TTL_SHORT);
     toastStore.show(message || 'Wallet selected successfully', 'info');
     return data;
   }
@@ -181,7 +181,7 @@ export default class Authentication {
     }
 
     accountError.set(null);
-    SetCache(USER_KEY, data, TTL_HOUR);
+    SetCache(USER_KEY, data, TTL_SHORT);
     toastStore.show(message || 'Wallet unlinked successfully', 'info');
     return data;
   }

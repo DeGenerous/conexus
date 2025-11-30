@@ -16,7 +16,7 @@
   import { accountError, developerMode } from '@stores/account.svelte';
   import openModal from '@stores/modal.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';
-  import { getCurrentUser, redirectTo } from '@utils/route-guard';
+  import { getCurrentUser } from '@utils/route-guard';
   import { referralActivationNotice } from '@constants/modal';
   import { toastStore } from '@stores/toast.svelte';
   import { blankImage, serveUrl } from '@constants/media';

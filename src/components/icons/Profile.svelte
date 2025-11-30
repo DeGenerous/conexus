@@ -92,6 +92,7 @@
 
 <a
   class="navigation-tab profile-tab"
+  class:active={activeTab === $user?.username}
   class:inactive={!$approvedTester}
   class:nopadding={!!$user}
   aria-label="Profile"
@@ -243,7 +244,6 @@
       &:focus-visible {
         fill: $cyan;
         @include dark-blue;
-        @include scale;
       }
     }
   }

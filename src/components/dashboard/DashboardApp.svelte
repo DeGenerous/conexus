@@ -61,7 +61,7 @@
     grid-template-columns: 1fr;
     width: 100vw;
     min-height: 100dvh;
-    padding-block: 0 5rem;
+    padding-block: 3rem 5rem;
     background-color: rgba(0, 0, 0, 0.25);
 
     .placeholder {

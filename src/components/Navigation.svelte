@@ -154,6 +154,10 @@
     class:hide={hiddenHeader}
     class:disabled={!$approvedTester}
   >
+    <!-- <BackArrowPCNav {arrow} /> -->
+
+    <!-- <BackArrow href={arrow} hideForPCs={true} /> -->
+
     <HomeSVG {activeTab} />
 
     <Profile {activeTab} />

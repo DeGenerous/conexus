@@ -3,7 +3,7 @@
   import { showProfile } from '@stores/modal.svelte';
   import { user, approvedTester } from '@stores/account.svelte';
   import { redirectTo } from '@utils/route-guard';
-  import { blankImage } from '@constants/media';
+  import { blankImage, serveUrl } from '@constants/media';
   import { resolveRenderableImage } from '@utils/file-validation';
 
   import DreamSVG from '@components/icons/Dream.svelte';
@@ -19,6 +19,8 @@
 
   $effect(() => {
     if ($user) avatarUrl = $user.avatar_url || '';
+    console.log('Avatar URL:', avatarUrl);
+    console.log('User:', $user);
   });
 
   $effect(() => {
@@ -26,10 +28,12 @@
       resolveRenderableImage(`/api${avatarUrl}`)
         .then((res) => {
           avatarImage = res;
+          console.log('Resolved avatar image:', res);
         })
         .catch(() => {
           avatarImage = blankImage;
         });
+    console.log('Avatar Image set to:', avatarUrl);
   });
 </script>
 
@@ -52,27 +56,8 @@
 
 <a
   class="navigation-tab dream-tab mobile-only"
-  class="navigation-tab dream-tab pc-only"
   class:active={activeTab === 'Dashboard'}
   class:inactive={!$approvedTester}
-  aria-label="Dream"
-  href="/dashboard#/dream/create"
-  onclick={(event) => {
-    if (!$user) {
-      event.preventDefault();
-      $showProfile = true;
-    }
-  }}
->
-  <DreamSVG />
-  <p>Dream</p>
-</a>
-
-<a
-  class="navigation-tab dream-tab mobile-only"
-  class:active={activeTab === 'Dashboard'}
-  class:inactive={!$approvedTester}
-  aria-label="Dashboard"
   aria-label="Dashboard"
   href="/dashboard#/dashboard"
   onclick={(event) => {
@@ -88,11 +73,10 @@
 
 <a
   class="navigation-tab profile-tab"
-  class:active={activeTab === $user?.username}
   class:inactive={!$approvedTester}
   class:nopadding={!!$user}
   aria-label="Profile"
-  href={$user ? `/c/${$user.username ?? 'unknown'}` : '/dashboard#/dashboard'}
+  href={$user ? `/c/${$user.username!}` : '/dashboard#/dashboard'}
   onclick={(event) => {
     if (!$user) {
       event.preventDefault();
@@ -118,93 +102,63 @@
 </a>
 
 {#if $user}
-  <div
+  <span
     class="dropdown flex transition"
     class:visible={svgFocus}
     onpointerover={() => (svgFocus = true)}
     onpointerout={() => (svgFocus = false)}
   >
-    <span class="flex">
-      <a
-        class="nohover-link"
-        href={$user
-          ? `/c/${$user.username ?? 'unknown'}`
-          : '/dashboard#/dashboard'}
-        onclick={(event) => {
-          event.preventDefault();
-          redirectTo(
-            $user
-              ? `/c/${$user.username ?? 'unknown'}`
-              : '/dashboard#/dashboard',
-          );
-        }}
-      >
-        Profile
-      </a>
-      <a
-        class="nohover-link"
-        href="/dashboard#/dashboard"
-        onclick={(event) => {
-          event.preventDefault();
-          redirectTo('/dashboard#/dashboard');
-        }}
-      >
-        Dashboard
-      </a>
-      <a
-        class="nohover-link"
-        href="/dashboard#/profile/overview"
-        onclick={(event) => {
-          event.preventDefault();
-          redirectTo('/dashboard#/profile/overview');
-        }}
-      >
-        Account
-      </a>
-      <a
-        class="nohover-link"
-        href="/dashboard#/profile/bookmarks"
-        onclick={(event) => {
-          event.preventDefault();
-          redirectTo('/dashboard#/profile/bookmarks');
-        }}
-      >
-        Bookmarks
-      </a>
-      <a
-        class="nohover-link"
-        href="/dashboard#/profile/settings"
-        onclick={(event) => {
-          event.preventDefault();
-          redirectTo('/dashboard#/profile/settings');
-        }}
-      >
-        Settings
-      </a>
-      {#if $user?.wallets?.filter((wallet) => !wallet.faux).length}
-        <a
-          class="nohover-link"
-          href="/dashboard#/omnihub"
-          onclick={(event) => {
-            event.preventDefault();
-            redirectTo('/dashboard#/omnihub');
-          }}
-        >
-          OmniHub
-        </a>
-      {/if}
-      <a
-        class="nohover-link"
-        href="/"
-        onclick={(event) => {
-          event.preventDefault();
-          authentication.logout();
-        }}
-      >
-        Sign Out
-      </a>
-    </span>
-  </div>
+    <a
+      class="nohover-link"
+      href="/dashboard#/profile/overview"
+      onclick={(event) => {
+        event.preventDefault();
+        redirectTo('/dashboard#/profile/overview');
+      }}
+    >
+      Profile
+    </a>
+    <a
+      class="nohover-link"
+      href="/dashboard#/profile/bookmarks"
+      onclick={(event) => {
+        event.preventDefault();
+        redirectTo('/dashboard#/profile/bookmarks');
+      }}
+    >
+      Bookmarks
+    </a>
+    <a
+      class="nohover-link"
+      href="/dashboard#/profile/settings"
+      onclick={(event) => {
+        event.preventDefault();
+        redirectTo('/dashboard#/profile/settings');
+      }}
+    >
+      Settings
+    </a>
+    <a
+      class="nohover-link"
+      href="/dashboard#/omnihub"
+      onclick={(event) => {
+        event.preventDefault();
+        redirectTo('/dashboard#/omnihub');
+      }}
+    >
+      OmniHub
+    </a>
+    <a
+      class="nohover-link"
+      href="/"
+      onclick={(event) => {
+        event.preventDefault();
+        authentication.logout();
+      }}
+    >
+      Sign Out
+    </a>
+  </span>
 {/if}
 
 <style lang="scss">
@@ -251,7 +205,6 @@
       img {
         width: 100%;
         border-radius: inherit;
-        aspect-ratio: 1 / 1;
       }
 
       &:hover,
@@ -259,6 +212,7 @@
       &:focus-visible {
         fill: $cyan;
         @include dark-blue;
+        @include scale;
       }
     }
   }
@@ -267,26 +221,18 @@
     position: absolute;
     top: 3rem;
     right: -1rem;
+    min-height: 3.5rem;
     width: 12rem;
     padding-top: 1.5rem;
     gap: 0;
+    border-bottom-left-radius: 0.5rem;
+    background-color: $dark-blue;
     fill: $cyan !important;
     opacity: 0;
     transform: translateX(100%);
-    z-index: 100;
+    z-index: -1;
+    @include box-shadow;
 
-    span {
-      width: 100%;
-      gap: 0;
-      border-bottom-left-radius: 0.5rem;
-      @include dark-blue;
-      @include box-shadow;
-    }
-
-    &.visible {
-      opacity: 1;
-      transform: translateX(0);
-    }
     &.visible {
       opacity: 1;
       transform: translateX(0);
@@ -298,19 +244,7 @@
       padding: 0.5rem 1.5rem;
       text-decoration: none;
       @include white-txt;
-    a {
-      width: 100%;
-      border-radius: 0.5rem;
-      padding: 0.5rem 1.5rem;
-      text-decoration: none;
-      @include white-txt;
 
-      &:hover,
-      &:active,
-      &:focus-visible {
-        @include navy;
-        @include cyan(1, text);
-      }
       &:hover,
       &:active,
       &:focus-visible {

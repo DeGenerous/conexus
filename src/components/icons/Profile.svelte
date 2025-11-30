@@ -19,8 +19,6 @@
 
   $effect(() => {
     if ($user) avatarUrl = $user.avatar_url || '';
-    console.log('Avatar URL:', avatarUrl);
-    console.log('User:', $user);
   });
 
   $effect(() => {
@@ -33,7 +31,6 @@
         .catch(() => {
           avatarImage = blankImage;
         });
-    console.log('Avatar Image set to:', avatarUrl);
   });
 </script>
 

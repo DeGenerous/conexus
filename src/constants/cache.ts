@@ -45,8 +45,6 @@ export const COOKIE_CONSENT_KEY = 'cookie_consent';
 // 1 HOUR
 /* -------------------------------------------------------------------- */
 
-export const USER_KEY = 'user';
-
 // Cache OmniHub data
 export const POTENTIALS_KEY = 'potentials';
 export const SELECTED_POTENTIAL_KEY = 'selected_potential';
@@ -54,6 +52,8 @@ export const SELECTED_POTENTIAL_KEY = 'selected_potential';
 /* -------------------------------------------------------------------- */
 // 15 MINUTES
 /* -------------------------------------------------------------------- */
+
+export const USER_KEY = 'user';
 
 // Cache subscription status & referral codes
 export const SUBSCRIPTION_STATUS_KEY = 'subscription_status';

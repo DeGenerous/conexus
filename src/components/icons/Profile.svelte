@@ -129,13 +129,23 @@
   >
     <a
       class="nohover-link"
+      href="/dashboard#/dashboard"
+      onclick={(event) => {
+        event.preventDefault();
+        redirectTo('/dashboard#/dashboard');
+      }}
+    >
+      Dashboard
+    </a>
+    <a
+      class="nohover-link"
       href="/dashboard#/profile/overview"
       onclick={(event) => {
         event.preventDefault();
         redirectTo('/dashboard#/profile/overview');
       }}
     >
-      Profile
+      Account
     </a>
     <a
       class="nohover-link"

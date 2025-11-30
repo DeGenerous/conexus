@@ -1,30 +1,3 @@
-<script lang="ts">
-  let {
-    href = '#',
-    target = '_self',
-    hideForMobiles = false,
-    hideForPCs = false,
-  }: {
-    href?: string;
-    target?: string;
-    hideForMobiles?: boolean;
-    hideForPCs?: boolean;
-  } = $props();
-
-  let svgFocus = $state<boolean>(false);
-</script>
-
-<!-- <a
-  class="flex nohover-link"
-  class:pc-only={hideForMobiles}
-  class:mobile-only={hideForPCs}
-  onpointerover={() => (svgFocus = true)}
-  onpointerout={() => (svgFocus = false)}
-  {href}
-  {target}
-  rel={target === "_blank" ? "noopener noreferrer" : undefined}
-  aria-label="CoNexus"
-> -->
 <svg viewBox="0 0 2341 546" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path
     d="M539 91C576 91 607.833 100.333 634.5 119C661.5 137.333 680.833 162.667 692.5 195L631.5 217.5C624.167 197.167 612.5 181.333 596.5 170C580.833 158.667 561.667 153 539 153C518.333 153 500.167 157.833 484.5 167.5C469.167 177.167 457.333 191 449 209C441 226.667 437 248 437 273C437 298 441 319.5 449 337.5C457.333 355.5 469.167 369.333 484.5 379C500.167 388.667 518.333 393.5 539 393.5C561.667 393.5 580.833 387.833 596.5 376.5C612.5 365.167 624.167 349.333 631.5 329L692.5 351C680.833 383.333 661.5 408.833 634.5 427.5C607.833 446.167 576 455.5 539 455.5C506 455.5 476.833 447.833 451.5 432.5C426.5 417.167 407 395.833 393 368.5C379 341.167 372 309.333 372 273C372 236.667 379 205 393 178C407 150.667 426.5 129.333 451.5 114C476.833 98.6667 506 91 539 91Z"
@@ -59,8 +32,6 @@
   />
 </svg>
 
-<!-- </a> -->
-
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
@@ -68,43 +39,4 @@
     width: 10rem;
     fill: $cyan;
   }
-
-  // a {
-  //   height: 2.5rem;
-  //   width: 10rem;
-  //   border-radius: 0.5rem;
-  //   fill: $cyan;
-  //   @include cyan(0.1);
-
-  //   svg {
-  //     width: 85%;
-  //   }
-
-  //   &.mobile-only {
-  //     margin-bottom: 0.5rem;
-  //   }
-
-  //   &:hover:not(&:disabled),
-  //   &:active:not(&:disabled),
-  //   &:focus:not(&:disabled) {
-  //     fill: $dark-blue;
-  //     @include cyan;
-  //   }
-
-  //   &.mobile-only {
-  //     display: flex;
-
-  //     @include respond-up("small-desktop") {
-  //       display: none;
-  //     }
-  //   }
-
-  //   &.pc-only {
-  //     display: none;
-
-  //     @include respond-up("small-desktop") {
-  //       display: flex;
-  //     }
-  //   }
-  // }
 </style>

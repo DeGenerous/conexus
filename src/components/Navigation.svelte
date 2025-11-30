@@ -106,7 +106,6 @@
 {#if $story === null}
   {#if header}
     <header class="flex-row">
-    <header class="flex-row">
       {#if header === 'CoNexus'}
         <h1 class="sr-only">CoNexus</h1>
         <ConexusLogo />
@@ -174,17 +173,15 @@
   header {
     width: 100vw;
     padding-inline: 1.5rem;
-    padding-inline: 1.5rem;
 
-      h1 {
-        width: 100%;
-      }
+    h1 {
+      width: 100%;
     }
 
-    &.mobile-home-header {
+    @include mobile-only {
+      height: 4rem;
       position: sticky;
       top: 0;
-      justify-content: center;
       justify-content: center;
       margin-top: -1.5rem;
       z-index: 100;

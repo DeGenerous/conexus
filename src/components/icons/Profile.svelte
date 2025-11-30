@@ -26,7 +26,6 @@
       resolveRenderableImage(`/api${avatarUrl}`)
         .then((res) => {
           avatarImage = res;
-          console.log('Resolved avatar image:', res);
         })
         .catch(() => {
           avatarImage = blankImage;

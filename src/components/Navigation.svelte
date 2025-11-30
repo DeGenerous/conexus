@@ -105,7 +105,7 @@
 
 {#if $story === null}
   {#if header}
-    <header class="flex-row" class:mobile-home-header={header === 'CoNexus'}>
+    <header class="flex-row">
       {#if header === 'CoNexus'}
         <h1 class="sr-only">CoNexus</h1>
         <ConexusLogo />
@@ -172,28 +172,21 @@
 
   header {
     width: 100vw;
+    padding-inline: 1.5rem;
 
-    &:not(.mobile-home-header) {
-      padding-inline: 1.5rem;
-      justify-content: space-between;
-
-      h1 {
-        width: 100%;
-      }
+    h1 {
+      width: 100%;
     }
 
-    &.mobile-home-header {
+    @include mobile-only {
+      height: 4rem;
       position: sticky;
       top: 0;
+      justify-content: center;
       margin-top: -1.5rem;
-      height: 4rem;
       z-index: 100;
       border-bottom: 1px solid $transparent-gray;
       @include dark-blue;
-
-      @include respond-up(small-desktop) {
-        display: none;
-      }
     }
   }
 

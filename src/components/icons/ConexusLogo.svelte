@@ -38,5 +38,9 @@
   svg {
     width: 10rem;
     fill: $cyan;
+
+    @include respond-up('small-desktop') {
+      display: none;
+    }
   }
 </style>

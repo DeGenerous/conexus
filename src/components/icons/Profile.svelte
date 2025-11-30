@@ -157,16 +157,18 @@
     >
       Settings
     </a>
-    <a
-      class="nohover-link"
-      href="/dashboard#/omnihub"
-      onclick={(event) => {
-        event.preventDefault();
-        redirectTo('/dashboard#/omnihub');
-      }}
-    >
-      OmniHub
-    </a>
+    {#if $user?.wallets?.filter((wallet) => !wallet.faux).length}
+      <a
+        class="nohover-link"
+        href="/dashboard#/omnihub"
+        onclick={(event) => {
+          event.preventDefault();
+          redirectTo('/dashboard#/omnihub');
+        }}
+      >
+        OmniHub
+      </a>
+    {/if}
     <a
       class="nohover-link"
       href="/"

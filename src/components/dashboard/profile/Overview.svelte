@@ -167,7 +167,8 @@
 
   const copyRefCode = (code: string) => {
     let codeBtn = document.getElementById(code) as HTMLButtonElement;
-    const refLink = `${window.location.origin}/?ref=${code}`;
+    const origin = (typeof window !== 'undefined' && window.location && window.location.origin) ? window.location.origin : '';
+    const refLink = `${origin}/?ref=${code}`;
     navigator.clipboard.writeText(refLink);
     codeBtn.classList.add('copied'); // animation
     setTimeout(() => codeBtn.classList.remove('copied'), 600);

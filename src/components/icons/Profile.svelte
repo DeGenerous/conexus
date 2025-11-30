@@ -3,7 +3,7 @@
   import { showProfile } from '@stores/modal.svelte';
   import { user, approvedTester } from '@stores/account.svelte';
   import { redirectTo } from '@utils/route-guard';
-  import { blankImage, serveUrl } from '@constants/media';
+  import { blankImage } from '@constants/media';
   import { resolveRenderableImage } from '@utils/file-validation';
 
   import DreamSVG from '@components/icons/Dream.svelte';
@@ -26,7 +26,6 @@
       resolveRenderableImage(`/api${avatarUrl}`)
         .then((res) => {
           avatarImage = res;
-          console.log('Resolved avatar image:', res);
         })
         .catch(() => {
           avatarImage = blankImage;
@@ -74,7 +73,7 @@
   class:inactive={!$approvedTester}
   class:nopadding={!!$user}
   aria-label="Profile"
-  href={$user ? `/c/${$user.username!}` : '/dashboard#/dashboard'}
+  href={$user ? `/c/${$user.username ?? 'unknown'}` : '/dashboard#/dashboard'}
   onclick={(event) => {
     if (!$user) {
       event.preventDefault();

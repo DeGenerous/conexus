@@ -34,7 +34,7 @@ export default class Environment {
    * @returns A promise that resolves to the login response.
    */
   async login(email: string) {
-    const { status, message, data } = await this.api.login(email);
+    const { status, message } = await this.api.login(email);
 
     if (status === 'error') {
       api_error(message);
@@ -51,7 +51,7 @@ export default class Environment {
    * @returns A promise that resolves to participation ID or null.
    */
   async isTester(): Promise<boolean> {
-    const { status, message, data } = await this.api.isTester();
+    const { status } = await this.api.isTester();
 
     if (status === 'error') {
       // api_error(message); // do not throw error

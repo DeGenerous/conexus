@@ -16,7 +16,7 @@ import { createSiweMessage } from 'viem/siwe';
 import { WagmiProvider } from 'wagmi';
 import { mainnet, base } from 'wagmi/chains';
 
-import { SetCache, USER_KEY, TTL_HOUR } from '@constants/cache';
+import { SetCache, USER_KEY, TTL_SHORT } from '@constants/cache';
 import { assetsURL } from '@constants/media';
 import { NAV_ROUTES } from '@constants/routes';
 import AuthenticationAPI from '@service/authentication';
@@ -130,7 +130,7 @@ const Web3Provider: React.FC<Web3Props> = ({ linking = false, children }) => {
                 AUTHENTICATION_STATUS = 'unauthenticated';
                 return false;
               }
-              SetCache(USER_KEY, data, TTL_HOUR);
+              SetCache(USER_KEY, data, TTL_SHORT);
               AUTHENTICATION_STATUS = 'authenticated';
               window.location.reload();
               return true;

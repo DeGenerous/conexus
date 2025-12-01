@@ -83,11 +83,13 @@
   const on_pointer_down = (e: PointerEvent) => {
     // Pointer down is deliberate (requires a click/tap), so it ignores is_wheel_safe
     if (!can_start_pull() || !e.isPrimary) return;
-    
+
     is_pulling = true;
     drag_start_y = e.clientY;
 
-    window.addEventListener('touchmove', on_window_touch_move, { passive: false });
+    window.addEventListener('touchmove', on_window_touch_move, {
+      passive: false,
+    });
     window.addEventListener('touchend', on_window_touch_end);
     window.addEventListener('pointermove', on_window_pointer_move);
     window.addEventListener('pointerup', on_window_pointer_up);
@@ -95,25 +97,25 @@
 
   const on_window_touch_move = (e: TouchEvent) => {
     if (!is_pulling) return;
-    
+
     const y = e.touches[0].clientY;
     const delta_y = y - drag_start_y;
 
     if (delta_y < 0) {
-      finish_pull(); 
+      finish_pull();
       return;
     }
 
     if (delta_y > 0 && window.scrollY <= 0) {
-      if (e.cancelable) e.preventDefault(); 
+      if (e.cancelable) e.preventDefault();
       const resisted_delta = delta_y / RESISTANCE_FACTOR;
       drag_distance = Math.min(maxDistance, resisted_delta);
     }
   };
 
   const on_window_pointer_move = (e: PointerEvent) => {
-    if (e.pointerType === 'touch') return; 
-    
+    if (e.pointerType === 'touch') return;
+
     if (!is_pulling) return;
     const delta_y = e.clientY - drag_start_y;
 
@@ -171,7 +173,7 @@
 
   const trigger_refresh = async () => {
     if (!refresh || is_refreshing) return;
-    
+
     is_refreshing = true;
     is_pulling = false;
     drag_distance = INDICATOR_HEIGHT;
@@ -363,7 +365,7 @@
       justify-content: flex-start;
       padding-block: 1.5rem;
       /* Vital for mobile: allows standard vertical scroll when we aren't pulling */
-      touch-action: pan-y; 
+      touch-action: pan-y;
       will-change: transform;
       transition-property: transform;
       transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);

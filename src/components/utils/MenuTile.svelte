@@ -1,8 +1,5 @@
 <script lang="ts">
-  import tippy from 'tippy.js';
-
   import { mediaURL, blankImage } from '@constants/media';
-  import { highlightCommunityPicks } from '@stores/navigation.svelte';
 
   let { section }: { section: Section } = $props();
 
@@ -10,28 +7,11 @@
   const imageName: string = section.name!.replace(/\s/g, '');
 
   const sectionImage: string = `${mediaURL}/conexus-sections/${imageName.toLocaleLowerCase()}.avif`;
-
-  $effect(() => {
-    if (section.name === 'Community Picks' && $highlightCommunityPicks) {
-      // spotlight the curated section during onboarding by calling tippy manually instead of on hover
-      const instance = tippy(
-        document.querySelector('.highlighted-menu-tile')!,
-        {
-          content: 'Check out 100+ stories from 18 different genres',
-          trigger: 'manual',
-          hideOnClick: false,
-        },
-      );
-      instance.show();
-    }
-  });
 </script>
 
 <a
   class="menu-tile"
   class:big-menu-tile={section.name === 'Community Picks'}
-  class:highlighted-menu-tile={section.name === 'Community Picks' &&
-    $highlightCommunityPicks}
   id={section.name}
   href="/s/{section.name}"
 >

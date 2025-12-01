@@ -16,7 +16,7 @@
   import { accountError, developerMode } from '@stores/account.svelte';
   import openModal from '@stores/modal.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';
-  import { getCurrentUser, redirectTo } from '@utils/route-guard';
+  import { getCurrentUser } from '@utils/route-guard';
   import { referralActivationNotice } from '@constants/modal';
   import { toastStore } from '@stores/toast.svelte';
   import { blankImage, serveUrl } from '@constants/media';
@@ -27,9 +27,11 @@
   } from '@utils/file-validation';
   import { toAvif } from '@utils/avif-convert';
   import convertDate from '@utils/date-converter';
+  import { usePullRefreshContext } from '@utils/pull-refresh';
 
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import Dropdown from '@components/utils/Dropdown.svelte';
+  import FooterLinks from '@components/dashboard/common/FooterLinks.svelte';
 
   import EyeSVG from '@components/icons/Eye.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
@@ -37,7 +39,6 @@
   import CopySVG from '@components/icons/Copy.svelte';
   import EditSVG from '@components/icons/Edit.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
-  import { usePullRefreshContext } from '@utils/pull-refresh';
 
   // SIGNED IN USER PROFILE
 
@@ -166,10 +167,15 @@
 
   const copyRefCode = (code: string) => {
     let codeBtn = document.getElementById(code) as HTMLButtonElement;
-    navigator.clipboard.writeText(code);
+    const origin =
+      typeof window !== 'undefined' && window.location && window.location.origin
+        ? window.location.origin
+        : '';
+    const refLink = `${origin}/?ref=${code}`;
+    navigator.clipboard.writeText(refLink);
     codeBtn.classList.add('copied'); // animation
     setTimeout(() => codeBtn.classList.remove('copied'), 600);
-    toastStore.show('Copied to clipboard: ' + code);
+    toastStore.show('Referral link copied to clipboard');
   };
 
   const resetRefCode = () => {
@@ -511,7 +517,7 @@
 
   {#if user.email && user.first_name}
     <Dropdown name="Account">
-      {#if user.role_name === 'Admin'}
+      <!-- {#if user.role_name === 'Admin'}
         <h3 style:color="gold">👑 You are Admin 👑</h3>
       {/if}
       <ul class="user-roles flex-row flex-wrap">
@@ -537,7 +543,7 @@
             </li>
           {/if}
         {/each}
-      </ul>
+      </ul> -->
 
       <form class="flex">
         <div class="input-container">
@@ -751,13 +757,15 @@
     </Dropdown>
   {:else}
     <span class="dream-container flex-row flex-wrap gap">
-      <h5>For extra features and rewards:</h5>
+      <h5>For OmniHub access, extra features, and rewards:</h5>
       <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
     </span>
   {/if}
 {:else}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {/if}
+
+<FooterLinks legal={true} />
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
@@ -770,45 +778,45 @@
     }
   }
 
-  .user-roles {
-    li {
-      padding: 1rem 0.5rem;
-      gap: 1rem;
-      border-radius: 1rem;
-      @include navy(0.75);
-      @include gray-border;
+  // .user-roles {
+  //   li {
+  //     padding: 1rem 0.5rem;
+  //     gap: 1rem;
+  //     border-radius: 1rem;
+  //     @include navy(0.75);
+  //     @include gray-border;
 
-      h4 {
-        width: auto;
-      }
+  //     h4 {
+  //       width: auto;
+  //     }
 
-      span {
-        align-items: flex-start;
-        gap: 0.5rem;
-        padding: 0.5rem;
-        border-radius: 0.5rem;
-        background-color: $transparent-black;
-        @include white-txt;
-        @include box-shadow(soft, inset);
+  //     span {
+  //       align-items: flex-start;
+  //       gap: 0.5rem;
+  //       padding: 0.5rem;
+  //       border-radius: 0.5rem;
+  //       background-color: $transparent-black;
+  //       @include white-txt;
+  //       @include box-shadow(soft, inset);
 
-        p {
-          @include red(0.75, text);
+  //       p {
+  //         @include red(0.75, text);
 
-          &.allowed {
-            @include green(0.9, text);
-          }
-        }
-      }
+  //         &.allowed {
+  //           @include green(0.9, text);
+  //         }
+  //       }
+  //     }
 
-      &.active {
-        @include deep-green(0.75);
+  //     &.active {
+  //       @include deep-green(0.75);
 
-        span {
-          @include dark-green;
-        }
-      }
-    }
-  }
+  //       span {
+  //         @include dark-green;
+  //       }
+  //     }
+  //   }
+  // }
 
   .dream-container {
     div {

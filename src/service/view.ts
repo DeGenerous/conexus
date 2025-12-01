@@ -37,7 +37,9 @@ export default class ViewAPI extends Fetcher {
    * @returns A promise that resolves to an array of Genre objects.
    */
   async genres(refresh: boolean = false) {
-    return this.request<Genre[]>(`${this.adminGroup}/genres?refresh=${refresh}`);
+    return this.request<Genre[]>(
+      `${this.adminGroup}/genres?refresh=${refresh}`,
+    );
   }
 
   /**

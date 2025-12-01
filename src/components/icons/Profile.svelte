@@ -2,20 +2,59 @@
   import Authentication from '@lib/authentication';
   import { showProfile } from '@stores/modal.svelte';
   import { user, approvedTester } from '@stores/account.svelte';
+  import { redirectTo } from '@utils/route-guard';
+  import { blankImage } from '@constants/media';
+  import { resolveRenderableImage } from '@utils/file-validation';
+
+  import DreamSVG from '@components/icons/Dream.svelte';
 
   let { activeTab }: { activeTab: string } = $props();
 
   let authentication: Authentication = new Authentication();
 
   let svgFocus = $state<boolean>(false);
+
+  let avatarUrl = $state<string>('');
+  let avatarImage = $state<string>(blankImage);
+
+  $effect(() => {
+    if ($user) avatarUrl = $user.avatar_url || '';
+  });
+
+  $effect(() => {
+    if (avatarUrl)
+      resolveRenderableImage(`/api${avatarUrl}`)
+        .then((res) => {
+          avatarImage = res;
+        })
+        .catch(() => {
+          avatarImage = blankImage;
+        });
+  });
 </script>
 
 <a
-  class="navigation-tab dashboard-tab"
+  class="navigation-tab dream-tab pc-only"
   class:active={activeTab === 'Dashboard'}
   class:inactive={!$approvedTester}
-  id="profile-icon"
-  aria-label="Profile"
+  aria-label="Dream"
+  href="/dashboard#/dream/create"
+  onclick={(event) => {
+    if (!$user) {
+      event.preventDefault();
+      $showProfile = true;
+    }
+  }}
+>
+  <DreamSVG />
+  <p>Dream</p>
+</a>
+
+<a
+  class="navigation-tab dream-tab mobile-only"
+  class:active={activeTab === 'Dashboard'}
+  class:inactive={!$approvedTester}
+  aria-label="Dashboard"
   href="/dashboard#/dashboard"
   onclick={(event) => {
     if (!$user) {
@@ -24,140 +63,202 @@
     }
   }}
 >
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="-75 -75 150 150"
-    aria-label="Profile"
-  >
-    <circle cy="-25" r="30" />
-    <path d="M -55 55 Q -60 20 -25 15 L 25 15 Q 60 20 55 55 Z" />
-  </svg>
+  <DreamSVG />
   <p>Dashboard</p>
 </a>
 
-<button
-  class="void-btn credits-tab flex-row gap-8 transition"
-  class:disabled={!$approvedTester}
+<a
+  class="navigation-tab profile-tab"
+  class:active={activeTab === $user?.username}
+  class:inactive={!$approvedTester}
+  class:nopadding={!!$user}
+  aria-label="Profile"
+  href={$user ? `/c/${$user.username ?? 'unknown'}` : '/dashboard#/dashboard'}
+  onclick={(event) => {
+    if (!$user) {
+      event.preventDefault();
+      $showProfile = true;
+    }
+  }}
   onpointerover={() => (svgFocus = true)}
   onpointerout={() => (svgFocus = false)}
-  onclick={() => {
-    if (!$user) $showProfile = true;
-  }}
 >
-  <h4>
-    {#if $user}
-      Credits: {$user.credits}
-    {:else}
-      Sign In
-    {/if}
-  </h4>
+  {#if $user}
+    <img src={avatarImage} alt="PFP" />
+  {:else}
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="-75 -75 150 150"
+      aria-label="Profile"
+    >
+      <circle cy="-25" r="30" />
+      <path d="M -55 55 Q -60 20 -25 15 L 25 15 Q 60 20 55 55 Z" />
+    </svg>
+  {/if}
+  <p>Profile</p>
+</a>
 
-  {#if activeTab !== 'Dashboard' && $user}
-    <span class="flex transition" class:visible={svgFocus}>
-      <a class="nohover-link" href="/dashboard#/profile/overview" target="_self"
-        >Profile</a
-      >
+{#if $user}
+  <span
+    class="dropdown flex transition"
+    class:visible={svgFocus}
+    onpointerover={() => (svgFocus = true)}
+    onpointerout={() => (svgFocus = false)}
+  >
+    <a
+      class="nohover-link"
+      href="/dashboard#/dashboard"
+      onclick={(event) => {
+        event.preventDefault();
+        redirectTo('/dashboard#/dashboard');
+      }}
+    >
+      Dashboard
+    </a>
+    <a
+      class="nohover-link"
+      href="/dashboard#/profile/overview"
+      onclick={(event) => {
+        event.preventDefault();
+        redirectTo('/dashboard#/profile/overview');
+      }}
+    >
+      Account
+    </a>
+    <a
+      class="nohover-link"
+      href="/dashboard#/profile/bookmarks"
+      onclick={(event) => {
+        event.preventDefault();
+        redirectTo('/dashboard#/profile/bookmarks');
+      }}
+    >
+      Bookmarks
+    </a>
+    <a
+      class="nohover-link"
+      href="/dashboard#/profile/settings"
+      onclick={(event) => {
+        event.preventDefault();
+        redirectTo('/dashboard#/profile/settings');
+      }}
+    >
+      Settings
+    </a>
+    {#if $user?.wallets?.filter((wallet) => !wallet.faux).length}
       <a
         class="nohover-link"
-        href="/dashboard#/profile/bookmarks"
-        target="_self">Bookmarks</a
-      >
-      <a
-        class="nohover-link"
-        href="/dashboard#/profile/settings"
-        target="_self"
-      >
-        Settings
-      </a>
-      <a class="nohover-link" href="/dashboard#/omnihub" target="_self">
-        OmniHub
-      </a>
-      <a
-        class="nohover-link"
-        href="/"
-        target="_self"
+        href="/dashboard#/omnihub"
         onclick={(event) => {
           event.preventDefault();
-          authentication.logout();
+          redirectTo('/dashboard#/omnihub');
         }}
       >
-        Sign Out
+        OmniHub
       </a>
-    </span>
-  {/if}
-</button>
+    {/if}
+    <a
+      class="nohover-link"
+      href="/"
+      onclick={(event) => {
+        event.preventDefault();
+        authentication.logout();
+      }}
+    >
+      Sign Out
+    </a>
+  </span>
+{/if}
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .credits-tab {
-    display: none;
-    position: relative;
-    height: 2.5rem;
-    min-width: 10rem;
-    padding-inline: 0.5rem;
-    border-radius: 0.5rem;
-    color: $cyan;
-    @include cyan(0.1);
-
-    &.disabled {
-      pointer-events: none;
-      cursor: not-allowed;
+  .dream-tab {
+    &.pc-only {
+      display: none;
     }
 
-    h4 {
-      font-size: 28px;
-      line-height: 1;
-      color: inherit;
-    }
-
-    span {
-      position: absolute;
-      top: calc(100% - 1rem);
-      top: 100%;
-      right: -1rem;
-      min-height: 3.5rem;
-      width: 12rem;
-      gap: 0;
-      padding-top: 1rem;
-      border-bottom-left-radius: 0.5rem;
-      background-color: $dark-blue;
-      fill: $cyan !important;
-      opacity: 0;
-      transform: translateX(100%);
-      z-index: -1;
-      @include box-shadow;
-
-      &.visible {
-        opacity: 1;
-        transform: translateX(0);
-      }
-
-      a {
-        width: 100%;
-        border-radius: 0.5rem;
-        padding: 0.5rem 1.5rem;
-        text-decoration: none;
-        @include white-txt;
-
-        &:hover,
-        &:active,
-        &:focus-visible {
-          @include navy;
-          @include cyan(1, text);
-        }
-      }
-    }
-
-    &:hover,
-    &:active,
-    &:focus-visible {
-      color: $dark-blue;
-      @include cyan;
-    }
-
-    @include respond-up(small-desktop) {
+    &.mobile-only {
       display: flex;
+    }
+
+    @include respond-up('small-desktop') {
+      &.pc-only {
+        display: flex;
+        margin-left: auto;
+      }
+
+      &.mobile-only {
+        display: none;
+      }
+    }
+  }
+
+  .profile-tab {
+    @include respond-up('small-desktop') {
+      padding: 0.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      fill: $light-blue;
+      @include navy(0.5);
+
+      &.nopadding {
+        padding: 0;
+      }
+
+      p {
+        display: none;
+      }
+
+      img {
+        width: 100%;
+        border-radius: inherit;
+      }
+
+      &:hover,
+      &:active,
+      &:focus-visible {
+        fill: $cyan;
+        @include dark-blue;
+      }
+    }
+  }
+
+  .dropdown {
+    position: absolute;
+    top: 3rem;
+    right: -1rem;
+    min-height: 3.5rem;
+    width: 12rem;
+    padding-top: 1.5rem;
+    gap: 0;
+    border-bottom-left-radius: 0.5rem;
+    background-color: $dark-blue;
+    fill: $cyan !important;
+    opacity: 0;
+    transform: translateX(100%);
+    z-index: -1;
+    @include box-shadow;
+
+    &.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    a {
+      width: 100%;
+      border-radius: 0.5rem;
+      padding: 0.5rem 1.5rem;
+      text-decoration: none;
+      @include white-txt;
+
+      &:hover,
+      &:active,
+      &:focus-visible {
+        @include navy;
+        @include cyan(1, text);
+      }
     }
   }
 </style>

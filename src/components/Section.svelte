@@ -249,7 +249,7 @@
         <h5>Loading more categories...</h5>
       {/if}
     {:else if showNoCategoriesMessage}
-      <h5>No categories found for this section.</h5>
+      <h5>No created stories found</h5>
     {:else}
       <Category {name} {intended} category={null} />
     {/if}

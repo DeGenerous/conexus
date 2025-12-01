@@ -457,7 +457,7 @@
     </span>
     <h4>{workingCategory.category_name}</h4>
     <span class="flex-row gap round-8">
-      <h5>Topics: {workingCategory.topic_count}</h5>
+      <h5>Stories: {workingCategory.topic_count}</h5>
       <SelectorSVG
         focused={null}
         disabled={false}

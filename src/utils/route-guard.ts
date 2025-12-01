@@ -6,13 +6,11 @@ import {
   isGuest,
   approvedTester,
 } from '@stores/account.svelte';
-import { ClearCache } from '@constants/cache';
 
 // Get the user object
 export async function getCurrentUser(
   refresh: boolean = false,
 ): Promise<Nullable<User>> {
-  if (refresh) ClearCache('auth');
   return await Account.getUser(refresh);
 }
 

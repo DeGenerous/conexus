@@ -884,3 +884,61 @@ html {
   overflow: hidden;
   overscroll-behavior: none; // iOS/Android: blocks pull‑to‑refresh bounce
 }
+
+// Legal docs styling
+
+ul:not(.default-ul),
+ol:not(.default-ol) {
+  list-style-type: none;
+}
+
+.default-ul,
+.default-ol,
+ol.uppercase,
+ol.lowercase,
+ol.subordered {
+  text-align: left;
+  list-style-position: inside;
+}
+
+.default-ul {
+  list-style-type: disc;
+
+  ul {
+    list-style-type: circle;
+    padding-left: 1rem;
+
+    ul {
+      list-style-type: square;
+      padding-left: 1rem;
+    }
+  }
+}
+
+ol.uppercase {
+  list-style-type: upper-alpha;
+}
+
+ol.lowercase {
+  list-style-type: lower-alpha;
+}
+
+ol.subordered {
+  list-style-type: none;
+  counter-reset: item;
+
+  & > li {
+    display: table;
+    counter-increment: item;
+  }
+
+  & > li:before {
+    content: counters(item, '.') '.';
+    display: table-cell;
+    padding-right: 0.5rem;
+  }
+
+  li .subordered > li:before {
+    content: counters(item, '.') '.';
+  }
+}

@@ -246,8 +246,9 @@
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<PullToRefresh refresh={refreshTopic}>
-  {#if $story === null}
+
+{#if $story === null}
+  <PullToRefresh refresh={refreshTopic}>
     {#if inFlight}
       <div class="story-wrapper flex">
         <section class="story container">
@@ -427,15 +428,15 @@
         </p>
       {/if}
     {/if}
-  {:else}
-    {#if !detectIOS()}
-      <BackgroundMusic />
-    {/if}
-    <Tts />
-
-    <Step {topic_name} {restartGame} />
+  </PullToRefresh>
+{:else}
+  {#if !detectIOS()}
+    <BackgroundMusic />
   {/if}
-</PullToRefresh>
+  <Tts />
+
+  <Step {topic_name} {restartGame} />
+{/if}
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

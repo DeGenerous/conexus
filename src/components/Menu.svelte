@@ -99,7 +99,7 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  section {
+  section.container {
     width: 95%;
     max-width: unset;
     margin: 0;

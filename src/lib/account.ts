@@ -510,13 +510,13 @@ class Account {
     duration: DurationEnum,
     ended: boolean = false,
   ): Promise<UserStoriesMetric[] | null> {
-    const { status, message, data } = await this.api.getStories({
+    const { status, data } = await this.api.getStories({
       ended,
       duration,
     });
 
     if (status === 'error') {
-      api_error(message);
+      // api_error(message); // TEMP: hide toast
       return null;
     }
 

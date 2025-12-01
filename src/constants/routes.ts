@@ -18,10 +18,10 @@ export const NAV_ROUTES = {
   SINGULAR:
     'https://singular.app/collectibles/base/0x111e0861baa9d479cff55d542e5a9e4205012bbe',
   // Legal
-  TERMS: 'https://dgrslabs.ink/terms-of-service',
-  PRIVACY_POLICY: 'https://dgrslabs.ink/privacy-policy',
-  COPYRIGHT_POLICY: 'https://dgrslabs.ink/copyright-policy',
-  CONTRIBUTOR_LICENSE: 'https://dgrslabs.ink/contributors-license-agreement',
+  TERMS: '/terms-of-service',
+  PRIVACY_POLICY: '/privacy-policy',
+  COPYRIGHT_POLICY: '/copyright-policy',
+  CONTRIBUTOR_LICENSE: '/contributors-license-agreement',
   // CoNexus routes
   HOME: '/',
   DASHBOARD: '/dashboard',

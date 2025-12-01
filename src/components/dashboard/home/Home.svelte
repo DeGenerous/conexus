@@ -11,12 +11,6 @@
   activity, and branch to resources and settings.
 </p>
 
-{#if $user?.username}
-  <a class="button-anchor cta" href="/c/{$user.username}" target="_self">
-    Go to your section
-  </a>
-{/if}
-
 <UnfinishedStories />
 <FinishedStories />
 

@@ -150,75 +150,93 @@
 </a>
 
 {#if $user}
-  <span
+  <div
     class="dropdown flex transition"
     class:visible={svgFocus}
     onpointerover={() => (svgFocus = true)}
     onpointerout={() => (svgFocus = false)}
   >
-    <a
-      class="nohover-link"
-      href="/dashboard#/dashboard"
-      onclick={(event) => {
-        event.preventDefault();
-        redirectTo('/dashboard#/dashboard');
-      }}
-    >
-      Dashboard
-    </a>
-    <a
-      class="nohover-link"
-      href="/dashboard#/profile/overview"
-      onclick={(event) => {
-        event.preventDefault();
-        redirectTo('/dashboard#/profile/overview');
-      }}
-    >
-      Account
-    </a>
-    <a
-      class="nohover-link"
-      href="/dashboard#/profile/bookmarks"
-      onclick={(event) => {
-        event.preventDefault();
-        redirectTo('/dashboard#/profile/bookmarks');
-      }}
-    >
-      Bookmarks
-    </a>
-    <a
-      class="nohover-link"
-      href="/dashboard#/profile/settings"
-      onclick={(event) => {
-        event.preventDefault();
-        redirectTo('/dashboard#/profile/settings');
-      }}
-    >
-      Settings
-    </a>
-    {#if $user?.wallets?.filter((wallet) => !wallet.faux).length}
+    <span class="flex">
       <a
         class="nohover-link"
-        href="/dashboard#/omnihub"
+        href={$user
+          ? `/c/${$user.username ?? 'unknown'}`
+          : '/dashboard#/dashboard'}
         onclick={(event) => {
           event.preventDefault();
-          redirectTo('/dashboard#/omnihub');
+          redirectTo(
+            $user
+              ? `/c/${$user.username ?? 'unknown'}`
+              : '/dashboard#/dashboard',
+          );
         }}
       >
-        OmniHub
+        Profile
       </a>
-    {/if}
-    <a
-      class="nohover-link"
-      href="/"
-      onclick={(event) => {
-        event.preventDefault();
-        authentication.logout();
-      }}
-    >
-      Sign Out
-    </a>
-  </span>
+      <a
+        class="nohover-link"
+        href="/dashboard#/dashboard"
+        onclick={(event) => {
+          event.preventDefault();
+          redirectTo('/dashboard#/dashboard');
+        }}
+      >
+        Dashboard
+      </a>
+      <a
+        class="nohover-link"
+        href="/dashboard#/profile/overview"
+        onclick={(event) => {
+          event.preventDefault();
+          redirectTo('/dashboard#/profile/overview');
+        }}
+      >
+        Account
+      </a>
+      <a
+        class="nohover-link"
+        href="/dashboard#/profile/bookmarks"
+        onclick={(event) => {
+          event.preventDefault();
+          redirectTo('/dashboard#/profile/bookmarks');
+        }}
+      >
+        Bookmarks
+      </a>
+      <a
+        class="nohover-link"
+        href="/dashboard#/profile/settings"
+        onclick={(event) => {
+          event.preventDefault();
+          redirectTo('/dashboard#/profile/settings');
+        }}
+      >
+        Settings
+      </a>
+      {#if $user?.wallets?.filter((wallet) => !wallet.faux).length}
+        <a
+          class="nohover-link"
+          href="/dashboard#/omnihub"
+          onclick={(event) => {
+            event.preventDefault();
+            redirectTo('/dashboard#/omnihub');
+          }}
+        >
+          OmniHub
+        </a>
+      {/if}
+      <a
+        class="nohover-link"
+        href="/"
+        onclick={(event) => {
+          event.preventDefault();
+          authentication.logout();
+        }}
+      >
+        Sign Out
+      </a>
+    </span>
+  </div>
 {/if}
 
 <style lang="scss">
@@ -301,17 +319,21 @@
     position: absolute;
     top: 3rem;
     right: -1rem;
-    min-height: 3.5rem;
     width: 12rem;
     padding-top: 1.5rem;
     gap: 0;
-    border-bottom-left-radius: 0.5rem;
-    background-color: $dark-blue;
     fill: $cyan !important;
     opacity: 0;
     transform: translateX(100%);
-    z-index: -1;
-    @include box-shadow;
+    z-index: 100;
+
+    span {
+      width: 100%;
+      gap: 0;
+      border-bottom-left-radius: 0.5rem;
+      @include dark-blue;
+      @include box-shadow;
+    }
 
     &.visible {
       opacity: 1;

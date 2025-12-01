@@ -63,7 +63,7 @@ const frequentlyAskedQuestions: {
     question: 'What is DGRS LABS?',
     answer: `
       <p>
-        DGRS LABS is a collective building media technology for the next generation of creators. We're focused on reimagining storytelling as something <b>interactive, social, and creator-owned</b>, starting with our core platform: <b>CoNexus</b>.
+        <a href="${NAV_ROUTES.WEBSITE}" target="_blank">DGRS LABS</a> is a collective building media technology for the next generation of creators. We're focused on reimagining storytelling as something <b>interactive, social, and creator-owned</b>, starting with our core platform: <b>CoNexus</b>.
       </p>
     `,
   },
@@ -125,10 +125,10 @@ const frequentlyAskedQuestions: {
       <h5>🌀 v1.5</h5>
       <ul class="default-ul" flex>
         <li>
-          Story customization tools: pacing, tone, visuals, narration
+          DREAM creative studio, curation, and self-publishing tools
         </li>
         <li>
-          Easier remixing and personalization
+          Community sharing and discovery
         </li>
       </ul>
       <h5>🛠️ v2</h5>

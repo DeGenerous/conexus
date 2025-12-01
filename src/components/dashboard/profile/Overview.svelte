@@ -170,7 +170,10 @@
 
   const copyRefCode = (code: string) => {
     let codeBtn = document.getElementById(code) as HTMLButtonElement;
-    const origin = (typeof window !== 'undefined' && window.location && window.location.origin) ? window.location.origin : '';
+    const origin =
+      typeof window !== 'undefined' && window.location && window.location.origin
+        ? window.location.origin
+        : '';
     const refLink = `${origin}/?ref=${code}`;
     navigator.clipboard.writeText(refLink);
     codeBtn.classList.add('copied'); // animation

@@ -1,0 +1,89 @@
+---
+import Layout from '@layouts/Layout.astro';
+---
+
+<Layout>
+  <section class="flex">
+    <h2>CoNexus Content Policy</h2>
+    <article>
+      We believe in creative freedom and want you to feel free to tell bold,
+      exciting, and personal stories. These guidelines are here to keep our
+      platform safe, respectful, and legally compliant — without limiting your
+      imagination unnecessarily.
+      <br />
+      <br />
+      You can create and publish stories that include mature themes, including sexual
+      content, strong language, or violence — <b
+        >as long as they do not promote real-world harm.</b
+      >
+      <br />
+      <br />
+      <b>You may NOT publish content that:</b>
+      <ol class="default-ol">
+        <li>
+          Promotes hate or violence toward people based on race, ethnicity,
+          nationality, religion, disability, gender, sexual orientation, or
+          similar characteristics.
+        </li>
+
+        <li>
+          Incites or glorifies real-world violence, terrorism, or self-harm.
+        </li>
+
+        <li>
+          Contains sexual content involving anyone under the age of 18
+          (including fictional depictions).
+        </li>
+
+        <li>
+          Includes non-consensual sexual content (including glorification of
+          sexual assault).
+        </li>
+
+        <li>Encourages illegal activity that could cause real harm.</li>
+        <li>
+          Contains personally identifying information about real people without
+          their permission.
+        </li>
+      </ol>
+      <br />
+      <b>What’s OK:</b>
+      <ol class="default-ol">
+        <li>Erotic or romantic content between consenting adults.</li>
+
+        <li>Violence or dark themes in a fictional setting.</li>
+
+        <li>
+          Satire, parody, or controversial ideas, as long as they don’t cross
+          into targeted hate or incitement.
+        </li>
+      </ol>
+      <br />
+      <b>What happens if content breaks these rules:</b>
+      <ol class="default-ol">
+        <li>It may be removed or not approved for public release.</li>
+
+        <li>
+          Repeat or severe violations may result in account suspension. We
+          reserve the right to remove or restrict any content or terminate user
+          accounts at our sole discretion.
+        </li>
+      </ol>
+      <br />
+      We want you to have fun, take creative risks, and explore challenging ideas
+      — just do it in a way that doesn’t put real people in danger or promote hate.
+    </article>
+  </section>
+</Layout>
+
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
+
+  section {
+    article {
+      text-align: left;
+      @include auto-width;
+      @include white-txt;
+    }
+  }
+</style>

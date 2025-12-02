@@ -1,0 +1,14 @@
+---
+import Layout from '@layouts/Layout.astro';
+import AgentSvelte from '@components/Agent.svelte';
+
+const meta = {
+  header: 'Agent',
+  nav: 'Agent',
+  arrow: '/',
+};
+---
+
+<Layout {...meta}>
+  <AgentSvelte client:only="svelte" />
+</Layout>

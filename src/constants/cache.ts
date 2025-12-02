@@ -41,6 +41,8 @@ export const DS_VOTING_HISTORY_KEY = (id: string) => `ds_voting_history[${id}]`;
 
 export const COOKIE_CONSENT_KEY = 'cookie_consent';
 
+export const TEMP_USER_ID = 'temp_user_id';
+
 /* -------------------------------------------------------------------- */
 // 1 HOUR
 /* -------------------------------------------------------------------- */
@@ -88,6 +90,7 @@ function saveImportantAndClearCache() {
   );
   const finishedStoriesRange = localStorage.getItem(FINISHED_STORIES_RANGE_KEY);
   const personalSetup = localStorage.getItem(PERSONAL_SETUP_KEY);
+  const tempUserId = localStorage.getItem(TEMP_USER_ID);
   // deleting all values
   localStorage.clear();
   // restoring saved values
@@ -109,6 +112,7 @@ function saveImportantAndClearCache() {
   if (finishedStoriesRange)
     localStorage.setItem(FINISHED_STORIES_RANGE_KEY, finishedStoriesRange);
   if (personalSetup) localStorage.setItem(PERSONAL_SETUP_KEY, personalSetup);
+  if (tempUserId) localStorage.setItem(TEMP_USER_ID, tempUserId);
 }
 
 export const SetCache = <T>(key: string, value: T, ttl: number = TTL_YEAR) => {

@@ -258,7 +258,7 @@
               {topic_availability ? 'Available' : 'Unavailable'}
             </button>
           {/if}
-          {#if topic.creator}
+          <!-- {#if topic.creator} -->
             <button
               class:green-btn={topic_visibility === 'public'}
               class:red-btn={topic_visibility === 'private'}
@@ -272,7 +272,7 @@
             >
               {topic_visibility === 'public' ? 'Public' : 'Private'}
             </button>
-          {/if}
+          <!-- {/if} -->
           {#if $isAdmin}
             <button
               class="rose-btn"

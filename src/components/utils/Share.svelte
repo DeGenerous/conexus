@@ -109,7 +109,7 @@
       aria-label="Copy link"
       {disabled}
     >
-      <CopySVG {copySvgFocus} data={false} />
+      <CopySVG />
     </button>
   </span>
 </div>

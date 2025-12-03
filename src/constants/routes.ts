@@ -6,7 +6,6 @@ export const NAV_ROUTES = {
   WEBSITE: 'https://dgrslabs.ink/',
   GOVERNANCE_HUB: 'https://governance.dgrslabs.ink',
   LOREDEX: 'https://loredex.dgrslabs.ink',
-  TERMS: 'https://dgrslabs.ink/terms-of-service',
   SUPPORT: 'mailto:contact@conexus.ink',
   WIKI: 'https://degenerousdao.gitbook.io/wiki',
   DISCORD: 'https://dgrslabs.ink/join',
@@ -18,6 +17,11 @@ export const NAV_ROUTES = {
   OPENSEA: 'https://opensea.io/collection/potentials-eth',
   SINGULAR:
     'https://singular.app/collectibles/base/0x111e0861baa9d479cff55d542e5a9e4205012bbe',
+  // Legal
+  TERMS: '/terms-of-service',
+  PRIVACY_POLICY: '/privacy-policy',
+  COPYRIGHT_POLICY: '/copyright-policy',
+  CONTRIBUTOR_LICENSE: '/contributors-license-agreement',
   // CoNexus routes
   HOME: '/',
   DASHBOARD: '/dashboard',

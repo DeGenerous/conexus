@@ -14,6 +14,7 @@
   import { NAV_ROUTES } from '@constants/routes';
 
   import Votes from '@components/dashboard/omnihub/Votes.svelte';
+  import SwitchArrows from '@components/utils/SwitchArrows.svelte';
 
   let potential = $state<Nullable<NFT>>(null);
   let loading = $state<boolean>(true);
@@ -34,7 +35,7 @@
 
     navContext.setContext({
       items: allPotentials.map((p) => ({
-        name: `#${p.token_id}`,
+        name: `Potential #${p.token_id}`,
         action() {
           SetCache(SELECTED_POTENTIAL_KEY, p, TTL_HOUR);
           window.location.reload();
@@ -55,6 +56,7 @@
 {#if loading}
   <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
 {:else if potential}
+  <SwitchArrows />
   <section class="flex">
     <header class="flex-row pad-8 pad-inline blur shad">
       <h4>{potential.name} ({getAttribute('class')})</h4>

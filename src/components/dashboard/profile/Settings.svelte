@@ -21,6 +21,7 @@
   import ThemeSettings from '@components/utils/ThemeSettings.svelte';
   import StylingController from '@components/utils/StylingController.svelte';
   import SelectorSVG from '@components/icons/Selector.svelte';
+  import FooterLinks from '@components/dashboard/common/FooterLinks.svelte';
 
   const account: Account = new Account();
 
@@ -312,6 +313,8 @@
   <StylingController />
   <ThemeSettings {table} />
 </Dropdown>
+
+<FooterLinks />
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

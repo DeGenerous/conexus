@@ -52,7 +52,6 @@
   <h5>{menuText[0]}</h5>
 
   {#if sectionsLoading}
-    <!-- Loading -->
     <div class="flex-row">
       {#each Array(3) as _, index}
         <div class="loading-menu-tile" class:big-menu-tile={index === 0}>
@@ -62,11 +61,9 @@
       {/each}
     </div>
   {:else if sectionError}
-    <!-- Error -->
     <p class="validation">Failed to fetch story sections...</p>
     <p class="validation">Error: {sectionError}</p>
   {:else}
-    <!-- Success -->
     <div class="flex-row">
       {#each prioritizeCommunityPicks(sections) as section, i (section.id ?? `section-${i}`)}
         <MenuTile {section} />
@@ -74,46 +71,30 @@
     </div>
   {/if}
 
-  <!-- {#await app.getSections()}
-    <div class="flex-row">
-      {#each Array(3) as _, index}
-        <div class="loading-menu-tile" class:big-menu-tile={index === 0}>
-          <div class="loading-animation"></div>
-          <span class="loading-animation"></span>
-        </div>
-      {/each}
-    </div>
-  {:then sections}
-    <div class="flex-row">
-      {#each prioritizeCommunityPicks(sections) as section, i (section.id ?? `section-${i}`)}
-        <MenuTile {section} />
-      {/each}
-    </div>
-  {:catch error}
-    <p class="validation">Failed to fetch story sections...</p>
-    <p class="validation">Error: {error.message}</p>
-  {/await} -->
-
   <h5>{menuText[1]}</h5>
 </section>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  section {
-    width: clamp(250px, 95%, 80rem);
+  section.container {
+    width: 95%;
+    max-width: unset;
     margin: 0;
 
     & > div {
       width: 100%;
       flex-wrap: wrap;
       gap: 1rem;
-      padding-inline: 0;
 
       @include respond-up(tablet) {
         flex-wrap: nowrap;
         gap: 1.5rem;
       }
+    }
+
+    @include respond-up(large-desktop) {
+      width: 78rem;
     }
   }
 </style>

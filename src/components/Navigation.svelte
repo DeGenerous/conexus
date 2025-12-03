@@ -1,16 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import tippy, { type Instance } from 'tippy.js';
 
-  import CoNexusApp from '@lib/view';
-  import { GetCache, SetCache, ONBOARDING_KEY } from '@constants/cache';
   import { trailerURL } from '@constants/media';
   import { story, game } from '@stores/conexus.svelte';
-  import {
-    highlightCommunityPicks,
-    prevItem,
-    nextItem,
-  } from '@stores/navigation.svelte';
   import {
     getCurrentUser,
     checkUserRoles,
@@ -27,7 +19,6 @@
   import PlaySVG from '@components/icons/Play.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
   import ConexusLogo from '@components/icons/ConexusLogo.svelte';
-  import BackArrowPCNav from '@components/utils/BackArrowPCNav.svelte';
 
   let {
     header = '',
@@ -62,19 +53,9 @@
   // Get user and roles on every page load
   onMount(initializeUser);
 
-  const app: CoNexusApp = new CoNexusApp();
   let hiddenHeader = $state<boolean>(false);
   let showIntro = $state<boolean>(false);
   let onboarding = $state<boolean>(false);
-
-  const navigateTo = (item: Nullable<NavItem>) => {
-    if (!item) return;
-    if (item.link) {
-      window.location.href = item.link; // or `location.href = item.link`
-    } else if (item.action) {
-      item.action();
-    }
-  };
 
   // FULLSCREEN
 
@@ -118,118 +99,23 @@
       ticking = false;
     });
   };
-
-  // ONBOARDING
-
-  // let tippyInstance: Instance;
-  // const startOnboarding = () =>
-  //   setTimeout(() => {
-  //     const isOnboarded = GetCache(ONBOARDING_KEY);
-  //     if (isOnboarded) return;
-
-  //     onboarding = true;
-
-  //     // Show the tooltip
-  //     const intro = document.getElementById('intro') as HTMLSpanElement;
-
-  //     tippyInstance = tippy(intro, {
-  //       content: 'Meet CoNexus in 30 seconds',
-  //       trigger: 'manual',
-  //       placement: 'bottom',
-  //       hideOnClick: false,
-  //     });
-
-  //     tippyInstance.show();
-
-  //     // Disable scroll
-  //     window.scrollTo({
-  //       top: 0,
-  //       behavior: 'smooth',
-  //     });
-  //     setTimeout(() => document.documentElement.classList.add('no-scroll'));
-  //   });
-
-  // const finishOnboarding = () => {
-  //   SetCache(ONBOARDING_KEY, true);
-  //   onboarding = false;
-
-  //   // Update the store to apply highlighted styling
-  //   $highlightCommunityPicks = true;
-
-  //   // Destroy the tooltip
-  //   tippyInstance.destroy();
-
-  //   // Enable scroll
-  //   document.documentElement.classList.remove('no-scroll');
-  // };
-
-  // onMount(startOnboarding);
 </script>
 
 <svelte:window {onkeypress} {onscroll} />
 
 {#if $story === null}
   {#if header}
-    <header class="flex-row" class:mobile-home-header={header === 'CoNexus'}>
+    <header class="flex-row">
       {#if header === 'CoNexus'}
         <h1 class="sr-only">CoNexus</h1>
         <ConexusLogo />
-      {:else if header}
-        {#if $prevItem}
-          <button
-            class="flex-row fade-in"
-            class:inactive={!$prevItem}
-            onclick={() => navigateTo($prevItem)}
-            disabled={!$prevItem}
-            draggable="false"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="-100 -100 200 200"
-              fill="white"
-            >
-              <polygon
-                points="-75 0 -10 -65 -10 65"
-                stroke-width="10"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <rect x="-30" y="-25" width="100" height="50" rx="5" />
-            </svg>
-            <p>{$prevItem?.name}</p>
-          </button>
-        {/if}
-        {#if !$prevItem && $nextItem}
-          <button style:visibility="hidden">Placeholder</button>
+      {:else}
+        {#if arrow}
+          <BackArrow href={arrow} />
         {/if}
         <h1>{header}</h1>
-        {#if $nextItem}
-          <button
-            class="flex-row fade-in"
-            class:inactive={!$nextItem}
-            onclick={() => navigateTo($nextItem)}
-            disabled={!$nextItem}
-            draggable="false"
-          >
-            <p>{$nextItem?.name}</p>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="-100 -100 200 200"
-              fill="white"
-              style:transform="rotate(180deg)"
-            >
-              <polygon
-                points="-75 0 -10 -65 -10 65"
-                stroke-width="10"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <rect x="-30" y="-25" width="100" height="50" rx="5" />
-            </svg>
-          </button>
-        {/if}
-        {#if $prevItem && !$nextItem}
-          <button style:visibility="hidden">Placeholder</button>
+        {#if arrow}
+          <BackArrow href={arrow} hidden={true} />
         {/if}
       {/if}
     </header>
@@ -253,10 +139,7 @@
       {#if header === 'CoNexus'}
         <span class="intro-wrapper flex" id="intro">
           <PlaySVG
-            onclick={() => {
-              showIntro = true;
-              // if (onboarding) finishOnboarding();
-            }}
+            onclick={() => (showIntro = true)}
             text="Watch 30-sec Intro"
             voidBtn={false}
             cta={true}
@@ -276,10 +159,6 @@
     class:hide={hiddenHeader}
     class:disabled={!$approvedTester}
   >
-    <BackArrowPCNav {arrow} />
-
-    <BackArrow href={arrow} hideForPCs={true} />
-
     <HomeSVG {activeTab} />
 
     <Profile {activeTab} />
@@ -293,52 +172,21 @@
 
   header {
     width: 100vw;
+    padding-inline: 1.5rem;
 
-    &:not(.mobile-home-header) {
-      padding-inline: 1.5rem;
-      justify-content: space-between;
-
-      h1 {
-        width: 100%;
-      }
-
-      button {
-        fill: currentColor;
-        justify-content: space-between;
-
-        p {
-          display: none;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-      }
-
-      @include respond-up(tablet) {
-        align-items: flex-start;
-
-        button {
-          width: 12.5rem;
-
-          p {
-            display: block;
-          }
-        }
-      }
+    h1 {
+      width: 100%;
     }
 
-    &.mobile-home-header {
+    @include mobile-only {
+      height: 4rem;
       position: sticky;
       top: 0;
+      justify-content: center;
       margin-top: -1.5rem;
-      height: 4rem;
       z-index: 100;
       border-bottom: 1px solid $transparent-gray;
       @include dark-blue;
-
-      @include respond-up(small-desktop) {
-        display: none;
-      }
     }
   }
 
@@ -374,7 +222,6 @@
     position: fixed;
     bottom: 0;
     width: 100vw;
-    justify-content: space-between;
     gap: 0;
     z-index: 100;
     border-top: 1px solid $transparent-gray;

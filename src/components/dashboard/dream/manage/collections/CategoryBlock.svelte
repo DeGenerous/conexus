@@ -528,7 +528,7 @@
             >
               {topic.visibility === 'public' ? 'Submitted' : 'Submit'}
             </button> -->
-            {#if creator}
+            <!-- {#if creator} -->
               <button
                 use:tippy={{
                   content: 'Toggle visibility',
@@ -545,7 +545,7 @@
               >
                 {topic.visibility === 'public' ? 'Public' : 'Private'}
               </button>
-            {/if}
+            <!-- {/if} -->
           </div>
         </a>
       {/each}

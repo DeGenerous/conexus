@@ -14,30 +14,29 @@
     "format": "prettier --write ."
   },
   "overrides": {
-    "wagmi": "2.16.3",
-    "@sveltejs/vite-plugin-svelte": "6.1.2"
+    "wagmi": "2.16.3"
   },
   "devDependencies": {
     "@astrojs/svelte": "7.1.0",
     "@sveltejs/vite-plugin-svelte": "6.1.2",
     "@types/uuid": "^10.0.0",
     "@vite-pwa/astro": "1.1.0",
-    "astro": "5.13.2",
+    "astro": "5.16.4",
     "sass-embedded": "1.90.0",
     "svelte": "5.38.1",
-    "vitest": "^3.2.4"
+    "vitest": "4.0.15"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/node": "9.4.2",
     "@astrojs/react": "4.3.0",
     "@astrojs/sitemap": "3.5.0",
-    "@astrojs/vercel": "8.2.6",
+    "@astrojs/vercel": "9.0.2",
     "@coinbase/wallet-sdk": "4.3.7",
     "@jsquash/avif": "^2.1.1",
     "@metamask/detect-provider": "^2.0.0",
-    "@metamask/sdk": "0.33.0",
-    "@rainbow-me/rainbowkit": "2.2.8",
+    "@metamask/sdk": "~0.33.0",
+    "@rainbow-me/rainbowkit": "2.2.9",
     "@tanstack/react-query": "5.85.3",
     "@types/react": "^19.2.2",
     "astro-compress": "^2.3.8",
@@ -47,8 +46,8 @@
     "metamask": "^0.0.1-security",
     "prettier": "3.6.2",
     "prettier-plugin-svelte": "3.4.0",
-    "react": "19.1.1",
-    "react-dom": "19.1.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "setprototypeof": "^1.2.0",
     "solc": "0.8.30",
     "svelte-dnd-action": "0.9.64",
@@ -60,6 +59,7 @@
     "viem": "2.33.3",
     "vite-plugin-pwa": "1.0.2",
     "wagmi": "2.16.3",
+    "@walletconnect/ethereum-provider": "2.21.1",
     "wasm-feature-detect": "^1.8.0"
   },
   "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"

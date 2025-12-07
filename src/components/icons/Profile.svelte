@@ -36,7 +36,7 @@
     const candidate = avatarFileId
       ? serveUrl(avatarFileId)
       : avatarUrl
-        ? `/api${avatarUrl}`
+        ? avatarUrl
         : '';
 
     if (!candidate) {

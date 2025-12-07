@@ -345,6 +345,7 @@
 
 {#if user}
   <img class="pfp round" src={avatarImage} alt="PFP" />
+  {#if user.username}
   <button
     onclick={triggerAvatarPicker}
     disabled={isUploadingAvatar}
@@ -364,6 +365,9 @@
     onchange={handleAvatarUpload}
     style:display="none"
   />
+  {:else}
+    <p class="validation">Please set a username</p>
+  {/if}
 
   <div class="dream-container">
     <div class="flex-row">

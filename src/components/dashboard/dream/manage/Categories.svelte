@@ -32,6 +32,13 @@
   const addCategory = async () => {
     if (!newCategoryName.trim()) return;
 
+    const sanitizedCategoryName = newCategoryName.replace(/[<>]/g, '').trim();
+    if (!sanitizedCategoryName) {
+      toastStore.show('Please enter a valid category name.', 'error');
+      return;
+    }
+    newCategoryName = sanitizedCategoryName;
+
     addingCategory = true;
 
     try {
@@ -41,13 +48,13 @@
           return;
         }
         await categoryView.createAdminCategory(selectedSectionId, {
-          name: newCategoryName,
+          name: sanitizedCategoryName,
           description: '',
           dashboard_sort_order: 0,
         });
       } else {
         await categoryView.createCreatorCategory({
-          name: newCategoryName,
+          name: sanitizedCategoryName,
           description: '',
           dashboard_sort_order: 0,
         });

@@ -3,8 +3,9 @@
   import { showProfile } from '@stores/modal.svelte';
   import { user, approvedTester } from '@stores/account.svelte';
   import { redirectTo } from '@utils/route-guard';
-  import { blankImage } from '@constants/media';
+  import { blankImage, serveUrl } from '@constants/media';
   import { resolveRenderableImage } from '@utils/file-validation';
+  import { getAvatarInitial } from '@utils/avatar';
 
   import DreamSVG from '@components/icons/Dream.svelte';
 
@@ -15,21 +16,41 @@
   let svgFocus = $state<boolean>(false);
 
   let avatarUrl = $state<string>('');
+  let avatarFileId = $state<string>('');
   let avatarImage = $state<string>(blankImage);
+  let avatarInitial = $state<string>('');
 
   $effect(() => {
-    if ($user) avatarUrl = $user.avatar_url || '';
+    if ($user) {
+      avatarUrl = $user.avatar_url || '';
+      avatarFileId = $user.avatar_file_id || '';
+      avatarInitial = getAvatarInitial($user.username);
+    } else {
+      avatarUrl = '';
+      avatarFileId = '';
+      avatarInitial = '';
+    }
   });
 
   $effect(() => {
-    if (avatarUrl)
-      resolveRenderableImage(`/api${avatarUrl}`)
-        .then((res) => {
-          avatarImage = res;
-        })
-        .catch(() => {
-          avatarImage = blankImage;
-        });
+    const candidate = avatarFileId
+      ? serveUrl(avatarFileId)
+      : avatarUrl
+        ? `/api${avatarUrl}`
+        : '';
+
+    if (!candidate) {
+      avatarImage = blankImage;
+      return;
+    }
+
+    resolveRenderableImage(candidate)
+      .then((res) => {
+        avatarImage = res;
+      })
+      .catch(() => {
+        avatarImage = blankImage;
+      });
   });
 </script>
 
@@ -84,7 +105,15 @@
   onpointerout={() => (svgFocus = false)}
 >
   {#if $user}
-    <img src={avatarImage} alt="PFP" />
+    {#if avatarFileId || avatarUrl}
+      <img src={avatarImage} alt="PFP" />
+    {:else if avatarInitial}
+      <div class="avatar-initial" aria-label="Profile initial">
+        {avatarInitial}
+      </div>
+    {:else}
+      <img src={avatarImage} alt="PFP" />
+    {/if}
   {:else}
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -229,10 +258,22 @@
         display: none;
       }
 
-      img {
+      img,
+      .avatar-initial {
         width: 100%;
         border-radius: inherit;
         aspect-ratio: 1 / 1;
+      }
+
+      .avatar-initial {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        @include cyan;
+        @include dark-blue(1, text);
       }
 
       &:hover,

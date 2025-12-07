@@ -228,7 +228,9 @@
 <PullToRefresh refresh={refreshSection}>
   {#if intended === 'c' && explorer}
     <div class="explorer-bio flex pad-inline">
-      <img class="pfp round" src={explorerImage} alt="Creator PFP" />
+      {#if explorerImage !== blankImage}
+        <img class="pfp round" src={explorerImage} alt="Creator PFP" />
+      {/if}
       <p>{explorer.avatar_bio}</p>
     </div>
   {/if}

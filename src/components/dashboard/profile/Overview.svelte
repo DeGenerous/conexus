@@ -25,6 +25,7 @@
     validateFiles,
     resolveRenderableImage,
   } from '@utils/file-validation';
+  import { getAvatarInitial } from '@utils/avatar';
   import { toAvif } from '@utils/avif-convert';
   import convertDate from '@utils/date-converter';
   import { usePullRefreshContext } from '@utils/pull-refresh';
@@ -63,6 +64,7 @@
   let isUploadingAvatar = $state<boolean>(false);
   let avatarInputEl = $state<HTMLInputElement | undefined>();
   let avatarImage = $state<string>(blankImage);
+  let avatarInitial = $state<string>('');
   let detachPullRefresh: Nullable<() => void> = null;
   const pullRefresh = usePullRefreshContext();
 
@@ -103,6 +105,7 @@
     bioInput = user?.avatar_bio || '';
     avatarUrl = user?.avatar_url || '';
     avatarFileId = user?.avatar_file_id || '';
+    avatarInitial = getAvatarInitial(user?.username);
   }
 
   onMount(() => {
@@ -263,9 +266,16 @@
       ? serveUrl(fileId)
       : externalUrl
         ? `/api/${encodeURIComponent(externalUrl)}`
-        : blankImage;
+        : '';
 
     let cancelled = false;
+
+    if (!candidate) {
+      avatarImage = blankImage;
+      return () => {
+        cancelled = true;
+      };
+    }
 
     avatarImage = candidate;
 
@@ -344,27 +354,35 @@
 </script>
 
 {#if user}
-  <img class="pfp round" src={avatarImage} alt="PFP" />
+  {#if avatarFileId || avatarUrl}
+    <img class="pfp round" src={avatarImage} alt="PFP" />
+  {:else if avatarInitial}
+    <div class="pfp round avatar-initial" aria-label="Profile initial">
+      {avatarInitial}
+    </div>
+  {:else}
+    <img class="pfp round" src={avatarImage} alt="PFP" />
+  {/if}
   {#if user.username}
-  <button
-    onclick={triggerAvatarPicker}
-    disabled={isUploadingAvatar}
-    aria-busy={isUploadingAvatar}
-  >
-    {#if isUploadingAvatar}
-      <LoadingSVG />
-      Uploading...
-    {:else}
-      Change Profile Picture
-    {/if}
-  </button>
-  <input
-    bind:this={avatarInputEl}
-    type="file"
-    accept="image/avif,image/jpeg,image/png,image/webp"
-    onchange={handleAvatarUpload}
-    style:display="none"
-  />
+    <button
+      onclick={triggerAvatarPicker}
+      disabled={isUploadingAvatar}
+      aria-busy={isUploadingAvatar}
+    >
+      {#if isUploadingAvatar}
+        <LoadingSVG />
+        Uploading...
+      {:else}
+        Change Profile Picture
+      {/if}
+    </button>
+    <input
+      bind:this={avatarInputEl}
+      type="file"
+      accept="image/avif,image/jpeg,image/png,image/webp"
+      onchange={handleAvatarUpload}
+      style:display="none"
+    />
   {:else}
     <p class="validation">Please set a username</p>
   {/if}
@@ -784,6 +802,18 @@
 
   .pfp {
     @include gray-border;
+
+    &.avatar-initial {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1 / 1;
+      font-size: 10rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      @include navy;
+      @include cyan(1, text);
+    }
 
     @include respond-up(tablet) {
       width: 20rem;

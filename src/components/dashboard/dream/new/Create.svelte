@@ -185,7 +185,7 @@
         'Manage Story',
         () => (window.location.href = storyLink),
       );
-    }, 600)
+    }, 600);
   };
 
   const createStory = () => {

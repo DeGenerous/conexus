@@ -61,9 +61,11 @@
   aria-label="Dream"
   href="/dashboard#/dream/create"
   onclick={(event) => {
+    event.preventDefault();
     if (!$user) {
-      event.preventDefault();
       $showProfile = true;
+    } else {
+      redirectTo('/dashboard#/dream/create');
     }
   }}
 >

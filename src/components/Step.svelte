@@ -44,7 +44,6 @@
   import FilledEyeSVG from '@components/icons/FilledEye.svelte';
   import ZoomInSVG from '@components/icons/ZoomIn.svelte';
   import ResetSVG from '@components/icons/Reset.svelte';
-  import LoadingSVG from '@components/icons/Loading.svelte';
 
   let {
     topic_name,

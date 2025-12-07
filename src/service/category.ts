@@ -25,6 +25,18 @@ export default class CategoryAPI extends Fetcher {
     return await this.request<Category[]>(`${this.group}/creator`);
   }
 
+  async deleteAdminCategory(category_id: string) {
+    return await this.request(`${this.group}/admin/${category_id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async deleteCreatorCategory(category_id: string) {
+    return await this.request(`${this.group}/creator/${category_id}`, {
+      method: 'DELETE',
+    });
+  }
+
   async updateAdminCategoryName(category_id: string, name: string) {
     return await this.request(`${this.group}/admin/${category_id}/name`, {
       method: 'PUT',

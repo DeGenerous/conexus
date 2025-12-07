@@ -89,6 +89,41 @@ export default class CategoryView {
   }
 
   /**
+   * Delete an admin-managed category.
+   * @param category_id - The identifier of the category to delete.
+   * @returns True if the delete succeeded, otherwise false.
+   */
+  async deleteAdminCategory(category_id: string): Promise<boolean> {
+    const { status, message } = await this.api.deleteAdminCategory(category_id);
+
+    if (status === 'error') {
+      api_error(message);
+      return false;
+    }
+
+    toastStore.show(message || 'Category deleted successfully', 'info');
+    return true;
+  }
+
+  /**
+   * Delete a creator-owned category.
+   * @param category_id - The identifier of the category to delete.
+   * @returns True if the delete succeeded, otherwise false.
+   */
+  async deleteCreatorCategory(category_id: string): Promise<boolean> {
+    const { status, message } =
+      await this.api.deleteCreatorCategory(category_id);
+
+    if (status === 'error') {
+      api_error(message);
+      return false;
+    }
+
+    toastStore.show(message || 'Category deleted successfully', 'info');
+    return true;
+  }
+
+  /**
    * Update the name of an admin-managed category.
    * @param category_id - The identifier of the category to update.
    * @param name - The new name to assign.

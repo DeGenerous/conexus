@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import AppView from '@lib/view';
   import CategoryView from '@lib/category';
   import { checkUserRoles } from '@utils/route-guard';
   import { isAdmin } from '@stores/account.svelte';
@@ -12,7 +11,6 @@
   import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
 
-  let view = new AppView();
   let categoryView = new CategoryView();
 
   let selectedSectionId = $state('');
@@ -65,23 +63,23 @@
     }
   };
 
-  const deleteCategory = async (category: Category) => {
-    console.log('delete category', category);
+  const deleteCategory = (category: Category) => {
+    if (!category.id) {
+      toastStore.show('Missing category id', 'error');
+      return;
+    }
+
     openModal(
       ensureMessage(`delete the category "${category.name}"`),
       'Delete',
       async () => {
-        const topics = await view.getCategoryTopics(category.id!, 1, 1);
-        console.log(topics.length);
-        if (topics.length > 0) {
-          console.log('cannot delete category with topics');
-          toastStore.show(
-            'Cannot delete category with existing topics. Please remove all topics first.',
-            'error',
-          );
-          return;
+        const deleted = $isAdmin
+          ? await categoryView.deleteAdminCategory(category.id!)
+          : await categoryView.deleteCreatorCategory(category.id!);
+
+        if (deleted && fetchCategories) {
+          await fetchCategories();
         }
-        await Promise.resolve(); // delete category API call
       },
     );
   };
@@ -147,10 +145,10 @@
           {#each categories as category (category.id)}
             <button class="void-btn small-blue-tile">
               <p>{category.name}</p>
-              <!-- <CloseSVG
+              <CloseSVG
                 onclick={() => deleteCategory(category)}
                 voidBtn={true}
-              /> -->
+              />
             </button>
           {/each}
         {:else}

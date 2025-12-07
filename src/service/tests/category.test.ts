@@ -47,6 +47,20 @@ describe('CategoryAPI', () => {
     expect(mockRequest).toHaveBeenCalledWith('/category/creator');
   });
 
+  it('deleteAdminCategory sends delete request', async () => {
+    await api.deleteAdminCategory('cat-1');
+    expect(mockRequest).toHaveBeenCalledWith('/category/admin/cat-1', {
+      method: 'DELETE',
+    });
+  });
+
+  it('deleteCreatorCategory sends delete request', async () => {
+    await api.deleteCreatorCategory('cat-2');
+    expect(mockRequest).toHaveBeenCalledWith('/category/creator/cat-2', {
+      method: 'DELETE',
+    });
+  });
+
   it('updateAdmin category field helpers post payloads', async () => {
     await api.updateAdminCategoryName('cat-1', 'New');
     expect(mockRequest).toHaveBeenCalledWith('/category/admin/cat-1/name', {

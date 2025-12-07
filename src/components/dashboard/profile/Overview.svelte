@@ -265,7 +265,7 @@
     const candidate = fileId
       ? serveUrl(fileId)
       : externalUrl
-        ? `/api/${encodeURIComponent(externalUrl)}`
+        ? externalUrl
         : '';
 
     let cancelled = false;

@@ -48,7 +48,7 @@
     const candidate = currentExplorer.avatar_file_id
       ? serveUrl(currentExplorer.avatar_file_id)
       : currentExplorer.avatar_url
-        ? `/api/${encodeURIComponent(currentExplorer.avatar_url)}`
+        ? currentExplorer.avatar_url
         : blankImage;
 
     let cancelled = false;

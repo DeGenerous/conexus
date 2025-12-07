@@ -16,7 +16,7 @@
         setTimeout(async () => {
           await getCurrentUser(true); // Refresh user data
           redirectTo('/'); // Redirect to the home page
-        });
+        }, 100);
       } else failed = true;
     });
   });

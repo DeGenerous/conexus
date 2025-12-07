@@ -8,6 +8,10 @@
     checkUserRoles,
     checkIfTesterApproved,
   } from '@utils/route-guard';
+  import {
+    loadUserbackWidget,
+    clearUserbackUserData,
+  } from '@utils/userback';
   import { user, developerMode, approvedTester } from '@stores/account.svelte';
 
   import Profile from '@components/Profile.svelte';
@@ -99,6 +103,31 @@
       ticking = false;
     });
   };
+
+  let lastUserbackId: string | null = null;
+
+  $effect(() => {
+    if (!isDevelopmentEnv && !isTestingEnv) return;
+    if (typeof window === 'undefined') return;
+
+    const currentUser = $user;
+    if (currentUser) {
+      const id = currentUser.id ?? '';
+      if (id === lastUserbackId) return;
+
+      const name = currentUser.username || currentUser.first_name || '';
+      const email = currentUser.email ?? '';
+
+      lastUserbackId = id || null;
+      loadUserbackWidget({
+        id,
+        info: { name, email },
+      });
+    } else {
+      lastUserbackId = null;
+      clearUserbackUserData();
+    }
+  });
 </script>
 
 <svelte:window {onkeypress} {onscroll} />

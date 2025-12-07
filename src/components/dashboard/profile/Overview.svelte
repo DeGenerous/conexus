@@ -191,6 +191,7 @@
     try {
       await account.changeReferralCode(refCodeInput);
       editingRefCode = false;
+      await hydrateProfile(true); // refresh to get updated referral code data
     } catch (error) {
       resetRefCode();
     }
@@ -435,36 +436,43 @@
                 </p>
               </span>
             {:else}
-              <h5>Referrals: {refCode.usage_count}</h5>
-              {#if editingRefCode}
-                <CloseSVG onclick={resetRefCode} />
-              {/if}
-              <input
-                bind:value={refCodeInput}
-                type="text"
-                placeholder="Enter referral code"
-                size={refCodeInput.length + 1}
-                minlength="3"
-                maxlength="20"
-                disabled={!editingRefCode}
-              />
-              {#if editingRefCode}
-                <SaveSVG
-                  onclick={changeRefCode}
-                  disabled={refCode.code === refCodeInput ||
-                    refCodeInput.length < 3}
+              <span class="flex-row flex-wrap">
+                <h5>Referrals: {refCode.usage_count}</h5>
+                {#if editingRefCode}
+                  <CloseSVG onclick={resetRefCode} />
+                {/if}
+                <input
+                  bind:value={refCodeInput}
+                  type="text"
+                  placeholder="Enter referral code"
+                  size={refCodeInput.length + 1}
+                  minlength="3"
+                  maxlength="20"
+                  disabled={!editingRefCode}
                 />
-              {:else}
-                <EditSVG bind:editing={editingRefCode} />
+                {#if editingRefCode}
+                  <SaveSVG
+                    onclick={changeRefCode}
+                    disabled={refCode.code === refCodeInput ||
+                      refCodeInput.length < 3}
+                  />
+                {:else}
+                  <EditSVG bind:editing={editingRefCode} />
+                {/if}
+                <button
+                  class="void-btn flex"
+                  id={refCode.code}
+                  onclick={() => copyRefCode(refCode?.code!)}
+                  aria-label="Copy code {refCode.code}"
+                >
+                  <CopySVG />
+                </button>
+              </span>
+              {#if editingRefCode && refCodeInput.length < 3}
+                <p class="validation fade-in">
+                  Referral code should contain at least 3 characters
+                </p>
               {/if}
-              <button
-                class="void-btn flex"
-                id={refCode.code}
-                onclick={() => copyRefCode(refCode?.code!)}
-                aria-label="Copy code {refCode.code}"
-              >
-                <CopySVG />
-              </button>
             {/if}
           {:else}
             <button class="green-btn" onclick={handleGenerateReferralCode}>
@@ -844,6 +852,14 @@
               @include white-txt(soft);
               @include font(caption);
             }
+          }
+        }
+
+        &.ref-code-wrapper {
+          flex-direction: column;
+
+          span {
+            width: 100%;
           }
         }
       }

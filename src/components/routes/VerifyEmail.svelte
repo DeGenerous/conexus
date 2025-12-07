@@ -1,6 +1,6 @@
 <script lang="ts">
   import Account from '@lib/account';
-  import { ClearCache } from '@constants/cache';
+  import { redirectTo, getCurrentUser } from '@utils/route-guard';
 
   import LoadingSVG from '@components/icons/Loading.svelte';
 
@@ -13,10 +13,10 @@
   $effect(() => {
     acct.confirmEmail(token).then((res) => {
       if (res === true) {
-        setTimeout(() => {
-          ClearCache('auth');
-          window.location.href = '/';
-        }, 1000);
+        setTimeout(async () => {
+          await getCurrentUser(true); // Refresh user data
+          redirectTo('/'); // Redirect to the home page
+        });
       } else failed = true;
     });
   });

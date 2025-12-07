@@ -3,6 +3,7 @@ import { api_error } from '@errors/index';
 import AuthenticationAPI from '@service/authentication';
 import { accountError } from '@stores/account.svelte';
 import { toastStore } from '@stores/toast.svelte';
+import { redirectTo } from '@utils/route-guard';
 
 /**
  * Handles user authentication and related actions.
@@ -33,7 +34,7 @@ export default class Authentication {
       return;
     }
 
-    window.location.href = data;
+    redirectTo(data);
   }
 
   /**
@@ -192,12 +193,12 @@ export default class Authentication {
   async logout(): Promise<void> {
     const { status, message } = await this.api.logout();
 
+    ClearCache('auth');
+
     if (status === 'error') {
       api_error(message);
       return;
     }
-
-    ClearCache('auth');
 
     toastStore.show(message || 'Logged out successfully', 'info');
 

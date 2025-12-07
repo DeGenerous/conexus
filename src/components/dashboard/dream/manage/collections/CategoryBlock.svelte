@@ -529,22 +529,22 @@
               {topic.visibility === 'public' ? 'Submitted' : 'Submit'}
             </button> -->
             <!-- {#if creator} -->
-              <button
-                use:tippy={{
-                  content: 'Toggle visibility',
-                  animation: 'scale',
-                }}
-                class:green-btn={topic.visibility === 'public'}
-                class:red-btn={topic.visibility === 'private'}
-                onclick={(event) =>
-                  toggleVisibility(
-                    event,
-                    topic.topic_id,
-                    topic.visibility === 'public' ? 'private' : 'public',
-                  )}
-              >
-                {topic.visibility === 'public' ? 'Public' : 'Private'}
-              </button>
+            <button
+              use:tippy={{
+                content: 'Toggle visibility',
+                animation: 'scale',
+              }}
+              class:green-btn={topic.visibility === 'public'}
+              class:red-btn={topic.visibility === 'private'}
+              onclick={(event) =>
+                toggleVisibility(
+                  event,
+                  topic.topic_id,
+                  topic.visibility === 'public' ? 'private' : 'public',
+                )}
+            >
+              {topic.visibility === 'public' ? 'Public' : 'Private'}
+            </button>
             <!-- {/if} -->
           </div>
         </a>

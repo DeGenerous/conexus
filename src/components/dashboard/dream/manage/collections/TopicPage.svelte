@@ -259,19 +259,19 @@
             </button>
           {/if}
           <!-- {#if topic.creator} -->
-            <button
-              class:green-btn={topic_visibility === 'public'}
-              class:red-btn={topic_visibility === 'private'}
-              use:tippy={{ content: 'Toggle visibility', animation: 'scale' }}
-              onclick={() => {
-                toggleVisibility(
-                  topic_id,
-                  topic_visibility === 'public' ? 'private' : 'public',
-                );
-              }}
-            >
-              {topic_visibility === 'public' ? 'Public' : 'Private'}
-            </button>
+          <button
+            class:green-btn={topic_visibility === 'public'}
+            class:red-btn={topic_visibility === 'private'}
+            use:tippy={{ content: 'Toggle visibility', animation: 'scale' }}
+            onclick={() => {
+              toggleVisibility(
+                topic_id,
+                topic_visibility === 'public' ? 'private' : 'public',
+              );
+            }}
+          >
+            {topic_visibility === 'public' ? 'Public' : 'Private'}
+          </button>
           <!-- {/if} -->
           {#if $isAdmin}
             <button

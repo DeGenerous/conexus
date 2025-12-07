@@ -90,7 +90,7 @@ export default class CoNexus {
       return;
     }
 
-    await getCurrentUser(true);
+    setTimeout(() => getCurrentUser(true));
 
     await setMedia(topic_id);
 

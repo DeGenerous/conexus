@@ -244,6 +244,23 @@
   }
 
   .profile-tab {
+    img,
+    .avatar-initial {
+      width: 2rem;
+      border-radius: 50%;
+      aspect-ratio: 1 / 1;
+    }
+
+    .avatar-initial {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      text-transform: uppercase;
+      @include cyan;
+      @include dark-blue(1, text);
+    }
+
     @include respond-up('small-desktop') {
       padding: 0.5rem;
       width: 2.5rem;
@@ -252,30 +269,21 @@
       fill: $light-blue;
       @include navy(0.5);
 
+      img,
+      .avatar-initial {
+        width: 100%;
+      }
+
+      .avatar-initial {
+        font-size: 1.5rem;
+      }
+
       &.nopadding {
         padding: 0;
       }
 
       p {
         display: none;
-      }
-
-      img,
-      .avatar-initial {
-        width: 100%;
-        border-radius: inherit;
-        aspect-ratio: 1 / 1;
-      }
-
-      .avatar-initial {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        @include cyan;
-        @include dark-blue(1, text);
       }
 
       &:hover,

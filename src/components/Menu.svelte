@@ -1,8 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { onMount } from 'svelte';
   import CoNexusApp from '@lib/view';
-  import { checkIfTesterApproved } from '@utils/route-guard';
   import { checkIfTesterApproved } from '@utils/route-guard';
 
   import MenuTile from '@components/utils/MenuTile.svelte';
@@ -30,24 +28,6 @@
     return reordered;
   };
 
-  let sections = $state<Section[]>([]);
-  let sectionsLoading = $state<boolean>(true);
-  let sectionError = $state<string>('');
-
-  let isTestingEnv = $derived<boolean>(
-    import.meta.env.PUBLIC_ENV === 'testing',
-  );
-
-  onMount(async () => {
-    try {
-      if (isTestingEnv) checkIfTesterApproved();
-      sections = await app.getSections();
-    } catch (error) {
-      sectionError = (error as Error).message;
-    } finally {
-      sectionsLoading = false;
-    }
-  });
 
   let sections = $state<Section[]>([]);
   let sectionsLoading = $state<boolean>(true);

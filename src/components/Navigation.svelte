@@ -8,10 +8,7 @@
     checkUserRoles,
     checkIfTesterApproved,
   } from '@utils/route-guard';
-  import {
-    loadUserbackWidget,
-    clearUserbackUserData,
-  } from '@utils/userback';
+  import { loadUserbackWidget, clearUserbackUserData } from '@utils/userback';
   import { user, developerMode, approvedTester } from '@stores/account.svelte';
 
   import Profile from '@components/Profile.svelte';

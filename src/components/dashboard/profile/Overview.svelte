@@ -25,6 +25,7 @@
     validateFiles,
     resolveRenderableImage,
   } from '@utils/file-validation';
+  import { getAvatarInitial } from '@utils/avatar';
   import { toAvif } from '@utils/avif-convert';
   import convertDate from '@utils/date-converter';
   import { usePullRefreshContext } from '@utils/pull-refresh';
@@ -63,6 +64,7 @@
   let isUploadingAvatar = $state<boolean>(false);
   let avatarInputEl = $state<HTMLInputElement | undefined>();
   let avatarImage = $state<string>(blankImage);
+  let avatarInitial = $state<string>('');
   let detachPullRefresh: Nullable<() => void> = null;
   const pullRefresh = usePullRefreshContext();
 
@@ -103,6 +105,7 @@
     bioInput = user?.avatar_bio || '';
     avatarUrl = user?.avatar_url || '';
     avatarFileId = user?.avatar_file_id || '';
+    avatarInitial = getAvatarInitial(user?.username);
   }
 
   onMount(() => {
@@ -191,6 +194,7 @@
     try {
       await account.changeReferralCode(refCodeInput);
       editingRefCode = false;
+      await hydrateProfile(true); // refresh to get updated referral code data
     } catch (error) {
       resetRefCode();
     }
@@ -261,10 +265,17 @@
     const candidate = fileId
       ? serveUrl(fileId)
       : externalUrl
-        ? `/api/${encodeURIComponent(externalUrl)}`
-        : blankImage;
+        ? externalUrl
+        : '';
 
     let cancelled = false;
+
+    if (!candidate) {
+      avatarImage = blankImage;
+      return () => {
+        cancelled = true;
+      };
+    }
 
     avatarImage = candidate;
 
@@ -343,26 +354,38 @@
 </script>
 
 {#if user}
-  <img class="pfp round" src={avatarImage} alt="PFP" />
-  <button
-    onclick={triggerAvatarPicker}
-    disabled={isUploadingAvatar}
-    aria-busy={isUploadingAvatar}
-  >
-    {#if isUploadingAvatar}
-      <LoadingSVG />
-      Uploading...
-    {:else}
-      Change Profile Picture
-    {/if}
-  </button>
-  <input
-    bind:this={avatarInputEl}
-    type="file"
-    accept="image/avif,image/jpeg,image/png,image/webp"
-    onchange={handleAvatarUpload}
-    style:display="none"
-  />
+  {#if avatarFileId || avatarUrl}
+    <img class="pfp round" src={avatarImage} alt="PFP" />
+  {:else if avatarInitial}
+    <div class="pfp round avatar-initial" aria-label="Profile initial">
+      {avatarInitial}
+    </div>
+  {:else}
+    <img class="pfp round" src={avatarImage} alt="PFP" />
+  {/if}
+  {#if user.username}
+    <button
+      onclick={triggerAvatarPicker}
+      disabled={isUploadingAvatar}
+      aria-busy={isUploadingAvatar}
+    >
+      {#if isUploadingAvatar}
+        <LoadingSVG />
+        Uploading...
+      {:else}
+        Change Profile Picture
+      {/if}
+    </button>
+    <input
+      bind:this={avatarInputEl}
+      type="file"
+      accept="image/avif,image/jpeg,image/png,image/webp"
+      onchange={handleAvatarUpload}
+      style:display="none"
+    />
+  {:else}
+    <p class="validation">Please set a username</p>
+  {/if}
 
   <div class="dream-container">
     <div class="flex-row">
@@ -435,36 +458,43 @@
                 </p>
               </span>
             {:else}
-              <h5>Referrals: {refCode.usage_count}</h5>
-              {#if editingRefCode}
-                <CloseSVG onclick={resetRefCode} />
-              {/if}
-              <input
-                bind:value={refCodeInput}
-                type="text"
-                placeholder="Enter referral code"
-                size={refCodeInput.length + 1}
-                minlength="3"
-                maxlength="20"
-                disabled={!editingRefCode}
-              />
-              {#if editingRefCode}
-                <SaveSVG
-                  onclick={changeRefCode}
-                  disabled={refCode.code === refCodeInput ||
-                    refCodeInput.length < 3}
+              <span class="flex-row flex-wrap">
+                <h5>Referrals: {refCode.usage_count}</h5>
+                {#if editingRefCode}
+                  <CloseSVG onclick={resetRefCode} />
+                {/if}
+                <input
+                  bind:value={refCodeInput}
+                  type="text"
+                  placeholder="Enter referral code"
+                  size={refCodeInput.length + 1}
+                  minlength="3"
+                  maxlength="20"
+                  disabled={!editingRefCode}
                 />
-              {:else}
-                <EditSVG bind:editing={editingRefCode} />
+                {#if editingRefCode}
+                  <SaveSVG
+                    onclick={changeRefCode}
+                    disabled={refCode.code === refCodeInput ||
+                      refCodeInput.length < 3}
+                  />
+                {:else}
+                  <EditSVG bind:editing={editingRefCode} />
+                {/if}
+                <button
+                  class="void-btn flex"
+                  id={refCode.code}
+                  onclick={() => copyRefCode(refCode?.code!)}
+                  aria-label="Copy code {refCode.code}"
+                >
+                  <CopySVG />
+                </button>
+              </span>
+              {#if editingRefCode && refCodeInput.length < 3}
+                <p class="validation fade-in">
+                  Referral code should contain at least 3 characters
+                </p>
               {/if}
-              <button
-                class="void-btn flex"
-                id={refCode.code}
-                onclick={() => copyRefCode(refCode?.code!)}
-                aria-label="Copy code {refCode.code}"
-              >
-                <CopySVG />
-              </button>
             {/if}
           {:else}
             <button class="green-btn" onclick={handleGenerateReferralCode}>
@@ -773,6 +803,18 @@
   .pfp {
     @include gray-border;
 
+    &.avatar-initial {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1 / 1;
+      font-size: 10rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      @include navy;
+      @include cyan(1, text);
+    }
+
     @include respond-up(tablet) {
       width: 20rem;
     }
@@ -844,6 +886,14 @@
               @include white-txt(soft);
               @include font(caption);
             }
+          }
+        }
+
+        &.ref-code-wrapper {
+          flex-direction: column;
+
+          span {
+            width: 100%;
           }
         }
       }

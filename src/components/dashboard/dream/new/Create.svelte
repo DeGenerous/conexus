@@ -47,7 +47,7 @@
     $storyData.name &&
       $storyData.description &&
       $storyData.description.length >= 50 &&
-      $storyData.image_prompt.length <= 1400 &&
+      $storyData.image_prompt.length <= 5000 &&
       $storyData.category_id,
   );
 
@@ -169,18 +169,23 @@
     if (!topic_id) return;
     if ($currentDraft?.id) Drafts.delete($currentDraft.id);
 
-    const storyLink = `/dashboard/topic/${topic_id}`;
-    openModal(
-      openStoryManage,
-      'Manage Story',
-      () => (window.location.href = storyLink),
-    );
     clearAutoSaveTimer();
     const cachedDraftId = GetCache<string>(CURRENT_DRAFT_KEY);
     if (cachedDraftId) await Drafts.delete(cachedDraftId);
     currentDraft.set(null);
     clearAllData();
     lastSavedAgo = 'unsaved';
+
+    await Drafts.create();
+
+    setTimeout(async () => {
+      const storyLink = `/dashboard/topic/${topic_id}`;
+      openModal(
+        openStoryManage,
+        'Manage Story',
+        () => (window.location.href = storyLink),
+      );
+    }, 600);
   };
 
   const createStory = () => {
@@ -326,7 +331,7 @@
     <label for="image-prompts">Image Generation Instructions</label>
     <textarea
       id="image-prompts"
-      class:red-border={$storyData.image_prompt.length > 1400}
+      class:red-border={$storyData.image_prompt.length > 5000}
       placeholder="What does your world feel like, what visual mood are you going for, and what elements stand out? Describe the environment, style, lighting, and textures you want to see."
       rows="2"
       bind:value={$storyData.image_prompt}
@@ -336,9 +341,9 @@
     ></textarea>
   </div>
 
-  {#if $storyData.image_prompt && $storyData.image_prompt.length > 1400}
+  {#if $storyData.image_prompt && $storyData.image_prompt.length > 5000}
     <p class="validation">
-      Please shorten your message to 1400 characters or less, you’ve typed {$storyData
+      Please shorten your message to 5000 characters or less, you’ve typed {$storyData
         .image_prompt.length}
     </p>
   {/if}

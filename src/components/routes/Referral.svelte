@@ -2,8 +2,8 @@
   import Account from '@lib/account';
   import Authentication from '@lib/authentication';
   import { toastStore } from '@stores/toast.svelte';
-  import { ClearCache } from '@constants/cache';
   import { NAV_ROUTES } from '@constants/routes';
+  import { redirectTo, getCurrentUser } from '@utils/route-guard';
 
   import DiscordSVG from '@components/icons/Discord.svelte';
 
@@ -29,8 +29,10 @@
     try {
       await acct.useReferralCode(code);
       toastStore.show('Referral code submitted successfully!');
-      ClearCache('auth');
-      window.location.href = '/'; // Redirect to the home page
+      setTimeout(async () => {
+        await getCurrentUser(true); // Refresh user data
+        redirectTo('/'); // Redirect to the home page
+      }, 100);
     } catch (error) {
       console.error('Error using referral code:', error);
       toastStore.show('Failed to use referral code. Please try again.');

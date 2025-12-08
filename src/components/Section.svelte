@@ -48,7 +48,7 @@
     const candidate = currentExplorer.avatar_file_id
       ? serveUrl(currentExplorer.avatar_file_id)
       : currentExplorer.avatar_url
-        ? `/api/${encodeURIComponent(currentExplorer.avatar_url)}`
+        ? currentExplorer.avatar_url
         : blankImage;
 
     let cancelled = false;
@@ -228,7 +228,9 @@
 <PullToRefresh refresh={refreshSection}>
   {#if intended === 'c' && explorer}
     <div class="explorer-bio flex pad-inline">
-      <img class="pfp round" src={explorerImage} alt="Creator PFP" />
+      {#if explorerImage !== blankImage}
+        <img class="pfp round" src={explorerImage} alt="Creator PFP" />
+      {/if}
       <p>{explorer.avatar_bio}</p>
     </div>
   {/if}

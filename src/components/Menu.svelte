@@ -28,6 +28,7 @@
     return reordered;
   };
 
+
   let sections = $state<Section[]>([]);
   let sectionsLoading = $state<boolean>(true);
   let sectionError = $state<string>('');

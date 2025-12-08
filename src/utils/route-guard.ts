@@ -32,11 +32,13 @@ export async function userState(state: UserState = 'signed'): Promise<boolean> {
   const user: Nullable<User> = await getCurrentUser();
   if (!user) return false;
 
+  const role = user.role_name ?? 'Guest';
+
   const checks: Record<UserState, () => boolean> = {
     signed: () => true,
-    admin: () => user.role_name === 'Admin',
-    player: () => user.role_name === 'Creator' || user.role_name === 'Player',
-    guest: () => user.role_name === 'Guest',
+    admin: () => role === 'Admin',
+    player: () => role === 'Creator' || role === 'Player',
+    guest: () => role === 'Guest',
     referred: () => Boolean(user.referred),
   };
 
@@ -72,13 +74,20 @@ export async function restrictToGuest(path = '/dashboard'): Promise<void> {
 export async function checkUserRoles(
   path = '/dashboard',
 ): Promise<{ isAdmin: boolean; isPlayer: boolean; isGuest: boolean }> {
-  const [_isAdmin, _isPlayer, _isGuest] = await Promise.all([
-    userState('admin'),
-    userState('player'),
-    userState('guest'),
-  ]);
+  const user = await getCurrentUser();
 
-  if (!(_isAdmin || _isPlayer || _isGuest)) redirectTo(path);
+  if (!user) {
+    redirectTo(path);
+    isAdmin.set(false);
+    isPlayer.set(false);
+    isGuest.set(false);
+    return { isAdmin: false, isPlayer: false, isGuest: false };
+  }
+
+  const role = user.role_name ?? 'Guest';
+  const _isAdmin = role === 'Admin';
+  const _isPlayer = role === 'Creator' || role === 'Player';
+  const _isGuest = role === 'Guest';
 
   isAdmin.set(_isAdmin);
   isPlayer.set(_isPlayer);

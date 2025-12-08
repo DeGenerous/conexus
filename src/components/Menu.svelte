@@ -1,8 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { onMount } from 'svelte';
   import CoNexusApp from '@lib/view';
-  import { checkIfTesterApproved } from '@utils/route-guard';
   import { checkIfTesterApproved } from '@utils/route-guard';
 
   import MenuTile from '@components/utils/MenuTile.svelte';

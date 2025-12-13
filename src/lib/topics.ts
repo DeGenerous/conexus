@@ -331,8 +331,14 @@ export default class Topic {
    * @param topic_id - The topic identifier.
    * @returns The topic manager data or null on failure.
    */
-  async getTopicManager(topic_id: string): Promise<TopicManager | null> {
-    const { status, message, data } = await this.api.topicManager(topic_id);
+  async getTopicManager(
+    topic_id: string,
+    refresh: boolean = false,
+  ): Promise<TopicManager | null> {
+    const { status, message, data } = await this.api.topicManager(
+      topic_id,
+      refresh,
+    );
 
     if (status === 'error') {
       api_error(message);

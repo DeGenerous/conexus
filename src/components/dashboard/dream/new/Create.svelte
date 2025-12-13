@@ -30,6 +30,7 @@
   import SaveSVG from '@components/icons/Checkmark.svelte';
   import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
   import TopicSettings from '@components/dashboard/common/TopicSettings.svelte';
+  import Dropdown from '@components/utils/Dropdown.svelte';
 
   const topic = new Topic();
 
@@ -45,8 +46,7 @@
   // minimal gating for the "Create" CTA: ensure we have base metadata and the prompt stays within limits
   let validation = $derived(
     $storyData.name &&
-      $storyData.description &&
-      $storyData.description.length >= 50 &&
+      $storyData.description.length <= 2500 &&
       $storyData.image_prompt.length <= 5000 &&
       $storyData.category_id,
   );
@@ -308,7 +308,7 @@
     <label for="description">Description</label>
     <textarea
       id="description"
-      class:red-border={$storyData.description.length < 50}
+      class:red-border={$storyData.description.length > 2500}
       placeholder="Describe the central premise, key themes, the main character's emotional journey ahead, and what kicks off the plot. Focus on what’s at stake, what makes the world unique, and why this story matters - make users want to see more."
       rows="3"
       bind:value={$storyData.description}
@@ -318,10 +318,10 @@
     ></textarea>
   </div>
 
-  {#if $storyData.description && $storyData.description.length < 50}
+  {#if $storyData.description && $storyData.description.length > 2500}
     <p class="validation">
-      Description should be longer, enter {50 - $storyData.description.length} more
-      characters
+      Please shorten your message to 5000 characters or less, you’ve typed {$storyData
+        .description.length}
     </p>
   {/if}
 
@@ -350,32 +350,34 @@
 </div>
 
 <!-- MAIN SETTINGS -->
-<TopicSettings bind:promptFormat>
-  {#snippet children(
-    promptFormat: 'Table' | 'Open',
-    setPromptFormat: (format: 'Table' | 'Open') => void,
-  )}
-    <div class="flex-row">
-      <h4>Format</h4>
-      <div class="container">
-        <button
-          class="void-btn dream-radio-btn"
-          class:active={promptFormat === 'Table'}
-          onclick={() => setPromptFormat('Table')}
-        >
-          Table
-        </button>
-        <button
-          class="void-btn dream-radio-btn"
-          class:active={promptFormat === 'Open'}
-          onclick={() => setPromptFormat('Open')}
-        >
-          Open
-        </button>
+<Dropdown name="Story Settings" table={true}>
+  <TopicSettings bind:promptFormat>
+    {#snippet children(
+      promptFormat: 'Table' | 'Open',
+      setPromptFormat: (format: 'Table' | 'Open') => void,
+    )}
+      <div class="flex-row">
+        <h4>Format</h4>
+        <div class="container">
+          <button
+            class="void-btn dream-radio-btn"
+            class:active={promptFormat === 'Table'}
+            onclick={() => setPromptFormat('Table')}
+          >
+            Table
+          </button>
+          <button
+            class="void-btn dream-radio-btn"
+            class:active={promptFormat === 'Open'}
+            onclick={() => setPromptFormat('Open')}
+          >
+            Open
+          </button>
+        </div>
       </div>
-    </div>
-  {/snippet}
-</TopicSettings>
+    {/snippet}
+  </TopicSettings>
+</Dropdown>
 
 {#if promptFormat === 'Table'}
   <div class="dream-container">

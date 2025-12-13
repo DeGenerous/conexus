@@ -35,9 +35,6 @@
     try {
       const genre = availableGenres.find((g: Genre) => g.name === name);
       if (genre && genre.id) await handleGenreChange(genre.id, 'remove');
-      topic_genres = topic_genres
-        ? topic_genres.filter((genre) => genre.name !== name)
-        : null;
     } catch (error) {
       console.error('Error removing genre:', error);
     }
@@ -52,10 +49,6 @@
 
     try {
       await handleGenreChange(newGenreId, 'add');
-      const genre = availableGenres.find((g: Genre) => g.id === newGenreId);
-      topic_genres = topic_genres
-        ? [...topic_genres, { id: genre?.id || '', name: genre?.name || '' }]
-        : [{ id: genre?.id || '', name: genre?.name || '' }];
     } catch (error) {
       console.error('Error adding genre:', error);
     } finally {

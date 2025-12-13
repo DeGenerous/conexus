@@ -195,8 +195,9 @@
       for (const f of accepted) {
         let upload = f;
 
+        toastStore.show(`Uploading ${f.name} file…`);
+
         if (shouldConvertToAvif(slot, f)) {
-          toastStore.show(`Uploading ${f.name} file…`);
           try {
             const { file: converted } = await toAvif(f, {
               maxBytes: MEDIA_RULES[slot].maxBytes,
@@ -213,7 +214,6 @@
           }
         }
 
-        console.log('Uploading media file:', upload);
         const [id] = await handleMediaUpload(slot, upload);
         if (!id) continue;
 

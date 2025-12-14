@@ -1,7 +1,7 @@
 import { ERROR_REQUIRED_TOKEN, ERROR_OUT_OF_CREDITS } from '@constants/error';
 import { api_error } from '@errors/index';
 import StoryAPI from '@service/story';
-import { story, game } from '@stores/conexus.svelte';
+import { story, game, ttsProvider } from '@stores/conexus.svelte';
 import { toastStore } from '@stores/toast.svelte';
 import openModal from '@stores/modal.svelte';
 import { getCurrentUser } from '@utils/route-guard';
@@ -391,7 +391,7 @@ export default class CoNexus {
     story.set(this);
     game.loading = false;
 
-    if (task_id !== '') {
+    if (task_id !== '' && ttsProvider === 'backend') {
       await Promise.all([this.#textToSpeech()]);
     }
   }

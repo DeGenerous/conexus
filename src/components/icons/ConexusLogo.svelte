@@ -32,15 +32,9 @@
   />
 </svg>
 
-<style lang="scss">
-  @use '/src/styles/mixins' as *;
-
+<style>
   svg {
     width: 10rem;
-    fill: $cyan;
-
-    @include respond-up('small-desktop') {
-      display: none;
-    }
+    fill: currentColor;
   }
 </style>

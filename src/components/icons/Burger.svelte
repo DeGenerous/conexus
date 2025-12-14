@@ -17,7 +17,7 @@
   @use '/src/styles/mixins' as *;
 
   svg {
-    width: 2.5rem;
+    width: 2rem;
     fill: none;
     stroke: $cyan;
     stroke-width: 2;

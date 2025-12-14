@@ -12,7 +12,6 @@
 
   import PullToRefresh from '@components/utils/PullToRefresh.svelte';
   import { initPullRefreshContext } from '@utils/pull-refresh';
-  import Sidebar from '@components/dashboard/Sidebar.svelte';
 
   onMount(ensureSigned);
   onMount(checkUserRoles);
@@ -44,43 +43,6 @@
   });
 </script>
 
-<Sidebar />
-
-<div class="dashboard-content blur fade-in">
-  <span class="placeholder"></span>
-  <PullToRefresh refresh={hasRefreshHandler ? triggerRefresh : undefined}>
-    <Router {routes} />
-  </PullToRefresh>
-</div>
-
-<style lang="scss">
-  @use '/src/styles/mixins' as *;
-
-  .dashboard-content {
-    display: grid;
-    grid-template-columns: 1fr;
-    width: 100vw;
-    min-height: 100dvh;
-    padding-block: 3rem 5rem;
-    background-color: rgba(0, 0, 0, 0.25);
-
-    .placeholder {
-      width: 100%;
-      height: 100%;
-      display: none;
-    }
-
-    @include respond-up(small-desktop) {
-      grid-template-columns: 320px minmax(0, 1fr);
-      padding-block: 4.5rem 0;
-
-      .placeholder {
-        display: block;
-      }
-    }
-  }
-
-  :global(html) {
-    padding-block: 0;
-  }
-</style>
+<PullToRefresh refresh={hasRefreshHandler ? triggerRefresh : undefined}>
+  <Router {routes} />
+</PullToRefresh>

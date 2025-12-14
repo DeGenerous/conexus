@@ -10,16 +10,18 @@
   } from '@utils/route-guard';
   import { loadUserbackWidget, clearUserbackUserData } from '@utils/userback';
   import { user, developerMode, approvedTester } from '@stores/account.svelte';
+  import { sidebarOpen } from '@stores/navigation.svelte';
 
   import Profile from '@components/Profile.svelte';
   import Background from '@components/utils/Background.svelte';
-  import Onboarding from '@components/utils/Onboarding.svelte';
 
   import HomeSVG from '@components/icons/Home.svelte';
   import BackArrow from '@components/icons/BackArrow.svelte';
   import PlaySVG from '@components/icons/Play.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
   import ConexusLogo from '@components/icons/ConexusLogo.svelte';
+  import BurgerSVG from '@components/icons/Burger.svelte';
+  import Sidebar from '@components/utils/Sidebar.svelte';
 
   let {
     header = '',
@@ -56,7 +58,10 @@
 
   let hiddenHeader = $state<boolean>(false);
   let showIntro = $state<boolean>(false);
-  let onboarding = $state<boolean>(false);
+
+  function toggleSidebar() {
+    $sidebarOpen = !$sidebarOpen;
+  }
 
   // FULLSCREEN
 
@@ -86,16 +91,14 @@
   let lastY = 0;
   let ticking = false;
   const onscroll = (event: Event) => {
-    if (onboarding) event.preventDefault();
-
-    if (activeTab === 'Dashboard') return;
-
     const y = window.scrollY;
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => {
-      if (y > lastY && y > clamp) hiddenHeader = true;
-      else if (y < lastY) hiddenHeader = false;
+      if (y > lastY && y > clamp) {
+        hiddenHeader = true;
+        $sidebarOpen = false;
+      } else if (y < lastY) hiddenHeader = false;
       lastY = y;
       ticking = false;
     });
@@ -131,19 +134,23 @@
 
 {#if $story === null}
   {#if header}
-    <header class="flex-row">
+    <header class="flex-row" class:home={header === 'CoNexus'}>
+      <BackArrow href={arrow} hidden={!arrow} />
       {#if header === 'CoNexus'}
         <h1 class="sr-only">CoNexus</h1>
         <ConexusLogo />
       {:else}
-        {#if arrow}
-          <BackArrow href={arrow} />
-        {/if}
         <h1>{header}</h1>
-        {#if arrow}
-          <BackArrow href={arrow} hidden={true} />
-        {/if}
       {/if}
+      <button
+        class="flex void-btn mobile-only"
+        aria-label="Toggle navigation"
+        aria-controls="dashboard-sidebar"
+        aria-expanded={$sidebarOpen}
+        onclick={toggleSidebar}
+      >
+        <BurgerSVG expanded={$sidebarOpen} />
+      </button>
     </header>
   {/if}
 
@@ -157,10 +164,7 @@
       <CloseSVG onclick={() => (showIntro = false)} hider={true} />
     </div>
   {:else if subheading}
-    <p
-      class="mobile-text-wrapper subheading pad-inline text-shad"
-      class:onboarding
-    >
+    <p class="mobile-text-wrapper subheading pad-inline text-shad">
       {@html subheading}
       {#if header === 'CoNexus'}
         <span class="intro-wrapper flex" id="intro">
@@ -176,10 +180,6 @@
     </p>
   {/if}
 
-  {#if onboarding && header === 'CoNexus'}
-    <Onboarding />
-  {/if}
-
   <nav
     class="flex-row"
     class:hide={hiddenHeader}
@@ -188,7 +188,19 @@
     <HomeSVG {activeTab} />
 
     <Profile {activeTab} />
+
+    <button
+      class="flex void-btn pc-only"
+      aria-label="Toggle navigation"
+      aria-controls="dashboard-sidebar"
+      aria-expanded={$sidebarOpen}
+      onclick={toggleSidebar}
+    >
+      <BurgerSVG expanded={$sidebarOpen} />
+    </button>
   </nav>
+
+  <Sidebar />
 {/if}
 
 <Background />
@@ -204,11 +216,29 @@
       width: 100%;
     }
 
+    button.mobile-only {
+      display: flex;
+
+      @include respond-up('small-desktop') {
+        display: none;
+      }
+    }
+
+    @include respond-up('small-desktop') {
+      h1 {
+        margin-right: 4.5rem;
+      }
+
+      &.home {
+        display: none;
+      }
+    }
+
     @include mobile-only {
-      height: 4rem;
+      height: 4.5rem;
       position: sticky;
       top: 0;
-      justify-content: center;
+      justify-content: space-between;
       margin-top: -1.5rem;
       z-index: 100;
       border-bottom: 1px solid $transparent-gray;
@@ -223,10 +253,6 @@
     .intro-wrapper {
       width: 100%;
       padding-top: 1rem;
-    }
-
-    &.onboarding {
-      z-index: 1000;
     }
 
     @include respond-up(small-desktop) {
@@ -252,6 +278,14 @@
     z-index: 100;
     border-top: 1px solid $transparent-gray;
     @include dark-blue;
+
+    button.pc-only {
+      display: none;
+
+      @include respond-up('small-desktop') {
+        display: flex;
+      }
+    }
 
     /* PC Styling */
 

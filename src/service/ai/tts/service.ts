@@ -1,5 +1,5 @@
 import { type TTSProvider } from './provider';
-import { BackendTTSProvider } from './backend';
+import { BackendTTSProvider } from './degenai';
 import { ElevenLabsTTSProvider, DEFAULT_VOICES } from './elevenlabs';
 
 export class TTSService {

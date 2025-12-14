@@ -314,7 +314,7 @@ export default class CoNexus {
     }
   }
 
-  async fetchElevenLabsTTS(): Promise<Blob> {
+  async fetchFromClientAI(): Promise<Blob> {
     console.log('Fetching ElevenLabs TTS for step:', this.step_data.id);
     let text = constructTextFromGame(this.step_data);
 
@@ -324,7 +324,7 @@ export default class CoNexus {
       voiceId: '9BWtsMINqrJLrRacOk9x',
     };
 
-    const res = await fetch('/ai/tts/elevenlabs', {
+    const res = await fetch(`/ai/tts/${ttsProvider}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(input),
@@ -338,7 +338,7 @@ export default class CoNexus {
     return await res.blob();
   }
 
-  async fetchFromBackendTTS(): Promise<Blob> {
+  async fetchFromServerAI(): Promise<Blob> {
     const { status, message, data } = await this.api.tts(this.step_data.id);
 
     if (status === 'error') {
@@ -362,14 +362,14 @@ export default class CoNexus {
    * Convert text to speech
    * @returns A promise that resolves when the TTS is ready
    */
-  async #textToSpeech(): Promise<void> {
-    switch (ttsProvider) {
-      case 'elevenlabs':
-        this.step_data.tts = await this.fetchElevenLabsTTS();
+  async #textToSpeech(which: 'client' | 'server' = 'client'): Promise<void> {
+    switch (which) {
+      case 'client':
+        this.step_data.tts = await this.fetchFromClientAI();
         story.set(this);
         break;
       default:
-        this.step_data.tts = await this.fetchFromBackendTTS();
+        this.step_data.tts = await this.fetchFromServerAI();
         story.set(this);
         break;
     }

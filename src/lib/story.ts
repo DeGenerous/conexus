@@ -22,12 +22,12 @@ export default class CoNexus {
    * @param data - Optional initial game data to bootstrap with.
    * @param task_id - Optional task identifier for pending assets.
    */
-  constructor(data?: GameData, task_id?: string) {
+  constructor(data?: GameData, task_id?: string, generate?: boolean) {
     this.api = new StoryAPI(import.meta.env.PUBLIC_BACKEND);
 
     this.step_data = {} as GameData;
     if (data) {
-      this.#setStepData(data, task_id); // ✅ Works now
+      this.#setStepData(data, task_id, generate); // ✅ Works now
     }
   }
 
@@ -296,19 +296,7 @@ export default class CoNexus {
     if (data.status === 'ready') {
       const url = `${import.meta.env.PUBLIC_BACKEND}${data.url}`;
 
-      // this.step_data.image = url;
-      // this.step_data.image_type = 'url';
-
-      this.step_data = {
-        ...this.step_data,
-        image: url,
-        image_type: 'url',
-      };
-
-      console.log('image status is generated (#generateImageStatus)');
-
-      story.set(this);
-      // story.set({ ...this });
+      this.#commitStepData({ image: url, image_type: 'url' });
       return;
     }
   }
@@ -414,12 +402,20 @@ export default class CoNexus {
    * Set the story data and the task id
    * @param data The story data and task id to set
    */
-  async #setStory(data: { story: GameData; task_id: string }): Promise<void> {
-    await this.#setStepData(data.story, data.task_id);
+  async #setStory(data: {
+    story: GameData;
+    task_id: string;
+    generate: boolean;
+  }): Promise<void> {
+    await this.#setStepData(data.story, data.task_id, data.generate);
 
-    if (!data.task_id) return;
+    if (data.generate) {
+      await Promise.all([this.#imageGenInternal(), this.#ttsInternal()]);
+    }
 
-    await Promise.all([this.#imageGenInternal(), this.#ttsInternal()]);
+    if (!data.generate && data.task_id) {
+      await this.#generateImageStatus(data.task_id);
+    }
   }
 
   /**
@@ -427,9 +423,13 @@ export default class CoNexus {
    * @param data - The step data returned from the API.
    * @param task_id - Optional task identifier for pending assets.
    */
-  async #setStepData(data: GameData, task_id?: string): Promise<void> {
+  async #setStepData(
+    data: GameData,
+    task_id?: string,
+    generate?: boolean,
+  ): Promise<void> {
     this.step_data = data;
-    this.step_data.task_id = task_id || '';
+    this.step_data.task_id = generate ? crypto.randomUUID() : task_id || '';
     this.maxStep = Math.max(this.maxStep, data.step);
 
     console.log('set step data');

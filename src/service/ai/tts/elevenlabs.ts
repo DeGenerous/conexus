@@ -17,7 +17,7 @@ export class ElevenLabsProvider implements TTSProvider {
   private readonly elevenlabs: ElevenLabsClient;
   private readonly voiceId: string;
 
-  constructor(apiKey?: string, voiceId: string = DEFAULT_VOICES.cheerful) {
+  constructor(voiceId: string = DEFAULT_VOICES.cheerful) {
     this.elevenlabs = client;
     this.voiceId = voiceId;
   }
@@ -33,7 +33,7 @@ export class ElevenLabsProvider implements TTSProvider {
       return this.convertToBlob(stream, 'audio/mpeg');
     } catch (error) {
       console.error('Error generating TTS:', error);
-      return new Blob([], { type: 'audio/mpeg' });
+      throw error;
     }
   }
 
@@ -54,26 +54,25 @@ export class ElevenLabsProvider implements TTSProvider {
     stream: ReadableStream<Uint8Array<ArrayBufferLike>>,
     mimeType: string = 'audio/mpeg',
   ): Promise<Blob> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const chunks: Uint8Array[] = [];
-      try {
-        for await (const chunk of stream) {
-          chunks.push(chunk);
+      (async () => {
+        try {
+          for await (const chunk of stream) {
+            chunks.push(chunk);
+          }
+          const size = chunks.reduce((n, c) => n + c.length, 0);
+          const buffer = new Uint8Array(size);
+          let offset = 0;
+          for (const c of chunks) {
+            buffer.set(c, offset);
+            offset += c.length;
+          }
+          resolve(new Blob([buffer], { type: mimeType }));
+        } catch (error) {
+          reject(error);
         }
-
-        const size = chunks.reduce((n, c) => n + c.length, 0);
-        const buffer = new Uint8Array(size);
-
-        let offset = 0;
-        for (const c of chunks) {
-          buffer.set(c, offset);
-          offset += c.length;
-        }
-
-        resolve(new Blob([buffer], { type: mimeType }));
-      } catch (error) {
-        reject(error);
-      }
+      })();
     });
   }
 }

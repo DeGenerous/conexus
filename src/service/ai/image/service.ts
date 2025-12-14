@@ -24,19 +24,21 @@ export async function generateImageWithFallback(
             `Attempting image generation with ${provider.name}, attempt ${retryCtx.attempt}`,
           );
           try {
-            const start = await provider.start(prompt, ctx);
+            const start = await provider.start(prompt);
 
             if (start.kind === 'ready') {
               return start.image;
             }
 
-            console.log(`Image generation started with ${provider.name}, job ID: ${start.id}`);
+            console.log(
+              `Image generation started with ${provider.name}, job ID: ${start.id}`,
+            );
 
             // job-based
             while (true) {
               await delay(3000);
 
-              const status = await provider.status!(start.id, ctx);
+              const status = await provider.status!(start.id);
 
               if (status.status === 'pending') continue;
               if (status.status === 'ready') return status.image;
@@ -46,7 +48,6 @@ export async function generateImageWithFallback(
               );
             }
           } catch (err) {
-            errors.push(err as Error);
             return Promise.reject(err);
           }
         },

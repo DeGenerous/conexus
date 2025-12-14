@@ -13,7 +13,7 @@ export async function generateTTSWithFallback(text: string): Promise<Blob> {
 
   for (const provider of ttsProviders) {
     try {
-      return await withRetry((retryCtx) => provider.generate(text), {
+      return await withRetry((retryCtx) => provider.generate(text, {}), {
         retries: 2,
         timeoutMs: 20_000,
       });

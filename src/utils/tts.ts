@@ -1,4 +1,4 @@
-export function constructTextFromGame(game: GameData): string {
+export function formatGameTextForSpeech(game: GameData): string {
   let text = game.story;
 
   if (game.ended) {

@@ -4,8 +4,8 @@
 export interface ImageProvider {
   name: string;
 
-  start(prompt: string, ctx: RequestContext): Promise<ImageStartResult>;
-  status?(id: string, ctx: RequestContext): Promise<ImageStatusResult>;
+  start(prompt: string): Promise<ImageStartResult>;
+  status?(id: string): Promise<ImageStatusResult>;
 }
 
 /*

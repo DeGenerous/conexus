@@ -24,7 +24,7 @@ type TTSOptions = {
 
 type ImageResult = {
   data: string;
-  type: ImageType;
+  imageType: ImageType;
 };
 
 type ImageStartResult =

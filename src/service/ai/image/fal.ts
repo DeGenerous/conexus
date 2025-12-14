@@ -6,12 +6,12 @@ import type { ImageProvider } from '@service/ai/provider';
 export class FalProvider implements ImageProvider {
   name = 'FAL';
 
-  async start(prompt: string, ctx: RequestContext): Promise<ImageStartResult> {
+  async start(prompt: string): Promise<ImageStartResult> {
     const { imageType, data } = await this.generateFalImage(prompt);
     return {
       kind: 'ready',
       image: {
-        type: imageType,
+        imageType: imageType,
         data: data,
       },
     };
@@ -38,10 +38,14 @@ export class FalProvider implements ImageProvider {
         url = result.data.images[0].url;
       }
 
+      if (!url) {
+        throw new Error('Failed to generate image: No image URL returned.');
+      }
+
       return { imageType: 'url', data: url };
     } catch (error) {
       console.error('Error generating image:', error);
-      return { imageType: 'url', data: '' };
+      throw error instanceof Error ? error : new Error(String(error));
     }
   }
 }

@@ -5,7 +5,7 @@ import { story, game } from '@stores/conexus.svelte';
 import { toastStore } from '@stores/toast.svelte';
 import openModal from '@stores/modal.svelte';
 import { getCurrentUser } from '@utils/route-guard';
-import { constructTextFromGame } from '@utils/tts';
+import { formatGameTextForSpeech } from '@utils/tts';
 
 /**
  * Orchestrates interactive story sessions and syncs game state with the backend.
@@ -317,10 +317,23 @@ export default class CoNexus {
 
     if (!res.ok) {
       game.loading = false;
-      return Promise.reject('Image generation failed');
+      let errorDetail = '';
+      try {
+        const errorBody = await res.json();
+        errorDetail = errorBody?.message || JSON.stringify(errorBody);
+      } catch (e) {
+        try {
+          errorDetail = await res.text();
+        } catch {
+          errorDetail = '';
+        }
+      }
+      return Promise.reject(
+        `Image generation failed (status: ${res.status})${errorDetail ? `: ${errorDetail}` : ''}`,
+      );
     }
 
-    const response = await res.json();
+    const response = (await res.json()) as ImageResult;
 
     this.#commitStepData({
       image: response.data,
@@ -329,7 +342,7 @@ export default class CoNexus {
   }
 
   async #fetchTTSFromClientAI(): Promise<Blob> {
-    let text = constructTextFromGame(this.step_data);
+    let text = formatGameTextForSpeech(this.step_data);
 
     const input: DialogueInput = {
       text,
@@ -413,7 +426,7 @@ export default class CoNexus {
       await Promise.all([this.#imageGenInternal(), this.#ttsInternal()]);
     }
 
-    if (!data.generate && data.task_id) {
+    if (!data.generate && data.task_id && data.task_id !== '') {
       await this.#generateImageStatus(data.task_id);
     }
   }

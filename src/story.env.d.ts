@@ -13,8 +13,6 @@ type PreferredSetup = {
   play_mode?: PlayMode;
 };
 
-type TTSPROVIDER = 'backend' | 'elevenlabs';
-
 type DialogueInput = {
   text: string;
   delivery?: string;

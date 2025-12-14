@@ -49,7 +49,7 @@ export class FluxProvider implements ImageProvider {
     if (data.status === 'Ready') {
       return {
         status: 'ready',
-        image: { type: 'url', data: data.result.sample },
+        image: { imageType: 'url', data: data.result.sample },
       };
     }
 

@@ -16,10 +16,11 @@ export const game = $state<{
   fullscreen: false,
 });
 
-export const ttsProvider = $state<'elevenlabs' | 'degenai'>('degenai');
-
 // Global reactive background settings used by Step.svelte to style the play view
 export const conexusBG = $state<ConexusBG>({
   opacity: 50,
   color: '#000000',
 });
+
+export const ttsProvider = $state<'elevenlabs' | 'degenai'>('degenai');
+export const imageProvider = $state<'luma' | 'dalle' | 'fal'>('fal');

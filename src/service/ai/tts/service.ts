@@ -1,37 +1,27 @@
-import { type TTSProvider } from './provider';
-import { BackendTTSProvider } from './degenai';
-import { ElevenLabsTTSProvider, DEFAULT_VOICES } from './elevenlabs';
+import { DegenProvider } from './degenai';
+import { ElevenLabsProvider } from './elevenlabs';
 
-export class TTSService {
-  private provider: TTSProvider;
+import { type TTSProvider } from '../provider';
 
-  constructor(provider: TTSProvider) {
-    this.provider = provider;
-  }
+export const ttsProviders: TTSProvider[] = [
+  new DegenProvider(),
+  new ElevenLabsProvider(),
+];
 
-  setProvider(provider: TTSProvider) {
-    this.provider = provider;
-  }
+export async function generateTTSWithFallback(text: string): Promise<Blob> {
+  const errors: Error[] = [];
 
-  async generateTTS(text: string): Promise<Blob> {
-    return this.provider.generateTTS(text);
-  }
-
-  async streamTTS(
-    text: string,
-  ): Promise<ReadableStream<Uint8Array> | undefined> {
-    if (this.provider.streamTTS) {
-      return this.provider.streamTTS(text);
+  for (const provider of ttsProviders) {
+    try {
+      return await withRetry(() => provider.generate(text), {
+        retries: 2,
+        timeoutMs: 20_000,
+      });
+    } catch (err) {
+      errors.push(err as Error);
+      continue;
     }
-    return undefined;
   }
-}
 
-// Singleton instance
-export const ttsService = new TTSService(
-  new ElevenLabsTTSProvider(
-    import.meta.env.PUBLIC_ELEVENLABS_API_KEY,
-    DEFAULT_VOICES.cheerful,
-  ),
-  //   new BackendTTSProvider(import.meta.env.PUBLIC_BACKEND_API_URL),
-);
+  throw new AggregateError(errors, 'All TTS providers failed');
+}

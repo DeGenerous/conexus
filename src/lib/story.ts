@@ -2,7 +2,12 @@ import { ERROR_REQUIRED_TOKEN, ERROR_OUT_OF_CREDITS } from '@constants/error';
 import { api_error } from '@errors/index';
 // import { DEFAULT_VOICES } from '@service/ai/tts/elevenlabs';
 import StoryAPI from '@service/story';
-import { story, game, ttsProvider } from '@stores/conexus.svelte';
+import {
+  story,
+  game,
+  ttsProvider,
+  imageProvider,
+} from '@stores/conexus.svelte';
 import { toastStore } from '@stores/toast.svelte';
 import openModal from '@stores/modal.svelte';
 import { getCurrentUser } from '@utils/route-guard';
@@ -314,7 +319,7 @@ export default class CoNexus {
     }
   }
 
-  async fetchFromClientAI(): Promise<Blob> {
+  async fetchTTSFromClientAI(): Promise<Blob> {
     console.log('Fetching ElevenLabs TTS for step:', this.step_data.id);
     let text = constructTextFromGame(this.step_data);
 
@@ -324,7 +329,7 @@ export default class CoNexus {
       voiceId: '9BWtsMINqrJLrRacOk9x',
     };
 
-    const res = await fetch(`/ai/tts/${ttsProvider}`, {
+    const res = await fetch(`/ai/tts`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(input),
@@ -338,7 +343,7 @@ export default class CoNexus {
     return await res.blob();
   }
 
-  async fetchFromServerAI(): Promise<Blob> {
+  async fetchTTSFromServerAI(): Promise<Blob> {
     const { status, message, data } = await this.api.tts(this.step_data.id);
 
     if (status === 'error') {
@@ -358,6 +363,39 @@ export default class CoNexus {
     return data;
   }
 
+  async #imageGen(): Promise<void> {
+    console.log('Generating image for step:', this.step_data.id);
+    let prompt = this.step_data.story; //TODO: Change to gen_image_prompt
+
+    const input: DialogueInput = {
+      text: prompt,
+    };
+
+    const res = await fetch(`/ai/image`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    });
+
+    if (!res.ok) {
+      game.loading = false;
+      throw new Error('Image failed');
+    }
+
+    const response = await res.clone().json();
+    console.log('Image generation response:', response);
+
+    this.step_data = {
+      ...this.step_data,
+      image: response.data,
+      image_type: response.imageType,
+    };
+
+    console.log('image status is generated (#imageGen)');
+
+    story.set(this);
+  }
+
   /**
    * Convert text to speech
    * @returns A promise that resolves when the TTS is ready
@@ -365,11 +403,11 @@ export default class CoNexus {
   async #textToSpeech(which: 'client' | 'server' = 'client'): Promise<void> {
     switch (which) {
       case 'client':
-        this.step_data.tts = await this.fetchFromClientAI();
+        this.step_data.tts = await this.fetchTTSFromClientAI();
         story.set(this);
         break;
       default:
-        this.step_data.tts = await this.fetchFromServerAI();
+        this.step_data.tts = await this.fetchTTSFromServerAI();
         story.set(this);
         break;
     }
@@ -407,7 +445,8 @@ export default class CoNexus {
     // await new Promise((resolve) => setTimeout(resolve, 3000));
 
     if (data.task_id !== '') {
-      await this.#generateImageStatus(data.task_id);
+      // await this.#generateImageStatus(data.task_id);
+      await this.#imageGen();
     }
   }
 

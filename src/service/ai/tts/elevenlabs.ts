@@ -2,7 +2,7 @@
 import { ElevenLabsClient, play } from '@elevenlabs/elevenlabs-js';
 import 'dotenv/config';
 
-import { type TTSProvider } from './provider';
+import type { TTSProvider } from '../provider';
 
 export const DEFAULT_VOICES = {
   cheerful: '9BWtsMINqrJLrRacOk9x',
@@ -68,40 +68,31 @@ export async function generateTTS(dialogues: DialogueInput[]): Promise<Blob> {
   return convertToBlob(audio, 'audio/mpeg');
 }
 
-export class ElevenLabsTTSProvider implements TTSProvider {
+export class ElevenLabsProvider implements TTSProvider {
+  name = 'ElevenLabs';
+
   private readonly elevenlabs: ElevenLabsClient;
   private readonly voiceId: string;
 
-  constructor(apiKey: string, voiceId: string) {
-    this.elevenlabs = new ElevenLabsClient({ apiKey: () => apiKey });
+  constructor(apiKey?: string, voiceId: string = DEFAULT_VOICES.cheerful) {
+    this.elevenlabs = client;
+    // this.elevenlabs = new ElevenLabsClient({ apiKey: () => apiKey });
     this.voiceId = voiceId;
   }
 
-  async generateTTS(text: string): Promise<Blob> {
-    const audio = await this.elevenlabs.textToSpeech.convert(this.voiceId, {
-      text: text,
-      modelId: 'eleven_multilingual_v2',
-      outputFormat: 'mp3_44100_128',
-    });
+  async generate(text: string, opts?: TTSOptions): Promise<Blob> {
+    try {
+      const stream = await client.textToSpeech.convert('9BWtsMINqrJLrRacOk9x', {
+        text: text,
+        modelId: 'eleven_multilingual_v2',
+        outputFormat: 'mp3_44100_128',
+      });
 
-    play(audio);
-
-    // Convert the ReadableStream to a Blob
-    const chunks: Uint8Array[] = [];
-    for await (const chunk of audio) {
-      chunks.push(chunk);
+      return convertToBlob(stream, 'audio/mpeg');
+    } catch (error) {
+      console.error('Error generating TTS:', error);
+      return new Blob([], { type: 'audio/mpeg' });
     }
-    // const audioBuffer = Buffer.concat(chunks);
-
-    const totalLength = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
-    const audioBuffer = new Uint8Array(totalLength);
-    let offset = 0;
-    for (const chunk of chunks) {
-      audioBuffer.set(chunk, offset);
-      offset += chunk.length;
-    }
-
-    return new Blob([audioBuffer], { type: 'audio/mpeg' });
   }
 
   async streamTTS(text: string): Promise<ReadableStream<Uint8Array>> {

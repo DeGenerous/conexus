@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { generateDegenTTS } from '@service/ai/tts/degenai';
+import { generateTTSWithFallback } from '@service/ai/tts/service';
 
 export const POST: APIRoute = async ({ request }) => {
   let input: DialogueInput;
@@ -15,7 +15,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const audio = await generateDegenTTS(input.text);
+    const audio = await generateTTSWithFallback(input.text);
 
     return new Response(audio, {
       status: 200,

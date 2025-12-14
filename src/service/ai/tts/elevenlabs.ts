@@ -2,7 +2,7 @@
 import { ElevenLabsClient, play } from '@elevenlabs/elevenlabs-js';
 import 'dotenv/config';
 
-import type { TTSProvider } from '../provider';
+import type { TTSProvider } from '@service/ai/provider';
 
 export const DEFAULT_VOICES = {
   cheerful: '9BWtsMINqrJLrRacOk9x',

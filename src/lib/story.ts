@@ -1,13 +1,7 @@
 import { ERROR_REQUIRED_TOKEN, ERROR_OUT_OF_CREDITS } from '@constants/error';
 import { api_error } from '@errors/index';
-// import { DEFAULT_VOICES } from '@service/ai/tts/elevenlabs';
 import StoryAPI from '@service/story';
-import {
-  story,
-  game,
-  ttsProvider,
-  imageProvider,
-} from '@stores/conexus.svelte';
+import { story, game } from '@stores/conexus.svelte';
 import { toastStore } from '@stores/toast.svelte';
 import openModal from '@stores/modal.svelte';
 import { getCurrentUser } from '@utils/route-guard';
@@ -319,7 +313,34 @@ export default class CoNexus {
     }
   }
 
-  async fetchTTSFromClientAI(): Promise<Blob> {
+  async #imageGenInternal(): Promise<void> {
+    console.log('Generating image for step:', this.step_data.id);
+    let prompt = this.step_data.story; //TODO: Change to gen_image_prompt
+
+    const input: DialogueInput = {
+      text: prompt,
+    };
+
+    const res = await fetch(`/ai/image`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    });
+
+    if (!res.ok) {
+      game.loading = false;
+      return Promise.reject('Image generation failed');
+    }
+
+    const response = await res.json();
+
+    this.#commitStepData({
+      image: response.data,
+      image_type: response.imageType,
+    });
+  }
+
+  async #fetchTTSFromClientAI(): Promise<Blob> {
     console.log('Fetching ElevenLabs TTS for step:', this.step_data.id);
     let text = constructTextFromGame(this.step_data);
 
@@ -343,7 +364,7 @@ export default class CoNexus {
     return await res.blob();
   }
 
-  async fetchTTSFromServerAI(): Promise<Blob> {
+  async #fetchTTSFromServerAI(): Promise<Blob> {
     const { status, message, data } = await this.api.tts(this.step_data.id);
 
     if (status === 'error') {
@@ -363,91 +384,43 @@ export default class CoNexus {
     return data;
   }
 
-  async #imageGen(): Promise<void> {
-    console.log('Generating image for step:', this.step_data.id);
-    let prompt = this.step_data.story; //TODO: Change to gen_image_prompt
-
-    const input: DialogueInput = {
-      text: prompt,
-    };
-
-    const res = await fetch(`/ai/image`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(input),
-    });
-
-    if (!res.ok) {
-      game.loading = false;
-      throw new Error('Image failed');
-    }
-
-    const response = await res.clone().json();
-    console.log('Image generation response:', response);
-
-    this.step_data = {
-      ...this.step_data,
-      image: response.data,
-      image_type: response.imageType,
-    };
-
-    console.log('image status is generated (#imageGen)');
-
-    story.set(this);
-  }
-
   /**
    * Convert text to speech
    * @returns A promise that resolves when the TTS is ready
    */
-  async #textToSpeech(which: 'client' | 'server' = 'client'): Promise<void> {
+  async #ttsInternal(which: 'client' | 'server' = 'client'): Promise<void> {
     switch (which) {
       case 'client':
-        this.step_data.tts = await this.fetchTTSFromClientAI();
-        story.set(this);
-        break;
+        const clientResult = await this.#fetchTTSFromClientAI();
+        this.#commitStepData({ tts: clientResult });
+        return;
       default:
-        this.step_data.tts = await this.fetchTTSFromServerAI();
-        story.set(this);
-        break;
+        const serverResult = await this.#fetchTTSFromServerAI();
+        this.#commitStepData({ tts: serverResult });
+        return;
     }
-  }
-
-  /**
-   * Restore credits when a story continuation fails.
-   */
-  async #rollbackCredits(): Promise<void> {
-    const { status, message } = await this.api.restoreCredit();
-
-    if (status === 'error') {
-      api_error(message);
-      return;
-    }
-
-    // return to topic page
-    // window.location.href = `/topic/${topic_id}`; // TODO: Change to topic page
-    window.location.reload();
-
-    toastStore.show(message || 'Credits rolled back', 'info');
   }
 
   /* Helper */
+
+  #commitStepData(patch: Partial<GameData>) {
+    this.step_data = {
+      ...this.step_data,
+      ...patch,
+    };
+    story.set(this);
+  }
 
   /**
    * Set the story data and the task id
    * @param data The story data and task id to set
    */
   async #setStory(data: { story: GameData; task_id: string }): Promise<void> {
-    // Set step data
     await this.#setStepData(data.story, data.task_id);
 
-    // Wait for image generation
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    if (!data.task_id) return;
 
-    if (data.task_id !== '') {
-      // await this.#generateImageStatus(data.task_id);
-      await this.#imageGen();
-    }
+    await Promise.all([this.#imageGenInternal(), this.#ttsInternal()]);
   }
 
   /**
@@ -467,9 +440,23 @@ export default class CoNexus {
 
     story.set(this);
     game.loading = false;
+  }
 
-    if (task_id !== '') {
-      await Promise.all([this.#textToSpeech()]);
+  /**
+   * Restore credits when a story continuation fails.
+   */
+  async #rollbackCredits(): Promise<void> {
+    const { status, message } = await this.api.restoreCredit();
+
+    if (status === 'error') {
+      api_error(message);
+      return;
     }
+
+    // return to topic page
+    // window.location.href = `/topic/${topic_id}`; // TODO: Change to topic page
+    window.location.reload();
+
+    toastStore.show(message || 'Credits rolled back', 'info');
   }
 }

@@ -1,4 +1,4 @@
-import type { TTSProvider } from '../provider';
+import type { TTSProvider } from '@service/ai/provider';
 
 export class DegenProvider implements TTSProvider {
   name = 'DegenAI';

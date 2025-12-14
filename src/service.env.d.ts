@@ -26,3 +26,7 @@ type TTSOptions = {
 type MediaResult =
   | { status: 'ready'; data: string; type: 'url' | 'base64' }
   | { status: 'pending'; taskId: string };
+
+type RetryOptions = {
+  retries?: number;
+};

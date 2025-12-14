@@ -1,7 +1,7 @@
 import { fal } from '@fal-ai/client';
 import 'dotenv/config';
 
-import type { ImageProvider } from '../provider';
+import type { ImageProvider } from '@service/ai/provider';
 
 export class FalProvider implements ImageProvider {
   name = 'FAL';

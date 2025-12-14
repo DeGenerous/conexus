@@ -341,7 +341,6 @@ export default class CoNexus {
   }
 
   async #fetchTTSFromClientAI(): Promise<Blob> {
-    console.log('Fetching ElevenLabs TTS for step:', this.step_data.id);
     let text = constructTextFromGame(this.step_data);
 
     const input: DialogueInput = {

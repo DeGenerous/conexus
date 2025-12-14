@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+
 import { generateTTSWithFallback } from '@service/ai/tts/service';
 
 export const POST: APIRoute = async ({ request }) => {

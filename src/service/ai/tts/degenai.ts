@@ -16,8 +16,6 @@ export class DegenProvider implements TTSProvider {
       throw new Error('text is empty');
     }
 
-    console.log('Generating TTS with DegenAI');
-
     const speechURL = `${this.apiUrl}/audio/speech`;
 
     const payload = {
@@ -40,8 +38,6 @@ export class DegenProvider implements TTSProvider {
       console.error(`TTS request failed (${res.status}): ${errText}`);
       return Promise.reject(new Error('TTS request failed'));
     }
-
-    console.log('TTS generation successful');
 
     return await res.blob();
   }

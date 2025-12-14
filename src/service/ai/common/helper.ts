@@ -5,8 +5,6 @@ export async function withRetry<T>(
 ): Promise<T> {
   const retries = options.retries ?? 2;
 
-  console.log(`withRetry: retries=${retries}`);
-
   let lastErr: unknown;
 
   for (let i = 0; i <= retries; i++) {

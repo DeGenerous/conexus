@@ -12,9 +12,8 @@ type RequestContext = {
   signal?: AbortSignal; // cancellation / timeout
 };
 
-type ImageResult = {
-  data: string;
-  type: ImageType;
+type RetryOptions = {
+  retries?: number;
 };
 
 type TTSOptions = {
@@ -23,10 +22,16 @@ type TTSOptions = {
   pitch?: number;
 };
 
-type MediaResult =
-  | { status: 'ready'; data: string; type: 'url' | 'base64' }
-  | { status: 'pending'; taskId: string };
-
-type RetryOptions = {
-  retries?: number;
+type ImageResult = {
+  data: string;
+  type: ImageType;
 };
+
+type ImageStartResult =
+  | { kind: 'ready'; image: ImageResult }
+  | { kind: 'job'; id: string };
+
+type ImageStatusResult =
+  | { status: 'pending' }
+  | { status: 'ready'; image: ImageResult }
+  | { status: 'failed' };

@@ -1,8 +1,14 @@
 import type { ImageProvider } from '@service/ai/provider';
 import { withRetry } from '@service/ai/common/helper';
 import { FalProvider } from '@service/ai/image/fal';
+import { LumaProvider } from '@service/ai/image/luma';
+import { FluxProvider } from '@service/ai/image/flux';
 
-const imageProviders: ImageProvider[] = [new FalProvider()];
+const imageProviders: ImageProvider[] = [
+  new FalProvider(),
+  new LumaProvider(),
+  new FluxProvider(),
+];
 
 export async function generateImageWithFallback(
   prompt: string,
@@ -13,7 +19,37 @@ export async function generateImageWithFallback(
   for (const provider of imageProviders) {
     try {
       return await withRetry(
-        (retryCtx) => provider.generate(prompt, retryCtx),
+        async (retryCtx) => {
+          console.log(
+            `Attempting image generation with ${provider.name}, attempt ${retryCtx.attempt}`,
+          );
+          try {
+            const start = await provider.start(prompt, ctx);
+
+            if (start.kind === 'ready') {
+              return start.image;
+            }
+
+            console.log(`Image generation started with ${provider.name}, job ID: ${start.id}`);
+
+            // job-based
+            while (true) {
+              await delay(3000);
+
+              const status = await provider.status!(start.id, ctx);
+
+              if (status.status === 'pending') continue;
+              if (status.status === 'ready') return status.image;
+
+              return Promise.reject(
+                new Error(`${provider.name} image generation failed`),
+              );
+            }
+          } catch (err) {
+            errors.push(err as Error);
+            return Promise.reject(err);
+          }
+        },
         ctx,
         { retries: 2 },
       );
@@ -23,4 +59,8 @@ export async function generateImageWithFallback(
   }
 
   throw new AggregateError(errors, 'All image providers failed');
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

@@ -6,9 +6,15 @@ import type { ImageProvider } from '@service/ai/provider';
 export class FalProvider implements ImageProvider {
   name = 'FAL';
 
-  async generate(prompt: string, ctx: RequestContext): Promise<ImageResult> {
+  async start(prompt: string, ctx: RequestContext): Promise<ImageStartResult> {
     const { imageType, data } = await this.generateFalImage(prompt);
-    return { type: imageType, data: data };
+    return {
+      kind: 'ready',
+      image: {
+        type: imageType,
+        data: data,
+      },
+    };
   }
 
   private async generateFalImage(

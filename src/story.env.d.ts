@@ -14,3 +14,9 @@ type PreferredSetup = {
 };
 
 type TTSPROVIDER = 'backend' | 'elevenlabs';
+
+type DialogueInput = {
+  text: string;
+  delivery?: string;
+  voiceId?: string;
+};

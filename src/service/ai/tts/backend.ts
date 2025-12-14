@@ -1,4 +1,4 @@
-import { constructTextFromGame, type TTSProvider } from './provider';
+import { type TTSProvider } from './provider';
 
 export class BackendTTSProvider implements TTSProvider {
   private readonly apiUrl: string;
@@ -7,11 +7,11 @@ export class BackendTTSProvider implements TTSProvider {
     this.apiUrl = apiUrl;
   }
 
-  async generateTTS(game: GameData): Promise<Blob> {
+  async generateTTS(text: string): Promise<Blob> {
     const response = await fetch(`${this.apiUrl}/tts`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: constructTextFromGame(game) }),
+      body: JSON.stringify({ text }),
     });
 
     if (!response.ok) {

@@ -22,6 +22,7 @@
     "@types/uuid": "^10.0.0",
     "@vite-pwa/astro": "1.1.0",
     "astro": "5.16.4",
+    "baseline-browser-mapping": "^2.9.7",
     "sass-embedded": "1.90.0",
     "svelte": "5.38.1",
     "vitest": "4.0.15"
@@ -44,6 +45,7 @@
     "astro-compress": "^2.3.8",
     "astro-seo": "^0.8.4",
     "comlink": "4.4.2",
+    "dotenv": "^17.2.3",
     "ethers": "6.15.0",
     "metamask": "^0.0.1-security",
     "prettier": "3.6.2",

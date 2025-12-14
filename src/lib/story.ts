@@ -1,10 +1,12 @@
 import { ERROR_REQUIRED_TOKEN, ERROR_OUT_OF_CREDITS } from '@constants/error';
 import { api_error } from '@errors/index';
+// import { DEFAULT_VOICES } from '@service/ai/tts/elevenlabs';
 import StoryAPI from '@service/story';
 import { story, game, ttsProvider } from '@stores/conexus.svelte';
 import { toastStore } from '@stores/toast.svelte';
 import openModal from '@stores/modal.svelte';
 import { getCurrentUser } from '@utils/route-guard';
+import { constructTextFromGame } from '@utils/tts';
 
 /**
  * Orchestrates interactive story sessions and syncs game state with the backend.
@@ -312,29 +314,65 @@ export default class CoNexus {
     }
   }
 
-  /**
-   * Convert text to speech
-   * @returns A promise that resolves when the TTS is ready
-   */
-  async #textToSpeech(): Promise<void> {
+  async fetchElevenLabsTTS(): Promise<Blob> {
+    console.log('Fetching ElevenLabs TTS for step:', this.step_data.id);
+    let text = constructTextFromGame(this.step_data);
+
+    const input: DialogueInput = {
+      text,
+      delivery: 'default',
+      voiceId: '9BWtsMINqrJLrRacOk9x',
+    };
+
+    const res = await fetch('/ai/tts/elevenlabs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    });
+
+    if (!res.ok) {
+      game.loading = false;
+      throw new Error('TTS failed');
+    }
+
+    return await res.blob();
+  }
+
+  async fetchFromBackendTTS(): Promise<Blob> {
     const { status, message, data } = await this.api.tts(this.step_data.id);
 
     if (status === 'error') {
       api_error(message);
       game.loading = false;
-      return;
+      throw new Error('TTS fetch failed');
     }
 
     if (!data) {
       game.loading = false;
-      return;
+      throw new Error('No TTS data received');
     }
 
     console.log('tts is ready');
     console.log(this);
 
-    this.step_data.tts = data;
-    story.set(this);
+    return data;
+  }
+
+  /**
+   * Convert text to speech
+   * @returns A promise that resolves when the TTS is ready
+   */
+  async #textToSpeech(): Promise<void> {
+    switch (ttsProvider) {
+      case 'elevenlabs':
+        this.step_data.tts = await this.fetchElevenLabsTTS();
+        story.set(this);
+        break;
+      default:
+        this.step_data.tts = await this.fetchFromBackendTTS();
+        story.set(this);
+        break;
+    }
   }
 
   /**
@@ -391,7 +429,7 @@ export default class CoNexus {
     story.set(this);
     game.loading = false;
 
-    if (task_id !== '' && ttsProvider === 'backend') {
+    if (task_id !== '') {
       await Promise.all([this.#textToSpeech()]);
     }
   }

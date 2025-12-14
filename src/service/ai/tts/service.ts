@@ -2,7 +2,7 @@ import { type TTSProvider } from './provider';
 import { BackendTTSProvider } from './backend';
 import { ElevenLabsTTSProvider, DEFAULT_VOICES } from './elevenlabs';
 
-class TTSService {
+export class TTSService {
   private provider: TTSProvider;
 
   constructor(provider: TTSProvider) {
@@ -13,15 +13,15 @@ class TTSService {
     this.provider = provider;
   }
 
-  async generateTTS(game: GameData): Promise<Blob> {
-    return this.provider.generateTTS(game);
+  async generateTTS(text: string): Promise<Blob> {
+    return this.provider.generateTTS(text);
   }
 
   async streamTTS(
-    game: GameData,
+    text: string,
   ): Promise<ReadableStream<Uint8Array> | undefined> {
     if (this.provider.streamTTS) {
-      return this.provider.streamTTS(game);
+      return this.provider.streamTTS(text);
     }
     return undefined;
   }

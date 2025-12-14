@@ -20,8 +20,6 @@ export class FalProvider implements ImageProvider {
   private async generateFalImage(
     prompt: string,
   ): Promise<{ imageType: ImageType; data: string }> {
-    console.log('Generating FAL image for prompt:', prompt);
-
     try {
       const result = await fal.subscribe('fal-ai/z-image/turbo', {
         input: {

@@ -209,12 +209,8 @@
   @use '/src/styles/mixins' as *;
 
   header {
-    width: 100vw;
+    width: 100%;
     padding-inline: 1.5rem;
-
-    h1 {
-      width: 100%;
-    }
 
     button.mobile-only {
       display: flex;
@@ -226,6 +222,7 @@
 
     @include respond-up('small-desktop') {
       h1 {
+        width: 100%;
         margin-right: 4.5rem;
       }
 

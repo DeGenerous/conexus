@@ -34,7 +34,7 @@
 
 <style>
   svg {
-    width: 10rem;
+    width: 100px;
     fill: currentColor;
   }
 </style>

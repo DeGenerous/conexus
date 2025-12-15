@@ -8,14 +8,14 @@ export const ttsProviders: TTSProvider[] = [];
 function getTTSProviders(): TTSProvider[] {
   if (ttsProviders.length === 0) {
     try {
-      ttsProviders.push(new DegenProvider());
-    } catch (err) {
-      console.error('Failed to initialize DegenProvider:', err);
-    }
-    try {
       ttsProviders.push(new ElevenLabsProvider());
     } catch (err) {
       console.error('Failed to initialize ElevenLabsProvider:', err);
+    }
+    try {
+      ttsProviders.push(new DegenProvider());
+    } catch (err) {
+      console.error('Failed to initialize DegenProvider:', err);
     }
   }
   return ttsProviders;

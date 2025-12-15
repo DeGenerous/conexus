@@ -243,7 +243,7 @@ export default class CoNexus {
     }
 
     game.loading = false;
-    await this.#setStory(data);
+    await this.#setStory(data); // TODO: Change to this after save to backend, await this.#setStepData(data.story);
   }
 
   /**

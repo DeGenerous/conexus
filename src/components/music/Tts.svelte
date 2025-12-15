@@ -7,7 +7,7 @@
   let last_tts: Blob | null = null;
   let tts: Blob | null = null;
 
-  const stepTTS = $derived.by<Blob>(() => $story?.step_data?.tts!);
+  const stepTTS: Blob | null = $derived.by(() => $story?.step_data?.tts!);
 
   $effect(() => {
     if (stepTTS && last_tts !== stepTTS) {

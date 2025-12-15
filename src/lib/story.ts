@@ -242,11 +242,6 @@ export default class CoNexus {
       return;
     }
 
-    console.log('step is loaded');
-    console.log('incoming step ID: ', this.step_data.id);
-    console.log('returned step ID: ', data.story.id);
-    console.log(this);
-
     game.loading = false;
     await this.#setStory(data);
   }
@@ -302,7 +297,6 @@ export default class CoNexus {
   }
 
   async #imageGenInternal(): Promise<void> {
-    console.log('Generating image for step:', this.step_data.id);
     let prompt = this.step_data.story; //TODO: Change to gen_image_prompt
 
     const input: DialogueInput = {
@@ -378,9 +372,6 @@ export default class CoNexus {
       throw new Error('No TTS data received');
     }
 
-    console.log('tts is ready');
-    console.log(this);
-
     return data;
   }
 
@@ -448,7 +439,6 @@ export default class CoNexus {
     console.log('set step data');
     console.log('incoming step ID: ', this.step_data.id);
     console.log('returned step ID: ', data.id);
-    console.log(this);
 
     story.set(this);
     game.loading = false;

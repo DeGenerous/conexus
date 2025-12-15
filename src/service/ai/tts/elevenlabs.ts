@@ -15,7 +15,7 @@ export class ElevenLabsProvider implements TTSProvider {
   private readonly elevenlabs: ElevenLabsClient;
   private readonly voiceId: string;
 
-  constructor(voiceId: string = DEFAULT_VOICES.cheerful) {
+  constructor(voiceId: string = DEFAULT_VOICES.casual) {
     const apiKey = process.env.ELEVENLABS_API_KEY;
     if (!apiKey) {
       throw new Error(
@@ -26,27 +26,17 @@ export class ElevenLabsProvider implements TTSProvider {
     this.voiceId = voiceId;
   }
 
-  async generate(text: string, _opts?: TTSOptions): Promise<Blob> {
+  async generate(text: string, opts?: TTSOptions): Promise<Blob> {
     try {
-      // const stream = await this.elevenlabs.textToSpeech.convert(this.voiceId, {
-      //   text: text,
-      //   modelId: 'eleven_multilingual_v2',
-      //   outputFormat: 'mp3_44100_128',
-      // });
-      const stream = await this.elevenlabs.textToDialogue.convert({
-        inputs: [
-          {
-            text: `[cheerfully] ${text}`,
-            voiceId: '9BWtsMINqrJLrRacOk9x',
-          },
-          {
-            text: `[stuttering] ${text}`,
-            voiceId: 'IKne3meq5aSn9XLyUdCD',
-          },
-        ],
-        // modelId: 'eleven_multilingual_v2',
-        outputFormat: 'mp3_44100_128',
-      });
+      const stream = await this.elevenlabs.textToSpeech.convert(
+        opts?.voiceId ?? this.voiceId,
+        {
+          text: text,
+          modelId: 'eleven_flash_v2_5',
+          //   modelId: 'eleven_multilingual_v2',
+          outputFormat: 'mp3_44100_128',
+        },
+      );
 
       return this.convertToBlob(stream, 'audio/mpeg');
     } catch (error) {

@@ -10,6 +10,7 @@
   } from '@utils/route-guard';
   import { loadUserbackWidget, clearUserbackUserData } from '@utils/userback';
   import { user, developerMode, approvedTester } from '@stores/account.svelte';
+  import { showProfile } from '@stores/modal.svelte';
   import { sidebarOpen } from '@stores/navigation.svelte';
 
   import Profile from '@components/Profile.svelte';
@@ -60,6 +61,10 @@
   let showIntro = $state<boolean>(false);
 
   function toggleSidebar() {
+    if (!$user) {
+      $showProfile = true;
+      return;
+    }
     $sidebarOpen = !$sidebarOpen;
   }
 

@@ -351,7 +351,7 @@
 
 <!-- MAIN SETTINGS -->
 <Dropdown name="Story Settings" table={true}>
-  <TopicSettings bind:promptFormat>
+  <TopicSettings nostyling={true} bind:promptFormat>
     {#snippet children(
       promptFormat: 'Table' | 'Open',
       setPromptFormat: (format: 'Table' | 'Open') => void,

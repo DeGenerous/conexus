@@ -34,19 +34,28 @@ export async function generateImageWithFallback(
               `Image generation started with ${provider.name}, job ID: ${start.id}`,
             );
 
-            // job-based
-            while (true) {
+            const maxIterations = 20; // 1 minute timeout (20 * 3 seconds)
+            let iterations = 0;
+
+            while (iterations < maxIterations) {
               await delay(3000);
 
               const status = await provider.status!(start.id);
 
-              if (status.status === 'pending') continue;
+              if (status.status === 'pending') {
+                iterations++;
+                continue;
+              }
               if (status.status === 'ready') return status.image;
 
               return Promise.reject(
                 new Error(`${provider.name} image generation failed`),
               );
             }
+
+            return Promise.reject(
+              new Error(`${provider.name} image generation timed out`),
+            );
           } catch (err) {
             return Promise.reject(err);
           }

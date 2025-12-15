@@ -10,6 +10,7 @@ type RequestContext = {
   attempt?: number; // retry count
   timeoutMs?: number; // per-attempt timeout
   signal?: AbortSignal; // cancellation / timeout
+  pollIntervalMs?: number; // job polling interval
 };
 
 type RetryOptions = {

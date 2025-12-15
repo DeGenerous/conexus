@@ -36,7 +36,15 @@ export class LumaProvider implements ImageProvider {
       body: JSON.stringify(body),
     });
 
-    if (!res.ok) throw new Error('Luma start failed');
+    if (!res.ok) {
+      let errorBody: string;
+      try {
+        errorBody = await res.text();
+      } catch (e) {
+        errorBody = '<failed to read error body>';
+      }
+      throw new Error(`Luma start failed: status ${res.status} - ${errorBody}`);
+    }
 
     const data = await res.json();
 

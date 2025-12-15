@@ -18,7 +18,6 @@ export async function generateTTSWithFallback(text: string): Promise<Blob> {
       });
     } catch (err) {
       errors.push(err as Error);
-      continue;
     }
   }
 

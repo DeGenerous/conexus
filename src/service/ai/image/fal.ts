@@ -56,28 +56,3 @@ export async function startImageGeneration(prompt: string): Promise<string> {
   });
   return request_id;
 }
-
-export async function getImageGenerationStatus(
-  requestId: string,
-): Promise<{ status: string; imageUrl?: string }> {
-  const status = await fal.queue.status('fal-ai/z-image/turbo', {
-    requestId: requestId,
-    logs: false,
-  });
-  return status;
-}
-
-export async function fetchGeneratedImage(requestId: string): Promise<Blob> {
-  const result = await fal.queue.result('fal-ai/z-image/turbo', {
-    requestId: requestId,
-  });
-
-  if (result.data && result.data.imageUrl) {
-    const imageUrl = result.data.imageUrl;
-    const response = await fetch(imageUrl);
-    const blob = await response.blob();
-    return blob;
-  } else {
-    throw new Error('Image not ready or failed to generate.');
-  }
-}

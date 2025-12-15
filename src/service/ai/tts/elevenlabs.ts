@@ -1,4 +1,3 @@
-// src/server/tts/elevenlabs.ts
 import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js';
 import 'dotenv/config';
 
@@ -9,8 +8,6 @@ export const DEFAULT_VOICES = {
   casual: 'IKne3meq5aSn9XLyUdCD',
 } as const;
 
-const client = new ElevenLabsClient();
-
 export class ElevenLabsProvider implements TTSProvider {
   name = 'ElevenLabs';
 
@@ -18,7 +15,7 @@ export class ElevenLabsProvider implements TTSProvider {
   private readonly voiceId: string;
 
   constructor(voiceId: string = DEFAULT_VOICES.cheerful) {
-    this.elevenlabs = client;
+    this.elevenlabs = new ElevenLabsClient();
     this.voiceId = voiceId;
   }
 
@@ -76,58 +73,3 @@ export class ElevenLabsProvider implements TTSProvider {
     });
   }
 }
-
-// const elevenlabs = new ElevenLabsClient({
-//   apiKey: () => process.env.PUBLIC_ELEVENLABS_API_KEY!,
-// });
-
-// export async function convertTextToDialogue(
-//   inputs: DialogueInput[],
-// ): Promise<void> {
-//   const formattedInputs = inputs.map((input) => ({
-//     text: input.delivery ? `[${input.delivery}] ${input.text}` : input.text,
-//     voiceId: input.voiceId || DEFAULT_VOICES.casual,
-//   }));
-
-//   const audio = await elevenlabs.textToDialogue.convert({
-//     inputs: formattedInputs,
-//   });
-
-//   await play(audio);
-// }
-
-// export async function convertTextToSpeech(
-//   text: string,
-//   voiceId: string = DEFAULT_VOICES.casual,
-//   modelId: string = 'eleven_multilingual_v2',
-//   outputFormat: ElevenLabs.OutputFormat = 'mp3_44100_128',
-// ): Promise<void> {
-//   const audio = await elevenlabs.textToSpeech.convert(voiceId, {
-//     text,
-//     modelId,
-//     outputFormat,
-//   });
-
-//   await play(audio);
-// }
-
-// export async function convertTextToSpeechStream(
-//   text: string,
-//   voiceId: string = DEFAULT_VOICES.cheerful,
-//   modelId: string = 'eleven_multilingual_v2',
-//   outputFormat: ElevenLabs.OutputFormat = 'mp3_44100_128',
-// ): Promise<void> {
-//   const audioStream = await elevenlabs.textToSpeech.stream(voiceId, {
-//     text,
-//     modelId,
-//     outputFormat,
-//   });
-
-//   const chunks: Uint8Array[] = [];
-//   for await (const chunk of audioStream) {
-//     chunks.push(chunk);
-//   }
-//   const audioBuffer = Buffer.concat(chunks);
-
-//   await play(Readable.from(audioBuffer));
-// }

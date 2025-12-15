@@ -15,5 +15,11 @@ export async function withRetry<T>(
     }
   }
 
-  throw lastErr;
+  if (lastErr instanceof Error) {
+    throw lastErr;
+  } else {
+    throw new Error(
+      `withRetry: ${lastErr !== undefined ? String(lastErr) : 'Unknown error'}`,
+    );
+  }
 }

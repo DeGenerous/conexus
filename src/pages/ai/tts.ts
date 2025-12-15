@@ -11,8 +11,8 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response('Invalid JSON body', { status: 400 });
   }
 
-  if (!input.text) {
-    return new Response('Missing text', { status: 400 });
+  if (typeof input.text !== 'string' || input.text.trim().length === 0) {
+    return new Response('Missing or empty text', { status: 400 });
   }
 
   try {

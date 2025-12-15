@@ -37,8 +37,13 @@ export async function generateImageWithFallback(
             const maxIterations = 20; // 1 minute timeout (20 * 3 seconds)
             let iterations = 0;
 
+            let pollInterval = ctx.pollIntervalMs ?? 3000;
+
             while (iterations < maxIterations) {
-              await delay(3000);
+              await delay(pollInterval);
+
+              // Optional: Exponential backoff (uncomment if desired)
+              // pollInterval = Math.min(pollInterval * 2, 15000); // cap at 15s
 
               if (!provider.status) {
                 return Promise.reject(
@@ -47,7 +52,7 @@ export async function generateImageWithFallback(
                   ),
                 );
               }
-              
+
               const status = await provider.status(start.id);
 
               if (status.status === 'pending') {

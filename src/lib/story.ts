@@ -335,13 +335,16 @@ export default class CoNexus {
     });
   }
 
-  async #fetchTTSFromClientAI(): Promise<Blob> {
+  async #fetchTTSFromClientAI(
+    delivery: string = 'default',
+    voiceId: string = '9BWtsMINqrJLrRacOk9x',
+  ): Promise<Blob> {
     let text = formatGameTextForSpeech(this.step_data);
 
     const input: DialogueInput = {
       text,
-      delivery: 'default',
-      voiceId: '9BWtsMINqrJLrRacOk9x',
+      delivery: delivery,
+      voiceId: voiceId,
     };
 
     const res = await fetch(`/ai/tts`, {
@@ -352,7 +355,20 @@ export default class CoNexus {
 
     if (!res.ok) {
       game.loading = false;
-      throw new Error('TTS failed');
+      let errorDetail = '';
+      try {
+        const errorBody = await res.json();
+        errorDetail = errorBody?.message || JSON.stringify(errorBody);
+      } catch (e) {
+        try {
+          errorDetail = await res.text();
+        } catch {
+          errorDetail = '';
+        }
+      }
+      throw new Error(
+        `TTS failed (status: ${res.status})${errorDetail ? `: ${errorDetail}` : ''}`,
+      );
     }
 
     return await res.blob();

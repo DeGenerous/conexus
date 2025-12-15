@@ -40,7 +40,15 @@ export async function generateImageWithFallback(
             while (iterations < maxIterations) {
               await delay(3000);
 
-              const status = await provider.status!(start.id);
+              if (!provider.status) {
+                return Promise.reject(
+                  new Error(
+                    `${provider.name} does not support job status polling`,
+                  ),
+                );
+              }
+              
+              const status = await provider.status(start.id);
 
               if (status.status === 'pending') {
                 iterations++;

@@ -16,6 +16,13 @@ type RetryOptions = {
   retries?: number;
 };
 
+type ImageGenerationInput = { text: string };
+
+type DialogueInput = {
+  delivery?: string;
+  voiceId?: string;
+} & ImageGenerationInput;
+
 type TTSOptions = {
   voiceId?: string;
   speed?: number;

@@ -5,10 +5,14 @@ export class DegenProvider implements TTSProvider {
 
   private readonly apiUrl: string;
 
-  constructor(
-    apiUrl: string = 'https://a3fq9nkvcxhp8k-8000.proxy.runpod.net/api/v1',
-  ) {
-    this.apiUrl = apiUrl;
+  constructor(apiUrl?: string) {
+    const envApiUrl = process.env.DEGEN_API_URL;
+    this.apiUrl = apiUrl ?? envApiUrl ?? '';
+    if (!this.apiUrl) {
+      throw new Error(
+        'DegenProvider: API URL must be provided via constructor or DEGEN_API_URL environment variable',
+      );
+    }
   }
 
   async generate(text: string, opts?: TTSOptions): Promise<Blob> {

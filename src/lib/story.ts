@@ -297,7 +297,7 @@ export default class CoNexus {
   }
 
   async #imageGenInternal(): Promise<void> {
-    let prompt = this.step_data.story; //TODO: Change to gen_image_prompt
+    let prompt = this.step_data.gen_image_prompt ?? this.step_data.story;
 
     const input: DialogueInput = {
       text: prompt,
@@ -414,7 +414,7 @@ export default class CoNexus {
     await this.#setStepData(data.story, data.task_id, data.generate);
 
     if (data.generate) {
-      await Promise.all([this.#imageGenInternal(), this.#ttsInternal()]);
+      await Promise.allSettled([this.#imageGenInternal(), this.#ttsInternal()]);
     }
 
     if (!data.generate && data.task_id && data.task_id !== '') {

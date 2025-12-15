@@ -9,7 +9,7 @@ export class LumaProvider implements ImageProvider {
   private readonly lumaKeys = process.env.LUMA_API_KEY?.split(',')
     .map((k) => k.trim())
     .filter(Boolean);
-  private lumaKeyIndex = 0;
+  private lumaKeyIndex = { value: 0 };
 
   constructor(
     apiUrl: string = 'https://api.lumalabs.ai/dream-machine/v1/generations',
@@ -49,7 +49,21 @@ export class LumaProvider implements ImageProvider {
       headers: this.headers(),
     });
 
-    if (!res.ok) throw new Error('Luma status check failed');
+    if (!res.ok) {
+      let errorBody: string;
+      try {
+        errorBody = JSON.stringify(await res.json());
+      } catch {
+        try {
+          errorBody = await res.text();
+        } catch {
+          errorBody = '<unable to read body>';
+        }
+      }
+      throw new Error(
+        `Luma status check failed (status: ${res.status}): ${errorBody}`,
+      );
+    }
 
     const data = await res.json();
 
@@ -69,8 +83,9 @@ export class LumaProvider implements ImageProvider {
       throw new Error('No LUMA API keys configured');
     }
 
-    const key = this.lumaKeys[this.lumaKeyIndex];
-    this.lumaKeyIndex = (this.lumaKeyIndex + 1) % this.lumaKeys.length;
+    const key = this.lumaKeys[this.lumaKeyIndex.value];
+    this.lumaKeyIndex.value =
+      (this.lumaKeyIndex.value + 1) % this.lumaKeys.length;
     return key;
   }
 }

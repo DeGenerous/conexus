@@ -28,7 +28,15 @@ export class FluxProvider implements ImageProvider {
       body: JSON.stringify(body),
     });
 
-    if (!res.ok) throw new Error('Flux start failed');
+    if (!res.ok) {
+      let errorBody: string;
+      try {
+        errorBody = await res.text();
+      } catch (e) {
+        errorBody = '<unable to read body>';
+      }
+      throw new Error(`Flux start failed: status ${res.status} - ${errorBody}`);
+    }
 
     const data = await res.json();
 
@@ -41,7 +49,12 @@ export class FluxProvider implements ImageProvider {
       headers: this.header,
     });
 
-    if (!res.ok) throw new Error('Flux status check failed');
+    if (!res.ok) {
+      const errorBody = await res.text();
+      throw new Error(
+        `Flux status check failed: status ${res.status} - ${errorBody}`,
+      );
+    }
 
     const data = await res.json();
 

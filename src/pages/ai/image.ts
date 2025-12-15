@@ -3,7 +3,7 @@ import type { APIRoute } from 'astro';
 import { generateImageWithFallback } from '@service/ai/image/service';
 
 export const POST: APIRoute = async ({ request }) => {
-  let input: DialogueInput;
+  let input: ImageGenerationInput;
 
   try {
     input = await request.json();

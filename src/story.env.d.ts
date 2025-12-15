@@ -13,8 +13,3 @@ type PreferredSetup = {
   play_mode?: PlayMode;
 };
 
-type DialogueInput = {
-  text: string;
-  delivery?: string;
-  voiceId?: string;
-};

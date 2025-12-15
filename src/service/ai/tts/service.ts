@@ -15,7 +15,6 @@ export async function generateTTSWithFallback(text: string): Promise<Blob> {
     try {
       return await withRetry((retryCtx) => provider.generate(text, {}), {
         retries: 2,
-        timeoutMs: 20_000,
       });
     } catch (err) {
       errors.push(err as Error);

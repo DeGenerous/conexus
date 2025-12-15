@@ -149,7 +149,13 @@ const absoluteImageURL = image.startsWith('http')
     <ToastContainer client:idle />
 
     <main>
-      <Navigation {header} {subheading} activeTab={nav} {arrow} client:load />
+      <Navigation
+        {header}
+        {subheading}
+        activeTab={nav}
+        {arrow}
+        client:only="svelte"
+      />
       <slot />
     </main>
 

@@ -88,7 +88,7 @@
   });
 </script>
 
-<div class="collection-header dashboard-collection-header">
+<div class="collection-header dashboard-collection-header blur">
   <h4>Completed Runs</h4>
 
   <div class="input-container">

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Authentication from '@lib/authentication';
   import { showProfile } from '@stores/modal.svelte';
   import { user, approvedTester } from '@stores/account.svelte';
   import { redirectTo } from '@utils/route-guard';
@@ -10,8 +9,6 @@
   import DreamSVG from '@components/icons/Dream.svelte';
 
   let { activeTab }: { activeTab: string } = $props();
-
-  let authentication: Authentication = new Authentication();
 
   let svgFocus = $state<boolean>(false);
 

@@ -297,7 +297,7 @@ export default class CoNexus {
   }
 
   async #imageGenInternal(): Promise<void> {
-    let prompt = this.step_data.image_prompt ?? this.step_data.story;
+    let prompt = this.step_data.image_prompt || this.step_data.story;
 
     const input: DialogueInput = {
       text: prompt,

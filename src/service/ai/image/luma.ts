@@ -24,7 +24,7 @@ export class LumaProvider implements ImageProvider {
     };
   }
 
-  async start(prompt: string): Promise<ImageStartResult> {
+  async start(prompt: string, _opts?: ImageOptions): Promise<ImageStartResult> {
     const body = {
       prompt: prompt,
       model: 'photon-flash-1',

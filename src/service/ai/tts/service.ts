@@ -23,6 +23,19 @@ function getTTSProviders(): TTSProvider[] {
 
 getTTSProviders();
 
+export async function selectProviderAndGenerateTTS(
+  text: string,
+  providerName: string,
+): Promise<Blob> {
+  const provider = ttsProviders.find((p) => p.name === providerName);
+  if (!provider) {
+    throw new Error(`TTS provider "${providerName}" not found`);
+  }
+  return await withRetry((retryCtx) => provider.generate(text, {}), {
+    retries: 2,
+  });
+}
+
 export async function generateTTSWithFallback(text: string): Promise<Blob> {
   const errors: Error[] = [];
 

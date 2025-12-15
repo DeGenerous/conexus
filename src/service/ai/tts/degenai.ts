@@ -41,7 +41,9 @@ export class DegenProvider implements TTSProvider {
 
     if (!res.ok) {
       const errText = await res.text().catch(() => '');
-      return Promise.reject(new Error(`TTS request failed (${res.status}): ${errText}`));
+      return Promise.reject(
+        new Error(`TTS request failed (${res.status}): ${errText}`),
+      );
     }
 
     return await res.blob();

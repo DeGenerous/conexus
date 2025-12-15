@@ -29,6 +29,69 @@ function getImageProviders(): ImageProvider[] {
 
 getImageProviders();
 
+export async function selectProviderAndGenerateImage(
+  text: string,
+  providerName: string,
+): Promise<string> {
+  const provider = imageProviders.find((p) => p.name === providerName);
+  if (!provider) {
+    throw new Error(`Image provider "${providerName}" not found`);
+  }
+  return await withRetry(
+    async (retryCtx) => {
+      console.log(
+        `Attempting image generation with ${provider.name}, attempt ${retryCtx.attempt}`,
+      );
+      try {
+        const start = await provider.start(text);
+
+        if (start.kind === 'ready') {
+          return start.image.data;
+        }
+
+        console.log(
+          `Image generation started with ${provider.name}, job ID: ${start.id}`,
+        );
+
+        const maxIterations = 20; // 1 minute timeout (20 * 3 seconds)
+        let iterations = 0;
+        const pollInterval = 3000;
+
+        while (iterations < maxIterations) {
+          await delay(pollInterval);
+
+          if (!provider.status) {
+            return Promise.reject(
+              new Error(`${provider.name} does not support job status polling`),
+            );
+          }
+
+          const status = await provider.status(start.id);
+
+          if (status.status === 'pending') {
+            iterations++;
+            continue;
+          }
+          if (status.status === 'ready') {
+            return status.image.data;
+          }
+
+          return Promise.reject(
+            new Error(`${provider.name} image generation failed`),
+          );
+        }
+
+        return Promise.reject(
+          new Error(`${provider.name} image generation timed out`),
+        );
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    },
+    { retries: 2 },
+  );
+}
+
 export async function generateImageWithFallback(
   prompt: string,
   ctx: RequestContext,

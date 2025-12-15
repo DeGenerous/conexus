@@ -28,9 +28,23 @@ export class ElevenLabsProvider implements TTSProvider {
 
   async generate(text: string, _opts?: TTSOptions): Promise<Blob> {
     try {
-      const stream = await this.elevenlabs.textToSpeech.convert(this.voiceId, {
-        text: text,
-        modelId: 'eleven_multilingual_v2',
+      // const stream = await this.elevenlabs.textToSpeech.convert(this.voiceId, {
+      //   text: text,
+      //   modelId: 'eleven_multilingual_v2',
+      //   outputFormat: 'mp3_44100_128',
+      // });
+      const stream = await this.elevenlabs.textToDialogue.convert({
+        inputs: [
+          {
+            text: `[cheerfully] ${text}`,
+            voiceId: '9BWtsMINqrJLrRacOk9x',
+          },
+          {
+            text: `[stuttering] ${text}`,
+            voiceId: 'IKne3meq5aSn9XLyUdCD',
+          },
+        ],
+        // modelId: 'eleven_multilingual_v2',
         outputFormat: 'mp3_44100_128',
       });
 

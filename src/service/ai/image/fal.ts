@@ -17,7 +17,7 @@ export class FalProvider implements ImageProvider {
     }
   }
 
-  async start(prompt: string): Promise<ImageStartResult> {
+  async start(prompt: string, _opts?: ImageOptions): Promise<ImageStartResult> {
     const { imageType, data } = await this.generateFalImage(prompt);
     return {
       kind: 'ready',

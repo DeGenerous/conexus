@@ -30,6 +30,10 @@ type TTSOptions = {
   pitch?: number;
 };
 
+type ImageOptions = {
+  model: string;
+};
+
 type ImageResult = {
   data: string;
   imageType: ImageType;

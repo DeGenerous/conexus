@@ -3,16 +3,23 @@ import 'dotenv/config';
 import type { ImageProvider } from '@service/ai/provider';
 
 export class FluxProvider implements ImageProvider {
-  name = 'flux';
+  name = 'Flux';
 
   private readonly apiUrl: string;
-  private readonly header: Record<string, string> = {
-    'Content-Type': 'application/json',
-    'x-key': `${process.env.FLUX_API_KEY}`,
-  };
+  private readonly header: Record<string, string>;
 
   constructor(apiUrl: string = 'https://api.bfl.ml/v1') {
+    const apiKey = process.env.FLUX_API_KEY;
+    if (!apiKey) {
+      throw new Error(
+        'FLUX_API_KEY environment variable is not set. Please set it to use FluxProvider.',
+      );
+    }
     this.apiUrl = apiUrl;
+    this.header = {
+      'Content-Type': 'application/json',
+      'x-key': apiKey,
+    };
   }
 
   async start(prompt: string): Promise<ImageStartResult> {

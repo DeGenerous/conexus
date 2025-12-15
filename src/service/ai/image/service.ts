@@ -4,11 +4,30 @@ import { FalProvider } from '@service/ai/image/fal';
 import { LumaProvider } from '@service/ai/image/luma';
 import { FluxProvider } from '@service/ai/image/flux';
 
-const imageProviders: ImageProvider[] = [
-  new FalProvider(),
-  new LumaProvider(),
-  new FluxProvider(),
-];
+const imageProviders: ImageProvider[] = [];
+
+function getImageProviders(): ImageProvider[] {
+  if (imageProviders.length === 0) {
+    try {
+      imageProviders.push(new FalProvider());
+    } catch (err) {
+      console.error('Failed to initialize FalProvider:', err);
+    }
+    try {
+      imageProviders.push(new LumaProvider());
+    } catch (err) {
+      console.error('Failed to initialize LumaProvider:', err);
+    }
+    try {
+      imageProviders.push(new FluxProvider());
+    } catch (err) {
+      console.error('Failed to initialize FluxProvider:', err);
+    }
+  }
+  return imageProviders;
+}
+
+getImageProviders();
 
 export async function generateImageWithFallback(
   prompt: string,

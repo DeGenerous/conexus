@@ -3,10 +3,25 @@ import { withRetry } from '@service/ai/common/helper';
 import { DegenProvider } from '@service/ai/tts/degenai';
 import { ElevenLabsProvider } from '@service/ai/tts/elevenlabs';
 
-export const ttsProviders: TTSProvider[] = [
-  new DegenProvider(),
-  new ElevenLabsProvider(),
-];
+export const ttsProviders: TTSProvider[] = [];
+
+function getTTSProviders(): TTSProvider[] {
+  if (ttsProviders.length === 0) {
+    try {
+      ttsProviders.push(new DegenProvider());
+    } catch (err) {
+      console.error('Failed to initialize DegenProvider:', err);
+    }
+    try {
+      ttsProviders.push(new ElevenLabsProvider());
+    } catch (err) {
+      console.error('Failed to initialize ElevenLabsProvider:', err);
+    }
+  }
+  return ttsProviders;
+}
+
+getTTSProviders();
 
 export async function generateTTSWithFallback(text: string): Promise<Blob> {
   const errors: Error[] = [];

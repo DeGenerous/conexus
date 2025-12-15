@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import type { TTSProvider } from '@service/ai/provider';
 
 export class DegenProvider implements TTSProvider {
@@ -15,9 +17,9 @@ export class DegenProvider implements TTSProvider {
     }
   }
 
-  async generate(text: string, opts?: TTSOptions): Promise<Blob> {
+  async generate(text: string, _opts?: TTSOptions): Promise<Blob> {
     if (!text) {
-      throw new Error('text is empty');
+      throw new Error('TTS generation failed: text parameter cannot be empty');
     }
 
     const speechURL = `${this.apiUrl}/audio/speech`;
@@ -39,8 +41,7 @@ export class DegenProvider implements TTSProvider {
 
     if (!res.ok) {
       const errText = await res.text().catch(() => '');
-      console.error(`TTS request failed (${res.status}): ${errText}`);
-      return Promise.reject(new Error('TTS request failed'));
+      return Promise.reject(new Error(`TTS request failed (${res.status}): ${errText}`));
     }
 
     return await res.blob();

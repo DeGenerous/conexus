@@ -3,7 +3,7 @@ import 'dotenv/config';
 import type { ImageProvider } from '@service/ai/provider';
 
 export class LumaProvider implements ImageProvider {
-  name = 'luma';
+  name = 'Luma';
 
   private readonly apiUrl: string;
   private readonly lumaKeys = process.env.LUMA_API_KEY?.split(',')

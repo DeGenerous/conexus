@@ -1,5 +1,6 @@
-import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js';
 import 'dotenv/config';
+
+import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js';
 
 import type { TTSProvider } from '@service/ai/provider';
 
@@ -15,11 +16,17 @@ export class ElevenLabsProvider implements TTSProvider {
   private readonly voiceId: string;
 
   constructor(voiceId: string = DEFAULT_VOICES.cheerful) {
-    this.elevenlabs = new ElevenLabsClient();
+    const apiKey = process.env.ELEVENLABS_API_KEY;
+    if (!apiKey) {
+      throw new Error(
+        'ELEVENLABS_API_KEY environment variable is not set. Please set it to use ElevenLabs TTS.',
+      );
+    }
+    this.elevenlabs = new ElevenLabsClient({ apiKey });
     this.voiceId = voiceId;
   }
 
-  async generate(text: string, opts?: TTSOptions): Promise<Blob> {
+  async generate(text: string, _opts?: TTSOptions): Promise<Blob> {
     try {
       const stream = await this.elevenlabs.textToSpeech.convert(this.voiceId, {
         text: text,

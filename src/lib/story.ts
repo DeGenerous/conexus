@@ -297,7 +297,7 @@ export default class CoNexus {
   }
 
   async #imageGenInternal(): Promise<void> {
-    let prompt = this.step_data.gen_image_prompt ?? this.step_data.story;
+    let prompt = this.step_data.image_prompt ?? this.step_data.story;
 
     const input: DialogueInput = {
       text: prompt,
@@ -430,7 +430,23 @@ export default class CoNexus {
     await this.#setStepData(data.story, data.task_id, data.generate);
 
     if (data.generate) {
-      await Promise.allSettled([this.#imageGenInternal(), this.#ttsInternal()]);
+      // await Promise.allSettled([this.#imageGenInternal(), this.#ttsInternal()]);
+      const results = await Promise.allSettled([
+        this.#imageGenInternal(),
+        this.#ttsInternal(),
+      ]);
+      results.forEach((result, idx) => {
+        if (result.status === 'rejected') {
+          console.error(
+            `Error in ${idx === 0 ? 'image generation' : 'TTS'}:`,
+            result.reason,
+          );
+          toastStore.show(
+            `Failed to generate ${idx === 0 ? 'image' : 'audio'} for this step.`,
+            'error',
+          );
+        }
+      });
     }
 
     if (!data.generate && data.task_id && data.task_id !== '') {

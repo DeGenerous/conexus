@@ -18,10 +18,14 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const data = await generateImageWithFallback(input.text, {});
 
+    const cacheKey = `tts-${Buffer.from(input.text).toString('base64')}`;
+
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=31536000, immutable',
+        'X-Cache-Key': cacheKey,
       },
     });
   } catch (err) {

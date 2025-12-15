@@ -1,10 +1,21 @@
-import { fal } from '@fal-ai/client';
 import 'dotenv/config';
+
+import { fal } from '@fal-ai/client';
 
 import type { ImageProvider } from '@service/ai/provider';
 
 export class FalProvider implements ImageProvider {
   name = 'FAL';
+
+  constructor() {
+    // check if FAL_KEY is set
+    const apiKey = process.env.FAL_KEY;
+    if (!apiKey) {
+      throw new Error(
+        'FAL_KEY environment variable is not set. Please set it to use FAL image generation.',
+      );
+    }
+  }
 
   async start(prompt: string): Promise<ImageStartResult> {
     const { imageType, data } = await this.generateFalImage(prompt);
@@ -48,11 +59,4 @@ export class FalProvider implements ImageProvider {
       throw error instanceof Error ? error : new Error(String(error));
     }
   }
-}
-
-export async function startImageGeneration(prompt: string): Promise<string> {
-  const { request_id } = await fal.queue.submit('fal-ai/z-image/turbo', {
-    input: { prompt: prompt },
-  });
-  return request_id;
 }

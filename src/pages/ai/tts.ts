@@ -18,11 +18,14 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const audio = await generateTTSWithFallback(input.text);
 
+    const cacheKey = `tts-${Buffer.from(input.text).toString('base64')}`;
+
     return new Response(audio, {
       status: 200,
       headers: {
         'Content-Type': 'audio/mpeg',
-        'Cache-Control': 'no-store',
+        'Cache-Control': 'public, max-age=31536000, immutable',
+        ETag: cacheKey,
       },
     });
   } catch (err) {

@@ -63,6 +63,7 @@ type StepData = {
   summary: string;
   trait: string;
   trait_description?: string;
+  image_prompt?: string;
   image?: string;
   image_type?: ImageType;
   tts?: Blob;

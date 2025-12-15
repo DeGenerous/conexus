@@ -30,13 +30,14 @@ export default class StoryAPI extends Fetcher {
     settings: StorySettingSelector = 'topic',
     mode: PlayMode = 'play_limited',
   ) {
-    return this.request<{ story: GameData; task_id: string }>(
-      `${this.group}/start`,
-      {
-        method: 'POST',
-        body: JSON.stringify({ topic_id, settings, mode }),
-      },
-    );
+    return this.request<{
+      story: GameData;
+      task_id: string;
+      generate: boolean;
+    }>(`${this.group}/start`, {
+      method: 'POST',
+      body: JSON.stringify({ topic_id, settings, mode }),
+    });
   }
 
   /**
@@ -45,9 +46,11 @@ export default class StoryAPI extends Fetcher {
    * @returns The story data and image generation task ID
    */
   async demo(topic_id: string) {
-    return this.request<{ story: GameData; task_id: string }>(
-      `${this.group}/demo/${topic_id}`,
-    );
+    return this.request<{
+      story: GameData;
+      task_id: string;
+      generate: boolean;
+    }>(`${this.group}/demo/${topic_id}`);
   }
 
   /**
@@ -75,13 +78,14 @@ export default class StoryAPI extends Fetcher {
    * @returns The story data and image generation task ID
    */
   async continue(story_id: string) {
-    return this.request<{ story: GameData; task_id: string }>(
-      `${this.group}/continue`,
-      {
-        method: 'POST',
-        body: JSON.stringify({ story_id }),
-      },
-    );
+    return this.request<{
+      story: GameData;
+      task_id: string;
+      generate: boolean;
+    }>(`${this.group}/continue`, {
+      method: 'POST',
+      body: JSON.stringify({ story_id }),
+    });
   }
 
   /**
@@ -91,13 +95,14 @@ export default class StoryAPI extends Fetcher {
    * @returns The story data and image generation task ID
    */
   async respond(story_id: string, choice: number) {
-    return this.request<{ story: GameData; task_id: string }>(
-      `${this.group}/respond`,
-      {
-        method: 'POST',
-        body: JSON.stringify({ story_id, choice }),
-      },
-    );
+    return this.request<{
+      story: GameData;
+      task_id: string;
+      generate: boolean;
+    }>(`${this.group}/respond`, {
+      method: 'POST',
+      body: JSON.stringify({ story_id, choice }),
+    });
   }
 
   /**
@@ -123,13 +128,14 @@ export default class StoryAPI extends Fetcher {
    * @returns The step story data and image generation task ID
    */
   async step(story_id: string, step: number) {
-    return this.request<{ story: GameData; task_id: string }>(
-      `${this.group}/step`,
-      {
-        method: 'POST',
-        body: JSON.stringify({ story_id, step }),
-      },
-    );
+    return this.request<{
+      story: GameData;
+      task_id: string;
+      generate: boolean;
+    }>(`${this.group}/step`, {
+      method: 'POST',
+      body: JSON.stringify({ story_id, step }),
+    });
   }
 
   /**

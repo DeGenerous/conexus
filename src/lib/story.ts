@@ -5,6 +5,7 @@ import { story, game } from '@stores/conexus.svelte';
 import { toastStore } from '@stores/toast.svelte';
 import openModal from '@stores/modal.svelte';
 import { getCurrentUser } from '@utils/route-guard';
+import { formatGameTextForSpeech } from '@utils/tts';
 
 /**
  * Orchestrates interactive story sessions and syncs game state with the backend.
@@ -21,12 +22,12 @@ export default class CoNexus {
    * @param data - Optional initial game data to bootstrap with.
    * @param task_id - Optional task identifier for pending assets.
    */
-  constructor(data?: GameData, task_id?: string) {
+  constructor(data?: GameData, task_id?: string, generate?: boolean) {
     this.api = new StoryAPI(import.meta.env.PUBLIC_BACKEND);
 
     this.step_data = {} as GameData;
     if (data) {
-      this.#setStepData(data, task_id); // ✅ Works now
+      this.#setStepData(data, task_id, generate); // ✅ Works now
     }
   }
 
@@ -241,13 +242,8 @@ export default class CoNexus {
       return;
     }
 
-    console.log('step is loaded');
-    console.log('incoming step ID: ', this.step_data.id);
-    console.log('returned step ID: ', data.story.id);
-    console.log(this);
-
     game.loading = false;
-    await this.#setStory(data);
+    await this.#setStory(data); // TODO: Change to this after save to backend, await this.#setStepData(data.story);
   }
 
   /**
@@ -295,46 +291,189 @@ export default class CoNexus {
     if (data.status === 'ready') {
       const url = `${import.meta.env.PUBLIC_BACKEND}${data.url}`;
 
-      // this.step_data.image = url;
-      // this.step_data.image_type = 'url';
-
-      this.step_data = {
-        ...this.step_data,
-        image: url,
-        image_type: 'url',
-      };
-
-      console.log('image status is generated (#generateImageStatus)');
-
-      story.set(this);
-      // story.set({ ...this });
+      this.#commitStepData({ image: url, image_type: 'url' });
       return;
     }
+  }
+
+  async #imageGenInternal(): Promise<void> {
+    let prompt = this.step_data.image_prompt || this.step_data.story;
+
+    const input: DialogueInput = {
+      text: prompt,
+    };
+
+    const res = await fetch(`/ai/image`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    });
+
+    if (!res.ok) {
+      game.loading = false;
+      let errorDetail = '';
+      try {
+        const errorBody = await res.json();
+        errorDetail = errorBody?.message || JSON.stringify(errorBody);
+      } catch (e) {
+        try {
+          errorDetail = await res.text();
+        } catch {
+          errorDetail = '';
+        }
+      }
+      return Promise.reject(
+        `Image generation failed (status: ${res.status})${errorDetail ? `: ${errorDetail}` : ''}`,
+      );
+    }
+
+    const response = (await res.json()) as ImageResult;
+
+    this.#commitStepData({
+      image: response.data,
+      image_type: response.imageType,
+    });
+  }
+
+  async #fetchTTSFromClientAI(
+    delivery: string = 'default',
+    voiceId: string = '9BWtsMINqrJLrRacOk9x',
+  ): Promise<Blob> {
+    let text = formatGameTextForSpeech(this.step_data);
+
+    const input: DialogueInput = {
+      text,
+      delivery: delivery,
+      voiceId: voiceId,
+    };
+
+    const res = await fetch(`/ai/tts`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    });
+
+    if (!res.ok) {
+      game.loading = false;
+      let errorDetail = '';
+      try {
+        const errorBody = await res.json();
+        errorDetail = errorBody?.message || JSON.stringify(errorBody);
+      } catch (e) {
+        try {
+          errorDetail = await res.text();
+        } catch {
+          errorDetail = '';
+        }
+      }
+      throw new Error(
+        `TTS failed (status: ${res.status})${errorDetail ? `: ${errorDetail}` : ''}`,
+      );
+    }
+
+    return await res.blob();
+  }
+
+  async #fetchTTSFromServerAI(): Promise<Blob> {
+    const { status, message, data } = await this.api.tts(this.step_data.id);
+
+    if (status === 'error') {
+      api_error(message);
+      game.loading = false;
+      throw new Error('TTS fetch failed');
+    }
+
+    if (!data) {
+      game.loading = false;
+      throw new Error('No TTS data received');
+    }
+
+    return data;
   }
 
   /**
    * Convert text to speech
    * @returns A promise that resolves when the TTS is ready
    */
-  async #textToSpeech(): Promise<void> {
-    const { status, message, data } = await this.api.tts(this.step_data.id);
-
-    if (status === 'error') {
-      api_error(message);
-      game.loading = false;
-      return;
+  async #ttsInternal(which: 'client' | 'server' = 'client'): Promise<void> {
+    switch (which) {
+      case 'client':
+        const clientResult = await this.#fetchTTSFromClientAI();
+        this.#commitStepData({ tts: clientResult });
+        return;
+      default:
+        const serverResult = await this.#fetchTTSFromServerAI();
+        this.#commitStepData({ tts: serverResult });
+        return;
     }
+  }
 
-    if (!data) {
-      game.loading = false;
-      return;
-    }
+  /* Helper */
 
-    console.log('tts is ready');
-    console.log(this);
-
-    this.step_data.tts = data;
+  #commitStepData(patch: Partial<GameData>) {
+    this.step_data = {
+      ...this.step_data,
+      ...patch,
+    };
     story.set(this);
+  }
+
+  /**
+   * Set the story data and the task id
+   * @param data The story data and task id to set
+   */
+  async #setStory(data: {
+    story: GameData;
+    task_id: string;
+    generate: boolean;
+  }): Promise<void> {
+    await this.#setStepData(data.story, data.task_id, data.generate);
+
+    if (data.generate) {
+      // await Promise.allSettled([this.#imageGenInternal(), this.#ttsInternal()]);
+      const results = await Promise.allSettled([
+        this.#imageGenInternal(),
+        this.#ttsInternal(),
+      ]);
+      results.forEach((result, idx) => {
+        if (result.status === 'rejected') {
+          console.error(
+            `Error in ${idx === 0 ? 'image generation' : 'TTS'}:`,
+            result.reason,
+          );
+          toastStore.show(
+            `Failed to generate ${idx === 0 ? 'image' : 'audio'} for this step.`,
+            'error',
+          );
+        }
+      });
+    }
+
+    if (!data.generate && data.task_id && data.task_id !== '') {
+      await this.#generateImageStatus(data.task_id);
+    }
+  }
+
+  /**
+   * Update local state for the currently active step and trigger media preparation.
+   * @param data - The step data returned from the API.
+   * @param task_id - Optional task identifier for pending assets.
+   */
+  async #setStepData(
+    data: GameData,
+    task_id?: string,
+    generate?: boolean,
+  ): Promise<void> {
+    this.step_data = data;
+    this.step_data.task_id = generate ? crypto.randomUUID() : task_id || '';
+    this.maxStep = Math.max(this.maxStep, data.step);
+
+    console.log('set step data');
+    console.log('incoming step ID: ', this.step_data.id);
+    console.log('returned step ID: ', data.id);
+
+    story.set(this);
+    game.loading = false;
   }
 
   /**
@@ -353,46 +492,5 @@ export default class CoNexus {
     window.location.reload();
 
     toastStore.show(message || 'Credits rolled back', 'info');
-  }
-
-  /* Helper */
-
-  /**
-   * Set the story data and the task id
-   * @param data The story data and task id to set
-   */
-  async #setStory(data: { story: GameData; task_id: string }): Promise<void> {
-    // Set step data
-    await this.#setStepData(data.story, data.task_id);
-
-    // Wait for image generation
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    if (data.task_id !== '') {
-      await this.#generateImageStatus(data.task_id);
-    }
-  }
-
-  /**
-   * Update local state for the currently active step and trigger media preparation.
-   * @param data - The step data returned from the API.
-   * @param task_id - Optional task identifier for pending assets.
-   */
-  async #setStepData(data: GameData, task_id?: string): Promise<void> {
-    this.step_data = data;
-    this.step_data.task_id = task_id || '';
-    this.maxStep = Math.max(this.maxStep, data.step);
-
-    console.log('set step data');
-    console.log('incoming step ID: ', this.step_data.id);
-    console.log('returned step ID: ', data.id);
-    console.log(this);
-
-    story.set(this);
-    game.loading = false;
-
-    if (task_id !== '') {
-      await Promise.all([this.#textToSpeech()]);
-    }
   }
 }

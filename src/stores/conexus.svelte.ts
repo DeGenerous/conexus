@@ -21,3 +21,6 @@ export const conexusBG = $state<ConexusBG>({
   opacity: 50,
   color: '#000000',
 });
+
+export const ttsProvider = $state<'elevenlabs' | 'degenai'>('degenai');
+export const imageProvider = $state<'luma' | 'dalle' | 'fal'>('fal');

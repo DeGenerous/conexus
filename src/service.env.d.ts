@@ -24,10 +24,18 @@ type DialogueInput = {
   voiceId?: string;
 } & ImageGenerationInput;
 
+type AudioFormat = 'mp3' | 'wav';
+type SampleRate = 22050 | 24000 | 44100 | 48000;
+
 type TTSOptions = {
-  voiceId?: string;
+  text: string;
+  voice?: string;
   speed?: number;
-  pitch?: number;
+  format?: {
+    codec: AudioFormat;
+    sampleRate: SampleRate;
+    bitrate?: number;
+  };
 };
 
 type ImageOptions = {

@@ -299,8 +299,10 @@ export default class CoNexus {
   async #imageGenInternal(): Promise<void> {
     let prompt = this.step_data.image_prompt || this.step_data.story;
 
-    const input: DialogueInput = {
+    const input: ImageGenerationInput = {
       text: prompt,
+      option: 'fallback',
+      providerNameOrCtx: 'auto',
     };
 
     const res = await fetch(`/ai/image`, {
@@ -343,8 +345,8 @@ export default class CoNexus {
 
     const input: DialogueInput = {
       text,
-      delivery: delivery,
-      voiceId: voiceId,
+      option: 'fallback',
+      providerNameOrOpts: 'auto',
     };
 
     const res = await fetch(`/ai/tts`, {

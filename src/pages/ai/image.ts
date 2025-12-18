@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 
-import { generateImageWithFallback } from '@service/ai/image/service';
+import ImageService from '@service/ai/image/service';
 
 export const POST: APIRoute = async ({ request }) => {
   let input: ImageGenerationInput;
@@ -16,7 +16,28 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const data = await generateImageWithFallback(input.text, {});
+    const imageService = new ImageService();
+
+    let context: RequestContext = {
+      timeoutMs: 120000,
+    };
+
+    if (typeof input.providerNameOrCtx === 'object') {
+      context = { ...context, ...input.providerNameOrCtx };
+    }
+
+    if (
+      typeof input.providerNameOrCtx === 'string' &&
+      input.providerNameOrCtx !== 'auto'
+    ) {
+      context = { ...context };
+    }
+
+    const data = await imageService.generateImage(
+      input.option,
+      input.text,
+      context || (input.providerNameOrCtx as string),
+    );
 
     const cacheKey = `tts-${Buffer.from(input.text).toString('base64')}`;
 

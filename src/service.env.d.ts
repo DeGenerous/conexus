@@ -17,12 +17,19 @@ type RetryOptions = {
   retries?: number;
 };
 
-type ImageGenerationInput = { text: string };
+type ImageGenerationInput = {
+  text: string;
+  option: 'select' | 'fallback';
+  providerNameOrCtx: string | RequestContext;
+};
 
 type DialogueInput = {
+  text: string;
+  option: 'select' | 'fallback';
+  providerNameOrOpts: string | TTSOptions;
   delivery?: string;
   voiceId?: string;
-} & ImageGenerationInput;
+};
 
 type AudioFormat = 'mp3' | 'wav';
 type SampleRate = 22050 | 24000 | 44100 | 48000;

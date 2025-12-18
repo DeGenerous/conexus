@@ -246,6 +246,21 @@ export default class CoNexus {
     await this.#setStory(data); // TODO: Change to this after save to backend, await this.#setStepData(data.story);
   }
 
+  async #storeStepImage(image_url: string): Promise<void> {
+    const { status, message } = await this.api.storeStepImage(
+      this.step_data.id,
+      this.step_data.step,
+      image_url,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || 'Step image stored', 'info');
+  }
+
   /**
    * Delete a story
    * @param story_id The ID of the story to delete
@@ -335,6 +350,9 @@ export default class CoNexus {
       image: response.data,
       image_type: response.imageType,
     });
+
+    // Store image data in step_data
+    await this.#storeStepImage(response.data);
   }
 
   async #fetchTTSFromClientAI(

@@ -139,6 +139,23 @@ export default class StoryAPI extends Fetcher {
   }
 
   /**
+   * Store an image URL for a specific step of the story
+   * @param story_id The ID of the story
+   * @param step The step number
+   * @param image_uri The URL of the image to store
+   * @returns A success status
+   */
+  async storeStepImage(story_id: string, step: number, image_uri: string) {
+    return this.request<{ success: boolean }>(
+      `${this.group}/step/store-image`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ story_id, step, image_uri }),
+      },
+    );
+  }
+
+  /**
    * Checks the status of an image generation task
    * @param story_id The ID of the story
    * @param task_id The ID of the image generation task

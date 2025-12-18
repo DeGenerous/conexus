@@ -429,7 +429,7 @@
 
 <button
   type="button"
-  class="category-toggle void-btn fade-in"
+  class="category-toggle void-btn fade-in blur"
   class:active={expandedCategories.has(workingCategory.category_id)}
   class:disabled={workingCategory.topic_count === 0}
   aria-expanded={expandedCategories.has(workingCategory.category_id)}

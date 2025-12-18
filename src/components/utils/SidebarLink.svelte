@@ -2,8 +2,9 @@
   import { link } from 'svelte-spa-router';
 
   import { isAdmin, isPlayer } from '@stores/account.svelte';
+  import { redirectTo } from '@utils/route-guard';
 
-  import SidebarLink from '@components/dashboard/SidebarLink.svelte';
+  import SidebarLink from '@components/utils/SidebarLink.svelte';
 
   let {
     item,
@@ -98,6 +99,12 @@
         use:link
         tabindex="0"
         title={item.name}
+        onclick={(event) => {
+          event.preventDefault();
+          redirectTo(
+            item.path ? `/dashboard#${item.path}` : '/dashboard#/dashboard',
+          );
+        }}
       >
         {item.name}
       </a>

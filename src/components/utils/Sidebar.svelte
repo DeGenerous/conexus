@@ -4,24 +4,15 @@
 
   import Authentication from '@lib/authentication.ts';
   import { DASHBOARD_LINKS } from '@components/dashboard/routes';
+  import { sidebarOpen } from '@stores/navigation.svelte';
 
-  import SidebarLink from '@components/dashboard/SidebarLink.svelte';
-  import BurgerSVG from '@components/icons/Burger.svelte';
+  import SidebarLink from '@components/utils/SidebarLink.svelte';
   import DoorSVG from '@components/icons/Door.svelte';
 
   const authentication: Authentication = new Authentication();
 
-  let sidebarOpen = $state<boolean>(false);
   let expanded = $state<Set<string>>(new Set());
   let activePath = $state<string>('');
-
-  function toggleSidebar() {
-    sidebarOpen = !sidebarOpen;
-  }
-
-  function closeSidebar() {
-    sidebarOpen = false;
-  }
 
   function hasChildren(
     link: Linking,
@@ -86,7 +77,7 @@
     const nextPath = sanitizePath(value);
     activePath = nextPath;
     ensureExpandedForPath(nextPath);
-    closeSidebar();
+    $sidebarOpen = false;
   });
 
   onDestroy(() => {
@@ -100,26 +91,16 @@
   }
 </script>
 
-{#if sidebarOpen}
+{#if $sidebarOpen}
   <div
     class="sidebar-scrim blur fade-in"
     role="presentation"
     aria-hidden="true"
-    onclick={closeSidebar}
+    onclick={() => ($sidebarOpen = false)}
   ></div>
 {/if}
 
-<section class:open={sidebarOpen} aria-label="Dashboard navigation">
-  <button
-    class="flex void-btn pad-8"
-    aria-label="Toggle navigation"
-    aria-controls="dashboard-sidebar"
-    aria-expanded={sidebarOpen}
-    onclick={toggleSidebar}
-  >
-    <BurgerSVG expanded={sidebarOpen} />
-  </button>
-
+<section class:open={$sidebarOpen} aria-label="Dashboard navigation">
   <nav class="flex gap-8 vert-scrollbar">
     <SidebarLink
       item={{
@@ -149,35 +130,28 @@
     position: fixed;
     inset: 0;
     background: $transparent-black;
-    z-index: 99;
+    z-index: 98;
     transform: none !important;
 
     @include respond-up(small-desktop) {
-      display: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
     }
   }
 
   section {
     position: fixed;
-    inset: 0 auto 0 0;
-    width: min(85vw, 320px);
-    max-width: 320px;
-    height: 100dvh;
-    z-index: 100;
-    transform: translateX(-100%);
+    inset: 0;
+    top: 4.5rem;
+    width: 100%;
+    height: 60dvh;
+    z-index: 99;
+    transform: translateY(-100%);
     transition: transform 0.3s ease;
+    border-bottom: 1px solid $transparent-gray;
 
     &.open {
-      transform: translateX(0);
-    }
-
-    button {
-      position: absolute;
-      left: calc(100% - 1px);
-      border-right: 1px solid $transparent-gray;
-      border-bottom: 1px solid $transparent-gray;
-      border-bottom-right-radius: 1rem;
-      @include dark-blue;
+      transform: translateY(0);
     }
 
     nav {
@@ -188,22 +162,25 @@
       padding: 0.5rem 1.5rem;
       background-color: $dark-blue;
       border-right: 1px solid $transparent-gray;
-      overflow-y: scroll;
+      overflow-y: auto;
       overscroll-behavior: contain;
     }
 
     @include respond-up(small-desktop) {
-      transform: none;
+      inset: unset;
+      transform: translateX(100%);
+      right: 0;
       top: 4.5rem;
-      height: calc(100dvh - 4.5rem);
+      height: 100dvh;
+      width: 320px;
+      border-bottom: none;
 
-      button {
-        display: none;
+      &.open {
+        transform: translateX(0);
       }
 
       nav {
-        padding: 0 1.5rem;
-        padding-bottom: 1.5rem;
+        padding-bottom: 6rem;
         border: none;
         box-shadow: 0.1rem 0 0.25rem rgba(0, 0, 0, 0.75);
       }

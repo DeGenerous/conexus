@@ -8,7 +8,7 @@ import { OMNIHUB } from './omnihub';
 
 export const DASHBOARD_LINKS: Linking[] = [
   {
-    name: 'Profile',
+    name: 'Account',
     intended: 'all',
     children: PROFILE_ROUTES.map((route) => ({
       name: route.name,

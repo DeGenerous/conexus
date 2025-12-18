@@ -258,7 +258,7 @@ export default class CoNexus {
       return;
     }
 
-    toastStore.show(message || 'Step image stored', 'info');
+    // toastStore.show(message || 'Step image stored', 'info');
   }
 
   /**

@@ -5,7 +5,7 @@
   let { user_id, topic_id }: { user_id: string; topic_id: string } = $props();
 
   const account: Account = new Account();
-  const AUTO_BOOKMARK_DELAY = 5000;
+  const AUTO_BOOKMARK_DELAY = 8000;
 
   let showManage = $state(false);
   let folders = $state<BookmarkFolder[]>([]);

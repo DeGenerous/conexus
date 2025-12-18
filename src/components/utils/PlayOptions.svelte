@@ -101,11 +101,14 @@
   @use '/src/styles/mixins' as *;
 
   section {
+    width: 100%;
+    
     .transparent-container {
       width: 100%;
       align-items: flex-start;
 
       div {
+        width: 100%;
         gap: 1rem;
 
         h5 {

@@ -186,11 +186,10 @@ class ImageService {
       return this.selectProviderAndGenerateImage(text, providerNameOrCtx);
     } else if (option === 'fallback') {
       if (
-        providerNameOrCtx === undefined ||
-        typeof providerNameOrCtx === null ||
+        providerNameOrCtx == null || // covers undefined and null
         typeof providerNameOrCtx === 'string'
       ) {
-        throw new Error('Context must be provided for fallback option');
+        throw new Error('Expected RequestContext object for fallback option');
       }
       return this.generateImageWithFallback(text, providerNameOrCtx);
     } else {

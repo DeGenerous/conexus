@@ -46,25 +46,6 @@
       sectionsLoading = false;
     }
   });
-
-  let sections = $state<Section[]>([]);
-  let sectionsLoading = $state<boolean>(true);
-  let sectionError = $state<string>('');
-
-  let isTestingEnv = $derived<boolean>(
-    import.meta.env.PUBLIC_ENV === 'testing',
-  );
-
-  onMount(async () => {
-    try {
-      if (isTestingEnv) checkIfTesterApproved();
-      sections = await app.getSections();
-    } catch (error) {
-      sectionError = (error as Error).message;
-    } finally {
-      sectionsLoading = false;
-    }
-  });
 </script>
 
 <section class="container fade-in dark-glowing">

@@ -26,10 +26,21 @@ export const POST: APIRoute = async ({ request }) => {
       context = { ...context, ...input.providerNameOrOpts };
     }
 
+    let thirdParam: string | TTSOptions;
+
+    if (input.option === 'select') {
+      thirdParam =
+        typeof input.providerNameOrOpts === 'string'
+          ? input.providerNameOrOpts
+          : context;
+    } else {
+      thirdParam = context;
+    }
+
     const audio = await ttsService.generateTTS(
       input.option,
       input.text,
-      context || (input.providerNameOrOpts as TTSOptions),
+      thirdParam,
     );
 
     const cacheKey = `tts-${Buffer.from(input.text).toString('base64')}`;

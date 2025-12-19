@@ -71,43 +71,6 @@
 </a>
 
 <a
-  class="navigation-tab dream-tab mobile-only"
-  class="navigation-tab dream-tab pc-only"
-  class:active={activeTab === 'Dashboard'}
-  class:inactive={!$approvedTester}
-  aria-label="Dream"
-  href="/dashboard#/dream/create"
-  onclick={(event) => {
-    event.preventDefault();
-    if (!$user) {
-      $showProfile = true;
-    } else {
-      redirectTo('/dashboard#/dream/create');
-    }
-  }}
->
-  <DreamSVG />
-  <p>Dream</p>
-</a>
-
-<a
-  class="navigation-tab dream-tab mobile-only"
-  class:active={activeTab === 'Dashboard'}
-  class:inactive={!$approvedTester}
-  aria-label="Dashboard"
-  href="/dashboard#/dashboard"
-  onclick={(event) => {
-    if (!$user) {
-      event.preventDefault();
-      $showProfile = true;
-    }
-  }}
->
-  <DreamSVG />
-  <p>Dashboard</p>
-</a>
-
-<a
   class="navigation-tab profile-tab"
   class:active={activeTab === $user?.username}
   class:inactive={!$approvedTester}

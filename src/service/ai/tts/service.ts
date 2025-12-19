@@ -72,8 +72,8 @@ class TTSService {
       }
       return this.selectProviderAndGenerateTTS(text, providerNameOrOpts, opts);
     } else if (option === 'fallback') {
-      if (typeof providerNameOrOpts !== 'object') {
-        throw new Error('Options must be provided for fallback option');
+      if (typeof providerNameOrOpts === 'string') {
+        throw new Error('Options must not be a provider name for fallback option');
       }
       return this.generateTTSWithFallback(text, providerNameOrOpts);
     } else {

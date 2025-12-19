@@ -13,7 +13,7 @@ export interface ImageProvider {
 export interface TTSProvider {
   name: string;
   voices: Record<string, string>;
-  models?: object;
+  models?: Record<string, string>;
   response_format?: string[];
 
   generate(text: string, opts?: TTSOptions): Promise<Blob>;

@@ -37,7 +37,7 @@ export const POST: APIRoute = async ({ request }) => {
       context,
     );
 
-    const cacheKey = `tts-${Buffer.from(input.text).toString('base64')}`;
+    const cacheKey = `image-${Buffer.from(input.text).toString('base64')}`;
 
     return new Response(JSON.stringify(data), {
       status: 200,

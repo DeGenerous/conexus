@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js';
+import { ElevenLabsClient, ElevenLabs } from '@elevenlabs/elevenlabs-js';
 
 import type { TTSProvider } from '@service/ai/provider';
 
@@ -9,13 +9,32 @@ export const DEFAULT_VOICES = {
   casual: 'IKne3meq5aSn9XLyUdCD',
 } as const;
 
+export const DEFAULT_MODELS = {
+  multilingual: 'eleven_multilingual_v2',
+  flash: 'eleven_flash_v2_5',
+} as const;
+
 export class ElevenLabsProvider implements TTSProvider {
   name = 'ElevenLabs';
+  voices = DEFAULT_VOICES;
+  models = DEFAULT_MODELS;
+  readonly response_format = [
+    'mp3_22050_32',
+    'mp3_24000_48',
+    'mp3_44100_32',
+    'mp3_44100_64',
+    'mp3_44100_96',
+    'mp3_44100_128',
+    'mp3_44100_192',
+    'pcm_16000',
+    'pcm_22050',
+    'pcm_24000',
+    'pcm_44100',
+  ] as const;
 
   private readonly elevenlabs: ElevenLabsClient;
-  private readonly voiceId: string;
 
-  constructor(voiceId: string = DEFAULT_VOICES.casual) {
+  constructor() {
     const apiKey = process.env.ELEVENLABS_API_KEY;
     if (!apiKey) {
       throw new Error(
@@ -23,18 +42,18 @@ export class ElevenLabsProvider implements TTSProvider {
       );
     }
     this.elevenlabs = new ElevenLabsClient({ apiKey });
-    this.voiceId = voiceId;
   }
 
-  async generate(text: string, opts?: TTSOptions): Promise<Blob> {
+  async generate(text: string, options?: TTSOptions): Promise<Blob> {
+    const opts = toElevenPayload(options ?? ({} as TTSOptions));
+
     try {
       const stream = await this.elevenlabs.textToSpeech.convert(
-        opts?.voiceId ?? this.voiceId,
+        opts.voice ?? this.voices.casual,
         {
           text: text,
-          modelId: 'eleven_flash_v2_5',
-          //   modelId: 'eleven_multilingual_v2',
-          outputFormat: 'mp3_44100_128',
+          modelId: opts.modelId ?? this.models.flash,
+          outputFormat: opts.outputFormat ?? 'mp3_44100_128',
         },
       );
 
@@ -47,7 +66,7 @@ export class ElevenLabsProvider implements TTSProvider {
 
   async streamTTS(text: string): Promise<ReadableStream<Uint8Array>> {
     const audioStream = await this.elevenlabs.textToSpeech.stream(
-      this.voiceId,
+      DEFAULT_VOICES.casual,
       {
         text: text,
         modelId: 'eleven_multilingual_v2',
@@ -83,4 +102,40 @@ export class ElevenLabsProvider implements TTSProvider {
       })();
     });
   }
+}
+
+function toElevenPayload(req: TTSOptions) {
+  // Map requested format to valid ElevenLabs format
+  const codec = req.format?.codec ?? 'mp3';
+  const sampleRate = req.format?.sampleRate ?? 44100;
+  const bitrate = req.format?.bitrate ?? 128;
+
+  // Ensure we use valid combinations
+  let outputFormat: string;
+  if (codec === 'mp3') {
+    if (sampleRate === 22050) {
+      outputFormat = 'mp3_22050_32'; // 22050 only supports 32kbps
+    } else if (sampleRate === 24000) {
+      outputFormat = 'mp3_24000_48'; // 24000 only supports 48kbps
+    } else {
+      // 44100 supports multiple bitrates
+      if (bitrate >= 192) outputFormat = 'mp3_44100_192';
+      else if (bitrate >= 128) outputFormat = 'mp3_44100_128';
+      else if (bitrate >= 96) outputFormat = 'mp3_44100_96';
+      else if (bitrate >= 64) outputFormat = 'mp3_44100_64';
+      else outputFormat = 'mp3_44100_32';
+    }
+  } else {
+    // PCM formats
+    const supportedPcmSampleRates = new Set([16000, 22050, 24000, 44100, 48000]);
+    const pcmSampleRate = supportedPcmSampleRates.has(sampleRate) ? sampleRate : 44100;
+    outputFormat = `pcm_${pcmSampleRate}`;
+  }
+
+  return {
+    voice: req.voice ?? DEFAULT_VOICES.casual,
+    modelId: DEFAULT_MODELS.flash,
+    outputFormat:
+      outputFormat as ElevenLabs.TextToSpeechConvertRequestOutputFormat,
+  };
 }

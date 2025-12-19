@@ -3,7 +3,6 @@
 */
 export interface ImageProvider {
   name: string;
-
   start(prompt: string, opts?: ImageOptions): Promise<ImageStartResult>;
   status?(id: string): Promise<ImageStatusResult>;
 }
@@ -13,5 +12,19 @@ export interface ImageProvider {
 */
 export interface TTSProvider {
   name: string;
+  voices: Record<string, string>;
+  models?: Record<string, string>;
+  response_format?: readonly string[] | string[];
+
   generate(text: string, opts?: TTSOptions): Promise<Blob>;
 }
+
+export const defaultTTSRequest: Required<Omit<TTSOptions, 'text'>> = {
+  voice: 'default',
+  speed: 1.0,
+  format: {
+    codec: 'mp3',
+    sampleRate: 44100,
+    bitrate: 128,
+  },
+};

@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 
-import { generateTTSWithFallback } from '@service/ai/tts/service';
+import TTSService from '@service/ai/tts/service';
 
 export const POST: APIRoute = async ({ request }) => {
   let input: DialogueInput;
@@ -16,7 +16,23 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const audio = await generateTTSWithFallback(input.text);
+    const ttsService = new TTSService();
+
+    let thirdParam: string | TTSOptions;
+
+    if (input.option === 'select' && typeof input.providerNameOrOpts === 'string') {
+      thirdParam = input.providerNameOrOpts;
+    } else if (typeof input.providerNameOrOpts === 'object') {
+      thirdParam = input.providerNameOrOpts;
+    } else {
+      thirdParam = {};
+    }
+
+    const audio = await ttsService.generateTTS(
+      input.option,
+      input.text,
+      thirdParam,
+    );
 
     const cacheKey = `tts-${Buffer.from(input.text).toString('base64')}`;
 

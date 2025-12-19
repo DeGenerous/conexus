@@ -132,7 +132,7 @@ function toElevenPayload(req: TTSOptions) {
   }
 
   return {
-    voice: req.voice ?? DEFAULT_VOICES.cheerful,
+    voice: req.voice ?? DEFAULT_VOICES.casual,
     modelId: DEFAULT_MODELS.flash,
     outputFormat: outputFormat as
       | 'mp3_22050_32'

@@ -46,7 +46,7 @@ export class ElevenLabsProvider implements TTSProvider {
   }
 
   async generate(text: string, _opts: TTSOptions): Promise<Blob> {
-    const opts = toElevenPayload(_opts);
+    const opts = toElevenPayload(_opts ?? ({} as TTSOptions));
 
     try {
       const stream = await this.elevenlabs.textToSpeech.convert(

@@ -32,14 +32,14 @@ export class DegenProvider implements TTSProvider {
     }
   }
 
-  async generate(text: string, _opts: TTSOptions): Promise<Blob> {
+  async generate(text: string, options?: TTSOptions): Promise<Blob> {
     if (!text) {
       throw new Error('TTS generation failed: text parameter cannot be empty');
     }
 
     const speechURL = `${this.apiUrl}/audio/speech`;
 
-    const opts = toProviderAPayload(_opts);
+    const opts = toDegenAIPayload(options ?? ({} as TTSOptions));
 
     const payload = {
       input: text,
@@ -67,9 +67,8 @@ export class DegenProvider implements TTSProvider {
   }
 }
 
-function toProviderAPayload(req: TTSOptions) {
+function toDegenAIPayload(req: TTSOptions) {
   return {
-    input: req.text,
     response_format: req.format?.codec ?? 'mp3',
     voice: req.voice ?? DEFAULT_VOICES.af_kore,
     speed: req.speed ?? 1.0,

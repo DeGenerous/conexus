@@ -45,14 +45,14 @@ export class ElevenLabsProvider implements TTSProvider {
     this.elevenlabs = new ElevenLabsClient({ apiKey });
   }
 
-  async generate(text: string, _opts: TTSOptions): Promise<Blob> {
-    const opts = toElevenPayload(_opts ?? ({} as TTSOptions));
+  async generate(text: string, options?: TTSOptions): Promise<Blob> {
+    const opts = toElevenPayload(options ?? ({} as TTSOptions));
 
     try {
       const stream = await this.elevenlabs.textToSpeech.convert(
         opts.voice ?? this.voices.casual,
         {
-          text: text ?? opts.text,
+          text: text,
           modelId: opts.modelId ?? this.models.flash,
           outputFormat: opts.outputFormat ?? 'mp3_44100_128',
         },
@@ -132,7 +132,6 @@ function toElevenPayload(req: TTSOptions) {
   }
 
   return {
-    text: req.text,
     voice: req.voice ?? DEFAULT_VOICES.cheerful,
     modelId: DEFAULT_MODELS.flash,
     outputFormat: outputFormat as

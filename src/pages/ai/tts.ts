@@ -18,9 +18,7 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const ttsService = new TTSService();
 
-    let context: TTSOptions = {
-      text: input.text,
-    };
+    let context: TTSOptions = {};
 
     if (typeof input.providerNameOrOpts === 'object') {
       context = { ...context, ...input.providerNameOrOpts };

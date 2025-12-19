@@ -18,9 +18,7 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const imageService = new ImageService();
 
-    let context: RequestContext = {
-      timeoutMs: 120000,
-    };
+    let context: RequestContext | string = {};
 
     if (typeof input.providerNameOrCtx === 'object') {
       context = { ...context, ...input.providerNameOrCtx };
@@ -30,13 +28,13 @@ export const POST: APIRoute = async ({ request }) => {
       typeof input.providerNameOrCtx === 'string' &&
       input.providerNameOrCtx !== 'auto'
     ) {
-      context = { ...context };
+      context = input.providerNameOrCtx;
     }
 
     const data = await imageService.generateImage(
       input.option,
       input.text,
-      context || (input.providerNameOrCtx as string),
+      context,
     );
 
     const cacheKey = `tts-${Buffer.from(input.text).toString('base64')}`;

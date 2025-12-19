@@ -26,13 +26,6 @@ export const POST: APIRoute = async ({ request }) => {
       context = { ...context, ...input.providerNameOrOpts };
     }
 
-    if (
-      typeof input.providerNameOrOpts === 'string' &&
-      input.providerNameOrOpts === 'auto'
-    ) {
-      context = { ...context };
-    }
-
     const audio = await ttsService.generateTTS(
       input.option,
       input.text,

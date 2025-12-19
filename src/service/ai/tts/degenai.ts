@@ -18,7 +18,7 @@ export const DEFAULT_VOICES = {
 export class DegenProvider implements TTSProvider {
   name = 'DegenAI';
   voices = DEFAULT_VOICES;
-  response_format = ['mp3', 'wav'];
+  readonly response_format = ['mp3', 'wav'] as const;
 
   private readonly apiUrl: string;
 

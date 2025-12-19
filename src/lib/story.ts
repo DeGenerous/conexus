@@ -364,7 +364,9 @@ export default class CoNexus {
     const input: DialogueInput = {
       text,
       option: 'fallback',
-      providerNameOrOpts: undefined,
+      providerNameOrOpts: {
+        voice: voiceId,
+      },
     };
 
     const res = await fetch(`/ai/tts`, {

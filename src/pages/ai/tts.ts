@@ -18,21 +18,14 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const ttsService = new TTSService();
 
-    let context: TTSOptions = {};
-
-    if (typeof input.providerNameOrOpts === 'object') {
-      context = { ...context, ...input.providerNameOrOpts };
-    }
-
     let thirdParam: string | TTSOptions;
 
-    if (input.option === 'select') {
-      thirdParam =
-        typeof input.providerNameOrOpts === 'string'
-          ? input.providerNameOrOpts
-          : context;
+    if (input.option === 'select' && typeof input.providerNameOrOpts === 'string') {
+      thirdParam = input.providerNameOrOpts;
+    } else if (typeof input.providerNameOrOpts === 'object') {
+      thirdParam = input.providerNameOrOpts;
     } else {
-      thirdParam = context;
+      thirdParam = {};
     }
 
     const audio = await ttsService.generateTTS(

@@ -128,7 +128,9 @@ function toElevenPayload(req: TTSOptions) {
     }
   } else {
     // PCM formats
-    outputFormat = `pcm_${sampleRate}`;
+    const supportedPcmSampleRates = new Set([16000, 22050, 24000, 44100, 48000]);
+    const pcmSampleRate = supportedPcmSampleRates.has(sampleRate) ? sampleRate : 44100;
+    outputFormat = `pcm_${pcmSampleRate}`;
   }
 
   return {

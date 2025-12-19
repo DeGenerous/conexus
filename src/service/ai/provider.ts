@@ -12,7 +12,7 @@ export interface ImageProvider {
 */
 export interface TTSProvider {
   name: string;
-  voices: object;
+  voices: Record<string, string>;
   models?: object;
   response_format?: string[];
 

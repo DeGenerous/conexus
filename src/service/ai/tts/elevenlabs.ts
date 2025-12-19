@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js';
+import { ElevenLabsClient, ElevenLabs } from '@elevenlabs/elevenlabs-js';
 
 import type { TTSProvider } from '@service/ai/provider';
 
@@ -18,7 +18,7 @@ export class ElevenLabsProvider implements TTSProvider {
   name = 'ElevenLabs';
   voices = DEFAULT_VOICES;
   models = DEFAULT_MODELS;
-  response_format = [
+  readonly response_format = [
     'mp3_22050_32',
     'mp3_24000_48',
     'mp3_44100_32',
@@ -30,8 +30,7 @@ export class ElevenLabsProvider implements TTSProvider {
     'pcm_22050',
     'pcm_24000',
     'pcm_44100',
-    'pcm_48000',
-  ];
+  ] as const;
 
   private readonly elevenlabs: ElevenLabsClient;
 
@@ -136,18 +135,7 @@ function toElevenPayload(req: TTSOptions) {
   return {
     voice: req.voice ?? DEFAULT_VOICES.casual,
     modelId: DEFAULT_MODELS.flash,
-    outputFormat: outputFormat as
-      | 'mp3_22050_32'
-      | 'mp3_24000_48'
-      | 'mp3_44100_32'
-      | 'mp3_44100_64'
-      | 'mp3_44100_96'
-      | 'mp3_44100_128'
-      | 'mp3_44100_192'
-      | 'pcm_16000'
-      | 'pcm_22050'
-      | 'pcm_24000'
-      | 'pcm_44100'
-      | 'pcm_48000',
+    outputFormat:
+      outputFormat as ElevenLabs.TextToSpeechConvertRequestOutputFormat,
   };
 }

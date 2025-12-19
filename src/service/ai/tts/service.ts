@@ -66,18 +66,25 @@ class TTSService {
     providerNameOrOpts: string | TTSOptions,
     opts?: TTSOptions,
   ): Promise<Blob> {
-    if (option === 'select') {
-      if (typeof providerNameOrOpts !== 'string') {
-        throw new Error('Provider name must be a string for select option');
-      }
-      return this.selectProviderAndGenerateTTS(text, providerNameOrOpts, opts);
-    } else if (option === 'fallback') {
-      if (typeof providerNameOrOpts === 'string') {
-        throw new Error('Options must not be a provider name for fallback option');
-      }
-      return this.generateTTSWithFallback(text, providerNameOrOpts);
-    } else {
-      throw new Error('Invalid option provided');
+    switch (option) {
+      case 'select':
+        if (typeof providerNameOrOpts !== 'string') {
+          throw new Error('Provider name must be a string for select option');
+        }
+        return this.selectProviderAndGenerateTTS(
+          text,
+          providerNameOrOpts,
+          opts,
+        );
+      case 'fallback':
+        if (typeof providerNameOrOpts === 'string') {
+          throw new Error(
+            'Options must not be a provider name for fallback option',
+          );
+        }
+        return this.generateTTSWithFallback(text, providerNameOrOpts);
+      default:
+        throw new Error('Invalid option provided');
     }
   }
 }

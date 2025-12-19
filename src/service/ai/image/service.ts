@@ -35,7 +35,7 @@ class ImageService {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  public async selectProviderAndGenerateImage(
+  public async handleSelectOption(
     text: string,
     providerName: string,
   ): Promise<string> {
@@ -100,7 +100,7 @@ class ImageService {
     );
   }
 
-  public async generateImageWithFallback(
+  public async handleFallbackOption(
     prompt: string,
     ctx: RequestContext,
   ): Promise<ImageResult> {
@@ -179,21 +179,22 @@ class ImageService {
     text: string,
     providerNameOrCtx: string | RequestContext,
   ): Promise<string | ImageResult> {
-    if (option === 'select') {
-      if (typeof providerNameOrCtx !== 'string') {
-        throw new Error('Provider name must be a string for select option');
-      }
-      return this.selectProviderAndGenerateImage(text, providerNameOrCtx);
-    } else if (option === 'fallback') {
-      if (
-        providerNameOrCtx == null || // covers undefined and null
-        typeof providerNameOrCtx === 'string'
-      ) {
-        throw new Error('Expected RequestContext object for fallback option');
-      }
-      return this.generateImageWithFallback(text, providerNameOrCtx);
-    } else {
-      throw new Error('Invalid option provided');
+    switch (option) {
+      case 'select':
+        if (typeof providerNameOrCtx !== 'string') {
+          throw new Error('Provider name must be a string for select option');
+        }
+        return this.handleSelectOption(text, providerNameOrCtx);
+      case 'fallback':
+        if (
+          providerNameOrCtx == null || // covers undefined and null
+          typeof providerNameOrCtx === 'string'
+        ) {
+          throw new Error('Expected RequestContext object for fallback option');
+        }
+        return this.handleFallbackOption(text, providerNameOrCtx);
+      default:
+        throw new Error('Invalid option provided');
     }
   }
 }

@@ -317,7 +317,7 @@ export default class CoNexus {
     const input: ImageGenerationInput = {
       text: prompt,
       option: 'fallback',
-      providerNameOrCtx: 'auto',
+      providerNameOrCtx: {},
     };
 
     const res = await fetch(`/ai/image`, {

@@ -4,15 +4,12 @@ import { fal } from '@fal-ai/client';
 
 import type { ImageProvider } from '@service/ai/provider';
 
-export const MODELS = {
-  turbo: 'fal-ai/z-image/turbo',
-  nanobanana: 'fal-ai/nano-banana-pro',
-  flux2: 'fal-ai/flux-2',
-} as const;
+import PROVIDER_CONFIG from './utils';
 
 export class FalProvider implements ImageProvider {
   name = 'FAL';
-  readonly models = MODELS;
+
+  readonly models = PROVIDER_CONFIG.FAL.models;
 
   constructor() {
     // check if FAL_KEY is set
@@ -39,9 +36,9 @@ export class FalProvider implements ImageProvider {
     prompt: string,
     ctx?: RequestContext,
   ): Promise<{ imageType: ImageType; data: string }> {
-    let model: string = MODELS.turbo;
-    if (ctx?.model && Object.values(MODELS).includes(ctx.model as any)) {
-      model = ctx.model;
+    let model: string = this.models.turbo;
+    if (ctx?.model && Object.keys(this.models).includes(ctx.model as any)) {
+      model = this.models[ctx.model as keyof typeof PROVIDER_CONFIG.FAL.models];
     }
 
     try {

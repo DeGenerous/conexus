@@ -2,8 +2,12 @@ import 'dotenv/config';
 
 import type { ImageProvider } from '@service/ai/provider';
 
+import PROVIDER_CONFIG from './utils';
+
 export class FluxProvider implements ImageProvider {
-  name = 'Flux';
+  name = 'FLUX';
+
+  readonly models = PROVIDER_CONFIG.FLUX.models;
 
   private readonly apiUrl: string;
   private readonly header: Record<string, string>;

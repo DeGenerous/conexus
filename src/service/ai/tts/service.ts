@@ -35,7 +35,7 @@ class TTSService {
         console.log(
           `Attempting TTS generation with ${provider.name}, attempt ${retryCtx.attempt}`,
         );
-        return provider.generate(text, opts);
+        return provider.generate(text, retryCtx, opts);
       },
       ctx,
       { retries: ctx.retries ?? 2 },

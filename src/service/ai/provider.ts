@@ -14,14 +14,13 @@ export interface ImageProvider {
 */
 export interface TTSProvider {
   name: string;
+
   voices: Record<string, string>;
   models?: Record<string, string>;
+  
   response_format?: readonly string[] | string[];
 
-  generate(
-    text: string,
-    opts?: TTSOptions,
-  ): Promise<Blob>;
+  generate(text: string, ctx: RequestContext, opts?: TTSOptions): Promise<Blob>;
 }
 
 export const defaultTTSRequest: Required<Omit<TTSOptions, 'text'>> = {

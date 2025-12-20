@@ -315,7 +315,7 @@ export default class CoNexus {
     provider: string = 'FAL',
     model: string = 'default',
   ): Promise<void> {
-    let prompt = this.step_data.image_prompt || this.step_data.story;
+    let text = this.step_data.image_prompt || this.step_data.story;
 
     const requestContext: RequestContext = {
       option: 'fallback',
@@ -326,7 +326,7 @@ export default class CoNexus {
     const res = await fetch(`/ai/image`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: prompt, context: requestContext }),
+      body: JSON.stringify({ text: text, context: requestContext }),
     });
 
     if (!res.ok) {
@@ -364,7 +364,7 @@ export default class CoNexus {
     delivery: string = 'default',
     voiceId: string = 'default',
   ): Promise<Blob> {
-    let prompt = formatGameTextForSpeech(this.step_data);
+    let text = formatGameTextForSpeech(this.step_data);
 
     const requestContext: RequestContext = {
       option: 'fallback',
@@ -381,7 +381,7 @@ export default class CoNexus {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        text: prompt,
+        text: text,
         context: requestContext,
         options: ttsOptions,
       }),

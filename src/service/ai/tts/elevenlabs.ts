@@ -117,17 +117,19 @@ export class ElevenLabsProvider implements TTSProvider {
 
     const voiceKey = req.voice ?? 'default';
     const voice =
-      this.voices[voiceKey as keyof typeof PROVIDER_CONFIG.ELEVENLABS.voices];
+      this.voices[voiceKey as keyof typeof PROVIDER_CONFIG.ELEVENLABS.voices] ??
+      this.voices.default;
 
     const modelKey = ctx.model ?? 'default';
     const modelId =
-      this.models[modelKey as keyof typeof PROVIDER_CONFIG.ELEVENLABS.models];
+      this.models[modelKey as keyof typeof PROVIDER_CONFIG.ELEVENLABS.models] ??
+      this.models.default;
 
-    const deliveryKey = req.delivery ?? 'standard';
+    const deliveryKey = req.delivery ?? 'default';
     const delivery =
       this.delivery[
         deliveryKey as keyof typeof PROVIDER_CONFIG.ELEVENLABS.delivery
-      ];
+      ] ?? this.delivery.default;
 
     return {
       voice: voice,

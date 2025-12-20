@@ -68,7 +68,9 @@ export class FalProvider implements ImageProvider {
 
   private validateAndMapOptions(ctx?: RequestContext) {
     const modelKey = ctx?.model ?? 'default';
-    const model = this.models[modelKey as keyof typeof PROVIDER_CONFIG.FAL.models];
+    const model =
+      this.models[modelKey as keyof typeof PROVIDER_CONFIG.FAL.models] ??
+      this.models.default;
 
     return {
       model,

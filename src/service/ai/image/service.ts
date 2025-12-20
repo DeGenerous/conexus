@@ -4,6 +4,9 @@ import { FalProvider } from '@service/ai/image/fal';
 import { FluxProvider } from '@service/ai/image/flux';
 import { LumaProvider } from '@service/ai/image/luma';
 
+const MAX_POLLING_ITERATIONS = 20; // Numeber of polling attempts
+const DEFAULT_POLL_INTERVAL_MS = 3000; // e.g., 1 minute timeout if polling every 3 seconds
+
 class ImageService {
   private imageProviders: ImageProvider[] = [];
 
@@ -56,9 +59,9 @@ class ImageService {
             `Image generation started with ${provider.name}, job ID: ${start.id}`,
           );
 
-          const maxIterations = 20; // 1 minute timeout (20 * 3 seconds)
+          const maxIterations = MAX_POLLING_ITERATIONS;
           let iterations = 0;
-          const pollInterval = ctx.pollIntervalMs ?? 3000;
+          const pollInterval = ctx.pollIntervalMs ?? DEFAULT_POLL_INTERVAL_MS;
 
           while (iterations < maxIterations) {
             await this.delay(pollInterval);

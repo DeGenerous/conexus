@@ -8,18 +8,8 @@ import 'dotenv/config';
 class TTSService {
   private ttsProviders: TTSProvider[] = [];
 
-  option: 'select' | 'fallback' | undefined;
-  provider: string | undefined;
-  model: string | undefined;
-  voice: string | undefined;
-
   constructor() {
     this.initializeProviders();
-
-    this.option = import.meta.env.TTS_PROVIDER_OPTION;
-    this.provider = import.meta.env.TTS_PROVIDER;
-    this.model = import.meta.env.TTS_PROVIDER_MODEL;
-    this.voice = import.meta.env.TTS_PROVIDER_VOICE;
   }
 
   private initializeProviders(): void {
@@ -88,26 +78,7 @@ class TTSService {
     ctx: RequestContext,
     options?: TTSOptions,
   ): Promise<Blob> {
-    if (this.option !== undefined) {
-      ctx.option = this.option;
-
-      if (this.provider !== undefined) {
-        ctx.provider = this.provider;
-      }
-
-      if (this.model !== undefined) {
-        ctx.model = this.model;
-      }
-
-      if (options !== undefined) {
-        options = {
-          ...options,
-          voice: this.voice ?? options.voice,
-        };
-      } else {
-        options = { voice: this.voice };
-      }
-    }
+    this.applyContextDefaults(ctx, options);
 
     switch (ctx.option) {
       case 'select':
@@ -119,6 +90,18 @@ class TTSService {
         return this.generateTTSWithFallback(text, ctx, options);
       default:
         throw new Error('Invalid option provided');
+    }
+  }
+
+  private applyContextDefaults(ctx: RequestContext, options?: TTSOptions) {
+    ctx.option = import.meta.env.TTS_PROVIDER_OPTION ?? ctx.option;
+    ctx.provider = import.meta.env.TTS_PROVIDER_NAME ?? ctx.provider;
+    ctx.model = import.meta.env.TTS_PROVIDER_MODEL ?? ctx.model;
+
+    if (options) {
+      options.voice = import.meta.env.TTS_PROVIDER_VOICE ?? options.voice;
+    } else {
+      options = { voice: import.meta.env.TTS_PROVIDER_VOICE };
     }
   }
 }

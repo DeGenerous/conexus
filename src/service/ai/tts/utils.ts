@@ -1,4 +1,4 @@
-// Providers with thier models, voices (for tts), and other constants
+// Providers with their models, voices (for tts), and other constants
 
 import { voices } from '@elevenlabs/elevenlabs-js/api';
 

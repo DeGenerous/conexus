@@ -17,6 +17,10 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response('Missing or empty text', { status: 400 });
   }
 
+  if (body.context && typeof body.context !== 'object') {
+    return new Response('Invalid context format', { status: 400 });
+  }
+
   try {
     const data = await imageService.generateImage(body.text, body.context);
 

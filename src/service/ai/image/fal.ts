@@ -22,7 +22,8 @@ export class FalProvider implements ImageProvider {
   }
 
   async start(prompt: string, ctx?: RequestContext): Promise<ImageStartResult> {
-    const { imageType, data } = await this.generateFalImage(prompt, ctx);
+    const opts = this.validateAndMapOptions(ctx);
+    const { imageType, data } = await this.generateFalImage(prompt, opts.model);
     return {
       kind: 'ready',
       image: {
@@ -34,14 +35,8 @@ export class FalProvider implements ImageProvider {
 
   private async generateFalImage(
     prompt: string,
-    ctx?: RequestContext,
+    model: string,
   ): Promise<{ imageType: ImageType; data: string }> {
-    let model: string = this.models.default;
-
-    if (ctx?.model && Object.keys(this.models).includes(ctx.model as any)) {
-      model = this.models[ctx.model as keyof typeof PROVIDER_CONFIG.FAL.models];
-    }
-
     try {
       const result = await fal.subscribe(model, {
         input: {
@@ -69,5 +64,14 @@ export class FalProvider implements ImageProvider {
       console.error('Error generating image:', error);
       throw error instanceof Error ? error : new Error(String(error));
     }
+  }
+
+  private validateAndMapOptions(ctx?: RequestContext) {
+    const modelKey = ctx?.model ?? 'default';
+    const model = this.models[modelKey as keyof typeof PROVIDER_CONFIG.FAL.models];
+
+    return {
+      model,
+    };
   }
 }

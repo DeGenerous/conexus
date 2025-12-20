@@ -33,22 +33,13 @@ export class DegenProvider implements TTSProvider {
 
     const speechURL = `${this.apiUrl}/audio/speech`;
 
-    const opts = toDegenAIPayload(options ?? ({} as TTSOptions));
-
-    let voice: string = this.voices.default;
-
-    if (opts.voice && Object.keys(this.voices).includes(opts.voice as any)) {
-      voice =
-        this.voices[
-          opts.voice as keyof typeof PROVIDER_CONFIG.DEGENAI.voices
-        ];
-    }
+    const opts = this.validateAndMapOptions(options ?? ({} as TTSOptions));
 
     const payload = {
       input: text,
-      voice: voice,
-      response_format: opts.response_format ?? 'mp3',
-      speed: opts.speed ?? 0.95,
+      voice: opts.voice,
+      response_format: opts.response_format,
+      speed: opts.speed,
     };
 
     const res = await fetch(speechURL, {
@@ -68,12 +59,20 @@ export class DegenProvider implements TTSProvider {
 
     return await res.blob();
   }
-}
 
-function toDegenAIPayload(req: TTSOptions) {
-  return {
-    response_format: req.format?.codec ?? 'mp3',
-    voice: req.voice ?? PROVIDER_CONFIG.DEGENAI.voices.default,
-    speed: req.speed ?? 1.0,
-  };
+  private validateAndMapOptions(req: TTSOptions) {
+    const response_format = req.format?.codec ?? 'mp3';
+
+    const voiceKey = req.voice ?? 'default';
+    const voice =
+      this.voices[voiceKey as keyof typeof PROVIDER_CONFIG.DEGENAI.voices];
+
+    const speed = req.speed ?? 1.0;
+
+    return {
+      response_format,
+      voice,
+      speed,
+    };
+  }
 }

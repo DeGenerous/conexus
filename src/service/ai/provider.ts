@@ -17,7 +17,7 @@ export interface TTSProvider {
 
   voices: Record<string, string>;
   models?: Record<string, string>;
-  
+
   response_format?: readonly string[] | string[];
 
   generate(text: string, ctx: RequestContext, opts?: TTSOptions): Promise<Blob>;

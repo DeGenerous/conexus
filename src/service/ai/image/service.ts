@@ -49,7 +49,6 @@ class ImageService {
           const start = await provider.start(prompt, ctx);
 
           if (start.kind === 'ready') {
-            // return ctx.option === 'select' ? start.image.data : start.image;
             return start.image;
           }
 
@@ -77,7 +76,6 @@ class ImageService {
               continue;
             }
             if (status.status === 'ready') {
-              // return ctx.option === 'select' ? status.image.data : status.image;
               return status.image;
             }
 
@@ -105,11 +103,7 @@ class ImageService {
       throw new Error(`Image provider "${providerName}" not found`);
     }
 
-    return this.generateWithProvider(
-      provider,
-      text,
-      ctx,
-    ) as Promise<ImageResult>;
+    return this.generateWithProvider(provider, text, ctx);
   }
 
   public async handleFallbackOption(
@@ -120,11 +114,7 @@ class ImageService {
 
     for (const provider of this.imageProviders) {
       try {
-        return (await this.generateWithProvider(
-          provider,
-          prompt,
-          ctx,
-        )) as ImageResult;
+        return await this.generateWithProvider(provider, prompt, ctx);
       } catch (err) {
         errors.push(err as Error);
       }

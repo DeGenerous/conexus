@@ -7,10 +7,6 @@ import openModal from '@stores/modal.svelte';
 import { getCurrentUser } from '@utils/route-guard';
 import { formatGameTextForSpeech } from '@utils/tts';
 
-import IMAGEPROVIDERCONFIG from '@service/ai/image/utils';
-import TTSPROVIDERCONFIG from '@service/ai/tts/utils';
-import { mode } from 'viem/chains';
-
 /**
  * Orchestrates interactive story sessions and syncs game state with the backend.
  */
@@ -315,11 +311,11 @@ export default class CoNexus {
     }
   }
 
-  async #imageGenInternal(): Promise<void> {
+  async #imageGenInternal(
+    provider: string = 'FAL',
+    model: string = 'default',
+  ): Promise<void> {
     let prompt = this.step_data.image_prompt || this.step_data.story;
-
-    const provider = 'FAL'; // imageProvider;
-    const model = 'default';
 
     const requestContext: RequestContext = {
       option: 'fallback',
@@ -363,13 +359,12 @@ export default class CoNexus {
   }
 
   async #ttsGenInternal(
-    delivery: string = '[suspicious]',
-    voiceId: string = 'cheerful',
+    provider: string = 'ELEVENLABS',
+    model: string = 'default',
+    delivery: string = 'default',
+    voiceId: string = 'default',
   ): Promise<Blob> {
-    let text = formatGameTextForSpeech(this.step_data);
-
-    const provider = 'ELEVENLABS'; // ttsProvider;
-    const model = 'default';
+    let prompt = formatGameTextForSpeech(this.step_data);
 
     const requestContext: RequestContext = {
       option: 'fallback',
@@ -386,7 +381,7 @@ export default class CoNexus {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        text: text,
+        text: prompt,
         context: requestContext,
         options: ttsOptions,
       }),

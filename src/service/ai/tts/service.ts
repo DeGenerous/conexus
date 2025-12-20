@@ -74,12 +74,7 @@ class TTSService {
 
     for (const provider of this.ttsProviders) {
       try {
-        return (await this.generateWithProvider(
-          provider,
-          text,
-          ctx,
-          opts,
-        )) as Blob;
+        return await this.generateWithProvider(provider, text, ctx, opts);
       } catch (err) {
         errors.push(err as Error);
       }
@@ -104,8 +99,13 @@ class TTSService {
         ctx.model = this.model;
       }
 
-      if (this.voice !== undefined && options !== undefined) {
-        options.voice = this.voice;
+      if (options !== undefined) {
+        options = {
+          ...options,
+          voice: this.voice ?? options.voice,
+        };
+      } else {
+        options = { voice: this.voice };
       }
     }
 

@@ -17,6 +17,10 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response('Missing or empty text', { status: 400 });
   }
 
+  if (!body.context || typeof body.context !== 'object') {
+    return new Response('Missing or invalid context', { status: 400 });
+  }
+
   try {
     const audio = await ttsService.generateTTS(
       body.text,

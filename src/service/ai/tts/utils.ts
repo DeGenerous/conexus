@@ -1,7 +1,4 @@
 // Providers with their models, voices (for tts), and other constants
-
-import { voices } from '@elevenlabs/elevenlabs-js/api';
-
 const PROVIDER_CONFIG = {
   DEGENAI: {
     models: {
@@ -44,6 +41,13 @@ const PROVIDER_CONFIG = {
       'pcm_24000',
       'pcm_44100',
     ] as const,
+    delivery: {
+      default: '[cheerful]',
+      sad: '[sad]',
+      angry: '[angry]',
+      fearful: '[fearful]',
+      surprised: '[surprised]',
+    },
   },
 } as const;
 

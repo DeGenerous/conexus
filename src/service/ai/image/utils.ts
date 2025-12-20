@@ -1,19 +1,19 @@
 const PROVIDER_CONFIG = {
   FAL: {
     models: {
-      turbo: 'fal-ai/z-image/turbo',
+      default: 'fal-ai/z-image/turbo',
       nanobanana: 'fal-ai/nano-banana-pro',
       flux2: 'fal-ai/flux-2',
     },
   },
   LUMA: {
     models: {
-      flash: 'photon-flash-1',
+      default: 'photon-flash-1',
     },
   },
   FLUX: {
     models: {
-      standard: 'flux-pro-1.1',
+      default: 'flux-pro-1.1',
     },
   },
 } as const;

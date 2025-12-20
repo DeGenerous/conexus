@@ -2,6 +2,8 @@ import type { APIRoute } from 'astro';
 
 import ImageService from '@service/ai/image/service';
 
+const imageService = new ImageService();
+
 export const POST: APIRoute = async ({ request }) => {
   let body: { text: string; context: RequestContext };
 
@@ -16,8 +18,6 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const imageService = new ImageService();
-
     const data = await imageService.generateImage(body.text, body.context);
 
     const cacheKey = `image-${Buffer.from(body.text).toString('base64')}`;

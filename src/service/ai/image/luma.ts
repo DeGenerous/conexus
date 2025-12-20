@@ -31,7 +31,7 @@ export class LumaProvider implements ImageProvider {
   async start(prompt: string, ctx?: RequestContext): Promise<ImageStartResult> {
     const body = {
       prompt: prompt,
-      model: this.models.flash,
+      model: this.models.default,
     };
 
     const res = await fetch(`${this.apiUrl}/image`, {

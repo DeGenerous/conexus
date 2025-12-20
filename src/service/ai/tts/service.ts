@@ -8,8 +8,18 @@ import 'dotenv/config';
 class TTSService {
   private ttsProviders: TTSProvider[] = [];
 
+  option: 'select' | 'fallback' | undefined;
+  provider: string | undefined;
+  model: string | undefined;
+  voice: string | undefined;
+
   constructor() {
     this.initializeProviders();
+
+    this.option = import.meta.env.TTS_PROVIDER_OPTION;
+    this.provider = import.meta.env.TTS_PROVIDER;
+    this.model = import.meta.env.TTS_PROVIDER_MODEL;
+    this.voice = import.meta.env.TTS_PROVIDER_VOICE;
   }
 
   private initializeProviders(): void {
@@ -80,17 +90,33 @@ class TTSService {
 
   public async generateTTS(
     text: string,
-    context: RequestContext,
+    ctx: RequestContext,
     options?: TTSOptions,
   ): Promise<Blob> {
-    switch (context.option) {
+    if (this.option !== undefined) {
+      ctx.option = this.option;
+
+      if (this.provider !== undefined) {
+        ctx.provider = this.provider;
+      }
+
+      if (this.model !== undefined) {
+        ctx.model = this.model;
+      }
+
+      if (this.voice !== undefined && options !== undefined) {
+        options.voice = this.voice;
+      }
+    }
+
+    switch (ctx.option) {
       case 'select':
-        if (typeof context.provider !== 'string') {
+        if (typeof ctx.provider !== 'string') {
           throw new Error('Provider name must be a string for select option');
         }
-        return this.selectProviderAndGenerateTTS(text, context, options);
+        return this.selectProviderAndGenerateTTS(text, ctx, options);
       case 'fallback':
-        return this.generateTTSWithFallback(text, context, options);
+        return this.generateTTSWithFallback(text, ctx, options);
       default:
         throw new Error('Invalid option provided');
     }

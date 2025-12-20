@@ -36,7 +36,8 @@ export class FalProvider implements ImageProvider {
     prompt: string,
     ctx?: RequestContext,
   ): Promise<{ imageType: ImageType; data: string }> {
-    let model: string = this.models.turbo;
+    let model: string = this.models.default;
+
     if (ctx?.model && Object.keys(this.models).includes(ctx.model as any)) {
       model = this.models[ctx.model as keyof typeof PROVIDER_CONFIG.FAL.models];
     }

@@ -7,8 +7,16 @@ import { LumaProvider } from '@service/ai/image/luma';
 class ImageService {
   private imageProviders: ImageProvider[] = [];
 
+  option: 'select' | 'fallback' | undefined;
+  provider: string | undefined;
+  model: string | undefined;
+
   constructor() {
     this.initializeProviders();
+
+    this.option = import.meta.env.IMAGE_PROVIDER_OPTION;
+    this.provider = import.meta.env.IMAGE_PROVIDER;
+    this.model = import.meta.env.IMAGE_PROVIDER_MODEL;
   }
 
   private initializeProviders(): void {
@@ -31,7 +39,7 @@ class ImageService {
     provider: ImageProvider,
     prompt: string,
     ctx: RequestContext,
-  ): Promise<ImageResult | string> {
+  ): Promise<ImageResult> {
     return withRetry(
       async (retryCtx) => {
         console.log(
@@ -41,7 +49,8 @@ class ImageService {
           const start = await provider.start(prompt, ctx);
 
           if (start.kind === 'ready') {
-            return ctx.option === 'select' ? start.image.data : start.image;
+            // return ctx.option === 'select' ? start.image.data : start.image;
+            return start.image;
           }
 
           console.log(
@@ -68,7 +77,8 @@ class ImageService {
               continue;
             }
             if (status.status === 'ready') {
-              return ctx.option === 'select' ? status.image.data : status.image;
+              // return ctx.option === 'select' ? status.image.data : status.image;
+              return status.image;
             }
 
             throw new Error(`${provider.name} image generation failed`);
@@ -87,7 +97,7 @@ class ImageService {
   public async handleSelectOption(
     text: string,
     ctx: RequestContext,
-  ): Promise<string> {
+  ): Promise<ImageResult> {
     const providerName = ctx.provider;
 
     const provider = this.imageProviders.find((p) => p.name === providerName);
@@ -95,7 +105,11 @@ class ImageService {
       throw new Error(`Image provider "${providerName}" not found`);
     }
 
-    return this.generateWithProvider(provider, text, ctx) as Promise<string>;
+    return this.generateWithProvider(
+      provider,
+      text,
+      ctx,
+    ) as Promise<ImageResult>;
   }
 
   public async handleFallbackOption(
@@ -123,6 +137,18 @@ class ImageService {
     text: string,
     ctx: RequestContext,
   ): Promise<string | ImageResult> {
+    if (this.option !== undefined) {
+      ctx.option = this.option;
+
+      if (this.provider !== undefined) {
+        ctx.provider = this.provider;
+      }
+
+      if (this.model !== undefined) {
+        ctx.model = this.model;
+      }
+    }
+
     switch (ctx.option) {
       case 'select':
         if (typeof ctx.provider !== 'string') {

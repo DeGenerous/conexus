@@ -9,6 +9,7 @@ import { formatGameTextForSpeech } from '@utils/tts';
 
 import IMAGEPROVIDERCONFIG from '@service/ai/image/utils';
 import TTSPROVIDERCONFIG from '@service/ai/tts/utils';
+import { mode } from 'viem/chains';
 
 /**
  * Orchestrates interactive story sessions and syncs game state with the backend.
@@ -318,15 +319,12 @@ export default class CoNexus {
     let prompt = this.step_data.image_prompt || this.step_data.story;
 
     const provider = 'FAL'; // imageProvider;
-    const model = 'nanobanana';
+    const model = 'default';
 
     const requestContext: RequestContext = {
       option: 'fallback',
-      model:
-        IMAGEPROVIDERCONFIG[provider as keyof typeof IMAGEPROVIDERCONFIG]
-          .models[
-          model as keyof (typeof IMAGEPROVIDERCONFIG)[typeof provider]['models']
-        ],
+      provider: provider,
+      model: model,
     };
 
     const res = await fetch(`/ai/image`, {
@@ -371,15 +369,12 @@ export default class CoNexus {
     let text = formatGameTextForSpeech(this.step_data);
 
     const provider = 'ELEVENLABS'; // ttsProvider;
-    const model = 'flash';
+    const model = 'default';
 
     const requestContext: RequestContext = {
       option: 'fallback',
       provider: provider,
-      model:
-        TTSPROVIDERCONFIG[provider as keyof typeof TTSPROVIDERCONFIG].models[
-          model as keyof (typeof TTSPROVIDERCONFIG)[typeof provider]['models']
-        ],
+      model: model,
     };
 
     const ttsOptions: TTSOptions = {

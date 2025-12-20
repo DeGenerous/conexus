@@ -2,6 +2,8 @@ import type { APIRoute } from 'astro';
 
 import TTSService from '@service/ai/tts/service';
 
+const ttsService = new TTSService();
+
 export const POST: APIRoute = async ({ request }) => {
   let body: { text: string; context: RequestContext; options: TTSOptions };
 
@@ -16,12 +18,10 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const ttsService = new TTSService();
-
     const audio = await ttsService.generateTTS(
       body.text,
       body.context,
-      body.options
+      body.options,
     );
 
     const cacheKey = `tts-${Buffer.from(body.text).toString('base64')}`;

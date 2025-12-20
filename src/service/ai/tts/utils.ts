@@ -5,11 +5,11 @@ import { voices } from '@elevenlabs/elevenlabs-js/api';
 const PROVIDER_CONFIG = {
   DEGENAI: {
     models: {
-      standard: 'degenai_standard_v1',
+      default: 'degenai_standard_v1',
       premium: 'degenai_premium_v1',
     },
     voices: {
-      af_kore: 'af_kore',
+      default: 'af_kore',
       af_jpn: 'af_jpn',
       af_chn: 'af_chn',
       eu_esp: 'eu_esp',
@@ -24,11 +24,11 @@ const PROVIDER_CONFIG = {
   },
   ELEVENLABS: {
     models: {
+      default: 'eleven_flash_v2_5',
       multilingual: 'eleven_multilingual_v2',
-      flash: 'eleven_flash_v2_5',
     },
     voices: {
-      cheerful: '9BWtsMINqrJLrRacOk9x',
+      default: '9BWtsMINqrJLrRacOk9x',
       casual: 'IKne3meq5aSn9XLyUdCD',
     },
     response_format: [

@@ -42,10 +42,22 @@ export class ElevenLabsProvider implements TTSProvider {
         ];
     }
 
+    let modelId: string = this.models.default;
+
+    if (
+      opts.modelId &&
+      Object.values(this.models).includes(opts.modelId as any)
+    ) {
+      modelId =
+        this.models[
+          opts.modelId as keyof typeof PROVIDER_CONFIG.ELEVENLABS.models
+        ];
+    }
+
     try {
       const stream = await this.elevenlabs.textToSpeech.convert(voice, {
         text: text,
-        modelId: opts.modelId ?? this.models.flash,
+        modelId: modelId,
         outputFormat: opts.outputFormat ?? 'mp3_44100_128',
       });
 
@@ -129,8 +141,8 @@ function toElevenPayload(ctx: RequestContext, req: TTSOptions) {
   }
 
   return {
-    voice: req.voice ?? PROVIDER_CONFIG.ELEVENLABS.voices.casual,
-    modelId: ctx.model ?? PROVIDER_CONFIG.ELEVENLABS.models.flash,
+    voice: req.voice ?? PROVIDER_CONFIG.ELEVENLABS.voices.default,
+    modelId: ctx.model ?? PROVIDER_CONFIG.ELEVENLABS.models.default,
     outputFormat:
       outputFormat as ElevenLabs.TextToSpeechConvertRequestOutputFormat,
   };

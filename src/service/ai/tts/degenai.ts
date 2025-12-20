@@ -35,12 +35,12 @@ export class DegenProvider implements TTSProvider {
 
     const opts = toDegenAIPayload(options ?? ({} as TTSOptions));
 
-    let voice: string = this.voices.af_kore;
+    let voice: string = this.voices.default;
 
     if (opts.voice && Object.keys(this.voices).includes(opts.voice as any)) {
       voice =
         this.voices[
-          opts.voice as keyof typeof PROVIDER_CONFIG.ELEVENLABS.voices
+          opts.voice as keyof typeof PROVIDER_CONFIG.DEGENAI.voices
         ];
     }
 
@@ -73,7 +73,7 @@ export class DegenProvider implements TTSProvider {
 function toDegenAIPayload(req: TTSOptions) {
   return {
     response_format: req.format?.codec ?? 'mp3',
-    voice: req.voice ?? PROVIDER_CONFIG.DEGENAI.voices.af_kore,
+    voice: req.voice ?? PROVIDER_CONFIG.DEGENAI.voices.default,
     speed: req.speed ?? 1.0,
   };
 }

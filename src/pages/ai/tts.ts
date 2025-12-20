@@ -3,38 +3,28 @@ import type { APIRoute } from 'astro';
 import TTSService from '@service/ai/tts/service';
 
 export const POST: APIRoute = async ({ request }) => {
-  let input: DialogueInput;
+  let body: { text: string; context: RequestContext; option: TTSOptions };
 
   try {
-    input = await request.json();
+    body = await request.json();
   } catch {
     return new Response('Invalid JSON body', { status: 400 });
   }
 
-  if (typeof input.text !== 'string' || input.text.trim().length === 0) {
+  if (typeof body.text !== 'string' || body.text.trim().length === 0) {
     return new Response('Missing or empty text', { status: 400 });
   }
 
   try {
     const ttsService = new TTSService();
 
-    let thirdParam: string | TTSOptions;
-
-    if (input.option === 'select' && typeof input.providerNameOrOpts === 'string') {
-      thirdParam = input.providerNameOrOpts;
-    } else if (typeof input.providerNameOrOpts === 'object') {
-      thirdParam = input.providerNameOrOpts;
-    } else {
-      thirdParam = {};
-    }
-
     const audio = await ttsService.generateTTS(
-      input.option,
-      input.text,
-      thirdParam,
+      body.text,
+      body.context,
+      body.option,
     );
 
-    const cacheKey = `tts-${Buffer.from(input.text).toString('base64')}`;
+    const cacheKey = `tts-${Buffer.from(body.text).toString('base64')}`;
 
     return new Response(audio, {
       status: 200,

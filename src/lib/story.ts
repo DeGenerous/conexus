@@ -314,16 +314,14 @@ export default class CoNexus {
   async #imageGenInternal(): Promise<void> {
     let prompt = this.step_data.image_prompt || this.step_data.story;
 
-    const input: ImageGenerationInput = {
-      text: prompt,
+    const requestContext: RequestContext = {
       option: 'fallback',
-      providerNameOrCtx: {},
     };
 
     const res = await fetch(`/ai/image`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(input),
+      body: JSON.stringify({ text: prompt, context: requestContext }),
     });
 
     if (!res.ok) {
@@ -361,18 +359,23 @@ export default class CoNexus {
   ): Promise<Blob> {
     let text = formatGameTextForSpeech(this.step_data);
 
-    const input: DialogueInput = {
-      text,
+    const requestContext: RequestContext = {
       option: 'fallback',
-      providerNameOrOpts: {
-        voice: voiceId,
-      },
+    };
+
+    const ttsOptions: TTSOptions = {
+      voice: voiceId,
+      delivery: delivery,
     };
 
     const res = await fetch(`/ai/tts`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(input),
+      body: JSON.stringify({
+        text: text,
+        context: requestContext,
+        options: ttsOptions,
+      }),
     });
 
     if (!res.ok) {

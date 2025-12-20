@@ -4,8 +4,15 @@ import { fal } from '@fal-ai/client';
 
 import type { ImageProvider } from '@service/ai/provider';
 
+export const MODELS = {
+  turbo: 'fal-ai/z-image/turbo',
+  nanobanana: 'fal-ai/nano-banana-pro',
+  flux2: 'fal-ai/flux-2',
+} as const;
+
 export class FalProvider implements ImageProvider {
   name = 'FAL';
+  readonly models = MODELS;
 
   constructor() {
     // check if FAL_KEY is set
@@ -17,8 +24,8 @@ export class FalProvider implements ImageProvider {
     }
   }
 
-  async start(prompt: string, _opts?: ImageOptions): Promise<ImageStartResult> {
-    const { imageType, data } = await this.generateFalImage(prompt);
+  async start(prompt: string, ctx?: RequestContext): Promise<ImageStartResult> {
+    const { imageType, data } = await this.generateFalImage(prompt, ctx);
     return {
       kind: 'ready',
       image: {
@@ -30,9 +37,15 @@ export class FalProvider implements ImageProvider {
 
   private async generateFalImage(
     prompt: string,
+    ctx?: RequestContext,
   ): Promise<{ imageType: ImageType; data: string }> {
+    let model: string = MODELS.turbo;
+    if (ctx?.model && Object.values(MODELS).includes(ctx.model as any)) {
+      model = ctx.model;
+    }
+
     try {
-      const result = await fal.subscribe('fal-ai/z-image/turbo', {
+      const result = await fal.subscribe(model, {
         input: {
           prompt: prompt,
         },

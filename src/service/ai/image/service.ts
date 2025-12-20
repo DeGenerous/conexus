@@ -2,7 +2,6 @@ import type { ImageProvider } from '@service/ai/provider';
 import { withRetry } from '@service/ai/common/helper';
 import { FalProvider } from '@service/ai/image/fal';
 import { FluxProvider } from '@service/ai/image/flux';
-import { GoogleProvider } from '@service/ai/image/google';
 import { LumaProvider } from '@service/ai/image/luma';
 
 class ImageService {
@@ -13,26 +12,13 @@ class ImageService {
   }
 
   private initializeProviders(): void {
-    if (this.imageProviders.length === 0) {
+    const providers = [FalProvider, LumaProvider, FluxProvider];
+
+    for (const Provider of providers) {
       try {
-        this.imageProviders.push(new GoogleProvider());
+        this.imageProviders.push(new Provider());
       } catch (err) {
-        console.error('Failed to initialize GoogleProvider:', err);
-      }
-      try {
-        this.imageProviders.push(new FalProvider());
-      } catch (err) {
-        console.error('Failed to initialize FalProvider:', err);
-      }
-      try {
-        this.imageProviders.push(new LumaProvider());
-      } catch (err) {
-        console.error('Failed to initialize LumaProvider:', err);
-      }
-      try {
-        this.imageProviders.push(new FluxProvider());
-      } catch (err) {
-        console.error('Failed to initialize FluxProvider:', err);
+        console.error(`Failed to initialize ${Provider.name}:`, err);
       }
     }
   }
@@ -41,24 +27,21 @@ class ImageService {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  public async handleSelectOption(
-    text: string,
-    providerName: string,
-  ): Promise<string> {
-    const provider = this.imageProviders.find((p) => p.name === providerName);
-    if (!provider) {
-      throw new Error(`Image provider "${providerName}" not found`);
-    }
-    return await withRetry(
+  private async generateWithProvider(
+    provider: ImageProvider,
+    prompt: string,
+    ctx: RequestContext,
+  ): Promise<ImageResult | string> {
+    return withRetry(
       async (retryCtx) => {
         console.log(
           `Attempting image generation with ${provider.name}, attempt ${retryCtx.attempt}`,
         );
         try {
-          const start = await provider.start(text);
+          const start = await provider.start(prompt, ctx);
 
           if (start.kind === 'ready') {
-            return start.image.data;
+            return ctx.option === 'select' ? start.image.data : start.image;
           }
 
           console.log(
@@ -67,16 +50,14 @@ class ImageService {
 
           const maxIterations = 20; // 1 minute timeout (20 * 3 seconds)
           let iterations = 0;
-          const pollInterval = 3000;
+          const pollInterval = ctx.pollIntervalMs ?? 3000;
 
           while (iterations < maxIterations) {
             await this.delay(pollInterval);
 
             if (!provider.status) {
-              return Promise.reject(
-                new Error(
-                  `${provider.name} does not support job status polling`,
-                ),
+              throw new Error(
+                `${provider.name} does not support job status polling`,
               );
             }
 
@@ -87,23 +68,34 @@ class ImageService {
               continue;
             }
             if (status.status === 'ready') {
-              return status.image.data;
+              return ctx.option === 'select' ? status.image.data : status.image;
             }
 
-            return Promise.reject(
-              new Error(`${provider.name} image generation failed`),
-            );
+            throw new Error(`${provider.name} image generation failed`);
           }
 
-          return Promise.reject(
-            new Error(`${provider.name} image generation timed out`),
-          );
+          throw new Error(`${provider.name} image generation timed out`);
         } catch (err) {
-          return Promise.reject(err);
+          throw err;
         }
       },
+      ctx,
       { retries: 2 },
     );
+  }
+
+  public async handleSelectOption(
+    text: string,
+    ctx: RequestContext,
+  ): Promise<string> {
+    const providerName = ctx.provider;
+
+    const provider = this.imageProviders.find((p) => p.name === providerName);
+    if (!provider) {
+      throw new Error(`Image provider "${providerName}" not found`);
+    }
+
+    return this.generateWithProvider(provider, text, ctx) as Promise<string>;
   }
 
   public async handleFallbackOption(
@@ -114,64 +106,11 @@ class ImageService {
 
     for (const provider of this.imageProviders) {
       try {
-        return await withRetry(
-          async (retryCtx) => {
-            console.log(
-              `Attempting image generation with ${provider.name}, attempt ${retryCtx.attempt}`,
-            );
-            try {
-              const start = await provider.start(prompt);
-
-              if (start.kind === 'ready') {
-                return start.image;
-              }
-
-              console.log(
-                `Image generation started with ${provider.name}, job ID: ${start.id}`,
-              );
-
-              const maxIterations = 20; // 1 minute timeout (20 * 3 seconds)
-              let iterations = 0;
-
-              let pollInterval = ctx.pollIntervalMs ?? 3000;
-
-              while (iterations < maxIterations) {
-                await this.delay(pollInterval);
-
-                // Optional: Exponential backoff (uncomment if desired)
-                // pollInterval = Math.min(pollInterval * 2, 15000); // cap at 15s
-
-                if (!provider.status) {
-                  return Promise.reject(
-                    new Error(
-                      `${provider.name} does not support job status polling`,
-                    ),
-                  );
-                }
-
-                const status = await provider.status(start.id);
-
-                if (status.status === 'pending') {
-                  iterations++;
-                  continue;
-                }
-                if (status.status === 'ready') return status.image;
-
-                return Promise.reject(
-                  new Error(`${provider.name} image generation failed`),
-                );
-              }
-
-              return Promise.reject(
-                new Error(`${provider.name} image generation timed out`),
-              );
-            } catch (err) {
-              return Promise.reject(err);
-            }
-          },
+        return (await this.generateWithProvider(
+          provider,
+          prompt,
           ctx,
-          { retries: 2 },
-        );
+        )) as ImageResult;
       } catch (err) {
         errors.push(err as Error);
       }
@@ -181,24 +120,17 @@ class ImageService {
   }
 
   public async generateImage(
-    option: 'select' | 'fallback',
     text: string,
-    providerNameOrCtx: string | RequestContext,
+    ctx: RequestContext,
   ): Promise<string | ImageResult> {
-    switch (option) {
+    switch (ctx.option) {
       case 'select':
-        if (typeof providerNameOrCtx !== 'string') {
+        if (typeof ctx.provider !== 'string') {
           throw new Error('Provider name must be a string for select option');
         }
-        return this.handleSelectOption(text, providerNameOrCtx);
+        return this.handleSelectOption(text, ctx);
       case 'fallback':
-        if (
-          providerNameOrCtx == null || // covers undefined and null
-          typeof providerNameOrCtx === 'string'
-        ) {
-          throw new Error('Expected RequestContext object for fallback option');
-        }
-        return this.handleFallbackOption(text, providerNameOrCtx);
+        return this.handleFallbackOption(text, ctx);
       default:
         throw new Error('Invalid option provided');
     }

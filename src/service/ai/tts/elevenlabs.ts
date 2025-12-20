@@ -44,7 +44,10 @@ export class ElevenLabsProvider implements TTSProvider {
     this.elevenlabs = new ElevenLabsClient({ apiKey });
   }
 
-  async generate(text: string, options?: TTSOptions): Promise<Blob> {
+  async generate(
+    text: string,
+    options?: TTSOptions,
+  ): Promise<Blob> {
     const opts = toElevenPayload(options ?? ({} as TTSOptions));
 
     try {
@@ -127,8 +130,12 @@ function toElevenPayload(req: TTSOptions) {
     }
   } else {
     // PCM formats
-    const supportedPcmSampleRates = new Set([16000, 22050, 24000, 44100, 48000]);
-    const pcmSampleRate = supportedPcmSampleRates.has(sampleRate) ? sampleRate : 44100;
+    const supportedPcmSampleRates = new Set([
+      16000, 22050, 24000, 44100, 48000,
+    ]);
+    const pcmSampleRate = supportedPcmSampleRates.has(sampleRate)
+      ? sampleRate
+      : 44100;
     outputFormat = `pcm_${pcmSampleRate}`;
   }
 

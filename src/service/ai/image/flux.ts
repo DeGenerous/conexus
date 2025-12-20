@@ -22,7 +22,7 @@ export class FluxProvider implements ImageProvider {
     };
   }
 
-  async start(prompt: string, _opts?: ImageOptions): Promise<ImageStartResult> {
+  async start(prompt: string, ctx?: RequestContext): Promise<ImageStartResult> {
     const body = {
       prompt: prompt,
       width: 1024,

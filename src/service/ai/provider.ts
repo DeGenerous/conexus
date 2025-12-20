@@ -5,7 +5,7 @@ export interface ImageProvider {
   name: string;
   models?: Record<string, string>;
 
-  start(prompt: string, opts?: ImageOptions): Promise<ImageStartResult>;
+  start(prompt: string, ctx?: RequestContext): Promise<ImageStartResult>;
   status?(id: string): Promise<ImageStatusResult>;
 }
 
@@ -18,11 +18,15 @@ export interface TTSProvider {
   models?: Record<string, string>;
   response_format?: readonly string[] | string[];
 
-  generate(text: string, opts?: TTSOptions): Promise<Blob>;
+  generate(
+    text: string,
+    opts?: TTSOptions,
+  ): Promise<Blob>;
 }
 
 export const defaultTTSRequest: Required<Omit<TTSOptions, 'text'>> = {
   voice: 'default',
+  delivery: '[cheerful]',
   speed: 1.0,
   format: {
     codec: 'mp3',

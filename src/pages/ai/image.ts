@@ -3,41 +3,24 @@ import type { APIRoute } from 'astro';
 import ImageService from '@service/ai/image/service';
 
 export const POST: APIRoute = async ({ request }) => {
-  let input: ImageGenerationInput;
+  let body: { text: string; context: RequestContext };
 
   try {
-    input = await request.json();
+    body = await request.json();
   } catch {
     return new Response('Invalid JSON body', { status: 400 });
   }
 
-  if (typeof input.text !== 'string' || input.text.trim().length === 0) {
+  if (typeof body.text !== 'string' || body.text.trim().length === 0) {
     return new Response('Missing or empty text', { status: 400 });
   }
 
   try {
     const imageService = new ImageService();
 
-    let context: RequestContext | string = {};
+    const data = await imageService.generateImage(body.text, body.context);
 
-    if (typeof input.providerNameOrCtx === 'object') {
-      context = { ...context, ...input.providerNameOrCtx };
-    }
-
-    if (
-      typeof input.providerNameOrCtx === 'string' &&
-      input.providerNameOrCtx !== 'auto'
-    ) {
-      context = input.providerNameOrCtx;
-    }
-
-    const data = await imageService.generateImage(
-      input.option,
-      input.text,
-      context,
-    );
-
-    const cacheKey = `image-${Buffer.from(input.text).toString('base64')}`;
+    const cacheKey = `image-${Buffer.from(body.text).toString('base64')}`;
 
     return new Response(JSON.stringify(data), {
       status: 200,

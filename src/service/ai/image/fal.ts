@@ -4,8 +4,12 @@ import { fal } from '@fal-ai/client';
 
 import type { ImageProvider } from '@service/ai/provider';
 
+import PROVIDER_CONFIG from './utils';
+
 export class FalProvider implements ImageProvider {
   name = 'FAL';
+
+  readonly models = PROVIDER_CONFIG.FAL.models;
 
   constructor() {
     // check if FAL_KEY is set
@@ -17,8 +21,9 @@ export class FalProvider implements ImageProvider {
     }
   }
 
-  async start(prompt: string, _opts?: ImageOptions): Promise<ImageStartResult> {
-    const { imageType, data } = await this.generateFalImage(prompt);
+  async start(prompt: string, ctx?: RequestContext): Promise<ImageStartResult> {
+    const opts = this.validateAndMapOptions(ctx);
+    const { imageType, data } = await this.generateFalImage(prompt, opts.model);
     return {
       kind: 'ready',
       image: {
@@ -30,9 +35,10 @@ export class FalProvider implements ImageProvider {
 
   private async generateFalImage(
     prompt: string,
+    model: string,
   ): Promise<{ imageType: ImageType; data: string }> {
     try {
-      const result = await fal.subscribe('fal-ai/z-image/turbo', {
+      const result = await fal.subscribe(model, {
         input: {
           prompt: prompt,
         },
@@ -58,5 +64,16 @@ export class FalProvider implements ImageProvider {
       console.error('Error generating image:', error);
       throw error instanceof Error ? error : new Error(String(error));
     }
+  }
+
+  private validateAndMapOptions(ctx?: RequestContext) {
+    const modelKey = ctx?.model ?? 'default';
+    const model =
+      this.models[modelKey as keyof typeof PROVIDER_CONFIG.FAL.models] ??
+      this.models.default;
+
+    return {
+      model,
+    };
   }
 }

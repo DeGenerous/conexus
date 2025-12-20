@@ -2,8 +2,12 @@ import 'dotenv/config';
 
 import type { ImageProvider } from '@service/ai/provider';
 
+import PROVIDER_CONFIG from './utils';
+
 export class FluxProvider implements ImageProvider {
-  name = 'Flux';
+  name = 'FLUX';
+
+  readonly models = PROVIDER_CONFIG.FLUX.models;
 
   private readonly apiUrl: string;
   private readonly header: Record<string, string>;
@@ -22,7 +26,7 @@ export class FluxProvider implements ImageProvider {
     };
   }
 
-  async start(prompt: string, _opts?: ImageOptions): Promise<ImageStartResult> {
+  async start(prompt: string, ctx?: RequestContext): Promise<ImageStartResult> {
     const body = {
       prompt: prompt,
       width: 1024,

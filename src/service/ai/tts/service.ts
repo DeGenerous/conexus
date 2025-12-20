@@ -13,45 +13,58 @@ class TTSService {
   }
 
   private initializeProviders(): void {
-    if (this.ttsProviders.length === 0) {
+    const providers = [ElevenLabsProvider, DegenProvider];
+
+    for (const Provider of providers) {
       try {
-        this.ttsProviders.push(new ElevenLabsProvider());
+        this.ttsProviders.push(new Provider());
       } catch (err) {
-        console.error('Failed to initialize ElevenLabsProvider:', err);
-      }
-      try {
-        this.ttsProviders.push(new DegenProvider());
-      } catch (err) {
-        console.error('Failed to initialize DegenProvider:', err);
+        console.error(`Failed to initialize ${Provider.name}:`, err);
       }
     }
+  }
+
+  private async generateWithProvider(
+    provider: TTSProvider,
+    text: string,
+    ctx: RequestContext,
+    opts?: TTSOptions,
+  ): Promise<Blob> {
+    return withRetry(
+      async (retryCtx) => {
+        console.log(
+          `Attempting TTS generation with ${provider.name}, attempt ${retryCtx.attempt}`,
+        );
+        return provider.generate(text, retryCtx, opts);
+      },
+      ctx,
+      { retries: ctx.retries ?? 2 },
+    );
   }
 
   public async selectProviderAndGenerateTTS(
     text: string,
-    providerName: string,
+    ctx: RequestContext,
     opts?: TTSOptions,
   ): Promise<Blob> {
-    const provider = this.ttsProviders.find((p) => p.name === providerName);
+    const provider = this.ttsProviders.find((p) => p.name === ctx.provider);
     if (!provider) {
-      throw new Error(`TTS provider "${providerName}" not found`);
+      throw new Error(`TTS provider "${ctx.provider}" not found`);
     }
-    return await withRetry((retryCtx) => provider.generate(text, opts), {
-      retries: 2,
-    });
+
+    return this.generateWithProvider(provider, text, ctx, opts);
   }
 
   public async generateTTSWithFallback(
     text: string,
+    ctx: RequestContext,
     opts?: TTSOptions,
   ): Promise<Blob> {
     const errors: Error[] = [];
 
     for (const provider of this.ttsProviders) {
       try {
-        return await withRetry((retryCtx) => provider.generate(text, opts), {
-          retries: 2,
-        });
+        return await this.generateWithProvider(provider, text, ctx, opts);
       } catch (err) {
         errors.push(err as Error);
       }
@@ -61,30 +74,34 @@ class TTSService {
   }
 
   public async generateTTS(
-    option: 'select' | 'fallback',
     text: string,
-    providerNameOrOpts: string | TTSOptions,
-    opts?: TTSOptions,
+    ctx: RequestContext,
+    options?: TTSOptions,
   ): Promise<Blob> {
-    switch (option) {
+    this.applyContextDefaults(ctx, options);
+
+    switch (ctx.option) {
       case 'select':
-        if (typeof providerNameOrOpts !== 'string') {
+        if (typeof ctx.provider !== 'string') {
           throw new Error('Provider name must be a string for select option');
         }
-        return this.selectProviderAndGenerateTTS(
-          text,
-          providerNameOrOpts,
-          opts,
-        );
+        return this.selectProviderAndGenerateTTS(text, ctx, options);
       case 'fallback':
-        if (typeof providerNameOrOpts === 'string') {
-          throw new Error(
-            'Options must not be a provider name for fallback option',
-          );
-        }
-        return this.generateTTSWithFallback(text, providerNameOrOpts);
+        return this.generateTTSWithFallback(text, ctx, options);
       default:
         throw new Error('Invalid option provided');
+    }
+  }
+
+  private applyContextDefaults(ctx: RequestContext, options?: TTSOptions) {
+    ctx.option = import.meta.env.TTS_PROVIDER_OPTION ?? ctx.option;
+    ctx.provider = import.meta.env.TTS_PROVIDER_NAME ?? ctx.provider;
+    ctx.model = import.meta.env.TTS_PROVIDER_MODEL ?? ctx.model;
+
+    if (options) {
+      options.voice = import.meta.env.TTS_PROVIDER_VOICE ?? options.voice;
+    } else {
+      options = { voice: import.meta.env.TTS_PROVIDER_VOICE };
     }
   }
 }

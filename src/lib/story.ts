@@ -311,19 +311,22 @@ export default class CoNexus {
     }
   }
 
-  async #imageGenInternal(): Promise<void> {
-    let prompt = this.step_data.image_prompt || this.step_data.story;
+  async #imageGenInternal(
+    provider: string = 'FAL',
+    model: string = 'default',
+  ): Promise<void> {
+    let text = this.step_data.image_prompt || this.step_data.story;
 
-    const input: ImageGenerationInput = {
-      text: prompt,
+    const requestContext: RequestContext = {
       option: 'fallback',
-      providerNameOrCtx: {},
+      provider: provider,
+      model: model,
     };
 
     const res = await fetch(`/ai/image`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(input),
+      body: JSON.stringify({ text: text, context: requestContext }),
     });
 
     if (!res.ok) {
@@ -355,24 +358,33 @@ export default class CoNexus {
     await this.#storeStepImage(response.data);
   }
 
-  async #fetchTTSFromClientAI(
+  async #ttsGenInternal(
+    provider: string = 'ELEVENLABS',
+    model: string = 'default',
     delivery: string = 'default',
-    voiceId: string = '9BWtsMINqrJLrRacOk9x',
+    voiceId: string = 'default',
   ): Promise<Blob> {
     let text = formatGameTextForSpeech(this.step_data);
 
-    const input: DialogueInput = {
-      text,
+    const requestContext: RequestContext = {
       option: 'fallback',
-      providerNameOrOpts: {
-        voice: voiceId,
-      },
+      provider: provider,
+      model: model,
+    };
+
+    const ttsOptions: TTSOptions = {
+      voice: voiceId,
+      delivery: delivery,
     };
 
     const res = await fetch(`/ai/tts`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(input),
+      body: JSON.stringify({
+        text: text,
+        context: requestContext,
+        options: ttsOptions,
+      }),
     });
 
     if (!res.ok) {
@@ -396,7 +408,7 @@ export default class CoNexus {
     return await res.blob();
   }
 
-  async #fetchTTSFromServerAI(): Promise<Blob> {
+  async #ttsGenExternal(): Promise<Blob> {
     const { status, message, data } = await this.api.tts(this.step_data.id);
 
     if (status === 'error') {
@@ -420,11 +432,11 @@ export default class CoNexus {
   async #ttsInternal(which: 'client' | 'server' = 'client'): Promise<void> {
     switch (which) {
       case 'client':
-        const clientResult = await this.#fetchTTSFromClientAI();
+        const clientResult = await this.#ttsGenInternal();
         this.#commitStepData({ tts: clientResult });
         return;
       default:
-        const serverResult = await this.#fetchTTSFromServerAI();
+        const serverResult = await this.#ttsGenExternal();
         this.#commitStepData({ tts: serverResult });
         return;
     }

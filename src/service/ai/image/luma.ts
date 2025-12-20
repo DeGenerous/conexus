@@ -2,8 +2,12 @@ import 'dotenv/config';
 
 import type { ImageProvider } from '@service/ai/provider';
 
+import PROVIDER_CONFIG from './utils';
+
 export class LumaProvider implements ImageProvider {
-  name = 'Luma';
+  name = 'LUMA';
+
+  readonly models = PROVIDER_CONFIG.LUMA.models;
 
   private readonly apiUrl: string;
   private readonly lumaKeys = process.env.LUMA_API_KEY?.split(',')
@@ -24,10 +28,10 @@ export class LumaProvider implements ImageProvider {
     };
   }
 
-  async start(prompt: string, _opts?: ImageOptions): Promise<ImageStartResult> {
+  async start(prompt: string, ctx?: RequestContext): Promise<ImageStartResult> {
     const body = {
       prompt: prompt,
-      model: 'photon-flash-1',
+      model: this.models.default,
     };
 
     const res = await fetch(`${this.apiUrl}/image`, {

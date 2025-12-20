@@ -2,23 +2,13 @@ import 'dotenv/config';
 
 import type { TTSProvider } from '@service/ai/provider';
 
-export const DEFAULT_VOICES = {
-  af_kore: 'af_kore',
-  af_jpn: 'af_jpn',
-  af_chn: 'af_chn',
-  eu_esp: 'eu_esp',
-  eu_fra: 'eu_fra',
-  eu_ger: 'eu_ger',
-  eu_ita: 'eu_ita',
-  eu_rus: 'eu_rus',
-  us_eng: 'us_eng',
-  us_spa: 'us_spa',
-} as const;
+import PROVIDER_CONFIG from './utils';
 
 export class DegenProvider implements TTSProvider {
-  name = 'DegenAI';
-  voices = DEFAULT_VOICES;
-  readonly response_format = ['mp3', 'wav'] as const;
+  name = 'DEGENAI';
+
+  voices = PROVIDER_CONFIG.DEGENAI.voices;
+  readonly response_format = PROVIDER_CONFIG.DEGENAI.response_format;
 
   private readonly apiUrl: string;
 
@@ -32,20 +22,24 @@ export class DegenProvider implements TTSProvider {
     }
   }
 
-  async generate(text: string, options?: TTSOptions): Promise<Blob> {
+  async generate(
+    text: string,
+    ctx: RequestContext,
+    options?: TTSOptions,
+  ): Promise<Blob> {
     if (!text) {
       throw new Error('TTS generation failed: text parameter cannot be empty');
     }
 
     const speechURL = `${this.apiUrl}/audio/speech`;
 
-    const opts = toDegenAIPayload(options ?? ({} as TTSOptions));
+    const opts = this.validateAndMapOptions(options ?? ({} as TTSOptions));
 
     const payload = {
       input: text,
-      voice: opts.voice ?? this.voices.af_kore,
-      response_format: opts.response_format ?? 'mp3',
-      speed: opts.speed ?? 0.95,
+      voice: opts.voice,
+      response_format: opts.response_format,
+      speed: opts.speed,
     };
 
     const res = await fetch(speechURL, {
@@ -65,12 +59,20 @@ export class DegenProvider implements TTSProvider {
 
     return await res.blob();
   }
-}
 
-function toDegenAIPayload(req: TTSOptions) {
-  return {
-    response_format: req.format?.codec ?? 'mp3',
-    voice: req.voice ?? DEFAULT_VOICES.af_kore,
-    speed: req.speed ?? 1.0,
-  };
+  private validateAndMapOptions(req: TTSOptions) {
+    const response_format = req.format?.codec ?? 'mp3';
+
+    const voiceKey = req.voice ?? 'default';
+    const voice =
+      this.voices[voiceKey as keyof typeof PROVIDER_CONFIG.DEGENAI.voices];
+
+    const speed = req.speed ?? 1.0;
+
+    return {
+      response_format,
+      voice,
+      speed,
+    };
+  }
 }

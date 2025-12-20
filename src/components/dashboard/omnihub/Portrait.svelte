@@ -44,7 +44,6 @@
       index,
     });
 
-    // console.log(potential);
     loading = false;
   });
 

@@ -310,12 +310,14 @@
               />
             {/if}
             <div class="flex">
-              {#if activeTopic.genres && activeTopic.genres.length > 0}
+              {#if activeTopic.genres && activeTopic.genres.length}
                 <span class="genres round-8 pad-8 transparent-glowing">
                   <p class="text-glowing">
                     {activeTopic.genres.join(', ').toUpperCase()}
                   </p>
                 </span>
+              {:else}
+                <span class="pc-only"></span>
               {/if}
 
               <span class="buttons flex-row flex-wrap">
@@ -422,10 +424,11 @@
             </span>
           </section>
         {/if}
-
-        <p class="description transparent-container white-txt text-shad">
-          {activeTopic.description}
-        </p>
+        {#if activeTopic.description}
+          <p class="description transparent-container white-txt text-shad">
+            {activeTopic.description}
+          </p>
+        {/if}
       {/if}
     {/if}
   </PullToRefresh>

@@ -70,7 +70,15 @@ describe('TopicAPI', () => {
 
   it('fetches topic manager data', async () => {
     await api.topicManager('topic-1');
-    expect(mockRequest).toHaveBeenCalledWith('/topic/manager/topic-1');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/topic/manager/topic-1?refresh=false',
+    );
+
+    mockRequest.mockClear();
+    await api.topicManager('topic-1', true);
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/topic/manager/topic-1?refresh=true',
+    );
   });
 
   it('manages categories on topics', async () => {

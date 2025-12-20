@@ -125,9 +125,19 @@
     "nativeName": "ဗမာစာ"
   },
   {
+    "code": "yue",
+    "name": "Cantonese",
+    "nativeName": "粵語"
+  },
+  {
     "code": "ca",
     "name": "Catalan; Valencian",
     "nativeName": "Català"
+  },
+  {
+    "code": "ceb",
+    "name": "Cebuano",
+    "nativeName": "Binisaya"
   },
   {
     "code": "ch",
@@ -195,6 +205,11 @@
     "nativeName": "Nederlands, Vlaams"
   },
   {
+    "code": "dz",
+    "name": "Dzongkha",
+    "nativeName": "རྫོང་ཁ"
+  },
+  {
     "code": "en",
     "name": "English",
     "nativeName": "English"
@@ -223,6 +238,11 @@
     "code": "fj",
     "name": "Fijian",
     "nativeName": "vosa Vakaviti"
+  },
+  {
+    "code": "fil",
+    "name": "Filipino",
+    "nativeName": "Filipino"
   },
   {
     "code": "fi",
@@ -280,6 +300,11 @@
     "nativeName": "Hausa, هَوُسَ"
   },
   {
+    "code": "haw",
+    "name": "Hawaiian",
+    "nativeName": "ʻŌlelo Hawaiʻi"
+  },
+  {
     "code": "he",
     "name": "Hebrew (modern)",
     "nativeName": "עברית"
@@ -293,6 +318,11 @@
     "code": "hi",
     "name": "Hindi",
     "nativeName": "हिन्दी, हिंदी"
+  },
+  {
+    "code": "hmn",
+    "name": "Hmong",
+    "nativeName": "Hmoob"
   },
   {
     "code": "ho",
@@ -430,6 +460,11 @@
     "nativeName": "Kurdî, كوردی‎"
   },
   {
+    "code": "ckb",
+    "name": "Kurdish (Sorani)",
+    "nativeName": "کوردیی ناوەندی"
+  },
+  {
     "code": "kj",
     "name": "Kwanyama, Kuanyama",
     "nativeName": "Kuanyama"
@@ -528,6 +563,11 @@
     "code": "mn",
     "name": "Mongolian",
     "nativeName": "монгол"
+  },
+  {
+    "code": "cnr",
+    "name": "Montenegrin",
+    "nativeName": "crnogorski"
   },
   {
     "code": "na",
@@ -908,5 +948,10 @@
     "code": "za",
     "name": "Zhuang, Chuang",
     "nativeName": "Saɯ cueŋƅ, Saw cuengh"
+  },
+  {
+    "code": "zu",
+    "name": "Zulu",
+    "nativeName": "isiZulu"
   }
 ]

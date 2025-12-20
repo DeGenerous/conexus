@@ -12,3 +12,4 @@ type PreferredSetup = {
   theme?: SettingMode;
   play_mode?: PlayMode;
 };
+

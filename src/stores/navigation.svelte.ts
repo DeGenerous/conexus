@@ -34,3 +34,5 @@ export const navContext = createNavContext();
 export const prevItem = navContext.prev;
 export const nextItem = navContext.next;
 export const hasNavContext = navContext.hasContext;
+
+export const sidebarOpen = writable<boolean>(false);

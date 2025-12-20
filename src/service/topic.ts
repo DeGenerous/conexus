@@ -174,8 +174,10 @@ export default class TopicAPI extends Fetcher {
    * @param topic_id The ID of the topic
    * @returns The topic manager data
    */
-  async topicManager(topic_id: string) {
-    return this.request<TopicManager>(`${this.group}/manager/${topic_id}`);
+  async topicManager(topic_id: string, refresh: boolean = false) {
+    return this.request<TopicManager>(
+      `${this.group}/manager/${topic_id}?refresh=${refresh}`,
+    );
   }
 
   /**

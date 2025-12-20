@@ -28,8 +28,6 @@
   $effect(() => {
     let cancelled = false;
 
-    console.log('ImageDisplay received image:', image);
-
     if (!image) {
       imageSrc = blankImage; // reset the source if null
       isLoading = true;

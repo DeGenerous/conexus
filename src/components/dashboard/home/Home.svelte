@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { user } from '@stores/account.svelte';
-
   import UnfinishedStories from '@components/dashboard/home/UnfinishedStories.svelte';
   import FinishedStories from '@components/dashboard/home/FinishedStories.svelte';
   import FooterLinks from '@components/dashboard/common/FooterLinks.svelte';

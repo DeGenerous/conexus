@@ -36,6 +36,7 @@
     "@coinbase/wallet-sdk": "4.3.7",
     "@elevenlabs/elevenlabs-js": "^2.27.0",
     "@fal-ai/client": "^1.7.2",
+    "@google/genai": "^1.34.0",
     "@jsquash/avif": "^2.1.1",
     "@metamask/detect-provider": "^2.0.0",
     "@metamask/sdk": "~0.33.0",

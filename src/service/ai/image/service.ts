@@ -1,8 +1,9 @@
 import type { ImageProvider } from '@service/ai/provider';
 import { withRetry } from '@service/ai/common/helper';
 import { FalProvider } from '@service/ai/image/fal';
-import { LumaProvider } from '@service/ai/image/luma';
 import { FluxProvider } from '@service/ai/image/flux';
+import { GoogleProvider } from '@service/ai/image/google';
+import { LumaProvider } from '@service/ai/image/luma';
 
 class ImageService {
   private imageProviders: ImageProvider[] = [];
@@ -13,6 +14,11 @@ class ImageService {
 
   private initializeProviders(): void {
     if (this.imageProviders.length === 0) {
+      try {
+        this.imageProviders.push(new GoogleProvider());
+      } catch (err) {
+        console.error('Failed to initialize GoogleProvider:', err);
+      }
       try {
         this.imageProviders.push(new FalProvider());
       } catch (err) {

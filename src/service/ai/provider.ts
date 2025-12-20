@@ -3,6 +3,8 @@
 */
 export interface ImageProvider {
   name: string;
+  models?: Record<string, string>;
+
   start(prompt: string, opts?: ImageOptions): Promise<ImageStartResult>;
   status?(id: string): Promise<ImageStatusResult>;
 }

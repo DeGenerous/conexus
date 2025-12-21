@@ -4,10 +4,10 @@ import { fal } from '@fal-ai/client';
 
 import type { ImageProvider } from '@service/ai/provider';
 
-import PROVIDER_CONFIG from './utils';
+import PROVIDER_CONFIG, { getModelDimensions } from './utils';
 
 export class FalProvider implements ImageProvider {
-  name = 'FAL';
+  name = 'FAL' as const;
 
   readonly models = PROVIDER_CONFIG.FAL.models;
 
@@ -21,9 +21,18 @@ export class FalProvider implements ImageProvider {
     }
   }
 
-  async start(prompt: string, ctx?: RequestContext): Promise<ImageStartResult> {
-    const opts = this.validateAndMapOptions(ctx);
-    const { imageType, data } = await this.generateFalImage(prompt, opts.model);
+  async start(
+    prompt: string,
+    ctx?: RequestContext,
+    opts?: ImageOptions,
+  ): Promise<ImageStartResult> {
+    const options = this.validateAndMapOptions(ctx, opts);
+
+    const { imageType, data } = await this.generateFalImage(
+      prompt,
+      options.model.id,
+      options.dimensions,
+    );
     return {
       kind: 'ready',
       image: {
@@ -35,12 +44,20 @@ export class FalProvider implements ImageProvider {
 
   private async generateFalImage(
     prompt: string,
-    model: string,
+    modelId: string,
+    dimensions: ImageDimensions,
   ): Promise<{ imageType: ImageType; data: string }> {
+    const resolvedDimensions = getModelDimensions(
+      this.name,
+      modelId,
+      dimensions,
+    );
+
     try {
-      const result = await fal.subscribe(model, {
+      const result = await fal.subscribe(modelId, {
         input: {
           prompt: prompt,
+          ...resolvedDimensions,
         },
         logs: true,
         onQueueUpdate: (update) => {
@@ -66,14 +83,40 @@ export class FalProvider implements ImageProvider {
     }
   }
 
-  private validateAndMapOptions(ctx?: RequestContext) {
+  private validateAndMapOptions(ctx?: RequestContext, opts?: ImageOptions) {
     const modelKey = ctx?.model ?? 'default';
     const model =
       this.models[modelKey as keyof typeof PROVIDER_CONFIG.FAL.models] ??
       this.models.default;
 
+    const dimensionType = model.dimensionType as DimensionType;
+
+    // Always return valid dimensions based on dimension type
+    const getDefaultDimensions = (): ImageDimensions => {
+      return dimensionType === 'aspectRatio'
+        ? { aspect_ratio: '1:1' }
+        : { width: 512, height: 512 };
+    };
+
+    let dimensions: ImageDimensions;
+
+    if (opts?.dimensions) {
+      const isAspectRatioValid =
+        dimensionType === 'aspectRatio' && 'aspect_ratio' in opts.dimensions;
+      const isSizeValid =
+        dimensionType === 'size' && 'width' in opts.dimensions;
+
+      dimensions =
+        isAspectRatioValid || isSizeValid
+          ? opts.dimensions
+          : getDefaultDimensions();
+    } else {
+      dimensions = getDefaultDimensions();
+    }
+
     return {
       model,
+      dimensions,
     };
   }
 }

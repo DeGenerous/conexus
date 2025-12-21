@@ -33,7 +33,7 @@ type TTSOptions = {
 };
 
 type ImageOptions = {
-  model: string;
+  dimensions?: ImageDimensions;
 };
 
 type ImageResult = {
@@ -49,3 +49,14 @@ type ImageStatusResult =
   | { status: 'pending' }
   | { status: 'ready'; image: ImageResult }
   | { status: 'failed' };
+
+type ImageModel = {
+  id: string;
+  dimensionType: DimensionType;
+};
+
+type DimensionType = 'size' | 'aspectRatio';
+
+type ImageDimensions =
+  | { width: number; height: number }
+  | { aspect_ratio: string };

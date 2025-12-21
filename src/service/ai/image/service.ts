@@ -42,6 +42,7 @@ class ImageService {
     provider: ImageProvider,
     prompt: string,
     ctx: RequestContext,
+    opts?: ImageOptions,
   ): Promise<ImageResult> {
     return withRetry(
       async (retryCtx) => {
@@ -49,7 +50,7 @@ class ImageService {
           `Attempting image generation with ${provider.name}, attempt ${retryCtx.attempt}`,
         );
         try {
-          const start = await provider.start(prompt, ctx);
+          const start = await provider.start(prompt, ctx, opts);
 
           if (start.kind === 'ready') {
             return start.image;
@@ -98,6 +99,7 @@ class ImageService {
   public async handleSelectOption(
     text: string,
     ctx: RequestContext,
+    opts?: ImageOptions,
   ): Promise<ImageResult> {
     const providerName = ctx.provider;
 
@@ -106,18 +108,19 @@ class ImageService {
       throw new Error(`Image provider "${providerName}" not found`);
     }
 
-    return this.generateWithProvider(provider, text, ctx);
+    return this.generateWithProvider(provider, text, ctx, opts);
   }
 
   public async handleFallbackOption(
     prompt: string,
     ctx: RequestContext,
+    opts?: ImageOptions,
   ): Promise<ImageResult> {
     const errors: Error[] = [];
 
     for (const provider of this.imageProviders) {
       try {
-        return await this.generateWithProvider(provider, prompt, ctx);
+        return await this.generateWithProvider(provider, prompt, ctx, opts);
       } catch (err) {
         errors.push(err as Error);
       }
@@ -129,6 +132,7 @@ class ImageService {
   public async generateImage(
     text: string,
     ctx: RequestContext,
+    opts?: ImageOptions,
   ): Promise<string | ImageResult> {
     if (this.option !== undefined) {
       ctx.option = this.option;
@@ -147,9 +151,9 @@ class ImageService {
         if (typeof ctx.provider !== 'string') {
           throw new Error('Provider name must be a string for select option');
         }
-        return this.handleSelectOption(text, ctx);
+        return this.handleSelectOption(text, ctx, opts);
       case 'fallback':
-        return this.handleFallbackOption(text, ctx);
+        return this.handleFallbackOption(text, ctx, opts);
       default:
         throw new Error('Invalid option provided');
     }

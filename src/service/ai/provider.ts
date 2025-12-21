@@ -3,7 +3,7 @@
 */
 export interface ImageProvider {
   name: string;
-  models?: Record<string, { id: string; dimensionType: string } | string>;
+  models?: Record<string, { id: string; dimensionType: DimensionType } | string>;
 
   start(
     prompt: string,

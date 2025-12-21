@@ -28,7 +28,11 @@ export class LumaProvider implements ImageProvider {
     };
   }
 
-  async start(prompt: string, ctx?: RequestContext): Promise<ImageStartResult> {
+  async start(
+    prompt: string,
+    ctx?: RequestContext,
+    opts?: ImageOptions,
+  ): Promise<ImageStartResult> {
     const body = {
       prompt: prompt,
       model: this.models.default,

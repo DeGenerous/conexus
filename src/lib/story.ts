@@ -314,6 +314,7 @@ export default class CoNexus {
   async #imageGenInternal(
     provider: string = 'FAL',
     model: string = 'default',
+    dimensions: ImageDimensions = { width: 1024, height: 576 },
   ): Promise<void> {
     let text = this.step_data.image_prompt || this.step_data.story;
 
@@ -323,10 +324,18 @@ export default class CoNexus {
       model: model,
     };
 
+    const options: ImageOptions = {
+      dimensions: dimensions,
+    };
+
     const res = await fetch(`/ai/image`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: text, context: requestContext }),
+      body: JSON.stringify({
+        text: text,
+        context: requestContext,
+        options: options,
+      }),
     });
 
     if (!res.ok) {

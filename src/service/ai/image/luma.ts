@@ -35,7 +35,9 @@ export class LumaProvider implements ImageProvider {
   ): Promise<ImageStartResult> {
     const body = {
       prompt: prompt,
-      model: this.models.default,
+      model: this.models.default.id,
+      width: 1024,
+      height: 576,
     };
 
     const res = await fetch(`${this.apiUrl}/image`, {

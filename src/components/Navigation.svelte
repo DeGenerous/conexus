@@ -138,26 +138,24 @@
 <svelte:window {onkeypress} {onscroll} />
 
 {#if $story === null}
-  {#if header}
-    <header class="flex-row" class:home={header === 'CoNexus'}>
-      <BackArrow href={arrow} hidden={!arrow} />
-      {#if header === 'CoNexus'}
-        <h1 class="sr-only">CoNexus</h1>
-        <ConexusLogo />
-      {:else}
-        <h1>{header}</h1>
-      {/if}
-      <button
-        class="flex void-btn mobile-only"
-        aria-label="Toggle navigation"
-        aria-controls="dashboard-sidebar"
-        aria-expanded={$sidebarOpen}
-        onclick={toggleSidebar}
-      >
-        <BurgerSVG expanded={$sidebarOpen} />
-      </button>
-    </header>
-  {/if}
+  <header class="flex-row" class:home={header === 'CoNexus'}>
+    <BackArrow href={arrow} hidden={!arrow} />
+    {#if header === 'CoNexus'}
+      <h1 class="sr-only">CoNexus</h1>
+      <ConexusLogo />
+    {:else}
+      <h1>{header}</h1>
+    {/if}
+    <button
+      class="flex void-btn mobile-only"
+      aria-label="Toggle navigation"
+      aria-controls="dashboard-sidebar"
+      aria-expanded={$sidebarOpen}
+      onclick={toggleSidebar}
+    >
+      <BurgerSVG expanded={$sidebarOpen} />
+    </button>
+  </header>
 
   {#if showIntro}
     <div class="video-wrapper container fade-in">

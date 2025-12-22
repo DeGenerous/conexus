@@ -5,7 +5,7 @@ import ImageService from '@service/ai/image/service';
 const imageService = new ImageService();
 
 export const POST: APIRoute = async ({ request }) => {
-  let body: { text: string; context: RequestContext };
+  let body: { text: string; context: RequestContext; options?: ImageOptions };
 
   try {
     body = await request.json();
@@ -22,7 +22,11 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const data = await imageService.generateImage(body.text, body.context);
+    const data = await imageService.generateImage(
+      body.text,
+      body.context,
+      body.options,
+    );
 
     const cacheKey = `image-${Buffer.from(body.text).toString('base64')}`;
 

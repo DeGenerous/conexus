@@ -3,9 +3,13 @@
 */
 export interface ImageProvider {
   name: string;
-  models?: Record<string, string>;
+  models?: Record<string, { id: string; dimensionType: DimensionType } | string>;
 
-  start(prompt: string, ctx?: RequestContext): Promise<ImageStartResult>;
+  start(
+    prompt: string,
+    ctx?: RequestContext,
+    opts?: ImageOptions,
+  ): Promise<ImageStartResult>;
   status?(id: string): Promise<ImageStatusResult>;
 }
 

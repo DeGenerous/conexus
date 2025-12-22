@@ -4,19 +4,13 @@
 
   let {
     width,
-    zoom,
     image,
     image_type = 'url',
-    imageWidth = 800,
-    imageHeight = 512,
     boxShadow = true,
   }: {
     width: number;
-    zoom: number;
     image: string | undefined;
     image_type?: string;
-    imageWidth: number;
-    imageHeight: number;
     boxShadow: boolean;
   } = $props();
 
@@ -74,9 +68,6 @@
   class:slim={!fullWidthImage}
   style:box-shadow={boxShadow ? '' : 'none'}
   style:border={boxShadow ? 'none' : ''}
-  style:max-width="{imageWidth}px"
-  style={width < 768 ? '' : `height: ${imageHeight}px`}
-  style:zoom
 >
   {#if isLoading}
     <span class="pulse-animation">

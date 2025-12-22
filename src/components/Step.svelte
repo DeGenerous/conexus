@@ -1,20 +1,13 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import { tippy } from 'svelte-tippy';
 
   import { story, game } from '@stores/conexus.svelte';
   import { conexusBG } from '@stores/conexus.svelte';
-  import {
-    GetCache,
-    SetCache,
-    GAME_INSTRUCTIONS_KEY,
-    SCALE_KEY,
-  } from '@constants/cache';
+  import { GetCache, SetCache, GAME_INSTRUCTIONS_KEY } from '@constants/cache';
   import detectIOS from '@utils/ios-device';
   import {
     defaultFont,
     defaultStyling,
-    defaultScale,
     lightThemeFont,
     lightThemeStyling,
   } from '@constants/customization';
@@ -26,7 +19,7 @@
     getStoredCustomization,
     persistActiveTheme,
   } from '@stores/customization.svelte';
-  import { ensureMessage, gameRulesModal } from '@constants/modal';
+  import { gameRulesModal } from '@constants/modal';
   import isColorLight from '@utils/brightness';
   import { isGuest } from '@stores/account.svelte';
 
@@ -42,7 +35,6 @@
   import SoundSVG from '@components/icons/Sound.svelte';
   import FullscreenSVG from '@components/icons/Fullscreen.svelte';
   import FilledEyeSVG from '@components/icons/FilledEye.svelte';
-  import ZoomInSVG from '@components/icons/ZoomIn.svelte';
   import ResetSVG from '@components/icons/Reset.svelte';
 
   let {
@@ -58,7 +50,6 @@
   let width = $state<number>(0);
   let height = $state<number>(0);
 
-  let zoom = $state<number>(1);
   let showCustomization = $state<boolean>(false);
 
   const step = $derived<StepData>($story?.step_data as StepData);
@@ -115,8 +106,7 @@
     const target = event.target as HTMLElement;
     if (
       target.closest(
-        'nav, section.step-controller, section.sound-controller,' +
-          'section.styling-controller, section.scale-controller',
+        'nav, section.step-controller, section.sound-controller, section.styling-controller',
       )
     ) {
       return;
@@ -132,10 +122,6 @@
     if (isDesktop) return;
 
     hiddenControls = !hiddenControls;
-  };
-
-  const toggleZoom = () => {
-    zoom = zoom === 1 ? 0.5 : 1;
   };
 
   const selectorSize = $derived.by<number>(() => {
@@ -160,17 +146,6 @@
 
   $effect(() => {
     conexusBG.color = $customStyling ? $customStyling.bgColor : '#000000';
-  });
-
-  let customScale = $state<CustomScale | null>(null);
-
-  const updateScale = (reset: Nullable<'reset'> = null) => {
-    if (reset) customScale = defaultScale;
-    if (customScale) SetCache(SCALE_KEY, customScale);
-  };
-
-  $effect(() => {
-    if (customScale) updateScale();
   });
 
   const openThemeSettings = () => {
@@ -202,10 +177,6 @@
     switch (event.key) {
       case 'f': {
         game.fullscreen = !game.fullscreen;
-        break;
-      }
-      case 'z': {
-        toggleZoom();
         break;
       }
       case 'ArrowLeft': {
@@ -275,10 +246,6 @@
 
     getStoredCustomization();
 
-    const storedScale = GetCache<CustomScale>(SCALE_KEY);
-    if (storedScale) customScale = storedScale;
-    else updateScale('reset');
-
     if (isDesktop) {
       const dontShowInstructions = GetCache(GAME_INSTRUCTIONS_KEY);
       if (!dontShowInstructions) {
@@ -320,7 +287,7 @@
 a11y_click_events_have_key_events
 a11y_no_static_element_interactions
 a11y_no_noninteractive_element_interactions -->
-{#if $customFont && $customStyling && customScale}
+{#if $customFont && $customStyling}
   <section
     class="step-wrapper flex {$customFont.baseSize}-font"
     class:text-shad={$customFont.shadow}
@@ -334,11 +301,8 @@ a11y_no_noninteractive_element_interactions -->
     {#if !$isGuest && (step.task_id !== '' && step.task_id !== 'generate')}
       <ImageDisplay
         {width}
-        {zoom}
         image={step.image}
         image_type={step.image_type}
-        imageWidth={customScale.imageWidth}
-        imageHeight={customScale.imageHeight}
         boxShadow={$customStyling.boxShadow}
       />
     {/if}
@@ -349,19 +313,12 @@ a11y_no_noninteractive_element_interactions -->
         class:text-shad={$customFont.shadow}
         style:font-style={$customFont.italic ? 'italic' : ''}
         style:color={$customFont.accentColor}
-        style:zoom
       >
         {step.title}
       </h4>
     {/if}
 
-    <article
-      style:max-width={width >= DESKTOP_BREAKPOINT
-        ? `${customScale.paragraphWidth}%`
-        : ''}
-      style:width="{100 * zoom}%"
-      style:zoom
-    >
+    <article>
       {step.story}
     </article>
 
@@ -373,17 +330,11 @@ a11y_no_noninteractive_element_interactions -->
         class:text-shad={$customFont.shadow}
         style:font-style={$customFont.italic ? 'italic' : ''}
         style:color={$customFont.accentColor}
-        style:zoom
       >
         {topic_name.trim()} Story Summary
       </h4>
 
-      <article
-        style:max-width={width >= DESKTOP_BREAKPOINT
-          ? `${customScale.paragraphWidth}%`
-          : ''}
-        style:zoom
-      >
+      <article>
         {step.summary}
       </article>
 
@@ -392,19 +343,13 @@ a11y_no_noninteractive_element_interactions -->
         class:text-shad={$customFont.shadow}
         style:font-style={$customFont.italic ? 'italic' : ''}
         style:color={$customFont.accentColor}
-        style:zoom
       >
         CoNexus identified your trait as:
         <strong class="text-glowing">{step.trait}</strong>
       </h4>
 
       {#if step.trait_description}
-        <article
-          style:max-width={width >= DESKTOP_BREAKPOINT
-            ? `${customScale.paragraphWidth}%`
-            : ''}
-          style:zoom
-        >
+        <article>
           {step.trait_description}
         </article>
       {/if}
@@ -417,11 +362,6 @@ a11y_no_noninteractive_element_interactions -->
         style:color={$customFont.accentColor}
         style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
         style:border={$customStyling.boxShadow ? 'none' : ''}
-        style:max-width={width >= DESKTOP_BREAKPOINT
-          ? `${customScale.optionsWidth}%`
-          : ''}
-        style:width="{width >= DESKTOP_BREAKPOINT ? 100 * zoom : 95}%"
-        style:zoom
       >
         <button id="option-0" class="void-btn menu-option" onclick={restartGame}
           >Start a new story</button
@@ -442,11 +382,6 @@ a11y_no_noninteractive_element_interactions -->
         style:color={$customFont.accentColor}
         style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
         style:border={$customStyling.boxShadow ? 'none' : ''}
-        style:max-width={width >= DESKTOP_BREAKPOINT
-          ? `${customScale.optionsWidth}%`
-          : ''}
-        style:width="{width >= DESKTOP_BREAKPOINT ? 100 * zoom : 95}%"
-        style:zoom
       >
         {#each step.options as option, i}
           <button
@@ -504,14 +439,6 @@ a11y_no_noninteractive_element_interactions -->
         <h5 class="title">{topic_name.trim()}</h5>
       </span>
       <div class="controls flex-row">
-        <div class="scale-icon">
-          <label class="pc-only" for="zoom-in-control">Scale</label>
-          <ZoomInSVG
-            onclick={() => switchController('scale')}
-            active={activeControlPanel == 'scale'}
-            control={true}
-          />
-        </div>
         <div class:pad-inline={detectIOS()}>
           <label class:pc-only={!detectIOS()} for="filled-eye"> Styling </label>
           <FilledEyeSVG
@@ -653,111 +580,6 @@ a11y_no_noninteractive_element_interactions -->
         <StylingController />
       {/if}
     </section>
-
-    <!-- SCALE CONTROLLER -->
-    <section
-      class="scale-controller"
-      class:visible={activeControlPanel == 'scale'}
-      onpointerenter={cancelHide}
-      onpointerleave={hideControlsAfterDelay}
-      onclick={stopPropagation}
-      role="toolbar"
-      tabindex="-1"
-    >
-      {#if zoom !== 1}
-        <p class="zoom-hint validation green-txt">
-          Zoomed-out mode active - perfect for screenshots 🖼️
-        </p>
-      {/if}
-      <div class="image-scale transparent-container">
-        <span class="flex-row">
-          <label for="image-width">Picture width</label>
-          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-            <input
-              id="image-width"
-              type="range"
-              min="800"
-              max={width}
-              step="16"
-              bind:value={customScale.imageWidth}
-            />
-            <p>{customScale.imageWidth}px</p>
-          </span>
-        </span>
-
-        <span class="flex-row">
-          <label for="image-height">Picture height</label>
-          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-            <input
-              id="image-height"
-              type="range"
-              min="512"
-              max={height}
-              step="16"
-              bind:value={customScale.imageHeight}
-            />
-            <p>{customScale.imageHeight}px</p>
-          </span>
-        </span>
-      </div>
-
-      <div class="text-scale transparent-container">
-        <span class="flex-row">
-          <label for="paragraph-width">Paragraph width</label>
-          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-            <input
-              id="paragraph-width"
-              type="range"
-              min="50"
-              max="100"
-              step="1"
-              bind:value={customScale.paragraphWidth}
-            />
-            <p>{customScale.paragraphWidth}%</p>
-          </span>
-        </span>
-
-        <span class="flex-row">
-          <label for="options-width">Options width</label>
-          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-            <input
-              id="options-width"
-              type="range"
-              min="50"
-              max="100"
-              step="1"
-              bind:value={customScale.optionsWidth}
-            />
-            <p>{customScale.optionsWidth}%</p>
-          </span>
-        </span>
-      </div>
-      <span class="flex-row flex-wrap">
-        <ResetSVG
-          text="Reset to default scale"
-          onclick={() =>
-            openModal(
-              ensureMessage(`reset ${activeControlPanel} settings`),
-              'Reset scale',
-              () => updateScale('reset'),
-            )}
-        />
-        <button
-          class:green-btn={zoom !== 1}
-          use:tippy={{
-            content: "Press 'Z' to toggle zoom",
-            animation: 'scale',
-          }}
-          onclick={toggleZoom}
-        >
-          {#if zoom === 1}
-            Zoom out
-          {:else}
-            Reset zoom
-          {/if}
-        </button>
-      </span>
-    </section>
   </section>
 {:else}
   <div class="opaque-container">
@@ -896,14 +718,6 @@ a11y_no_noninteractive_element_interactions -->
           &.pad-inline {
             padding-inline: 0.5rem;
           }
-
-          &.scale-icon {
-            display: none;
-
-            @include respond-up(small-desktop) {
-              display: flex;
-            }
-          }
         }
       }
 
@@ -1008,11 +822,6 @@ a11y_no_noninteractive_element_interactions -->
             display: none;
           }
         }
-      }
-
-      // SCALE
-      .zoom-hint {
-        width: 100%;
       }
 
       // STYLING

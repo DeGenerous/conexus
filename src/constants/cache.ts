@@ -18,7 +18,6 @@ export const PLAY_OPTIONS_KEY = 'show_play_options';
 export const THEMES_KEY = 'themes';
 export const FONT_KEY = 'font';
 export const STYLING_KEY = 'styling';
-export const SCALE_KEY = 'scale';
 export const VOLUME_KEY = (type: 'voice' | 'music'): string => `${type}_volume`;
 export const TTS_SPEED_KEY = 'tts_speed';
 
@@ -80,7 +79,6 @@ function saveImportantAndClearCache() {
   const customThemes = localStorage.getItem(THEMES_KEY);
   const customFont = localStorage.getItem(FONT_KEY);
   const customStyling = localStorage.getItem(STYLING_KEY);
-  const customScale = localStorage.getItem(SCALE_KEY);
   const currentDraft = localStorage.getItem(CURRENT_DRAFT_KEY);
   const user = localStorage.getItem(USER_KEY); // save user object too
   const unfinishedStoriesRange = localStorage.getItem(
@@ -101,7 +99,6 @@ function saveImportantAndClearCache() {
   if (customThemes) localStorage.setItem(THEMES_KEY, customThemes);
   if (customFont) localStorage.setItem(FONT_KEY, customFont);
   if (customStyling) localStorage.setItem(STYLING_KEY, customStyling);
-  if (customScale) localStorage.setItem(SCALE_KEY, customScale);
   if (currentDraft) localStorage.setItem(CURRENT_DRAFT_KEY, currentDraft);
   if (user) localStorage.setItem(USER_KEY, user);
   if (unfinishedStoriesRange)

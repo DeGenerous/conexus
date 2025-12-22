@@ -18,13 +18,6 @@ export const defaultStyling: CustomStyling = {
   bgColor: '#000000',
 };
 
-export const defaultScale: CustomScale = {
-  paragraphWidth: 95,
-  optionsWidth: 95,
-  imageWidth: 1024,
-  imageHeight: 512,
-};
-
 // LIGHT THEME
 
 export const lightThemeFont: CustomFont = {

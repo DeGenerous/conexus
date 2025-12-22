@@ -1,7 +1,7 @@
 /// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
 
-type StepController = 'scale' | 'styling' | 'sound' | 'step';
+type StepController = 'styling' | 'sound' | 'step';
 
 type FontSizes = 'caption' | 'small' | 'body' | 'h5' | 'h4'; // not used
 
@@ -22,13 +22,6 @@ type CustomStyling = Nullable<{
   optionSelector: boolean;
   bgPictureOpacity: number;
   bgColor: string;
-}>;
-
-type CustomScale = Nullable<{
-  paragraphWidth: number; // %
-  optionsWidth: number; // %
-  imageWidth: number; // px
-  imageHeight: number; // px
 }>;
 
 type CustomTheme = {

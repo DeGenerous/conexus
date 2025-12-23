@@ -298,70 +298,68 @@ a11y_no_noninteractive_element_interactions -->
     style:cursor={game.loading ? 'wait' : 'default'}
     onpointerdown={handleWrapperPointer}
   >
-    {#if !$isGuest && (step.task_id !== '' && step.task_id !== 'generate')}
-      <ImageDisplay
-        {width}
-        image={step.image}
-        image_type={step.image_type}
-        boxShadow={$customStyling.boxShadow}
-      />
-    {/if}
-
-    {#if step.title}
+    <div class="step-content transparent-container">
       <h4
         class="{$customFont.accentSize}-font"
         class:text-shad={$customFont.shadow}
         style:font-style={$customFont.italic ? 'italic' : ''}
         style:color={$customFont.accentColor}
       >
-        {step.title}
+        Step {step.step}{#if step.title}: "{step.title}"{/if}
       </h4>
-    {/if}
 
-    <article>
-      {step.story}
-    </article>
+      <span class="description flex">
+        {#if !$isGuest && step.task_id !== ''}
+          <ImageDisplay image={step.image} image_type={step.image_type} />
+        {/if}
+
+        <article class="vert-scrollbar">
+          {step.story}
+        </article>
+      </span>
+
+      {#if $story?.step_data?.ended}
+        <hr />
+
+        <h4
+          class="{$customFont.accentSize}-font"
+          class:text-shad={$customFont.shadow}
+          style:font-style={$customFont.italic ? 'italic' : ''}
+          style:color={$customFont.accentColor}
+        >
+          {topic_name.trim()} Story Summary
+        </h4>
+
+        <article>
+          {step.summary}
+        </article>
+
+        <h4
+          class="{$customFont.accentSize}-font"
+          class:text-shad={$customFont.shadow}
+          style:font-style={$customFont.italic ? 'italic' : ''}
+          style:color={$customFont.accentColor}
+        >
+          CoNexus identified your trait as:
+          <strong class="text-glowing">{step.trait}</strong>
+        </h4>
+
+        {#if step.trait_description}
+          <article>
+            {step.trait_description}
+          </article>
+        {/if}
+
+        <Share container={true} />
+      {/if}
+    </div>
 
     {#if $story?.step_data?.ended}
-      <hr />
-
-      <h4
-        class="{$customFont.accentSize}-font"
-        class:text-shad={$customFont.shadow}
-        style:font-style={$customFont.italic ? 'italic' : ''}
-        style:color={$customFont.accentColor}
-      >
-        {topic_name.trim()} Story Summary
-      </h4>
-
-      <article>
-        {step.summary}
-      </article>
-
-      <h4
-        class="{$customFont.accentSize}-font"
-        class:text-shad={$customFont.shadow}
-        style:font-style={$customFont.italic ? 'italic' : ''}
-        style:color={$customFont.accentColor}
-      >
-        CoNexus identified your trait as:
-        <strong class="text-glowing">{step.trait}</strong>
-      </h4>
-
-      {#if step.trait_description}
-        <article>
-          {step.trait_description}
-        </article>
-      {/if}
-
       <div
-        class="options {$customFont.accentSize}-font"
+        class="step-options transparent-container {$customFont.accentSize}-font"
         class:text-shad={$customFont.shadow}
-        class:transparent-container={$customStyling.optionsContainer}
         style:font-style={$customFont.italic ? 'italic' : ''}
         style:color={$customFont.accentColor}
-        style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
-        style:border={$customStyling.boxShadow ? 'none' : ''}
       >
         <button id="option-0" class="void-btn menu-option" onclick={restartGame}
           >Start a new story</button
@@ -373,15 +371,11 @@ a11y_no_noninteractive_element_interactions -->
           >Return to main menu</button
         >
       </div>
-      <Share container={true} />
     {:else}
       <div
-        class="flex options wide-container {$customFont.accentSize}-font"
+        class="step-options transparent-container {$customFont.accentSize}-font"
         class:text-shad={$customFont.shadow}
-        class:transparent-container={$customStyling.optionsContainer}
         style:color={$customFont.accentColor}
-        style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
-        style:border={$customStyling.boxShadow ? 'none' : ''}
       >
         {#each step.options as option, i}
           <button
@@ -408,17 +402,15 @@ a11y_no_noninteractive_element_interactions -->
             onfocus={() => (focusedOption = i)}
             onblur={() => (focusedOption = null)}
           >
-            {#if $customStyling.optionSelector}
-              <SelectorSVG
-                focused={(step.choice && step.choice - 1 === i) ||
-                  focusedOption === i}
-                disabled={game.loading || step.step !== $story?.maxStep}
-                hideForMobiles={true}
-                color={$customFont.accentColor}
-                {selectorSize}
-              />
-            {/if}
             {option}
+            <SelectorSVG
+              focused={(step.choice && step.choice - 1 === i) ||
+                focusedOption === i}
+              disabled={game.loading || step.step !== $story?.maxStep}
+              hideForMobiles={true}
+              color={$customFont.accentColor}
+              {selectorSize}
+            />
           </button>
         {/each}
       </div>
@@ -602,38 +594,62 @@ a11y_no_noninteractive_element_interactions -->
       font-weight: inherit;
     }
 
-    h4 {
-      @include white-txt;
+    .transparent-container {
+      @include respond-up(small-desktop) {
+        width: 960px;
+      }
+
+      @include respond-up(large-desktop) {
+        width: 1360px;
+      }
+
+      @include respond-up(full-hd) {
+        width: 1600px;
+      }
+
+      @include respond-up(quad-hd) {
+        width: 1920px;
+      }
     }
 
-    article {
-      width: 100%;
-      padding-inline: 1rem;
-      text-align: left;
-      white-space: pre-wrap;
-      color: inherit;
-      text-shadow: inherit;
+    .step-content {
+      padding: 1.5rem;
+
+      article {
+        width: 100%;
+        text-align: left;
+        white-space: pre-wrap;
+        color: inherit;
+        text-shadow: inherit;
+
+        &::-webkit-scrollbar-thumb {
+          background: $transparent-black !important;
+        }
+      }
+
+      @include respond-up(small-desktop) {
+        .description {
+          flex-direction: row;
+
+          article {
+            aspect-ratio: 16 / 9;
+            overflow-y: scroll;
+            padding-right: 0.5rem;
+          }
+        }
+      }
+    }
+
+    .step-options {
+      align-items: stretch;
 
       @include respond-up(tablet) {
-        width: clamp(250px, 95%, 70rem);
-      }
-
-      @include respond-up(small-desktop) {
-        width: 100%;
-      }
-    }
-
-    .options {
-      align-items: flex-start;
-      @include box-shadow;
-
-      @include respond-up(small-desktop) {
-        width: 100%;
+        flex-direction: row;
       }
 
       button {
         width: 100%;
-        justify-content: flex-start;
+        justify-content: space-between;
         text-align: left;
         fill: $cyan;
         stroke: $cyan;
@@ -644,6 +660,11 @@ a11y_no_noninteractive_element_interactions -->
         color: inherit;
         font-style: inherit;
         text-shadow: inherit;
+
+        background-color: $transparent-black;
+        padding: 1rem;
+        border-radius: 1rem;
+        @include gray-border;
 
         &:hover:not(&:disabled),
         &:active:not(&:disabled),

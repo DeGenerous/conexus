@@ -17,9 +17,6 @@ type CustomFont = Nullable<{
 }>;
 
 type CustomStyling = Nullable<{
-  boxShadow: boolean;
-  optionsContainer: boolean;
-  optionSelector: boolean;
   bgPictureOpacity: number;
   bgColor: string;
 }>;

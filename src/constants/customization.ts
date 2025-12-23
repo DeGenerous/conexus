@@ -11,9 +11,6 @@ export const defaultFont: CustomFont = {
 };
 
 export const defaultStyling: CustomStyling = {
-  boxShadow: true,
-  optionsContainer: true,
-  optionSelector: true,
   bgPictureOpacity: 25,
   bgColor: '#000000',
 };
@@ -32,9 +29,6 @@ export const lightThemeFont: CustomFont = {
 };
 
 export const lightThemeStyling: CustomStyling = {
-  boxShadow: true,
-  optionsContainer: true,
-  optionSelector: true,
   bgPictureOpacity: 10,
   bgColor: '#faeed1', // beidge
 };
@@ -53,9 +47,6 @@ export const horrorThemeFont: CustomFont = {
 };
 
 export const horrorThemeStyling: CustomStyling = {
-  boxShadow: true,
-  optionsContainer: true,
-  optionSelector: true,
   bgPictureOpacity: 0,
   bgColor: '#000000',
 };
@@ -74,9 +65,6 @@ export const kidsThemeFont: CustomFont = {
 };
 
 export const kidsThemeStyling: CustomStyling = {
-  boxShadow: false,
-  optionsContainer: true,
-  optionSelector: true,
   bgPictureOpacity: 10,
   bgColor: '#c9f8b1', // mint green
 };
@@ -95,9 +83,6 @@ export const sciFiThemeFont: CustomFont = {
 };
 
 export const sciFiThemeStyling: CustomStyling = {
-  boxShadow: false,
-  optionsContainer: true,
-  optionSelector: true,
   bgPictureOpacity: 20,
   bgColor: '#050b1e', // deep blue-black
 };
@@ -116,9 +101,6 @@ export const fantasyThemeFont: CustomFont = {
 };
 
 export const fantasyThemeStyling: CustomStyling = {
-  boxShadow: true,
-  optionsContainer: true,
-  optionSelector: true,
   bgPictureOpacity: 15,
   bgColor: '#2f3e2f', // mossy green
 };
@@ -137,9 +119,6 @@ export const noirThemeFont: CustomFont = {
 };
 
 export const noirThemeStyling: CustomStyling = {
-  boxShadow: false,
-  optionsContainer: true,
-  optionSelector: true,
   bgPictureOpacity: 5,
   bgColor: '#121212', // smoky gray-black
 };
@@ -158,9 +137,6 @@ export const epicThemeFont: CustomFont = {
 };
 
 export const epicThemeStyling: CustomStyling = {
-  boxShadow: true,
-  optionsContainer: true,
-  optionSelector: true,
   bgPictureOpacity: 30,
   bgColor: '#1a1a1a',
 };
@@ -179,9 +155,6 @@ export const romanticThemeFont: CustomFont = {
 };
 
 export const romanticThemeStyling: CustomStyling = {
-  boxShadow: true,
-  optionsContainer: true,
-  optionSelector: true,
   bgPictureOpacity: 10,
   bgColor: '#fff0f5', // lavender blush
 };

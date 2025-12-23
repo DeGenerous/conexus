@@ -271,12 +271,9 @@
       <span
         class="options {$customFont.accentSize}-font"
         class:text-shad={$customFont.shadow}
-        class:transparent-container={$customStyling.optionsContainer}
         style:font-family={$customFont.family}
         style:font-style={$customFont.italic ? 'italic' : ''}
         style:color={$customFont.accentColor}
-        style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
-        style:border={$customStyling.boxShadow ? 'none' : ''}
       >
         {#each options as option, i}
           <button
@@ -291,15 +288,13 @@
             onfocus={() => (focusedOption = i)}
             onblur={() => (focusedOption = null)}
           >
-            {#if $customStyling.optionSelector}
-              <SelectorSVG
-                focused={focusedOption === i}
-                disabled={false}
-                hideForMobiles={true}
-                color={$customFont.accentColor}
-                {selectorSize}
-              />
-            {/if}
+            <SelectorSVG
+              focused={focusedOption === i}
+              disabled={false}
+              hideForMobiles={true}
+              color={$customFont.accentColor}
+              {selectorSize}
+            />
             {option}
           </button>
         {/each}

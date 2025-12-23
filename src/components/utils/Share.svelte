@@ -150,6 +150,9 @@
     &.container {
       width: 95%;
       padding: 0.5rem 1rem;
+      animation: none;
+      box-shadow: none;
+      background-color: $transparent-black;
 
       p {
         @include white-txt;

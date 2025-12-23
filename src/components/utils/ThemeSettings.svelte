@@ -81,9 +81,6 @@
       $customFont!.bold === theme.font!.bold &&
       $customFont!.italic === theme.font!.italic &&
       $customFont!.shadow === theme.font!.shadow &&
-      $customStyling!.boxShadow === theme.styling!.boxShadow &&
-      $customStyling!.optionsContainer === theme.styling!.optionsContainer &&
-      $customStyling!.optionSelector === theme.styling!.optionSelector &&
       $customStyling!.bgPictureOpacity === theme.styling!.bgPictureOpacity &&
       $customStyling!.bgColor === theme.styling!.bgColor
     );

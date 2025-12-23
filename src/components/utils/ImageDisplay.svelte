@@ -3,15 +3,11 @@
   import { resolveRenderableImage } from '@utils/file-validation';
 
   let {
-    width,
     image,
     image_type = 'url',
-    boxShadow = true,
   }: {
-    width: number;
     image: string | undefined;
     image_type?: string;
-    boxShadow: boolean;
   } = $props();
 
   let fullWidthImage = $state<boolean>(false);
@@ -63,11 +59,9 @@
 
 <button
   id="step-image"
-  class="void-btn transparent-container"
+  class="void-btn container"
   onclick={() => (fullWidthImage = !fullWidthImage)}
   class:slim={!fullWidthImage}
-  style:box-shadow={boxShadow ? '' : 'none'}
-  style:border={boxShadow ? 'none' : ''}
 >
   {#if isLoading}
     <span class="pulse-animation">
@@ -87,9 +81,11 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .transparent-container {
-    padding: 0 !important;
-    @include box-shadow;
+  .container {
+    width: 100%;
+    padding: 0;
+    animation: none;
+    background-color: $transparent-black;
 
     span {
       position: relative;
@@ -107,6 +103,10 @@
       max-height: 100%;
       height: 100%;
       border-radius: inherit;
+
+      @include respond-up(small-desktop) {
+        aspect-ratio: 16 / 9;
+      }
     }
 
     &.slim {
@@ -122,15 +122,6 @@
 
       &.slim {
         height: auto;
-      }
-    }
-
-    @include respond-up(small-desktop) {
-      width: 100%;
-      height: unset;
-
-      img {
-        height: inherit;
       }
     }
   }

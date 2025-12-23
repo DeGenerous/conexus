@@ -131,34 +131,6 @@
         <p>{$customStyling.bgPictureOpacity}%</p>
       </span>
     </div>
-
-    <div class="fade-in transparent-container flex-row">
-      <label for="layout">Layout</label>
-      <button
-        class:active-btn={$customStyling.optionsContainer}
-        onclick={() =>
-          ($customStyling!.optionsContainer =
-            !$customStyling!.optionsContainer)}
-      >
-        options frame
-      </button>
-
-      <button
-        id="option-selector-btn"
-        class:active-btn={$customStyling.optionSelector}
-        onclick={() =>
-          ($customStyling!.optionSelector = !$customStyling!.optionSelector)}
-      >
-        option selector
-      </button>
-
-      <button
-        class:active-btn={$customStyling.boxShadow}
-        onclick={() => ($customStyling!.boxShadow = !$customStyling!.boxShadow)}
-      >
-        box shadow
-      </button>
-    </div>
   </section>
 {/if}
 
@@ -196,14 +168,6 @@
 
     @include respond-up(tablet) {
       width: 15rem;
-    }
-  }
-
-  #option-selector-btn {
-    display: none;
-
-    @include respond-up(tablet) {
-      display: flex;
     }
   }
 </style>

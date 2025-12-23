@@ -150,13 +150,7 @@ const fontsEqual = (a: CustomFont, b: CustomFont): boolean => {
 
 const stylingEqual = (a: CustomStyling, b: CustomStyling): boolean => {
   if (!a || !b) return false;
-  return (
-    a.boxShadow === b.boxShadow &&
-    a.optionsContainer === b.optionsContainer &&
-    a.optionSelector === b.optionSelector &&
-    a.bgPictureOpacity === b.bgPictureOpacity &&
-    a.bgColor === b.bgColor
-  );
+  return a.bgPictureOpacity === b.bgPictureOpacity && a.bgColor === b.bgColor;
 };
 
 const themesEqual = (a: CustomTheme, b: CustomTheme): boolean =>

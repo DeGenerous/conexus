@@ -4,11 +4,13 @@
     text = '',
     active = false,
     control = true,
+    accentColor = '',
   }: {
     onclick: () => void;
     text: string;
-    active: boolean;
+    active?: boolean;
     control?: boolean;
+    accentColor?: string;
   } = $props();
 </script>
 
@@ -18,6 +20,7 @@
   class="void-btn flex"
   class:active
   aria-label="Back"
+  style="--accent-color: {accentColor}"
 >
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
     <circle r="100" />
@@ -30,7 +33,7 @@
 
   button {
     width: 2rem;
-    fill: $light-blue;
+    fill: currentColor;
     position: relative;
     font-family: inherit;
 
@@ -41,8 +44,8 @@
       left: 50%;
       transform: translate(-50%, -50%);
       font-family: inherit;
+      color: var(--accent-color);
       z-index: 2;
-      @include dark-blue(1, text);
       @include font(caption);
 
       @include respond-up(small-desktop) {
@@ -50,18 +53,21 @@
       }
     }
 
-    svg {
-      z-index: 1;
+    &.active {
+      fill: var(--accent-color);
+
+      h5 {
+        color: inherit;
+      }
     }
 
-    &.active {
-      fill: $cyan !important;
+    svg {
+      z-index: 1;
     }
 
     &:hover,
     &:focus-visible,
     &:active {
-      fill: $cyan;
       @include scale;
 
       h5 {

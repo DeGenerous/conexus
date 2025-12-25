@@ -13,17 +13,13 @@
     STANDARD_THEME_COUNT,
   } from '@stores/customization.svelte';
   import { GetCache, THEMES_KEY } from '@constants/cache';
+  import openModal from '@stores/modal.svelte';
+  import { ensureMessage } from '@constants/modal';
 
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
 
-  let {
-    closeDialog = () => {},
-    table = false,
-  }: {
-    closeDialog?: () => void;
-    table?: boolean;
-  } = $props();
+  let { table = false }: { table?: boolean } = $props();
 
   // update FONT in localStorage after every change
   $effect(() => {
@@ -69,6 +65,13 @@
     await persistActiveTheme('Custom Theme');
   };
 
+  const handleDeleteTheme = (index: number) =>
+    openModal(ensureMessage('delete this theme?'), 'Delete', () => {
+      $customThemes.splice(index, 1);
+      $customThemes = $customThemes; // force re-render;
+      persistCustomThemesCache();
+    });
+
   // Check if current customization settings are similar to some THEME-object
   const compareCurrentTheme = (theme: CustomTheme): boolean => {
     if (!$customFont || !$customStyling) return false;
@@ -78,12 +81,6 @@
       $customFont!.accentSize === theme.font!.accentSize &&
       $customFont!.baseColor === theme.font!.baseColor &&
       $customFont!.accentColor === theme.font!.accentColor &&
-      $customFont!.bold === theme.font!.bold &&
-      $customFont!.italic === theme.font!.italic &&
-      $customFont!.shadow === theme.font!.shadow &&
-      $customStyling!.boxShadow === theme.styling!.boxShadow &&
-      $customStyling!.optionsContainer === theme.styling!.optionsContainer &&
-      $customStyling!.optionSelector === theme.styling!.optionSelector &&
       $customStyling!.bgPictureOpacity === theme.styling!.bgPictureOpacity &&
       $customStyling!.bgColor === theme.styling!.bgColor
     );
@@ -117,10 +114,8 @@
           voidBtn={true}
           dark={true}
           onclick={(event: Event) => {
-            event.stopPropagation();
-            $customThemes.splice(index, 1);
-            $customThemes = $customThemes; // force re-render;
-            persistCustomThemesCache();
+            event.stopImmediatePropagation();
+            handleDeleteTheme(index);
           }}
         />
       {/if}
@@ -184,7 +179,7 @@
     }
 
     &.table {
-      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
     }
   }
 </style>

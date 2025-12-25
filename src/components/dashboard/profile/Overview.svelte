@@ -891,6 +891,7 @@
 
         &.ref-code-wrapper {
           flex-direction: column;
+          @include white-txt;
 
           span {
             width: 100%;

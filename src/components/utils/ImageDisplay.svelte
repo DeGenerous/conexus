@@ -3,21 +3,13 @@
   import { resolveRenderableImage } from '@utils/file-validation';
 
   let {
-    width,
-    zoom,
     image,
     image_type = 'url',
-    imageWidth = 800,
-    imageHeight = 512,
-    boxShadow = true,
+    style = '',
   }: {
-    width: number;
-    zoom: number;
     image: string | undefined;
     image_type?: string;
-    imageWidth: number;
-    imageHeight: number;
-    boxShadow: boolean;
+    style?: string;
   } = $props();
 
   let fullWidthImage = $state<boolean>(false);
@@ -69,22 +61,20 @@
 
 <button
   id="step-image"
-  class="void-btn transparent-container"
-  onclick={() => (fullWidthImage = !fullWidthImage)}
+  class="void-btn container loading-animation"
+  class:loading={isLoading}
   class:slim={!fullWidthImage}
-  style:box-shadow={boxShadow ? '' : 'none'}
-  style:border={boxShadow ? 'none' : ''}
-  style:max-width="{imageWidth}px"
-  style={width < 768 ? '' : `height: ${imageHeight}px`}
-  style:zoom
+  onclick={() => (fullWidthImage = !fullWidthImage)}
+  {style}
 >
   {#if isLoading}
-    <span class="pulse-animation">
+    <span>
       <img src="/icons/loading.png" alt="Loading..." />
       <p>Click to change image size</p>
     </span>
   {:else}
     <img
+      style:visibility={isLoading ? 'hidden' : 'visible'}
       src={imageSrc}
       alt=""
       onload={handleImageLoad}
@@ -96,19 +86,33 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .transparent-container {
-    padding: 0 !important;
-    @include box-shadow;
+  button.container {
+    width: 100%;
+    padding: 0;
+    animation: none;
+    background-color: unset;
+
+    &.loading {
+      animation: shimmer 2s ease infinite;
+    }
 
     span {
       position: relative;
       width: 100%;
       height: 100%;
 
+      img {
+        opacity: 0.25;
+        transform: scale(0.75);
+        filter: grayscale(100%);
+      }
+
       p {
         position: absolute;
         width: 100%;
         bottom: 1rem;
+        opacity: 0.25;
+        color: var(--theme-font);
       }
     }
 
@@ -116,6 +120,11 @@
       max-height: 100%;
       height: 100%;
       border-radius: inherit;
+
+      @include respond-up(small-desktop) {
+        max-height: 400px;
+        aspect-ratio: 16 / 9;
+      }
     }
 
     &.slim {
@@ -131,15 +140,6 @@
 
       &.slim {
         height: auto;
-      }
-    }
-
-    @include respond-up(small-desktop) {
-      width: 100%;
-      height: unset;
-
-      img {
-        height: inherit;
       }
     }
   }

@@ -16,13 +16,11 @@ button svg {
 
 .copied {
   p {
-    color: $green !important;
+    color: $green;
   }
 
   svg {
-    fill: $green !important;
-    stroke: $green !important;
-    filter: none !important;
+    fill: currentColor !important;
   }
 }
 

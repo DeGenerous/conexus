@@ -59,6 +59,7 @@
 <a
   class="section-tab navigation-tab"
   class:active={activeTab === 'Community Picks'}
+  class:inactive={!$approvedTester}
   href="/s/Community%20Picks"
   target="_self"
 >
@@ -68,6 +69,7 @@
 <a
   class="section-tab navigation-tab"
   class:active={activeTab === 'Collabs'}
+  class:inactive={!$approvedTester}
   href="/s/Collabs"
   target="_self"
 >
@@ -77,6 +79,7 @@
 <a
   class="section-tab navigation-tab"
   class:active={activeTab === 'Dischordian Saga'}
+  class:inactive={!$approvedTester}
   href="/s/Dischordian%20Saga"
   target="_self"
 >

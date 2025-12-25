@@ -238,35 +238,7 @@
     }
   };
 
-  let pictureKeyframe: KeyframeEffect | null = null;
-  let pictureAnimation: Animation | null = null;
-
-  $effect(() => {
-    if (!step?.image || !pictureAnimation) return;
-    pictureAnimation.play();
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  });
-
   onMount(() => {
-    const stepImage = document.getElementById('step-image') as HTMLImageElement;
-    pictureKeyframe = new KeyframeEffect(
-      stepImage,
-      [
-        { transform: 'scale(1)' },
-        { transform: 'scale(0.975)' },
-        { transform: 'scale(1.025)' },
-        { transform: 'scale(1)' },
-      ],
-      {
-        duration: 600,
-        easing: 'ease',
-      },
-    );
-    pictureAnimation = new Animation(pictureKeyframe, document.timeline);
-
     getStoredCustomization();
 
     if (isDesktop) {

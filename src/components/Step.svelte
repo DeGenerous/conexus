@@ -73,12 +73,13 @@
       `--theme-accent: ${accentColor}`,
       `--theme-bg: ${bgColor}`,
       `--theme-font: ${family}`,
-      // Dynamic panel color: Mix accent with transparency
       `--theme-panel-bg: color-mix(in srgb, var(--theme-accent), transparent 85%)`,
       `--theme-panel-border: color-mix(in srgb, var(--theme-accent), transparent 60%)`,
       `--theme-hover-bg: color-mix(in srgb, var(--theme-accent), transparent 70%)`,
-      `--theme-panel-dark: color-mix(in srgb, var(--theme-bg), transparent 60%)`,
-      `--theme-hover-dark: color-mix(in srgb, var(--theme-bg), transparent 50%)`,
+      `--theme-panel-muted: color-mix(in srgb, var(--theme-bg), transparent 60%)`,
+      `--theme-hover-muted: color-mix(in srgb, var(--theme-bg), transparent 50%)`,
+      `--theme-panel-deep: color-mix(in srgb, var(--theme-bg), var(--theme-accent) 15%)`,
+      `--theme-panel-dark: color-mix(in srgb, var(--theme-bg), black 15%)`,
     ].join(';');
   });
 
@@ -322,7 +323,7 @@ a11y_no_noninteractive_element_interactions -->
             primary={$customFont.accentColor}
             secondary={$customFont.baseColor}
           />
-          Loading...
+          Loading story data...
         {:else}
           Step {step.step}{#if step.title}: "{step.title}"{/if}
         {/if}
@@ -445,18 +446,12 @@ a11y_no_noninteractive_element_interactions -->
       <div class="controls flex-row">
         <div class:pad-inline={detectIOS()}>
           <label class:pc-only={!detectIOS()} for="filled-eye"> Styling </label>
-          <FilledEyeSVG
-            onclick={() => switchController('styling')}
-            active={activeControlPanel == 'styling'}
-          />
+          <FilledEyeSVG onclick={() => switchController('styling')} />
         </div>
         {#if !detectIOS()}
           <div>
             <label class="pc-only" for="sound">Sound</label>
-            <SoundSVG
-              onclick={() => switchController('sound')}
-              active={activeControlPanel == 'sound'}
-            />
+            <SoundSVG onclick={() => switchController('sound')} />
           </div>
         {/if}
         <div class:pad-inline={detectIOS()}>
@@ -464,8 +459,8 @@ a11y_no_noninteractive_element_interactions -->
           <StepSVG
             text={`${step.step < 10 ? '0' : ''}${step.step}`}
             onclick={() => switchController('step')}
-            active={activeControlPanel == 'step'}
             control={true}
+            accentColor={$customStyling.bgColor}
           />
         </div>
       </div>
@@ -496,7 +491,7 @@ a11y_no_noninteractive_element_interactions -->
           disabled={step.step === 1}
         />
         <span class="flex gap-8">
-          <h5 class="title">{topic_name.trim()}</h5>
+          <h5>{topic_name.trim()}</h5>
           <hr />
           <h5>
             {#if step.title}
@@ -518,6 +513,7 @@ a11y_no_noninteractive_element_interactions -->
             text={String(index + 1)}
             onclick={() => $story?.loadStep(index + 1)}
             active={step.step == index + 1}
+            accentColor={$customStyling.bgColor}
           />
         {/each}
       </ul>
@@ -533,9 +529,9 @@ a11y_no_noninteractive_element_interactions -->
       role="toolbar"
       tabindex="-1"
     >
-      <Slider type="music" />
+      <Slider type="music" style={themeStyles} />
       {#if !$isGuest && step.task_id !== ''}
-        <Slider type="voice" />
+        <Slider type="voice" style={themeStyles} />
       {/if}
     </section>
 
@@ -577,7 +573,7 @@ a11y_no_noninteractive_element_interactions -->
       </span>
 
       {#if showCustomization}
-        <StylingController />
+        <StylingController style={themeStyles} />
       {/if}
     </section>
   </section>
@@ -626,7 +622,8 @@ a11y_no_noninteractive_element_interactions -->
       }
     }
 
-    h4 {
+    h4,
+    h5 {
       color: var(--theme-accent);
       font-style: inherit;
     }
@@ -647,7 +644,7 @@ a11y_no_noninteractive_element_interactions -->
         }
 
         &.text-only {
-          background-color: var(--theme-panel-dark);
+          background-color: var(--theme-panel-muted);
           padding: 1rem;
           border-radius: 0.5rem;
           @include gray-border;
@@ -689,7 +686,7 @@ a11y_no_noninteractive_element_interactions -->
         font-style: inherit;
         text-shadow: inherit;
 
-        background-color: var(--theme-panel-dark);
+        background-color: var(--theme-panel-muted);
 
         padding: 1rem;
         border-radius: 0.5rem;
@@ -698,7 +695,7 @@ a11y_no_noninteractive_element_interactions -->
         &:hover:not(&:disabled),
         &:active:not(&:disabled),
         &:focus:not(&:disabled) {
-          background-color: var(--theme-hover-dark);
+          background-color: var(--theme-hover-muted);
           border-color: var(--theme-panel-border);
           filter: brightness(1.1);
         }
@@ -722,10 +719,19 @@ a11y_no_noninteractive_element_interactions -->
       padding-inline: 1rem;
       z-index: 100;
       justify-content: space-between;
-      @include navy;
+      background-color: var(--theme-panel-deep);
+      color: var(--theme-text);
 
       @include respond-up(small-desktop) {
         padding: 1rem;
+      }
+
+      label {
+        color: inherit;
+
+        &::after {
+          content: ':';
+        }
       }
 
       span {
@@ -756,7 +762,7 @@ a11y_no_noninteractive_element_interactions -->
           gap: 0.5rem;
           padding: 0.25rem;
           border-radius: 0.5rem;
-          @include dark-blue(0.5);
+          background-color: var(--theme-panel-bg);
           @include box-shadow(soft, inset);
 
           @include respond-up(tablet) {
@@ -786,19 +792,6 @@ a11y_no_noninteractive_element_interactions -->
       z-index: 10;
     }
 
-    label {
-      transition: color 0.3s ease;
-
-      &::after {
-        content: ':';
-      }
-
-      &:hover,
-      &:active {
-        @include white-txt;
-      }
-    }
-
     // ADDITIONAL CONTROLLERS STYLING
     section {
       @extend :global(.shad-behind);
@@ -816,8 +809,7 @@ a11y_no_noninteractive_element_interactions -->
       gap: 0.5rem;
       transform: translateY(100%);
       transition: all 0.6s ease;
-      background-color: $dark-gray;
-      @include white-txt(soft);
+      background-color: var(--theme-panel-dark);
 
       @include respond-up(tablet) {
         max-height: 70vh;
@@ -827,6 +819,11 @@ a11y_no_noninteractive_element_interactions -->
         width: 100%;
         flex-wrap: wrap;
         margin-inline: unset;
+
+        &.transparent-container {
+          animation: none;
+          background-color: var(--theme-panel-bg);
+        }
 
         @include respond-up(tablet) {
           width: auto;
@@ -861,12 +858,8 @@ a11y_no_noninteractive_element_interactions -->
             flex-flow: row wrap;
             gap: 1rem;
 
-            .title {
-              @include white-txt(0.5);
-
-              &::after {
-                content: ':';
-              }
+            h5:first-of-type::after {
+              content: ':';
             }
           }
 

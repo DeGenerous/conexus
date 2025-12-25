@@ -1,22 +1,10 @@
 <script lang="ts">
   import sound from '@stores/volumes.svelte';
 
-  let {
-    onclick = () => {},
-    active = false,
-  }: {
-    onclick: () => void;
-    active: boolean;
-  } = $props();
+  let { onclick = () => {} }: { onclick: () => void } = $props();
 </script>
 
-<button
-  id="sound"
-  class="void-btn flex"
-  class:active
-  {onclick}
-  aria-label="Back"
->
+<button id="sound" class="void-btn flex" {onclick} aria-label="Back">
   <svg
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
@@ -54,19 +42,12 @@
 
   button {
     width: 2rem;
-    fill: $light-blue;
-    stroke: $light-blue;
-
-    &.active {
-      fill: $cyan !important;
-      stroke: $cyan !important;
-    }
+    fill: currentColor;
+    stroke: currentColor;
 
     &:hover,
     &:focus-visible,
     &:active {
-      fill: $cyan;
-      stroke: $cyan;
       @include scale;
     }
   }

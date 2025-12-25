@@ -47,7 +47,7 @@
 
     &.void-btn {
       width: 2rem;
-      fill: $light-blue;
+      fill: currentColor;
     }
 
     &.full-width {
@@ -58,8 +58,6 @@
     &:hover,
     &:active,
     &:focus-visible {
-      fill: $cyan;
-
       svg {
         transform: scale(1.1);
 

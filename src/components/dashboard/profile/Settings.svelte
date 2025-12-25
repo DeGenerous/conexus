@@ -53,8 +53,8 @@
       `--theme-panel-bg: color-mix(in srgb, var(--theme-accent), transparent 85%)`,
       `--theme-panel-border: color-mix(in srgb, var(--theme-accent), transparent 60%)`,
       `--theme-hover-bg: color-mix(in srgb, var(--theme-accent), transparent 70%)`,
-      `--theme-panel-dark: color-mix(in srgb, var(--theme-bg), transparent 60%)`,
-      `--theme-hover-dark: color-mix(in srgb, var(--theme-bg), transparent 50%)`,
+      `--theme-panel-muted: color-mix(in srgb, var(--theme-bg), transparent 60%)`,
+      `--theme-hover-muted: color-mix(in srgb, var(--theme-bg), transparent 50%)`,
     ].join(';');
   });
 
@@ -389,7 +389,7 @@
         }
 
         &.text-only {
-          background-color: var(--theme-panel-dark);
+          background-color: var(--theme-panel-muted);
           padding: 1rem;
           border-radius: 0.5rem;
           @include gray-border;
@@ -430,7 +430,7 @@
         font-style: inherit;
         text-shadow: inherit;
 
-        background-color: var(--theme-panel-dark);
+        background-color: var(--theme-panel-muted);
 
         padding: 1rem;
         border-radius: 0.5rem;
@@ -439,7 +439,7 @@
         &:hover:not(&:disabled),
         &:active:not(&:disabled),
         &:focus:not(&:disabled) {
-          background-color: var(--theme-hover-dark);
+          background-color: var(--theme-hover-muted);
           border-color: var(--theme-panel-border);
           filter: brightness(1.1);
         }

@@ -9,6 +9,8 @@
     getStoredCustomization,
   } from '@stores/customization.svelte';
 
+  let { style = '' }: { style?: string } = $props();
+
   // update FONT in localStorage after every change
   $effect(() => {
     $customFont && updateFont();
@@ -39,7 +41,7 @@
 </script>
 
 {#if $customFont && $customStyling}
-  <section class="flex gap-8">
+  <section class="flex gap-8" class:custom-colors={Boolean(style)} {style}>
     <div class="fade-in transparent-container flex-row">
       <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
         <label for="text-color">Main color</label>
@@ -117,6 +119,28 @@
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
+
+  .custom-colors .transparent-container {
+    animation: none;
+    color: var(--theme-text);
+    background-color: var(--theme-panel-bg);
+
+    label {
+      color: inherit;
+    }
+
+    .dark-glowing {
+      animation: none;
+      background-color: var(--theme-panel-muted);
+    }
+
+    select {
+      background-color: var(--theme-panel-muted);
+      color: inherit;
+      box-shadow: none !important;
+      @include gray-border;
+    }
+  }
 
   .transparent-container {
     width: 100%;

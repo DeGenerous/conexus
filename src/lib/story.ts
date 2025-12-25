@@ -492,7 +492,7 @@ export default class CoNexus {
       });
     }
 
-    if (!data.generate && data.task_id && data.task_id !== '') {
+    if (data.generate === false && data.task_id && data.task_id !== 'generate') {
       await this.#generateImageStatus(data.task_id);
     }
   }

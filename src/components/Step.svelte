@@ -331,7 +331,7 @@ a11y_no_noninteractive_element_interactions -->
     style:cursor={game.loading ? 'wait' : 'default'}
     onpointerdown={handleWrapperPointer}
   >
-    {#if !$isGuest && step.task_id !== ''}
+    {#if !$isGuest && (step.task_id !== '' && step.task_id !== 'generate')}
       <ImageDisplay
         {width}
         {zoom}

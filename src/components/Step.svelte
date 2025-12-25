@@ -302,7 +302,7 @@ a11y_no_noninteractive_element_interactions -->
       </h4>
 
       <span class="description flex">
-        {#if !$isGuest && step.task_id !== ''}
+        {#if !$isGuest && (step.task_id !== '' && step.task_id !== 'generate')}
           <ImageDisplay
             image={step.image}
             image_type={step.image_type}
@@ -312,7 +312,7 @@ a11y_no_noninteractive_element_interactions -->
 
         <article
           class="vert-scrollbar"
-          class:text-only={$isGuest || step.task_id === ''}
+          class:text-only={$isGuest || step.task_id === '' || step.task_id === 'generate'}
         >
           {step.story}
         </article>
@@ -502,7 +502,7 @@ a11y_no_noninteractive_element_interactions -->
       tabindex="-1"
     >
       <Slider type="music" style={themeStyles} />
-      {#if !$isGuest && step.task_id !== ''}
+      {#if !$isGuest && (step.task_id !== '' && step.task_id !== 'generate')}
         <Slider type="voice" style={themeStyles} />
       {/if}
     </section>

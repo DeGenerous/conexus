@@ -66,12 +66,15 @@
 
 <style lang="scss">
   button {
-    width: 2rem;
+    width: 1em;
+    height: 1em;
+    min-width: unset;
+    min-height: unset;
     cursor: wait !important;
 
     svg {
-      width: 1.75rem;
-      height: 1.75rem;
+      width: inherit;
+      height: inherit;
     }
   }
 </style>

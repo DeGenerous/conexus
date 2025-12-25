@@ -289,7 +289,7 @@ a11y_no_noninteractive_element_interactions -->
     onpointerdown={handleWrapperPointer}
   >
     <div class="step-content transparent-container">
-      <h4 class="flex-row gap-8 {$customFont.accentSize}-font">
+      <h4 class="flex-row gap-16 {$customFont.accentSize}-font">
         {#if game.loading}
           <LoadingSVG
             primary={$customFont.accentColor}

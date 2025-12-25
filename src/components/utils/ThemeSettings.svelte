@@ -78,9 +78,6 @@
       $customFont!.accentSize === theme.font!.accentSize &&
       $customFont!.baseColor === theme.font!.baseColor &&
       $customFont!.accentColor === theme.font!.accentColor &&
-      $customFont!.bold === theme.font!.bold &&
-      $customFont!.italic === theme.font!.italic &&
-      $customFont!.shadow === theme.font!.shadow &&
       $customStyling!.bgPictureOpacity === theme.styling!.bgPictureOpacity &&
       $customStyling!.bgColor === theme.styling!.bgColor
     );
@@ -181,7 +178,7 @@
     }
 
     &.table {
-      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
     }
   }
 </style>

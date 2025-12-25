@@ -1,3 +1,13 @@
+<script lang="ts">
+  let {
+    primary = '',
+    secondary = '',
+  }: {
+    primary?: string;
+    secondary?: string;
+  } = $props();
+</script>
+
 <button class="void-btn flex rotate-animation fade-in" disabled>
   <svg
     width="64"
@@ -8,14 +18,24 @@
     <defs>
       <!-- Gradient for red arc -->
       <linearGradient id="cyan-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="rgba(51, 226, 230, 1)" />
-        <stop offset="100%" stop-color="rgb(51, 226, 230, 0)" />
+        {#if primary}
+          <stop offset="0%" stop-color={primary} />
+          <stop offset="100%" stop-color="rgb(0, 0, 0, 0)" />
+        {:else}
+          <stop offset="0%" stop-color="rgba(51, 226, 230, 1)" />
+          <stop offset="100%" stop-color="rgb(51, 226, 230, 0)" />
+        {/if}
       </linearGradient>
 
       <!-- Gradient for blue arc -->
       <linearGradient id="blue-gradient" x1="100%" y1="0%" x2="0%" y2="0%">
-        <stop offset="0%" stop-color="rgba(56, 117, 250, 1)" />
-        <stop offset="100%" stop-color="rgba(56, 117, 250, 0)" />
+        {#if secondary}
+          <stop offset="0%" stop-color={secondary} />
+          <stop offset="100%" stop-color="rgba(0, 0, 0, 0)" />
+        {:else}
+          <stop offset="0%" stop-color="rgba(56, 117, 250, 1)" />
+          <stop offset="100%" stop-color="rgba(56, 117, 250, 0)" />
+        {/if}
       </linearGradient>
     </defs>
 

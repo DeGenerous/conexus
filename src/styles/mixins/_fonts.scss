@@ -120,9 +120,7 @@ $font-scale: (
   @include font(h1);
 }
 
-// Hanken Grotesk
-// 'Hanken Grotesk', 'Helvetica Neue', Arial, sans-serif;
-
+/* FAMILY: Hanken Grotesk (Void / Default) */
 @font-face {
   font-family: 'Hanken Grotesk';
   src: url('/fonts/HankenGrotesk-Light.woff2') format('woff2');
@@ -130,15 +128,6 @@ $font-scale: (
   font-style: normal;
   font-display: swap;
 }
-
-@font-face {
-  font-family: 'Hanken Grotesk';
-  src: url('/fonts/HankenGrotesk-LightItalic.woff2') format('woff2');
-  font-weight: 300;
-  font-style: italic;
-  font-display: swap;
-}
-
 @font-face {
   font-family: 'Hanken Grotesk';
   src: url('/fonts/HankenGrotesk-Regular.woff2') format('woff2');
@@ -146,15 +135,6 @@ $font-scale: (
   font-style: normal;
   font-display: swap;
 }
-
-@font-face {
-  font-family: 'Hanken Grotesk';
-  src: url('/fonts/HankenGrotesk-Italic.woff2') format('woff2');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-
 @font-face {
   font-family: 'Hanken Grotesk';
   src: url('/fonts/HankenGrotesk-Medium.woff2') format('woff2');
@@ -162,15 +142,6 @@ $font-scale: (
   font-style: normal;
   font-display: swap;
 }
-
-@font-face {
-  font-family: 'Hanken Grotesk';
-  src: url('/fonts/HankenGrotesk-MediumItalic.woff2') format('woff2');
-  font-weight: 500;
-  font-style: italic;
-  font-display: swap;
-}
-
 @font-face {
   font-family: 'Hanken Grotesk';
   src: url('/fonts/HankenGrotesk-SemiBold.woff2') format('woff2');
@@ -178,15 +149,6 @@ $font-scale: (
   font-style: normal;
   font-display: swap;
 }
-
-@font-face {
-  font-family: 'Hanken Grotesk';
-  src: url('/fonts/HankenGrotesk-SemiBoldItalic.woff2') format('woff2');
-  font-weight: 600;
-  font-style: italic;
-  font-display: swap;
-}
-
 @font-face {
   font-family: 'Hanken Grotesk';
   src: url('/fonts/HankenGrotesk-Bold.woff2') format('woff2');
@@ -195,144 +157,23 @@ $font-scale: (
   font-display: swap;
 }
 
+/* FAMILY: Inter (Onyx / Focus) */
 @font-face {
-  font-family: 'Hanken Grotesk';
-  src: url('/fonts/HankenGrotesk-BoldItalic.woff2') format('woff2');
-  font-weight: 700;
-  font-style: italic;
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
   font-display: swap;
 }
-
-// PT Serif Caption font
-
 @font-face {
-  font-family: 'PT Serif Caption';
-  src: url('/fonts/PTSerifCaption-Regular.woff2') format('woff2');
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Regular.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'PT Serif Caption';
-  src: url('/fonts/PTSerifCaption-Italic.woff2') format('woff2');
-  font-weight: normal;
-  font-style: italic;
-  font-display: swap;
-}
-
-// LORA font
-
-@font-face {
-  font-family: 'Lora';
-  src: url('/fonts/Lora-Italic.woff2') format('woff2');
-  font-weight: normal;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Lora';
-  src: url('/fonts/Lora-Bold.woff2') format('woff2');
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Lora';
-  src: url('/fonts/Lora-BoldItalic.woff2') format('woff2');
-  font-weight: bold;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Lora';
-  src: url('/fonts/Lora-Regular.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-// ROBOTO font
-
-@font-face {
-  font-family: 'Roboto';
-  src: url('/fonts/Roboto-Regular.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Roboto';
-  src: url('/fonts/Roboto-Italic.woff2') format('woff2');
-  font-weight: normal;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Roboto';
-  src: url('/fonts/Roboto-Bold.woff2') format('woff2');
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Roboto';
-  src: url('/fonts/Roboto-BoldItalic.woff2') format('woff2');
-  font-weight: bold;
-  font-style: italic;
-  font-display: swap;
-}
-
-// MERRIWEATHER font
-
-@font-face {
-  font-family: 'Merriweather';
-  src: url('/fonts/Merriweather24pt-Bold.woff2') format('woff2');
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Merriweather';
-  src: url('/fonts/Merriweather24pt-BoldItalic.woff2') format('woff2');
-  font-weight: bold;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Merriweather';
-  src: url('/fonts/Merriweather24pt-Regular.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Merriweather';
-  src: url('/fonts/Merriweather24pt-Italic.woff2') format('woff2');
-  font-weight: normal;
-  font-style: italic;
-  font-display: swap;
-}
-
-// COURIER PRIME font
-
-@font-face {
-  font-family: 'Courier Prime';
-  src: url('/fonts/CourierPrime-BoldItalic.woff2') format('woff2');
-  font-weight: bold;
-  font-style: italic;
-  font-display: swap;
-}
-
+/* FAMILY: Courier Prime (Terminal) */
 @font-face {
   font-family: 'Courier Prime';
   src: url('/fonts/CourierPrime-Bold.woff2') format('woff2');
@@ -340,15 +181,6 @@ $font-scale: (
   font-style: normal;
   font-display: swap;
 }
-
-@font-face {
-  font-family: 'Courier Prime';
-  src: url('/fonts/CourierPrime-Italic.woff2') format('woff2');
-  font-weight: normal;
-  font-style: italic;
-  font-display: swap;
-}
-
 @font-face {
   font-family: 'Courier Prime';
   src: url('/fonts/CourierPrime-Regular.woff2') format('woff2');
@@ -357,42 +189,71 @@ $font-scale: (
   font-display: swap;
 }
 
-// COMIC NEUE font
-
+/* FAMILY: Lora (Overgrowth) */
 @font-face {
-  font-family: 'Comic Neue';
-  src: url('/fonts/ComicNeue-Bold.woff2') format('woff2');
+  font-family: 'Lora';
+  src: url('/fonts/Lora-Bold.woff2') format('woff2');
   font-weight: bold;
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
-  font-family: 'Comic Neue';
-  src: url('/fonts/ComicNeue-Italic.woff2') format('woff2');
-  font-weight: normal;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Comic Neue';
-  src: url('/fonts/ComicNeue-Regular.woff2') format('woff2');
+  font-family: 'Lora';
+  src: url('/fonts/Lora-Regular.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
+/* FAMILY: Exo 2 (Nebula) */
 @font-face {
-  font-family: 'Comic Neue';
-  src: url('/fonts/ComicNeue-BoldItalic.woff2') format('woff2');
+  font-family: 'Exo 2';
+  src: url('/fonts/Exo2-Bold.woff2') format('woff2');
   font-weight: bold;
-  font-style: italic;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Exo 2';
+  src: url('/fonts/Exo2-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
   font-display: swap;
 }
 
-// CAVEAT font (no italic)
+/* FAMILY: Cinzel (Solar) */
+@font-face {
+  font-family: 'Cinzel';
+  src: url('/fonts/Cinzel-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cinzel';
+  src: url('/fonts/Cinzel-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
+/* FAMILY: Merriweather (Crimson) */
+@font-face {
+  font-family: 'Merriweather';
+  src: url('/fonts/Merriweather24pt-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Merriweather';
+  src: url('/fonts/Merriweather24pt-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* FAMILY: Caveat (Velvet Heading) */
 @font-face {
   font-family: 'Caveat';
   src: url('/fonts/Caveat-Bold.woff2') format('woff2');
@@ -400,10 +261,57 @@ $font-scale: (
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: 'Caveat';
   src: url('/fonts/Caveat-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* FAMILY: PT Serif Caption (Paper / Velvet Body) */
+@font-face {
+  font-family: 'PT Serif Caption';
+  src: url('/fonts/PTSerifCaption-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PT Serif Caption';
+  src: url('/fonts/PTSerif-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* FAMILY: Open Sans (Laboratory) */
+@font-face {
+  font-family: 'Open Sans';
+  src: url('/fonts/OpenSans-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: url('/fonts/OpenSans-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* FAMILY: Comic Neue (Playground) */
+@font-face {
+  font-family: 'Comic Neue';
+  src: url('/fonts/ComicNeue-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Comic Neue';
+  src: url('/fonts/ComicNeue-Regular.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;

@@ -9,9 +9,11 @@
   let {
     disabled = false,
     container = false,
+    style = '',
   }: {
     disabled?: boolean;
     container?: boolean;
+    style?: string;
   } = $props();
 
   let copySvgFocus = $state<Nullable<string | boolean>>(null);
@@ -52,8 +54,8 @@
   };
 </script>
 
-<div class="share flex-row gap-8" class:container>
-  <p class="transparent-white-txt">
+<div class="share flex-row gap-8" class:container {style}>
+  <p>
     {#if container}
       Share This Story:
     {:else}
@@ -118,7 +120,10 @@
   @use '/src/styles/mixins' as *;
 
   .share {
+    @include white-txt(0.5);
+
     p {
+      color: inherit;
       @include font(caption);
     }
 
@@ -151,17 +156,15 @@
       width: 95%;
       padding: 0.5rem 1rem;
       animation: none;
-      box-shadow: none;
-      background-color: $transparent-black;
+      background-color: unset;
+      color: var(--theme-accent);
 
       p {
-        @include white-txt;
         @include font(body);
       }
 
       span {
-        box-shadow: none;
-        background-color: transparent;
+        background-color: var(--theme-panel-dark);
         animation: none;
       }
 

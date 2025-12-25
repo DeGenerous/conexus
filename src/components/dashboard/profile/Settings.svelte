@@ -38,6 +38,26 @@
   ];
   let focusedOption = $state<Nullable<number>>(null);
 
+  const themeStyles = $derived.by(() => {
+    if (!$customFont || !$customStyling) return '';
+
+    const { baseColor, accentColor, family } = $customFont;
+    const { bgColor } = $customStyling;
+
+    return [
+      `--theme-text: ${baseColor}`,
+      `--theme-accent: ${accentColor}`,
+      `--theme-bg: ${bgColor}`,
+      `--theme-font: ${family}`,
+      // Dynamic Glass Logic
+      `--theme-panel-bg: color-mix(in srgb, var(--theme-accent), transparent 85%)`,
+      `--theme-panel-border: color-mix(in srgb, var(--theme-accent), transparent 60%)`,
+      `--theme-hover-bg: color-mix(in srgb, var(--theme-accent), transparent 70%)`,
+      `--theme-panel-dark: color-mix(in srgb, var(--theme-bg), transparent 60%)`,
+      `--theme-hover-dark: color-mix(in srgb, var(--theme-bg), transparent 50%)`,
+    ].join(';');
+  });
+
   // calculate option selector size based on font size
   let selectorSize = $state<number>(1.5); // rem
   $effect(() => {
@@ -245,41 +265,27 @@
   {#if $customFont && $customStyling}
     <section
       class="step-preview flex round-8 pad-24 {$customFont.baseSize}-font"
-      class:text-shad={$customFont.shadow}
-      style:font-family={$customFont.family}
-      style:font-weight={$customFont.bold ? 'bold' : 'normal'}
-      style:font-style={$customFont.italic ? 'italic' : ''}
-      style:color={$customFont.baseColor}
-      style:background-color={$customStyling.bgColor}
+      style={themeStyles}
     >
-      <h4
-        class="{$customFont.accentSize}-font"
-        class:text-shad={$customFont.shadow}
-        style:font-style={$customFont.italic ? 'italic' : ''}
-        style:color={$customFont.accentColor}
-        style:font-family={$customFont.family}
-      >
-        Preview Step
-      </h4>
-      <article style:font-family={$customFont.family}>
-        This neutral passage exists only to preview your theme. It has no plot,
-        only layout and rhythm. Scan spacing, contrast, and hierarchy across
-        headings, paragraphs, inline emphasis, and controls. Adjust type,
-        colors, borders, and shadows, then see how each change propagates across
-        components on this screen.
-      </article>
+      <span class="step-content transparent-container">
+        <h4 class="{$customFont.accentSize}-font">Step 1: "Theme Preview"</h4>
+        <span class="description flex">
+          <article class="text-only">
+            This neutral passage exists only to preview your theme. It has no
+            plot, only layout and rhythm. Scan spacing, contrast, and hierarchy
+            across headings, paragraphs, inline emphasis, and controls. Adjust
+            type, colors, borders, and shadows, then see how each change
+            propagates across components on this screen.
+          </article>
+        </span>
+      </span>
       <span
-        class="options {$customFont.accentSize}-font"
-        class:text-shad={$customFont.shadow}
-        style:font-family={$customFont.family}
-        style:font-style={$customFont.italic ? 'italic' : ''}
-        style:color={$customFont.accentColor}
+        class="step-options transparent-container {$customFont.accentSize}-font"
       >
         {#each options as option, i}
           <button
             id="option-0"
             class="void-btn flex-row gap-8"
-            style:font-family={$customFont.family}
             onpointerover={() => {
               focusedOption = i;
               blurActiveBtn();
@@ -288,6 +294,7 @@
             onfocus={() => (focusedOption = i)}
             onblur={() => (focusedOption = null)}
           >
+            {option}
             <SelectorSVG
               focused={focusedOption === i}
               disabled={false}
@@ -295,7 +302,6 @@
               color={$customFont.accentColor}
               {selectorSize}
             />
-            {option}
           </button>
         {/each}
       </span>
@@ -305,8 +311,8 @@
       ></span>
     </section>
   {/if}
-  <StylingController />
   <ThemeSettings {table} />
+  <StylingController />
 </Dropdown>
 
 <FooterLinks />
@@ -341,55 +347,101 @@
     position: relative;
     width: 100%;
     margin-bottom: 1.5rem;
-    background-color: black;
+
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
+    font-family: var(--theme-font);
+
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
     @include gray-border;
+
+    * {
+      font-family: inherit;
+      font-weight: inherit;
+    }
+
+    .transparent-container {
+      width: 95%;
+      background-color: var(--theme-panel-bg);
+      animation: none;
+    }
 
     h4 {
       width: auto;
+      color: var(--theme-accent);
+      font-style: inherit;
     }
 
-    article {
-      width: 100%;
-      padding-inline: 1rem;
-      text-align: left;
-      color: inherit;
-      text-shadow: inherit;
+    .step-content {
+      padding: 1.5rem;
+
+      article {
+        width: 100%;
+        text-align: left;
+        color: inherit;
+        text-shadow: inherit;
+
+        &::-webkit-scrollbar-thumb {
+          background: var(--theme-panel-border);
+          border-radius: 4px;
+        }
+
+        &.text-only {
+          background-color: var(--theme-panel-dark);
+          padding: 1rem;
+          border-radius: 0.5rem;
+          @include gray-border;
+        }
+      }
+
+      @include respond-up(small-desktop) {
+        .description {
+          flex-direction: row;
+
+          article {
+            overflow-y: scroll;
+            padding-right: 0.5rem;
+          }
+        }
+      }
+    }
+
+    .step-options {
+      align-items: stretch;
 
       @include respond-up(tablet) {
-        width: clamp(250px, 95%, 70rem);
-      }
-
-      @include respond-up(small-desktop) {
-        width: 100%;
-      }
-    }
-
-    .options {
-      align-items: flex-start;
-      @include box-shadow;
-
-      @include respond-up(small-desktop) {
-        width: 100%;
+        flex-direction: row;
       }
 
       button {
         width: 100%;
-        justify-content: flex-start;
+        justify-content: space-between;
         text-align: left;
-        fill: $cyan;
-        stroke: $cyan;
-        color: $cyan;
+
+        color: var(--theme-accent);
+        fill: var(--theme-accent);
+        stroke: var(--theme-accent);
+        font-family: var(--theme-font);
 
         font-size: inherit;
         line-height: inherit;
-        color: inherit;
         font-style: inherit;
         text-shadow: inherit;
+
+        background-color: var(--theme-panel-dark);
+
+        padding: 1rem;
+        border-radius: 0.5rem;
+        @include gray-border;
 
         &:hover:not(&:disabled),
         &:active:not(&:disabled),
         &:focus:not(&:disabled) {
-          filter: hue-rotate(30deg) saturate(200%);
+          background-color: var(--theme-hover-dark);
+          border-color: var(--theme-panel-border);
+          filter: brightness(1.1);
         }
       }
     }

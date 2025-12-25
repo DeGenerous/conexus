@@ -22,6 +22,20 @@
   onMount(() => {
     getStoredCustomization();
   });
+
+  const fontOptions = [
+    'Hanken Grotesk',
+    'Inter',
+    'Courier Prime',
+    'Merriweather',
+    'Lora',
+    'Caveat',
+    'PT Serif Caption',
+    'Cinzel',
+    'Exo 2',
+    'Open Sans',
+    'Comic Neue',
+  ];
 </script>
 
 {#if $customFont && $customStyling}
@@ -55,15 +69,9 @@
       <span class="flex-row">
         <label for="custom-font">Font</label>
         <select id="custom-font" bind:value={$customFont.family}>
-          <option value="PT Serif Caption">Default (serif)</option>
-          <option value="Merriweather">Merriweather</option>
-          <option value="Lora">Lora</option>
-          <option value="Roboto">Roboto</option>
-          <option value="Verdana">Verdana</option>
-          <option value="Monospace">Monospace</option>
-          <option value="Courier Prime">Courier prime</option>
-          <option value="Comic Neue">Comic Neue</option>
-          <option value="Caveat">Caveat</option>
+          {#each fontOptions as font}
+            <option value={font}>{font}</option>
+          {/each}
         </select>
       </span>
 
@@ -87,33 +95,6 @@
           <option value="h5">Large</option>
           <option value="h4">Maximal</option>
         </select>
-      </span>
-
-      <span class="flex-row gap-8">
-        {#if $customFont.family !== 'PT Serif Caption'}
-          <button
-            class:active-btn={$customFont.bold}
-            onclick={() => ($customFont!.bold = !$customFont!.bold)}
-          >
-            bold
-          </button>
-        {/if}
-
-        {#if $customFont.family !== 'Caveat'}
-          <button
-            class:active-btn={$customFont.italic}
-            onclick={() => ($customFont!.italic = !$customFont!.italic)}
-          >
-            italic
-          </button>
-        {/if}
-
-        <button
-          class:active-btn={$customFont.shadow}
-          onclick={() => ($customFont!.shadow = !$customFont!.shadow)}
-        >
-          shadow
-        </button>
       </span>
     </div>
 

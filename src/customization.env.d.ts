@@ -11,9 +11,6 @@ type CustomFont = Nullable<{
   accentSize: string;
   baseColor: string;
   accentColor: string;
-  bold: boolean;
-  italic: boolean;
-  shadow: boolean;
 }>;
 
 type CustomStyling = Nullable<{

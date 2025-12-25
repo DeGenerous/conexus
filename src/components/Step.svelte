@@ -8,8 +8,8 @@
   import {
     defaultFont,
     defaultStyling,
-    lightThemeFont,
-    lightThemeStyling,
+    paperThemeFont,
+    paperThemeStyling,
   } from '@constants/customization';
   import openModal, { showModal } from '@stores/modal.svelte';
   import {
@@ -36,6 +36,7 @@
   import FullscreenSVG from '@components/icons/Fullscreen.svelte';
   import FilledEyeSVG from '@components/icons/FilledEye.svelte';
   import ResetSVG from '@components/icons/Reset.svelte';
+  import LoadingSVG from '@components/icons/Loading.svelte';
 
   let {
     topic_name,
@@ -59,6 +60,27 @@
     game.background_image = null;
     game.background_music = null;
   };
+
+  // Construct a derived style string for the root element
+  const themeStyles = $derived.by(() => {
+    if (!$customFont || !$customStyling) return '';
+
+    const { baseColor, accentColor, family } = $customFont;
+    const { bgColor, bgPictureOpacity } = $customStyling;
+
+    return [
+      `--theme-text: ${baseColor}`,
+      `--theme-accent: ${accentColor}`,
+      `--theme-bg: ${bgColor}`,
+      `--theme-font: ${family}`,
+      // Dynamic panel color: Mix accent with transparency
+      `--theme-panel-bg: color-mix(in srgb, var(--theme-accent), transparent 85%)`,
+      `--theme-panel-border: color-mix(in srgb, var(--theme-accent), transparent 60%)`,
+      `--theme-hover-bg: color-mix(in srgb, var(--theme-accent), transparent 70%)`,
+      `--theme-panel-dark: color-mix(in srgb, var(--theme-bg), transparent 60%)`,
+      `--theme-hover-dark: color-mix(in srgb, var(--theme-bg), transparent 50%)`,
+    ].join(';');
+  });
 
   // CONTROL BAR
 
@@ -290,30 +312,35 @@ a11y_no_noninteractive_element_interactions -->
 {#if $customFont && $customStyling}
   <section
     class="step-wrapper flex {$customFont.baseSize}-font"
-    class:text-shad={$customFont.shadow}
-    style:font-family={$customFont.family}
-    style:font-weight={$customFont.bold ? 'bold' : 'normal'}
-    style:font-style={$customFont.italic ? 'italic' : ''}
-    style:color={$customFont.baseColor}
-    style:cursor={game.loading ? 'wait' : 'default'}
+    style={themeStyles}
     onpointerdown={handleWrapperPointer}
   >
     <div class="step-content transparent-container">
-      <h4
-        class="{$customFont.accentSize}-font"
-        class:text-shad={$customFont.shadow}
-        style:font-style={$customFont.italic ? 'italic' : ''}
-        style:color={$customFont.accentColor}
-      >
-        Step {step.step}{#if step.title}: "{step.title}"{/if}
+      <h4 class="flex-row gap-8 {$customFont.accentSize}-font">
+        {#if game.loading}
+          <LoadingSVG
+            primary={$customFont.accentColor}
+            secondary={$customFont.baseColor}
+          />
+          Loading...
+        {:else}
+          Step {step.step}{#if step.title}: "{step.title}"{/if}
+        {/if}
       </h4>
 
       <span class="description flex">
         {#if !$isGuest && step.task_id !== ''}
-          <ImageDisplay image={step.image} image_type={step.image_type} />
+          <ImageDisplay
+            image={step.image}
+            image_type={step.image_type}
+            style={themeStyles}
+          />
         {/if}
 
-        <article class="vert-scrollbar">
+        <article
+          class="vert-scrollbar"
+          class:text-only={$isGuest || step.task_id === ''}
+        >
           {step.story}
         </article>
       </span>
@@ -321,12 +348,7 @@ a11y_no_noninteractive_element_interactions -->
       {#if $story?.step_data?.ended}
         <hr />
 
-        <h4
-          class="{$customFont.accentSize}-font"
-          class:text-shad={$customFont.shadow}
-          style:font-style={$customFont.italic ? 'italic' : ''}
-          style:color={$customFont.accentColor}
-        >
+        <h4 class="{$customFont.accentSize}-font">
           {topic_name.trim()} Story Summary
         </h4>
 
@@ -334,14 +356,9 @@ a11y_no_noninteractive_element_interactions -->
           {step.summary}
         </article>
 
-        <h4
-          class="{$customFont.accentSize}-font"
-          class:text-shad={$customFont.shadow}
-          style:font-style={$customFont.italic ? 'italic' : ''}
-          style:color={$customFont.accentColor}
-        >
+        <h4 class="{$customFont.accentSize}-font">
           CoNexus identified your trait as:
-          <strong class="text-glowing">{step.trait}</strong>
+          <strong>{step.trait}</strong>
         </h4>
 
         {#if step.trait_description}
@@ -350,39 +367,34 @@ a11y_no_noninteractive_element_interactions -->
           </article>
         {/if}
 
-        <Share container={true} />
+        <Share container={true} style={themeStyles} />
       {/if}
     </div>
 
     {#if $story?.step_data?.ended}
       <div
         class="step-options transparent-container {$customFont.accentSize}-font"
-        class:text-shad={$customFont.shadow}
-        style:font-style={$customFont.italic ? 'italic' : ''}
-        style:color={$customFont.accentColor}
       >
-        <button id="option-0" class="void-btn menu-option" onclick={restartGame}
-          >Start a new story</button
-        >
         <button
           id="option-1"
-          class="void-btn menu-option"
+          class="void-btn"
           onclick={() => (window.location.href = '/')}
-          >Return to main menu</button
         >
+          Return to main menu
+        </button>
+        <button id="option-0" class="void-btn" onclick={restartGame}>
+          Start a new story
+        </button>
       </div>
     {:else}
       <div
         class="step-options transparent-container {$customFont.accentSize}-font"
-        class:text-shad={$customFont.shadow}
-        style:color={$customFont.accentColor}
       >
         {#each step.options as option, i}
           <button
             id="option-{i}"
             class="void-btn flex-row gap-8"
             class:active-option={step.choice && step.choice - 1 === i}
-            style:font-family={$customFont.family}
             disabled={game.loading || step.step !== $story?.maxStep}
             onclick={() => {
               $story?.nextStep(i + 1);
@@ -541,18 +553,14 @@ a11y_no_noninteractive_element_interactions -->
         {#if isColorLight($customStyling.bgColor)}
           <ResetSVG
             onclick={() =>
-              applyQuickTheme(defaultFont, defaultStyling, 'DARK (default)')}
-            text="Apply DARK Theme"
+              applyQuickTheme(defaultFont, defaultStyling, 'VOID (default)')}
+            text="Apply VOID Theme"
           />
         {:else}
           <ResetSVG
             onclick={() =>
-              applyQuickTheme(
-                lightThemeFont,
-                lightThemeStyling,
-                'LIGHT (default)',
-              )}
-            text="Apply LIGHT Theme"
+              applyQuickTheme(paperThemeFont, paperThemeStyling, 'PAPER')}
+            text="Apply PAPER Theme"
           />
         {/if}
 
@@ -585,6 +593,9 @@ a11y_no_noninteractive_element_interactions -->
 
   // GENERAL STEP STYLING
   .step-wrapper {
+    color: var(--theme-text);
+    font-family: var(--theme-font, inherit);
+
     @include respond-up(small-desktop) {
       margin-block: -4rem 4rem;
     }
@@ -595,6 +606,9 @@ a11y_no_noninteractive_element_interactions -->
     }
 
     .transparent-container {
+      background-color: var(--theme-panel-bg);
+      animation: none;
+
       @include respond-up(small-desktop) {
         width: 960px;
       }
@@ -612,6 +626,11 @@ a11y_no_noninteractive_element_interactions -->
       }
     }
 
+    h4 {
+      color: var(--theme-accent);
+      font-style: inherit;
+    }
+
     .step-content {
       padding: 1.5rem;
 
@@ -623,7 +642,15 @@ a11y_no_noninteractive_element_interactions -->
         text-shadow: inherit;
 
         &::-webkit-scrollbar-thumb {
-          background: $transparent-black !important;
+          background: var(--theme-panel-border);
+          border-radius: 4px;
+        }
+
+        &.text-only {
+          background-color: var(--theme-panel-dark);
+          padding: 1rem;
+          border-radius: 0.5rem;
+          @include gray-border;
         }
       }
 
@@ -632,7 +659,7 @@ a11y_no_noninteractive_element_interactions -->
           flex-direction: row;
 
           article {
-            aspect-ratio: 16 / 9;
+            max-height: 400px;
             overflow-y: scroll;
             padding-right: 0.5rem;
           }
@@ -651,33 +678,37 @@ a11y_no_noninteractive_element_interactions -->
         width: 100%;
         justify-content: space-between;
         text-align: left;
-        fill: $cyan;
-        stroke: $cyan;
-        color: $cyan;
+
+        color: var(--theme-accent);
+        fill: var(--theme-accent);
+        stroke: var(--theme-accent);
+        font-family: var(--theme-font);
 
         font-size: inherit;
         line-height: inherit;
-        color: inherit;
         font-style: inherit;
         text-shadow: inherit;
 
-        background-color: $transparent-black;
+        background-color: var(--theme-panel-dark);
+
         padding: 1rem;
-        border-radius: 1rem;
+        border-radius: 0.5rem;
         @include gray-border;
 
         &:hover:not(&:disabled),
         &:active:not(&:disabled),
         &:focus:not(&:disabled) {
-          filter: hue-rotate(30deg) saturate(200%);
+          background-color: var(--theme-hover-dark);
+          border-color: var(--theme-panel-border);
+          filter: brightness(1.1);
         }
 
         &:disabled:not(&.active-option) {
-          opacity: 0.25;
+          opacity: 0.5;
         }
 
-        &.menu-option {
-          text-align: center;
+        &.active-option {
+          border-color: var(--theme-accent);
         }
       }
     }

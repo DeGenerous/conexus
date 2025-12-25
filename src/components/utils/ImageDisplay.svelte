@@ -5,9 +5,11 @@
   let {
     image,
     image_type = 'url',
+    style = '',
   }: {
     image: string | undefined;
     image_type?: string;
+    style?: string;
   } = $props();
 
   let fullWidthImage = $state<boolean>(false);
@@ -59,17 +61,20 @@
 
 <button
   id="step-image"
-  class="void-btn container"
-  onclick={() => (fullWidthImage = !fullWidthImage)}
+  class="void-btn container loading-animation"
+  class:loading={isLoading}
   class:slim={!fullWidthImage}
+  onclick={() => (fullWidthImage = !fullWidthImage)}
+  {style}
 >
   {#if isLoading}
-    <span class="pulse-animation">
+    <span>
       <img src="/icons/loading.png" alt="Loading..." />
       <p>Click to change image size</p>
     </span>
   {:else}
     <img
+      style:visibility={isLoading ? 'hidden' : 'visible'}
       src={imageSrc}
       alt=""
       onload={handleImageLoad}
@@ -81,21 +86,33 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .container {
+  button.container {
     width: 100%;
     padding: 0;
     animation: none;
-    background-color: $transparent-black;
+    background-color: unset;
+
+    &.loading {
+      animation: shimmer 2s ease infinite;
+    }
 
     span {
       position: relative;
       width: 100%;
       height: 100%;
 
+      img {
+        opacity: 0.25;
+        transform: scale(0.75);
+        filter: grayscale(100%);
+      }
+
       p {
         position: absolute;
         width: 100%;
         bottom: 1rem;
+        opacity: 0.25;
+        color: var(--theme-font);
       }
     }
 
@@ -105,6 +122,7 @@
       border-radius: inherit;
 
       @include respond-up(small-desktop) {
+        max-height: 400px;
         aspect-ratio: 16 / 9;
       }
     }

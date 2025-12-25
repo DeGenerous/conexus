@@ -18,8 +18,6 @@
 
   onMount(async () => {
     gates = await collection.listGates(collection_id);
-    console.log('fetched gates for collection', collection_id);
-    console.log('gates', gates);
   });
 
   const deleteGate = async (gate_id: string) => {

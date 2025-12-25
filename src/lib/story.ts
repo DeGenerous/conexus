@@ -511,10 +511,6 @@ export default class CoNexus {
     this.step_data.task_id = generate ? crypto.randomUUID() : task_id || '';
     this.maxStep = Math.max(this.maxStep, data.step);
 
-    console.log('set step data');
-    console.log('incoming step ID: ', this.step_data.id);
-    console.log('returned step ID: ', data.id);
-
     story.set(this);
     game.loading = false;
   }

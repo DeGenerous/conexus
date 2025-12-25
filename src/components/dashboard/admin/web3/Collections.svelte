@@ -36,7 +36,6 @@
 
   onMount(async () => {
     const fetchedCollections = await collection.listCollections();
-    console.log('collections', fetchedCollections);
 
     const nextInputs: InputsState = {
       name: {},
@@ -247,7 +246,6 @@
     }
 
     try {
-      console.log(standard);
       if (standard === 'erc721') {
         await collection.updateERC721Collection(
           id,

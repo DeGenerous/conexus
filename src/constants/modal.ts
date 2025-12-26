@@ -1,14 +1,23 @@
-export const walletSwitchModal =
-  '<h4>Are you sure you want to select this address as your main one?</h4>';
+import { NAV_ROUTES } from '@constants/routes';
 
-export const deleteStoryModal = `
-  <h4>Are you sure you want to delete this story?</h4>
-  <h5>This action is irreversible. You will lose it forever!</h5>
+// Micro-templates for modals rendered through the global modal store
+export const ensureMessage = (message: string = 'remove this') => `
+  <h4>Are you sure you want to ${message}?</h4>
 `;
 
-export const deleteUnfinishedModal = `
-  <h4>Are you sure you want to delete this story?</h4>
-  <h5>This action is irreversible. You will lose all progress on this story.</h5>
+export const restoreDraft = (title: string) => `
+  <h4>Restore this draft?</h4>
+  <p>Open “${title}” in the creator with all fields prefilled.</p>
+`;
+
+export const createDream = `
+  <h4>Before You Create</h4>
+  <p>Creating a story costs 10 credits and must comply with our <a href="${NAV_ROUTES.COPYRIGHT_POLICY}" target="_blank">Content Policy</a>. By creating a story, you agree to these terms.</p>
+`;
+
+export const disableAccountWarning = `
+  <h4>Disable User Account?</h4>
+  <p>This is a soft delete. The user loses access immediately. Data stays in the database and can be restored later.</p>
 `;
 
 export const referralWarning = `
@@ -20,15 +29,6 @@ export const referralActivationNotice = `
   <h4>Activate Your Account First</h4>
   <p>Before you can invite others, you need to activate your own account with a referral code. You’re just one step away.</p>
 `;
-
-export const refreshDataModal = `
-  <p>This will force a CoNexus reload, and remove old stored files - letting you see the latest version of the platform with the newest content. It won't affect your local settings.</p>
-`;
-
-export const resetSettingsModal = (type: any) =>
-  `<h4>Are you sure you want to reset ${type} settings?</h4>`;
-
-export const resetDreamModal = `<h4>Are you sure you want to reset all data?</h4>`;
 
 export const openStoryManage = `
   <h4>Dream created!</h4>

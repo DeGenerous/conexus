@@ -2,7 +2,7 @@
 
 select {
   text-align: center;
-  width: clamp(250px, 50vw, 20rem);
+  width: min(280px, 100%);
   min-width: 2.75rem;
   min-height: 2.75rem;
   border-radius: 0.5rem;
@@ -30,7 +30,7 @@ select {
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     @include cyan(1, text);
     @include box-glow;
     @include cyan-border;

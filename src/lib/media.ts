@@ -1,63 +1,92 @@
 // import { IMAGE_UPLOAD_DIR, MUSIC_UPLOAD_DIR } from '@/config';
 
-import { serveUrl } from '@constants/media';
+import { serveUrl, blankImage } from '@constants/media';
 import { tracks } from '@constants/tracks';
-import { MediaAPI } from '@service/routes';
+import MediaAPI from '@service/media';
 import { toastStore } from '@stores/toast.svelte';
 import { game } from '@stores/conexus.svelte';
 
+/**
+ * Manages media assets tied to topics and game state.
+ */
 class MediaManager {
   private mediaAPI: MediaAPI;
 
+  /**
+   * Instantiate the media manager with the configured API client.
+   */
   constructor() {
     this.mediaAPI = new MediaAPI(import.meta.env.PUBLIC_BACKEND);
   }
 
+  /**
+   * Request a media file by its identifier.
+   * @param file_id - The media file identifier to serve.
+   * @returns A promise resolving to the server response.
+   */
   async serveFile(file_id: string) {
     return this.mediaAPI.serveFile(file_id);
   }
 
+  /**
+   * Upload a media asset for a topic.
+   * @param file - The file to upload.
+   * @param topic_id - The topic receiving the media.
+   * @param media_type - The type of media being uploaded.
+   * @returns A list of uploaded media identifiers, or an empty array on failure.
+   */
   async uploadTopicMedia(file: File, topic_id: number, media_type: MediaType) {
-    const { data, error } = await this.mediaAPI.uploadFile(
+    const { status, message, data, error } = await this.mediaAPI.uploadFile(
       file,
       topic_id,
       media_type,
     );
 
-    if (!data) {
-      if (error) {
-        if (error.details) {
-          if (
-            error.details.includes(
-              'pq: duplicate key value violates unique constraint',
-            )
-          ) {
-            toastStore.show('This file already exists', 'error');
-            return [];
-          }
-        }
-        toastStore.show(error.message, 'error');
+    if (status === 'error') {
+      const detail =
+        error?.details || message || 'Unable to process media upload';
+      if (
+        detail.includes('pq: duplicate key value violates unique constraint')
+      ) {
+        toastStore.show('This file already exists', 'error');
         return [];
       }
+      toastStore.show(detail, 'error');
       return [];
     }
 
-    return data;
+    return data || [];
   }
 
+  /**
+   * Fetch media identifiers for the given topic.
+   * @param topic_id - The topic identifier to fetch media for.
+   * @param media_type - The type of media to retrieve.
+   * @returns A list of media identifiers, or an empty array when not found.
+   */
   async fetchTopicMedia(
     topic_id: string,
     media_type: MediaType,
   ): Promise<string[]> {
-    const { data } = await this.mediaAPI.getFile(topic_id, media_type);
+    const { status, message, data } = await this.mediaAPI.getFile(
+      topic_id,
+      media_type,
+    );
 
-    if (!data) {
+    if (status === 'error') {
+      toastStore.show(message || 'Unable to fetch media', 'error');
       return [];
     }
 
-    return data;
+    return data || [];
   }
 
+  /**
+   * Delete media previously uploaded to a topic.
+   * @param topic_id - The topic identifier.
+   * @param file_id - The media identifier to remove.
+   * @param media_type - The media type of the file.
+   */
   async deleteTopicMedia(
     topic_id: number,
     file_id: string,
@@ -65,50 +94,63 @@ class MediaManager {
   ) {
     // const KEY = `${MEDIA_CACHE_KEY}_${topic_id}_${media_type}`;
 
-    const { data, error } = await this.mediaAPI.DeleteFile(
+    const { status, message, error } = await this.mediaAPI.DeleteFile(
       topic_id,
       file_id,
       media_type,
     );
 
-    if (!data) {
-      if (error) {
-        throw new Error(error.details);
-      }
+    if (status === 'error') {
+      throw new Error(error?.details || message || 'Unable to delete media');
     }
 
     // ClearCache(KEY);
   }
 
+  /**
+   * Convenience wrapper to fetch media using a numeric topic id.
+   * @param topic_id - The topic identifier.
+   * @param media_type - The media type to retrieve.
+   * @returns A list of media identifiers, or an empty array when not found.
+   */
   async fetchMedia(topic_id: number, media_type: MediaType): Promise<string[]> {
     return this.fetchTopicMedia(topic_id.toString(), media_type);
   }
 
+  /**
+   * Resolve the primary story image for display.
+   * @param topid_id - The topic identifier.
+   * @param media_type - The media type to request.
+   * @returns A served URL to the image or a fallback placeholder.
+   */
   async fetchStoryImage(
     topid_id: number,
     media_type: MediaType,
   ): Promise<string> {
-    const blankPicture: string = '/blank.avif'; // temp
-
     const images = await this.fetchMedia(topid_id, media_type);
     if (images.length === 0) {
-      return blankPicture;
+      return blankImage;
     }
 
     return serveUrl(images[0]);
   }
 
+  /**
+   * Assign a random background image from the topic media to the game state.
+   * @param topic_id - The topic identifier to load media for.
+   */
   async setBackgroundImage(topic_id: number): Promise<void> {
     const images = await this.fetchMedia(topic_id, 'background');
     if (images.length > 0) {
       let randomImage = images[Math.floor(Math.random() * images.length)];
       game.background_image = serveUrl(randomImage);
-
-      console.log('bg image is set');
-      console.log(game.background_image);
     }
   }
 
+  /**
+   * Configure background music for the game, falling back to default tracks when needed.
+   * @param topic_id - The topic identifier to load media for.
+   */
   async playBackgroundMusic(topic_id: number): Promise<void> {
     let queue: string[] = JSON.parse(localStorage.getItem('queue') ?? '[]');
 
@@ -119,6 +161,9 @@ class MediaManager {
       return;
     }
 
+    /**
+     * Shuffle the default audio tracks to vary the playlist.
+     */
     const shuffle = <T>(array: T[]): T[] => {
       let currentIndex = array.length,
         randomIndex: number;

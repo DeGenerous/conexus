@@ -1,18 +1,15 @@
 ---
 import Layout from '@layouts/Layout.astro';
 
-import Dashboard from '@components/routes/Dashboard.svelte';
+import DashboardApp from '@components/dashboard/DashboardApp.svelte';
 
 const meta = {
-  header: 'Track Your Universe',
   nav: 'Dashboard',
-  subheading:
-    'Monitor plays, optimize engagement, and keep your best stories at the top.',
+  arrow: '/',
+  header: 'CoNexus',
 };
 ---
 
 <Layout {...meta}>
-  <main>
-    <Dashboard client:load />
-  </main>
+  <DashboardApp client:only="svelte" />
 </Layout>

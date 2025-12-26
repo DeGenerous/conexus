@@ -16,7 +16,7 @@
   justify-content: center;
   gap: 1rem;
   padding-inline: 1.5rem;
-  margin-block: 1rem 0;
+  margin-block: 0 -0.5rem;
   z-index: 50;
 
   h2 {
@@ -35,10 +35,29 @@
   }
 
   @include respond-up(tablet) {
-    margin-block: 0 -1rem;
+    h2 {
+      line-height: 1;
+    }
 
     button {
-      bottom: 0.5rem;
+      bottom: 0;
+      right: 1rem;
+      box-shadow: none;
+    }
+  }
+
+  &.dashboard-collection-header {
+    width: 100vw;
+    flex-flow: row wrap;
+    margin-inline: -1.5rem;
+    margin-bottom: -1.5rem;
+    padding-block: 0.5rem;
+    @include navy;
+
+    @include respond-up(tablet) {
+      width: calc(100% + 3rem);
+      justify-content: space-between;
+      margin-inline: 0;
     }
   }
 }
@@ -54,13 +73,16 @@
   justify-content: flex-start;
   overflow-x: scroll;
   overflow-y: hidden;
-  gap: 1rem;
-  padding: 1rem;
-  box-shadow: $shadow-plus-inset-glow;
-  animation: transparent-glowing 10s ease-in-out infinite;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  // box-shadow: $shadow-plus-inset-glow;
+  animation: transparent-glowing 15s ease infinite;
   scrollbar-width: thin;
   scrollbar-color: $transparent-cyan transparent;
   outline: none !important;
+  border-top: 1px solid $transparent-gray;
+  border-bottom: 1px solid $transparent-gray;
+  @include cyan(0.1);
 
   @include respond-up(tablet) {
     min-height: 22rem;
@@ -97,6 +119,21 @@
   &::-webkit-scrollbar-thumb:active {
     background-color: rgba(51, 226, 230, 0.5);
   }
+
+  &.dashboard-collection {
+    width: 100vw;
+    margin-inline: -1.5rem;
+
+    @include respond-up(small-desktop) {
+      width: calc(100% + 3rem);
+      margin-inline: 0;
+    }
+
+    .empty-title {
+      width: 100%;
+      height: 100%;
+    }
+  }
 }
 
 // MENU TILE
@@ -112,21 +149,16 @@
   padding: 0.5rem;
   border-radius: 1.5rem;
   box-shadow: $soft-shadow-plus-inset-glow;
-  @include navy(0.75);
+  @include navy;
   @include cyan(0.75, text);
 
   &.big-menu-tile {
     width: 100%;
   }
 
-  &.highlighted-menu-tile {
-    @include deep-green;
-    @include dark-green(1, text);
-  }
-
   &:hover:not(.loading-menu-tile),
   &:active:not(.loading-menu-tile),
-  &:focus:not(.loading-menu-tile) {
+  &:focus-visible:not(.loading-menu-tile) {
     text-decoration: none;
     box-shadow: $shadow-plus-inset-glow;
     outline: none;
@@ -146,6 +178,7 @@
 
   h4 {
     color: inherit;
+    white-space: wrap;
   }
 
   @include respond-up(tablet) {
@@ -205,12 +238,12 @@
   text-decoration: none !important;
   flex: none;
   @include blue(0.75);
-  @include white-txt;
+  @include white-txt(1);
   @include box-shadow;
 
   &:hover:not(.loading-tile),
   &:active:not(.loading-tile),
-  &:focus:not(.loading-tile) {
+  &:focus-visible:not(.loading-tile) {
     @include dark-blue(1, text);
     @include blue(0.9, bg, bright);
     @include bright;
@@ -230,6 +263,17 @@
   h5 {
     padding-inline: 1rem;
     color: inherit;
+    white-space: wrap;
+  }
+
+  .tile-data {
+    width: 100%;
+    flex-flow: column nowrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.75rem;
+    background-color: $transparent-black;
+    @include box-shadow(soft, inset);
   }
 
   @include respond-up(tablet) {
@@ -253,7 +297,7 @@
 
     &:hover,
     &:active,
-    &:focus {
+    &:focus-visible {
       @include orange;
       @include orange(1, text, bright);
       @include bright(100%);
@@ -289,6 +333,10 @@
       fill: $soft-white;
     }
 
+    p {
+      white-space: wrap;
+    }
+
     @include respond-up(tablet) {
       display: flex;
     }
@@ -296,7 +344,7 @@
 }
 
 .loading-tile {
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease;
   @extend .tile;
   cursor: progress;
 
@@ -331,7 +379,7 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     @include purple(1, bg, bright);
     @include dark-red(1, text);
   }
@@ -343,7 +391,7 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     @include deep-green;
     @include dark-green(1, text);
   }
@@ -355,8 +403,20 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     @include rose;
+    @include dark-red(1, text);
+  }
+}
+
+.orange-tile {
+  @extend .tile;
+  @include orange(0.85);
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus-visible:not(&:disabled) {
+    @include orange(1, bg, bright);
     @include dark-red(1, text);
   }
 }
@@ -367,7 +427,7 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     @include light-blue(0.5);
     @include cyan(1, text);
   }
@@ -383,7 +443,7 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     background-color: $royal-purple;
     @include orange(1, text, bright);
   }
@@ -403,12 +463,16 @@
   border-radius: 0.5rem;
   flex: none;
 
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease;
 
   // Fallback if no support
   opacity: 1;
   transform: none;
   filter: none;
+
+  h5 {
+    white-space: nowrap;
+  }
 
   & > p {
     width: 100%;
@@ -420,10 +484,11 @@
 
   @include box-shadow;
   @include white-txt(soft);
+  @include gray(0.5);
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(:disabled) {
+  &:focus-visible:not(:disabled) {
     @include white-txt;
     @include scale-up(soft);
     @include box-shadow(deep);
@@ -454,7 +519,7 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(:disabled) {
+  &:focus-visible:not(:disabled) {
     @include purple(1, bg, bright);
   }
 }
@@ -463,13 +528,13 @@
   @extend .small-tile;
   @include orange(0.85);
 
-  p {
+  & > p {
     @include dark-red(0.5);
   }
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(:disabled) {
+  &:focus-visible:not(:disabled) {
     @include orange(1, bg, bright);
   }
 }
@@ -478,13 +543,13 @@
   @extend .small-tile;
   @include rose(0.85);
 
-  p {
+  & > p {
     @include dark-red(0.5);
   }
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(:disabled) {
+  &:focus-visible:not(:disabled) {
     @include rose(1, bg, bright);
   }
 }
@@ -493,13 +558,28 @@
   @extend .small-tile;
   @include deep-green;
 
-  p {
+  & > p {
     @include dark-green(0.5);
   }
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(:disabled) {
+  &:focus-visible:not(:disabled) {
+    @include bright;
+  }
+}
+
+.small-blue-tile {
+  @extend .small-tile;
+  @include blue;
+
+  & > p {
+    @include dark-blue(0.5);
+  }
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus-visible:not(:disabled) {
     @include bright;
   }
 }
@@ -533,7 +613,7 @@
     color: $dark-blue;
     background-color: inherit;
 
-    transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease;
 
     // Fallback if no support
     opacity: 1;

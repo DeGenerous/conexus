@@ -45,12 +45,11 @@
 
   button {
     width: 2rem;
-    fill: $light-blue;
+    fill: currentColor;
 
     &:hover:not(&:disabled),
     &:active:not(&:disabled),
-    &:focus:not(&:disabled) {
-      fill: $cyan;
+    &:focus-visible:not(&:disabled) {
       @include scale;
 
       svg g {
@@ -61,7 +60,7 @@
     &.right:not(&:disabled) {
       &:hover,
       &:active,
-      &:focus {
+      &:focus-visible {
         svg g {
           transform: scale(1.2) rotate(180deg) !important;
         }

@@ -1,57 +1,151 @@
 <script lang="ts">
-  let { onclick = () => {} }: { onclick: () => void } = $props();
+  import { showProfile } from '@stores/modal.svelte';
+  import { user, approvedTester } from '@stores/account.svelte';
+  import { redirectTo } from '@utils/route-guard';
+  import { blankImage, serveUrl } from '@constants/media';
+  import { resolveRenderableImage } from '@utils/file-validation';
+  import { getAvatarInitial } from '@utils/avatar';
+
+  import DreamSVG from '@components/icons/Dream.svelte';
+
+  let { activeTab }: { activeTab: string } = $props();
+
+  let svgFocus = $state<boolean>(false);
+
+  let avatarUrl = $state<string>('');
+  let avatarFileId = $state<string>('');
+  let avatarImage = $state<string>(blankImage);
+  let avatarInitial = $state<string>('');
+
+  $effect(() => {
+    if ($user) {
+      avatarUrl = $user.avatar_url || '';
+      avatarFileId = $user.avatar_file_id || '';
+      avatarInitial = getAvatarInitial($user.username);
+    } else {
+      avatarUrl = '';
+      avatarFileId = '';
+      avatarInitial = '';
+    }
+  });
+
+  $effect(() => {
+    const candidate = avatarFileId
+      ? serveUrl(avatarFileId)
+      : avatarUrl
+        ? avatarUrl
+        : '';
+
+    if (!candidate) {
+      avatarImage = blankImage;
+      return;
+    }
+
+    resolveRenderableImage(candidate)
+      .then((res) => {
+        avatarImage = res;
+      })
+      .catch(() => {
+        avatarImage = blankImage;
+      });
+  });
 </script>
 
-<button
-  class="top-right-icon void-btn flex fade-in"
-  id="profile-icon"
-  aria-label="Profile"
-  {onclick}
+<a
+  class="navigation-tab dream-tab"
+  class:active={activeTab === 'Dashboard'}
+  class:inactive={!$approvedTester}
+  aria-label="Dream"
+  href="/dashboard#/dream/create"
+  onclick={(event) => {
+    event.preventDefault();
+    if (!$user) {
+      $showProfile = true;
+    } else {
+      redirectTo('/dashboard#/dream/create');
+    }
+  }}
 >
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
-    <defs>
-      <mask id="profile-svg-mask">
-        <circle r="100" fill="white" />
-        <g fill="black">
-          <circle cy="-25" r="30" />
-          <path
-            d="
-            M -55 55
-            Q -60 20 -25 15
-            L 25 15
-            Q 60 20 55 55
-            Z
-          "
-          />
-        </g>
-      </mask>
-    </defs>
-    <circle r="100" mask="url(#profile-svg-mask)" />
-  </svg>
-</button>
+  <DreamSVG />
+  <p>Dream</p>
+</a>
+
+<a
+  class="navigation-tab profile-tab"
+  class:active={activeTab === $user?.username}
+  class:inactive={!$approvedTester}
+  aria-label="Profile"
+  href={$user ? `/c/${$user.username ?? 'unknown'}` : '/dashboard#/dashboard'}
+  onclick={(event) => {
+    if (!$user) {
+      event.preventDefault();
+      $showProfile = true;
+    }
+  }}
+  onpointerover={() => (svgFocus = true)}
+  onpointerout={() => (svgFocus = false)}
+>
+  {#if $user}
+    {#if avatarFileId || avatarUrl}
+      <img src={avatarImage} alt="PFP" />
+    {:else if avatarInitial}
+      <div class="avatar-initial" aria-label="Profile initial">
+        {avatarInitial}
+      </div>
+    {:else}
+      <img src={avatarImage} alt="PFP" />
+    {/if}
+  {:else}
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="-75 -75 150 150"
+      aria-label="Profile"
+    >
+      <circle cy="-25" r="30" />
+      <path d="M -55 55 Q -60 20 -25 15 L 25 15 Q 60 20 55 55 Z" />
+    </svg>
+  {/if}
+  <p>Profile</p>
+</a>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  button {
-    fill: $light-blue;
-
-    &:hover,
-    &:active,
-    &:focus {
-      fill: $cyan;
-
-      #profile-svg-mask g {
-        transform: scale(1.1);
-      }
+  .profile-tab {
+    img,
+    .avatar-initial {
+      width: 2rem;
+      border-radius: 50%;
+      aspect-ratio: 1 / 1;
     }
 
-    &:global(.profile-hover) {
-      fill: $bright-purple;
-      @include scale;
+    .avatar-initial {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      text-transform: uppercase;
+      @include cyan;
+      @include dark-blue(1, text);
+    }
 
-      #profile-svg-mask g {
-        transform: scale(1.1);
+    @include respond-up('small-desktop') {
+      margin-left: auto;
+      flex-direction: row-reverse;
+      fill: $light-blue;
+
+      svg {
+        width: 2rem;
+        padding: 0.25rem;
+      }
+
+      img,
+      .avatar-initial {
+        width: 2rem;
+      }
+
+      .avatar-initial {
+        font-size: 1.5rem;
       }
     }
   }

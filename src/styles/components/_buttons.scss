@@ -20,8 +20,8 @@ button:not(.void-btn),
   outline: none;
   text-transform: uppercase;
   letter-spacing: 1px;
-  @include white-txt(0.9);
-  @include blue(0.75);
+  @include white-txt;
+  @include blue;
   @include cyan-border(0.5);
 
   @include respond-up(small-desktop) {
@@ -31,9 +31,9 @@ button:not(.void-btn),
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     @include cyan(1, text);
-    @include blue(0.9, bg, bright);
+    @include blue(1, bg, bright);
     @include box-glow;
     @include scale;
     @include cyan-border;
@@ -83,7 +83,7 @@ button:not(.void-btn),
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     box-shadow: 0 0 0.5rem $green;
     @include dark-green(1, text);
     @include green;
@@ -98,7 +98,7 @@ button:not(.void-btn),
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     box-shadow: 0 0 0.5rem $red;
     @include dark-red(1, text);
     @include red;
@@ -112,7 +112,7 @@ button:not(.void-btn),
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     box-shadow: 0 0 0.5rem $purple;
     @include purple(1, bg, bright);
     @include dark-red(1, text);
@@ -127,7 +127,7 @@ button:not(.void-btn),
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     box-shadow: 0 0 0.5rem $orange;
     @include dark-red(1, text);
     @include orange(1, bg, bright);
@@ -142,7 +142,7 @@ button:not(.void-btn),
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     box-shadow: 0 0 0.5rem $rose;
     @include dark-red(1, text);
     @include rose(1, bg, bright);
@@ -155,6 +155,77 @@ button:not(.void-btn),
   background-color: $deep-green !important;
   color: $white !important;
   border-color: $green !important;
+}
+
+@property --cta-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@property --cta-sweep {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.cta {
+  --cta-border-width: 2px;
+  --cta-angle: 0deg;
+  --cta-sweep: 24deg;
+  position: relative;
+  isolation: isolate;
+  border-width: var(--cta-border-width) !important;
+  border-style: solid !important;
+  border-color: transparent !important;
+  background-image:
+    radial-gradient($bright-blue, $blue),
+    conic-gradient(
+      from 0deg,
+      rgba($cyan, 0.25),
+      rgba($light-blue, 0.25),
+      rgba($bright-purple, 0.25),
+      rgba($cyan, 0.25)
+    ),
+    conic-gradient(
+      from var(--cta-angle),
+      transparent 0deg,
+      rgba($cyan, 0.85) calc(var(--cta-sweep) * 0.35),
+      rgba($bright-purple, 0.9) calc(var(--cta-sweep) * 0.7),
+      rgba($light-blue, 0.9) var(--cta-sweep),
+      transparent calc(var(--cta-sweep) + 18deg)
+    );
+  background-origin: padding-box, border-box, border-box;
+  background-clip: padding-box, border-box, border-box;
+  box-shadow: 0 0 0.65rem rgba($light-blue, 0.25);
+  animation: live-border 10s linear infinite;
+
+  &:hover:not(&:disabled),
+  &:active:not(&:disabled),
+  &:focus-visible:not(&:disabled) {
+    @include bright(150%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    background-image:
+      linear-gradient($dark-blue, $dark-blue),
+      linear-gradient(
+        120deg,
+        rgba($cyan, 0.4),
+        rgba($bright-purple, 0.4),
+        rgba($light-blue, 0.4)
+      );
+  }
+}
+
+@supports not (background: conic-gradient(from 0deg, red, blue)) {
+  .cta {
+    background-image: linear-gradient($dark-blue, $dark-blue);
+    border-color: rgba($cyan, 0.85) !important;
+    box-shadow: 0 0 0.5rem rgba($cyan, 0.3);
+    animation: none;
+  }
 }
 
 :where(.void-btn) {

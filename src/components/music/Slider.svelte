@@ -13,7 +13,8 @@
   import MusicSVG from '@components/icons/Music.svelte';
   import RestartSVG from '@components/icons/Restart.svelte';
 
-  let { type }: { type: 'voice' | 'music' } = $props();
+  let { type, style = '' }: { type: 'voice' | 'music'; style?: string } =
+    $props();
 
   let allMuted: boolean = false; // to handle mute with 'M' key
 
@@ -68,14 +69,14 @@
 
 <svelte:window on:keydown={muteWithKey} />
 
-<div class="transparent-container">
+<div class="transparent-container" {style}>
   {#if type === 'voice'}
     <VoiceSVG muted={disabledInput} onclick={mute} />
   {:else if type === 'music'}
     <MusicSVG muted={disabledInput} onclick={mute} />
   {/if}
 
-  <span class="flex-row pad-8 round-8 gap-8 dark-glowing shad-inset">
+  <span class="flex-row pad-8 round-8 gap-8">
     <input
       type="range"
       min="0"
@@ -92,10 +93,10 @@
   {#if type === 'voice'}
     <RestartSVG disabled={disabledInput} onclick={restart} />
 
-    <span class="voice-speed flex-row gap-8">
+    <span class="voice-speed flex-row gap-8 round-8">
       <button
         id="voice-speed"
-        class="void-btn min-size-btn flex-row pad-8 round-8 dark-glowing shad-inset"
+        class="void-btn min-size-btn flex-row pad-8 round-8"
         onclick={adjustTtsSpeed}
         disabled={disabledInput}
       >
@@ -109,21 +110,28 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  div {
+  div.transparent-container {
     flex-flow: row wrap;
-    width: unset !important;
-    margin-inline: unset !important;
+    width: unset;
+    margin-inline: unset;
+
+    animation: none;
+    background-color: var(--theme-panel-bg);
+
+    span {
+      background-color: var(--theme-panel-muted);
+    }
 
     .voice-speed {
       button {
         width: auto !important;
-        @include white-txt;
+        color: var(--theme-text);
         @include font(h4);
 
         &:hover:not(&:disabled),
         &:active:not(&:disabled),
-        &:focus:not(&:disabled) {
-          @include cyan(1, text);
+        &:focus-visible:not(&:disabled) {
+          color: var(--theme-accent);
         }
 
         &:disabled {
@@ -131,7 +139,6 @@
         }
 
         @include respond-up(tablet) {
-          @include white-txt;
           @include font(h5);
         }
       }

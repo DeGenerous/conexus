@@ -1,106 +1,85 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { GetCache, SetCache, TERMS_KEY } from '@constants/cache';
+  import { GetCache, SetCache } from '@constants/cache';
 
   import {
     modal,
     showModal,
     resetModal,
-    draftsManager,
-    themeSettings,
+    playOptions,
   } from '@stores/modal.svelte';
+  import { themeSettingsModal } from '@stores/customization.svelte';
+  import { NAV_ROUTES } from '@constants/routes';
 
-  import Drafts from '@components/dashboard/dream/create/Drafts.svelte';
   import ThemeSettings from '@components/utils/ThemeSettings.svelte';
+  import PlayOptions from '@components/utils/PlayOptions.svelte';
 
-  let dialog: HTMLDialogElement;
-  
-  let termsAccepted: boolean = false;
-
-  $: if (dialog && $showModal) {
-    dialog.classList.remove('dialog-fade-out');
-    dialog.showModal();
-  } else if (dialog) {
-    closeDialog();
-  }
+  let dialog = $state<HTMLDialogElement | null>(null);
 
   const closeDialog = () => {
-    dialog.classList.add('dialog-fade-out'); // animation before close
+    dialog?.classList.add('dialog-fade-out');
     $showModal = false;
-    if ($draftsManager) $draftsManager = false;
-    if ($themeSettings) $themeSettings = false;
+    if ($themeSettingsModal) $themeSettingsModal = false;
+    if ($playOptions) $playOptions = false;
     resetModal();
     setTimeout(() => dialog?.close(), 300);
   };
 
-  const checkTermsAccepted = () => {
-    termsAccepted = GetCache<boolean>(TERMS_KEY) || false;
-    if (!termsAccepted) {
-      $showModal = true;
-      modal.content = `
-        <h4>Terms of Service</h4>
-        <p>
-          To continue using CoNexus, you must review and accept the updated 
-          <a href="https://dgrslabs.ink/terms-of-service" target="_blank" rel="noopener noreferrer"
-          >Terms of Service</a
-          >.
-        </p>
-        <p>The updated Terms take effect on 12 September 2025.</p>
-        <p>
-          By clicking <b>Accept</b>, you acknowledge that you have read and agree to the <b>Terms of Service</b>.
-        </p>
-        <p>
-          If you do not agree, click <b>Decline</b> to exit the app.
-        </p>
-      `;
-      modal.button = 'Accept';
-      modal.buttonClass = 'green-btn';
-      modal.buttonFunc = () => {
-        SetCache(TERMS_KEY, true);
-        window.location.reload();
-      }
+  $effect(() => {
+    if (!dialog) return;
+    if ($showModal) {
+      dialog.classList.remove('dialog-fade-out');
+      dialog.showModal();
+    } else if (dialog.open) {
+      closeDialog();
+    }
+  });
+
+  const handleBackdropClick = (event: MouseEvent) => {
+    if (event.target === event.currentTarget) {
+      closeDialog();
     }
   };
 
-  onMount(checkTermsAccepted);
+  const stopPropagation = (event: Event) => {
+    event.stopPropagation();
+  };
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <dialog
   class="blur"
   bind:this={dialog}
-  on:close={closeDialog}
-  on:click|self={closeDialog}
+  onclose={closeDialog}
+  onclick={handleBackdropClick}
   aria-label="Modal"
+  aria-modal="true"
 >
-  <div class="flex" on:click|stopPropagation>
+  <div class="flex" onclick={stopPropagation} role="dialog" tabindex="-1">
     <!-- DYNAMIC CONTENT PROVIDED BY openModal() FUNCTION -->
     {@html modal.content}
 
-    <!-- DRAFTS MANGER -->
-    {#if $draftsManager}
-      <Drafts {closeDialog} />
+    <!-- CUSTOM THEMES WINDOW -->
+    {#if $themeSettingsModal}
+      <h3>Theme Preferences</h3>
+      <h5>Use the default look or create your own custom theme.</h5>
+      <ThemeSettings {closeDialog} />
     {/if}
 
-    <!-- CUSTOM THEMES WINDOW -->
-    {#if $themeSettings}
-      <ThemeSettings {closeDialog} />
+    <!-- PLAY MODE -->
+    {#if $playOptions}
+      <PlayOptions />
     {/if}
 
     <span class="flex">
       <!-- DEFAULT CLOSE BUTTON ON EVERY MODAL -->
-      <button class="red-btn" on:click={() => ($showModal = false)}>
-        {#if termsAccepted}
-          Close
-        {:else}
-          Decline
-        {/if}
+      <button class="red-btn" onclick={() => ($showModal = false)}>
+        Close
       </button>
 
       <!-- SECOND OPTIONAL BUTTON IF NEEDED -->
       {#if modal.button}
-        <button class={modal.buttonClass} on:click={modal.buttonFunc}>
+        <button class={modal.buttonClass} onclick={modal.buttonFunc}>
           {modal.button}
         </button>
       {/if}

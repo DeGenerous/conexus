@@ -14,11 +14,12 @@ type APISTDResposne = {
 };
 
 type APIError = {
-  message: string; // User-facing error message
   details?: string; // Developer debug info (optional)
 };
 
 type APIResponse<T> = {
+  status: 'success' | 'error';
+  message: string;
   data?: T;
   error?: APIError;
 };
@@ -31,9 +32,7 @@ type VolumeControl = {
 
 type ContinuableStory = {
   story_id: string;
-  topic_id: number;
-  category: string;
-  created?: string;
+  topic_id: string;
 };
 
 type Topic = {
@@ -42,8 +41,10 @@ type Topic = {
 };
 
 type Category = {
+  id?: string;
   name: string;
-  topics: Topic[];
+  description: string;
+  dashboard_sort_order: number;
 };
 
 type CategoryView = {
@@ -53,17 +54,20 @@ type CategoryView = {
 
 type StepData = {
   step: number;
+  step_id: string;
   title?: string;
   story: string;
-  end: boolean;
+  ended: boolean;
+  options: string[];
+  choice?: number;
   summary: string;
   trait: string;
   trait_description?: string;
-  options: string[];
+  image_prompt?: string;
   image?: string;
   image_type?: ImageType;
-  choice?: number;
   tts?: Blob;
+  task_id: string;
 };
 
 type GameData = {
@@ -87,14 +91,33 @@ type Web3Signin = {
 };
 
 type Section = {
-  id: number;
-  name: string;
-  tile_image?: string;
+  id?: string;
+  name?: string;
+  description?: string;
+};
+
+type Creator = {
+  id: string;
+  username?: string;
+  avatar_url?: string;
+  avatar_bio?: string;
+  avatar_file_id?: string;
+};
+
+type Explorer = {
+  id: string;
+  name?: string;
+  description?: string;
+  username?: string;
+  avatar_url?: string;
+  avatar_bio?: string;
+  avatar_file_id?: string;
 };
 
 type Genre = {
-  id: number;
+  id?: string;
   name: string;
+  description?: string;
 };
 
 type StoryNavigation = {
@@ -189,7 +212,7 @@ type OnchainAttribute = {
 };
 
 type NavItem = {
-  name: string;
+  name?: string;
   link?: string;
   action?: () => void;
 };
@@ -198,3 +221,24 @@ type NavContext = {
   items: NavItem[];
   index: number;
 };
+
+type DashboardPathLink = {
+  name: string;
+  intended?: DashboardParentLinkDisplay;
+  path: string;
+  display?: () => boolean;
+  children?: never;
+};
+
+type DashboardParentLinkDisplay = 'all' | 'admin' | 'player';
+
+// A "parent" link — has children, no path
+type DashboardParentLink = {
+  name: string;
+  intended: DashboardParentLinkDisplay;
+  children: Linking[];
+  display?: () => boolean;
+  path?: never;
+};
+
+type Linking = DashboardPathLink | DashboardParentLink;

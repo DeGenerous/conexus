@@ -3,7 +3,7 @@
 /* WINDOW WRAPPER */
 
 [role='document'] * {
-  transition: all 0.3s ease-in-out !important;
+  transition: all 0.3s ease !important;
 }
 
 /* MAIN WINDOW */
@@ -38,7 +38,7 @@
 
   &:hover:not(&:disabled),
   &:active:not(&:disabled),
-  &:focus:not(&:disabled) {
+  &:focus-visible:not(&:disabled) {
     transform: scale(1.05) !important;
     background-color: $light-blue !important;
     border-color: $cyan !important;
@@ -72,7 +72,7 @@ a > div {
   height: 1rem;
 }
 
-@media only screen and (max-width: 600px) {
+@include mobile-only {
   [role='document'] button,
   [role='document'] button:hover,
   [role='document'] button:active [role='document'] button:disabled,

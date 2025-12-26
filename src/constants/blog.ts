@@ -1,3 +1,6 @@
+import { NAV_ROUTES } from './routes';
+
+// Structured content blocks for the marketing blog/landing pages
 const blogPages: BlogPage[] = [
   {
     url: 'choose-your-own-adventure-tools',
@@ -69,7 +72,7 @@ export const topTools: BlogPageCard[] = [
     pricing: 'Free',
     description:
       'CoNexus is a web-based platform that blends choose-your-own-adventure storytelling with AI-generated content, visuals, and voice narration. It allows creators to design branching stories without code, and lets users customize tone, pacing, language, and visual style. Unlike traditional tools, CoNexus stories are replayable and reactive, with each choice reshaping the outcome. CoNexus can also be installed as a progressive web app (PWA), giving users the option to download it like a native app. It’s designed for both casual storytellers and creators building immersive, modular story worlds.',
-    url: 'https://conexus.degenerousdao.com',
+    url: NAV_ROUTES.CONEXUS,
   },
   {
     name: 'StoryLoom',
@@ -99,7 +102,7 @@ export const onlineGames: BlogPageCard[] = [
     pricing: 'Free',
     description:
       'CoNexus is a next-generation platform for interactive storytelling. It offers a library of story games across genres like fantasy, dystopia, romance, sci-fi, and more — all designed to adapt in real time based on your decisions. Each choice you make leads to different outcomes, with no two playthroughs ever the same. CoNexus stories are enhanced by visuals, narration, and music, and the platform allows for full customization of tone, pacing, and language. New stories are added regularly, and players can even become creators using the built-in no-code tools.',
-    url: 'https://conexus.degenerousdao.com',
+    url: NAV_ROUTES.CONEXUS,
   },
   {
     name: 'Choice of Games',
@@ -147,7 +150,7 @@ export const interactiveFiction: BlogPageCard[] = [
     pricing: 'Free',
     description:
       'CoNexus is a platform designed for creating and playing branching story games with high customizability and instant publishing. It supports visual, audio, and narrative customization — allowing creators to build deeply immersive stories that adapt to player decisions. You can control story pacing, tone, language, and even visual style, all without technical barriers. CoNexus also enables story remixing and collaborative worldbuilding, making it ideal for both solo creators and communities.',
-    url: 'https://conexus.degenerousdao.com',
+    url: NAV_ROUTES.CONEXUS,
   },
   {
     name: 'Twine',
@@ -187,7 +190,7 @@ export const visualNovels: BlogPageCard[] = [
     pricing: 'Free',
     description:
       "While not a traditional visual novel platform, CoNexus lets users experience interactive stories that feel like visual novels — complete with branching narratives, customizable visuals, AI narration, and music. Each story adapts in real time to the player's decisions, offering endless replayability and dynamic presentation. With stories across fantasy, romance, sci-fi, and more, CoNexus is ideal for players who want modern, evolving narratives without downloading anything. It also includes creation tools for building your own visual novel-style story directly in the browser.",
-    url: 'https://conexus.degenerousdao.com',
+    url: NAV_ROUTES.CONEXUS,
   },
   {
     name: 'Doki Doki Literature Club Plus',
@@ -245,7 +248,7 @@ export const aiStories: BlogPageCard[] = [
     pricing: 'Free',
     description:
       'CoNexus is one of the only platforms offering fully structured, interactive AI stories that react to your choices and evolve over time. Rather than a static AI output, each story on CoNexus plays like a dynamic experience — complete with branching logic, visuals, music, narration, and full customization of pacing, tone, and language. Stories can be played, remixed, or created from scratch without any coding, and the platform supports genres ranging from high fantasy to psychological thriller. With social features, community remixing, and support for text-to-novel and text-to-film on the horizon, CoNexus is setting the standard for what AI storytelling can be.',
-    url: 'https://conexus.degenerousdao.com',
+    url: NAV_ROUTES.CONEXUS,
   },
   {
     name: 'Sudowrite',

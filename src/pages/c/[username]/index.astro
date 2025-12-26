@@ -1,0 +1,25 @@
+---
+import Section from '@components/Section.svelte';
+import Layout from '@layouts/Layout.astro';
+
+const { username } = Astro.params;
+
+if (!username) {
+  Astro.redirect('/');
+}
+
+const sectionName = username?.replace(/%20/g, ' ');
+
+const meta = {
+  title: `${sectionName} | CoNexus`,
+  imageType: 'image/avif',
+  url: `${import.meta.env.PUBLIC_FRONTEND}/c/${username}`,
+  header: username,
+  nav: username,
+  arrow: '/',
+};
+---
+
+<Layout {...meta}>
+  <Section name={username} intended={'c'} client:idle />
+</Layout>

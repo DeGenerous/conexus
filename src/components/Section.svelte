@@ -1,60 +1,105 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
   import { onMount } from 'svelte';
 
   import CoNexusApp from '@lib/view';
-  import {
-    SetCache,
-    GetCache,
-    SECTION_CATEGORIES_KEY,
-    TTL_HOUR,
-  } from '@constants/cache';
+  import { blankImage, serveUrl } from '@constants/media';
+  import { resolveRenderableImage } from '@utils/file-validation';
 
   import Category from '@components/Category.svelte';
+  import PullToRefresh from '@components/utils/PullToRefresh.svelte';
   import SearchAndGenre from '@components/Filters.svelte';
   import SpotifyIframe from '@components/music/SpotifyIframe.svelte';
   import Links from '@components/utils/Links.svelte';
 
-  export let section: string;
+  let {
+    name,
+    intended,
+  }: {
+    name: string;
+    intended: 's' | 'c'; // section or creator
+  } = $props();
 
   let app: CoNexusApp = new CoNexusApp();
 
-  let categories: CategoryInSection[] = [];
-  let genres: Genre[] = [];
+  let currExplorerId = $state<string>('');
 
-  let pageSize: number = 1;
-  let loading: boolean = false;
-  let allLoaded: boolean = false; // Prevent further requests when empty response
-  let showNoCategoriesMessage: boolean = false;
+  let explorer = $state<Explorer | null>(null);
+  let sections = $state<Section[]>([]);
+  let categories = $state<SectionCategoryTopics[]>([]);
+  let genres = $state<Genre[]>([]);
 
-  const fetchCategories = async () => {
-    if (!section || loading || allLoaded) return;
+  let pageSize = $state<number>(1);
+  let loading = $state<boolean>(false);
+  let allLoaded = $state<boolean>(false); // Prevent further requests when empty response
+  let showNoCategoriesMessage = $state<boolean>(false);
+  let filtersResetKey = $state<number>(0);
+
+  let explorerImage = $state<string>(blankImage);
+  let categoriesContainer = $state<HTMLElement | undefined>();
+
+  // Prefetch explorer portrait and swap to placeholder on failure
+  $effect(() => {
+    const currentExplorer = explorer;
+    if (!currentExplorer) {
+      explorerImage = blankImage;
+      return;
+    }
+
+    const candidate = currentExplorer.avatar_file_id
+      ? serveUrl(currentExplorer.avatar_file_id)
+      : currentExplorer.avatar_url
+        ? currentExplorer.avatar_url
+        : blankImage;
+
+    let cancelled = false;
+
+    explorerImage = candidate;
+
+    (async () => {
+      const safe = await resolveRenderableImage(candidate);
+      if (!cancelled) explorerImage = safe;
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  });
+
+  // incremental loader; each call pulls the next page and appends while respecting the cache for sections
+  const fetchCategories = async (refresh = false) => {
+    if (!name || loading || allLoaded) return;
     loading = true;
 
-    const response = await app.getSectionCategories(
-      section,
-      categories.length + 1,
-      pageSize,
-    );
+    let response: SectionCategoryTopics[] = [];
+
+    switch (intended) {
+      case 's':
+        response = await app.getSectionCategoryTopics(
+          name,
+          categories.length + 1,
+          pageSize,
+          refresh,
+        );
+        break;
+      case 'c':
+        response = await app.getCreatorCategoryTopics(
+          currExplorerId,
+          categories.length + 1,
+          pageSize,
+          refresh,
+        );
+        break;
+      default:
+        console.error('Invalid intended type:', intended);
+        loading = false;
+        return;
+    }
 
     if (response && response.length > 0) {
       setTimeout(() => {
         categories = [...categories, ...response];
-        SetCache(
-          SECTION_CATEGORIES_KEY(section),
-          categories.map((cat) => {
-            const orderedTopics = cat.topics.sort((a, b) => {
-              if (a.topic_order > b.topic_order) return 1;
-              if (a.topic_order < b.topic_order) return -1;
-              return 0;
-            });
-            cat.topics = orderedTopics;
-            return cat;
-          }),
-          TTL_HOUR,
-        );
         loading = false;
-      }, 600); // Simulate loading delay
+      }, 150); // Simulate loading delay
       showNoCategoriesMessage = false; // Hide message if categories are found
     } else {
       allLoaded = true; // Stop fetching more categories
@@ -62,68 +107,83 @@
     }
   };
 
-  onMount(async () => {
+  const hydrateSection = async (refresh = false) => {
     try {
-      const sections = await app.getSections();
-      if (!sections.some(({ name }) => name === section)) {
+      observer?.disconnect();
+      categories = [];
+      allLoaded = false;
+      showNoCategoriesMessage = false;
+      loading = false;
+      filtersResetKey += 1;
+      if (categoriesContainer) categoriesContainer.scrollTo({ top: 0 });
+
+      if (intended === 's') {
+        explorer = (await app.getSection(name)) as Explorer;
+      } else if (intended === 'c') {
+        explorer = (await app.getCreator(name)) as Explorer;
+      }
+
+      if (!explorer || !explorer.id) {
         window.location.href = '/404';
         return;
       }
 
-      const cachedCategories = GetCache<CategoryInSection[]>(
-        SECTION_CATEGORIES_KEY(section),
-      );
-      if (cachedCategories) categories = cachedCategories;
-      else await fetchCategories();
+      currExplorerId = explorer.id;
 
-      await app.getGenres().then((data) => {
-        function sortByName(a: Genre, b: Genre) {
-          if (a.name < b.name) {
-            return -1;
-          }
-          if (a.name > b.name) {
-            return 1;
-          }
-          return 0;
-        }
+      await fetchCategories(refresh);
 
-        genres = data.sort(sortByName);
-      });
+      const data = await app.getGenres(refresh);
+      genres = data.sort((a, b) => a.name.localeCompare(b.name));
 
-      // If no categories after 2 seconds, show "No categories found"
+      // Fallback message if no categories found
       setTimeout(() => {
         if (categories.length === 0) {
           showNoCategoriesMessage = true;
         }
       }, 2000);
     } catch (error) {
+      console.error('Error loading section:', error);
+    }
+  };
+
+  onMount(async () => {
+    try {
+      await hydrateSection();
+      // If intended === 'c', you can later add creator-specific setup here
+    } catch (error) {
       console.error('Error on mount:', error);
     }
   });
 
+  // delegate search/genre filtering to the view API while keeping the same signature for both explorer types
   const getTopics = async (
     text: string,
     which: 'search' | 'genre',
     page: number = 1,
     pageSize: number = 10,
-    sort_order: TopicSortOrder = 'category',
+    sort_order: TopicSortOrder = 'name',
   ) => {
     switch (which) {
       case 'search':
-        return await app.searchSectionCategories(
-          section,
+        return await app.searchCategories(
+          currExplorerId,
           text.replace(/[^a-zA-Z ]/g, ''),
+          sort_order,
           page,
           pageSize,
-          sort_order,
+          intended,
         );
       case 'genre':
+        const genre = genres.find((g) => g.name === text);
+        if (!genre || !genre.id) return [];
+
         return await app.getGenreTopics(
-          section,
-          text,
+          currExplorerId,
+          genre.id,
           page,
           pageSize,
           sort_order,
+          intended,
         );
     }
   };
@@ -156,35 +216,66 @@
   };
 
   // When 1 or more categories visible - observe the last one
-  $: if (categories.length > 0) setTimeout(observeLastCategory, 500);
+  $effect(() => {
+    if (categories.length > 0) setTimeout(observeLastCategory, 500);
+  });
+
+  const refreshSection = async () => {
+    await hydrateSection(true);
+  };
 </script>
 
-<SearchAndGenre {section} {genres} {getTopics} {categories} />
-
-<section class="flex" on:scroll={handleScroll}>
-  {#if categories.length > 0}
-    {#each categories as category (category.name)}
-      <div class="category flex">
-        <Category {section} {category} />
-      </div>
-    {/each}
-
-    {#if loading}
-      <h5>Loading more categories...</h5>
-    {/if}
-  {:else if showNoCategoriesMessage}
-    <h5>No categories found for this section.</h5>
-  {:else}
-    <Category {section} category={null} />
+<PullToRefresh refresh={refreshSection}>
+  {#if intended === 'c' && explorer}
+    <div class="explorer-bio flex pad-inline">
+      {#if explorerImage !== blankImage}
+        <img class="pfp round" src={explorerImage} alt="Creator PFP" />
+      {/if}
+      <p>{explorer.avatar_bio}</p>
+    </div>
   {/if}
-</section>
 
-{#if categories.length === 0 && !loading && !showNoCategoriesMessage}
-  <h5>Loading categories...</h5>
-{/if}
+  {#key filtersResetKey}
+    <SearchAndGenre {name} {intended} {genres} {getTopics} {categories} />
+  {/key}
 
-{#if section === 'Dischordian Saga'}
-  <SpotifyIframe />
-{/if}
+  <section class="flex" bind:this={categoriesContainer} onscroll={handleScroll}>
+    {#if categories.length > 0}
+      {#each categories as category (category.id)}
+        <div class="category flex">
+          <Category {name} {intended} {category} />
+        </div>
+      {/each}
 
-<Links {section} />
+      {#if loading}
+        <h5>Loading more categories...</h5>
+      {/if}
+    {:else if showNoCategoriesMessage}
+      <h5>No created stories found</h5>
+    {:else}
+      <Category {name} {intended} category={null} />
+    {/if}
+  </section>
+
+  {#if categories.length === 0 && !loading && !showNoCategoriesMessage}
+    <h5>Loading categories...</h5>
+  {/if}
+
+  {#if intended === 's' && name === 'Dischordian Saga'}
+    <SpotifyIframe />
+  {/if}
+
+  <Links section_name={name} />
+</PullToRefresh>
+
+<style lang="scss">
+  @use '/src/styles/mixins' as *;
+
+  .pfp {
+    @include gray-border;
+
+    @include respond-up(tablet) {
+      width: 20rem;
+    }
+  }
+</style>

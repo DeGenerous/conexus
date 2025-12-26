@@ -11,28 +11,28 @@ function generatePrompt(
   props: StoryData,
   settings: PromptSettings,
   data: TablePrompt | string,
-): CreatePrompt {
-  let imagePrompt: string = `Use ${settings.imageStyle} style.\n\n`;
+): TopicRequest {
+  let imagePrompt: string = `Use ${settings.image_style} style.\n\n`;
 
-  imagePrompt += props.imagePrompt;
+  imagePrompt += props.image_prompt;
 
   // ADDING CHARACTERS TO THE IMAGE PROMPT
   if (typeof data !== 'string') {
     imagePrompt += '\n';
 
-    imagePrompt += `Main Character: name: ${data.mainCharacter.name}, description: ${data.mainCharacter.description}`;
+    imagePrompt += `Main Character: name: ${data.main_character.name}, description: ${data.main_character.description}`;
 
-    if (data.mainCharacter.physicality)
-      imagePrompt += `, physicality: ${data.mainCharacter.physicality}`;
+    if (data.main_character.physicality)
+      imagePrompt += `, physicality: ${data.main_character.physicality}`;
 
-    if (data.mainCharacter.physicality)
-      imagePrompt += `, psychology: ${data.mainCharacter.psychology}`;
+    if (data.main_character.psychology)
+      imagePrompt += `, psychology: ${data.main_character.psychology}`;
 
     imagePrompt += '\n';
 
-    if (data.sideCharacters.length > 0) {
+    if (data.side_characters.length > 0) {
       imagePrompt += 'Side Characters:\n';
-      data.sideCharacters.map((character: Character) => {
+      data.side_characters.map((character: Character) => {
         imagePrompt += `name: ${character.name}, description: ${character.description}`;
 
         if (character.physicality)
@@ -45,66 +45,6 @@ function generatePrompt(
       });
     }
   }
-
-  const setUpSettings = () => {
-    let promptSettings: string =
-      'Note: Consider the following characteristics for the story, follow these strictly especially the premise.\n\n';
-
-    promptSettings += `You will only write in ${settings.language}.\n`;
-
-    if (settings.interactivity !== 'standard')
-      promptSettings +=
-        'Adjust the interactivity of the story based on the following:\n';
-    switch (settings.interactivity) {
-      case 'min': {
-        promptSettings +=
-          'Make sure user gets to make a decision between options for every little decision.\n\n';
-        break;
-      }
-      case 'max': {
-        promptSettings +=
-          'Steps will have more text and events, so user gets options only for key decisions.\n\n';
-        break;
-      }
-    }
-
-    if (settings.difficulty !== 'min')
-      promptSettings +=
-        'Adjust the story based on the following difficulty level: \n';
-    switch (settings.difficulty) {
-      case 'standard': {
-        promptSettings +=
-          'It should be difficult for the user to succeed in the story.\n\n';
-        break;
-      }
-      case 'max': {
-        promptSettings +=
-          'It should be extremely difficult for the user to succeed in the story. They will likely fail every single time.\n\n';
-        break;
-      }
-    }
-
-    promptSettings += 'Adjust the story based on the following: \n';
-    switch (settings.length) {
-      case 'min': {
-        promptSettings +=
-          'The story should last maximum 20 steps, usually ending after 15, and each step should have 2 to 3 sentences. You will focus more on character development, interactions, etc making sure the user gets immersed as the main character, and key events should happen rarely. The story should have two arcs or acts if the user makes decisions to last long enough.\n\n';
-        break;
-      }
-      case 'standard': {
-        promptSettings +=
-          'You will use standard pacing, making sure you focus on both character development and actionable events. The story should have three arcs or acts if the user makes decisions to last long enough.\n\n';
-        break;
-      }
-      case 'max': {
-        promptSettings +=
-          'The story should have many steps, and 10 sentences per step. You will use quick pacing to the story, going for more action and making sure large events happen faster. The story should have five to eight arcs or acts if the user makes decisions to last enough.\n\n';
-        break;
-      }
-    }
-
-    return promptSettings;
-  };
 
   const setUpPrompt = () => {
     if (typeof data === 'string') {
@@ -119,25 +59,25 @@ function generatePrompt(
 
     if (data.exposition) promptData += `Exposition: ${data.exposition}\n`;
 
-    if (data.firstAction) promptData += `First Act: ${data.firstAction}\n`;
+    if (data.first_action) promptData += `First Act: ${data.first_action}\n`;
 
     // CHARACTERS
     promptData += '\n';
     promptData += 'The following characters are involved in the story:\n';
 
-    promptData += `Main Character: name: ${data.mainCharacter.name}, description: ${data.mainCharacter.description}`;
+    promptData += `Main Character: name: ${data.main_character.name}, description: ${data.main_character.description}`;
 
-    if (data.mainCharacter.physicality)
-      promptData += `, physicality: ${data.mainCharacter.physicality}`;
+    if (data.main_character.physicality)
+      promptData += `, physicality: ${data.main_character.physicality}`;
 
-    if (data.mainCharacter.physicality)
-      promptData += `, psychology: ${data.mainCharacter.psychology}`;
+    if (data.main_character.psychology)
+      promptData += `, psychology: ${data.main_character.psychology}`;
 
     promptData += '\n';
 
-    if (data.sideCharacters.length > 0) {
+    if (data.side_characters.length > 0) {
       promptData += 'Side Characters:\n';
-      data.sideCharacters.map((character: Character) => {
+      data.side_characters.map((character: Character) => {
         promptData += `name: ${character.name}, description: ${character.description}`;
 
         if (character.physicality)
@@ -162,38 +102,38 @@ function generatePrompt(
     }
 
     // SCENARIOS
-    if (data.winningScenarios.length > 0) {
+    if (data.winning_scenarios.length > 0) {
       promptData += '\n';
       promptData += 'Incorportate the following winning scenarios:\n';
-      data.winningScenarios.map((scenario: string, index: number) => {
+      data.winning_scenarios.map((scenario: string, index: number) => {
         promptData += `${index + 1}) ${scenario}\n`;
       });
     }
 
-    if (data.losingScenarios.length > 0) {
+    if (data.losing_scenarios.length > 0) {
       promptData += '\n';
       promptData += 'Incorportate the following losing scenarios:\n';
-      data.losingScenarios.map((scenario: string, index: number) => {
+      data.losing_scenarios.map((scenario: string, index: number) => {
         promptData += `${index + 1}) ${scenario}\n`;
       });
     }
 
-    if (data.keyEvents.length > 0) {
+    if (data.key_events.length > 0) {
       promptData += '\n';
       promptData += 'Incorportate the following key events:\n';
-      data.keyEvents.map((event: string, index: number) => {
+      data.key_events.map((event: string, index: number) => {
         promptData += `${index + 1}) ${event}\n`;
       });
     }
 
     // WRITING STYLE
-    if (data.POV) {
+    if (data.pov) {
       promptData += '\n';
-      promptData += `Tell the story from the point of view of: ${data.POV}\n`;
+      promptData += `Tell the story from the point of view of: ${data.pov}\n`;
     }
 
     promptData += '\n';
-    switch (data.storyArcs) {
+    switch (data.story_arcs) {
       case 'min': {
         promptData +=
           'The story should have two arcs or acts if the user makes decisions to last long enough.\n';
@@ -234,28 +174,30 @@ function generatePrompt(
     promptData +=
       'The following writing style and tone are to be considered:\n';
 
-    promptData += `Writing Style:\n- Tense: ${data.tense};\n- Style: ${data.writingStyle};\n- Voice: ${data.voice}.\n`;
+    promptData += `Writing Style:\n- Tense: ${data.tense};\n- Style: ${data.writing_style};\n- Voice: ${data.voice}.\n`;
 
     promptData += 'Tone:\n';
     data.tone.map(({ name, value }) => {
       if (value !== 'none') promptData += `- ${name}: ${value};\n`;
     });
 
-    if (data.additionalData)
-      promptData += `\nAlso consider:\n${data.additionalData}`;
+    if (data.additional_data)
+      promptData += `\nAlso consider:\n${data.additional_data}`;
 
     return promptData;
   };
 
-  const storySettings = setUpSettings();
   const storyPrompt = setUpPrompt();
 
-  const fullStory: CreatePrompt = {
-    topic: props.name.trim(),
+  const fullStory: TopicRequest = {
+    name: props.name.trim(),
     description: props.description,
+    category_id: props.category_id,
+    available: true,
+    visibility: 'public',
+    prompt: storyPrompt,
     image_prompt: imagePrompt,
-    category: props.category!,
-    prompt: storySettings + storyPrompt,
+    settings: settings,
   };
 
   return fullStory;

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
 
-  import { createRoot } from 'react-dom/client';
+  import { createRoot, type Root } from 'react-dom/client';
 
   import { showProfile } from '@stores/modal.svelte';
 
@@ -15,12 +15,41 @@
     title?: string;
   } = $props();
 
-  onMount(() => {
-    const reactRoot = document.getElementById('react-root');
-    if (reactRoot) {
-      const root = createRoot(reactRoot); // Create a root
-      root.render(RainbowConnect(linking, title));
+  const rootMap = new WeakMap<HTMLElement, Root>();
+
+  let container: HTMLDivElement | null = null;
+
+  const renderReact = () => {
+    if (!container) return;
+
+    let root = rootMap.get(container);
+    if (!root) {
+      root = createRoot(container);
+      rootMap.set(container, root);
     }
+
+    root.render(RainbowConnect(linking, title));
+  };
+
+  onMount(() => {
+    renderReact();
+  });
+
+  $effect(() => {
+    if (!container) return;
+
+    const root = rootMap.get(container);
+    if (!root) return;
+
+    root.render(RainbowConnect(linking, title));
+  });
+
+  onDestroy(() => {
+    if (!container) return;
+
+    const root = rootMap.get(container);
+    root?.unmount();
+    if (root) rootMap.delete(container);
   });
 
   const closeProfile = () => {
@@ -32,4 +61,11 @@
 <!-- svelte-ignore
 a11y_click_events_have_key_events
 a11y_no_static_element_interactions -->
-<div id="react-root" onclick={closeProfile} role="toolbar" tabindex="-1"></div>
+<div
+  id="react-root"
+  bind:this={container}
+  onclick={closeProfile}
+  role="toolbar"
+  tabindex="-1"
+  style:width="auto"
+></div>

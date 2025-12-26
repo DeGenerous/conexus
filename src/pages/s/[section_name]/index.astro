@@ -1,0 +1,55 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import { mediaURL } from '@constants/media';
+import { NAV_ROUTES } from '@constants/routes';
+
+import Section from '@components/Section.svelte';
+
+const { section_name } = Astro.params;
+
+if (!section_name) {
+  Astro.redirect('/');
+}
+
+let subheading: string = '';
+
+switch (section_name) {
+  case 'Community Picks': {
+    subheading = `Community Picks are stories that aren't bound to any project or genre but have been demanded, written, or voted in by the
+    <a href=${NAV_ROUTES.MAGIC_EDEN} target="_blank">Potentials</a>
+    holders.`;
+    break;
+  }
+  case 'Dischordian Saga': {
+    subheading = `The Dischordian Saga led to the creation of CoNexus and tells the epic narrative of wars between Artificial Intelligence and Humanity.
+    <a href=${NAV_ROUTES.MAGIC_EDEN} target="_blank">Potentials</a>
+    vote on
+    <a href=${NAV_ROUTES.GOVERNANCE_HUB} target="_blank">story nodes</a>
+    weekly, thus activating CoNexus story games and guiding the franchise's direction.`;
+    break;
+  }
+  case 'Collabs': {
+    subheading = `Collabs are stories that are custom-written to add depth to the partners of <a href="${NAV_ROUTES.WEBSITE}" target="_blank">DGRS LABS</a>.`;
+    break;
+  }
+}
+
+const sectionImage = section_name?.split(' ').join('').split('%20').join('');
+const sectionName = section_name?.replace(/%20/g, ' ');
+
+const meta = {
+  title: `${sectionName} | CoNexus`,
+  image: `${mediaURL}/conexus-sections/${sectionImage?.toLocaleLowerCase()}.avif`,
+  imageType: 'image/avif',
+  url: `${import.meta.env.PUBLIC_FRONTEND}/s/${section_name}`,
+  header: section_name,
+  nav: section_name,
+  arrow: '/',
+  subheading,
+};
+---
+
+<Layout {...meta}>
+  <Section name={section_name} intended={'s'} client:idle />
+</Layout>

@@ -1,232 +1,469 @@
-import {
-  GENRES_KEY,
-  TTL_MONTH,
-  SECTIONS_KEY,
-  TTL_DAY,
-  GetCache,
-  SetCache,
-} from '@constants/cache';
+import { ClearCache } from '@constants/cache';
+import { serveUrl } from '@constants/media';
 import { api_error } from '@errors/index';
-import { ViewAPI } from '@service/routes';
-import { toastStore } from '@stores/toast.svelte';
+import ViewAPI from '@service/view';
 import { availableGenres } from '@stores/view.svelte';
-import contracts from '@constants/contracts';
 
-class CoNexusApp extends ViewAPI {
-  private static instance: CoNexusApp;
-  // Constructor
+/**
+ * Provides read-only helpers for fetching view data and caching responses.
+ */
+export default class AppView {
+  protected api: ViewAPI;
+
+  private static instance: AppView;
+
+  /**
+   * Initialize the view service with the configured backend endpoint.
+   */
   constructor() {
-    super(import.meta.env.PUBLIC_BACKEND);
+    this.api = new ViewAPI(import.meta.env.PUBLIC_BACKEND);
   }
 
-  static getInstance(): CoNexusApp {
-    if (!CoNexusApp.instance) {
-      CoNexusApp.instance = new CoNexusApp();
+  /**
+   * Get or create the singleton AppView instance.
+   * @returns The shared AppView instance.
+   */
+  static getInstance(): AppView {
+    if (!AppView.instance) {
+      AppView.instance = new AppView();
     }
-    return CoNexusApp.instance;
+    return AppView.instance;
   }
 
-  async getSections(): Promise<Section[]> {
-    // Return cached data if valid
-    const cachedData = GetCache<Section[]>(SECTIONS_KEY);
-    if (cachedData) {
-      return cachedData;
+  /**
+   * Retrieves a specific section by name.
+   * @param section_name The name of the section to retrieve.
+   * @returns A promise that resolves to the requested Section object.
+   */
+  async getSection(section_name: string): Promise<Section | null> {
+    const { status, message, data } = await this.api.getSection(section_name);
+
+    if (status === 'error') {
+      api_error(message);
+      return null;
     }
 
-    // Fetch fresh data
-    const { data, error } = await this.sections();
+    return data || null;
+  }
 
-    if (!data) {
-      if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error fetching view', 'error');
-      }
+  /**
+   * Retrieves a specific creator by username.
+   * @param username The username of the creator to retrieve.
+   * @returns A promise that resolves to the requested Creator object.
+   */
+  async getCreator(username: string): Promise<Creator | null> {
+    const { status, message, data } = await this.api.getCreator(username);
+
+    if (status === 'error') {
+      api_error(message);
+      return null;
+    }
+
+    return data || null;
+  }
+
+  /**
+   * Get Sections
+   * @returns {Promise<Section[]>} A list of sections for the tenant
+   */
+  async getSections(refresh: boolean = false): Promise<Section[]> {
+    if (refresh) ClearCache('view');
+
+    const { status, message, data } = await this.api.sections(refresh);
+
+    if (status === 'error') {
+      api_error(message);
       return [];
     }
 
-    // Store in localStorage
-    SetCache(SECTIONS_KEY, data, TTL_DAY);
-
-    return data;
+    return data || [];
   }
 
-  async getGenres(): Promise<Genre[]> {
-    const cachedData = GetCache<Genre[]>(GENRES_KEY);
-    if (cachedData) {
-      return cachedData;
-    }
+  /**
+   * Retrieve all available genres, caching the result for reuse.
+   * @returns A list of genres or an empty array on failure.
+   */
+  async getGenres(refresh: boolean = false): Promise<Genre[]> {
+    if (refresh) ClearCache('view');
 
-    // Fetch fresh data
-    const { data, error } = await this.genres();
+    const { status, message, data } = await this.api.genres(refresh);
 
-    if (!data) {
-      if (error) {
-        api_error(error);
-      } else {
-        toastStore.show('Error fetching genres', 'error');
-      }
+    if (status === 'error') {
+      api_error(message);
       return [];
     }
 
-    SetCache(GENRES_KEY, data, TTL_MONTH);
+    if (data) {
+      availableGenres.splice(0, availableGenres.length, ...data); // Update state
+    }
 
-    availableGenres.splice(0, availableGenres.length, ...data); // Update state
-
-    return data;
+    return data || [];
   }
-
-  async getSectionCategories(
-    section: string,
+  /**
+   * Fetch topics for a given category.
+   * @param category_id - The category identifier.
+   * @param page - The page number to request.
+   * @param pageSize - The number of topics per page.
+   * @returns A sorted list of category topics.
+   */
+  async getCategoryTopics(
+    category_id: string,
     page: number,
     pageSize: number,
-  ): Promise<CategoryInSection[]> {
-    const { data, error } = await this.sectionCategories(
-      section,
+    refresh: boolean = false,
+  ): Promise<CategoryTopic[]> {
+    const { status, message, data } = await this.api.categoryTopics(
+      category_id,
       page,
       pageSize,
+      refresh,
     );
 
-    if (!data) {
-      if (error) {
-        api_error(error);
-      }
+    if (status === 'error') {
+      api_error(message);
       return [];
     }
 
-    const orderedCategories = data.sort(
-      (a: CategoryInSection, b: CategoryInSection) => {
-        if (a.order < b.order) return -1;
-        if (a.order > b.order) return 1;
+    if (!data) {
+      return [];
+    }
+
+    const orderedCategoryTopics = data
+      .sort((a: CategoryTopic, b: CategoryTopic) => {
+        if (a.sort_order < b.sort_order) return -1;
+        if (a.sort_order > b.sort_order) return 1;
+        return 0;
+      })
+      .filter((topic) => topic.available);
+
+    return orderedCategoryTopics;
+  }
+
+  /**
+   * Fetch topics grouped by category within a section.
+   * @param section_id - The section identifier.
+   * @param page - The page number to request.
+   * @param pageSize - The number of records per page.
+   * @returns A sorted list of section category topics.
+   */
+  async getSectionCategoryTopics(
+    section_name: string,
+    page: number,
+    pageSize: number,
+    refresh: boolean = false,
+  ): Promise<SectionCategoryTopics[]> {
+    const { status, message, data } = await this.api.sectionTopics(
+      section_name,
+      page,
+      pageSize,
+      refresh,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      return [];
+    }
+
+    if (!data) {
+      return [];
+    }
+
+    const orderedSectionCategoriesTopics = data.sort(
+      (a: SectionCategoryTopics, b: SectionCategoryTopics) => {
+        if (a.sort_order < b.sort_order) return -1;
+        if (a.sort_order > b.sort_order) return 1;
         return 0;
       },
     );
 
-    return orderedCategories;
-  }
-
-  async getCategoryTopics(
-    category_id: number,
-    page: number,
-    pageSize: number,
-  ): Promise<TopicInCategory[]> {
-    const { data, error } = await this.categoryTopics(
-      category_id,
-      page,
-      pageSize,
-    );
-
-    if (!data) {
-      if (error) {
-        api_error(error);
-      }
-      return [];
-    }
-
-    return data;
-  }
-
-  async searchSectionCategories(
-    section: string,
-    topic: string,
-    page: number = 1,
-    pageSize: number = 5,
-    sort_order: TopicSortOrder = 'name',
-  ): Promise<TopicInCategory[]> {
-    const { data, error } = await this.searchSectionByTopic(
-      section,
-      topic,
-      page,
-      pageSize,
-      sort_order,
-    );
-
-    if (!data) {
-      if (error) {
-        api_error(error);
-      }
-      return [];
-    }
-
-    return data;
-  }
-
-  async getGenreTopics(
-    section: string,
-    genre: string,
-    page: number = 1,
-    pageSize: number = 5,
-    sort_order: TopicSortOrder = 'category',
-  ): Promise<TopicInCategory[]> {
-    const { data, error } = await this.genreTopics(
-      section,
-      genre,
-      page,
-      pageSize,
-      sort_order,
-    );
-
-    if (!data) {
-      if (error) {
-        api_error(error);
-      }
-      return [];
-    }
-
-    return data;
+    return orderedSectionCategoriesTopics;
   }
 
   /**
-   * Fetches the NFT gates for a specific topic.
-   *
-   * @param topic_id - The ID of the topic to fetch gates for.
-   * @returns A promise that resolves to an array of TopicNFTGateWithContract objects.
+   * Search for categories or sections that match a topic query.
+   * @param id - Section or creator identifier.
+   * @param topic - The topic search term.
+   * @param sort_order - The sorting strategy to apply.
+   * @param page - The page number to request.
+   * @param pageSize - The number of items per page.
+   * @param intended - Whether to search sections ('s') or creators ('c').
+   * @returns A sorted list of category topics.
    */
-  async fetchTopicGates(topic_id: number): Promise<TopicNFTGateWithContract[]> {
-    const { data, error } = await this.getTopicNFTGates(topic_id);
-    if (!data) {
-      if (error) {
-        api_error(error);
-      }
+  async searchCategories(
+    id: string,
+    topic: string,
+    sort_order: TopicSortOrder = 'name',
+    page: number = 1,
+    pageSize: number = 5,
+    intended: 's' | 'c',
+  ): Promise<CategoryTopic[]> {
+    let response: APIResponse<CategoryTopic[]>;
+
+    switch (intended) {
+      case 's':
+        response = await this.api.searchSectionForTopic(
+          id,
+          topic,
+          sort_order,
+          page,
+          pageSize,
+        );
+        break;
+
+      case 'c':
+        response = await this.api.searchCreatorForTopic(
+          id,
+          topic,
+          sort_order,
+          page,
+          pageSize,
+        );
+        break;
+
+      default:
+        api_error('Invalid intended type');
+        return [];
+    }
+
+    const { status, message, data } = response;
+
+    if (status === 'error') {
+      api_error(message);
       return [];
     }
 
-    data.map((gate: TopicNFTGate) => {
-      const gateWithContract = gate as TopicNFTGateWithContract;
-      const gatingContract = contracts.get(gate.contract_name);
-      if (gatingContract) {
-        gateWithContract.name = gatingContract.name;
-        gateWithContract.link = gatingContract.link;
-        return gateWithContract;
-      }
-    });
-
-    return data;
-  }
-
-  async fetchClassGates(): Promise<ClassGate[]> {
-    const { data, error } = await this.getClassGates();
-
     if (!data) {
-      if (error) {
-        api_error(error);
-      }
       return [];
     }
 
-    return data;
+    return data.sort((a, b) => a.sort_order - b.sort_order);
   }
 
-  async fetchClassGate(class_ID: number): Promise<ClassGate | null> {
-    const { data, error } = await this.getGateClass(class_ID);
+  /**
+   * Fetch topics grouped by category for a creator.
+   * @param creator_id - The creator identifier.
+   * @param page - The page number to request.
+   * @param pageSize - The number of records per page.
+   * @returns A sorted list of creator category topics.
+   */
+  async getCreatorCategoryTopics(
+    creator_id: string,
+    page: number,
+    pageSize: number,
+    refresh: boolean = false,
+  ): Promise<SectionCategoryTopics[]> {
+    const { status, message, data } = await this.api.creatorTopics(
+      creator_id,
+      page,
+      pageSize,
+      refresh,
+    );
+
+    if (status === 'error') {
+      console.error('Error fetching creator categories:', message);
+      api_error(message);
+      return [];
+    }
+
     if (!data) {
-      if (error) {
-        api_error(error);
-      }
+      return [];
+    }
+
+    const orderedSectionCategoriesTopics = data.sort(
+      (a: SectionCategoryTopics, b: SectionCategoryTopics) => {
+        if (a.sort_order < b.sort_order) return -1;
+        if (a.sort_order > b.sort_order) return 1;
+        return 0;
+      },
+    );
+
+    return orderedSectionCategoriesTopics;
+  }
+
+  /**
+   * Fetch topics by genre for either sections or creators.
+   * @param id - The section or creator identifier.
+   * @param genre_id - The genre identifier.
+   * @param page - The page number to request.
+   * @param pageSize - The number of items per page.
+   * @param sort_order - The chosen topic sort order.
+   * @param intended - Whether the id references a section ('s') or creator ('c').
+   * @returns A list of category topics, or an empty array on failure.
+   */
+  async getGenreTopics(
+    id: string,
+    genre_id: string,
+    page: number = 1,
+    pageSize: number = 5,
+    sort_order: TopicSortOrder = 'category',
+    intended: 's' | 'c',
+  ): Promise<CategoryTopic[]> {
+    let response: APIResponse<CategoryTopic[]>;
+
+    switch (intended) {
+      case 's':
+        response = await this.api.sectionGenreTopics(
+          id,
+          genre_id,
+          page,
+          pageSize,
+          sort_order,
+        );
+        break;
+
+      case 'c':
+        response = await this.api.creatorGenreTopics(
+          id,
+          genre_id,
+          page,
+          pageSize,
+          sort_order,
+        );
+        break;
+
+      default:
+        api_error('Invalid intended type');
+        return [];
+    }
+
+    const { status, message, data } = response;
+
+    if (status === 'error') {
+      api_error(message);
+      return [];
+    }
+
+    return data || [];
+  }
+
+  /**
+   * Retrieve neighboring topics for a given topic.
+   * @param topic_id - The topic identifier.
+   * @param page - The page number to request.
+   * @param pageSize - The number of neighbors per page.
+   * @param category_id - (Optional) The category identifier to filter neighbors.
+   * @returns A list of neighboring topics or an empty array on failure.
+   */
+  async getTopicNeighbors(
+    topic_id: string,
+    page: number,
+    pageSize: number,
+    category_id?: string,
+    refresh: boolean = false,
+  ): Promise<TopicNeighbor[]> {
+    const { status, message, data } = await this.api.topicNeighbors(
+      topic_id,
+      page,
+      pageSize,
+      category_id,
+      refresh,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      return [];
+    }
+
+    return data || [];
+  }
+
+  /**
+   * Retrieve the topic page details, optionally scoped to an account.
+   * @param topic_id - The topic identifier.
+   * @param account_id - Optional account identifier.
+   * @returns The topic page payload or null on failure.
+   */
+  async getTopicPage(
+    topic_id: string,
+    account_id?: string,
+    category_id?: string,
+    page: number = 1,
+    pageSize: number = 5,
+    refresh: boolean = false,
+  ): Promise<{ topic: TopicPage | null; neighbors: TopicNeighbor[] }> {
+    const { status, message, data } = await this.api.topicView(
+      topic_id,
+      account_id,
+      category_id,
+      page,
+      pageSize,
+      refresh,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      return { topic: null, neighbors: [] };
+    }
+
+    return data || { topic: null, neighbors: [] };
+  }
+
+  /**
+   * Fetch media identifiers for a topic.
+   * @param topic_id - The topic identifier.
+   * @param media_type - The type of media to request.
+   * @returns A list of media identifiers or null on failure.
+   */
+  async getMediaFile(
+    topic_id: string,
+    media_type: MediaType,
+  ): Promise<string[] | null> {
+    const { status, message, data } = await this.api.getFile(
+      topic_id,
+      media_type,
+    );
+
+    if (status === 'error') {
+      api_error(message);
       return null;
     }
-    return data;
+
+    return data ?? null;
+  }
+
+  /**
+   * Request a topic media file by identifier.
+   * @param file_id - The media identifier to serve.
+   * @returns The media blob or null on failure.
+   */
+  async serveTopicMedia(file_id: string): Promise<Blob | null> {
+    const { status, message, data } = await this.api.serveMedia(file_id);
+
+    if (status === 'error') {
+      api_error(message);
+      return null;
+    }
+
+    return data || null;
+  }
+
+  /**
+   * Choose a random background image for the provided topic.
+   * @param topic_id - The topic identifier.
+   * @returns The resolved media URL or null when none exist.
+   */
+  async setBackgroundImage(topic_id: string): Promise<string | null> {
+    const images = await this.getMediaFile(topic_id, 'background');
+    if (images && images.length > 0) {
+      let randomImage = images[Math.floor(Math.random() * images.length)];
+      return serveUrl(randomImage);
+    }
+
+    return null;
+  }
+
+  /**
+   * Choose a random background audio track for the provided topic.
+   * @param topic_id - The topic identifier.
+   * @returns The resolved media URL or null when none exist.
+   */
+  async playBackgroundMusic(topic_id: string): Promise<string | null> {
+    const audios = await this.getMediaFile(topic_id, 'audio');
+    if (audios && audios.length > 0) {
+      let randomAudio = audios[Math.floor(Math.random() * audios.length)];
+      return serveUrl(randomAudio);
+    }
+
+    return null;
   }
 }
-
-export default CoNexusApp;

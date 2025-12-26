@@ -45,14 +45,12 @@
 
   button {
     width: 2rem;
-    fill: $light-blue;
-    stroke: $light-blue;
+    fill: currentColor;
+    stroke: currentColor;
 
     &:hover,
-    &:focus,
+    &:focus-visible,
     &:active {
-      fill: $cyan;
-      stroke: $cyan;
       @include scale;
 
       #windowed-arrow {

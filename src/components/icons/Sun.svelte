@@ -26,7 +26,7 @@
 
     &:hover,
     &:active,
-    &:focus {
+    &:focus-visible {
       @include scale;
       @include bright;
     }

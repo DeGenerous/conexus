@@ -1,20 +1,15 @@
 <script lang="ts">
+  import { blankImage } from '@constants/media';
+  import { resolveRenderableImage } from '@utils/file-validation';
+
   let {
-    width,
-    zoom,
     image,
     image_type = 'url',
-    imageWidth = 800,
-    imageHeight = 512,
-    boxShadow = true,
+    style = '',
   }: {
-    width: number;
-    zoom: number;
     image: string | undefined;
     image_type?: string;
-    imageWidth: number;
-    imageHeight: number;
-    boxShadow: boolean;
+    style?: string;
   } = $props();
 
   let fullWidthImage = $state<boolean>(false);
@@ -23,18 +18,34 @@
 
   // Watch for changes in image props
   $effect(() => {
-    if (image) {
-      if (image_type === 'url') {
-        imageSrc = image;
-        isLoading = true; // Ensure loader shows until image loads
-      } else {
-        imageSrc = `data:image/png;base64,${image}`;
-        isLoading = false; // Base64 images load instantly
-      }
-    } else {
-      imageSrc = ''; // Reset image source when null
+    let cancelled = false;
+
+    if (!image) {
+      imageSrc = blankImage; // reset the source if null
       isLoading = true;
+      return () => {
+        cancelled = true;
+      };
     }
+
+    if (image_type === 'url') {
+      // Validate remote URLs before binding them to the <img>
+      imageSrc = image;
+      isLoading = false;
+      (async () => {
+        const safeSrc = await resolveRenderableImage(image);
+        if (!cancelled) {
+          if (safeSrc !== image) imageSrc = safeSrc;
+        }
+      })();
+    } else {
+      imageSrc = `data:image/png;base64,${image}`;
+      isLoading = false; // Base64 images load instantly
+    }
+
+    return () => {
+      cancelled = true;
+    };
   });
 
   function handleImageLoad() {
@@ -43,27 +54,27 @@
 
   function handleImageError() {
     console.error('Image failed to load:', imageSrc);
-    isLoading = true; // Keep the loader if the image fails
+    imageSrc = blankImage;
+    isLoading = false;
   }
 </script>
 
 <button
   id="step-image"
-  class="void-btn transparent-container"
-  onclick={() => (fullWidthImage = !fullWidthImage)}
+  class="void-btn container loading-animation"
+  class:loading={isLoading}
   class:slim={!fullWidthImage}
-  style:box-shadow={boxShadow ? '' : 'none'}
-  style:max-width="{imageWidth}px"
-  style={width < 768 ? '' : `height: ${imageHeight}px`}
-  style:zoom
+  onclick={() => (fullWidthImage = !fullWidthImage)}
+  {style}
 >
   {#if isLoading}
-    <span class="pulse-animation">
+    <span>
       <img src="/icons/loading.png" alt="Loading..." />
       <p>Click to change image size</p>
     </span>
   {:else}
     <img
+      style:visibility={isLoading ? 'hidden' : 'visible'}
       src={imageSrc}
       alt=""
       onload={handleImageLoad}
@@ -75,25 +86,45 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .transparent-container {
-    padding: 0 !important;
+  button.container {
+    width: 100%;
+    padding: 0;
+    animation: none;
+    background-color: unset;
+
+    &.loading {
+      animation: shimmer 2s ease infinite;
+    }
 
     span {
       position: relative;
       width: 100%;
       height: 100%;
 
+      img {
+        opacity: 0.25;
+        transform: scale(0.75);
+        filter: grayscale(100%);
+      }
+
       p {
         position: absolute;
         width: 100%;
         bottom: 1rem;
+        opacity: 0.25;
+        color: var(--theme-font);
       }
     }
 
     img {
-      max-height: inherit;
+      max-height: 100%;
       height: 100%;
       border-radius: inherit;
+
+      @include respond-up(small-desktop) {
+        max-height: 400px;
+        aspect-ratio: 16 / 9;
+      }
     }
 
     &.slim {
@@ -109,15 +140,6 @@
 
       &.slim {
         height: auto;
-      }
-    }
-
-    @include respond-up(small-desktop) {
-      width: 100%;
-      height: unset;
-
-      img {
-        height: inherit;
       }
     }
   }

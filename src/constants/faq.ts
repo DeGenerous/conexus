@@ -1,3 +1,6 @@
+import { NAV_ROUTES } from './routes';
+
+// FAQ content rendered on the /learn onboarding pages
 const frequentlyAskedQuestions: {
   question: string;
   answer: string;
@@ -6,7 +9,7 @@ const frequentlyAskedQuestions: {
     question: 'How do I start?',
     answer: `
       <p>
-        You can start by visiting <a href="conexus.degenerousdao.com">conexus.degenerousdao.com</a> and choosing one of three sign-in options:
+        You can start by visiting <a href=${NAV_ROUTES.CONEXUS}>conexus.ink</a> and choosing one of three sign-in options:
       </p>
       <ul class="default-ul" flex>
         <li>
@@ -19,7 +22,7 @@ const frequentlyAskedQuestions: {
           <b>Email Sign-Up</b> – Slightly more setup, but gives you the most control and access. Also requires a referral code.
         </li>
       </ul>
-      <p>👉 <b>Need a referral code?</b> Join our <a href="https://dgrslabs.ink/join">Discord</a> and check the <code>#ref-codes</code> channel to get one instantly.</p>
+      <p>👉 <b>Need a referral code?</b> Join our <a href=${NAV_ROUTES.DISCORD}>Discord</a> and check the <code>#ref-codes</code> channel to get one instantly.</p>
     `,
   },
   {
@@ -60,7 +63,7 @@ const frequentlyAskedQuestions: {
     question: 'What is DGRS LABS?',
     answer: `
       <p>
-        DGRS LABS is a collective building media technology for the next generation of creators. We're focused on reimagining storytelling as something <b>interactive, social, and creator-owned</b>, starting with our core platform: <b>CoNexus</b>.
+        <a href="${NAV_ROUTES.WEBSITE}" target="_blank">DGRS LABS</a> is a collective building media technology for the next generation of creators. We're focused on reimagining storytelling as something <b>interactive, social, and creator-owned</b>, starting with our core platform: <b>CoNexus</b>.
       </p>
     `,
   },
@@ -122,10 +125,10 @@ const frequentlyAskedQuestions: {
       <h5>🌀 v1.5</h5>
       <ul class="default-ul" flex>
         <li>
-          Story customization tools: pacing, tone, visuals, narration
+          DREAM creative studio, curation, and self-publishing tools
         </li>
         <li>
-          Easier remixing and personalization
+          Community sharing and discovery
         </li>
       </ul>
       <h5>🛠️ v2</h5>

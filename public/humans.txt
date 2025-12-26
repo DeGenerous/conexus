@@ -1,7 +1,7 @@
 /* TEAM */
 
 Your title: John-Franklin.
-Site: anusiemj@gmail.com, https://rhaqim.com.
+Site: https://rhaqim.com.
 GitHub: https://github.com/Rhaqim
                          
 Your title: Dimon

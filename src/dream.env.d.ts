@@ -23,43 +23,43 @@ type Tone = {
   hints?: string[];
 }[];
 
-interface PromptSettings {
-  imageStyle: string;
+type PromptSettings = {
+  image_style: string;
   language: string;
   interactivity: Min_Max;
   difficulty: Min_Max;
   length: Min_Max;
-  readingStyle: string;
-  kidsMode: Nullable<string>;
-}
+  reading_style: string;
+  kids_mode: string;
+};
 
-interface TablePrompt {
+type TablePrompt = {
   premise: string;
   environment: string;
   exposition: string;
-  firstAction: string;
-  mainCharacter: Character;
-  sideCharacters: Character[];
+  first_action: string;
+  main_character: Character;
+  side_characters: Character[];
   relationships: Relationship[];
-  winningScenarios: string[];
-  losingScenarios: string[];
-  keyEvents: string[];
+  winning_scenarios: string[];
+  losing_scenarios: string[];
+  key_events: string[];
   tense: string;
-  storyArcs: Min_Max;
-  writingStyle: string;
+  story_arcs: Min_Max;
+  writing_style: string;
   voice: string;
   pacing: Min_Max;
-  POV?: string;
+  pov?: string;
   tone: Tone;
-  additionalData: string;
-}
+  additional_data: string;
+};
 
-interface StoryData {
+type StoryData = {
   name: string;
   description: string;
-  imagePrompt: string;
-  category: Nullable<number>;
-}
+  image_prompt: string;
+  category_id: string;
+};
 
 type CreatePrompt = {
   topic: string;
@@ -69,53 +69,85 @@ type CreatePrompt = {
   prompt: string;
 };
 
-interface DraftPayload {
-  id: string; // uuid v4
-  title: string; // copy of storyData.name (or "Untitled")
-  created: number; // epoch ms
-  updated: number;
-  schema: const;
-  data: {
-    storyData: StoryData;
-    promptSettings: PromptSettings;
-    openPrompt: string;
-    tablePrompt: TablePrompt;
-  };
-}
-
-type DraftIndexEntry = Pick<DraftPayload, 'id' | 'title' | 'updated'>;
-
 type ImageType = 'url' | 'base64';
 
-type ClassGate = {
-  id: number;
+/* V2 */
+
+type DraftView = {
+  id: string; // uuid v4
+  title: string; // copy of storyData.name (or "Untitled")
+  created_at: Date; // epoch ms
+  updated_at: Date; // epoch ms
+};
+
+type DraftData = {
+  table_prompt: TablePrompt;
+  open_prompt: string;
+  story_data: StoryData;
+  prompt_settings: PromptSettings;
+};
+
+type DraftPayload = DraftData & {
+  id?: string; // uuid v4
+  created_at?: Date; // epoch ms
+  updated_at?: Date; // epoch ms
+  tenant_id?: string;
+  account_id?: string;
+  title: string; // copy of storyData.name (or "Untitled")
+};
+
+type TopicRequest = {
   name: string;
-  start_token_id: number;
-  end_token_id: number;
-  created_at: Date;
+  description: string;
+  category_id: string;
+  available: boolean;
+  visibility: string;
+  prompt: string;
+  image_prompt: string;
+  settings: PromptSettings;
 };
 
-type SupportedContracts =
-  | 'Potential'
-  | 'Ark'
-  | 'Moonsign'
-  | 'Apes'
-  | 'Anyone'
-  | 'All';
+type TopicVisibility = 'public' | 'private' | 'unlisted';
 
-type TopicNFTGate = {
-  topic_id: number;
-  contract_name: SupportedContracts;
-  class_id?: number;
-  token_ids?: number[];
-  amount?: number;
-  created_at?: Date;
+type TopicFull = {
+  id: string;
+  name: string;
+  description: string;
+  available: boolean;
+  visibility: TopicVisibility;
+  media_folder_id: string;
 };
 
-type ContractGate = {
-  name?: string;
-  link?: string;
+type TopicPrompt = {
+  id: string;
+  prompt: string;
+  image_prompt: string;
 };
 
-type TopicNFTGateWithContract = {} & TopicNFTGate & ContractGate;
-interface TopicNFTGateWithContract extends TopicNFTGate, ContractGate {}
+type TopicCategory = {
+  id: string;
+  name: string;
+  sort_order: number;
+};
+
+type TopicGenre = {
+  id: string;
+  name: string;
+};
+
+type TopicMediaFile = {
+  id: string;
+  file_id: string;
+  media_type: MediaType;
+};
+
+type TopicManager = {
+  topic: TopicFull;
+  topic_prompt: TopicPrompt;
+  topic_prompt_settings: PromptSettings;
+  categories: TopicCategory[];
+  gates: TopicGate[];
+  genres: TopicGenre[];
+  media_files: TopicMediaFile[];
+  creator: boolean;
+};

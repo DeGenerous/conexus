@@ -1,15 +1,19 @@
 <script lang="ts">
   import { tippy } from 'svelte-tippy';
 
+  import { NAV_ROUTES } from '@constants/routes';
   import { toastStore } from '@stores/toast.svelte';
+
   import CopySVG from '@components/icons/Copy.svelte';
 
   let {
     disabled = false,
     container = false,
+    style = '',
   }: {
     disabled?: boolean;
     container?: boolean;
+    style?: string;
   } = $props();
 
   let copySvgFocus = $state<Nullable<string | boolean>>(null);
@@ -31,24 +35,27 @@
         toastStore.show('Copied — now share it with the world!');
         break;
       case 'discord':
-        const shareUrlDiscord = `https://dgrslabs.ink/join`;
+        const shareUrlDiscord = NAV_ROUTES.DISCORD;
         await navigator.clipboard.writeText(window.location.href);
         window.open(shareUrlDiscord, '_blank');
         break;
       case 'twitter':
-        const shareUrlTwitter = `https://twitter.com/intent/tweet?text=${encodedMessage}&url=${encodedURI}`;
+        const shareUrlTwitter = NAV_ROUTES.TWITTER(encodedMessage, encodedURI);
         window.open(shareUrlTwitter, '_blank');
         break;
       case 'facebook':
-        const shareUrlFacebook = `https://www.facebook.com/sharer/sharer.php?u=${encodedURI}&quote=${encodedMessage}`;
+        const shareUrlFacebook = NAV_ROUTES.FACEBOOK(
+          encodedMessage,
+          encodedURI,
+        );
         window.open(shareUrlFacebook, '_blank');
         break;
     }
   };
 </script>
 
-<div class="share flex-row gap-8" class:container>
-  <p class="transparent-white-txt">
+<div class="share flex-row gap-8" class:container {style}>
+  <p>
     {#if container}
       Share This Story:
     {:else}
@@ -57,7 +64,7 @@
   </p>
 
   <span
-    class="flex-row pad-inline round-8 shad"
+    class="flex-row pad-inline round-8"
     class:loading-animation={disabled}
     class:transparent-glowing={!disabled}
   >
@@ -104,7 +111,7 @@
       aria-label="Copy link"
       {disabled}
     >
-      <CopySVG {copySvgFocus} data={false} />
+      <CopySVG />
     </button>
   </span>
 </div>
@@ -113,7 +120,10 @@
   @use '/src/styles/mixins' as *;
 
   .share {
+    @include white-txt(0.5);
+
     p {
+      color: inherit;
       @include font(caption);
     }
 
@@ -131,7 +141,7 @@
 
         &:hover:not(&:disabled),
         &:active:not(&:disabled),
-        &:focus:not(&:disabled) {
+        &:focus-visible:not(&:disabled) {
           @include scale(0.9);
           @include bright;
         }
@@ -145,15 +155,16 @@
     &.container {
       width: 95%;
       padding: 0.5rem 1rem;
+      animation: none;
+      background-color: unset;
+      color: var(--theme-accent);
 
       p {
-        @include white-txt;
         @include font(body);
       }
 
       span {
-        box-shadow: none;
-        background-color: transparent;
+        background-color: var(--theme-panel-dark);
         animation: none;
       }
 

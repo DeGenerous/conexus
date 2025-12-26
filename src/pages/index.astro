@@ -8,6 +8,7 @@ const meta = {
     Welcome to CoNexus - where stories evolve with every move you make.<br class="pc-only" />
     Step into a living multiverse that responds in real time. Become the main character.`,
   nav: 'Home',
+  arrow: '',
 };
 
 const footerText = [
@@ -18,14 +19,8 @@ const footerText = [
 ---
 
 <Layout {...meta}>
-  <main>
-    <Menu client:load />
-    <footer class="flex">
-      {
-        footerText.map((text: any) => (
-          <p class="mobile-text-wrapper pad-inline text-shad">{text}</p>
-        ))
-      }
-    </footer>
-  </main>
+  <Menu client:idle />
+  <footer class="mobile-text-wrapper">
+    {footerText.map((text: any) => <p>{text}</p>)}
+  </footer>
 </Layout>

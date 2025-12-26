@@ -1,17 +1,10 @@
 <script lang="ts">
-  let {
-    onclick = () => {},
-    active = false,
-  }: {
-    onclick: () => void;
-    active: boolean;
-  } = $props();
+  let { onclick = () => {} }: { onclick: () => void } = $props();
 </script>
 
 <button
   id="filled-eye"
   class="void-btn flex"
-  class:active
   {onclick}
   aria-label="Customization"
 >
@@ -40,19 +33,12 @@
 
   button {
     width: 2rem;
-    fill: $light-blue;
-    stroke: $light-blue;
-
-    &.active {
-      fill: $cyan !important;
-      stroke: $cyan !important;
-    }
+    fill: currentColor;
+    stroke: currentColor;
 
     &:hover,
     &:active,
-    &:focus {
-      fill: $cyan;
-      stroke: $cyan;
+    &:focus-visible {
       @include scale;
     }
   }

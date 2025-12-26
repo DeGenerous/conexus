@@ -55,17 +55,15 @@
   @use '/src/styles/mixins' as *;
 
   button {
-    fill: $light-blue;
-    stroke: $light-blue;
-    color: $light-blue;
+    fill: currentColor;
+    stroke: currentColor;
+    color: inherit;
     gap: 0.5rem;
+    width: 2rem;
 
     &:hover:not(&.muted),
     &:active:not(&.muted),
-    &:focus:not(&.muted) {
-      fill: $cyan;
-      stroke: $cyan;
-      color: $cyan;
+    &:focus-visible:not(&.muted) {
       @include scale;
     }
 
@@ -82,9 +80,7 @@
     }
 
     @include respond-up(tablet) {
-      fill: $white;
-      stroke: $white;
-      color: $white;
+      width: auto;
     }
   }
 </style>

@@ -39,7 +39,7 @@
 
     &:hover,
     &:active,
-    &:focus {
+    &:focus-visible {
       stroke: $cyan;
     }
 

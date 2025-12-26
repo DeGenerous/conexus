@@ -1,39 +1,33 @@
-<!-- LEGACY SVELTE 3/4 SYNTAX -->
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { tippy } from 'svelte-tippy';
+  import { onMount, onDestroy } from 'svelte';
 
   import { story, game } from '@stores/conexus.svelte';
-  import conexusBG from '@stores/background.svelte';
-  import {
-    GetCache,
-    SetCache,
-    GAME_INSTRUCTIONS_KEY,
-    FONT_KEY,
-    STYLING_KEY,
-    SCALE_KEY,
-  } from '@constants/cache';
+  import { conexusBG } from '@stores/conexus.svelte';
+  import { GetCache, SetCache, GAME_INSTRUCTIONS_KEY } from '@constants/cache';
   import detectIOS from '@utils/ios-device';
   import {
     defaultFont,
     defaultStyling,
-    defaultScale,
-    lightThemeFont,
-    lightThemeStyling,
+    paperThemeFont,
+    paperThemeStyling,
   } from '@constants/customization';
-  import openModal, {
-    showModal,
-    themeSettings,
+  import openModal, { showModal } from '@stores/modal.svelte';
+  import {
+    themeSettingsModal,
     customFont,
     customStyling,
-  } from '@stores/modal.svelte';
-  import { resetSettingsModal, gameRulesModal } from '@constants/modal';
+    getStoredCustomization,
+    persistActiveTheme,
+  } from '@stores/customization.svelte';
+  import { gameRulesModal } from '@constants/modal';
   import isColorLight from '@utils/brightness';
+  import { isGuest } from '@stores/account.svelte';
 
   import Slider from '@components/music/Slider.svelte';
   import ImageDisplay from '@components/utils/ImageDisplay.svelte';
   import Share from './utils/Share.svelte';
 
+  import StylingController from './utils/StylingController.svelte';
   import SelectorSVG from '@components/icons/Selector.svelte';
   import QuitSVG from '@components/icons/Quit.svelte';
   import StepSVG from '@components/icons/Step.svelte';
@@ -41,32 +35,68 @@
   import SoundSVG from '@components/icons/Sound.svelte';
   import FullscreenSVG from '@components/icons/Fullscreen.svelte';
   import FilledEyeSVG from '@components/icons/FilledEye.svelte';
-  import ZoomInSVG from '@components/icons/ZoomIn.svelte';
   import ResetSVG from '@components/icons/Reset.svelte';
+  import LoadingSVG from '@components/icons/Loading.svelte';
 
-  export let story_name: string;
-  export let restartGame: () => void;
+  let {
+    topic_name,
+    restartGame,
+    quitGame = () => window.location.reload(),
+  }: {
+    topic_name: string;
+    restartGame: () => void;
+    quitGame?: () => void;
+  } = $props();
 
-  let width: number;
-  let height: number;
+  let width = $state<number>(0);
+  let height = $state<number>(0);
 
-  let zoom: number = 1;
+  let showCustomization = $state<boolean>(false);
 
-  let showCustomization: boolean = false;
+  const step = $derived<StepData>($story?.step_data as StepData);
 
-  $: step = $story?.step_data as StepData;
+  const exitGame = () => {
+    $story = null;
+    game.background_image = null;
+    game.background_music = null;
+  };
+
+  // Construct a derived style string for the root element
+  const themeStyles = $derived.by(() => {
+    if (!$customFont || !$customStyling) return '';
+
+    const { baseColor, accentColor, family } = $customFont;
+    const { bgColor, bgPictureOpacity } = $customStyling;
+
+    return [
+      `--theme-text: ${baseColor}`,
+      `--theme-accent: ${accentColor}`,
+      `--theme-bg: ${bgColor}`,
+      `--theme-font: ${family}`,
+      `--theme-panel-bg: color-mix(in srgb, var(--theme-accent), transparent 85%)`,
+      `--theme-panel-border: color-mix(in srgb, var(--theme-accent), transparent 60%)`,
+      `--theme-hover-bg: color-mix(in srgb, var(--theme-accent), transparent 70%)`,
+      `--theme-panel-muted: color-mix(in srgb, var(--theme-bg), transparent 60%)`,
+      `--theme-hover-muted: color-mix(in srgb, var(--theme-bg), transparent 50%)`,
+      `--theme-panel-deep: color-mix(in srgb, var(--theme-bg), var(--theme-accent) 15%)`,
+      `--theme-panel-dark: color-mix(in srgb, var(--theme-bg), black 15%)`,
+    ].join(';');
+  });
 
   // CONTROL BAR
 
-  let hiddenControls: boolean = false;
-  let activeControlPanel: Nullable<StepController> = null;
-  $: if (hiddenControls) activeControlPanel = null; // reset active control panel too
+  let hiddenControls = $state<boolean>(false);
+  let activeControlPanel = $state<Nullable<StepController>>(null);
+
+  $effect(() => {
+    if (hiddenControls) activeControlPanel = null;
+  });
 
   const DESKTOP_BREAKPOINT = 1024;
-  $: isDesktop = width >= DESKTOP_BREAKPOINT;
+  const isDesktop = $derived<boolean>(width >= DESKTOP_BREAKPOINT);
 
   const switchController = (controller: StepController) => {
-    if (activeControlPanel == controller) {
+    if (activeControlPanel === controller) {
       activeControlPanel = null;
       return;
     }
@@ -77,9 +107,8 @@
     () => {},
   );
 
-  // Hide control bar for PC
   const hideControlsAfterDelay = () => {
-    if (!isDesktop) return; // min width for PC
+    if (!isDesktop) return;
     clearTimeout(hiddenControlsTimeout);
     hiddenControlsTimeout = setTimeout(() => {
       hiddenControls = true;
@@ -96,105 +125,73 @@
     clearTimeout(hiddenControlsTimeout);
   };
 
-  // Hide control bar for Mobiles
-  function handleWrapperPointer(e: PointerEvent) {
-    // Ignore taps that start on the control bar or any panel
+  const handleWrapperPointer = (event: PointerEvent) => {
+    const target = event.target as HTMLElement;
     if (
-      (e.target as HTMLElement).closest(
-        'nav, section.step-controller, section.sound-controller,' +
-          'section.styling-controller, section.scale-controller',
+      target.closest(
+        'nav, section.step-controller, section.sound-controller, section.styling-controller',
       )
     ) {
       return;
     }
 
-    if ((e.target as HTMLElement).tagName === 'BUTTON') return;
+    if (target.tagName === 'BUTTON') return;
 
-    // Close panel if one is open
     if (activeControlPanel) {
       activeControlPanel = null;
       return;
     }
 
-    if (isDesktop) return; // desktop keeps old logic
+    if (isDesktop) return;
 
-    // Toggle the bar itself
     hiddenControls = !hiddenControls;
-  }
-
-  // ZOOM
-
-  const toggleZoom = () => {
-    if (zoom === 1) zoom = 0.5;
-    else zoom = 1;
   };
 
-  // FONT FOR ALL ELEMENTS INSIDE step-wrapper
+  const selectorSize = $derived.by<number>(() => {
+    if (!$customFont) return 1.5;
+    switch ($customFont.accentSize) {
+      case 'h4':
+        return 1.75;
+      case 'h5':
+        return 1.5;
+      case 'body':
+        return 1.25;
+      case 'small':
+        return 1;
+      default:
+        return 0.75;
+    }
+  });
 
-  const updateFont = (reset: Nullable<'reset'> = null) => {
-    if (reset) $customFont = defaultFont;
-    SetCache(FONT_KEY, $customFont);
-  };
+  $effect(() => {
+    conexusBG.opacity = $customStyling ? $customStyling.bgPictureOpacity : 50;
+  });
 
-  // update FONT in localStorage after every change
-  $: $customFont && updateFont();
-
-  // calculate option selector size based on font size
-  let selectorSize: number = 1.5; // rem
-  $: if ($customFont)
-    selectorSize =
-      $customFont.accentSize === 'h4'
-        ? 1.75
-        : $customFont.accentSize === 'h5'
-          ? 1.5
-          : $customFont.accentSize === 'body'
-            ? 1.25
-            : $customFont.accentSize === 'small'
-              ? 1
-              : 0.75;
-
-  // STYLING CUSTOMIZATION
-
-  const updateStyling = (reset: Nullable<'reset'> = null) => {
-    if (reset) $customStyling = defaultStyling;
-    SetCache(STYLING_KEY, $customStyling);
-  };
-
-  // update STYLING in localStorage after every change
-  $: $customStyling && updateStyling();
-
-  // reactive updatement of BG storages
-  $: conexusBG.opacity = $customStyling ? $customStyling.bgPictureOpacity : 50;
-  $: conexusBG.color = $customStyling ? $customStyling.bgColor : '#000000';
-
-  // SCALE CUSTOMIZATION
-
-  let customScale: CustomScale = null;
-
-  const updateScale = (reset: Nullable<'reset'> = null) => {
-    if (reset) customScale = defaultScale;
-    SetCache(SCALE_KEY, customScale);
-  };
-
-  // update SCALE in localStorage after every change
-  $: customScale && updateScale();
-
-  // THEME SETTINGS
+  $effect(() => {
+    conexusBG.color = $customStyling ? $customStyling.bgColor : '#000000';
+  });
 
   const openThemeSettings = () => {
     $showModal = true;
-    $themeSettings = true;
+    $themeSettingsModal = true;
   };
 
-  // KEYBOARD CONTROLS
+  const applyQuickTheme = async (
+    font: CustomFont,
+    styling: CustomStyling,
+    name: string,
+  ) => {
+    $customFont = structuredClone(font);
+    $customStyling = structuredClone(styling);
+    await persistActiveTheme(name);
+  };
 
-  let activeOptionNumber: number = 0;
-  let focusedOption: Nullable<number> = null;
+  let activeOptionNumber = $state<number>(0);
+  let focusedOption = $state<Nullable<number>>(null);
 
   const blurActiveBtn = () => {
-    if (document.activeElement!.tagName == 'BUTTON') {
-      const activeOption = document.activeElement as HTMLButtonElement;
-      activeOption.blur();
+    if (document.activeElement?.tagName === 'BUTTON') {
+      (document.activeElement as HTMLButtonElement).blur();
     }
   };
 
@@ -205,14 +202,9 @@
         game.fullscreen = !game.fullscreen;
         break;
       }
-      case 'z': {
-        toggleZoom();
-        break;
-      }
       case 'ArrowLeft': {
         if (step.step !== 1) {
-          // load PREV step and blur focused button if it is
-          $story?.loadGameStep(step.step - 1);
+          $story?.loadStep(step.step - 1);
           blurActiveBtn();
           activeOptionNumber = 0;
         } else return;
@@ -220,8 +212,7 @@
       }
       case 'ArrowRight': {
         if (step.step !== $story?.maxStep) {
-          // load NEXT step and blur focused button if it is
-          $story?.loadGameStep(step.step + 1);
+          $story?.loadStep(step.step + 1);
           blurActiveBtn();
           activeOptionNumber = 0;
         } else return;
@@ -229,88 +220,34 @@
       }
       case 'ArrowUp': {
         if (step.step !== $story?.maxStep || game.loading) return;
-        event.preventDefault(); // prevent scroll
-        // get PREV (TOP) option ID if step is not last
-        if ($story?.step_data?.end) activeOptionNumber = 0;
+        event.preventDefault();
+        if ($story?.step_data?.ended) activeOptionNumber = 0;
         else if (activeOptionNumber !== 0) activeOptionNumber--;
-        const activeOption = document.getElementById(
-          `option-${activeOptionNumber}`,
-        );
-        activeOption?.focus();
+        document.getElementById(`option-${activeOptionNumber}`)?.focus();
         break;
       }
       case 'ArrowDown': {
         if (step.step !== $story?.maxStep || game.loading) return;
-        event.preventDefault(); // prevent scroll
-        // get NEXT (BOTTOM) option ID if step is not last
-        if ($story?.step_data?.end) activeOptionNumber = 0;
+        event.preventDefault();
+        if ($story?.step_data?.ended) activeOptionNumber = 0;
         else if (activeOptionNumber !== step.options.length - 1)
           activeOptionNumber++;
-        const activeOption = document.getElementById(
-          `option-${activeOptionNumber}`,
-        );
-        activeOption?.focus();
+        document.getElementById(`option-${activeOptionNumber}`)?.focus();
         break;
       }
     }
   };
 
-  // SCROLL ANIMATION ON IMAGE LOAD
-
-  let pictureKeyframe: KeyframeEffect;
-  let pictureAnimation: Animation;
-
-  $: if (step.image && step.image_type !== 'url') {
-    pictureAnimation.play();
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  }
-
   onMount(() => {
-    const stepImage = document.getElementById('step-image') as HTMLImageElement;
-    pictureKeyframe = new KeyframeEffect(
-      stepImage,
-      [
-        { transform: 'scale(1)' },
-        { transform: 'scale(0.975)' },
-        { transform: 'scale(1.025)' },
-        { transform: 'scale(1)' },
-      ],
-      {
-        duration: 600,
-        easing: 'ease-in-out',
-      },
-    );
-    pictureAnimation = new Animation(pictureKeyframe, document.timeline);
+    getStoredCustomization();
 
-    // GET CUSTOMIZATION FROM THE localStorage
-
-    const storedFont = GetCache<CustomFont>(FONT_KEY);
-    if (storedFont) $customFont = storedFont;
-    else updateFont('reset');
-
-    const storedStyling = GetCache<CustomStyling>(STYLING_KEY);
-    if (storedStyling) $customStyling = storedStyling;
-    else updateStyling('reset');
-
-    const storedScale = GetCache<CustomScale>(SCALE_KEY);
-    if (storedScale) customScale = storedScale;
-    else updateScale('reset');
-
-    // SHOW HOW TO PLAY INSTRUCTIONS
-
-    // min width for PC
     if (isDesktop) {
       const dontShowInstructions = GetCache(GAME_INSTRUCTIONS_KEY);
-      // Show instructions if no stored value
       if (!dontShowInstructions) {
         setTimeout(
           () =>
             openModal(gameRulesModal, "Don't show again", () => {
               SetCache(GAME_INSTRUCTIONS_KEY, 'dont_show');
-              // Hide control panel after 3s delay
               hideControlsAfterDelay();
             }),
           600,
@@ -319,11 +256,24 @@
         hideControlsAfterDelay();
       }
     }
+
+    const handleBeforeUnload = () => exitGame();
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
   });
+
+  onDestroy(exitGame);
+
+  const stopPropagation = (event: Event) => {
+    event.stopPropagation();
+  };
 </script>
 
 <svelte:window
-  on:keydown={handleKeyDown}
+  onkeydown={handleKeyDown}
   bind:innerWidth={width}
   bind:innerHeight={height}
 />
@@ -332,207 +282,148 @@
 a11y_click_events_have_key_events
 a11y_no_static_element_interactions
 a11y_no_noninteractive_element_interactions -->
-{#if $customFont && $customStyling && customScale}
+{#if $customFont && $customStyling}
   <section
     class="step-wrapper flex {$customFont.baseSize}-font"
-    class:text-shad={$customFont.shadow}
-    style:font-family={$customFont.family}
-    style:font-weight={$customFont.bold ? 'bold' : 'normal'}
-    style:font-style={$customFont.italic ? 'italic' : ''}
-    style:color={$customFont.baseColor}
-    on:pointerdown={handleWrapperPointer}
+    style={themeStyles}
+    onpointerdown={handleWrapperPointer}
   >
-    <ImageDisplay
-      {width}
-      {zoom}
-      image={step.image}
-      image_type={step.image_type}
-      imageWidth={customScale.imageWidth}
-      imageHeight={customScale.imageHeight}
-      boxShadow={$customStyling.boxShadow}
-    />
-
-    {#if step.title}
-      <h4
-        class="{$customFont.accentSize}-font"
-        class:text-shad={$customFont.shadow}
-        style:font-style={$customFont.italic ? 'italic' : ''}
-        style:color={$customFont.accentColor}
-        style:zoom
-      >
-        {step.title}
-      </h4>
-    {/if}
-
-    <article
-      style:max-width={width >= DESKTOP_BREAKPOINT
-        ? `${customScale.paragraphWidth}%`
-        : ''}
-      style:width="{100 * zoom}%"
-      style:zoom
-    >
-      {step.story}
-    </article>
-
-    {#if $story?.step_data?.end}
-      <hr />
-
-      <h4
-        class="{$customFont.accentSize}-font"
-        class:text-shad={$customFont.shadow}
-        style:font-style={$customFont.italic ? 'italic' : ''}
-        style:color={$customFont.accentColor}
-        style:zoom
-      >
-        {story_name.trim()} Story Summary
+    <div class="step-content transparent-container">
+      <h4 class="flex-row gap-16 {$customFont.accentSize}-font">
+        {#if game.loading}
+          <LoadingSVG
+            primary={$customFont.accentColor}
+            secondary={$customFont.baseColor}
+          />
+          Loading story data...
+        {:else}
+          Step {step.step}{#if step.title}: "{step.title}"{/if}
+        {/if}
       </h4>
 
-      <article
-        style:max-width={width >= DESKTOP_BREAKPOINT
-          ? `${customScale.paragraphWidth}%`
-          : ''}
-        style:zoom
-      >
-        {step.summary}
-      </article>
+      <span class="description flex">
+        {#if !$isGuest && (step.task_id !== '' && step.task_id !== 'generate')}
+          <ImageDisplay
+            image={step.image}
+            image_type={step.image_type}
+            style={themeStyles}
+          />
+        {/if}
 
-      <h4
-        class="{$customFont.accentSize}-font"
-        class:text-shad={$customFont.shadow}
-        style:font-style={$customFont.italic ? 'italic' : ''}
-        style:color={$customFont.accentColor}
-        style:zoom
-      >
-        CoNexus identified your trait as:
-        <strong class="text-glowing">{step.trait}</strong>
-      </h4>
-
-      {#if step.trait_description}
         <article
-          style:max-width={width >= DESKTOP_BREAKPOINT
-            ? `${customScale.paragraphWidth}%`
-            : ''}
-          style:zoom
+          class="vert-scrollbar"
+          class:text-only={$isGuest || step.task_id === '' || step.task_id === 'generate'}
         >
-          {step.trait_description}
+          {step.story}
         </article>
-      {/if}
+      </span>
 
+      {#if $story?.step_data?.ended}
+        <hr />
+
+        <h4 class="{$customFont.accentSize}-font">
+          {topic_name.trim()} Story Summary
+        </h4>
+
+        <article>
+          {step.summary}
+        </article>
+
+        <h4 class="{$customFont.accentSize}-font">
+          CoNexus identified your trait as:
+          <strong>{step.trait}</strong>
+        </h4>
+
+        {#if step.trait_description}
+          <article>
+            {step.trait_description}
+          </article>
+        {/if}
+
+        <Share container={true} style={themeStyles} />
+      {/if}
+    </div>
+
+    {#if $story?.step_data?.ended}
       <div
-        class="options {$customFont.accentSize}-font"
-        class:text-shad={$customFont.shadow}
-        class:transparent-container={$customStyling.optionsContainer}
-        style:font-style={$customFont.italic ? 'italic' : ''}
-        style:color={$customFont.accentColor}
-        style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
-        style:max-width={width >= DESKTOP_BREAKPOINT
-          ? `${customScale.optionsWidth}%`
-          : ''}
-        style:width="{width >= DESKTOP_BREAKPOINT ? 100 * zoom : 95}%"
-        style:zoom
+        class="step-options transparent-container {$customFont.accentSize}-font"
       >
-        <button
-          id="option-0"
-          class="void-btn menu-option"
-          on:click={restartGame}>Start a new story</button
-        >
         <button
           id="option-1"
-          class="void-btn menu-option"
-          on:click={() => (window.location.href = '/')}
-          >Return to main menu</button
+          class="void-btn"
+          onclick={() => (window.location.href = '/')}
         >
+          Return to main menu
+        </button>
+        <button id="option-0" class="void-btn" onclick={restartGame}>
+          Start a new story
+        </button>
       </div>
-      <Share container={true} />
     {:else}
       <div
-        class="flex options wide-container {$customFont.accentSize}-font"
-        class:text-shad={$customFont.shadow}
-        class:transparent-container={$customStyling.optionsContainer}
-        style:color={$customFont.accentColor}
-        style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
-        style:max-width={width >= DESKTOP_BREAKPOINT
-          ? `${customScale.optionsWidth}%`
-          : ''}
-        style:width="{width >= DESKTOP_BREAKPOINT ? 100 * zoom : 95}%"
-        style:zoom
+        class="step-options transparent-container {$customFont.accentSize}-font"
       >
         {#each step.options as option, i}
           <button
             id="option-{i}"
             class="void-btn flex-row gap-8"
             class:active-option={step.choice && step.choice - 1 === i}
-            style:font-family={$customFont.family}
             disabled={game.loading || step.step !== $story?.maxStep}
-            on:click={() => {
+            onclick={() => {
               $story?.nextStep(i + 1);
               if (activeOptionNumber !== 0) activeOptionNumber = 0;
             }}
-            on:pointerover={() => {
+            onpointerover={() => {
               if (!game.loading && step.step == $story?.maxStep) {
                 focusedOption = i;
               }
               blurActiveBtn();
             }}
-            on:pointerout={() => {
+            onpointerout={() => {
               if (!game.loading && step.step == $story?.maxStep) {
                 focusedOption = null;
               }
             }}
-            on:focus={() => (focusedOption = i)}
-            on:blur={() => (focusedOption = null)}
+            onfocus={() => (focusedOption = i)}
+            onblur={() => (focusedOption = null)}
           >
-            {#if $customStyling.optionSelector}
-              <SelectorSVG
-                focused={(step.choice && step.choice - 1 === i) ||
-                  focusedOption === i}
-                disabled={game.loading || step.step !== $story?.maxStep}
-                hideForMobiles={true}
-                color={$customFont.accentColor}
-                {selectorSize}
-              />
-            {/if}
             {option}
+            <SelectorSVG
+              focused={(step.choice && step.choice - 1 === i) ||
+                focusedOption === i}
+              disabled={game.loading || step.step !== $story?.maxStep}
+              hideForMobiles={true}
+              color={$customFont.accentColor}
+              {selectorSize}
+            />
           </button>
         {/each}
       </div>
     {/if}
 
     <!-- CONTROL PANEL -->
+    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
     <nav
       class="flex-row blur transition shad-behind pad-8"
       class:hidden={hiddenControls}
-      on:pointerenter={cancelHide}
-      on:pointerleave={hideControlsAfterDelay}
-      on:click|stopPropagation
+      onpointerenter={cancelHide}
+      onpointerleave={hideControlsAfterDelay}
+      onclick={stopPropagation}
+      tabindex="-1"
     >
       <span class="flex-row">
-        <QuitSVG onclick={() => window.location.reload()} voidBtn={true} />
-        <h5 class="title">{story_name.trim()}</h5>
+        <QuitSVG onclick={quitGame} voidBtn={true} />
+        <h5 class="title">{topic_name.trim()}</h5>
       </span>
       <div class="controls flex-row">
-        <div class="scale-icon">
-          <label class="pc-only" for="zoom-in-control">Scale</label>
-          <ZoomInSVG
-            onclick={() => switchController('scale')}
-            active={activeControlPanel == 'scale'}
-            control={true}
-          />
-        </div>
         <div class:pad-inline={detectIOS()}>
           <label class:pc-only={!detectIOS()} for="filled-eye"> Styling </label>
-          <FilledEyeSVG
-            onclick={() => switchController('styling')}
-            active={activeControlPanel == 'styling'}
-          />
+          <FilledEyeSVG onclick={() => switchController('styling')} />
         </div>
         {#if !detectIOS()}
           <div>
             <label class="pc-only" for="sound">Sound</label>
-            <SoundSVG
-              onclick={() => switchController('sound')}
-              active={activeControlPanel == 'sound'}
-            />
+            <SoundSVG onclick={() => switchController('sound')} />
           </div>
         {/if}
         <div class:pad-inline={detectIOS()}>
@@ -540,8 +431,8 @@ a11y_no_noninteractive_element_interactions -->
           <StepSVG
             text={`${step.step < 10 ? '0' : ''}${step.step}`}
             onclick={() => switchController('step')}
-            active={activeControlPanel == 'step'}
             control={true}
+            accentColor={$customStyling.bgColor}
           />
         </div>
       </div>
@@ -552,25 +443,27 @@ a11y_no_noninteractive_element_interactions -->
 
     <div
       id="controls-placeholder"
-      on:pointerenter={showControls}
-      on:pointerleave={hideControlsAfterDelay}
+      onpointerenter={showControls}
+      onpointerleave={hideControlsAfterDelay}
     ></div>
 
     <!-- STEP CONTROLLER -->
     <section
       class="step-controller"
       class:visible={activeControlPanel == 'step'}
-      on:pointerenter={cancelHide}
-      on:pointerleave={hideControlsAfterDelay}
-      on:click|stopPropagation
+      onpointerenter={cancelHide}
+      onpointerleave={hideControlsAfterDelay}
+      onclick={stopPropagation}
+      role="toolbar"
+      tabindex="-1"
     >
       <div class="transparent-container flex-row">
         <SwitchSVG
-          onclick={() => $story?.loadGameStep(step.step - 1)}
+          onclick={() => $story?.loadStep(step.step - 1)}
           disabled={step.step === 1}
         />
         <span class="flex gap-8">
-          <h5 class="title">{story_name.trim()}</h5>
+          <h5>{topic_name.trim()}</h5>
           <hr />
           <h5>
             {#if step.title}
@@ -581,7 +474,7 @@ a11y_no_noninteractive_element_interactions -->
           </h5>
         </span>
         <SwitchSVG
-          onclick={() => $story?.loadGameStep(step.step + 1)}
+          onclick={() => $story?.loadStep(step.step + 1)}
           disabled={step.step === $story?.maxStep}
           right={true}
         />
@@ -590,8 +483,9 @@ a11y_no_noninteractive_element_interactions -->
         {#each Array($story!.maxStep) as _, index}
           <StepSVG
             text={String(index + 1)}
-            onclick={() => $story?.loadGameStep(index + 1)}
+            onclick={() => $story?.loadStep(index + 1)}
             active={step.step == index + 1}
+            accentColor={$customStyling.bgColor}
           />
         {/each}
       </ul>
@@ -601,299 +495,58 @@ a11y_no_noninteractive_element_interactions -->
     <section
       class="sound-controller"
       class:visible={activeControlPanel == 'sound'}
-      on:pointerenter={cancelHide}
-      on:pointerleave={hideControlsAfterDelay}
-      on:click|stopPropagation
+      onpointerenter={cancelHide}
+      onpointerleave={hideControlsAfterDelay}
+      onclick={stopPropagation}
+      role="toolbar"
+      tabindex="-1"
     >
-      <Slider type="music" />
-      <Slider type="voice" />
+      <Slider type="music" style={themeStyles} />
+      {#if !$isGuest && (step.task_id !== '' && step.task_id !== 'generate')}
+        <Slider type="voice" style={themeStyles} />
+      {/if}
     </section>
 
     <!-- STYLING CONTROLLER -->
     <section
       class="styling-controller"
       class:visible={activeControlPanel == 'styling'}
-      on:pointerenter={cancelHide}
-      on:pointerleave={hideControlsAfterDelay}
-      on:click|stopPropagation
+      onpointerenter={cancelHide}
+      onpointerleave={hideControlsAfterDelay}
+      onclick={stopPropagation}
+      role="toolbar"
+      tabindex="-1"
     >
       <span class="custom-themes flex">
         {#if isColorLight($customStyling.bgColor)}
           <ResetSVG
-            onclick={() => {
-              $customFont = defaultFont;
-              $customStyling = defaultStyling;
-            }}
-            text="Apply DARK Theme"
+            onclick={() =>
+              applyQuickTheme(defaultFont, defaultStyling, 'VOID (default)')}
+            text="Apply VOID Theme"
           />
         {:else}
           <ResetSVG
-            onclick={() => {
-              $customFont = lightThemeFont;
-              $customStyling = lightThemeStyling;
-            }}
-            text="Apply LIGHT Theme"
+            onclick={() =>
+              applyQuickTheme(paperThemeFont, paperThemeStyling, 'PAPER')}
+            text="Apply PAPER Theme"
           />
         {/if}
 
-        <button class="purple-btn" on:click={openThemeSettings}>
+        <button class="purple-btn" onclick={openThemeSettings}>
           Manage Themes 🧩
         </button>
 
         <button
           class:active-btn={showCustomization}
-          on:click={() => (showCustomization = !showCustomization)}
+          onclick={() => (showCustomization = !showCustomization)}
         >
           Customize look 🎨
         </button>
       </span>
 
       {#if showCustomization}
-        <div class="fade-in transparent-container flex-row">
-          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-            <label for="text-color">Main color</label>
-            <input
-              id="text-color"
-              type="color"
-              bind:value={$customFont.baseColor}
-            />
-          </span>
-
-          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-            <label for="title-color">Highlight color</label>
-            <input
-              id="title-color"
-              type="color"
-              bind:value={$customFont.accentColor}
-            />
-          </span>
-
-          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-            <label for="bg-color">Background color</label>
-            <input
-              id="bg-color"
-              type="color"
-              bind:value={$customStyling.bgColor}
-            />
-          </span>
-        </div>
-
-        <div class="font-family fade-in transparent-container flex-row">
-          <span class="flex-row">
-            <label for="custom-font">Font</label>
-            <select id="custom-font" bind:value={$customFont.family}>
-              <option value="PT Serif Caption">Default (serif)</option>
-              <option value="Merriweather">Merriweather</option>
-              <option value="Lora">Lora</option>
-              <option value="Roboto">Roboto</option>
-              <option value="Verdana">Verdana</option>
-              <option value="Monospace">Monospace</option>
-              <option value="Courier Prime">Courier prime</option>
-              <option value="Comic Neue">Comic Neue</option>
-              <option value="Caveat">Caveat</option>
-            </select>
-          </span>
-
-          <span class="flex-row">
-            <label for="text-size">Main text size</label>
-            <select id="text-size" bind:value={$customFont.baseSize}>
-              <option value="caption">Minimal</option>
-              <option value="small">Compact</option>
-              <option value="body">Standard</option>
-              <option value="h5">Large</option>
-              <option value="h4">Maximal</option>
-            </select>
-          </span>
-
-          <span class="flex-row">
-            <label for="title-size">Highlight size</label>
-            <select id="title-size" bind:value={$customFont.accentSize}>
-              <option value="caption">Minimal</option>
-              <option value="small">Compact</option>
-              <option value="body">Standard</option>
-              <option value="h5">Large</option>
-              <option value="h4">Maximal</option>
-            </select>
-          </span>
-
-          <span class="flex-row gap-8">
-            {#if $customFont.family !== 'PT Serif Caption'}
-              <button
-                class:active-btn={$customFont.bold}
-                on:click={() => ($customFont!.bold = !$customFont!.bold)}
-              >
-                bold
-              </button>
-            {/if}
-
-            {#if $customFont.family !== 'Caveat'}
-              <button
-                class:active-btn={$customFont.italic}
-                on:click={() => ($customFont!.italic = !$customFont!.italic)}
-              >
-                italic
-              </button>
-            {/if}
-
-            <button
-              class:active-btn={$customFont.shadow}
-              on:click={() => ($customFont!.shadow = !$customFont!.shadow)}
-            >
-              shadow
-            </button>
-          </span>
-        </div>
-
-        <div class="fade-in transparent-container flex-row">
-          <label for="bg-opacity">Background image visibility</label>
-          <span
-            class="bg-image-slider flex-row pad-8 round-8 gap-8 dark-glowing"
-          >
-            <input
-              id="bg-opacity"
-              type="range"
-              min="0"
-              max="100"
-              step="5"
-              bind:value={$customStyling.bgPictureOpacity}
-            />
-            <p>{$customStyling.bgPictureOpacity}%</p>
-          </span>
-        </div>
-
-        <div class="fade-in transparent-container flex-row">
-          <label for="layout">Layout</label>
-          <button
-            class:active-btn={$customStyling.optionsContainer}
-            on:click={() =>
-              ($customStyling!.optionsContainer =
-                !$customStyling!.optionsContainer)}
-          >
-            options frame
-          </button>
-
-          <button
-            id="option-selector-btn"
-            class:active-btn={$customStyling.optionSelector}
-            on:click={() =>
-              ($customStyling!.optionSelector =
-                !$customStyling!.optionSelector)}
-          >
-            option selector
-          </button>
-
-          <button
-            class:active-btn={$customStyling.boxShadow}
-            on:click={() =>
-              ($customStyling!.boxShadow = !$customStyling!.boxShadow)}
-          >
-            box shadow
-          </button>
-        </div>
+        <StylingController style={themeStyles} />
       {/if}
-    </section>
-
-    <!-- SCALE CONTROLLER -->
-    <section
-      class="scale-controller"
-      class:visible={activeControlPanel == 'scale'}
-      on:pointerenter={cancelHide}
-      on:pointerleave={hideControlsAfterDelay}
-      on:click|stopPropagation
-    >
-      {#if zoom !== 1}
-        <p class="zoom-hint validation green-txt">
-          Zoomed-out mode active - perfect for screenshots 🖼️
-        </p>
-      {/if}
-      <div class="image-scale transparent-container">
-        <span class="flex-row">
-          <label for="image-width">Picture width</label>
-          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-            <input
-              id="image-width"
-              type="range"
-              min="800"
-              max={width}
-              step="16"
-              bind:value={customScale.imageWidth}
-            />
-            <p>{customScale.imageWidth}px</p>
-          </span>
-        </span>
-
-        <span class="flex-row">
-          <label for="image-height">Picture height</label>
-          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-            <input
-              id="image-height"
-              type="range"
-              min="512"
-              max={height}
-              step="16"
-              bind:value={customScale.imageHeight}
-            />
-            <p>{customScale.imageHeight}px</p>
-          </span>
-        </span>
-      </div>
-
-      <div class="text-scale transparent-container">
-        <span class="flex-row">
-          <label for="paragraph-width">Paragraph width</label>
-          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-            <input
-              id="paragraph-width"
-              type="range"
-              min="50"
-              max="100"
-              step="1"
-              bind:value={customScale.paragraphWidth}
-            />
-            <p>{customScale.paragraphWidth}%</p>
-          </span>
-        </span>
-
-        <span class="flex-row">
-          <label for="options-width">Options width</label>
-          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-            <input
-              id="options-width"
-              type="range"
-              min="50"
-              max="100"
-              step="1"
-              bind:value={customScale.optionsWidth}
-            />
-            <p>{customScale.optionsWidth}%</p>
-          </span>
-        </span>
-      </div>
-      <span class="flex-row flex-wrap">
-        <ResetSVG
-          text="Reset to default scale"
-          onclick={() =>
-            openModal(
-              resetSettingsModal(activeControlPanel),
-              'Reset scale',
-              () => updateScale('reset'),
-            )}
-        />
-        <button
-          class:green-btn={zoom !== 1}
-          use:tippy={{
-            content: "Press 'Z' to toggle zoom",
-            animation: 'scale',
-          }}
-          on:click={toggleZoom}
-        >
-          {#if zoom === 1}
-            Zoom out
-          {:else}
-            Reset zoom
-          {/if}
-        </button>
-      </span>
     </section>
   </section>
 {:else}
@@ -908,10 +561,11 @@ a11y_no_noninteractive_element_interactions -->
 
   // GENERAL STEP STYLING
   .step-wrapper {
-    margin-top: -2rem;
+    color: var(--theme-text);
+    font-family: var(--theme-font, inherit);
 
     @include respond-up(small-desktop) {
-      margin-bottom: 4rem;
+      margin-block: -4rem 4rem;
     }
 
     * {
@@ -919,60 +573,111 @@ a11y_no_noninteractive_element_interactions -->
       font-weight: inherit;
     }
 
-    h4 {
-      @include white-txt;
+    .transparent-container {
+      background-color: var(--theme-panel-bg);
+      animation: none;
+
+      @include respond-up(small-desktop) {
+        width: 960px;
+      }
+
+      @include respond-up(large-desktop) {
+        width: 1360px;
+      }
+
+      @include respond-up(full-hd) {
+        width: 1600px;
+      }
+
+      @include respond-up(quad-hd) {
+        width: 1920px;
+      }
     }
 
-    article {
-      width: 100%;
-      padding-inline: 1rem;
-      text-align: left;
-      white-space: pre-wrap;
-      color: inherit;
-      text-shadow: inherit;
+    h4,
+    h5 {
+      color: var(--theme-accent);
+      font-style: inherit;
+    }
+
+    .step-content {
+      padding: 1.5rem;
+
+      article {
+        width: 100%;
+        text-align: left;
+        white-space: pre-wrap;
+        color: inherit;
+        text-shadow: inherit;
+
+        &::-webkit-scrollbar-thumb {
+          background: var(--theme-panel-border);
+          border-radius: 4px;
+        }
+
+        &.text-only {
+          background-color: var(--theme-panel-muted);
+          padding: 1rem;
+          border-radius: 0.5rem;
+          @include gray-border;
+        }
+      }
+
+      @include respond-up(small-desktop) {
+        .description {
+          flex-direction: row;
+
+          article {
+            max-height: 400px;
+            overflow-y: scroll;
+            padding-right: 0.5rem;
+          }
+        }
+      }
+    }
+
+    .step-options {
+      align-items: stretch;
 
       @include respond-up(tablet) {
-        width: clamp(250px, 95%, 70rem);
-      }
-
-      @include respond-up(small-desktop) {
-        width: 100%;
-      }
-    }
-
-    .options {
-      align-items: flex-start;
-
-      @include respond-up(small-desktop) {
-        width: 100%;
+        flex-direction: row;
       }
 
       button {
         width: 100%;
-        justify-content: flex-start;
+        justify-content: space-between;
         text-align: left;
-        fill: $cyan;
-        stroke: $cyan;
-        color: $cyan;
+
+        color: var(--theme-accent);
+        fill: var(--theme-accent);
+        stroke: var(--theme-accent);
+        font-family: var(--theme-font);
 
         font-size: inherit;
         line-height: inherit;
-        color: inherit;
         font-style: inherit;
         text-shadow: inherit;
+
+        background-color: var(--theme-panel-muted);
+
+        padding: 1rem;
+        border-radius: 0.5rem;
+        @include gray-border;
 
         &:hover:not(&:disabled),
         &:active:not(&:disabled),
         &:focus:not(&:disabled) {
-          filter: hue-rotate(30deg) saturate(200%);
+          background-color: var(--theme-hover-muted);
+          border-color: var(--theme-panel-border);
+          filter: brightness(1.1);
         }
 
         &:disabled:not(&.active-option) {
-          opacity: 0.25;
+          opacity: 0.5;
         }
 
-        &.menu-option {
-          text-align: center;
+        &.active-option {
+          border-color: var(--theme-accent);
         }
       }
     }
@@ -986,10 +691,19 @@ a11y_no_noninteractive_element_interactions -->
       padding-inline: 1rem;
       z-index: 100;
       justify-content: space-between;
-      @include navy;
+      background-color: var(--theme-panel-deep);
+      color: var(--theme-text);
 
       @include respond-up(small-desktop) {
         padding: 1rem;
+      }
+
+      label {
+        color: inherit;
+
+        &::after {
+          content: ':';
+        }
       }
 
       span {
@@ -1020,7 +734,7 @@ a11y_no_noninteractive_element_interactions -->
           gap: 0.5rem;
           padding: 0.25rem;
           border-radius: 0.5rem;
-          @include dark-blue(0.5);
+          background-color: var(--theme-panel-bg);
           @include box-shadow(soft, inset);
 
           @include respond-up(tablet) {
@@ -1033,14 +747,6 @@ a11y_no_noninteractive_element_interactions -->
 
           &.pad-inline {
             padding-inline: 0.5rem;
-          }
-
-          &.scale-icon {
-            display: none;
-
-            @include respond-up(small-desktop) {
-              display: flex;
-            }
           }
         }
       }
@@ -1056,27 +762,6 @@ a11y_no_noninteractive_element_interactions -->
       width: 100vw;
       height: 4rem;
       z-index: 10;
-    }
-
-    label {
-      transition: color 0.3s ease-in-out;
-
-      &::after {
-        content: ':';
-      }
-
-      &:hover,
-      &:active {
-        @include white-txt;
-      }
-    }
-
-    select {
-      width: 12rem;
-
-      @include respond-up(tablet) {
-        width: 15rem;
-      }
     }
 
     // ADDITIONAL CONTROLLERS STYLING
@@ -1095,26 +780,22 @@ a11y_no_noninteractive_element_interactions -->
       padding: 0.5rem;
       gap: 0.5rem;
       transform: translateY(100%);
-      transition: all 0.6s ease-in-out;
-      background-color: $dark-gray;
-      @include white-txt(soft);
+      transition: all 0.6s ease;
+      background-color: var(--theme-panel-dark);
 
       @include respond-up(tablet) {
         max-height: 70vh;
-      }
-
-      #option-selector-btn {
-        display: none;
-
-        @include respond-up(tablet) {
-          display: flex;
-        }
       }
 
       div {
         width: 100%;
         flex-wrap: wrap;
         margin-inline: unset;
+
+        &.transparent-container {
+          animation: none;
+          background-color: var(--theme-panel-bg);
+        }
 
         @include respond-up(tablet) {
           width: auto;
@@ -1149,12 +830,8 @@ a11y_no_noninteractive_element_interactions -->
             flex-flow: row wrap;
             gap: 1rem;
 
-            .title {
-              @include white-txt(0.5);
-
-              &::after {
-                content: ':';
-              }
+            h5:first-of-type::after {
+              content: ':';
             }
           }
 
@@ -1164,17 +841,8 @@ a11y_no_noninteractive_element_interactions -->
         }
       }
 
-      // SCALE
-      .zoom-hint {
-        width: 100%;
-      }
-
       // STYLING
       &.styling-controller {
-        .font-family {
-          gap: 1rem 1.5rem;
-        }
-
         .custom-themes {
           width: 100%;
           flex-flow: column nowrap;
@@ -1183,26 +851,6 @@ a11y_no_noninteractive_element_interactions -->
           @include respond-up(tablet) {
             flex-flow: row wrap;
             padding-block: 0;
-          }
-        }
-
-        .bg-image-slider {
-          width: 100%;
-
-          input {
-            width: 85%;
-          }
-
-          p {
-            flex: none;
-          }
-
-          @include respond-up(tablet) {
-            width: auto;
-
-            input {
-              width: clamp(250px, 50vw, 20rem);
-            }
           }
         }
       }

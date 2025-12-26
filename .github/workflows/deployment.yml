@@ -1,30 +1,65 @@
 # This workflow will build a golang project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
 
-name: Go
+name: CoNexus CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main, staging, develop]
+  pull_request:
+    branches: [main, staging, develop]
 
 jobs:
-
-  build:
+  deploy:
     runs-on: ubuntu-latest
+    if: github.ref_name == 'main' || github.ref_name == 'staging' || github.ref_name == 'develop'
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        port: ${{ secrets.PORT }}
-        script: |
-            cd ~/git/frontend/conexus
-            pwd
-            git checkout main
-            git pull
-            cd scripts
-            ./pod.sh
+      - name: Set branch-specific environment
+        run: |
+          case "${GITHUB_REF_NAME}" in
+            main)
+              echo "DEPLOY_ENV=production" >> $GITHUB_ENV
+              ;;
+            staging)
+              echo "DEPLOY_ENV=staging" >> $GITHUB_ENV
+              ;;
+            develop)
+              echo "DEPLOY_ENV=development" >> $GITHUB_ENV
+              ;;
+          esac
+          echo "DEPLOY_BRANCH=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+
+      - name: Deploy with Docker Compose
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            set -e
+            
+            DEPLOY_ENV=${{ env.DEPLOY_ENV }}
+            DEPLOY_BRANCH=${{ env.DEPLOY_BRANCH }}
+
+            cd ~/apps/conexus/$DEPLOY_ENV
+
+            # Pull the latest changes
+            echo "📥 Pulling latest changes from $DEPLOY_BRANCH..."
+            git fetch origin
+            git checkout $DEPLOY_BRANCH
+            git pull origin $DEPLOY_BRANCH
+
+            # Build and deploy using Docker Compose
+            echo "🛠️ Building and deploying Docker containers..."
+            docker compose build
+            docker compose up -d
+
+            # Cleanup old images (optional)
+            echo "🧹 Cleaning up old Docker images..."
+            docker image prune -f || true
+
+            echo "🎉 Deployment completed successfully for $DEPLOY_ENV environment"

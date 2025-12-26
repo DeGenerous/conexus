@@ -1,4 +1,4 @@
-import { v4 as uuid } from 'uuid';
+import Topic from '@lib/topics';
 import {
   clearAllData,
   currentDraft,
@@ -10,100 +10,100 @@ import {
   GetCache,
   SetCache,
   ClearCache,
-  DRAFTS_INDEX_KEY,
-  DRAFT_KEY,
   CURRENT_DRAFT_KEY,
 } from '@constants/cache';
 
-const SCHEMA_VERSION = 1; // bump when shape changes
+let topic: Topic = new Topic();
 
-function readIndex(): DraftIndexEntry[] {
-  return GetCache(DRAFTS_INDEX_KEY) || [];
-}
-
-function writeIndex(list: DraftIndexEntry[]) {
-  SetCache(DRAFTS_INDEX_KEY, list);
-}
-
-const shortenID = (id: string) => id.split('-')[0];
+const shortenID = (id: string) => id?.split('-')[0];
 
 const Drafts = {
-  create(): string {
+  async create(): Promise<string | null> {
     clearAllData();
 
-    const id = uuid();
-    const when = Date.now();
+    const draftData = collectState();
+
     const draft: DraftPayload = {
-      id,
-      title: 'Untitled',
-      created: when,
-      updated: when,
-      schema: SCHEMA_VERSION,
-      data: collectState(),
+      title: draftData.story_data.name || 'Untitled',
+      ...draftData,
     };
 
-    SetCache(DRAFT_KEY(id), draft);
-    writeIndex([...readIndex(), { id, title: draft.title, updated: when }]);
+    const id = await topic.saveNewTopicDraft(draft);
+    if (!id) {
+      toastStore.show('Failed to create draft', 'error');
+      return null;
+    }
+    draft.id = id;
     SetCache(CURRENT_DRAFT_KEY, id);
 
     currentDraft.set(draft);
+
     toastStore.show(
-      `You just began a new dream. Draft created: ${shortenID(id)} (${draft.title})`,
+      `You just began a new dream. Draft created: ${shortenID(id!)}`,
     );
     return id;
   },
 
-  save(id?: string) {
+  async save(id?: string): Promise<void> {
     if (typeof window === 'undefined') return;
 
-    id ||= GetCache(CURRENT_DRAFT_KEY) || this.create();
-    const draft = structuredClone(GetCache<DraftPayload>(DRAFT_KEY(id!)));
-    if (!draft) return toastStore.show(`Save unknown draft`, 'error');
+    id ||= GetCache(CURRENT_DRAFT_KEY) || (await this.create());
+    const draft = await topic.getDraft(id!);
+    if (!draft || !id) {
+      toastStore.show(`Save unknown draft`, 'error');
+      return;
+    }
 
-    draft.data = collectState();
-    draft.updated = Date.now();
-    if (draft.data.storyData.name) draft.title = draft.data.storyData.name;
+    const draftData = collectState();
 
-    SetCache(DRAFT_KEY(id!), draft);
-
-    // sync index entry
-    const list = readIndex();
-    const entry = list.find((e) => e.id === id)!;
-    entry.title = draft.data.storyData.name || 'Untitled';
-    entry.updated = draft.updated;
-    writeIndex(list);
+    draft.story_data = draftData.story_data;
+    draft.prompt_settings = draftData.prompt_settings;
+    draft.open_prompt = draftData.open_prompt;
+    draft.table_prompt = draftData.table_prompt;
+    draft.title = draft.story_data.name || 'Untitled';
 
     currentDraft.set(draft);
-    toastStore.show(`Draft saved: ${shortenID(id as string)} (${draft.title})`);
+
+    await topic.updateDraft(id, draft);
+
+    // toastStore.show(`Draft saved: ${shortenID(id as string)} (${draft.title})`);
   },
 
-  restore(id: string) {
-    const draft = GetCache<DraftPayload>(DRAFT_KEY(id));
-    if (!draft) return toastStore.show('Draft not found', 'error');
+  async restore(id: string): Promise<void> {
+    let draft: Nullable<DraftPayload>;
 
-    if (draft.schema !== SCHEMA_VERSION)
-      return toastStore.show(
-        'This draft is from an older version and cannot be loaded',
-        'error',
-      );
+    try {
+      draft = await topic.getDraft(id);
+    } catch (error) {
+      toastStore.show('Failed to restore draft', 'error');
+      ClearCache(CURRENT_DRAFT_KEY);
+      this.create();
+      return;
+    }
 
-    applyState(draft.data);
+    if (!draft) {
+      toastStore.show('Draft not found', 'error');
+      ClearCache(CURRENT_DRAFT_KEY);
+      this.create();
+      return;
+    }
+
     SetCache(CURRENT_DRAFT_KEY, id);
+    applyState(draft);
 
     currentDraft.set(draft);
-    toastStore.show('Draft restored - you’re back where you left off');
+
+    toastStore.show(
+      `Draft ${shortenID(id as string)} restored - you’re back where you left off`,
+    );
   },
 
-  delete(id: string) {
-    ClearCache(DRAFT_KEY(id));
-    writeIndex(readIndex().filter((e) => e.id !== id));
+  async delete(id: string) {
     if (GetCache(CURRENT_DRAFT_KEY) === id) ClearCache(CURRENT_DRAFT_KEY);
 
-    toastStore.show(`Draft deleted: ${shortenID(id)}`);
-  },
+    await topic.deleteDraft(id);
 
-  list(): DraftIndexEntry[] {
-    return readIndex().sort((a, b) => b.updated - a.updated);
+    // toastStore.show(`Draft deleted: ${shortenID(id)}`);
   },
 };
 

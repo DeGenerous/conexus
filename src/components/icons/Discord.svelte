@@ -1,12 +1,10 @@
 <script lang="ts">
+  import { NAV_ROUTES } from '@constants/routes';
+
   let { text = 'Discord' }: { text?: string } = $props();
 </script>
 
-<a
-  class="button-anchor blur purple-btn"
-  href="https://dgrslabs.ink/join"
-  target="_blank"
->
+<a class="button-anchor purple-btn" href={NAV_ROUTES.DISCORD} target="_blank">
   <img src="/icons/discord.png" alt="Discord" />
   {text}
 </a>
@@ -22,7 +20,7 @@
 
     &:hover,
     &:active,
-    &:focus {
+    &:focus-visible {
       img {
         @include scale-up(soft);
         @include box-shadow;

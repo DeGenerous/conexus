@@ -9,6 +9,8 @@
     getStoredCustomization,
   } from '@stores/customization.svelte';
 
+  let { style = '' }: { style?: string } = $props();
+
   // update FONT in localStorage after every change
   $effect(() => {
     $customFont && updateFont();
@@ -22,10 +24,24 @@
   onMount(() => {
     getStoredCustomization();
   });
+
+  const fontOptions = [
+    'Hanken Grotesk',
+    'Inter',
+    'Courier Prime',
+    'Merriweather',
+    'Lora',
+    'Caveat',
+    'PT Serif Caption',
+    'Cinzel',
+    'Exo 2',
+    'Open Sans',
+    'Comic Neue',
+  ];
 </script>
 
 {#if $customFont && $customStyling}
-  <section class="flex gap-8">
+  <section class="flex gap-8" class:custom-colors={Boolean(style)} {style}>
     <div class="fade-in transparent-container flex-row">
       <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
         <label for="text-color">Main color</label>
@@ -55,15 +71,9 @@
       <span class="flex-row">
         <label for="custom-font">Font</label>
         <select id="custom-font" bind:value={$customFont.family}>
-          <option value="PT Serif Caption">Default (serif)</option>
-          <option value="Merriweather">Merriweather</option>
-          <option value="Lora">Lora</option>
-          <option value="Roboto">Roboto</option>
-          <option value="Verdana">Verdana</option>
-          <option value="Monospace">Monospace</option>
-          <option value="Courier Prime">Courier prime</option>
-          <option value="Comic Neue">Comic Neue</option>
-          <option value="Caveat">Caveat</option>
+          {#each fontOptions as font}
+            <option value={font}>{font}</option>
+          {/each}
         </select>
       </span>
 
@@ -88,33 +98,6 @@
           <option value="h4">Maximal</option>
         </select>
       </span>
-
-      <span class="flex-row gap-8">
-        {#if $customFont.family !== 'PT Serif Caption'}
-          <button
-            class:active-btn={$customFont.bold}
-            onclick={() => ($customFont!.bold = !$customFont!.bold)}
-          >
-            bold
-          </button>
-        {/if}
-
-        {#if $customFont.family !== 'Caveat'}
-          <button
-            class:active-btn={$customFont.italic}
-            onclick={() => ($customFont!.italic = !$customFont!.italic)}
-          >
-            italic
-          </button>
-        {/if}
-
-        <button
-          class:active-btn={$customFont.shadow}
-          onclick={() => ($customFont!.shadow = !$customFont!.shadow)}
-        >
-          shadow
-        </button>
-      </span>
     </div>
 
     <div class="fade-in transparent-container flex-row">
@@ -131,39 +114,33 @@
         <p>{$customStyling.bgPictureOpacity}%</p>
       </span>
     </div>
-
-    <div class="fade-in transparent-container flex-row">
-      <label for="layout">Layout</label>
-      <button
-        class:active-btn={$customStyling.optionsContainer}
-        onclick={() =>
-          ($customStyling!.optionsContainer =
-            !$customStyling!.optionsContainer)}
-      >
-        options frame
-      </button>
-
-      <button
-        id="option-selector-btn"
-        class:active-btn={$customStyling.optionSelector}
-        onclick={() =>
-          ($customStyling!.optionSelector = !$customStyling!.optionSelector)}
-      >
-        option selector
-      </button>
-
-      <button
-        class:active-btn={$customStyling.boxShadow}
-        onclick={() => ($customStyling!.boxShadow = !$customStyling!.boxShadow)}
-      >
-        box shadow
-      </button>
-    </div>
   </section>
 {/if}
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
+
+  .custom-colors .transparent-container {
+    animation: none;
+    color: var(--theme-text);
+    background-color: var(--theme-panel-bg);
+
+    label {
+      color: inherit;
+    }
+
+    .dark-glowing {
+      animation: none;
+      background-color: var(--theme-panel-muted);
+    }
+
+    select {
+      background-color: var(--theme-panel-muted);
+      color: inherit;
+      box-shadow: none !important;
+      @include gray-border;
+    }
+  }
 
   .transparent-container {
     width: 100%;
@@ -196,14 +173,6 @@
 
     @include respond-up(tablet) {
       width: 15rem;
-    }
-  }
-
-  #option-selector-btn {
-    display: none;
-
-    @include respond-up(tablet) {
-      display: flex;
     }
   }
 </style>

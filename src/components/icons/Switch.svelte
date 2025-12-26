@@ -45,12 +45,11 @@
 
   button {
     width: 2rem;
-    fill: $light-blue;
+    fill: currentColor;
 
     &:hover:not(&:disabled),
     &:active:not(&:disabled),
     &:focus-visible:not(&:disabled) {
-      fill: $cyan;
       @include scale;
 
       svg g {

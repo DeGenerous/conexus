@@ -32,12 +32,10 @@
 
   svg {
     fill: none;
-    stroke: $soft-white;
+    stroke: currentColor;
     width: 1.25rem;
 
     &.copy-hover {
-      fill: $deep-green;
-      stroke: $deep-green;
       @include bright(50%);
     }
   }

@@ -12,7 +12,6 @@
   let collections = $state<Partial<CollectionResponse>[]>([]);
   onMount(async () => {
     collections = await collection.listCollections();
-    console.log('collections', collections);
   });
 </script>
 

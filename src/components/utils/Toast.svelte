@@ -55,11 +55,11 @@
     @include white-txt(1);
 
     &.info {
-      @include green(0.85);
+      @include green(0.95);
     }
 
     &.error {
-      @include red(0.85);
+      @include red(0.95);
     }
 
     &:hover,

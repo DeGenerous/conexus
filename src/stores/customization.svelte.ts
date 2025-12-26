@@ -4,22 +4,28 @@ import { writable, get } from 'svelte/store';
 import {
   defaultFont,
   defaultStyling,
-  lightThemeFont,
-  lightThemeStyling,
-  horrorThemeFont,
-  horrorThemeStyling,
-  kidsThemeFont,
-  kidsThemeStyling,
-  sciFiThemeFont,
-  sciFiThemeStyling,
-  fantasyThemeFont,
-  fantasyThemeStyling,
-  noirThemeFont,
-  noirThemeStyling,
-  epicThemeFont,
-  epicThemeStyling,
-  romanticThemeFont,
-  romanticThemeStyling,
+  onyxThemeFont,
+  onyxThemeStyling,
+  terminalThemeFont,
+  terminalThemeStyling,
+  crimsonThemeFont,
+  crimsonThemeStyling,
+  overgrowthThemeFont,
+  overgrowthThemeStyling,
+  velvetThemeFont,
+  velvetThemeStyling,
+  solarThemeFont,
+  solarThemeStyling,
+  nebulaThemeFont,
+  nebulaThemeStyling,
+  paperThemeFont,
+  paperThemeStyling,
+  labThemeFont,
+  labThemeStyling,
+  playgroundThemeFont,
+  playgroundThemeStyling,
+  focusThemeFont,
+  focusThemeStyling,
 } from '@constants/customization';
 import Account from '@lib/account';
 import {
@@ -64,57 +70,75 @@ const clone = <T>(value: T): T => structuredClone(value);
 
 const STANDARD_THEMES: CustomTheme[] = [
   {
-    name: 'DARK (default)',
+    name: 'VOID (default)',
     font: clone(defaultFont),
     styling: clone(defaultStyling),
     standard: true,
   },
   {
-    name: 'LIGHT (default)',
-    font: clone(lightThemeFont),
-    styling: clone(lightThemeStyling),
+    name: 'ONYX',
+    font: clone(onyxThemeFont),
+    styling: clone(onyxThemeStyling),
     standard: true,
   },
   {
-    name: 'Horror',
-    font: clone(horrorThemeFont),
-    styling: clone(horrorThemeStyling),
+    name: 'TERMINAL',
+    font: clone(terminalThemeFont),
+    styling: clone(terminalThemeStyling),
     standard: true,
   },
   {
-    name: 'Kids',
-    font: clone(kidsThemeFont),
-    styling: clone(kidsThemeStyling),
+    name: 'CRIMSON',
+    font: clone(crimsonThemeFont),
+    styling: clone(crimsonThemeStyling),
     standard: true,
   },
   {
-    name: 'Sci-Fi',
-    font: clone(sciFiThemeFont),
-    styling: clone(sciFiThemeStyling),
+    name: 'OVERGROWTH',
+    font: clone(overgrowthThemeFont),
+    styling: clone(overgrowthThemeStyling),
     standard: true,
   },
   {
-    name: 'Fantasy',
-    font: clone(fantasyThemeFont),
-    styling: clone(fantasyThemeStyling),
+    name: 'VELVET',
+    font: clone(velvetThemeFont),
+    styling: clone(velvetThemeStyling),
     standard: true,
   },
   {
-    name: 'Noir',
-    font: clone(noirThemeFont),
-    styling: clone(noirThemeStyling),
+    name: 'SOLAR',
+    font: clone(solarThemeFont),
+    styling: clone(solarThemeStyling),
     standard: true,
   },
   {
-    name: 'Epic',
-    font: clone(epicThemeFont),
-    styling: clone(epicThemeStyling),
+    name: 'NEBULA',
+    font: clone(nebulaThemeFont),
+    styling: clone(nebulaThemeStyling),
     standard: true,
   },
   {
-    name: 'Romantic',
-    font: clone(romanticThemeFont),
-    styling: clone(romanticThemeStyling),
+    name: 'PAPER',
+    font: clone(paperThemeFont),
+    styling: clone(paperThemeStyling),
+    standard: true,
+  },
+  {
+    name: 'LAB',
+    font: clone(labThemeFont),
+    styling: clone(labThemeStyling),
+    standard: true,
+  },
+  {
+    name: 'PLAYGROUND',
+    font: clone(playgroundThemeFont),
+    styling: clone(playgroundThemeStyling),
+    standard: true,
+  },
+  {
+    name: 'FOCUS',
+    font: clone(focusThemeFont),
+    styling: clone(focusThemeStyling),
     standard: true,
   },
 ];
@@ -141,22 +165,13 @@ const fontsEqual = (a: CustomFont, b: CustomFont): boolean => {
     a.baseSize === b.baseSize &&
     a.accentSize === b.accentSize &&
     a.baseColor === b.baseColor &&
-    a.accentColor === b.accentColor &&
-    a.bold === b.bold &&
-    a.italic === b.italic &&
-    a.shadow === b.shadow
+    a.accentColor === b.accentColor
   );
 };
 
 const stylingEqual = (a: CustomStyling, b: CustomStyling): boolean => {
   if (!a || !b) return false;
-  return (
-    a.boxShadow === b.boxShadow &&
-    a.optionsContainer === b.optionsContainer &&
-    a.optionSelector === b.optionSelector &&
-    a.bgPictureOpacity === b.bgPictureOpacity &&
-    a.bgColor === b.bgColor
-  );
+  return a.bgPictureOpacity === b.bgPictureOpacity && a.bgColor === b.bgColor;
 };
 
 const themesEqual = (a: CustomTheme, b: CustomTheme): boolean =>

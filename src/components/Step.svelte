@@ -1,22 +1,15 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import { tippy } from 'svelte-tippy';
 
   import { story, game } from '@stores/conexus.svelte';
   import { conexusBG } from '@stores/conexus.svelte';
-  import {
-    GetCache,
-    SetCache,
-    GAME_INSTRUCTIONS_KEY,
-    SCALE_KEY,
-  } from '@constants/cache';
+  import { GetCache, SetCache, GAME_INSTRUCTIONS_KEY } from '@constants/cache';
   import detectIOS from '@utils/ios-device';
   import {
     defaultFont,
     defaultStyling,
-    defaultScale,
-    lightThemeFont,
-    lightThemeStyling,
+    paperThemeFont,
+    paperThemeStyling,
   } from '@constants/customization';
   import openModal, { showModal } from '@stores/modal.svelte';
   import {
@@ -26,7 +19,7 @@
     getStoredCustomization,
     persistActiveTheme,
   } from '@stores/customization.svelte';
-  import { ensureMessage, gameRulesModal } from '@constants/modal';
+  import { gameRulesModal } from '@constants/modal';
   import isColorLight from '@utils/brightness';
   import { isGuest } from '@stores/account.svelte';
 
@@ -42,8 +35,8 @@
   import SoundSVG from '@components/icons/Sound.svelte';
   import FullscreenSVG from '@components/icons/Fullscreen.svelte';
   import FilledEyeSVG from '@components/icons/FilledEye.svelte';
-  import ZoomInSVG from '@components/icons/ZoomIn.svelte';
   import ResetSVG from '@components/icons/Reset.svelte';
+  import LoadingSVG from '@components/icons/Loading.svelte';
 
   let {
     topic_name,
@@ -58,7 +51,6 @@
   let width = $state<number>(0);
   let height = $state<number>(0);
 
-  let zoom = $state<number>(1);
   let showCustomization = $state<boolean>(false);
 
   const step = $derived<StepData>($story?.step_data as StepData);
@@ -68,6 +60,28 @@
     game.background_image = null;
     game.background_music = null;
   };
+
+  // Construct a derived style string for the root element
+  const themeStyles = $derived.by(() => {
+    if (!$customFont || !$customStyling) return '';
+
+    const { baseColor, accentColor, family } = $customFont;
+    const { bgColor, bgPictureOpacity } = $customStyling;
+
+    return [
+      `--theme-text: ${baseColor}`,
+      `--theme-accent: ${accentColor}`,
+      `--theme-bg: ${bgColor}`,
+      `--theme-font: ${family}`,
+      `--theme-panel-bg: color-mix(in srgb, var(--theme-accent), transparent 85%)`,
+      `--theme-panel-border: color-mix(in srgb, var(--theme-accent), transparent 60%)`,
+      `--theme-hover-bg: color-mix(in srgb, var(--theme-accent), transparent 70%)`,
+      `--theme-panel-muted: color-mix(in srgb, var(--theme-bg), transparent 60%)`,
+      `--theme-hover-muted: color-mix(in srgb, var(--theme-bg), transparent 50%)`,
+      `--theme-panel-deep: color-mix(in srgb, var(--theme-bg), var(--theme-accent) 15%)`,
+      `--theme-panel-dark: color-mix(in srgb, var(--theme-bg), black 15%)`,
+    ].join(';');
+  });
 
   // CONTROL BAR
 
@@ -115,8 +129,7 @@
     const target = event.target as HTMLElement;
     if (
       target.closest(
-        'nav, section.step-controller, section.sound-controller,' +
-          'section.styling-controller, section.scale-controller',
+        'nav, section.step-controller, section.sound-controller, section.styling-controller',
       )
     ) {
       return;
@@ -132,10 +145,6 @@
     if (isDesktop) return;
 
     hiddenControls = !hiddenControls;
-  };
-
-  const toggleZoom = () => {
-    zoom = zoom === 1 ? 0.5 : 1;
   };
 
   const selectorSize = $derived.by<number>(() => {
@@ -160,17 +169,6 @@
 
   $effect(() => {
     conexusBG.color = $customStyling ? $customStyling.bgColor : '#000000';
-  });
-
-  let customScale = $state<CustomScale | null>(null);
-
-  const updateScale = (reset: Nullable<'reset'> = null) => {
-    if (reset) customScale = defaultScale;
-    if (customScale) SetCache(SCALE_KEY, customScale);
-  };
-
-  $effect(() => {
-    if (customScale) updateScale();
   });
 
   const openThemeSettings = () => {
@@ -202,10 +200,6 @@
     switch (event.key) {
       case 'f': {
         game.fullscreen = !game.fullscreen;
-        break;
-      }
-      case 'z': {
-        toggleZoom();
         break;
       }
       case 'ArrowLeft': {
@@ -244,40 +238,8 @@
     }
   };
 
-  let pictureKeyframe: KeyframeEffect | null = null;
-  let pictureAnimation: Animation | null = null;
-
-  $effect(() => {
-    if (!step?.image || !pictureAnimation) return;
-    pictureAnimation.play();
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  });
-
   onMount(() => {
-    const stepImage = document.getElementById('step-image') as HTMLImageElement;
-    pictureKeyframe = new KeyframeEffect(
-      stepImage,
-      [
-        { transform: 'scale(1)' },
-        { transform: 'scale(0.975)' },
-        { transform: 'scale(1.025)' },
-        { transform: 'scale(1)' },
-      ],
-      {
-        duration: 600,
-        easing: 'ease',
-      },
-    );
-    pictureAnimation = new Animation(pictureKeyframe, document.timeline);
-
     getStoredCustomization();
-
-    const storedScale = GetCache<CustomScale>(SCALE_KEY);
-    if (storedScale) customScale = storedScale;
-    else updateScale('reset');
 
     if (isDesktop) {
       const dontShowInstructions = GetCache(GAME_INSTRUCTIONS_KEY);
@@ -320,140 +282,92 @@
 a11y_click_events_have_key_events
 a11y_no_static_element_interactions
 a11y_no_noninteractive_element_interactions -->
-{#if $customFont && $customStyling && customScale}
+{#if $customFont && $customStyling}
   <section
     class="step-wrapper flex {$customFont.baseSize}-font"
-    class:text-shad={$customFont.shadow}
-    style:font-family={$customFont.family}
-    style:font-weight={$customFont.bold ? 'bold' : 'normal'}
-    style:font-style={$customFont.italic ? 'italic' : ''}
-    style:color={$customFont.baseColor}
-    style:cursor={game.loading ? 'wait' : 'default'}
+    style={themeStyles}
     onpointerdown={handleWrapperPointer}
   >
-    {#if !$isGuest && (step.task_id !== '' && step.task_id !== 'generate')}
-      <ImageDisplay
-        {width}
-        {zoom}
-        image={step.image}
-        image_type={step.image_type}
-        imageWidth={customScale.imageWidth}
-        imageHeight={customScale.imageHeight}
-        boxShadow={$customStyling.boxShadow}
-      />
-    {/if}
-
-    {#if step.title}
-      <h4
-        class="{$customFont.accentSize}-font"
-        class:text-shad={$customFont.shadow}
-        style:font-style={$customFont.italic ? 'italic' : ''}
-        style:color={$customFont.accentColor}
-        style:zoom
-      >
-        {step.title}
+    <div class="step-content transparent-container">
+      <h4 class="flex-row gap-16 {$customFont.accentSize}-font">
+        {#if game.loading}
+          <LoadingSVG
+            primary={$customFont.accentColor}
+            secondary={$customFont.baseColor}
+          />
+          Loading story data...
+        {:else}
+          Step {step.step}{#if step.title}: "{step.title}"{/if}
+        {/if}
       </h4>
-    {/if}
 
-    <article
-      style:max-width={width >= DESKTOP_BREAKPOINT
-        ? `${customScale.paragraphWidth}%`
-        : ''}
-      style:width="{100 * zoom}%"
-      style:zoom
-    >
-      {step.story}
-    </article>
+      <span class="description flex">
+        {#if !$isGuest && (step.task_id !== '' && step.task_id !== 'generate')}
+          <ImageDisplay
+            image={step.image}
+            image_type={step.image_type}
+            style={themeStyles}
+          />
+        {/if}
+
+        <article
+          class="vert-scrollbar"
+          class:text-only={$isGuest || step.task_id === '' || step.task_id === 'generate'}
+        >
+          {step.story}
+        </article>
+      </span>
+
+      {#if $story?.step_data?.ended}
+        <hr />
+
+        <h4 class="{$customFont.accentSize}-font">
+          {topic_name.trim()} Story Summary
+        </h4>
+
+        <article>
+          {step.summary}
+        </article>
+
+        <h4 class="{$customFont.accentSize}-font">
+          CoNexus identified your trait as:
+          <strong>{step.trait}</strong>
+        </h4>
+
+        {#if step.trait_description}
+          <article>
+            {step.trait_description}
+          </article>
+        {/if}
+
+        <Share container={true} style={themeStyles} />
+      {/if}
+    </div>
 
     {#if $story?.step_data?.ended}
-      <hr />
-
-      <h4
-        class="{$customFont.accentSize}-font"
-        class:text-shad={$customFont.shadow}
-        style:font-style={$customFont.italic ? 'italic' : ''}
-        style:color={$customFont.accentColor}
-        style:zoom
-      >
-        {topic_name.trim()} Story Summary
-      </h4>
-
-      <article
-        style:max-width={width >= DESKTOP_BREAKPOINT
-          ? `${customScale.paragraphWidth}%`
-          : ''}
-        style:zoom
-      >
-        {step.summary}
-      </article>
-
-      <h4
-        class="{$customFont.accentSize}-font"
-        class:text-shad={$customFont.shadow}
-        style:font-style={$customFont.italic ? 'italic' : ''}
-        style:color={$customFont.accentColor}
-        style:zoom
-      >
-        CoNexus identified your trait as:
-        <strong class="text-glowing">{step.trait}</strong>
-      </h4>
-
-      {#if step.trait_description}
-        <article
-          style:max-width={width >= DESKTOP_BREAKPOINT
-            ? `${customScale.paragraphWidth}%`
-            : ''}
-          style:zoom
-        >
-          {step.trait_description}
-        </article>
-      {/if}
-
       <div
-        class="options {$customFont.accentSize}-font"
-        class:text-shad={$customFont.shadow}
-        class:transparent-container={$customStyling.optionsContainer}
-        style:font-style={$customFont.italic ? 'italic' : ''}
-        style:color={$customFont.accentColor}
-        style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
-        style:border={$customStyling.boxShadow ? 'none' : ''}
-        style:max-width={width >= DESKTOP_BREAKPOINT
-          ? `${customScale.optionsWidth}%`
-          : ''}
-        style:width="{width >= DESKTOP_BREAKPOINT ? 100 * zoom : 95}%"
-        style:zoom
+        class="step-options transparent-container {$customFont.accentSize}-font"
       >
-        <button id="option-0" class="void-btn menu-option" onclick={restartGame}
-          >Start a new story</button
-        >
         <button
           id="option-1"
-          class="void-btn menu-option"
+          class="void-btn"
           onclick={() => (window.location.href = '/')}
-          >Return to main menu</button
         >
+          Return to main menu
+        </button>
+        <button id="option-0" class="void-btn" onclick={restartGame}>
+          Start a new story
+        </button>
       </div>
-      <Share container={true} />
     {:else}
       <div
-        class="flex options wide-container {$customFont.accentSize}-font"
-        class:text-shad={$customFont.shadow}
-        class:transparent-container={$customStyling.optionsContainer}
-        style:color={$customFont.accentColor}
-        style:box-shadow={$customStyling.boxShadow ? '' : 'none'}
-        style:border={$customStyling.boxShadow ? 'none' : ''}
-        style:max-width={width >= DESKTOP_BREAKPOINT
-          ? `${customScale.optionsWidth}%`
-          : ''}
-        style:width="{width >= DESKTOP_BREAKPOINT ? 100 * zoom : 95}%"
-        style:zoom
+        class="step-options transparent-container {$customFont.accentSize}-font"
       >
         {#each step.options as option, i}
           <button
             id="option-{i}"
             class="void-btn flex-row gap-8"
             class:active-option={step.choice && step.choice - 1 === i}
-            style:font-family={$customFont.family}
             disabled={game.loading || step.step !== $story?.maxStep}
             onclick={() => {
               $story?.nextStep(i + 1);
@@ -473,17 +387,15 @@ a11y_no_noninteractive_element_interactions -->
             onfocus={() => (focusedOption = i)}
             onblur={() => (focusedOption = null)}
           >
-            {#if $customStyling.optionSelector}
-              <SelectorSVG
-                focused={(step.choice && step.choice - 1 === i) ||
-                  focusedOption === i}
-                disabled={game.loading || step.step !== $story?.maxStep}
-                hideForMobiles={true}
-                color={$customFont.accentColor}
-                {selectorSize}
-              />
-            {/if}
             {option}
+            <SelectorSVG
+              focused={(step.choice && step.choice - 1 === i) ||
+                focusedOption === i}
+              disabled={game.loading || step.step !== $story?.maxStep}
+              hideForMobiles={true}
+              color={$customFont.accentColor}
+              {selectorSize}
+            />
           </button>
         {/each}
       </div>
@@ -504,28 +416,14 @@ a11y_no_noninteractive_element_interactions -->
         <h5 class="title">{topic_name.trim()}</h5>
       </span>
       <div class="controls flex-row">
-        <div class="scale-icon">
-          <label class="pc-only" for="zoom-in-control">Scale</label>
-          <ZoomInSVG
-            onclick={() => switchController('scale')}
-            active={activeControlPanel == 'scale'}
-            control={true}
-          />
-        </div>
         <div class:pad-inline={detectIOS()}>
           <label class:pc-only={!detectIOS()} for="filled-eye"> Styling </label>
-          <FilledEyeSVG
-            onclick={() => switchController('styling')}
-            active={activeControlPanel == 'styling'}
-          />
+          <FilledEyeSVG onclick={() => switchController('styling')} />
         </div>
         {#if !detectIOS()}
           <div>
             <label class="pc-only" for="sound">Sound</label>
-            <SoundSVG
-              onclick={() => switchController('sound')}
-              active={activeControlPanel == 'sound'}
-            />
+            <SoundSVG onclick={() => switchController('sound')} />
           </div>
         {/if}
         <div class:pad-inline={detectIOS()}>
@@ -533,8 +431,8 @@ a11y_no_noninteractive_element_interactions -->
           <StepSVG
             text={`${step.step < 10 ? '0' : ''}${step.step}`}
             onclick={() => switchController('step')}
-            active={activeControlPanel == 'step'}
             control={true}
+            accentColor={$customStyling.bgColor}
           />
         </div>
       </div>
@@ -565,7 +463,7 @@ a11y_no_noninteractive_element_interactions -->
           disabled={step.step === 1}
         />
         <span class="flex gap-8">
-          <h5 class="title">{topic_name.trim()}</h5>
+          <h5>{topic_name.trim()}</h5>
           <hr />
           <h5>
             {#if step.title}
@@ -587,6 +485,7 @@ a11y_no_noninteractive_element_interactions -->
             text={String(index + 1)}
             onclick={() => $story?.loadStep(index + 1)}
             active={step.step == index + 1}
+            accentColor={$customStyling.bgColor}
           />
         {/each}
       </ul>
@@ -602,9 +501,9 @@ a11y_no_noninteractive_element_interactions -->
       role="toolbar"
       tabindex="-1"
     >
-      <Slider type="music" />
-      {#if !$isGuest && step.task_id !== ''}
-        <Slider type="voice" />
+      <Slider type="music" style={themeStyles} />
+      {#if !$isGuest && (step.task_id !== '' && step.task_id !== 'generate')}
+        <Slider type="voice" style={themeStyles} />
       {/if}
     </section>
 
@@ -622,18 +521,14 @@ a11y_no_noninteractive_element_interactions -->
         {#if isColorLight($customStyling.bgColor)}
           <ResetSVG
             onclick={() =>
-              applyQuickTheme(defaultFont, defaultStyling, 'DARK (default)')}
-            text="Apply DARK Theme"
+              applyQuickTheme(defaultFont, defaultStyling, 'VOID (default)')}
+            text="Apply VOID Theme"
           />
         {:else}
           <ResetSVG
             onclick={() =>
-              applyQuickTheme(
-                lightThemeFont,
-                lightThemeStyling,
-                'LIGHT (default)',
-              )}
-            text="Apply LIGHT Theme"
+              applyQuickTheme(paperThemeFont, paperThemeStyling, 'PAPER')}
+            text="Apply PAPER Theme"
           />
         {/if}
 
@@ -650,113 +545,8 @@ a11y_no_noninteractive_element_interactions -->
       </span>
 
       {#if showCustomization}
-        <StylingController />
+        <StylingController style={themeStyles} />
       {/if}
-    </section>
-
-    <!-- SCALE CONTROLLER -->
-    <section
-      class="scale-controller"
-      class:visible={activeControlPanel == 'scale'}
-      onpointerenter={cancelHide}
-      onpointerleave={hideControlsAfterDelay}
-      onclick={stopPropagation}
-      role="toolbar"
-      tabindex="-1"
-    >
-      {#if zoom !== 1}
-        <p class="zoom-hint validation green-txt">
-          Zoomed-out mode active - perfect for screenshots 🖼️
-        </p>
-      {/if}
-      <div class="image-scale transparent-container">
-        <span class="flex-row">
-          <label for="image-width">Picture width</label>
-          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-            <input
-              id="image-width"
-              type="range"
-              min="800"
-              max={width}
-              step="16"
-              bind:value={customScale.imageWidth}
-            />
-            <p>{customScale.imageWidth}px</p>
-          </span>
-        </span>
-
-        <span class="flex-row">
-          <label for="image-height">Picture height</label>
-          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-            <input
-              id="image-height"
-              type="range"
-              min="512"
-              max={height}
-              step="16"
-              bind:value={customScale.imageHeight}
-            />
-            <p>{customScale.imageHeight}px</p>
-          </span>
-        </span>
-      </div>
-
-      <div class="text-scale transparent-container">
-        <span class="flex-row">
-          <label for="paragraph-width">Paragraph width</label>
-          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-            <input
-              id="paragraph-width"
-              type="range"
-              min="50"
-              max="100"
-              step="1"
-              bind:value={customScale.paragraphWidth}
-            />
-            <p>{customScale.paragraphWidth}%</p>
-          </span>
-        </span>
-
-        <span class="flex-row">
-          <label for="options-width">Options width</label>
-          <span class="flex-row pad-8 round-8 gap-8 dark-glowing">
-            <input
-              id="options-width"
-              type="range"
-              min="50"
-              max="100"
-              step="1"
-              bind:value={customScale.optionsWidth}
-            />
-            <p>{customScale.optionsWidth}%</p>
-          </span>
-        </span>
-      </div>
-      <span class="flex-row flex-wrap">
-        <ResetSVG
-          text="Reset to default scale"
-          onclick={() =>
-            openModal(
-              ensureMessage(`reset ${activeControlPanel} settings`),
-              'Reset scale',
-              () => updateScale('reset'),
-            )}
-        />
-        <button
-          class:green-btn={zoom !== 1}
-          use:tippy={{
-            content: "Press 'Z' to toggle zoom",
-            animation: 'scale',
-          }}
-          onclick={toggleZoom}
-        >
-          {#if zoom === 1}
-            Zoom out
-          {:else}
-            Reset zoom
-          {/if}
-        </button>
-      </span>
     </section>
   </section>
 {:else}
@@ -771,6 +561,9 @@ a11y_no_noninteractive_element_interactions -->
 
   // GENERAL STEP STYLING
   .step-wrapper {
+    color: var(--theme-text);
+    font-family: var(--theme-font, inherit);
+
     @include respond-up(small-desktop) {
       margin-block: -4rem 4rem;
     }
@@ -780,61 +573,111 @@ a11y_no_noninteractive_element_interactions -->
       font-weight: inherit;
     }
 
-    h4 {
-      @include white-txt;
+    .transparent-container {
+      background-color: var(--theme-panel-bg);
+      animation: none;
+
+      @include respond-up(small-desktop) {
+        width: 960px;
+      }
+
+      @include respond-up(large-desktop) {
+        width: 1360px;
+      }
+
+      @include respond-up(full-hd) {
+        width: 1600px;
+      }
+
+      @include respond-up(quad-hd) {
+        width: 1920px;
+      }
     }
 
-    article {
-      width: 100%;
-      padding-inline: 1rem;
-      text-align: left;
-      white-space: pre-wrap;
-      color: inherit;
-      text-shadow: inherit;
+    h4,
+    h5 {
+      color: var(--theme-accent);
+      font-style: inherit;
+    }
+
+    .step-content {
+      padding: 1.5rem;
+
+      article {
+        width: 100%;
+        text-align: left;
+        white-space: pre-wrap;
+        color: inherit;
+        text-shadow: inherit;
+
+        &::-webkit-scrollbar-thumb {
+          background: var(--theme-panel-border);
+          border-radius: 4px;
+        }
+
+        &.text-only {
+          background-color: var(--theme-panel-muted);
+          padding: 1rem;
+          border-radius: 0.5rem;
+          @include gray-border;
+        }
+      }
+
+      @include respond-up(small-desktop) {
+        .description {
+          flex-direction: row;
+
+          article {
+            max-height: 400px;
+            overflow-y: scroll;
+            padding-right: 0.5rem;
+          }
+        }
+      }
+    }
+
+    .step-options {
+      align-items: stretch;
 
       @include respond-up(tablet) {
-        width: clamp(250px, 95%, 70rem);
-      }
-
-      @include respond-up(small-desktop) {
-        width: 100%;
-      }
-    }
-
-    .options {
-      align-items: flex-start;
-      @include box-shadow;
-
-      @include respond-up(small-desktop) {
-        width: 100%;
+        flex-direction: row;
       }
 
       button {
         width: 100%;
-        justify-content: flex-start;
+        justify-content: space-between;
         text-align: left;
-        fill: $cyan;
-        stroke: $cyan;
-        color: $cyan;
+
+        color: var(--theme-accent);
+        fill: var(--theme-accent);
+        stroke: var(--theme-accent);
+        font-family: var(--theme-font);
 
         font-size: inherit;
         line-height: inherit;
-        color: inherit;
         font-style: inherit;
         text-shadow: inherit;
+
+        background-color: var(--theme-panel-muted);
+
+        padding: 1rem;
+        border-radius: 0.5rem;
+        @include gray-border;
 
         &:hover:not(&:disabled),
         &:active:not(&:disabled),
         &:focus:not(&:disabled) {
-          filter: hue-rotate(30deg) saturate(200%);
+          background-color: var(--theme-hover-muted);
+          border-color: var(--theme-panel-border);
+          filter: brightness(1.1);
         }
 
         &:disabled:not(&.active-option) {
-          opacity: 0.25;
+          opacity: 0.5;
         }
 
-        &.menu-option {
-          text-align: center;
+        &.active-option {
+          border-color: var(--theme-accent);
         }
       }
     }
@@ -848,10 +691,19 @@ a11y_no_noninteractive_element_interactions -->
       padding-inline: 1rem;
       z-index: 100;
       justify-content: space-between;
-      @include navy;
+      background-color: var(--theme-panel-deep);
+      color: var(--theme-text);
 
       @include respond-up(small-desktop) {
         padding: 1rem;
+      }
+
+      label {
+        color: inherit;
+
+        &::after {
+          content: ':';
+        }
       }
 
       span {
@@ -882,7 +734,7 @@ a11y_no_noninteractive_element_interactions -->
           gap: 0.5rem;
           padding: 0.25rem;
           border-radius: 0.5rem;
-          @include dark-blue(0.5);
+          background-color: var(--theme-panel-bg);
           @include box-shadow(soft, inset);
 
           @include respond-up(tablet) {
@@ -895,14 +747,6 @@ a11y_no_noninteractive_element_interactions -->
 
           &.pad-inline {
             padding-inline: 0.5rem;
-          }
-
-          &.scale-icon {
-            display: none;
-
-            @include respond-up(small-desktop) {
-              display: flex;
-            }
           }
         }
       }
@@ -918,19 +762,6 @@ a11y_no_noninteractive_element_interactions -->
       width: 100vw;
       height: 4rem;
       z-index: 10;
-    }
-
-    label {
-      transition: color 0.3s ease;
-
-      &::after {
-        content: ':';
-      }
-
-      &:hover,
-      &:active {
-        @include white-txt;
-      }
     }
 
     // ADDITIONAL CONTROLLERS STYLING
@@ -950,8 +781,7 @@ a11y_no_noninteractive_element_interactions -->
       gap: 0.5rem;
       transform: translateY(100%);
       transition: all 0.6s ease;
-      background-color: $dark-gray;
-      @include white-txt(soft);
+      background-color: var(--theme-panel-dark);
 
       @include respond-up(tablet) {
         max-height: 70vh;
@@ -961,6 +791,11 @@ a11y_no_noninteractive_element_interactions -->
         width: 100%;
         flex-wrap: wrap;
         margin-inline: unset;
+
+        &.transparent-container {
+          animation: none;
+          background-color: var(--theme-panel-bg);
+        }
 
         @include respond-up(tablet) {
           width: auto;
@@ -995,12 +830,8 @@ a11y_no_noninteractive_element_interactions -->
             flex-flow: row wrap;
             gap: 1rem;
 
-            .title {
-              @include white-txt(0.5);
-
-              &::after {
-                content: ':';
-              }
+            h5:first-of-type::after {
+              content: ':';
             }
           }
 
@@ -1008,11 +839,6 @@ a11y_no_noninteractive_element_interactions -->
             display: none;
           }
         }
-      }
-
-      // SCALE
-      .zoom-hint {
-        width: 100%;
       }
 
       // STYLING

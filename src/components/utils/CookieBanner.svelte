@@ -7,6 +7,7 @@
     COOKIE_CONSENT_KEY,
     TTL_MONTH,
   } from '@constants/cache';
+  import { NAV_ROUTES } from '@constants/routes';
 
   let showBanner = $state(false);
   let analyticsEnabled = false;
@@ -68,10 +69,9 @@
       <p class="soft-white-txt">
         By continuing to use this website, you consent to the use of cookies as
         described in our
-        <a
-          href="https://docs.google.com/document/d/1kkIY-86y2LtoM4IXzp80E5H7Op1YSezw8nPBG1AQ2uo/edit?usp=sharing"
-          target="_blank">Privacy Policy</a
-        >.
+        <a href={NAV_ROUTES.PRIVACY_POLICY}>
+          Privacy Policy
+        </a>
       </p>
     </div>
     <div class="consent-buttons flex-row">

@@ -4,6 +4,7 @@
   import { toastStore } from '@stores/toast.svelte';
   import { NAV_ROUTES } from '@constants/routes';
   import { redirectTo, getCurrentUser } from '@utils/route-guard';
+  import { ClearCache, REFERRAL_CODE_KEY } from '@constants/cache';
 
   import DiscordSVG from '@components/icons/Discord.svelte';
 
@@ -30,6 +31,7 @@
       await acct.useReferralCode(code);
       toastStore.show('Referral code submitted successfully!');
       setTimeout(async () => {
+        ClearCache(REFERRAL_CODE_KEY);
         await getCurrentUser(true); // Refresh user data
         redirectTo('back'); // Redirect to previous page
       }, 100);

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import { showProfile } from '@stores/modal.svelte';
   import { user, approvedTester } from '@stores/account.svelte';
   import { redirectTo } from '@utils/route-guard';
@@ -49,11 +51,29 @@
         avatarImage = blankImage;
       });
   });
+
+  let currentHash = $state<string>('');
+
+  onMount(() => {
+    currentHash = window.location.hash;
+
+    const handleHashChange = () => {
+      currentHash = window.location.hash;
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleHashChange);
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handleHashChange);
+    };
+  });
 </script>
 
 <a
   class="navigation-tab dream-tab"
-  class:active={activeTab === 'Dashboard'}
+  class:active={currentHash === '#/dream/create'}
   class:inactive={!$approvedTester}
   aria-label="Dream"
   href="/dashboard#/dream/create"

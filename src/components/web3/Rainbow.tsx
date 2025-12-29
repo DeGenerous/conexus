@@ -95,7 +95,7 @@ const Web3Provider: React.FC<Web3Props> = ({ linking = false, children }) => {
               nonce,
               address,
               chainId,
-              statement: `Welcome to CoNexus! Click to sign in and accept the Terms of Service: ${NAV_ROUTES.TERMS}`,
+              statement: `Welcome to CoNexus! Click to sign in and accept the Terms of Service: ${window.location.origin}${NAV_ROUTES.TERMS}`,
               domain: window.location.host,
               uri: window.location.origin,
               version: '1',

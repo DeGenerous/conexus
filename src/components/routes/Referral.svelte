@@ -31,7 +31,7 @@
       toastStore.show('Referral code submitted successfully!');
       setTimeout(async () => {
         await getCurrentUser(true); // Refresh user data
-        redirectTo('/'); // Redirect to the home page
+        redirectTo('back'); // Redirect to previous page
       }, 100);
     } catch (error) {
       console.error('Error using referral code:', error);

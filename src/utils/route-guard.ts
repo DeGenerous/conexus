@@ -16,6 +16,11 @@ export async function getCurrentUser(
 
 export function redirectTo(path: string) {
   if (typeof window !== 'undefined') {
+    if (path === 'back') {
+      window.history.back();
+      return;
+    }
+
     const target = new URL(path, window.location.origin);
     const current = new URL(window.location.href);
 

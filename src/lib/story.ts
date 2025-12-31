@@ -57,6 +57,7 @@ export default class CoNexus {
     setMedia: (topic_id: string) => Promise<void>,
   ): Promise<void> {
     game.loading = true;
+    this.maxStep = 0; // Reset max step number
 
     const { status, message, data } = await this.api.start(
       topic_id,
@@ -111,6 +112,7 @@ export default class CoNexus {
     setMedia: (topic_id: string) => Promise<void>,
   ): Promise<void> {
     game.loading = true;
+    this.maxStep = 0; // Reset max step number
 
     const { status, message, data } = await this.api.demo(topic_id);
 

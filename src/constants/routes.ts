@@ -22,6 +22,7 @@ export const NAV_ROUTES = {
   PRIVACY_POLICY: '/privacy-policy',
   COPYRIGHT_POLICY: '/copyright-policy',
   CONTRIBUTOR_LICENSE: '/contributors-license-agreement',
+  CONTENT_POLICY: '/content-policy',
   // CoNexus routes
   HOME: '/',
   DASHBOARD: '/dashboard',

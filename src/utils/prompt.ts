@@ -189,6 +189,8 @@ function generatePrompt(
 
   const storyPrompt = setUpPrompt();
 
+  const isBlockPrompt = typeof data === 'string';
+
   const fullStory: TopicRequest = {
     name: props.name.trim(),
     description: props.description,

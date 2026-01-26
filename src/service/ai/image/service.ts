@@ -47,7 +47,7 @@ class ImageService {
     return withRetry(
       async (retryCtx) => {
         console.log(
-          `Attempting image generation with ${provider.name}, attempt ${retryCtx.attempt}`,
+          `Attempting image generation with ${provider.name} model: ${ctx.model}, attempt ${retryCtx.attempt}`,
         );
         try {
           const start = await provider.start(prompt, ctx, opts);
@@ -57,7 +57,7 @@ class ImageService {
           }
 
           console.log(
-            `Image generation started with ${provider.name}, job ID: ${start.id}`,
+            `Image generation started with ${provider.name} model: ${ctx.model}, job ID: ${start.id}`,
           );
 
           const maxIterations = MAX_POLLING_ITERATIONS;
@@ -83,10 +83,10 @@ class ImageService {
               return status.image;
             }
 
-            throw new Error(`${provider.name} image generation failed`);
+            throw new Error(`${provider.name} model: ${ctx.model} image generation failed`);
           }
 
-          throw new Error(`${provider.name} image generation timed out`);
+          throw new Error(`${provider.name} model: ${ctx.model} image generation timed out`);
         } catch (err) {
           throw err;
         }

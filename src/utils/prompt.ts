@@ -195,9 +195,11 @@ function generatePrompt(
     category_id: props.category_id,
     available: true,
     visibility: 'public',
-    prompt: storyPrompt,
+    prompt_type: typeof data === 'string' ? 'block' : 'structured',
+    block_prompt: typeof data === 'string' ? storyPrompt : undefined,
+    structured_prompt: typeof data === 'string' ? undefined : data,
     image_prompt: imagePrompt,
-    settings: settings,
+    prompt_settings: settings,
   };
 
   return fullStory;

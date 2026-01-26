@@ -96,15 +96,19 @@ type DraftPayload = DraftData & {
   title: string; // copy of storyData.name (or "Untitled")
 };
 
+type PromptType = 'structured' | 'block';
+
 type TopicRequest = {
   name: string;
   description: string;
   category_id: string;
   available: boolean;
   visibility: string;
-  prompt: string;
+  prompt_type: PromptType;
+  block_prompt?: string;
+  structured_prompt?: TablePrompt;
+  prompt_settings: PromptSettings;
   image_prompt: string;
-  settings: PromptSettings;
 };
 
 type TopicVisibility = 'public' | 'private' | 'unlisted';

@@ -133,9 +133,11 @@
 
     nameDraft = topic_name;
     descriptionDraft = topic_description;
-    promptDraft = textPrompt.structured_prompt || {
-      premise: textPrompt.block_prompt || '',
-    };
+    promptDraft = structuredClone(
+      textPrompt.structured_prompt ?? {
+        premise: textPrompt.block_prompt ?? '',
+      },
+    );
     imagePromptDraft = topic_image_prompt;
   };
 
@@ -186,7 +188,7 @@
 
   $effect(() => {
     if (editingTextPrompt) {
-      promptDraft = topic_text_prompt;
+      promptDraft = structuredClone(topic_text_prompt);
     }
   });
 
@@ -563,6 +565,8 @@
             disabled={!editingTextPrompt}
           ></textarea>
         </div>
+
+        <!-- Add More Fields (Make them optional, a closed panel) -->
       </section>
 
       <!-- MEDIA FILES -->

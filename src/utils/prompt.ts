@@ -10,7 +10,7 @@
 function generatePrompt(
   props: StoryData,
   settings: PromptSettings,
-  data: TablePrompt | string,
+  data: TablePrompt,
 ): TopicRequest {
   let imagePrompt: string = `Use ${settings.image_style} style.\n\n`;
 
@@ -193,9 +193,9 @@ function generatePrompt(
     return promptData;
   };
 
-  const storyPrompt = setUpPrompt();
+  // const storyPrompt = setUpPrompt();
 
-  const isBlockPrompt = typeof data === 'string';
+  // All prompts are now structured
 
   const fullStory: TopicRequest = {
     name: props.name.trim(),
@@ -203,9 +203,8 @@ function generatePrompt(
     category_id: props.category_id,
     available: true,
     visibility: 'public',
-    prompt_type: typeof data === 'string' ? 'block' : 'structured',
-    block_prompt: typeof data === 'string' ? storyPrompt : undefined,
-    structured_prompt: typeof data === 'string' ? undefined : data,
+    prompt_type: 'structured',
+    structured_prompt: data,
     image_prompt: imagePrompt,
     prompt_settings: settings,
   };

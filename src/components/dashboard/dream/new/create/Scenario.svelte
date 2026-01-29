@@ -6,13 +6,13 @@
   const addWinningScenario = () => {
     if (newWinningScenario === '') return;
     $tablePrompt.winning_scenarios = [
-      ...$tablePrompt.winning_scenarios,
+      ...($tablePrompt.winning_scenarios ?? []),
       newWinningScenario,
     ];
     newWinningScenario = '';
   };
   const removeWinningScenario = (index: number) => {
-    $tablePrompt.winning_scenarios = $tablePrompt.winning_scenarios.filter(
+    $tablePrompt.winning_scenarios = ($tablePrompt.winning_scenarios ?? []).filter(
       (scenario, nr) => {
         return nr !== index;
       },
@@ -23,13 +23,13 @@
   const addLosingScenario = () => {
     if (newLosingScenario === '') return;
     $tablePrompt.losing_scenarios = [
-      ...$tablePrompt.losing_scenarios,
+      ...($tablePrompt.losing_scenarios ?? []),
       newLosingScenario,
     ];
     newLosingScenario = '';
   };
   const removeLosingScenario = (index: number) => {
-    $tablePrompt.losing_scenarios = $tablePrompt.losing_scenarios.filter(
+    $tablePrompt.losing_scenarios = ($tablePrompt.losing_scenarios ?? []).filter(
       (scenario, nr) => {
         return nr !== index;
       },
@@ -39,11 +39,11 @@
   let newKeyEvent: string = $state('');
   const addKeyEvent = () => {
     if (newKeyEvent === '') return;
-    $tablePrompt.key_events = [...$tablePrompt.key_events, newKeyEvent];
+    $tablePrompt.key_events = [...($tablePrompt.key_events ?? []), newKeyEvent];
     newKeyEvent = '';
   };
   const removeKeyEvent = (index: number) => {
-    $tablePrompt.key_events = $tablePrompt.key_events.filter((event, nr) => {
+    $tablePrompt.key_events = ($tablePrompt.key_events ?? []).filter((event, nr) => {
       return nr !== index;
     });
   };
@@ -75,11 +75,11 @@
 
 <Dropdown name="Describe Scenarios">
   <h4>
-    Winning Scenarios{$tablePrompt.winning_scenarios.length
+    Winning Scenarios{$tablePrompt.winning_scenarios?.length
       ? ': ' + $tablePrompt.winning_scenarios.length
       : ''}
   </h4>
-  {#if $tablePrompt.winning_scenarios.length > 0}
+  {#if $tablePrompt.winning_scenarios?.length && $tablePrompt.winning_scenarios.length > 0}
     <ul class="winning-scenarios flex">
       {#each $tablePrompt.winning_scenarios as scenario, index}
         <li class="flex">
@@ -104,11 +104,11 @@
   <hr />
 
   <h4>
-    Losing Scenarios{$tablePrompt.losing_scenarios.length
+    Losing Scenarios{$tablePrompt.losing_scenarios?.length
       ? ': ' + $tablePrompt.losing_scenarios.length
       : ''}
   </h4>
-  {#if $tablePrompt.losing_scenarios.length > 0}
+  {#if $tablePrompt.losing_scenarios?.length && $tablePrompt.losing_scenarios.length > 0}
     <ul class="losing-scenarios flex">
       {#each $tablePrompt.losing_scenarios as scenario, index}
         <li class="flex">
@@ -133,11 +133,11 @@
   <hr />
 
   <h4>
-    Key Events{$tablePrompt.key_events.length
+    Key Events{$tablePrompt.key_events?.length
       ? ': ' + $tablePrompt.key_events.length
       : ''}
   </h4>
-  {#if $tablePrompt.key_events.length > 0}
+  {#if $tablePrompt.key_events?.length && $tablePrompt.key_events.length > 0}
     <ul class="key-events flex">
       {#each $tablePrompt.key_events as event, index}
         <li class="flex">

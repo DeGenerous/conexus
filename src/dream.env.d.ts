@@ -35,23 +35,23 @@ type PromptSettings = {
 
 type TablePrompt = {
   premise: string;
-  environment: string;
-  exposition: string;
-  first_action: string;
-  main_character: Character;
-  side_characters: Character[];
-  relationships: Relationship[];
-  winning_scenarios: string[];
-  losing_scenarios: string[];
-  key_events: string[];
-  tense: string;
-  story_arcs: Min_Max;
-  writing_style: string;
-  voice: string;
-  pacing: Min_Max;
+  environment?: string;
+  exposition?: string;
+  first_action?: string;
+  main_character?: Character;
+  side_characters?: Character[];
+  relationships?: Relationship[];
+  winning_scenarios?: string[];
+  losing_scenarios?: string[];
+  key_events?: string[];
+  tense?: string;
+  story_arcs?: Min_Max;
+  writing_style?: string;
+  voice?: string;
+  pacing?: Min_Max;
   pov?: string;
-  tone: Tone;
-  additional_data: string;
+  tone?: Tone;
+  additional_data?: string;
 };
 
 type StoryData = {
@@ -122,10 +122,37 @@ type TopicFull = {
   media_folder_id: string;
 };
 
+type PromptVersion = {
+  id: string;
+  version_number: number;
+};
+
+type TopicTextPrompt = {
+  current_prompt_version: PromptVersion;
+  all_prompt_versions: PromptVersion[];
+
+  is_block: boolean;
+  block_prompt: string;
+  structured_prompt?: TablePrompt | null;
+
+  prompt_settings_id?: string | null;
+};
+
+type TopicImagePrompt = {
+  current_prompt_version: PromptVersion;
+  all_prompt_versions: PromptVersion[];
+
+  prompt: string;
+};
+
 type TopicPrompt = {
   id: string;
-  prompt: string;
-  image_prompt: string;
+  topic_id: string;
+
+  text: TopicTextPrompt;
+  image: TopicImagePrompt;
+
+  content_rating: ContentRating;
 };
 
 type TopicCategory = {

@@ -339,7 +339,7 @@ export default class TopicAPI extends Fetcher {
    * @param new_prompt The new prompt for the topic
    * @returns The response from the API
    */
-  async editPrompt(topic_id: string, new_prompt: string) {
+  async editPrompt(topic_id: string, new_prompt: TablePrompt) {
     return this.request(`${this.group}/edit-prompt`, {
       method: 'PATCH',
       body: JSON.stringify({ topic_id, new_prompt }),

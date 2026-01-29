@@ -44,8 +44,8 @@
   let topic_media_files = $state<TopicMediaFile[]>([]);
 
   let topic_prompt_id = $state<string>('');
-  let topic_prompt = $state<string>('');
-  let topic_imagePrompt = $state<string>('');
+  let topic_text_prompt = $state<TablePrompt>({ premise: '' });
+  let topic_image_prompt = $state<string>('');
 
   let topic_categories = $state<TopicCategory[]>([]);
   let topic_genres = $state<TopicGenre[]>([]);
@@ -53,8 +53,32 @@
 
   let nameDraft = $state<string>('');
   let descriptionDraft = $state<string>('');
-  let promptDraft = $state<string>('');
+  let promptDraft = $state<TablePrompt>({ premise: '' });
   let imagePromptDraft = $state<string>('');
+
+  const deepEqual = (a: any, b: any): boolean => {
+    if (a === b) return true;
+
+    if (
+      typeof a !== 'object' ||
+      typeof b !== 'object' ||
+      a === null ||
+      b === null
+    )
+      return false;
+
+    const keysA = Object.keys(a);
+    const keysB = Object.keys(b);
+
+    if (keysA.length !== keysB.length) return false;
+
+    for (const key of keysA) {
+      if (!keysB.includes(key)) return false;
+      if (!deepEqual(a[key], b[key])) return false;
+    }
+
+    return true;
+  };
 
   const setUpSettings = (settings: PromptSettings) => {
     if (!settings) return;
@@ -91,9 +115,16 @@
     topic_availability = data.topic.available;
     topic_visibility = data.topic.visibility;
 
+    // Prompts
     topic_prompt_id = data.topic_prompt.id;
-    topic_prompt = data.topic_prompt.prompt;
-    topic_imagePrompt = data.topic_prompt.image_prompt;
+
+    const textPrompt = data.topic_prompt.text;
+    const imagePrompt = data.topic_prompt.image;
+
+    topic_text_prompt = textPrompt.structured_prompt || {
+      premise: textPrompt.block_prompt || '',
+    };
+    topic_image_prompt = imagePrompt.prompt;
 
     topic_categories = data.categories;
     topic_genres = data.genres;
@@ -102,8 +133,10 @@
 
     nameDraft = topic_name;
     descriptionDraft = topic_description;
-    promptDraft = topic_prompt;
-    imagePromptDraft = topic_imagePrompt;
+    promptDraft = textPrompt.structured_prompt || {
+      premise: textPrompt.block_prompt || '',
+    };
+    imagePromptDraft = topic_image_prompt;
   };
 
   const hydrateTopic = async (refresh = false) => {
@@ -129,7 +162,7 @@
 
   let editingName = $state<boolean>(false);
   let editingDescription = $state<boolean>(false);
-  let editingPrompt = $state<boolean>(false);
+  let editingTextPrompt = $state<boolean>(false);
   let editingImagePrompt = $state<boolean>(false);
 
   // whenever an edit toggle opens we repopulate the draft with the latest saved value to avoid stale local state
@@ -147,13 +180,13 @@
 
   $effect(() => {
     if (editingImagePrompt) {
-      imagePromptDraft = topic_imagePrompt;
+      imagePromptDraft = topic_image_prompt;
     }
   });
 
   $effect(() => {
-    if (editingPrompt) {
-      promptDraft = topic_prompt;
+    if (editingTextPrompt) {
+      promptDraft = topic_text_prompt;
     }
   });
 
@@ -244,8 +277,8 @@
       topic: topic_name,
       description: topic_description,
       prompt_id: topic_prompt_id,
-      prompt: topic_prompt,
-      image_prompt: topic_imagePrompt,
+      prompt: topic_text_prompt,
+      image_prompt: topic_image_prompt,
       genres: topic_genres,
       categories: topic_categories,
     };
@@ -457,12 +490,12 @@
                 <CloseSVG
                   onclick={() => {
                     editingImagePrompt = false;
-                    imagePromptDraft = topic_imagePrompt;
+                    imagePromptDraft = topic_image_prompt;
                   }}
                 />
                 <SaveSVG
                   onclick={async () => {
-                    if (topic_imagePrompt === imagePromptDraft) {
+                    if (topic_image_prompt === imagePromptDraft) {
                       editingImagePrompt = false;
                       return;
                     }
@@ -470,11 +503,11 @@
                       topic_id,
                       imagePromptDraft,
                     );
-                    topic_imagePrompt = imagePromptDraft;
+                    topic_image_prompt = imagePromptDraft;
                     editingImagePrompt = false;
                     await refreshTopic();
                   }}
-                  disabled={topic_imagePrompt === imagePromptDraft}
+                  disabled={topic_image_prompt === imagePromptDraft}
                 />
               {:else}
                 <EditSVG bind:editing={editingImagePrompt} />
@@ -491,33 +524,34 @@
           ></textarea>
         </div>
 
-        <!-- PROMPT -->
+        <!-- PROMPT Premise -->
         <div class="flex-row box-header">
           <span class="edit-wrapper flex">
-            <h4>Prompt</h4>
+            <h4>Premise</h4>
             <span class="flex-row">
-              {#if editingPrompt}
+              {#if editingTextPrompt}
                 <CloseSVG
                   onclick={() => {
-                    editingPrompt = false;
-                    promptDraft = topic_prompt;
+                    editingTextPrompt = false;
+                    promptDraft = structuredClone(topic_text_prompt);
                   }}
                 />
                 <SaveSVG
                   onclick={async () => {
-                    if (topic_prompt === promptDraft) {
-                      editingPrompt = false;
+                    if (deepEqual(topic_text_prompt, promptDraft)) {
+                      console.log('no changes');
+                      editingTextPrompt = false;
                       return;
                     }
                     await topicManager.editPrompt(topic_id, promptDraft);
-                    topic_prompt = promptDraft;
-                    editingPrompt = false;
+                    topic_text_prompt = structuredClone(promptDraft);
+                    editingTextPrompt = false;
                     await refreshTopic();
                   }}
-                  disabled={topic_prompt === promptDraft}
+                  disabled={deepEqual(topic_text_prompt, promptDraft)}
                 />
               {:else}
-                <EditSVG bind:editing={editingPrompt} />
+                <EditSVG bind:editing={editingTextPrompt} />
               {/if}
             </span>
           </span>
@@ -525,8 +559,8 @@
             id="prompt"
             placeholder="Describe any scenario you want, and the AI will turn it into a story! Whether it's a thrilling mystery, an epic fantasy, or a hilarious adventure, your imagination sets the stage. You can be as detailed or vague as you like—every idea sparks a unique tale. E.g. Make a unique Sherlock Holmes story where during an investigation he ends up taking a new type of drug, deeply affecting him so he’ll lead a fight both versus himself and a serial killer."
             rows="5"
-            bind:value={promptDraft}
-            disabled={!editingPrompt}
+            bind:value={promptDraft.premise}
+            disabled={!editingTextPrompt}
           ></textarea>
         </div>
       </section>

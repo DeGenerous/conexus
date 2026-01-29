@@ -588,10 +588,10 @@ export default class Topic {
   /**
    * Update the text prompt for a topic.
    * @param topic_id - The topic identifier.
-   * @param prompt - The prompt text to store.
+   * @param new_prompt - The new prompt TablePrompt.
    */
-  async editPrompt(topic_id: string, prompt: string): Promise<void> {
-    const { status, message } = await this.api.editPrompt(topic_id, prompt);
+  async editPrompt(topic_id: string, new_prompt: TablePrompt): Promise<void> {
+    const { status, message } = await this.api.editPrompt(topic_id, new_prompt);
 
     if (status === 'error') {
       api_error(message);

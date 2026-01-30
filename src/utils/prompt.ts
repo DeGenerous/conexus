@@ -10,7 +10,7 @@
 function generatePrompt(
   props: StoryData,
   settings: PromptSettings,
-  data: TablePrompt | string,
+  data: TablePrompt,
 ): TopicRequest {
   let imagePrompt: string = `Use ${settings.image_style} style.\n\n`;
 
@@ -20,17 +20,19 @@ function generatePrompt(
   if (typeof data !== 'string') {
     imagePrompt += '\n';
 
-    imagePrompt += `Main Character: name: ${data.main_character.name}, description: ${data.main_character.description}`;
+    if (data.main_character) {
+      imagePrompt += `Main Character: name: ${data.main_character.name}, description: ${data.main_character.description}`;
 
-    if (data.main_character.physicality)
-      imagePrompt += `, physicality: ${data.main_character.physicality}`;
+      if (data.main_character.physicality)
+        imagePrompt += `, physicality: ${data.main_character.physicality}`;
 
-    if (data.main_character.psychology)
-      imagePrompt += `, psychology: ${data.main_character.psychology}`;
+      if (data.main_character.psychology)
+        imagePrompt += `, psychology: ${data.main_character.psychology}`;
 
-    imagePrompt += '\n';
+      imagePrompt += '\n';
+    }
 
-    if (data.side_characters.length > 0) {
+    if (data.side_characters && data.side_characters.length > 0) {
       imagePrompt += 'Side Characters:\n';
       data.side_characters.map((character: Character) => {
         imagePrompt += `name: ${character.name}, description: ${character.description}`;
@@ -38,7 +40,7 @@ function generatePrompt(
         if (character.physicality)
           imagePrompt += `, physicality: ${character.physicality}`;
 
-        if (character.physicality)
+        if (character.psychology)
           imagePrompt += `, psychology: ${character.psychology}`;
 
         imagePrompt += '\n';
@@ -65,17 +67,19 @@ function generatePrompt(
     promptData += '\n';
     promptData += 'The following characters are involved in the story:\n';
 
-    promptData += `Main Character: name: ${data.main_character.name}, description: ${data.main_character.description}`;
+    if (data.main_character) {
+      promptData += `Main Character: name: ${data.main_character.name}, description: ${data.main_character.description}`;
 
-    if (data.main_character.physicality)
-      promptData += `, physicality: ${data.main_character.physicality}`;
+      if (data.main_character.physicality)
+        promptData += `, physicality: ${data.main_character.physicality}`;
 
-    if (data.main_character.psychology)
-      promptData += `, psychology: ${data.main_character.psychology}`;
+      if (data.main_character.psychology)
+        promptData += `, psychology: ${data.main_character.psychology}`;
 
-    promptData += '\n';
+      promptData += '\n';
+    }
 
-    if (data.side_characters.length > 0) {
+    if (data.side_characters && data.side_characters.length > 0) {
       promptData += 'Side Characters:\n';
       data.side_characters.map((character: Character) => {
         promptData += `name: ${character.name}, description: ${character.description}`;
@@ -90,7 +94,7 @@ function generatePrompt(
       });
     }
 
-    if (data.relationships.length > 0) {
+    if (data.relationships && data.relationships.length > 0) {
       promptData +=
         'Consider the following relationships between the characters:\n';
       data.relationships.map((relations: Relationship) => {
@@ -102,7 +106,7 @@ function generatePrompt(
     }
 
     // SCENARIOS
-    if (data.winning_scenarios.length > 0) {
+    if (data.winning_scenarios && data.winning_scenarios.length > 0) {
       promptData += '\n';
       promptData += 'Incorportate the following winning scenarios:\n';
       data.winning_scenarios.map((scenario: string, index: number) => {
@@ -110,7 +114,7 @@ function generatePrompt(
       });
     }
 
-    if (data.losing_scenarios.length > 0) {
+    if (data.losing_scenarios && data.losing_scenarios.length > 0) {
       promptData += '\n';
       promptData += 'Incorportate the following losing scenarios:\n';
       data.losing_scenarios.map((scenario: string, index: number) => {
@@ -118,7 +122,7 @@ function generatePrompt(
       });
     }
 
-    if (data.key_events.length > 0) {
+    if (data.key_events && data.key_events.length > 0) {
       promptData += '\n';
       promptData += 'Incorportate the following key events:\n';
       data.key_events.map((event: string, index: number) => {
@@ -176,10 +180,12 @@ function generatePrompt(
 
     promptData += `Writing Style:\n- Tense: ${data.tense};\n- Style: ${data.writing_style};\n- Voice: ${data.voice}.\n`;
 
-    promptData += 'Tone:\n';
-    data.tone.map(({ name, value }) => {
-      if (value !== 'none') promptData += `- ${name}: ${value};\n`;
-    });
+    if (data.tone) {
+      promptData += 'Tone:\n';
+      data.tone.map(({ name, value }) => {
+        if (value !== 'none') promptData += `- ${name}: ${value};\n`;
+      });
+    }
 
     if (data.additional_data)
       promptData += `\nAlso consider:\n${data.additional_data}`;
@@ -187,7 +193,9 @@ function generatePrompt(
     return promptData;
   };
 
-  const storyPrompt = setUpPrompt();
+  // const storyPrompt = setUpPrompt();
+
+  // All prompts are now structured
 
   const fullStory: TopicRequest = {
     name: props.name.trim(),
@@ -195,9 +203,8 @@ function generatePrompt(
     category_id: props.category_id,
     available: true,
     visibility: 'public',
-    prompt_type: typeof data === 'string' ? 'block' : 'structured',
-    block_prompt: typeof data === 'string' ? storyPrompt : undefined,
-    structured_prompt: typeof data === 'string' ? undefined : data,
+    prompt_type: 'structured',
+    structured_prompt: data,
     image_prompt: imagePrompt,
     prompt_settings: settings,
   };

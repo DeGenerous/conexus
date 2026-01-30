@@ -5,6 +5,16 @@
   import Dropdown from '@components/utils/Dropdown.svelte';
   import NewCharacter from '@components/dashboard/dream/new/create/NewCharacter.svelte';
 
+  // Initialize main_character if undefined
+  if (!$tablePrompt.main_character) {
+    $tablePrompt.main_character = {
+      name: '',
+      description: '',
+      physicality: '',
+      psychology: '',
+    };
+  }
+
   // ADD NEW SIDE CHARACTER
 
   let newSideCharacter: Character = {
@@ -16,7 +26,7 @@
 
   const addSideCharacter = () => {
     $tablePrompt.side_characters = [
-      ...$tablePrompt.side_characters,
+      ...($tablePrompt.side_characters || []),
       newSideCharacter,
     ];
     newSideCharacter = {
@@ -28,7 +38,7 @@
   };
 
   const removeSideCharacter = (index: number) => {
-    $tablePrompt.side_characters = $tablePrompt.side_characters.filter(
+    $tablePrompt.side_characters = ($tablePrompt.side_characters || []).filter(
       (character, nr) => {
         return nr !== index;
       },
@@ -44,7 +54,7 @@
   };
   const addRelationship = () => {
     $tablePrompt.relationships = [
-      ...$tablePrompt.relationships,
+      ...($tablePrompt.relationships || []),
       newRelationship,
     ];
     newRelationship = {
@@ -54,7 +64,7 @@
     };
   };
   const removeRelationship = (index: number) => {
-    $tablePrompt.relationships = $tablePrompt.relationships.filter(
+    $tablePrompt.relationships = ($tablePrompt.relationships || []).filter(
       (character, nr) => {
         return nr !== index;
       },
@@ -83,7 +93,9 @@
 <Dropdown name="Add Characters">
   <div class="character-data flex">
     <h3>Main Character</h3>
-    <NewCharacter bind:character={$tablePrompt.main_character} />
+    {#if $tablePrompt.main_character}
+      <NewCharacter bind:character={$tablePrompt.main_character} />
+    {/if}
   </div>
 
   <hr />
@@ -92,11 +104,11 @@
 
   <div class="character-data flex">
     <h3>
-      Side Characters{$tablePrompt.side_characters.length
+      Side Characters{$tablePrompt.side_characters?.length
         ? ': ' + $tablePrompt.side_characters.length
         : ''}
     </h3>
-    {#if $tablePrompt.side_characters.length > 0}
+    {#if $tablePrompt.side_characters && $tablePrompt.side_characters.length > 0}
       <ul class="side-characters flex-row">
         {#each $tablePrompt.side_characters as character, index}
           <li class="flex transition">
@@ -141,7 +153,7 @@
   <!-- CHARACTERS RELATIONSHIPS -->
 
   <h3>Relationships</h3>
-  {#if $tablePrompt.relationships.length > 0}
+  {#if $tablePrompt.relationships && $tablePrompt.relationships.length > 0}
     <ul class="relationships flex-row">
       {#each $tablePrompt.relationships as { type, details, connection }, index}
         <li class="flex transition {type}">
@@ -193,7 +205,7 @@
           bind:value={newRelationship.connection[0]}
         >
           <option value="" selected={true} disabled hidden>Select</option>
-          {#if $tablePrompt.main_character.name}
+          {#if $tablePrompt.main_character && $tablePrompt.main_character.name}
             <option value={$tablePrompt.main_character.name}
               >{$tablePrompt.main_character.name}</option
             >
@@ -214,7 +226,7 @@
           bind:value={newRelationship.connection[1]}
         >
           <option value="" selected={true} disabled hidden>Select</option>
-          {#if $tablePrompt.main_character.name}
+          {#if $tablePrompt.main_character && $tablePrompt.main_character.name}
             <option value={$tablePrompt.main_character.name}
               >{$tablePrompt.main_character.name}</option
             >
@@ -231,9 +243,9 @@
     </div>
   </section>
 
-  {#if $tablePrompt.side_characters.length < 1 && !$tablePrompt.main_character.name}
+  {#if (!$tablePrompt.side_characters || $tablePrompt.side_characters.length < 1) && (!$tablePrompt.main_character || !$tablePrompt.main_character.name)}
     <p class="validation">There is no characters added</p>
-  {:else if $tablePrompt.side_characters.length < 1 || ($tablePrompt.side_characters.length < 2 && !$tablePrompt.main_character.name)}
+  {:else if !$tablePrompt.side_characters || $tablePrompt.side_characters.length < 1 || ($tablePrompt.side_characters && $tablePrompt.side_characters.length < 2 && (!$tablePrompt.main_character || !$tablePrompt.main_character.name))}
     <p class="validation">
       You must have at least 2 characters to set up a relationship
     </p>

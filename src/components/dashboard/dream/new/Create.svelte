@@ -401,7 +401,8 @@
         placeholder="Describe the time and place where your story unfolds, whether it's a futuristic city, a medieval kingdom, a distant galaxy, or somewhere beyond imagination."
         rows="2"
         bind:value={$tablePrompt.environment}
-        style:min-height={$tablePrompt.environment.length > 500
+        style:min-height={$tablePrompt.environment &&
+        $tablePrompt.environment.length > 500
           ? $tablePrompt.environment.length / 50 + 'rem'
           : ''}
       ></textarea>
@@ -414,7 +415,8 @@
         placeholder="Set the stage for your story—introduce the world, key events leading up to the present, and any important background details the reader needs to know."
         rows="2"
         bind:value={$tablePrompt.exposition}
-        style:min-height={$tablePrompt.exposition.length > 500
+        style:min-height={$tablePrompt.exposition &&
+        $tablePrompt.exposition.length > 500
           ? $tablePrompt.exposition.length / 50 + 'rem'
           : ''}
       ></textarea>
@@ -427,7 +429,8 @@
         placeholder="Describe how the story begins—introduce the main character, their current situation, and the inciting event that sets the plot in motion."
         rows="2"
         bind:value={$tablePrompt.first_action}
-        style:min-height={$tablePrompt.first_action.length > 500
+        style:min-height={$tablePrompt.first_action &&
+        $tablePrompt.first_action.length > 500
           ? $tablePrompt.first_action.length / 50 + 'rem'
           : ''}
       ></textarea>
@@ -449,7 +452,8 @@
       placeholder="Add any additional styling, references, details, twists, character ideas, or world-building elements you’d like to include in your story."
       rows="2"
       bind:value={$tablePrompt.additional_data}
-      style:min-height={$tablePrompt.additional_data.length > 500
+      style:min-height={$tablePrompt.additional_data &&
+      $tablePrompt.additional_data.length > 500
         ? $tablePrompt.additional_data.length / 50 + 'rem'
         : ''}
     ></textarea>

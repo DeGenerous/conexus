@@ -3,7 +3,7 @@
 
   import AdminApp from '@lib/admin';
   import AppView from '@lib/view';
-  import openModal from '@stores/modal.svelte';
+  import { modal } from '@lib/modal-manager.svelte';
   import { ensureMessage } from '@constants/modal';
 
   import CloseSVG from '@components/icons/Close.svelte';
@@ -28,9 +28,12 @@
   };
 
   const deleteGenre = async (id: string) => {
-    openModal(ensureMessage('delete this genre'), 'Delete', async () => {
-      await admin.deleteGenre(id);
-      genres = await view.getGenres(true);
+    modal.confirm('', ensureMessage('delete this genre'), {
+      onConfirm: async () => {
+        await admin.deleteGenre(id);
+        genres = await view.getGenres(true);
+      },
+      confirmText: 'Delete',
     });
   };
 

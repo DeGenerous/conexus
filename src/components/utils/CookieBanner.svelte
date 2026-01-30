@@ -69,9 +69,7 @@
       <p class="soft-white-txt">
         By continuing to use this website, you consent to the use of cookies as
         described in our
-        <a href={NAV_ROUTES.PRIVACY_POLICY}>
-          Privacy Policy
-        </a>
+        <a href={NAV_ROUTES.PRIVACY_POLICY}> Privacy Policy </a>
       </p>
     </div>
     <div class="consent-buttons flex-row">

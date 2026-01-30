@@ -1,10 +1,12 @@
-/// <reference path="../.astro/types.d.ts" />
-/// <reference types="astro/client" />
+/**
+ * Topic view types.
+ * Topic pages, categories, gates, and navigation for the player-facing UI.
+ */
 
+/** Sort order for topic listing views. */
 type TopicSortOrder = 'name' | 'category';
 
-/* V2 */
-
+/** Access gate attached to a topic (token-gated content). */
 type TopicGate = {
   gate_id: string;
   name: string;
@@ -14,13 +16,26 @@ type TopicGate = {
   symbol: string;
   purchase_link: string;
 
+  /** Minimum token balance required (ERC-20). */
   min_amount?: number;
 
+  /** Token ID range bounds (ERC-721 class gates). */
   token_id_min?: number;
   token_id_max?: number;
+  /** Explicit token IDs required (ERC-721 token gates). */
   specific_token_ids?: number[];
 };
 
+/** Category with its topics for section-based browsing. */
+type SectionCategoryTopics = {
+  id: string;
+  name: string;
+  sort_order: number;
+  topic_count: number;
+  topics?: CategoryTopic[];
+};
+
+/** Topic card shown within a category listing. */
 type CategoryTopic = {
   id: string;
   name: string;
@@ -32,19 +47,13 @@ type CategoryTopic = {
   topic_gates?: TopicGate[];
 };
 
-type SectionCategoryTopics = {
-  id: string;
-  name: string;
-  sort_order: number;
-  topic_count: number;
-  topics?: CategoryTopic[];
-};
-
+/** Unfinished story reference for "continue" prompts. */
 type UnfinishedStory = {
   story_id: string;
   created_at: string;
 };
 
+/** Adjacent topics for prev/next navigation. */
 type TopicNeighbor = {
   topic_id: string;
   topic_name: string;
@@ -53,6 +62,7 @@ type TopicNeighbor = {
   next_topic_id?: string;
 };
 
+/** Full topic page data for the player-facing topic view. */
 type TopicPage = {
   id: string;
   name: string;

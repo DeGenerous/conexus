@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import openModal from '@stores/modal.svelte';
+  import { modal } from '@lib/modal-manager.svelte';
   import { ensureMessage } from '@constants/modal';
 
   import Collection from '@lib/collection';
@@ -21,10 +21,8 @@
   });
 
   const deleteGate = async (gate_id: string) => {
-    openModal(
-      ensureMessage('delete this gate permanently'),
-      'Delete Gate',
-      async () => {
+    modal.confirm('', ensureMessage('delete this gate permanently'), {
+      onConfirm: async () => {
         try {
           await collection.deleteGate(gate_id);
           gates = gates.filter((gate) => gate.id !== gate_id);
@@ -32,7 +30,8 @@
           console.error('Error deleting gate:', error);
         }
       },
-    );
+      confirmText: 'Delete Gate',
+    });
   };
 </script>
 

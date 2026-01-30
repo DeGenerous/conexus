@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
 
   import Collection from '@lib/collection';
-  import openModal from '@stores/modal.svelte';
+  import { modal } from '@lib/modal-manager.svelte';
   import { ensureMessage } from '@constants/modal';
 
   import Gates from '@components/dashboard/admin/web3/Gates.svelte';
@@ -283,10 +283,8 @@
   };
 
   const deleteCollection = async (id: string) => {
-    openModal(
-      ensureMessage('delete this collection permanently'),
-      'Delete',
-      async () => {
+    modal.confirm('', ensureMessage('delete this collection permanently'), {
+      onConfirm: async () => {
         try {
           await collection.deleteCollection(id);
           collections = collections.filter((col) => col.id !== id);
@@ -294,7 +292,8 @@
           console.error('Error deleting collection:', error);
         }
       },
-    );
+      confirmText: 'Delete',
+    });
   };
 </script>
 

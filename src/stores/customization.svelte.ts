@@ -37,8 +37,6 @@ import {
   THEMES_KEY,
 } from '@constants/cache';
 
-export const themeSettingsModal = writable<boolean>(false);
-
 export const customFont = writable<CustomFont>(null);
 export const customStyling = writable<CustomStyling>(null);
 

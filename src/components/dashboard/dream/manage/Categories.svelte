@@ -5,7 +5,7 @@
   import { checkUserRoles } from '@utils/route-guard';
   import { isAdmin } from '@stores/account.svelte';
   import { toastStore } from '@stores/toast.svelte';
-  import openModal from '@stores/modal.svelte';
+  import { modal } from '@lib/modal-manager.svelte';
   import { ensureMessage } from '@constants/modal';
 
   import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
@@ -76,10 +76,8 @@
       return;
     }
 
-    openModal(
-      ensureMessage(`delete the category "${category.name}"`),
-      'Delete',
-      async () => {
+    modal.confirm('', ensureMessage(`delete the category "${category.name}"`), {
+      onConfirm: async () => {
         const deleted = $isAdmin
           ? await categoryView.deleteAdminCategory(category.id!)
           : await categoryView.deleteCreatorCategory(category.id!);
@@ -88,7 +86,8 @@
           await fetchCategories();
         }
       },
-    );
+      confirmText: 'Delete',
+    });
   };
 
   const onkeypress = (event: KeyboardEvent) => {

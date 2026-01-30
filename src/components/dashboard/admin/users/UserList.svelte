@@ -1,6 +1,6 @@
 <script lang="ts">
   import AdminApp from '@lib/admin';
-  import openModal from '@stores/modal.svelte';
+  import { modal } from '@lib/modal-manager.svelte';
   import { disableAccountWarning } from '@constants/modal';
 
   let { roles }: { roles: TenantRole[] } = $props();
@@ -199,9 +199,10 @@
               account.localDisabled ||
               disableBusy[account.id || '']}
             onclick={() =>
-              openModal(disableAccountWarning, 'Disable', () =>
-                disableAccount(account.id),
-              )}
+              modal.confirm('', disableAccountWarning, {
+                onConfirm: () => disableAccount(account.id),
+                confirmText: 'Disable',
+              })}
           >
             {#if disableBusy[account.id || '']}
               Disabling...

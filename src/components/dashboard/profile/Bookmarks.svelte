@@ -5,7 +5,7 @@
   import { resolveRenderableImage } from '@utils/file-validation';
   import Account from '@lib/account';
   import { toastStore } from '@stores/toast.svelte';
-  import openModal from '@stores/modal.svelte';
+  import { modal } from '@lib/modal-manager.svelte';
   import { ensureMessage } from '@constants/modal';
 
   import CloseSVG from '@components/icons/Close.svelte';
@@ -144,10 +144,13 @@
       return;
     }
 
-    openModal(ensureMessage('remove this folder'), 'Remove', async () => {
-      await account.deleteBookmarkFolder(folder.id!);
-      await loadFolders();
-      openGeneralFolder();
+    modal.confirm('', ensureMessage('remove this folder'), {
+      onConfirm: async () => {
+        await account.deleteBookmarkFolder(folder.id!);
+        await loadFolders();
+        openGeneralFolder();
+      },
+      confirmText: 'Remove',
     });
   }
 

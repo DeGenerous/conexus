@@ -14,7 +14,7 @@
   import Account from '@lib/account';
   import Authentication from '@lib/authentication';
   import { accountError, developerMode } from '@stores/account.svelte';
-  import openModal from '@stores/modal.svelte';
+  import { modal } from '@lib/modal-manager.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';
   import { getCurrentUser } from '@utils/route-guard';
   import { referralActivationNotice } from '@constants/modal';
@@ -206,11 +206,10 @@
 
   const handleGenerateReferralCode = async () => {
     if (!user?.referred && !$developerMode) {
-      openModal(
-        referralActivationNotice,
-        'Proceed',
-        () => (window.location.href = '/referral'),
-      );
+      modal.confirm('', referralActivationNotice, {
+        onConfirm: () => (window.location.href = '/referral'),
+        confirmText: 'Proceed',
+      });
       return;
     }
     await account.generateReferralCode();
@@ -220,10 +219,10 @@
   // Web3 wallets
 
   const openSelectWalletModal = (wallet: string) => {
-    openModal(
+    modal.confirm(
+      '',
       ensureMessage('select this wallet as the main address for your account'),
-      'Select',
-      () => selectMainWallet(wallet),
+      { onConfirm: () => selectMainWallet(wallet), confirmText: 'Select' },
     );
   };
 
@@ -235,11 +234,10 @@
 
   const openRemoveWalletModal = (event: Event, wallet: string) => {
     event.stopPropagation();
-    openModal(
-      ensureMessage('unlink this wallet from your account'),
-      'Unlink',
-      () => unlinkWallet(wallet),
-    );
+    modal.confirm('', ensureMessage('unlink this wallet from your account'), {
+      onConfirm: () => unlinkWallet(wallet),
+      confirmText: 'Unlink',
+    });
   };
 
   const unlinkWallet = async (wallet: string) => {
@@ -336,18 +334,21 @@
 
   // Delete account
   const deleteAccount = async () => {
-    openModal(
+    modal.confirm(
+      '',
       ensureMessage(
         'delete your account permanently, without the possibility of recovery',
       ),
-      'Delete',
-      async () => {
-        try {
-          await account.deleteAccount();
-          await authentication.logout(); // TODO: remove it once deleteAccount handles logout internally
-        } catch (error) {
-          console.error('Failed to delete account:', error);
-        }
+      {
+        onConfirm: async () => {
+          try {
+            await account.deleteAccount();
+            await authentication.logout(); // TODO: remove it once deleteAccount handles logout internally
+          } catch (error) {
+            console.error('Failed to delete account:', error);
+          }
+        },
+        confirmText: 'Delete',
       },
     );
   };

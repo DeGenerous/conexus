@@ -5,7 +5,7 @@
 
   import { NAV_ROUTES } from '@constants/routes';
   import TopicManagement from '@lib/topics';
-  import openModal from '@stores/modal.svelte';
+  import { modal } from '@lib/modal-manager.svelte';
   import { ensureMessage } from '@constants/modal';
   import { checkUserRoles, ensurePlayer } from '@utils/route-guard';
   import { isAdmin } from '@stores/account.svelte';
@@ -575,14 +575,13 @@
       <button
         class="red-btn"
         onclick={() =>
-          openModal(
-            ensureMessage('delete this story'),
-            `Delete story: ${topic_name}`,
-            async () => {
+          modal.confirm('', ensureMessage('delete this story'), {
+            onConfirm: async () => {
               await topicManager.deleteTopic(topic_id);
               window.location.href = '/dashboard#/dream/manage/collections';
             },
-          )}
+            confirmText: `Delete story: ${topic_name}`,
+          })}
       >
         Delete Story
       </button>

@@ -3,7 +3,7 @@
 
   import Topic from '@lib/topics';
   import Drafts from '@utils/story-drafts';
-  import openModal from '@stores/modal.svelte';
+  import { modal } from '@lib/modal-manager.svelte';
   import { ensureMessage, restoreDraft } from '@constants/modal';
   import { SetCache, CURRENT_DRAFT_KEY } from '@constants/cache';
 
@@ -32,18 +32,24 @@
   };
 
   const openDraft = (id: string, title: string) => {
-    openModal(restoreDraft(title), 'Restore', () => {
-      SetCache(CURRENT_DRAFT_KEY, id);
-      open('/dashboard#/dream/create', '_self');
+    modal.confirm('', restoreDraft(title), {
+      onConfirm: () => {
+        SetCache(CURRENT_DRAFT_KEY, id);
+        open('/dashboard#/dream/create', '_self');
+      },
+      confirmText: 'Restore',
     });
   };
 
   const deleteDraft = (event: Event, id: string) => {
     event.stopPropagation();
-    openModal(ensureMessage('delete this draft'), 'Delete', () => {
-      Drafts.delete(id).then(() => {
-        drafts = drafts.filter((draft) => draft.id !== id);
-      });
+    modal.confirm('', ensureMessage('delete this draft'), {
+      onConfirm: () => {
+        Drafts.delete(id).then(() => {
+          drafts = drafts.filter((draft) => draft.id !== id);
+        });
+      },
+      confirmText: 'Delete',
     });
   };
 

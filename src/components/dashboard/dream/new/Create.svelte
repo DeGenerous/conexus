@@ -17,7 +17,7 @@
     clearAllData,
     currentDraft,
   } from '@stores/dream.svelte';
-  import openModal from '@stores/modal.svelte';
+  import { modal } from '@lib/modal-manager.svelte';
   import generatePrompt from '@utils/prompt';
   import { checkUserRoles } from '@utils/route-guard';
   import { isAdmin } from '@stores/account.svelte';
@@ -180,16 +180,18 @@
 
     setTimeout(async () => {
       const storyLink = `/dashboard/topic/${topic_id}`;
-      openModal(
-        openStoryManage,
-        'Manage Story',
-        () => (window.location.href = storyLink),
-      );
+      modal.confirm('', openStoryManage, {
+        onConfirm: () => (window.location.href = storyLink),
+        confirmText: 'Manage Story',
+      });
     }, 600);
   };
 
   const createStory = () => {
-    openModal(createDream, 'Create Dream', generateStory);
+    modal.confirm('', createDream, {
+      onConfirm: generateStory,
+      confirmText: 'Create Dream',
+    });
   };
 </script>
 
@@ -481,7 +483,10 @@
   <button
     class="red-btn"
     onclick={() =>
-      openModal(ensureMessage('reset all data'), 'Reset', clearAllData)}
+      modal.confirm('', ensureMessage('reset all data'), {
+        onConfirm: clearAllData,
+        confirmText: 'Reset',
+      })}
   >
     Reset Data
   </button>

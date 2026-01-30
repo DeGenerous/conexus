@@ -9,7 +9,7 @@
     defaultPromptSettings,
     arePromptSettingsEqual,
   } from '@stores/dream.svelte';
-  import openModal from '@stores/modal.svelte';
+  import { modal } from '@lib/modal-manager.svelte';
   import { ensureMessage } from '@constants/modal';
   import { customFont, customStyling } from '@stores/customization.svelte';
   import { getPersonalSetup, setPersonalSetup } from '@stores/account.svelte';
@@ -107,9 +107,12 @@
   };
 
   const resetPromptSettings = () => {
-    openModal(ensureMessage('reset your personal settings'), 'Reset', () => {
-      resetSettings();
-      saveChanges();
+    modal.confirm('', ensureMessage('reset your personal settings'), {
+      onConfirm: () => {
+        resetSettings();
+        saveChanges();
+      },
+      confirmText: 'Reset',
     });
   };
 

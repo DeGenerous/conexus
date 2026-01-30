@@ -2,8 +2,15 @@
   import { onMount } from 'svelte';
 
   import { getPersonalSetup, setPersonalSetup } from '@stores/account.svelte';
-  import { modal, playOptions } from '@stores/modal.svelte';
   import { isGuest } from '@stores/account.svelte';
+
+  let {
+    onPlayModeChange,
+    onDontShowAgainChange,
+  }: {
+    onPlayModeChange?: (mode: PlayMode) => void;
+    onDontShowAgainChange?: (val: boolean) => void;
+  } = $props();
 
   let preferredSettings = $state<SettingMode | null>(null);
   // let preferredTheme = $state<SettingMode | null>(null);
@@ -25,16 +32,11 @@
   });
 
   $effect(() => {
-    modal.button =
-      playMode === 'play_limited' ? 'Play: 1 credit' : 'Play: 3 credits';
+    if (playMode) onPlayModeChange?.(playMode);
   });
 
   $effect(() => {
-    if (dontShowAgain) {
-      $playOptions = 'dont_show_again';
-    } else {
-      $playOptions = true;
-    }
+    onDontShowAgainChange?.(dontShowAgain);
   });
 
   onMount(async () => {

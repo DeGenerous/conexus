@@ -1,9 +1,23 @@
-/// <reference path="../.astro/types.d.ts" />
-/// <reference types="astro/client" />
+/**
+ * Dream types.
+ * Story creation, structured prompts, drafts, and topic management.
+ */
 
+// ---------------------------------------------------------------------------
+// Prompt Enums
+// ---------------------------------------------------------------------------
+
+/** Three-level intensity scale. */
 type Min_Max = 'min' | 'standard' | 'max';
+
+/** Four-level intensity scale (includes "none"). */
 type None_Max = 'none' | Min_Max;
 
+// ---------------------------------------------------------------------------
+// Characters & Relationships
+// ---------------------------------------------------------------------------
+
+/** A story character with optional personality and appearance details. */
 type Character = {
   name: string;
   description: string;
@@ -11,18 +25,27 @@ type Character = {
   psychology?: string;
 };
 
+/** Defines how two named characters relate to each other. */
 type Relationship = {
   type: 'friends' | 'neutral' | 'enemies';
   details?: string;
+  /** Pair of character names that share this relationship. */
   connection: [string, string];
 };
 
+/** Tone settings: an array of named tones with intensity values. */
 type Tone = {
   name: string;
   value: None_Max;
+  /** Optional narrative hints for this tone. */
   hints?: string[];
 }[];
 
+// ---------------------------------------------------------------------------
+// Prompt Configuration
+// ---------------------------------------------------------------------------
+
+/** Global prompt settings controlling AI generation behavior. */
 type PromptSettings = {
   image_style: string;
   language: string;
@@ -33,6 +56,7 @@ type PromptSettings = {
   kids_mode: string;
 };
 
+/** Full structured prompt (table format) for story generation. */
 type TablePrompt = {
   premise: string;
   environment?: string;
@@ -54,6 +78,7 @@ type TablePrompt = {
   additional_data?: string;
 };
 
+/** Core metadata when creating a new story/topic. */
 type StoryData = {
   name: string;
   description: string;
@@ -61,25 +86,23 @@ type StoryData = {
   category_id: string;
 };
 
-type CreatePrompt = {
-  topic: string;
-  description: string;
-  image_prompt: string;
-  category: number;
-  prompt: string;
-};
-
+/** How an image is delivered — remote URL or inline base64. */
 type ImageType = 'url' | 'base64';
 
-/* V2 */
+// ---------------------------------------------------------------------------
+// V2 — Drafts
+// ---------------------------------------------------------------------------
 
+/** Read-only draft summary for listing views. */
 type DraftView = {
-  id: string; // uuid v4
-  title: string; // copy of storyData.name (or "Untitled")
-  created_at: Date; // epoch ms
-  updated_at: Date; // epoch ms
+  id: string;
+  /** Copy of storyData.name (or "Untitled"). */
+  title: string;
+  created_at: Date;
+  updated_at: Date;
 };
 
+/** Full draft content (prompt + settings + metadata). */
 type DraftData = {
   table_prompt: TablePrompt;
   open_prompt: string;
@@ -87,17 +110,24 @@ type DraftData = {
   prompt_settings: PromptSettings;
 };
 
+/** Draft save/update payload sent to the backend. */
 type DraftPayload = DraftData & {
-  id?: string; // uuid v4
-  created_at?: Date; // epoch ms
-  updated_at?: Date; // epoch ms
+  id?: string;
+  created_at?: Date;
+  updated_at?: Date;
   tenant_id?: string;
   account_id?: string;
-  title: string; // copy of storyData.name (or "Untitled")
+  title: string;
 };
 
+/** Prompt authoring mode. */
 type PromptType = 'structured' | 'block';
 
+// ---------------------------------------------------------------------------
+// Topic Management (Creator)
+// ---------------------------------------------------------------------------
+
+/** Payload for creating or updating a topic. */
 type TopicRequest = {
   name: string;
   description: string;
@@ -111,8 +141,10 @@ type TopicRequest = {
   image_prompt: string;
 };
 
+/** Topic visibility levels. */
 type TopicVisibility = 'public' | 'private' | 'unlisted';
 
+/** Full topic record from the backend. */
 type TopicFull = {
   id: string;
   name: string;
@@ -155,23 +187,27 @@ type TopicPrompt = {
   content_rating: ContentRating;
 };
 
+/** Category assignment for a topic. */
 type TopicCategory = {
   id: string;
   name: string;
   sort_order: number;
 };
 
+/** Genre tag for a topic. */
 type TopicGenre = {
   id: string;
   name: string;
 };
 
+/** Media file attached to a topic. */
 type TopicMediaFile = {
   id: string;
   file_id: string;
   media_type: MediaType;
 };
 
+/** Aggregate topic editing state used by the creator dashboard. */
 type TopicManager = {
   topic: TopicFull;
   topic_prompt: TopicPrompt;
@@ -180,5 +216,6 @@ type TopicManager = {
   gates: TopicGate[];
   genres: TopicGenre[];
   media_files: TopicMediaFile[];
+  /** True if the current user is the topic creator. */
   creator: boolean;
 };

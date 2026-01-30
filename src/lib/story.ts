@@ -3,7 +3,7 @@ import { api_error } from '@errors/index';
 import StoryAPI from '@service/story';
 import { story, game } from '@stores/conexus.svelte';
 import { toastStore } from '@stores/toast.svelte';
-import openModal from '@stores/modal.svelte';
+import { modal } from '@lib/modal-manager.svelte';
 import { getCurrentUser } from '@utils/route-guard';
 import { formatGameTextForSpeech } from '@utils/tts';
 
@@ -73,20 +73,26 @@ export default class CoNexus {
         const errorTitle = errorMessage[0];
         const nftLinks = errorMessage[1];
 
-        openModal(`
+        modal.alert(
+          '',
+          `
           <h4>${errorTitle}</h4>
           <p>${nftLinks}</p>
-        `);
+        `,
+        );
       } else if (message.match(ERROR_OUT_OF_CREDITS)) {
         const errorMessage: string[] = message.split(', ');
 
         const errorTitle = errorMessage[0];
         const outOfCredits = errorMessage[1];
 
-        openModal(`
+        modal.alert(
+          '',
+          `
           <h4>${errorTitle}</h4>
           <p>${outOfCredits.charAt(0).toUpperCase() + outOfCredits.slice(1)}</p>
-        `);
+        `,
+        );
       }
       api_error(message);
       return;
@@ -124,20 +130,26 @@ export default class CoNexus {
           const errorTitle = errorMessage[0];
           const nftLinks = errorMessage[1];
 
-          openModal(`
+          modal.alert(
+            '',
+            `
             <h4>${errorTitle}</h4>
             <p>${nftLinks}</p>
-          `);
+          `,
+          );
         } else if (message.match(ERROR_OUT_OF_CREDITS)) {
           const errorMessage: string[] = message.split(', ');
 
           const errorTitle = errorMessage[0];
           const outOfCredits = errorMessage[1];
 
-          openModal(`
+          modal.alert(
+            '',
+            `
             <h4>${errorTitle}</h4>
             <p>${outOfCredits.charAt(0).toUpperCase() + outOfCredits.slice(1)}</p>
-          `);
+          `,
+          );
         }
         api_error(message);
       }
@@ -494,7 +506,11 @@ export default class CoNexus {
       });
     }
 
-    if (data.generate === false && data.task_id && data.task_id !== 'generate') {
+    if (
+      data.generate === false &&
+      data.task_id &&
+      data.task_id !== 'generate'
+    ) {
       await this.#generateImageStatus(data.task_id);
     }
   }

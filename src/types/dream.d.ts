@@ -105,7 +105,6 @@ type DraftView = {
 /** Full draft content (prompt + settings + metadata). */
 type DraftData = {
   table_prompt: TablePrompt;
-  open_prompt: string;
   story_data: StoryData;
   prompt_settings: PromptSettings;
 };

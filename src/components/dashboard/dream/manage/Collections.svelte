@@ -9,6 +9,7 @@
   import { getCurrentUser } from '@utils/route-guard';
   import { isAdmin, isPlayer } from '@stores/account.svelte';
   import { usePullRefreshContext } from '@utils/pull-refresh';
+  import { modal } from '@lib/modal-manager.svelte';
 
   import CategoryBlock from '@components/dashboard/dream/manage/collections/CategoryBlock.svelte';
   import Dropdown from '@components/utils/Dropdown.svelte';
@@ -902,6 +903,8 @@
     </button>
   {/if}
 {/if}
+
+<button onclick={() => modal.categoryManager()}> Manage Categories </button>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

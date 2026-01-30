@@ -50,8 +50,6 @@ export const isPromptSettingsDefault = (settings: PromptSettings): boolean => {
 
 export const promptSettings = writable<PromptSettings>(defaultPromptSettings());
 
-export const openPrompt = writable<string>('');
-
 export const tablePrompt = writable<TablePrompt>({
   premise: '',
   environment: '',
@@ -230,7 +228,6 @@ export const clearAllData = () => {
     category_id: '',
   });
   resetSettings();
-  openPrompt.set('');
   tablePrompt.set({
     premise: '',
     environment: '',
@@ -404,7 +401,6 @@ export function collectState() {
   return {
     story_data: get(storyData),
     prompt_settings: get(promptSettings),
-    open_prompt: get(openPrompt),
     table_prompt: get(tablePrompt),
   };
 }
@@ -412,6 +408,5 @@ export function collectState() {
 export function applyState(state: DraftPayload) {
   storyData.set(state.story_data);
   promptSettings.set(state.prompt_settings);
-  openPrompt.set(state.open_prompt);
   tablePrompt.set(state.table_prompt);
 }

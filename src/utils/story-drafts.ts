@@ -58,7 +58,6 @@ const Drafts = {
 
     draft.story_data = draftData.story_data;
     draft.prompt_settings = draftData.prompt_settings;
-    draft.open_prompt = draftData.open_prompt;
     draft.table_prompt = draftData.table_prompt;
     draft.title = draft.story_data.name || 'Untitled';
 

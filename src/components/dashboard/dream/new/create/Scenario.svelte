@@ -12,11 +12,11 @@
     newWinningScenario = '';
   };
   const removeWinningScenario = (index: number) => {
-    $tablePrompt.winning_scenarios = ($tablePrompt.winning_scenarios ?? []).filter(
-      (scenario, nr) => {
-        return nr !== index;
-      },
-    );
+    $tablePrompt.winning_scenarios = (
+      $tablePrompt.winning_scenarios ?? []
+    ).filter((scenario, nr) => {
+      return nr !== index;
+    });
   };
 
   let newLosingScenario: string = $state('');
@@ -29,11 +29,11 @@
     newLosingScenario = '';
   };
   const removeLosingScenario = (index: number) => {
-    $tablePrompt.losing_scenarios = ($tablePrompt.losing_scenarios ?? []).filter(
-      (scenario, nr) => {
-        return nr !== index;
-      },
-    );
+    $tablePrompt.losing_scenarios = (
+      $tablePrompt.losing_scenarios ?? []
+    ).filter((scenario, nr) => {
+      return nr !== index;
+    });
   };
 
   let newKeyEvent: string = $state('');
@@ -43,9 +43,11 @@
     newKeyEvent = '';
   };
   const removeKeyEvent = (index: number) => {
-    $tablePrompt.key_events = ($tablePrompt.key_events ?? []).filter((event, nr) => {
-      return nr !== index;
-    });
+    $tablePrompt.key_events = ($tablePrompt.key_events ?? []).filter(
+      (event, nr) => {
+        return nr !== index;
+      },
+    );
   };
 
   function handleEnterKey(event: KeyboardEvent) {

@@ -9,18 +9,12 @@
   import { ensureMessage } from '@constants/modal';
   import { checkUserRoles, ensurePlayer } from '@utils/route-guard';
   import { isAdmin } from '@stores/account.svelte';
-  import {
-    promptSettings,
-    resetSettings,
-    isPromptSettingsDefault,
-    arePromptSettingsEqual,
-  } from '@stores/dream.svelte';
+  import { promptSettings } from '@stores/dream.svelte';
   import PullToRefresh from '@components/utils/PullToRefresh.svelte';
 
   import ExploreCategory from '@components/dashboard/dream/manage/collections/AddTopicCategory.svelte';
   import GenreTags from '@components/dashboard/dream/manage/collections/GenreTags.svelte';
   import Gating from '@components/dashboard/dream/manage/collections/Gating.svelte';
-  import TopicSettings from '@components/dashboard/common/TopicSettings.svelte';
   import Media from '@components/dashboard/dream/manage/collections/Media.svelte';
 
   import EditSVG from '@components/icons/Edit.svelte';
@@ -92,14 +86,6 @@
       kids_mode: settings.kids_mode,
     });
   };
-
-  const compareSettings = $derived(() => {
-    const originalSettings = topic?.topic_prompt_settings;
-
-    if (!originalSettings) return true;
-
-    return arePromptSettingsEqual($promptSettings, originalSettings);
-  });
 
   const saveSettingsChanges = async () => {
     await topicManager.editPromptSettings(topic_id, $promptSettings);
@@ -348,6 +334,13 @@
                 Export JSON
               </button>
             {/if}
+            <button
+              class="purple-btn"
+              onclick={() =>
+                modal.topicSettings({ onSave: saveSettingsChanges })}
+            >
+              Story Settings
+            </button>
             <a
               class="button-anchor cta"
               href="/dashboard/topic/{topic_id}/demo?demoID={topic_id}&demoName={topic_name}"
@@ -417,27 +410,6 @@
           <Gating {topic_gates} {handleGatingChange} />
         {/if}
       </section>
-
-      <TopicSettings>
-        {#snippet children()}
-          <span class="flex-row flex-wrap">
-            <button
-              class="red-btn"
-              onclick={resetSettings}
-              disabled={isPromptSettingsDefault($promptSettings)}
-            >
-              Reset to Default
-            </button>
-            <button
-              class="green-btn"
-              onclick={saveSettingsChanges}
-              disabled={compareSettings()}
-            >
-              Save Changes
-            </button>
-          </span>
-        {/snippet}
-      </TopicSettings>
 
       <section class="dream-container">
         <!-- DESCRIPTION -->

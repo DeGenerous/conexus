@@ -139,6 +139,48 @@ class ModalManager {
   }
 
   /**
+   * Opens the topic prompt settings modal.
+   */
+  topicSettings(options?: { onSave: () => Promise<void> }) {
+    this.open(
+      MODAL_KEYS.TOPIC_SETTINGS,
+      {
+        onSave: async () => {
+          await options?.onSave();
+          this.close();
+        },
+      },
+      'lg',
+    );
+  }
+
+  /**
+   * Opens the category manager modal.
+   */
+  categoryManager(options?: { onUpdate?: () => Promise<void> }) {
+    this.open(
+      MODAL_KEYS.CATEGORY_MANAGER,
+      {
+        onUpdate: options?.onUpdate,
+      },
+      'lg',
+    );
+  }
+
+  /**
+   * Opens the drafts manager modal.
+   */
+  draftsManager(options?: { onRestore?: () => void }) {
+    this.open(
+      MODAL_KEYS.DRAFTS_MANAGER,
+      {
+        onRestore: options?.onRestore,
+      },
+      'lg',
+    );
+  }
+
+  /**
    * Opens the Atmospheres selector modal.
    * Currently a no-op — ThemesFragment is not yet registered (pending Void Energy deps).
    */

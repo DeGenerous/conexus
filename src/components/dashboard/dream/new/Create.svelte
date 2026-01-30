@@ -12,7 +12,6 @@
   import {
     storyData,
     promptSettings,
-    openPrompt,
     tablePrompt,
     clearAllData,
     currentDraft,
@@ -22,26 +21,22 @@
   import { checkUserRoles } from '@utils/route-guard';
   import { isAdmin } from '@stores/account.svelte';
   import Drafts from '@utils/story-drafts';
-  import { redirectTo } from '@utils/route-guard';
 
   import Characters from '@components/dashboard/dream/new/create/Characters.svelte';
   import Scenario from '@components/dashboard/dream/new/create/Scenario.svelte';
   import WritingStyle from '@components/dashboard/dream/new/create/WritingStyle.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
   import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
-  import TopicSettings from '@components/dashboard/common/TopicSettings.svelte';
-  import Dropdown from '@components/utils/Dropdown.svelte';
 
   const topic = new Topic();
 
   let selectedSectionId = $state('');
+  let refreshCategories = $state<() => Promise<void>>();
   let lastSavedAgo = $state<string>('unsaved');
 
   $effect(() => {
     if (selectedSectionId) $storyData.category_id = '';
   });
-
-  let promptFormat: 'Table' | 'Open' = $state('Open');
 
   // minimal gating for the "Create" CTA: ensure we have base metadata and the prompt stays within limits
   let validation = $derived(
@@ -56,8 +51,8 @@
 
   // fingerprint combines all draft sources so we can debounce autosaves when any piece of state changes
   const fingerprint = derived(
-    [storyData, promptSettings, openPrompt, tablePrompt],
-    ([$s, $p, $o, $t]) => JSON.stringify([$s, $p, $o, $t]),
+    [storyData, promptSettings, tablePrompt],
+    ([$s, $p, $t]) => JSON.stringify([$s, $p, $t]),
   );
 
   let autoSaveTimer: ReturnType<typeof setTimeout> | null = null;
@@ -161,8 +156,7 @@
   // CREATE DREAM
 
   const generateStory = async () => {
-    const promptData: TablePrompt | string =
-      promptFormat === 'Table' ? $tablePrompt : $openPrompt;
+    const promptData: TablePrompt = $tablePrompt;
     const topic_id = await topic.newTopic(
       generatePrompt($storyData, $promptSettings, promptData),
     );
@@ -211,9 +205,27 @@
   </div>
 {/if}
 
+<!-- MAIN SETTINGS -->
+<div class="flex-row">
+  <button
+    onclick={() => modal.draftsManager({ onRestore: updateLastSavedLabel })}
+  >
+    Manage Drafts
+  </button>
+  <button
+    onclick={() => modal.categoryManager({ onUpdate: refreshCategories })}
+  >
+    Manage Categories
+  </button>
+  <button onclick={() => modal.topicSettings()}> Story Settings </button>
+</div>
+
 <!-- CATEGORY, TITLE, DESCRIPTION, IMAGE PROMPT -->
 <div class="dream-container">
-  <CategoryFetcher bind:selectedSectionId>
+  <CategoryFetcher
+    bind:selectedSectionId
+    bind:fetchCategories={refreshCategories}
+  >
     {#snippet children(
       loadingSections: boolean,
       errorSections: string,
@@ -281,15 +293,6 @@
           {/each}
         </select>
       </div>
-
-      {#if !categories.length && !loadingCategories && !$isAdmin}
-        <button
-          class="cta"
-          onclick={() => redirectTo('/dashboard#/dream/manage/categories')}
-        >
-          Create your first story category
-        </button>
-      {/if}
     {/snippet}
   </CategoryFetcher>
 
@@ -351,129 +354,84 @@
   {/if}
 </div>
 
-<!-- MAIN SETTINGS -->
-<Dropdown name="Story Settings" table={true}>
-  <TopicSettings nostyling={true} bind:promptFormat>
-    {#snippet children(
-      promptFormat: 'Table' | 'Open',
-      setPromptFormat: (format: 'Table' | 'Open') => void,
-    )}
-      <div class="flex-row">
-        <h4>Format</h4>
-        <div class="container">
-          <button
-            class="void-btn dream-radio-btn"
-            class:active={promptFormat === 'Table'}
-            onclick={() => setPromptFormat('Table')}
-          >
-            Table
-          </button>
-          <button
-            class="void-btn dream-radio-btn"
-            class:active={promptFormat === 'Open'}
-            onclick={() => setPromptFormat('Open')}
-          >
-            Open
-          </button>
-        </div>
-      </div>
-    {/snippet}
-  </TopicSettings>
-</Dropdown>
+<div class="dream-container">
+  <h4>Write up a scenario of Your Story</h4>
+  <textarea
+    id="blank"
+    placeholder="Describe any scenario you want, and the AI will turn it into a story! Whether it's a thrilling mystery, an epic fantasy, or a hilarious adventure, your imagination sets the stage. You can be as detailed or vague as you like—every idea sparks a unique tale. E.g. Make a unique Sherlock Holmes story where during an investigation he ends up taking a new type of drug, deeply affecting him so he’ll lead a fight both versus himself and a serial killer."
+    rows="5"
+    bind:value={$tablePrompt.premise}
+    style:min-height={$tablePrompt.premise.length > 500
+      ? $tablePrompt.premise.length / 50 + 'rem'
+      : ''}
+  ></textarea>
+</div>
 
-{#if promptFormat === 'Table'}
-  <div class="dream-container">
-    <div class="flex-row">
-      <h4>Set Premise</h4>
-      <textarea
-        id="premise"
-        placeholder="Summarize the core of your story—who the main character is, what challenge they face, and what’s at stake in their journey."
-        rows="2"
-        bind:value={$tablePrompt.premise}
-        style:min-height={$tablePrompt.premise.length > 500
-          ? $tablePrompt.premise.length / 50 + 'rem'
-          : ''}
-      ></textarea>
-    </div>
-
-    <div class="flex-row">
-      <h4>Set Environment</h4>
-      <textarea
-        id="setting"
-        placeholder="Describe the time and place where your story unfolds, whether it's a futuristic city, a medieval kingdom, a distant galaxy, or somewhere beyond imagination."
-        rows="2"
-        bind:value={$tablePrompt.environment}
-        style:min-height={$tablePrompt.environment &&
-        $tablePrompt.environment.length > 500
-          ? $tablePrompt.environment.length / 50 + 'rem'
-          : ''}
-      ></textarea>
-    </div>
-
-    <div class="flex-row">
-      <h4>Set Exposition</h4>
-      <textarea
-        id="exposition"
-        placeholder="Set the stage for your story—introduce the world, key events leading up to the present, and any important background details the reader needs to know."
-        rows="2"
-        bind:value={$tablePrompt.exposition}
-        style:min-height={$tablePrompt.exposition &&
-        $tablePrompt.exposition.length > 500
-          ? $tablePrompt.exposition.length / 50 + 'rem'
-          : ''}
-      ></textarea>
-    </div>
-
-    <div class="flex-row">
-      <h4>Set First Action</h4>
-      <textarea
-        id="first-act"
-        placeholder="Describe how the story begins—introduce the main character, their current situation, and the inciting event that sets the plot in motion."
-        rows="2"
-        bind:value={$tablePrompt.first_action}
-        style:min-height={$tablePrompt.first_action &&
-        $tablePrompt.first_action.length > 500
-          ? $tablePrompt.first_action.length / 50 + 'rem'
-          : ''}
-      ></textarea>
-    </div>
-  </div>
-
-  <Characters />
-
-  <Scenario />
-
-  <WritingStyle />
-
-  <div class="dream-container">
-    <h4>
-      If you have anything else you wish to add to improve the story, you may
-      write it here
-    </h4>
+<div class="dream-container">
+  <div class="flex-row">
+    <h4>Environment</h4>
     <textarea
-      placeholder="Add any additional styling, references, details, twists, character ideas, or world-building elements you’d like to include in your story."
+      id="setting"
+      placeholder="Describe the time and place where your story unfolds, whether it's a futuristic city, a medieval kingdom, a distant galaxy, or somewhere beyond imagination."
       rows="2"
-      bind:value={$tablePrompt.additional_data}
-      style:min-height={$tablePrompt.additional_data &&
-      $tablePrompt.additional_data.length > 500
-        ? $tablePrompt.additional_data.length / 50 + 'rem'
+      bind:value={$tablePrompt.environment}
+      style:min-height={$tablePrompt.environment &&
+      $tablePrompt.environment.length > 500
+        ? $tablePrompt.environment.length / 50 + 'rem'
         : ''}
     ></textarea>
   </div>
-{:else}
-  <div class="dream-container">
-    <h4>Write up a scenario of Your Story</h4>
+
+  <div class="flex-row">
+    <h4>Exposition</h4>
     <textarea
-      id="blank"
-      placeholder="Describe any scenario you want, and the AI will turn it into a story! Whether it's a thrilling mystery, an epic fantasy, or a hilarious adventure, your imagination sets the stage. You can be as detailed or vague as you like—every idea sparks a unique tale. E.g. Make a unique Sherlock Holmes story where during an investigation he ends up taking a new type of drug, deeply affecting him so he’ll lead a fight both versus himself and a serial killer."
-      rows="5"
-      bind:value={$openPrompt}
-      style:min-height={$openPrompt.length > 1000
-        ? $openPrompt.length / 50 + 'rem'
+      id="exposition"
+      placeholder="Set the stage for your story—introduce the world, key events leading up to the present, and any important background details the reader needs to know."
+      rows="2"
+      bind:value={$tablePrompt.exposition}
+      style:min-height={$tablePrompt.exposition &&
+      $tablePrompt.exposition.length > 500
+        ? $tablePrompt.exposition.length / 50 + 'rem'
         : ''}
     ></textarea>
   </div>
-{/if}
+
+  <div class="flex-row">
+    <h4>First Action</h4>
+    <textarea
+      id="first-act"
+      placeholder="Describe how the story begins—introduce the main character, their current situation, and the inciting event that sets the plot in motion."
+      rows="2"
+      bind:value={$tablePrompt.first_action}
+      style:min-height={$tablePrompt.first_action &&
+      $tablePrompt.first_action.length > 500
+        ? $tablePrompt.first_action.length / 50 + 'rem'
+        : ''}
+    ></textarea>
+  </div>
+</div>
+
+<Characters />
+
+<Scenario />
+
+<WritingStyle />
+
+<div class="dream-container">
+  <h4>
+    If you have anything else you wish to add to improve the story, you may
+    write it here
+  </h4>
+  <textarea
+    placeholder="Add any additional styling, references, details, twists, character ideas, or world-building elements you’d like to include in your story."
+    rows="2"
+    bind:value={$tablePrompt.additional_data}
+    style:min-height={$tablePrompt.additional_data &&
+    $tablePrompt.additional_data.length > 500
+      ? $tablePrompt.additional_data.length / 50 + 'rem'
+      : ''}
+  ></textarea>
+</div>
 
 {#if !validation}
   <p class="validation">Fill all required fields</p>

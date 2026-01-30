@@ -1,35 +1,46 @@
 <script lang="ts">
-  import { type Snippet } from 'svelte';
+  import { get } from 'svelte/store';
 
-  import { promptSettings } from '@stores/dream.svelte';
+  import {
+    promptSettings,
+    resetSettings,
+    isPromptSettingsDefault,
+    arePromptSettingsEqual,
+  } from '@stores/dream.svelte';
   import dreamData from '@constants/dream';
   import countries from '@constants/countries.json';
-
   import Slider from '@components/utils/Slider.svelte';
 
-  let {
-    promptFormat = $bindable<'Table' | 'Open'>('Open'),
-    nostyling = false,
-    children,
-  }: {
-    promptFormat?: 'Table' | 'Open';
-    nostyling?: boolean;
-    children: Snippet<
-      [
-        promptFormat: 'Table' | 'Open',
-        setPromptFormat: (format: 'Table' | 'Open') => void,
-        saveChanges?: () => Promise<void>,
-        resetSettings?: () => void,
-      ]
-    >;
-  } = $props();
+  let { onSave }: { onSave: () => Promise<void> } = $props();
 
-  const setPromptFormat = (format: 'Table' | 'Open') => {
-    promptFormat = format;
-  };
+  // Snapshot for change detection & rollback on close without save.
+  const initialSettings = structuredClone(get(promptSettings));
+  let didSave = false;
+
+  const hasChanges = $derived(
+    !arePromptSettingsEqual($promptSettings, initialSettings),
+  );
+
+  async function handleSave() {
+    await onSave();
+    didSave = true;
+  }
+
+  // Restore original settings if the modal closes without saving.
+  $effect(() => {
+    return () => {
+      if (!didSave) {
+        promptSettings.set(initialSettings);
+      }
+    };
+  });
 </script>
 
-<section class="flex" class:dream-container={!nostyling} class:nostyling>
+<div
+  class="modal-content dream-container"
+  onclick={(e) => e.stopPropagation()}
+  role="presentation"
+>
   <div class="flex-row">
     <h4>Content</h4>
     <div class="container">
@@ -139,17 +150,32 @@
     </div>
   </div>
 
-  {@render children(promptFormat, setPromptFormat)}
-</section>
+  <div class="flex flex-row justify-center gap-md">
+    <button
+      class="btn-alert red-btn"
+      onclick={resetSettings}
+      disabled={isPromptSettingsDefault($promptSettings)}
+    >
+      Reset
+    </button>
+    <button
+      class="btn-signal green-btn"
+      onclick={handleSave}
+      disabled={!hasChanges}
+    >
+      Save
+    </button>
+  </div>
+</div>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .nostyling {
-    animation: none !important;
-    background-color: transparent;
-    border: none;
-    border-radius: 0;
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
   }
 
   .container {
@@ -188,5 +214,14 @@
         @include bright(150%);
       }
     }
+  }
+
+  .btn-alert,
+  .btn-signal {
+    cursor: pointer;
+  }
+
+  .justify-center {
+    justify-content: center;
   }
 </style>

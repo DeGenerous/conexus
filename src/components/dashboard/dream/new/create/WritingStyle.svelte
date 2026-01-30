@@ -46,7 +46,11 @@
             </button>
           {/each}
         </span>
-        <p>{$tablePrompt.tense ? tenseHints[$tablePrompt.tense as keyof typeof tenseHints] : ''}</p>
+        <p>
+          {$tablePrompt.tense
+            ? tenseHints[$tablePrompt.tense as keyof typeof tenseHints]
+            : ''}
+        </p>
       </div>
     </div>
 
@@ -80,7 +84,11 @@
             </button>
           {/each}
         </span>
-        <p>{$tablePrompt.writing_style ? styleHints[$tablePrompt.writing_style as keyof typeof styleHints] : ''}</p>
+        <p>
+          {$tablePrompt.writing_style
+            ? styleHints[$tablePrompt.writing_style as keyof typeof styleHints]
+            : ''}
+        </p>
       </div>
     </div>
 
@@ -98,7 +106,11 @@
             </button>
           {/each}
         </span>
-        <p>{$tablePrompt.voice ? voiceHints[$tablePrompt.voice as keyof typeof voiceHints] : ''}</p>
+        <p>
+          {$tablePrompt.voice
+            ? voiceHints[$tablePrompt.voice as keyof typeof voiceHints]
+            : ''}
+        </p>
       </div>
     </div>
 

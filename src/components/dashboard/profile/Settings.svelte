@@ -2,22 +2,14 @@
   import { onMount } from 'svelte';
 
   import Account from '@lib/account';
-  import {
-    promptSettings,
-    resetSettings,
-    isPromptSettingsDefault,
-    defaultPromptSettings,
-    arePromptSettingsEqual,
-  } from '@stores/dream.svelte';
+  import { promptSettings } from '@stores/dream.svelte';
   import { modal } from '@lib/modal-manager.svelte';
-  import { ensureMessage } from '@constants/modal';
   import { customFont, customStyling } from '@stores/customization.svelte';
   import { getPersonalSetup, setPersonalSetup } from '@stores/account.svelte';
   import { checkUserRoles } from '@utils/route-guard';
   import { isGuest } from '@stores/account.svelte';
 
   import Dropdown from '@components/utils/Dropdown.svelte';
-  import TopicSettings from '@components/dashboard/common/TopicSettings.svelte';
   import ThemeSettings from '@components/utils/ThemeSettings.svelte';
   import StylingController from '@components/utils/StylingController.svelte';
   import SelectorSVG from '@components/icons/Selector.svelte';
@@ -97,23 +89,9 @@
     }
   });
 
-  const compareSettings = $derived.by(() =>
-    arePromptSettingsEqual($promptSettings, originalSettings),
-  );
-
   const saveChanges = async () => {
     await account.createOrUpdatePromptSettings($promptSettings);
     originalSettings = await account.getPromptSettings();
-  };
-
-  const resetPromptSettings = () => {
-    modal.confirm('', ensureMessage('reset your personal settings'), {
-      onConfirm: () => {
-        resetSettings();
-        saveChanges();
-      },
-      confirmText: 'Reset',
-    });
   };
 
   const blurActiveBtn = () => {
@@ -241,28 +219,9 @@
   </div>
 </section>
 
-<Dropdown name="Personal Settings" {table}>
-  <TopicSettings nostyling={true}>
-    {#snippet children()}
-      <span class="flex-row flex-wrap">
-        <button
-          class="red-btn"
-          onclick={resetPromptSettings}
-          disabled={isPromptSettingsDefault($promptSettings)}
-        >
-          Reset to Default
-        </button>
-        <button
-          class="green-btn"
-          onclick={saveChanges}
-          disabled={compareSettings}
-        >
-          Save Settings
-        </button>
-      </span>
-    {/snippet}
-  </TopicSettings>
-</Dropdown>
+<button onclick={() => modal.topicSettings({ onSave: saveChanges })}>
+  Personal Settings
+</button>
 
 <Dropdown name="Personal Theme" {table}>
   {#if $customFont && $customStyling}

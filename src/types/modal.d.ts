@@ -46,6 +46,24 @@ type ModalContract = {
     /** Optional callback fired when user closes */
     onClose?: () => void;
   };
+
+  /** Topic prompt settings editor (language, difficulty, length, etc.) */
+  topicSettings: {
+    /** Callback to persist the current $promptSettings to the backend */
+    onSave: () => Promise<void>;
+  };
+
+  /** Category CRUD manager (add / delete categories). */
+  categoryManager: {
+    /** Called after a category is added or deleted so the parent can refresh. */
+    onUpdate?: () => Promise<void>;
+  };
+
+  /** Drafts browser — lists, restores, and deletes saved drafts. */
+  draftsManager: {
+    /** Called after a draft is restored so the parent can react (e.g. reset timer, update label). */
+    onRestore?: () => void;
+  };
 };
 
 /**

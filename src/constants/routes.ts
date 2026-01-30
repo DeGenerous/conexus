@@ -30,7 +30,8 @@ export const NAV_ROUTES = {
   BOOKMARKS: '/dashboard#/profile/bookmarks',
   FAQ: '/learn/faq',
   BLOG: '/learn/blog',
-  MANAGE: '/dashboard#/dream/manage/collections',
+  DREAM: '/dream',
+  MANAGE: '/dashboard#/collections',
   OMNIHUB: `/dashboard#/omnihub`,
   EXPLORE: (topic_id: string) => `/dashboard/topic/${topic_id}`,
 };

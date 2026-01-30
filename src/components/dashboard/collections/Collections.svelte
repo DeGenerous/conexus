@@ -11,7 +11,7 @@
   import { usePullRefreshContext } from '@utils/pull-refresh';
   import { modal } from '@lib/modal-manager.svelte';
 
-  import CategoryBlock from '@components/dashboard/dream/manage/collections/CategoryBlock.svelte';
+  import CategoryBlock from '@components/dashboard/collections/CategoryBlock.svelte';
   import Dropdown from '@components/utils/Dropdown.svelte';
 
   const topicManager = new Topics();

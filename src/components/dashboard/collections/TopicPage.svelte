@@ -12,10 +12,10 @@
   import { promptSettings } from '@stores/dream.svelte';
   import PullToRefresh from '@components/utils/PullToRefresh.svelte';
 
-  import ExploreCategory from '@components/dashboard/dream/manage/collections/AddTopicCategory.svelte';
-  import GenreTags from '@components/dashboard/dream/manage/collections/GenreTags.svelte';
-  import Gating from '@components/dashboard/dream/manage/collections/Gating.svelte';
-  import Media from '@components/dashboard/dream/manage/collections/Media.svelte';
+  import ExploreCategory from '@components/dashboard/collections/AddTopicCategory.svelte';
+  import GenreTags from '@components/dashboard/collections/GenreTags.svelte';
+  import Gating from '@components/dashboard/collections/Gating.svelte';
+  import Media from '@components/dashboard/collections/Media.svelte';
 
   import EditSVG from '@components/icons/Edit.svelte';
   import CloseSVG from '@components/icons/Close.svelte';

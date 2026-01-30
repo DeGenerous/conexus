@@ -51,38 +51,20 @@
         avatarImage = blankImage;
       });
   });
-
-  let currentHash = $state<string>('');
-
-  onMount(() => {
-    currentHash = window.location.hash;
-
-    const handleHashChange = () => {
-      currentHash = window.location.hash;
-    };
-
-    window.addEventListener('hashchange', handleHashChange);
-    window.addEventListener('popstate', handleHashChange);
-
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-      window.removeEventListener('popstate', handleHashChange);
-    };
-  });
 </script>
 
 <a
   class="navigation-tab dream-tab"
-  class:active={currentHash === '#/dream/create'}
+  class:active={activeTab === 'Dream'}
   class:inactive={!$approvedTester}
   aria-label="Dream"
-  href="/dashboard#/dream/create"
+  href="/dream"
   onclick={(event) => {
     event.preventDefault();
     if (!$user) {
       $showProfile = true;
     } else {
-      redirectTo('/dashboard#/dream/create');
+      redirectTo('/dream');
     }
   }}
 >

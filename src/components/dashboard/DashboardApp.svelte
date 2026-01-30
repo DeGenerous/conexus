@@ -5,7 +5,7 @@
   import { checkUserRoles } from '@utils/route-guard';
   import { ensureSigned } from '@utils/route-guard';
   import { profileRoutes } from '@components/dashboard/profile';
-  import { dreamRoutes } from '@components/dashboard/dream';
+  import { collectionsRoutes } from '@components/dashboard/collections';
   import { adminRoutes } from '@components/dashboard/admin';
   import { omnihubRoutes } from '@components/dashboard/omnihub';
   import { DASHBOARD_LINKS, buildRoutes } from '@components/dashboard/routes';
@@ -18,7 +18,7 @@
 
   const componentMap: Record<string, WrappedComponent> = {
     ...profileRoutes,
-    ...dreamRoutes,
+    ...collectionsRoutes,
     ...adminRoutes,
     ...omnihubRoutes,
   };

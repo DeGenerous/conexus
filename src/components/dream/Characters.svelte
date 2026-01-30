@@ -3,7 +3,7 @@
   import { tablePrompt } from '@stores/dream.svelte';
 
   import Dropdown from '@components/utils/Dropdown.svelte';
-  import NewCharacter from '@components/dashboard/dream/new/create/NewCharacter.svelte';
+  import NewCharacter from './NewCharacter.svelte';
 
   // Initialize main_character if undefined
   if (!$tablePrompt.main_character) {

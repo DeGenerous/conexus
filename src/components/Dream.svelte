@@ -22,9 +22,9 @@
   import { isAdmin } from '@stores/account.svelte';
   import Drafts from '@utils/story-drafts';
 
-  import Characters from '@components/dashboard/dream/new/create/Characters.svelte';
-  import Scenario from '@components/dashboard/dream/new/create/Scenario.svelte';
-  import WritingStyle from '@components/dashboard/dream/new/create/WritingStyle.svelte';
+  import Characters from '@components/dream/Characters.svelte';
+  import Scenario from '@components/dream/Scenario.svelte';
+  import WritingStyle from '@components/dream/WritingStyle.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
   import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
 

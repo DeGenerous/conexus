@@ -550,7 +550,7 @@
           modal.confirm('', ensureMessage('delete this story'), {
             onConfirm: async () => {
               await topicManager.deleteTopic(topic_id);
-              window.location.href = '/dashboard#/dream/manage/collections';
+              window.location.href = '/dashboard/collections';
             },
             confirmText: `Delete story: ${topic_name}`,
           })}

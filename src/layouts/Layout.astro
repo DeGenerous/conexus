@@ -129,7 +129,7 @@ const absoluteImageURL = image.startsWith('http')
               (p.src = s.api_host + '/static/array.js'),
               (r = t.getElementsByTagName('script')[0]).parentNode.insertBefore(
                 p,
-                r
+                r,
               ));
             var u = e;
             for (
@@ -148,7 +148,7 @@ const absoluteImageURL = image.startsWith('http')
                 },
                 o =
                   'capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys onSessionId'.split(
-                    ' '
+                    ' ',
                   ),
                 n = 0;
               n < o.length;
@@ -196,13 +196,7 @@ const absoluteImageURL = image.startsWith('http')
     <ToastContainer client:idle />
 
     <main>
-      <Navigation
-        {header}
-        {subheading}
-        activeTab={nav}
-        {arrow}
-        client:only="svelte"
-      />
+      <Navigation {header} {subheading} activeTab={nav} {arrow} client:load />
       <slot />
     </main>
 

@@ -1,0 +1,15 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import UsersPage from '@components/dashboard/admin/Users.svelte';
+
+const meta = {
+  nav: 'Admin',
+  arrow: '/dashboard',
+  header: 'Users',
+};
+---
+
+<Layout {...meta}>
+  <UsersPage client:only="svelte" />
+</Layout>

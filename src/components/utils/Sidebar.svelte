@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte';
-  import { location } from 'svelte-spa-router';
+  import { onMount } from 'svelte';
 
   import Authentication from '@lib/authentication.ts';
   import { DASHBOARD_LINKS } from '@components/dashboard/routes';
@@ -12,7 +11,9 @@
   const authentication: Authentication = new Authentication();
 
   let expanded = $state<Set<string>>(new Set());
-  let activePath = $state<string>('');
+  let activePath = $state<string>(
+    typeof window !== 'undefined' ? window.location.pathname : '',
+  );
 
   function hasChildren(
     link: Linking,
@@ -63,25 +64,16 @@
     }
   }
 
-  function sanitizePath(path: string | null | undefined): string {
-    if (!path) {
-      return '';
-    }
+  onMount(() => {
+    ensureExpandedForPath(activePath);
 
-    const withoutHash = path.split('#')[0];
-    const [clean] = withoutHash.split('?');
-    return clean ?? '';
-  }
+    const handler = () => {
+      activePath = window.location.pathname;
+      ensureExpandedForPath(activePath);
+    };
 
-  const unsubscribe = location.subscribe((value) => {
-    const nextPath = sanitizePath(value);
-    activePath = nextPath;
-    ensureExpandedForPath(nextPath);
-    $sidebarOpen = false;
-  });
-
-  onDestroy(() => {
-    unsubscribe();
+    document.addEventListener('astro:page-load', handler);
+    return () => document.removeEventListener('astro:page-load', handler);
   });
 
   function toggleExpand(name: string) {

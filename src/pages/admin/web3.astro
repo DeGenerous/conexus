@@ -1,0 +1,15 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import Web3Page from '@components/dashboard/admin/Web3.svelte';
+
+const meta = {
+  nav: 'Admin',
+  arrow: '/dashboard',
+  header: 'Web3',
+};
+---
+
+<Layout {...meta}>
+  <Web3Page client:only="svelte" />
+</Layout>

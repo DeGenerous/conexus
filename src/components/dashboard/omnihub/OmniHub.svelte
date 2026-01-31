@@ -117,7 +117,7 @@
           Connect a wallet to activate OmniHub and access your assets, identity,
           and tools
         </h5>
-        <button onclick={() => open('/dashboard#/profile/overview', '_self')}>
+        <button onclick={() => open('/dashboard/account', '_self')}>
           Open Your Profile
         </button>
       {:else}
@@ -131,7 +131,7 @@
           If your Potential lies elsewhere, link the right access point through
           your profile
         </p>
-        <button onclick={() => open('/dashboard#/profile/overview', '_self')}>
+        <button onclick={() => open('/dashboard/account', '_self')}>
           Connect Another Wallet
         </button>
 

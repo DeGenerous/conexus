@@ -1,56 +1,28 @@
-import type { WrappedComponent } from 'svelte-spa-router';
+import { get } from 'svelte/store';
 
-import { home } from './home';
-import { PROFILE_ROUTES } from './profile';
-import { ADMIN_ROUTES } from './admin';
-import { OMNIHUB } from './omnihub';
+import { user } from '@stores/account.svelte';
+
+const hasMainWallet = () =>
+  Boolean(get(user)?.wallets?.filter((wallet) => !wallet.faux).length);
 
 export const DASHBOARD_LINKS: Linking[] = [
   {
     name: 'Account',
     intended: 'all',
-    children: PROFILE_ROUTES.map((route) => ({
-      name: route.name,
-      path: route.path,
-    })),
+    children: [
+      { name: 'Overview', path: '/dashboard/account' },
+      { name: 'Bookmarks', path: '/dashboard/bookmarks' },
+      { name: 'Settings', path: '/dashboard/settings' },
+    ],
   },
   {
     name: 'Collections',
     intended: 'player',
-    path: '/collections',
+    path: '/dashboard/collections',
   },
   {
-    name: 'Admin',
-    intended: 'admin',
-    children: ADMIN_ROUTES.map((route) => ({
-      name: route.name,
-      path: route.path,
-    })),
+    name: 'OmniHub',
+    path: '/dashboard/omnihub',
+    display: hasMainWallet,
   },
-  ...OMNIHUB,
 ];
-
-export function buildRoutes(
-  links: Linking[],
-  map: Record<string, WrappedComponent>,
-): Record<string, WrappedComponent> {
-  const routes: Record<string, WrappedComponent> = {};
-
-  function traverse(items: Linking[]) {
-    for (const item of items) {
-      if (item.path && map[item.path]) {
-        routes[item.path] = map[item.path];
-      }
-      if (item.children) {
-        traverse(item.children);
-      }
-    }
-  }
-
-  traverse(links);
-
-  // fallback
-  routes['*'] = home;
-
-  return routes;
-}

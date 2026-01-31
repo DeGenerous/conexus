@@ -53,7 +53,7 @@
   <h4>Play options</h4>
   <p>
     These choices are also
-    <a href="/dashboard#/profile/settings" target="_self"> in your profile. </a>
+    <a href="/dashboard/settings" target="_self"> in your profile. </a>
     Changes apply immediately.
   </p>
 

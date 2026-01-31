@@ -1,9 +1,6 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
   import { showProfile } from '@stores/modal.svelte';
-  import { user, approvedTester } from '@stores/account.svelte';
-  import { redirectTo } from '@utils/route-guard';
+  import { user, isAdmin, approvedTester } from '@stores/account.svelte';
   import { blankImage, serveUrl } from '@constants/media';
   import { resolveRenderableImage } from '@utils/file-validation';
   import { getAvatarInitial } from '@utils/avatar';
@@ -60,11 +57,9 @@
   aria-label="Dream"
   href="/dream"
   onclick={(event) => {
-    event.preventDefault();
     if (!$user) {
+      event.preventDefault();
       $showProfile = true;
-    } else {
-      redirectTo('/dream');
     }
   }}
 >
@@ -72,12 +67,22 @@
   <p>Dream</p>
 </a>
 
+{#if $isAdmin}
+  <a
+    class="navigation-tab admin-tab"
+    class:active={activeTab === 'Admin'}
+    href="/admin/users"
+  >
+    <p>Admin</p>
+  </a>
+{/if}
+
 <a
   class="navigation-tab profile-tab"
   class:active={activeTab === $user?.username}
   class:inactive={!$approvedTester}
   aria-label="Profile"
-  href={$user ? `/c/${$user.username ?? 'unknown'}` : '/dashboard#/dashboard'}
+  href={$user ? `/c/${$user.username ?? 'unknown'}` : '/dashboard'}
   onclick={(event) => {
     if (!$user) {
       event.preventDefault();

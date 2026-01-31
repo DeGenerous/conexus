@@ -895,10 +895,7 @@
     </div>
   {:else}
     <p class="validation">No story categories found, pull down to refresh</p>
-    <button
-      class="cta"
-      onclick={() => open('/dashboard#/dream/manage/categories', '_self')}
-    >
+    <button class="cta" onclick={() => modal.categoryManager()}>
       Create your first story category
     </button>
   {/if}

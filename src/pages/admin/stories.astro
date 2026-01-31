@@ -1,0 +1,15 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import StoriesPage from '@components/dashboard/admin/Stories.svelte';
+
+const meta = {
+  nav: 'Admin',
+  arrow: '/dashboard',
+  header: 'Stories',
+};
+---
+
+<Layout {...meta}>
+  <StoriesPage client:only="svelte" />
+</Layout>

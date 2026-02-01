@@ -1,15 +1,23 @@
 <script lang="ts">
   import { showProfile } from '@stores/modal.svelte';
-  import { user, isAdmin, approvedTester } from '@stores/account.svelte';
+  import { user, approvedTester } from '@stores/account.svelte';
   import { blankImage, serveUrl } from '@constants/media';
   import { resolveRenderableImage } from '@utils/file-validation';
   import { getAvatarInitial } from '@utils/avatar';
 
-  import DreamSVG from '@components/icons/Dream.svelte';
-
-  let { activeTab }: { activeTab: string } = $props();
-
-  let svgFocus = $state<boolean>(false);
+  let {
+    activeTab,
+    expanded = false,
+    onclick,
+    onpointerenter,
+    onpointerleave,
+  }: {
+    activeTab: string;
+    expanded?: boolean;
+    onclick?: () => void;
+    onpointerenter?: (event: PointerEvent) => void;
+    onpointerleave?: (event: PointerEvent) => void;
+  } = $props();
 
   let avatarUrl = $state<string>('');
   let avatarFileId = $state<string>('');
@@ -50,47 +58,22 @@
   });
 </script>
 
-<a
-  class="navigation-tab dream-tab"
-  class:active={activeTab === 'Dream'}
-  class:inactive={!$approvedTester}
-  aria-label="Dream"
-  href="/dream"
-  onclick={(event) => {
-    if (!$user) {
-      event.preventDefault();
-      $showProfile = true;
-    }
-  }}
->
-  <DreamSVG />
-  <p>Dream</p>
-</a>
-
-{#if $isAdmin}
-  <a
-    class="navigation-tab admin-tab"
-    class:active={activeTab === 'Admin'}
-    href="/admin/users"
-  >
-    <p>Admin</p>
-  </a>
-{/if}
-
-<a
-  class="navigation-tab profile-tab"
+<button
+  class="void-btn navigation-tab profile-tab"
   class:active={activeTab === $user?.username}
   class:inactive={!$approvedTester}
-  aria-label="Profile"
-  href={$user ? `/c/${$user.username ?? 'unknown'}` : '/dashboard'}
-  onclick={(event) => {
+  aria-label={expanded ? 'Close menu' : 'Open menu'}
+  aria-haspopup="true"
+  aria-expanded={expanded}
+  onclick={() => {
     if (!$user) {
-      event.preventDefault();
       $showProfile = true;
+      return;
     }
+    onclick?.();
   }}
-  onpointerover={() => (svgFocus = true)}
-  onpointerout={() => (svgFocus = false)}
+  {onpointerenter}
+  {onpointerleave}
 >
   {#if $user}
     {#if avatarFileId || avatarUrl}
@@ -112,8 +95,9 @@
       <path d="M -55 55 Q -60 20 -25 15 L 25 15 Q 60 20 55 55 Z" />
     </svg>
   {/if}
-  <p>Profile</p>
-</a>
+  <p class="pc-only">Profile</p>
+  <span class="arrow icon" data-size="sm" aria-hidden="true"></span>
+</button>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
@@ -136,9 +120,21 @@
       @include dark-blue(1, text);
     }
 
+    .arrow {
+      width: 0.5rem;
+      aspect-ratio: 1 / 1;
+      flex: none;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(45deg);
+    }
+
+    &:hover .arrow {
+      transform: scaleY(1.1) translateY(10%) rotate(45deg);
+    }
+
     @include respond-up('small-desktop') {
       margin-left: auto;
-      flex-direction: row-reverse;
       fill: $light-blue;
 
       svg {

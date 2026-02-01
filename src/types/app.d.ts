@@ -282,42 +282,43 @@ type OnchainAttribute = {
 };
 
 // ---------------------------------------------------------------------------
-// Dashboard Navigation
+// Story Navigation
 // ---------------------------------------------------------------------------
 
-/** Navigation menu action item. */
+/** Navigation menu action item (prev/next story arrows). */
 type NavItem = {
   name?: string;
   link?: string;
   action?: () => void;
 };
 
-/** Navigation context tracking current position. */
+/** Navigation context tracking current position in a story sequence. */
 type NavContext = {
   items: NavItem[];
   index: number;
 };
 
-/** Dashboard sidebar link (leaf node with a path). */
-type DashboardPathLink = {
+// ---------------------------------------------------------------------------
+// Sidebar
+// ---------------------------------------------------------------------------
+
+/** Sidebar link item — leaf (has path) or group (has children). */
+type Linking = {
   name: string;
-  intended?: DashboardParentLinkDisplay;
-  path: string;
+  path?: string;
+  onclick?: () => void;
+  children?: Linking[];
+  intended?: 'all' | 'admin' | 'player';
   display?: () => boolean;
-  children?: never;
 };
 
-/** Visibility scope for dashboard links. */
-type DashboardParentLinkDisplay = 'all' | 'admin' | 'player';
-
-/** Dashboard sidebar group (parent node with children, no path). */
-type DashboardParentLink = {
-  name: string;
-  intended: DashboardParentLinkDisplay;
-  children: Linking[];
-  display?: () => boolean;
-  path?: never;
+/** Sidebar item that renders a Svelte component instead of a link. */
+type SidebarComponentItem = {
+  id: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component: import('svelte').Component<any>;
+  props?: Record<string, unknown>;
 };
 
-/** Union of leaf and parent dashboard links. */
-type Linking = DashboardPathLink | DashboardParentLink;
+/** Union of link-based and component-based sidebar items. */
+type SidebarItem = Linking | SidebarComponentItem;

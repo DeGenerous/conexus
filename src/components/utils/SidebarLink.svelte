@@ -83,6 +83,15 @@
           {/each}
         </ul>
       {/if}
+    {:else if item.onclick}
+      <!-- Action -->
+      <button
+        class="void-btn standalone"
+        onclick={item.onclick}
+        title={item.name}
+      >
+        {item.name}
+      </button>
     {:else if item.path}
       <!-- Standalone -->
       <a

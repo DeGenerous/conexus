@@ -343,7 +343,7 @@
             </button>
             <a
               class="button-anchor cta"
-              href="/dashboard/topic/{topic_id}/demo?demoID={topic_id}&demoName={topic_name}"
+              href="/dashboard/collections/topic/{topic_id}/demo?demoID={topic_id}&demoName={topic_name}"
             >
               Play Now
             </a>

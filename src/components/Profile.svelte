@@ -58,11 +58,9 @@
   $effect(() => {
     if (!dialog) return;
     if ($showProfile) {
-      dialog.classList.remove('dialog-fade-out');
       dialog.showModal();
     } else {
-      dialog.classList.add('dialog-fade-out');
-      setTimeout(() => dialog?.close(), 300);
+      dialog?.close();
       resetAuthViewState();
     }
   });

@@ -37,5 +37,5 @@ export const NAV_ROUTES = {
   ADMIN_USERS: '/admin/users',
   ADMIN_STORIES: '/admin/stories',
   ADMIN_WEB3: '/admin/web3',
-  EXPLORE: (topic_id: string) => `/dashboard/topic/${topic_id}`,
+  EXPLORE: (topic_id: string) => `/dashboard/collections/topic/${topic_id}`,
 };

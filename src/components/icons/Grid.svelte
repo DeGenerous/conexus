@@ -12,13 +12,3 @@
     stroke-linejoin="round"
   />
 </svg>
-
-<style lang="scss">
-  @use '/src/styles/mixins' as *;
-
-  @include respond-up('small-desktop') {
-    svg {
-      display: none;
-    }
-  }
-</style>

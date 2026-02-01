@@ -101,6 +101,10 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
+  .dream-container {
+    width: 100%;
+  }
+
   .container {
     width: 100%;
     flex-flow: row wrap;

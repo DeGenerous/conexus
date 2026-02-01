@@ -333,6 +333,7 @@
     height: 4.5rem;
     gap: 0;
     z-index: 100;
+    padding-inline: 1rem;
     border-bottom: 1px solid $transparent-gray;
     @include dark-blue;
     transition: transform 0.3s ease;

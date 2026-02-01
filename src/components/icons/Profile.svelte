@@ -103,6 +103,10 @@
   @use '/src/styles/mixins' as *;
 
   .profile-tab {
+    width: auto;
+    margin-left: auto;
+    flex-direction: row;
+
     img,
     .avatar-initial {
       width: 2rem;
@@ -134,7 +138,6 @@
     }
 
     @include respond-up('small-desktop') {
-      margin-left: auto;
       fill: $light-blue;
 
       svg {

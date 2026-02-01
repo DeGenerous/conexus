@@ -45,14 +45,14 @@
       ],
     },
     {
-      name: 'Settings',
-      intended: 'all',
-      onclick: () => modal.topicSettings(),
-    },
-    {
       name: 'Collections',
       intended: 'player',
       path: '/dashboard/collections',
+    },
+    {
+      name: 'Settings',
+      intended: 'all',
+      onclick: () => modal.topicSettings(),
     },
     {
       name: 'OmniHub',

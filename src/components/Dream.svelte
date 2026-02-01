@@ -17,7 +17,6 @@
     currentDraft,
   } from '@stores/dream.svelte';
   import { modal } from '@lib/modal-manager.svelte';
-  import generatePrompt from '@utils/prompt';
   import { checkUserRoles } from '@utils/route-guard';
   import { isAdmin } from '@stores/account.svelte';
   import Drafts from '@utils/story-drafts';
@@ -155,10 +154,27 @@
 
   // CREATE DREAM
 
+  function generatePrompt(
+    props: StoryData,
+    settings: PromptSettings,
+    data: TablePrompt,
+  ): TopicRequest {
+    return {
+      name: props.name.trim(),
+      description: props.description,
+      category_id: props.category_id,
+      available: true,
+      visibility: 'public',
+      prompt_type: 'structured',
+      structured_prompt: data,
+      image_prompt: props.image_prompt,
+      prompt_settings: settings,
+    };
+  }
+
   const generateStory = async () => {
-    const promptData: TablePrompt = $tablePrompt;
     const topic_id = await topic.newTopic(
-      generatePrompt($storyData, $promptSettings, promptData),
+      generatePrompt($storyData, $promptSettings, $tablePrompt),
     );
     if (!topic_id) return;
     if ($currentDraft?.id) Drafts.delete($currentDraft.id);
@@ -173,7 +189,7 @@
     await Drafts.create();
 
     setTimeout(async () => {
-      const storyLink = `/dashboard/topic/${topic_id}`;
+      const storyLink = `/dashboard/collections/topic/${topic_id}`;
       modal.confirm('', openStoryManage, {
         onConfirm: () => (window.location.href = storyLink),
         confirmText: 'Manage Story',
@@ -329,29 +345,6 @@
         .description.length}
     </p>
   {/if}
-
-  <hr />
-
-  <div class="input-container">
-    <label for="image-prompts">Image Generation Instructions</label>
-    <textarea
-      id="image-prompts"
-      class:red-border={$storyData.image_prompt.length > 5000}
-      placeholder="What does your world feel like, what visual mood are you going for, and what elements stand out? Describe the environment, style, lighting, and textures you want to see."
-      rows="2"
-      bind:value={$storyData.image_prompt}
-      style:min-height={$storyData.image_prompt.length > 500
-        ? $storyData.image_prompt.length / 50 + 'rem'
-        : ''}
-    ></textarea>
-  </div>
-
-  {#if $storyData.image_prompt && $storyData.image_prompt.length > 5000}
-    <p class="validation">
-      Please shorten your message to 5000 characters or less, you’ve typed {$storyData
-        .image_prompt.length}
-    </p>
-  {/if}
 </div>
 
 <div class="dream-container">
@@ -416,6 +409,26 @@
 <Scenario />
 
 <WritingStyle />
+
+<div class="dream-container">
+  <h4>Image Generation Instructions</h4>
+  <textarea
+    id="image-prompts"
+    class:red-border={$storyData.image_prompt.length > 5000}
+    placeholder="What does your world feel like, what visual mood are you going for, and what elements stand out? Describe the environment, style, lighting, and textures you want to see."
+    rows="2"
+    bind:value={$storyData.image_prompt}
+    style:min-height={$storyData.image_prompt.length > 500
+      ? $storyData.image_prompt.length / 50 + 'rem'
+      : ''}
+  ></textarea>
+  {#if $storyData.image_prompt && $storyData.image_prompt.length > 5000}
+    <p class="validation">
+      Please shorten your message to 5000 characters or less, you’ve typed {$storyData
+        .image_prompt.length}
+    </p>
+  {/if}
+</div>
 
 <div class="dream-container">
   <h4>

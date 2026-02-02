@@ -18,7 +18,7 @@ type LayoutProps = {
   header?: string;
   subheading?: string;
   nav?: string;
-  arrow?: string;
+  breadcrumbs?: Breadcrumb[];
   title?: string;
   ogTitle?: string;
   description?: string;
@@ -35,7 +35,7 @@ const {
   header,
   subheading,
   nav,
-  arrow = 'back',
+  breadcrumbs = [],
   title = 'CoNexus | AI Storytelling',
   description = 'CoNexus is the gateway to a boundless multiverse with infinite Choose-Your-Adventure stories.',
   image = `${assetsURL}/og.jpeg`,
@@ -196,7 +196,7 @@ const absoluteImageURL = image.startsWith('http')
     <ToastContainer client:idle />
 
     <main>
-      <Navigation {header} {subheading} activeTab={nav} {arrow} client:load />
+      <Navigation {header} {subheading} activeTab={nav} {breadcrumbs} client:load />
       <slot />
     </main>
 

@@ -14,7 +14,11 @@ if (!topic_id) {
 const meta = {
   header: 'Refine & Enhance',
   nav: topic_id,
-  arrow: NAV_ROUTES.MANAGE,
+  breadcrumbs: [
+    { label: 'Dashboard', href: NAV_ROUTES.DASHBOARD },
+    { label: 'Collections', href: NAV_ROUTES.MANAGE },
+    { label: 'Refine & Enhance' },
+  ],
 };
 ---
 

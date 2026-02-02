@@ -363,7 +363,7 @@
       width: 100%;
       height: 100%;
       justify-content: flex-start;
-      padding-block: 1.5rem;
+      padding-bottom: 1.5rem;
       /* Vital for mobile: allows standard vertical scroll when we aren't pulling */
       touch-action: pan-y;
       will-change: transform;

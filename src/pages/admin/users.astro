@@ -5,7 +5,11 @@ import UsersPage from '@components/dashboard/admin/Users.svelte';
 
 const meta = {
   nav: 'Admin',
-  arrow: '/dashboard',
+  breadcrumbs: [
+    { label: 'Users', href: '/admin/users', active: true },
+    { label: 'Stories', href: '/admin/stories', active: false },
+    { label: 'Web3', href: '/admin/web3', active: false },
+  ],
   header: 'Users',
 };
 ---

@@ -5,7 +5,11 @@ import Web3Page from '@components/dashboard/admin/Web3.svelte';
 
 const meta = {
   nav: 'Admin',
-  arrow: '/dashboard',
+  breadcrumbs: [
+    { label: 'Users', href: '/admin/users', active: false },
+    { label: 'Stories', href: '/admin/stories', active: false },
+    { label: 'Web3', href: '/admin/web3', active: true },
+  ],
   header: 'Web3',
 };
 ---

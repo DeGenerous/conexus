@@ -20,7 +20,7 @@
 
   import Profile from '@components/Profile.svelte';
   import Background from '@components/utils/Background.svelte';
-  import BackArrow from '@components/icons/BackArrow.svelte';
+  import Breadcrumbs from '@components/Breadcrumbs.svelte';
   import Sidebar from '@components/utils/Sidebar.svelte';
   import Home from '@components/icons/Home.svelte';
 
@@ -35,12 +35,12 @@
     header = '',
     subheading = '',
     activeTab = 'Home',
-    arrow,
+    breadcrumbs = [],
   }: {
     header: string;
     subheading: string;
     activeTab: string;
-    arrow: string;
+    breadcrumbs: Breadcrumb[];
   } = $props();
 
   let isDevelopmentEnv = $derived<boolean>(
@@ -208,7 +208,7 @@
 <svelte:window {onkeypress} {onscroll} />
 
 {#if $story === null}
-  <BackArrow href={arrow} hidden={!arrow} />
+  <Breadcrumbs items={breadcrumbs} hidden={hiddenHeader} />
 
   {#if showIntro}
     <div class="video-wrapper container fade-in">

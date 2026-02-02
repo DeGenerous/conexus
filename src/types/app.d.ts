@@ -322,3 +322,10 @@ type SidebarComponentItem = {
 
 /** Union of link-based and component-based sidebar items. */
 type SidebarItem = Linking | SidebarComponentItem;
+
+// ---------------------------------------------------------------------------
+// Breadcrumbs
+// ---------------------------------------------------------------------------
+
+/** Single segment in a breadcrumb trail. Omit `href` for the current page. */
+type Breadcrumb = { label: string; href?: string; active?: boolean };

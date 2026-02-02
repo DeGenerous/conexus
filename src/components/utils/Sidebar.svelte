@@ -36,18 +36,24 @@
       path: profilePath,
     },
     {
-      name: 'Account',
-      intended: 'all',
-      children: [
-        { name: 'Overview', path: '/dashboard/account' },
-        { name: 'Bookmarks', path: '/dashboard/bookmarks' },
-        { name: 'Preferences', path: '/dashboard/settings' },
-      ],
-    },
-    {
       name: 'Collections',
       intended: 'player',
       path: '/dashboard/collections',
+    },
+    {
+      name: 'Bookmarks',
+      intended: 'all',
+      path: '/dashboard/bookmarks',
+    },
+    {
+      name: 'Account',
+      intended: 'all',
+      path: '/dashboard/account',
+    },
+    {
+      name: 'Preferences',
+      intended: 'all',
+      path: '/dashboard/settings',
     },
     {
       name: 'Settings',
@@ -181,6 +187,10 @@
     background: $transparent-black;
     z-index: 98;
     transform: none !important;
+
+    @include respond-up(small-desktop) {
+      display: none;
+    }
   }
 
   section {
@@ -211,10 +221,13 @@
 
     @include respond-up(small-desktop) {
       left: unset;
-      width: 320px;
+      width: auto;
+      min-width: 220px;
       max-height: 80vh;
+      padding: 1rem;
       border-bottom-left-radius: 1rem;
       transform: translateX(100%);
+      @include box-shadow;
 
       &.open {
         transform: translateX(0);

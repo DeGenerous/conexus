@@ -7,7 +7,11 @@ import { blogURL } from '@constants/media';
 const meta = {
   title: 'Blog | CoNexus',
   nav: 'Blog',
-  arrow: '/learn/blog',
+  breadcrumbs: [
+    { label: 'Learn', href: '/learn' },
+    { label: 'Blog', href: '/learn/blog' },
+    { label: 'Top Tools' },
+  ],
   header: 'Top Tools',
   subheading:
     'Looking for the best choose-your-own-adventure tools to build interactive stories in 2025? Explore free and advanced platforms for creating branching narratives, visual novels, and story games — with and without code.',

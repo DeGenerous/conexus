@@ -5,8 +5,7 @@
   import { NAV_ROUTES } from '@constants/routes';
   import { normalizeMeta } from '@utils/potentials';
   import { POTENTIALS_COLLECTION_ID } from '@constants/curation';
-  import { usePullRefreshContext } from '@utils/pull-refresh';
-
+  import PullToRefresh from '@components/utils/PullToRefresh.svelte';
   import NFTSection from '@components/dashboard/omnihub/NFTs.svelte';
 
   const curation = new Curation();
@@ -18,9 +17,6 @@
   let potentials = $state<Array<NFT>>([]);
   let potentialsPower = $state<number>(0);
   let userRank = $state<Nullable<string>>(null);
-  let detachPullRefresh: Nullable<() => void> = null;
-  const pullRefresh = usePullRefreshContext();
-
   function nftTileToNFT(nfts: NFTTile[]): Array<NFT> {
     return nfts.map((nft) => ({
       token_id: nft.normalized.token_id,
@@ -30,15 +26,6 @@
       attributes: nft.raw.attributes,
     }));
   }
-
-  // allow users to manually bust the cached omnihub payload
-  const installPullToRefresh = () => {
-    detachPullRefresh?.();
-    detachPullRefresh =
-      pullRefresh?.register(async () => {
-        await loadOmniHub(true);
-      }) ?? null;
-  };
 
   // central fetcher so both initial mount and pull-to-refresh share logic
   async function loadOmniHub(refresh = false) {
@@ -90,76 +77,71 @@
   }
 
   onMount(() => {
-    let cancelled = false;
-
-    (async () => {
-      await loadOmniHub();
-      if (!cancelled) installPullToRefresh();
-    })();
-
-    return () => {
-      cancelled = true;
-      detachPullRefresh?.();
-      detachPullRefresh = null;
-    };
+    loadOmniHub();
   });
 </script>
 
-{#if loading}
-  <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
-{:else if potentials.length}
-  <NFTSection {potentials} {potentialsPower} {userRank} />
-{:else}
-  <section class="container flex-row flex-wrap">
-    <div class="container fade-in">
-      {#if noWalletDetected}
-        <h5>
-          Connect a wallet to activate OmniHub and access your assets, identity,
-          and tools
-        </h5>
-        <button onclick={() => open('/dashboard/account', '_self')}>
-          Open Your Profile
-        </button>
-      {:else}
-        <h5 class="validation">
-          No Potentials Detected Across Connected Wallets
-        </h5>
+<PullToRefresh refresh={() => loadOmniHub(true)}>
+  {#if loading}
+    <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
+  {:else if potentials.length}
+    <NFTSection {potentials} {potentialsPower} {userRank} />
+  {:else}
+    <section class="container flex-row flex-wrap">
+      <div class="container fade-in">
+        {#if noWalletDetected}
+          <h5>
+            Connect a wallet to activate OmniHub and access your assets,
+            identity, and tools
+          </h5>
+          <button onclick={() => open('/dashboard/account', '_self')}>
+            Open Your Profile
+          </button>
+        {:else}
+          <h5 class="validation">
+            No Potentials Detected Across Connected Wallets
+          </h5>
 
-        <hr />
+          <hr />
 
-        <p>
-          If your Potential lies elsewhere, link the right access point through
-          your profile
-        </p>
-        <button onclick={() => open('/dashboard/account', '_self')}>
-          Connect Another Wallet
-        </button>
+          <p>
+            If your Potential lies elsewhere, link the right access point
+            through your profile
+          </p>
+          <button onclick={() => open('/dashboard/account', '_self')}>
+            Connect Another Wallet
+          </button>
 
-        <hr />
+          <hr />
 
-        <p>
-          Or explore the Marketplace to discover a Potential that resonates with
-          your journey
-        </p>
-        <span class="flex-row flex-wrap">
-          <a class="button-anchor" href={NAV_ROUTES.MAGIC_EDEN} target="_blank">
-            <img src="/icons/magiceden.png" alt="Magic Eden marketplace" />
-            Magic Eden
-          </a>
-          <a class="button-anchor" href={NAV_ROUTES.OPENSEA} target="_blank">
-            <img src="/icons/opensea.png" alt="OpenSea marketplace" />
-            OpenSea
-          </a>
-        </span>
-      {/if}
-    </div>
-    <img
-      class="fade-in"
-      src="/omnihub/quarchon.avif"
-      alt="Potential - Quarchon"
-    />
-  </section>
-{/if}
+          <p>
+            Or explore the Marketplace to discover a Potential that resonates
+            with your journey
+          </p>
+          <span class="flex-row flex-wrap">
+            <a
+              class="button-anchor"
+              href={NAV_ROUTES.MAGIC_EDEN}
+              target="_blank"
+            >
+              <img src="/icons/magiceden.png" alt="Magic Eden marketplace" />
+              Magic Eden
+            </a>
+            <a class="button-anchor" href={NAV_ROUTES.OPENSEA} target="_blank">
+              <img src="/icons/opensea.png" alt="OpenSea marketplace" />
+              OpenSea
+            </a>
+          </span>
+        {/if}
+      </div>
+      <img
+        class="fade-in"
+        src="/omnihub/quarchon.avif"
+        alt="Potential - Quarchon"
+      />
+    </section>
+  {/if}
+</PullToRefresh>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

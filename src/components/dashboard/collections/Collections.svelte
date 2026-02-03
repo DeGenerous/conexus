@@ -8,11 +8,11 @@
   import { toastStore } from '@stores/toast.svelte';
   import { getCurrentUser } from '@utils/route-guard';
   import { isAdmin, isPlayer } from '@stores/account.svelte';
-  import { usePullRefreshContext } from '@utils/pull-refresh';
   import { modal } from '@lib/modal-manager.svelte';
 
   import CategoryBlock from '@components/dashboard/collections/CategoryBlock.svelte';
   import Dropdown from '@components/utils/Dropdown.svelte';
+  import PullToRefresh from '@components/utils/PullToRefresh.svelte';
 
   const topicManager = new Topics();
   const categoryManager = new CategoryView();
@@ -28,28 +28,17 @@
   // token that invalidates all expanded topic lists when incremented
   let topicsRefreshToken = $state(0);
 
-  // hydrate initial datasets for the active role and register pull refresh
+  // hydrate initial datasets for the active role
   onMount(() => {
-    let cancelled = false;
-
     startDragPolicyWatchers();
 
-    (async () => {
-      if ($isAdmin) {
-        await loadAdminCollections();
-      } else if ($isPlayer) {
-        await loadPlayerCollections();
-      }
-
-      if (!cancelled && ($isAdmin || $isPlayer)) {
-        installPullToRefresh();
-      }
-    })();
+    if ($isAdmin) {
+      loadAdminCollections();
+    } else if ($isPlayer) {
+      loadPlayerCollections();
+    }
 
     return () => {
-      cancelled = true;
-      detachPullRefresh?.();
-      detachPullRefresh = null;
       detachPointerChange?.();
       detachPointerChange = null;
       detachResizeListener?.();
@@ -70,8 +59,6 @@
   let creatorReordering = $state<Set<string>>(new Set());
   let disableDragInteractions = $state(false);
   const CREATOR_SELF_KEY = 'creator-self';
-  let detachPullRefresh: Nullable<() => void> = null;
-  const pullRefresh = usePullRefreshContext();
   let detachPointerChange: Nullable<() => void> = null;
   let detachResizeListener: Nullable<() => void> = null;
   // emit a new token whenever any topic mutation completes
@@ -203,12 +190,6 @@
     if (refresh) bumpTopicsRefresh();
   }
 
-  // unregister existing handler so other routes can attach theirs
-  // expose manual cache bust via pull-to-refresh gesture
-  const installPullToRefresh = () => {
-    detachPullRefresh?.();
-    detachPullRefresh = pullRefresh?.register(refreshCollections) ?? null;
-  };
   // called by child blocks after any topic-level mutation
   const handleTopicMutated = () => bumpTopicsRefresh();
 
@@ -682,90 +663,157 @@
   }
 </script>
 
-<!-- Admin collections management -->
-{#if $isAdmin}
-  <div class="dream-container">
-    <div class="flex-row">
-      <h4>Scope</h4>
-      <div class="container">
-        <button
-          class="void-btn dream-radio-btn"
-          class:active={adminToggle === 'sections'}
-          onclick={() => (adminToggle = 'sections')}
-        >
-          Sections
-        </button>
-        <button
-          class="void-btn dream-radio-btn"
-          class:active={adminToggle === 'creators'}
-          onclick={() => (adminToggle = 'creators')}
-        >
-          Creators
-        </button>
+<PullToRefresh refresh={refreshCollections}>
+  <!-- Admin collections management -->
+  {#if $isAdmin}
+    <div class="dream-container">
+      <div class="flex-row">
+        <h4>Scope</h4>
+        <div class="container">
+          <button
+            class="void-btn dream-radio-btn"
+            class:active={adminToggle === 'sections'}
+            onclick={() => (adminToggle = 'sections')}
+          >
+            Sections
+          </button>
+          <button
+            class="void-btn dream-radio-btn"
+            class:active={adminToggle === 'creators'}
+            onclick={() => (adminToggle = 'creators')}
+          >
+            Creators
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  {#if adminToggle === 'creators'}
-    {#if creators && creators.length > 0}
-      {#each creators as creator}
+    {#if adminToggle === 'creators'}
+      {#if creators && creators.length > 0}
+        {#each creators as creator}
+          <Dropdown
+            name={creator.creator_name}
+            dropdownFunc={() => toggleExpandCreator(creator.creator_id)}
+          >
+            {#if expandedCreators.has(creator.creator_id)}
+              {#if creator.categories && creator.categories.length > 0}
+                <div
+                  class="category-dnd-zone flex"
+                  class:reordering={creatorReordering.has(creator.creator_id)}
+                  aria-busy={creatorReordering.has(creator.creator_id)}
+                  use:dndzone={{
+                    items: getCreatorCategoryItems(
+                      creator.creator_id,
+                      creator.categories,
+                    ),
+                    type: `creator-categories-${creator.creator_id}`,
+                    dropFromOthersDisabled: true,
+                    dragDisabled:
+                      disableDragInteractions ||
+                      creatorReordering.has(creator.creator_id),
+                  }}
+                  onconsider={(event) =>
+                    handleCreatorCategoryConsider(creator.creator_id, event)}
+                  onfinalize={(event) =>
+                    handleCreatorCategoryFinalize(
+                      creator.creator_id,
+                      event,
+                      'admin',
+                    )}
+                >
+                  {#each getCreatorCategoryItems(creator.creator_id, creator.categories) as category (category.id)}
+                    <div class="category-draggable">
+                      <CategoryBlock
+                        {category}
+                        {topicManager}
+                        {topicsRefreshToken}
+                        disableDrag={disableDragInteractions}
+                        categoryOrderDisabled={creatorReordering.has(
+                          creator.creator_id,
+                        )}
+                        maxCategoryOrder={Math.max(
+                          1,
+                          getCreatorCategoryItems(
+                            creator.creator_id,
+                            creator.categories,
+                          ).length,
+                        )}
+                        requestGlobalRefresh={refreshCollections}
+                        onManualCategoryOrderChange={(order) =>
+                          handleManualCreatorCategoryOrder(
+                            creator.creator_id,
+                            category.category_id,
+                            order,
+                            'admin',
+                          )}
+                        onTopicMutated={handleTopicMutated}
+                        creator={true}
+                      />
+                    </div>
+                  {/each}
+                </div>
+              {:else}
+                <p class="validation">No story categories found</p>
+              {/if}
+            {/if}
+          </Dropdown>
+        {/each}
+      {:else}
+        <p class="validation">No creators found</p>
+      {/if}
+    {:else if sections && sections.length > 0}
+      {#each sections as section}
         <Dropdown
-          name={creator.creator_name}
-          dropdownFunc={() => toggleExpandCreator(creator.creator_id)}
+          name={section.section_name}
+          dropdownFunc={() => toggleExpandSection(section.section_id)}
         >
-          {#if expandedCreators.has(creator.creator_id)}
-            {#if creator.categories && creator.categories.length > 0}
+          {#if expandedSections.has(section.section_id)}
+            {#if section.categories && section.categories.length > 0}
               <div
                 class="category-dnd-zone flex"
-                class:reordering={creatorReordering.has(creator.creator_id)}
-                aria-busy={creatorReordering.has(creator.creator_id)}
+                class:reordering={sectionReordering.has(section.section_id)}
+                aria-busy={sectionReordering.has(section.section_id)}
                 use:dndzone={{
-                  items: getCreatorCategoryItems(
-                    creator.creator_id,
-                    creator.categories,
+                  items: getSectionCategoryItems(
+                    section.section_id,
+                    section.categories,
                   ),
-                  type: `creator-categories-${creator.creator_id}`,
+                  type: `categories-${section.section_id}`,
                   dropFromOthersDisabled: true,
                   dragDisabled:
                     disableDragInteractions ||
-                    creatorReordering.has(creator.creator_id),
+                    sectionReordering.has(section.section_id),
                 }}
                 onconsider={(event) =>
-                  handleCreatorCategoryConsider(creator.creator_id, event)}
+                  handleCategoryConsider(section.section_id, event)}
                 onfinalize={(event) =>
-                  handleCreatorCategoryFinalize(
-                    creator.creator_id,
-                    event,
-                    'admin',
-                  )}
+                  handleCategoryFinalize(section.section_id, event)}
               >
-                {#each getCreatorCategoryItems(creator.creator_id, creator.categories) as category (category.id)}
+                {#each getSectionCategoryItems(section.section_id, section.categories) as category (category.id)}
                   <div class="category-draggable">
                     <CategoryBlock
                       {category}
                       {topicManager}
                       {topicsRefreshToken}
                       disableDrag={disableDragInteractions}
-                      categoryOrderDisabled={creatorReordering.has(
-                        creator.creator_id,
+                      categoryOrderDisabled={sectionReordering.has(
+                        section.section_id,
                       )}
                       maxCategoryOrder={Math.max(
                         1,
-                        getCreatorCategoryItems(
-                          creator.creator_id,
-                          creator.categories,
+                        getSectionCategoryItems(
+                          section.section_id,
+                          section.categories,
                         ).length,
                       )}
                       requestGlobalRefresh={refreshCollections}
                       onManualCategoryOrderChange={(order) =>
-                        handleManualCreatorCategoryOrder(
-                          creator.creator_id,
+                        handleManualSectionCategoryOrder(
+                          section.section_id,
                           category.category_id,
                           order,
-                          'admin',
                         )}
                       onTopicMutated={handleTopicMutated}
-                      creator={true}
                     />
                   </div>
                 {/each}
@@ -777,131 +825,66 @@
         </Dropdown>
       {/each}
     {:else}
-      <p class="validation">No creators found</p>
+      <p class="validation">No story categories found</p>
     {/if}
-  {:else if sections && sections.length > 0}
-    {#each sections as section}
-      <Dropdown
-        name={section.section_name}
-        dropdownFunc={() => toggleExpandSection(section.section_id)}
+  {/if}
+
+  <!-- Creator-only category management -->
+  {#if $isPlayer && !$isAdmin}
+    {#if creatorCategories && creatorCategories.length > 0}
+      <div
+        class="category-dnd-zone flex"
+        class:reordering={creatorReordering.has(CREATOR_SELF_KEY)}
+        aria-busy={creatorReordering.has(CREATOR_SELF_KEY)}
+        use:dndzone={{
+          items: getCreatorCategoryItems(CREATOR_SELF_KEY, creatorCategories),
+          type: `creator-categories-${CREATOR_SELF_KEY}`,
+          dropFromOthersDisabled: true,
+          dragDisabled:
+            disableDragInteractions || creatorReordering.has(CREATOR_SELF_KEY),
+        }}
+        onconsider={(event) =>
+          handleCreatorCategoryConsider(CREATOR_SELF_KEY, event)}
+        onfinalize={(event) =>
+          handleCreatorCategoryFinalize(CREATOR_SELF_KEY, event, 'self')}
       >
-        {#if expandedSections.has(section.section_id)}
-          {#if section.categories && section.categories.length > 0}
-            <div
-              class="category-dnd-zone flex"
-              class:reordering={sectionReordering.has(section.section_id)}
-              aria-busy={sectionReordering.has(section.section_id)}
-              use:dndzone={{
-                items: getSectionCategoryItems(
-                  section.section_id,
-                  section.categories,
-                ),
-                type: `categories-${section.section_id}`,
-                dropFromOthersDisabled: true,
-                dragDisabled:
-                  disableDragInteractions ||
-                  sectionReordering.has(section.section_id),
-              }}
-              onconsider={(event) =>
-                handleCategoryConsider(section.section_id, event)}
-              onfinalize={(event) =>
-                handleCategoryFinalize(section.section_id, event)}
-            >
-              {#each getSectionCategoryItems(section.section_id, section.categories) as category (category.id)}
-                <div class="category-draggable">
-                  <CategoryBlock
-                    {category}
-                    {topicManager}
-                    {topicsRefreshToken}
-                    disableDrag={disableDragInteractions}
-                    categoryOrderDisabled={sectionReordering.has(
-                      section.section_id,
-                    )}
-                    maxCategoryOrder={Math.max(
-                      1,
-                      getSectionCategoryItems(
-                        section.section_id,
-                        section.categories,
-                      ).length,
-                    )}
-                    requestGlobalRefresh={refreshCollections}
-                    onManualCategoryOrderChange={(order) =>
-                      handleManualSectionCategoryOrder(
-                        section.section_id,
-                        category.category_id,
-                        order,
-                      )}
-                    onTopicMutated={handleTopicMutated}
-                  />
-                </div>
-              {/each}
-            </div>
-          {:else}
-            <p class="validation">No story categories found</p>
-          {/if}
-        {/if}
-      </Dropdown>
-    {/each}
-  {:else}
-    <p class="validation">No story categories found</p>
-  {/if}
-{/if}
-
-<!-- Creator-only category management -->
-{#if $isPlayer && !$isAdmin}
-  {#if creatorCategories && creatorCategories.length > 0}
-    <div
-      class="category-dnd-zone flex"
-      class:reordering={creatorReordering.has(CREATOR_SELF_KEY)}
-      aria-busy={creatorReordering.has(CREATOR_SELF_KEY)}
-      use:dndzone={{
-        items: getCreatorCategoryItems(CREATOR_SELF_KEY, creatorCategories),
-        type: `creator-categories-${CREATOR_SELF_KEY}`,
-        dropFromOthersDisabled: true,
-        dragDisabled:
-          disableDragInteractions || creatorReordering.has(CREATOR_SELF_KEY),
-      }}
-      onconsider={(event) =>
-        handleCreatorCategoryConsider(CREATOR_SELF_KEY, event)}
-      onfinalize={(event) =>
-        handleCreatorCategoryFinalize(CREATOR_SELF_KEY, event, 'self')}
-    >
-      {#each getCreatorCategoryItems(CREATOR_SELF_KEY, creatorCategories) as category (category.id)}
-        <div class="category-draggable">
-          <CategoryBlock
-            {category}
-            {topicManager}
-            {topicsRefreshToken}
-            disableDrag={disableDragInteractions}
-            categoryOrderDisabled={creatorReordering.has(CREATOR_SELF_KEY)}
-            maxCategoryOrder={Math.max(
-              1,
-              getCreatorCategoryItems(CREATOR_SELF_KEY, creatorCategories)
-                .length,
-            )}
-            requestGlobalRefresh={refreshCollections}
-            onManualCategoryOrderChange={(order) =>
-              handleManualCreatorCategoryOrder(
-                CREATOR_SELF_KEY,
-                category.category_id,
-                order,
-                'self',
+        {#each getCreatorCategoryItems(CREATOR_SELF_KEY, creatorCategories) as category (category.id)}
+          <div class="category-draggable">
+            <CategoryBlock
+              {category}
+              {topicManager}
+              {topicsRefreshToken}
+              disableDrag={disableDragInteractions}
+              categoryOrderDisabled={creatorReordering.has(CREATOR_SELF_KEY)}
+              maxCategoryOrder={Math.max(
+                1,
+                getCreatorCategoryItems(CREATOR_SELF_KEY, creatorCategories)
+                  .length,
               )}
-            onTopicMutated={handleTopicMutated}
-            creator={true}
-          />
-        </div>
-      {/each}
-    </div>
-  {:else}
-    <p class="validation">No story categories found, pull down to refresh</p>
-    <button class="cta" onclick={() => modal.categoryManager()}>
-      Create your first story category
-    </button>
+              requestGlobalRefresh={refreshCollections}
+              onManualCategoryOrderChange={(order) =>
+                handleManualCreatorCategoryOrder(
+                  CREATOR_SELF_KEY,
+                  category.category_id,
+                  order,
+                  'self',
+                )}
+              onTopicMutated={handleTopicMutated}
+              creator={true}
+            />
+          </div>
+        {/each}
+      </div>
+    {:else}
+      <p class="validation">No story categories found, pull down to refresh</p>
+      <button class="cta" onclick={() => modal.categoryManager()}>
+        Create your first story category
+      </button>
+    {/if}
   {/if}
-{/if}
 
-<button onclick={() => modal.categoryManager()}> Manage Categories </button>
+  <button onclick={() => modal.categoryManager()}> Manage Categories </button>
+</PullToRefresh>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

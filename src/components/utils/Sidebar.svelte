@@ -66,6 +66,24 @@
       display: hasMainWallet,
     },
     {
+      name: 'Admin',
+      intended: 'admin',
+      children: [
+        {
+          name: 'Users',
+          path: '/admin/users',
+        },
+        {
+          name: 'Stories',
+          path: '/admin/stories',
+        },
+        {
+          name: 'Web3',
+          path: '/admin/web3',
+        },
+      ],
+    },
+    {
       id: 'sign-out',
       component: DoorSVG,
       props: {

@@ -9,13 +9,7 @@
     checkIfTesterApproved,
   } from '@utils/route-guard';
   import { loadUserbackWidget, clearUserbackUserData } from '@utils/userback';
-  import {
-    user,
-    isAdmin,
-    developerMode,
-    approvedTester,
-  } from '@stores/account.svelte';
-  import { showProfile } from '@stores/modal.svelte';
+  import { user, developerMode, approvedTester } from '@stores/account.svelte';
   import { sidebarOpen } from '@stores/navigation.svelte';
 
   import Profile from '@components/Profile.svelte';
@@ -28,7 +22,6 @@
   import PlaySVG from '@components/icons/Play.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
   import DreamSVG from '@components/icons/Dream.svelte';
-  import GearSVG from '@components/icons/Gear.svelte';
   import GridSVG from '@components/icons/Grid.svelte';
 
   let {
@@ -100,7 +93,6 @@
     href: string;
     icon: Component;
     active: boolean;
-    visible?: boolean;
   };
 
   let navItems = $derived<NavTab[]>([
@@ -124,14 +116,6 @@
       href: '/dashboard',
       icon: GridSVG,
       active: activeTab === 'Dashboard',
-    },
-    {
-      id: 'Admin',
-      label: 'Admin',
-      href: '/admin/users',
-      icon: GearSVG,
-      active: activeTab === 'Admin',
-      visible: $isAdmin,
     },
   ]);
 
@@ -243,7 +227,7 @@
   >
     <Home />
 
-    {#each navItems.filter((t) => t.visible !== false) as tab (tab.id)}
+    {#each navItems as tab (tab.id)}
       <a
         class="navigation-tab pc-only"
         class:active={tab.active}
@@ -266,7 +250,7 @@
 
   <!-- Mobile bottom bar: nav icons -->
   <nav class="bottom-nav flex-row" class:disabled={!$approvedTester}>
-    {#each navItems.filter((t) => t.visible !== false) as tab (tab.id)}
+    {#each navItems as tab (tab.id)}
       <a
         class="navigation-tab"
         class:active={tab.active}

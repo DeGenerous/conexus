@@ -100,7 +100,6 @@
     href: string;
     icon: Component;
     active: boolean;
-    requiresAuth?: boolean;
     visible?: boolean;
   };
 
@@ -118,7 +117,6 @@
       href: '/dream',
       icon: DreamSVG,
       active: activeTab === 'Dream',
-      requiresAuth: true,
     },
     {
       id: 'Dashboard',
@@ -252,12 +250,6 @@
         class:inactive={!$approvedTester}
         href={tab.href}
         draggable="false"
-        onclick={(event) => {
-          if (tab.requiresAuth && !$user) {
-            event.preventDefault();
-            $showProfile = true;
-          }
-        }}
       >
         <p>{tab.label}</p>
       </a>
@@ -281,12 +273,6 @@
         class:inactive={!$approvedTester}
         href={tab.href}
         draggable="false"
-        onclick={(event) => {
-          if (tab.requiresAuth && !$user) {
-            event.preventDefault();
-            $showProfile = true;
-          }
-        }}
       >
         <tab.icon />
         <p>{tab.label}</p>

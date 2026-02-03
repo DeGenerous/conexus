@@ -53,7 +53,7 @@
     {
       name: 'Preferences',
       intended: 'all',
-      path: '/dashboard/settings',
+      path: '/dashboard/preferences',
     },
     {
       name: 'Settings',

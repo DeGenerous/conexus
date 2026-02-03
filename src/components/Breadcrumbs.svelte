@@ -87,13 +87,13 @@
     a {
       overflow: hidden;
       text-overflow: ellipsis;
-      @include cyan(0.85, text);
+      @include light-blue(1, text);
       @include text-shadow;
 
       &:hover,
       &:active,
       &:focus-visible {
-        @include light-blue(1, text);
+        @include cyan(1, text);
       }
     }
 
@@ -112,7 +112,7 @@
     }
 
     .separator {
-      @include cyan(0.5, text);
+      @include light-blue(0.75, text);
       user-select: none;
     }
   }

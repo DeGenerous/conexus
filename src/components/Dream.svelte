@@ -21,11 +21,13 @@
   import { isAdmin } from '@stores/account.svelte';
   import Drafts from '@utils/story-drafts';
 
+  import World from './dream/World.svelte';
   import Characters from '@components/dream/Characters.svelte';
   import Scenario from '@components/dream/Scenario.svelte';
   import WritingStyle from '@components/dream/WritingStyle.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
   import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
+  import Additional from './dream/Additional.svelte';
 
   const topic = new Topic();
 
@@ -39,10 +41,11 @@
 
   // minimal gating for the "Create" CTA: ensure we have base metadata and the prompt stays within limits
   let validation = $derived(
-    $storyData.name &&
-      $storyData.description.length <= 2500 &&
-      $storyData.image_prompt.length <= 5000 &&
-      $storyData.category_id,
+    $storyData.name.trim() &&
+      $storyData.category_id &&
+      $storyData.description.length >= 20 &&
+      $storyData.description.length <= 500 &&
+      $tablePrompt.premise.length >= 5,
   );
 
   const AUTO_SAVE_DELAY_MS = 5 * 60 * 1000;
@@ -329,19 +332,17 @@
     <label for="description">Description</label>
     <textarea
       id="description"
-      class:red-border={$storyData.description.length > 2500}
+      class:red-border={$storyData.description.length < 20 ||
+        $storyData.description.length > 500}
       placeholder="Describe the central premise, key themes, the main character's emotional journey ahead, and what kicks off the plot. Focus on what’s at stake, what makes the world unique, and why this story matters - make users want to see more."
       rows="3"
       bind:value={$storyData.description}
-      style:min-height={$storyData.description.length > 500
-        ? $storyData.description.length / 50 + 'rem'
-        : ''}
     ></textarea>
   </div>
 
-  {#if $storyData.description && $storyData.description.length > 2500}
+  {#if $storyData.description && $storyData.description.length > 500}
     <p class="validation">
-      Please shorten your message to 5000 characters or less, you’ve typed {$storyData
+      Please shorten your message to 500 characters or less, you’ve typed {$storyData
         .description.length}
     </p>
   {/if}
@@ -350,59 +351,15 @@
 <div class="dream-container">
   <h4>Write up a scenario of Your Story</h4>
   <textarea
-    id="blank"
+    class:red-border={$tablePrompt.premise.length < 5}
+    id="premise"
     placeholder="Describe any scenario you want, and the AI will turn it into a story! Whether it's a thrilling mystery, an epic fantasy, or a hilarious adventure, your imagination sets the stage. You can be as detailed or vague as you like—every idea sparks a unique tale. E.g. Make a unique Sherlock Holmes story where during an investigation he ends up taking a new type of drug, deeply affecting him so he’ll lead a fight both versus himself and a serial killer."
     rows="5"
     bind:value={$tablePrompt.premise}
-    style:min-height={$tablePrompt.premise.length > 500
-      ? $tablePrompt.premise.length / 50 + 'rem'
-      : ''}
   ></textarea>
 </div>
 
-<div class="dream-container">
-  <div class="flex-row">
-    <h4>Environment</h4>
-    <textarea
-      id="setting"
-      placeholder="Describe the time and place where your story unfolds, whether it's a futuristic city, a medieval kingdom, a distant galaxy, or somewhere beyond imagination."
-      rows="2"
-      bind:value={$tablePrompt.environment}
-      style:min-height={$tablePrompt.environment &&
-      $tablePrompt.environment.length > 500
-        ? $tablePrompt.environment.length / 50 + 'rem'
-        : ''}
-    ></textarea>
-  </div>
-
-  <div class="flex-row">
-    <h4>Exposition</h4>
-    <textarea
-      id="exposition"
-      placeholder="Set the stage for your story—introduce the world, key events leading up to the present, and any important background details the reader needs to know."
-      rows="2"
-      bind:value={$tablePrompt.exposition}
-      style:min-height={$tablePrompt.exposition &&
-      $tablePrompt.exposition.length > 500
-        ? $tablePrompt.exposition.length / 50 + 'rem'
-        : ''}
-    ></textarea>
-  </div>
-
-  <div class="flex-row">
-    <h4>First Action</h4>
-    <textarea
-      id="first-act"
-      placeholder="Describe how the story begins—introduce the main character, their current situation, and the inciting event that sets the plot in motion."
-      rows="2"
-      bind:value={$tablePrompt.first_action}
-      style:min-height={$tablePrompt.first_action &&
-      $tablePrompt.first_action.length > 500
-        ? $tablePrompt.first_action.length / 50 + 'rem'
-        : ''}
-    ></textarea>
-  </div>
-</div>
+<World />
 
 <Characters />
 
@@ -410,41 +367,7 @@
 
 <WritingStyle />
 
-<div class="dream-container">
-  <h4>Image Generation Instructions</h4>
-  <textarea
-    id="image-prompts"
-    class:red-border={$storyData.image_prompt.length > 5000}
-    placeholder="What does your world feel like, what visual mood are you going for, and what elements stand out? Describe the environment, style, lighting, and textures you want to see."
-    rows="2"
-    bind:value={$storyData.image_prompt}
-    style:min-height={$storyData.image_prompt.length > 500
-      ? $storyData.image_prompt.length / 50 + 'rem'
-      : ''}
-  ></textarea>
-  {#if $storyData.image_prompt && $storyData.image_prompt.length > 5000}
-    <p class="validation">
-      Please shorten your message to 5000 characters or less, you’ve typed {$storyData
-        .image_prompt.length}
-    </p>
-  {/if}
-</div>
-
-<div class="dream-container">
-  <h4>
-    If you have anything else you wish to add to improve the story, you may
-    write it here
-  </h4>
-  <textarea
-    placeholder="Add any additional styling, references, details, twists, character ideas, or world-building elements you’d like to include in your story."
-    rows="2"
-    bind:value={$tablePrompt.additional_data}
-    style:min-height={$tablePrompt.additional_data &&
-    $tablePrompt.additional_data.length > 500
-      ? $tablePrompt.additional_data.length / 50 + 'rem'
-      : ''}
-  ></textarea>
-</div>
+<Additional />
 
 {#if !validation}
   <p class="validation">Fill all required fields</p>
@@ -491,7 +414,7 @@
     }
   }
 
-  #blank {
+  #premise {
     min-height: 25rem;
 
     @include respond-up(small-desktop) {

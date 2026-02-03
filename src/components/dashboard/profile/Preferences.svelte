@@ -3,7 +3,6 @@
 
   import Account from '@lib/account';
   import { promptSettings } from '@stores/dream.svelte';
-  import { modal } from '@lib/modal-manager.svelte';
   import { customFont, customStyling } from '@stores/customization.svelte';
   import { getPersonalSetup, setPersonalSetup } from '@stores/account.svelte';
   import { checkUserRoles } from '@utils/route-guard';
@@ -102,8 +101,6 @@
   };
 </script>
 
-<h3>Personal Settings & Theme</h3>
-
 <p>
   Make stories fit you. Set styling, tone, pace, difficulty, content filters,
   and continuity.
@@ -145,43 +142,6 @@
     </div>
   </div>
 
-  <!-- <div class="flex-row">
-    <h4>Preferred Theme</h4>
-    <div class="container">
-      <span class="flex-row">
-        <button
-          class="void-btn dream-radio-btn"
-          class:active={preferredTheme === 'personal'}
-          onclick={() => {
-            preferredTheme = 'personal';
-            updatePersonalSetup();
-          }}
-        >
-          Personal
-        </button>
-        <button
-          class="void-btn dream-radio-btn"
-          class:active={preferredTheme === 'default'}
-          onclick={() => {
-            preferredTheme = 'default';
-            updatePersonalSetup();
-          }}
-        >
-          Default
-        </button>
-      </span>
-      <p>
-        {#if preferredTheme === 'personal'}
-          Apply your saved theme (colors, fonts, spacing) to all stories you
-          play until you switch back.
-        {:else}
-          Apply the author’s default theme to all stories you play until you
-          switch back.
-        {/if}
-      </p>
-    </div>
-  </div> -->
-
   <div class="flex-row">
     <h4>Play Mode</h4>
     <div class="container">
@@ -219,11 +179,8 @@
   </div>
 </section>
 
-<button onclick={() => modal.topicSettings({ onSave: saveChanges })}>
-  Personal Settings
-</button>
-
-<Dropdown name="Personal Theme" {table}>
+<div class="dream-container">
+  <h4>Selected Theme</h4>
   {#if $customFont && $customStyling}
     <section
       class="step-preview flex round-8 pad-24 {$customFont.baseSize}-font"
@@ -275,7 +232,7 @@
   {/if}
   <ThemeSettings {table} />
   <StylingController />
-</Dropdown>
+</div>
 
 <FooterLinks />
 

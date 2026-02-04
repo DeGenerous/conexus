@@ -1,6 +1,7 @@
 <!-- 🔒 GATED FOR ADMINS -->
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { untrack } from 'svelte';
+  import { get } from 'svelte/store';
   import { tippy } from 'svelte-tippy';
 
   import { NAV_ROUTES } from '@constants/routes';
@@ -9,13 +10,22 @@
   import { ensureMessage } from '@constants/modal';
   import { checkUserRoles, ensurePlayer } from '@utils/route-guard';
   import { isAdmin } from '@stores/account.svelte';
-  import { promptSettings } from '@stores/dream.svelte';
+  import {
+    promptSettings,
+    tablePrompt,
+    defaultTablePrompt,
+  } from '@stores/dream.svelte';
   import PullToRefresh from '@components/utils/PullToRefresh.svelte';
 
   import ExploreCategory from '@components/dashboard/collections/AddTopicCategory.svelte';
   import GenreTags from '@components/dashboard/collections/GenreTags.svelte';
   import Gating from '@components/dashboard/collections/Gating.svelte';
   import Media from '@components/dashboard/collections/Media.svelte';
+
+  import World from '@components/dream/World.svelte';
+  import Characters from '@components/dream/Characters.svelte';
+  import Scenario from '@components/dream/Scenario.svelte';
+  import WritingStyle from '@components/dream/WritingStyle.svelte';
 
   import EditSVG from '@components/icons/Edit.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
@@ -31,48 +41,38 @@
 
   let topic = $state<Nullable<TopicManager>>(null);
 
-  let topic_name = $state<string>('Loading...');
-  let topic_description = $state<string>('');
-  let topic_availability = $state<boolean>(false);
-  let topic_visibility = $state<TopicVisibility>('public');
-  let topic_media_files = $state<TopicMediaFile[]>([]);
+  let topic_name = $derived(topic?.topic.name ?? 'Loading...');
+  let topic_description = $derived(topic?.topic.description ?? '');
+  let topic_availability = $derived(topic?.topic.available ?? false);
+  let topic_visibility = $derived<TopicVisibility>(
+    topic?.topic.visibility ?? 'public',
+  );
+  let topic_media_files = $derived<TopicMediaFile[]>(topic?.media_files ?? []);
 
-  let topic_prompt_id = $state<string>('');
-  let topic_text_prompt = $state<TablePrompt>({ premise: '' });
-  let topic_image_prompt = $state<string>('');
+  let topic_prompt_id = $derived(topic?.topic_prompt.id ?? '');
+  let topic_text_prompt = $derived<TablePrompt>(
+    topic?.topic_prompt.text.structured_prompt ?? {
+      premise: topic?.topic_prompt.text.block_prompt ?? '',
+    },
+  );
+  let topic_image_prompt = $derived(topic?.topic_prompt.image.prompt ?? '');
 
-  let topic_categories = $state<TopicCategory[]>([]);
-  let topic_genres = $state<TopicGenre[]>([]);
-  let topic_gates = $state<TopicGate[]>([]);
+  let topic_categories = $derived<TopicCategory[]>(topic?.categories ?? []);
+  let topic_genres = $derived<TopicGenre[]>(topic?.genres ?? []);
+  let topic_gates = $derived<TopicGate[]>(topic?.gates ?? []);
+
+  let is_block = $derived(topic?.topic_prompt.text.is_block ?? true);
+  let promptVersions = $derived(
+    topic?.topic_prompt.text.all_prompt_versions ?? [],
+  );
+  let currentVersion = $derived(
+    topic?.topic_prompt.text.current_prompt_version ?? null,
+  );
 
   let nameDraft = $state<string>('');
   let descriptionDraft = $state<string>('');
   let promptDraft = $state<TablePrompt>({ premise: '' });
   let imagePromptDraft = $state<string>('');
-
-  const deepEqual = (a: any, b: any): boolean => {
-    if (a === b) return true;
-
-    if (
-      typeof a !== 'object' ||
-      typeof b !== 'object' ||
-      a === null ||
-      b === null
-    )
-      return false;
-
-    const keysA = Object.keys(a);
-    const keysB = Object.keys(b);
-
-    if (keysA.length !== keysB.length) return false;
-
-    for (const key of keysA) {
-      if (!keysB.includes(key)) return false;
-      if (!deepEqual(a[key], b[key])) return false;
-    }
-
-    return true;
-  };
 
   const setUpSettings = (settings: PromptSettings) => {
     if (!settings) return;
@@ -92,60 +92,39 @@
     await refreshTopic();
   };
 
-  const applyTopicData = (data: TopicManager) => {
-    topic = data;
-    setUpSettings(data.topic_prompt_settings);
-
-    topic_name = data.topic.name;
-    topic_description = data.topic.description;
-    topic_availability = data.topic.available;
-    topic_visibility = data.topic.visibility;
-
-    // Prompts
-    topic_prompt_id = data.topic_prompt.id;
-
-    const textPrompt = data.topic_prompt.text;
-    const imagePrompt = data.topic_prompt.image;
-
-    topic_text_prompt = textPrompt.structured_prompt || {
-      premise: textPrompt.block_prompt || '',
-    };
-    topic_image_prompt = imagePrompt.prompt;
-
-    topic_categories = data.categories;
-    topic_genres = data.genres;
-    topic_gates = data.gates;
-    topic_media_files = data.media_files ?? [];
-
-    nameDraft = topic_name;
-    descriptionDraft = topic_description;
-    promptDraft = structuredClone(
-      textPrompt.structured_prompt ?? {
-        premise: textPrompt.block_prompt ?? '',
-      },
-    );
-    imagePromptDraft = topic_image_prompt;
-  };
-
   const hydrateTopic = async (refresh = false) => {
     const next = await topicManager.getTopicManager(topic_id, refresh);
 
-    if (!next || !next.topic || !next.topic_prompt || !next.categories) {
+    if (!next?.topic || !next.topic_prompt || !next.categories) {
       window.location.href = NAV_ROUTES.MANAGE;
       return;
     }
 
-    applyTopicData(next);
+    topic = next; // all $derived fields auto-update
+    setUpSettings(next.topic_prompt_settings);
+
+    // Populate drafts for display (guarded so active edits aren't overwritten)
+    if (!editingName) nameDraft = next.topic.name;
+    if (!editingDescription) descriptionDraft = next.topic.description;
+    if (!editingTextPrompt) {
+      const text = next.topic_prompt.text;
+      promptDraft = structuredClone(
+        text.structured_prompt ?? { premise: text.block_prompt ?? '' },
+      );
+    }
+    if (!editingImagePrompt) imagePromptDraft = next.topic_prompt.image.prompt;
   };
 
   const refreshTopic = async () => {
     await hydrateTopic(true);
   };
 
-  onMount(async () => {
-    await ensurePlayer(NAV_ROUTES.MANAGE);
-    await checkUserRoles();
-    await hydrateTopic();
+  $effect(() => {
+    void (async () => {
+      await ensurePlayer(NAV_ROUTES.MANAGE);
+      await checkUserRoles();
+      await hydrateTopic();
+    })();
   });
 
   let editingName = $state<boolean>(false);
@@ -153,30 +132,37 @@
   let editingTextPrompt = $state<boolean>(false);
   let editingImagePrompt = $state<boolean>(false);
 
-  // whenever an edit toggle opens we repopulate the draft with the latest saved value to avoid stale local state
+  // When an edit toggle opens, populate the draft with the latest saved value.
+  // untrack prevents re-running when the source $derived value changes (e.g. PullToRefresh during editing).
   $effect(() => {
     if (editingName) {
-      nameDraft = topic_name;
+      nameDraft = untrack(() => topic_name);
     }
   });
 
   $effect(() => {
     if (editingDescription) {
-      descriptionDraft = topic_description;
+      descriptionDraft = untrack(() => topic_description);
     }
   });
 
   $effect(() => {
     if (editingImagePrompt) {
-      imagePromptDraft = topic_image_prompt;
+      imagePromptDraft = untrack(() => topic_image_prompt);
     }
   });
 
   $effect(() => {
     if (editingTextPrompt) {
-      promptDraft = structuredClone(topic_text_prompt);
+      const source = $state.snapshot(
+        untrack(() => topic_text_prompt),
+      ) as TablePrompt;
+      promptDraft = structuredClone(source);
+      tablePrompt.set({ ...defaultTablePrompt(), ...source });
     }
   });
+
+  let promptHasChanges = $derived(editingTextPrompt);
 
   async function handleCategoryChange(
     categoryId: string,
@@ -186,16 +172,9 @@
     switch (method) {
       case 'add':
         await topicManager.addTopicToCategory(topic_id, categoryId);
-        topic_categories = [
-          ...topic_categories,
-          { id: categoryId, name: name!, sort_order: 0 },
-        ];
         break;
       case 'remove':
         await topicManager.removeTopicFromCategory(topic_id, categoryId);
-        topic_categories = topic_categories.filter(
-          (category) => category.id !== categoryId,
-        );
         break;
     }
 
@@ -247,7 +226,6 @@
 
   async function toggleAvailability(topic_id: string, available: boolean) {
     await topicManager.changeAvailability(topic_id, available);
-    topic_availability = available;
     await refreshTopic();
   }
 
@@ -256,7 +234,28 @@
     visibility: 'public' | 'private',
   ) {
     await topicManager.changeVisibility(topic_id, visibility);
-    topic_visibility = topic_visibility === 'public' ? 'private' : 'public';
+    await refreshTopic();
+  }
+
+  const handleSavePrompt = async () => {
+    const currentPrompt: TablePrompt = is_block
+      ? promptDraft
+      : { ...get(tablePrompt), premise: promptDraft.premise };
+
+    await topicManager.editPrompt(topic_id, currentPrompt);
+    editingTextPrompt = false;
+    await refreshTopic();
+  };
+
+  async function handleVersionSwitch(version_id: string) {
+    if (version_id === currentVersion?.id) return;
+    await topicManager.switchPromptVersion(topic_id, version_id);
+    await refreshTopic();
+  }
+
+  async function handleVersionDelete(version_id: string) {
+    if (version_id === currentVersion?.id) return;
+    await topicManager.deletePromptVersion(topic_id, version_id);
     await refreshTopic();
   }
 
@@ -381,7 +380,6 @@
                       return;
                     }
                     await topicManager.changeName(topic_id, nameDraft);
-                    topic_name = nameDraft;
                     editingName = false;
                     await refreshTopic();
                   }}
@@ -396,22 +394,6 @@
 
         <hr />
 
-        <ExploreCategory {topic_categories} {handleCategoryChange} />
-
-        <hr />
-
-        <!-- GENRES -->
-        <GenreTags {topic_genres} {handleGenreChange} />
-
-        <!-- NFT RESTRICTIONS -->
-        {#if $isAdmin}
-          <hr />
-
-          <Gating {topic_gates} {handleGatingChange} />
-        {/if}
-      </section>
-
-      <section class="dream-container">
         <!-- DESCRIPTION -->
         <div class="flex-row">
           <span class="edit-wrapper flex">
@@ -434,7 +416,6 @@
                       topic_id,
                       descriptionDraft,
                     );
-                    topic_description = descriptionDraft;
                     editingDescription = false;
                     await refreshTopic();
                   }}
@@ -455,6 +436,155 @@
           ></textarea>
         </div>
 
+        <hr />
+
+        <ExploreCategory {topic_categories} {handleCategoryChange} />
+
+        <hr />
+
+        <!-- GENRES -->
+        <GenreTags {topic_genres} {handleGenreChange} />
+
+        <!-- NFT RESTRICTIONS -->
+        {#if $isAdmin}
+          <hr />
+
+          <Gating {topic_gates} {handleGatingChange} />
+        {/if}
+      </section>
+
+      <section class="dream-container">
+        <!-- PROMPT -->
+        <div class="flex-row box-header">
+          <span class="edit-wrapper flex flex-row flex-wrap">
+            <h4>Story Prompt</h4>
+            <span class="flex-row">
+              {#if editingTextPrompt}
+                <CloseSVG
+                  onclick={() => {
+                    editingTextPrompt = false;
+                    promptDraft = $state.snapshot(
+                      topic_text_prompt,
+                    ) as TablePrompt;
+                  }}
+                />
+                <SaveSVG
+                  onclick={handleSavePrompt}
+                  disabled={!promptHasChanges}
+                />
+              {:else}
+                <EditSVG bind:editing={editingTextPrompt} />
+              {/if}
+            </span>
+          </span>
+        </div>
+
+        {#if promptVersions.length}
+          <div class="version-tiles flex-row flex-wrap gap-8">
+            {#each promptVersions as version}
+              <button
+                class="void-btn small-tile-addon"
+                class:active={version.id === currentVersion?.id}
+                class:small-green-tile={version.id === currentVersion?.id}
+                class:small-blue-tile={version.id !== currentVersion?.id}
+                disabled={editingTextPrompt}
+                onclick={() => handleVersionSwitch(version.id)}
+              >
+                <p>Version: {version.version_number}</p>
+                {#if version.id !== currentVersion?.id}
+                  <CloseSVG
+                    onclick={(e) => {
+                      e.stopPropagation();
+                      handleVersionDelete(version.id);
+                    }}
+                    voidBtn={true}
+                    dark={true}
+                  />
+                {/if}
+              </button>
+            {/each}
+          </div>
+        {/if}
+
+        <!-- Premise (always shown) -->
+        <div class="flex-row">
+          <h4>Premise</h4>
+          <textarea
+            id="prompt"
+            placeholder="Describe any scenario you want, and the AI will turn it into a story!"
+            rows="5"
+            bind:value={promptDraft.premise}
+            disabled={!editingTextPrompt}
+          ></textarea>
+        </div>
+
+        <!-- Structured fields (only when not block format) -->
+        {#if !is_block}
+          {#if editingTextPrompt}
+            <World />
+            <Characters />
+            <Scenario />
+            <WritingStyle />
+            <div class="flex-row">
+              <h4>Additional Data</h4>
+              <textarea
+                id="additional-data"
+                placeholder="Add any additional styling, references, details..."
+                rows="2"
+                bind:value={$tablePrompt.additional_data}
+              ></textarea>
+            </div>
+          {:else}
+            <!-- Read-only display of populated structured fields -->
+            {#if topic_text_prompt.environment}
+              <div class="flex-row read-only-field">
+                <h4>Environment</h4>
+                <textarea disabled>{topic_text_prompt.environment}</textarea>
+              </div>
+            {/if}
+            {#if topic_text_prompt.exposition}
+              <div class="flex-row read-only-field">
+                <h4>Exposition</h4>
+                <textarea disabled>{topic_text_prompt.exposition}</textarea>
+              </div>
+            {/if}
+            {#if topic_text_prompt.first_action}
+              <div class="flex-row read-only-field">
+                <h4>First Action</h4>
+                <textarea disabled>{topic_text_prompt.first_action}</textarea>
+              </div>
+            {/if}
+            {#if topic_text_prompt.main_character?.name}
+              <div class="flex-row read-only-field">
+                <h4>Main Character</h4>
+                <textarea disabled>
+                  {topic_text_prompt.main_character.name} &mdash; {topic_text_prompt
+                    .main_character.description}
+                </textarea>
+              </div>
+            {/if}
+            {#if topic_text_prompt.side_characters?.length}
+              <div class="flex-row read-only-field">
+                <h4>Side Characters</h4>
+                <textarea disabled>
+                  {topic_text_prompt.side_characters
+                    .map((c) => c.name)
+                    .join(', ')}
+                </textarea>
+              </div>
+            {/if}
+            {#if topic_text_prompt.additional_data}
+              <div class="flex-row read-only-field">
+                <h4>Additional Data</h4>
+                <textarea disabled>{topic_text_prompt.additional_data}</textarea
+                >
+              </div>
+            {/if}
+          {/if}
+        {/if}
+      </section>
+
+      <section class="dream-container">
         <!-- IMAGE-PROMPT -->
         <div class="flex-row box-header">
           <span class="edit-wrapper flex">
@@ -477,7 +607,6 @@
                       topic_id,
                       imagePromptDraft,
                     );
-                    topic_image_prompt = imagePromptDraft;
                     editingImagePrompt = false;
                     await refreshTopic();
                   }}
@@ -497,52 +626,10 @@
             disabled={!editingImagePrompt}
           ></textarea>
         </div>
-
-        <!-- PROMPT Premise -->
-        <div class="flex-row box-header">
-          <span class="edit-wrapper flex">
-            <h4>Premise</h4>
-            <span class="flex-row">
-              {#if editingTextPrompt}
-                <CloseSVG
-                  onclick={() => {
-                    editingTextPrompt = false;
-                    promptDraft = structuredClone(topic_text_prompt);
-                  }}
-                />
-                <SaveSVG
-                  onclick={async () => {
-                    if (deepEqual(topic_text_prompt, promptDraft)) {
-                      console.log('no changes');
-                      editingTextPrompt = false;
-                      return;
-                    }
-                    await topicManager.editPrompt(topic_id, promptDraft);
-                    topic_text_prompt = structuredClone(promptDraft);
-                    editingTextPrompt = false;
-                    await refreshTopic();
-                  }}
-                  disabled={deepEqual(topic_text_prompt, promptDraft)}
-                />
-              {:else}
-                <EditSVG bind:editing={editingTextPrompt} />
-              {/if}
-            </span>
-          </span>
-          <textarea
-            id="prompt"
-            placeholder="Describe any scenario you want, and the AI will turn it into a story! Whether it's a thrilling mystery, an epic fantasy, or a hilarious adventure, your imagination sets the stage. You can be as detailed or vague as you like—every idea sparks a unique tale. E.g. Make a unique Sherlock Holmes story where during an investigation he ends up taking a new type of drug, deeply affecting him so he’ll lead a fight both versus himself and a serial killer."
-            rows="5"
-            bind:value={promptDraft.premise}
-            disabled={!editingTextPrompt}
-          ></textarea>
-        </div>
-
-        <!-- Add More Fields (Make them optional, a closed panel) -->
       </section>
 
       <!-- MEDIA FILES -->
-      <Media bind:topic_media_files {handleMediaUpload} {handleDeleteMedia} />
+      <Media {topic_media_files} {handleMediaUpload} {handleDeleteMedia} />
 
       <button
         class="red-btn"
@@ -603,7 +690,22 @@
 
   #description:disabled,
   #prompt:disabled,
-  #image-prompt:disabled {
+  #image-prompt:disabled,
+  #additional-data:disabled {
     @include white-txt(0.5);
+  }
+
+  .version-tiles {
+    justify-content: center;
+    flex-flow: row-reverse wrap;
+
+    .small-tile-addon.active::after {
+      content: 'active';
+    }
+  }
+
+  .box-header .edit-wrapper {
+    flex-direction: row;
+    align-items: center;
   }
 </style>

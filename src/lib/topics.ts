@@ -586,6 +586,50 @@ export default class Topic {
   }
 
   /**
+   * Switch the active prompt version for a topic.
+   * @param topic_id - The topic identifier.
+   * @param version_id - The version identifier to activate.
+   */
+  async switchPromptVersion(
+    topic_id: string,
+    version_id: string,
+  ): Promise<void> {
+    const { status, message } = await this.api.switchPromptVersion(
+      topic_id,
+      version_id,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || 'Switched to version', 'info');
+  }
+
+  /**
+   * Delete a prompt version for a topic.
+   * @param topic_id - The topic identifier.
+   * @param version_id - The version identifier to delete.
+   */
+  async deletePromptVersion(
+    topic_id: string,
+    version_id: string,
+  ): Promise<void> {
+    const { status, message } = await this.api.deletePromptVersion(
+      topic_id,
+      version_id,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || 'Version deleted', 'info');
+  }
+
+  /**
    * Update the text prompt for a topic.
    * @param topic_id - The topic identifier.
    * @param new_prompt - The new prompt TablePrompt.

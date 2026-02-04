@@ -360,6 +360,32 @@ export default class TopicAPI extends Fetcher {
   }
 
   /**
+   * Switch to a specific prompt version (stub — backend not yet implemented)
+   * @param topic_id The ID of the topic
+   * @param version_id The ID of the version to switch to
+   * @returns The response from the API
+   */
+  async switchPromptVersion(topic_id: string, version_id: string) {
+    return this.request(`${this.group}/switch-prompt-version`, {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, version_id }),
+    });
+  }
+
+  /**
+   * Delete a specific prompt version (stub — backend not yet implemented)
+   * @param topic_id The ID of the topic
+   * @param version_id The ID of the version to delete
+   * @returns The response from the API
+   */
+  async deletePromptVersion(topic_id: string, version_id: string) {
+    return this.request(`${this.group}/delete-prompt-version`, {
+      method: 'DELETE',
+      body: JSON.stringify({ topic_id, version_id }),
+    });
+  }
+
+  /**
    * Edit the prompt settings of a topic
    * @param topic_id The ID of the topic
    * @param settings The new prompt settings for the topic

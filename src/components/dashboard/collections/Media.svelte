@@ -11,7 +11,7 @@
   import { toAvif } from '@utils/avif-convert';
 
   let {
-    topic_media_files = $bindable(),
+    topic_media_files,
     handleMediaUpload,
     handleDeleteMedia,
   }: {
@@ -239,10 +239,6 @@
   const handleDelete = async (fileId: string, type: MediaType) => {
     try {
       await handleDeleteMedia(fileId, type);
-
-      topic_media_files = topic_media_files.filter(
-        (file) => file.file_id !== fileId,
-      );
 
       if (type === 'background') {
         backgrounds = backgrounds.filter((bg) => bg !== fileId);

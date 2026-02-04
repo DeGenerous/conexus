@@ -593,10 +593,12 @@ export default class Topic {
   async switchPromptVersion(
     topic_id: string,
     version_id: string,
+    prompt_intention: 'text' | 'image',
   ): Promise<void> {
     const { status, message } = await this.api.switchPromptVersion(
       topic_id,
       version_id,
+      prompt_intention,
     );
 
     if (status === 'error') {

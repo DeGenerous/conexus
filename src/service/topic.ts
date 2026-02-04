@@ -365,10 +365,14 @@ export default class TopicAPI extends Fetcher {
    * @param version_id The ID of the version to switch to
    * @returns The response from the API
    */
-  async switchPromptVersion(topic_id: string, version_id: string) {
+  async switchPromptVersion(
+    topic_id: string,
+    version_id: string,
+    prompt_intention: 'text' | 'image',
+  ) {
     return this.request(`${this.group}/switch-prompt-version`, {
       method: 'PATCH',
-      body: JSON.stringify({ topic_id, version_id }),
+      body: JSON.stringify({ topic_id, version_id, prompt_intention }),
     });
   }
 

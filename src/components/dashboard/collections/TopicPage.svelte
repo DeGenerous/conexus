@@ -247,9 +247,15 @@
     await refreshTopic();
   };
 
-  async function handleVersionSwitch(version_id: string) {
+  async function handleTextVersionSwitch(version_id: string) {
     if (version_id === currentVersion?.id) return;
-    await topicManager.switchPromptVersion(topic_id, version_id);
+    await topicManager.switchPromptVersion(topic_id, version_id, 'text');
+    await refreshTopic();
+  }
+  
+  async function handleImageVersionSwitch(version_id: string) {
+    if (version_id === currentVersion?.id) return;
+    await topicManager.switchPromptVersion(topic_id, version_id, 'image');
     await refreshTopic();
   }
 
@@ -488,7 +494,7 @@
                 class:small-green-tile={version.id === currentVersion?.id}
                 class:small-blue-tile={version.id !== currentVersion?.id}
                 disabled={editingTextPrompt}
-                onclick={() => handleVersionSwitch(version.id)}
+                onclick={() => handleTextVersionSwitch(version.id)}
               >
                 <p>Version: {version.version_number}</p>
                 {#if version.id !== currentVersion?.id}

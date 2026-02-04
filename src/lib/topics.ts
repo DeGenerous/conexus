@@ -589,6 +589,7 @@ export default class Topic {
    * Switch the active prompt version for a topic.
    * @param topic_id - The topic identifier.
    * @param version_id - The version identifier to activate.
+   * @param prompt_intention - The type of prompt ('text' or 'image').
    */
   async switchPromptVersion(
     topic_id: string,
@@ -613,14 +614,17 @@ export default class Topic {
    * Delete a prompt version for a topic.
    * @param topic_id - The topic identifier.
    * @param version_id - The version identifier to delete.
+   * @param prompt_intention - The type of prompt ('text' or 'image').
    */
   async deletePromptVersion(
     topic_id: string,
     version_id: string,
+    prompt_intention: 'text' | 'image',
   ): Promise<void> {
     const { status, message } = await this.api.deletePromptVersion(
       topic_id,
       version_id,
+      prompt_intention,
     );
 
     if (status === 'error') {

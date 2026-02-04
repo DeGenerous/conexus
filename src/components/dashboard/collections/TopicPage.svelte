@@ -259,9 +259,9 @@
     await refreshTopic();
   }
 
-  async function handleVersionDelete(version_id: string) {
+  async function handleTextVersionDelete(version_id: string) {
     if (version_id === currentVersion?.id) return;
-    await topicManager.deletePromptVersion(topic_id, version_id);
+    await topicManager.deletePromptVersion(topic_id, version_id, 'text');
     await refreshTopic();
   }
 
@@ -501,7 +501,7 @@
                   <CloseSVG
                     onclick={(e) => {
                       e.stopPropagation();
-                      handleVersionDelete(version.id);
+                      handleTextVersionDelete(version.id);
                     }}
                     voidBtn={true}
                     dark={true}

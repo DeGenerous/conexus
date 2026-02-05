@@ -47,7 +47,7 @@ const Drafts = {
   async save(id?: string): Promise<void> {
     if (typeof window === 'undefined') return;
 
-    id ||= GetCache(CURRENT_DRAFT_KEY) || (await this.create());
+    id ||= GetCache(CURRENT_DRAFT_KEY) || (await this.create()) || undefined;
     const draft = await topic.getDraft(id!);
     if (!draft || !id) {
       toastStore.show(`Save unknown draft`, 'error');

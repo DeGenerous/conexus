@@ -5,9 +5,9 @@
   import { modal } from '@lib/modal-manager.svelte';
   import { ensureMessage } from '@constants/modal';
 
-  import Gates from '@components/dashboard/admin/web3/Gates.svelte';
-  import AddCollection from '@components/dashboard/admin/web3/AddCollection.svelte';
-  import AddGate from '@components/dashboard/admin/web3/AddGate.svelte';
+  import Gates from '@components/admin/web3/Gates.svelte';
+  import AddCollection from '@components/admin/web3/AddCollection.svelte';
+  import AddGate from '@components/admin/web3/AddGate.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
   import SaveSVG from '@components/icons/Checkmark.svelte';
   import EditSVG from '@components/icons/Edit.svelte';

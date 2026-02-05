@@ -252,7 +252,7 @@
     await topicManager.switchPromptVersion(topic_id, version_id, 'text');
     await refreshTopic();
   }
-  
+
   async function handleImageVersionSwitch(version_id: string) {
     if (version_id === currentVersion?.id) return;
     await topicManager.switchPromptVersion(topic_id, version_id, 'image');

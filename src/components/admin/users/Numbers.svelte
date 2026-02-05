@@ -1,7 +1,7 @@
 <script lang="ts">
   import AdminApp from '@lib/admin';
 
-  import TopUsers from '@components/dashboard/admin/users/TopUsers.svelte';
+  import TopUsers from '@components/admin/users/TopUsers.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
 
   let { roles }: { roles: TenantRole[] } = $props();

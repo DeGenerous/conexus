@@ -4,7 +4,7 @@
   import AdminApp from '@lib/admin';
   import Collection from '@lib/collection';
 
-  import Collections from '@components/dashboard/admin/web3/Collections.svelte';
+  import Collections from '@components/admin/web3/Collections.svelte';
 
   const admin = new AdminApp();
   const collection = new Collection();

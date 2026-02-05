@@ -384,7 +384,11 @@ export default class TopicAPI extends Fetcher {
    * @param prompt_intention The type of prompt ('text' or 'image')
    * @returns The response from the API
    */
-  async deletePromptVersion(topic_id: string, version_id: string, prompt_intention: 'text' | 'image') {
+  async deletePromptVersion(
+    topic_id: string,
+    version_id: string,
+    prompt_intention: 'text' | 'image',
+  ) {
     return this.request(`${this.group}/delete-prompt-version`, {
       method: 'DELETE',
       body: JSON.stringify({ topic_id, version_id, prompt_intention }),

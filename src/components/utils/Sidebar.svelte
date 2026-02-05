@@ -4,6 +4,7 @@
   import Authentication from '@lib/authentication.ts';
   import { user } from '@stores/account.svelte';
   import { sidebarOpen } from '@stores/navigation.svelte';
+  import { showProfile } from '@stores/modal.svelte';
 
   import { modal } from '@lib/modal-manager.svelte';
 
@@ -187,13 +188,24 @@
   {onpointerenter}
   {onpointerleave}
 >
-  {#each sidebarItems as item}
-    {#if isComponentItem(item)}
-      <item.component {...item.props} />
-    {:else}
-      <SidebarLink {item} {expanded} {toggleExpand} {activePath} />
-    {/if}
-  {/each}
+  {#if $user}
+    {#each sidebarItems as item}
+      {#if isComponentItem(item)}
+        <item.component {...item.props} />
+      {:else}
+        <SidebarLink {item} {expanded} {toggleExpand} {activePath} />
+      {/if}
+    {/each}
+  {:else}
+    <DoorSVG
+      state="inside"
+      text="Sign In"
+      onclick={() => {
+        $showProfile = true;
+      }}
+      voidBtn={true}
+    />
+  {/if}
 </section>
 
 <style lang="scss">

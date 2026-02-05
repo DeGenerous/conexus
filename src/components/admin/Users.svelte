@@ -3,8 +3,8 @@
 
   import AdminApp from '@lib/admin';
 
-  import Numbers from '@components/dashboard/admin/users/Numbers.svelte';
-  import UserList from '@components/dashboard/admin/users/UserList.svelte';
+  import Numbers from '@components/admin/users/Numbers.svelte';
+  import UserList from '@components/admin/users/UserList.svelte';
 
   const admin: AdminApp = new AdminApp();
 

@@ -1,7 +1,7 @@
 <script lang="ts">
   import AdminApp from '@lib/admin';
 
-  import TopTopics from '@components/dashboard/admin/stories/TopTopics.svelte';
+  import TopTopics from '@components/admin/stories/TopTopics.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
 
   const admin: AdminApp = new AdminApp();

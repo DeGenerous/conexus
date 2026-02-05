@@ -17,10 +17,10 @@
     currentDraft,
   } from '@stores/dream.svelte';
   import { modal } from '@lib/modal-manager.svelte';
-  import { checkUserRoles } from '@utils/route-guard';
-  import { isAdmin } from '@stores/account.svelte';
-  import Drafts from '@utils/story-drafts';
+  import { user, isAdmin } from '@stores/account.svelte';
+  import { showProfile } from '@stores/modal.svelte';
 
+  import Drafts from '@utils/story-drafts';
   import World from './dream/World.svelte';
   import Characters from '@components/dream/Characters.svelte';
   import Scenario from '@components/dream/Scenario.svelte';
@@ -117,8 +117,6 @@
     let destroyed = false;
     let isInitialFingerprintRun = true;
 
-    checkUserRoles();
-
     void (async () => {
       const draftID = GetCache<string>(CURRENT_DRAFT_KEY);
       if (draftID) await Drafts.restore(draftID);
@@ -208,36 +206,40 @@
   };
 </script>
 
-<!-- DRAFT SAVING -->
-{#if $currentDraft}
-  <div class="draft-wrapper fade-in container flex-row flex-wrap">
-    <h5>
-      📝 Working on draft: {$currentDraft.id?.split('-')[0]}
-      <strong>
-        - Last saved: {lastSavedAgo}
-      </strong>
-    </h5>
-    <span class="flex-row">
-      <SaveSVG onclick={triggerSaveDraft} />
-      <button class="rose-btn" onclick={createDraft}> Start new Draft </button>
-    </span>
+{#if $user !== null}
+  <!-- DRAFT SAVING -->
+  {#if $currentDraft}
+    <div class="draft-wrapper fade-in container flex-row flex-wrap">
+      <h5>
+        📝 Working on draft: {$currentDraft.id?.split('-')[0]}
+        <strong>
+          - Last saved: {lastSavedAgo}
+        </strong>
+      </h5>
+      <span class="flex-row">
+        <SaveSVG onclick={triggerSaveDraft} />
+        <button class="rose-btn" onclick={createDraft}>
+          Start new Draft
+        </button>
+      </span>
+    </div>
+  {/if}
+
+  <!-- MAIN SETTINGS -->
+  <div class="flex-row">
+    <button
+      onclick={() => modal.draftsManager({ onRestore: updateLastSavedLabel })}
+    >
+      Manage Drafts
+    </button>
+    <button
+      onclick={() => modal.categoryManager({ onUpdate: refreshCategories })}
+    >
+      Manage Categories
+    </button>
+    <button onclick={() => modal.topicSettings()}> Story Settings </button>
   </div>
 {/if}
-
-<!-- MAIN SETTINGS -->
-<div class="flex-row">
-  <button
-    onclick={() => modal.draftsManager({ onRestore: updateLastSavedLabel })}
-  >
-    Manage Drafts
-  </button>
-  <button
-    onclick={() => modal.categoryManager({ onUpdate: refreshCategories })}
-  >
-    Manage Categories
-  </button>
-  <button onclick={() => modal.topicSettings()}> Story Settings </button>
-</div>
 
 <!-- CATEGORY, TITLE, DESCRIPTION, IMAGE PROMPT -->
 <div class="dream-container">
@@ -369,25 +371,29 @@
 
 <Additional />
 
-{#if !validation}
-  <p class="validation">Fill all required fields</p>
-{/if}
+{#if $user !== null}
+  {#if !validation}
+    <p class="validation">Fill all required fields</p>
+  {/if}
 
-<div class="flex-row flex-wrap">
-  <button
-    class="red-btn"
-    onclick={() =>
-      modal.confirm('', ensureMessage('reset all data'), {
-        onConfirm: clearAllData,
-        confirmText: 'Reset',
-      })}
-  >
-    Reset Data
-  </button>
-  <button class="green-btn" onclick={createStory} disabled={!validation}>
-    Create a DREAM: 10 Credits
-  </button>
-</div>
+  <div class="flex-row flex-wrap">
+    <button
+      class="red-btn"
+      onclick={() =>
+        modal.confirm('', ensureMessage('reset all data'), {
+          onConfirm: clearAllData,
+          confirmText: 'Reset',
+        })}
+    >
+      Reset Data
+    </button>
+    <button class="green-btn" onclick={createStory} disabled={!validation}>
+      Create a DREAM: 10 Credits
+    </button>
+  </div>
+{:else}
+  <button class="cta" onclick={() => ($showProfile = true)}>Sign In</button>
+{/if}
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

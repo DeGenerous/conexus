@@ -1,9 +1,8 @@
 <script lang="ts">
   import { storyData, tablePrompt } from '@stores/dream.svelte';
-  import Dropdown from '@components/utils/Dropdown.svelte';
 </script>
 
-<Dropdown name="Additional Data">
+<section class="dream-container fade-in">
   <section class="flex">
     <h5>Image Generation Instructions</h5>
     <textarea
@@ -32,7 +31,7 @@
       bind:value={$tablePrompt.additional_data}
     ></textarea>
   </section>
-</Dropdown>
+</section>
 
 <style>
   section.flex {

@@ -2,7 +2,6 @@
   import dreamData from '@constants/dream';
   import { tablePrompt } from '@stores/dream.svelte';
 
-  import Dropdown from '@components/utils/Dropdown.svelte';
   import NewCharacter from './NewCharacter.svelte';
 
   // Initialize main_character if undefined
@@ -90,7 +89,7 @@
     newRelationship.connection[0] !== newRelationship.connection[1];
 </script>
 
-<Dropdown name="Add Characters">
+<section class="dream-container fade-in">
   <div class="character-data flex">
     <h3>Main Character</h3>
     {#if $tablePrompt.main_character}
@@ -261,7 +260,7 @@
   <button onclick={addRelationship} disabled={!relationsValidation}>
     Add Relationship
   </button>
-</Dropdown>
+</section>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

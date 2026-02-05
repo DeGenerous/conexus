@@ -2,7 +2,6 @@
   import dreamData from '@constants/dream';
   import { tablePrompt } from '@stores/dream.svelte';
 
-  import Dropdown from '@components/utils/Dropdown.svelte';
   import Slider from '@components/utils/Slider.svelte';
 
   const tenseHints = {
@@ -30,116 +29,114 @@
   };
 </script>
 
-<Dropdown name="Build Writing Style">
-  <section class="dream-container">
-    <div class="flex-row">
-      <h4>Tense</h4>
-      <div class="container">
-        <span class="flex-row">
-          {#each dreamData.tense as tense}
-            <button
-              class="void-btn dream-radio-btn"
-              class:active={tense === $tablePrompt.tense}
-              onclick={() => ($tablePrompt.tense = tense)}
-            >
-              {tense}
-            </button>
-          {/each}
-        </span>
-        <p>
-          {$tablePrompt.tense
-            ? tenseHints[$tablePrompt.tense as keyof typeof tenseHints]
-            : ''}
-        </p>
-      </div>
+<section class="dream-container fade-in">
+  <div class="flex-row">
+    <h4>Tense</h4>
+    <div class="container">
+      <span class="flex-row">
+        {#each dreamData.tense as tense}
+          <button
+            class="void-btn dream-radio-btn"
+            class:active={tense === $tablePrompt.tense}
+            onclick={() => ($tablePrompt.tense = tense)}
+          >
+            {tense}
+          </button>
+        {/each}
+      </span>
+      <p>
+        {$tablePrompt.tense
+          ? tenseHints[$tablePrompt.tense as keyof typeof tenseHints]
+          : ''}
+      </p>
     </div>
+  </div>
 
-    <div class="flex-row">
-      <h4>Story Arcs</h4>
-      <div class="container">
-        <Slider
-          bind:sliderValue={$tablePrompt.story_arcs}
-          parameters={dreamData.min_max}
-          inputValue={2}
-          hints={[
-            'A simple narrative with a clear beginning, middle, and end.',
-            'A balanced journey with character growth and key turning points.',
-            'A deep story with twists, challenges, and evolving developments.',
-          ]}
-        />
-      </div>
+  <div class="flex-row">
+    <h4>Story Arcs</h4>
+    <div class="container">
+      <Slider
+        bind:sliderValue={$tablePrompt.story_arcs}
+        parameters={dreamData.min_max}
+        inputValue={2}
+        hints={[
+          'A simple narrative with a clear beginning, middle, and end.',
+          'A balanced journey with character growth and key turning points.',
+          'A deep story with twists, challenges, and evolving developments.',
+        ]}
+      />
     </div>
+  </div>
 
-    <div class="flex-row">
-      <h4>Style</h4>
-      <div class="container">
-        <span class="flex-row">
-          {#each dreamData.writingStyle as style}
-            <button
-              class="void-btn dream-radio-btn"
-              class:active={style === $tablePrompt.writing_style}
-              onclick={() => ($tablePrompt.writing_style = style)}
-            >
-              {style}
-            </button>
-          {/each}
-        </span>
-        <p>
-          {$tablePrompt.writing_style
-            ? styleHints[$tablePrompt.writing_style as keyof typeof styleHints]
-            : ''}
-        </p>
-      </div>
+  <div class="flex-row">
+    <h4>Style</h4>
+    <div class="container">
+      <span class="flex-row">
+        {#each dreamData.writingStyle as style}
+          <button
+            class="void-btn dream-radio-btn"
+            class:active={style === $tablePrompt.writing_style}
+            onclick={() => ($tablePrompt.writing_style = style)}
+          >
+            {style}
+          </button>
+        {/each}
+      </span>
+      <p>
+        {$tablePrompt.writing_style
+          ? styleHints[$tablePrompt.writing_style as keyof typeof styleHints]
+          : ''}
+      </p>
     </div>
+  </div>
 
-    <div class="flex-row">
-      <h4>Voice</h4>
-      <div class="container">
-        <span class="flex-row">
-          {#each dreamData.voice as voice}
-            <button
-              class="void-btn dream-radio-btn"
-              class:active={voice === $tablePrompt.voice}
-              onclick={() => ($tablePrompt.voice = voice)}
-            >
-              {voice}
-            </button>
-          {/each}
-        </span>
-        <p>
-          {$tablePrompt.voice
-            ? voiceHints[$tablePrompt.voice as keyof typeof voiceHints]
-            : ''}
-        </p>
-      </div>
+  <div class="flex-row">
+    <h4>Voice</h4>
+    <div class="container">
+      <span class="flex-row">
+        {#each dreamData.voice as voice}
+          <button
+            class="void-btn dream-radio-btn"
+            class:active={voice === $tablePrompt.voice}
+            onclick={() => ($tablePrompt.voice = voice)}
+          >
+            {voice}
+          </button>
+        {/each}
+      </span>
+      <p>
+        {$tablePrompt.voice
+          ? voiceHints[$tablePrompt.voice as keyof typeof voiceHints]
+          : ''}
+      </p>
     </div>
+  </div>
 
-    <div class="flex-row">
-      <h4>Pacing</h4>
-      <div class="container">
-        <Slider
-          bind:sliderValue={$tablePrompt.pacing}
-          parameters={dreamData.min_max}
-          inputValue={2}
-          hints={[
-            'Slower pacing focuses on deep character moments, world-building, and gradual story progression.',
-            'A balanced mix of action, character development, and key events unfolding naturally.',
-            'Fast-paced storytelling with rapid events, high stakes, and minimal downtime.',
-          ]}
-        />
-      </div>
+  <div class="flex-row">
+    <h4>Pacing</h4>
+    <div class="container">
+      <Slider
+        bind:sliderValue={$tablePrompt.pacing}
+        parameters={dreamData.min_max}
+        inputValue={2}
+        hints={[
+          'Slower pacing focuses on deep character moments, world-building, and gradual story progression.',
+          'A balanced mix of action, character development, and key events unfolding naturally.',
+          'Fast-paced storytelling with rapid events, high stakes, and minimal downtime.',
+        ]}
+      />
     </div>
+  </div>
 
-    <div class="flex-row">
-      <h4>Point of View</h4>
-      <textarea
-        id="point-of-view"
-        placeholder="Specify the perspective of the story—first-person, second-person, or third-person—and whose eyes we experience the journey through. E.g. First-person, from the detective’s skeptical assistant, uncovering their mentor’s hidden dark secret."
-        rows="3"
-        bind:value={$tablePrompt.pov}
-      ></textarea>
-    </div>
-  </section>
+  <div class="flex-row">
+    <h4>Point of View</h4>
+    <textarea
+      id="point-of-view"
+      placeholder="Specify the perspective of the story—first-person, second-person, or third-person—and whose eyes we experience the journey through. E.g. First-person, from the detective’s skeptical assistant, uncovering their mentor’s hidden dark secret."
+      rows="3"
+      bind:value={$tablePrompt.pov}
+    ></textarea>
+  </div>
 
   <hr />
 
@@ -153,27 +150,23 @@
       </div>
     </span>
   {/each}
-</Dropdown>
+</section>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  section {
-    width: 100%;
+  .container {
+    flex-direction: column;
 
-    .container {
-      flex-direction: column;
+    span {
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
 
-      span {
-        width: 100%;
-        flex-wrap: wrap;
-        justify-content: space-around;
-      }
-
-      p {
-        @include white-txt(0.5);
-        @include font(caption);
-      }
+    p {
+      @include white-txt(0.5);
+      @include font(caption);
     }
   }
 

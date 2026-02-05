@@ -20,13 +20,13 @@
   import { user, isAdmin } from '@stores/account.svelte';
   import { showProfile } from '@stores/modal.svelte';
 
+  import SaveSVG from '@components/icons/Checkmark.svelte';
   import Drafts from '@utils/story-drafts';
+  import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
   import World from './dream/World.svelte';
   import Characters from '@components/dream/Characters.svelte';
   import Scenario from '@components/dream/Scenario.svelte';
   import WritingStyle from '@components/dream/WritingStyle.svelte';
-  import SaveSVG from '@components/icons/Checkmark.svelte';
-  import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
   import Additional from './dream/Additional.svelte';
 
   const topic = new Topic();
@@ -34,6 +34,12 @@
   let selectedSectionId = $state('');
   let refreshCategories = $state<() => Promise<void>>();
   let lastSavedAgo = $state<string>('unsaved');
+
+  let showWorld = $state<boolean>(false);
+  let showCharacters = $state<boolean>(false);
+  let showScenario = $state<boolean>(false);
+  let showWritingStyle = $state<boolean>(false);
+  let showAdditional = $state<boolean>(false);
 
   $effect(() => {
     if (selectedSectionId) $storyData.category_id = '';
@@ -361,17 +367,55 @@
   ></textarea>
 </div>
 
-<World />
+{#if showWorld}
+  <World />
+{/if}
 
-<Characters />
+{#if showCharacters}
+  <Characters />
+{/if}
 
-<Scenario />
+{#if showScenario}
+  <Scenario />
+{/if}
 
-<WritingStyle />
+{#if showWritingStyle}
+  <WritingStyle />
+{/if}
 
-<Additional />
+{#if showAdditional}
+  <Additional />
+{/if}
 
 {#if $user !== null}
+  <div class="flex-row flex-wrap">
+    {#if !showWorld}
+      <button class="purple-btn" onclick={() => (showWorld = true)}>
+        + Add World
+      </button>
+    {/if}
+    {#if !showCharacters}
+      <button class="purple-btn" onclick={() => (showCharacters = true)}>
+        + Add Characters
+      </button>
+    {/if}
+    {#if !showScenario}
+      <button class="purple-btn" onclick={() => (showScenario = true)}>
+        + Add Scenarios
+      </button>
+    {/if}
+    {#if !showWritingStyle}
+      <button class="purple-btn" onclick={() => (showWritingStyle = true)}>
+        + Set Writing Style
+      </button>
+    {/if}
+    {#if !showAdditional}
+      <button class="purple-btn" onclick={() => (showAdditional = true)}>
+        + Add Additional Data
+      </button>
+    {/if}
+  </div>
+
   {#if !validation}
     <p class="validation">Fill all required fields</p>
   {/if}

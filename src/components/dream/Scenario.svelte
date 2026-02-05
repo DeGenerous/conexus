@@ -1,6 +1,5 @@
 <script lang="ts">
   import { tablePrompt } from '@stores/dream.svelte';
-  import Dropdown from '@components/utils/Dropdown.svelte';
 
   let newWinningScenario: string = $state('');
   const addWinningScenario = () => {
@@ -75,7 +74,7 @@
 
 <svelte:window on:keypress={handleEnterKey} />
 
-<Dropdown name="Describe Scenarios">
+<section class="dream-container fade-in">
   <h4>
     Winning Scenarios{$tablePrompt.winning_scenarios?.length
       ? ': ' + $tablePrompt.winning_scenarios.length
@@ -160,7 +159,7 @@
   <button onclick={addKeyEvent} disabled={newKeyEvent === ''}>
     Add Key Event
   </button>
-</Dropdown>
+</section>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

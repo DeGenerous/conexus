@@ -224,43 +224,44 @@
 </script>
 
 {#if $user !== null}
-  <!-- DRAFT SAVING -->
-  {#if $currentDraft}
-    <div class="draft-wrapper fade-in container flex-row flex-wrap">
-      <h5>
-        📝 Working on draft: {$currentDraft.id?.split('-')[0]}
-        <strong>
-          - Last saved: {lastSavedAgo}
-        </strong>
-      </h5>
-      <span class="flex-row">
-        <SaveSVG onclick={triggerSaveDraft} />
-        <button class="rose-btn" onclick={createDraft}>
-          Start new Draft
-        </button>
-      </span>
-    </div>
-  {/if}
-
   <!-- MAIN SETTINGS -->
-  <div class="flex-row flex-wrap">
-    <button
-      onclick={() => modal.draftsManager({ onRestore: updateLastSavedLabel })}
-    >
-      Manage Drafts
-    </button>
-    <button
-      onclick={() => modal.categoryManager({ onUpdate: refreshCategories })}
-    >
-      Manage Categories
-    </button>
-    <button
-      class:purple-btn={!isPromptSettingsDefault($promptSettings)}
-      onclick={openStorySettings}
-    >
-      Story Settings
-    </button>
-  </div>
+  <nav class="dream-container">
+    <span class="flex-row flex-wrap">
+      <button
+        onclick={() => modal.categoryManager({ onUpdate: refreshCategories })}
+      >
+        Manage Categories
+      </button>
+      <button
+        class:purple-btn={!isPromptSettingsDefault($promptSettings)}
+        onclick={openStorySettings}
+      >
+        Story Settings
+      </button>
+    </span>
+
+    <span class="flex-row flex-wrap">
+      {#if $currentDraft}
+        <h5>
+          📝 Working on draft: {$currentDraft.id?.split('-')[0]}
+          <strong>
+            - Last saved: {lastSavedAgo}
+          </strong>
+        </h5>
+        <SaveSVG onclick={triggerSaveDraft} text="Save Draft" />
+      {/if}
+      <button
+        class="rose-btn"
+        onclick={() =>
+          modal.draftsManager({
+            onRestore: updateLastSavedLabel,
+            onCreate: createDraft,
+          })}
+      >
+        Manage Drafts
+      </button>
+    </span>
+  </nav>
 {/if}
 
 <!-- CATEGORY, TITLE, DESCRIPTION, IMAGE PROMPT -->
@@ -579,11 +580,10 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .draft-wrapper {
-    width: 100%;
-    justify-content: space-between;
-    animation: none;
-    @include rose(0.25);
+  nav {
+    @include respond-up(small-desktop) {
+      flex-flow: row wrap;
+    }
 
     h5 {
       @include rose(1, text, bright);

@@ -8,7 +8,13 @@
 
   import CloseSVG from '@components/icons/Close.svelte';
 
-  let { onRestore }: { onRestore?: () => void } = $props();
+  let {
+    onRestore,
+    onCreate,
+  }: {
+    onRestore?: () => void;
+    onCreate: () => void;
+  } = $props();
 
   const topic = new Topic();
 
@@ -92,6 +98,8 @@
   {:else}
     <h4>No drafts yet</h4>
   {/if}
+
+  <button class="green-btn" onclick={onCreate}> Start new Draft </button>
 
   {#if error}
     <p class="validation">{error}</p>

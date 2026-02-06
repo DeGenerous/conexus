@@ -179,7 +179,7 @@ class ModalManager {
   /**
    * Opens the drafts manager modal.
    */
-  draftsManager(options?: { onRestore?: () => void }) {
+  draftsManager(options?: { onRestore?: () => void; onCreate?: () => void }) {
     this.open(
       MODAL_KEYS.DRAFTS_MANAGER,
       {

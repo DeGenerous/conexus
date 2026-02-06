@@ -1,0 +1,27 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import TopicPage from '@components/dashboard/collections/TopicPage.svelte';
+
+import { NAV_ROUTES } from '@constants/routes';
+
+const { topic_id } = Astro.params;
+
+if (!topic_id) {
+  Astro.redirect('/');
+}
+
+const meta = {
+  header: 'Refine & Enhance',
+  nav: topic_id,
+  breadcrumbs: [
+    { label: 'Dashboard', href: NAV_ROUTES.DASHBOARD },
+    { label: 'Collections', href: NAV_ROUTES.MANAGE },
+    { label: 'Refine & Enhance' },
+  ],
+};
+---
+
+<Layout {...meta}>
+  <TopicPage {topic_id} client:idle />
+</Layout>

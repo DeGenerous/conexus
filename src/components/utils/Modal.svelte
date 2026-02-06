@@ -1,90 +1,62 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { GetCache, SetCache } from '@constants/cache';
-
-  import {
-    modal,
-    showModal,
-    resetModal,
-    playOptions,
-  } from '@stores/modal.svelte';
-  import { themeSettingsModal } from '@stores/customization.svelte';
-  import { NAV_ROUTES } from '@constants/routes';
-
-  import ThemeSettings from '@components/utils/ThemeSettings.svelte';
-  import PlayOptions from '@components/utils/PlayOptions.svelte';
+  import { modal } from '@lib/modal-manager.svelte';
+  import { modalRegistry } from '@config/modal-registry';
 
   let dialog = $state<HTMLDialogElement | null>(null);
 
-  const closeDialog = () => {
-    dialog?.classList.add('dialog-fade-out');
-    $showModal = false;
-    if ($themeSettingsModal) $themeSettingsModal = false;
-    if ($playOptions) $playOptions = false;
-    resetModal();
-    setTimeout(() => dialog?.close(), 300);
-  };
+  // --- Visual buffers to avoid flicker during close animation ---
+  // Keep component mounted until CSS transition completes (see handleTransitionEnd).
+  let ActiveComponent = $state<ModalComponentType | null>(null);
+  let renderedSize = $state(modal.state.size);
+  let renderedProps = $state(modal.state.props);
 
+  // Sync fragment rendering when modal.state.key changes.
   $effect(() => {
-    if (!dialog) return;
-    if ($showModal) {
-      dialog.classList.remove('dialog-fade-out');
-      dialog.showModal();
-    } else if (dialog.open) {
-      closeDialog();
+    if (modal.state.key) {
+      const component =
+        modalRegistry[modal.state.key as keyof typeof modalRegistry];
+      if (component) {
+        renderedSize = modal.state.size;
+        renderedProps = modal.state.props;
+        ActiveComponent = component as ModalComponentType;
+
+        if (dialog && !dialog.open) {
+          dialog.showModal();
+          document.dispatchEvent(new CustomEvent('void:modal-opened'));
+        }
+      }
+    } else if (!modal.state.key && dialog?.open) {
+      dialog.close();
     }
   });
 
-  const handleBackdropClick = (event: MouseEvent) => {
-    if (event.target === event.currentTarget) {
-      closeDialog();
+  // Cleanup after CSS transition ends — keeps content visible during exit animation.
+  const handleTransitionEnd = (e: TransitionEvent) => {
+    if (e.target === dialog && !dialog?.open) {
+      ActiveComponent = null;
+      renderedProps = {};
     }
   };
 
-  const stopPropagation = (event: Event) => {
-    event.stopPropagation();
+  // Backdrop click: close when clicking the dark overlay, not the content.
+  const handleBackdrop = (e: MouseEvent) => {
+    if (e.target === e.currentTarget) modal.close();
   };
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <dialog
-  class="blur"
   bind:this={dialog}
-  onclose={closeDialog}
-  onclick={handleBackdropClick}
-  aria-label="Modal"
+  data-size={renderedSize}
+  onclose={() => modal.close()}
+  onclick={handleBackdrop}
+  ontransitionend={handleTransitionEnd}
+  aria-labelledby="modal-title"
   aria-modal="true"
 >
-  <div class="flex" onclick={stopPropagation} role="dialog" tabindex="-1">
-    <!-- DYNAMIC CONTENT PROVIDED BY openModal() FUNCTION -->
-    {@html modal.content}
-
-    <!-- CUSTOM THEMES WINDOW -->
-    {#if $themeSettingsModal}
-      <h3>Theme Preferences</h3>
-      <h5>Use the default look or create your own custom theme.</h5>
-      <ThemeSettings />
-    {/if}
-
-    <!-- PLAY MODE -->
-    {#if $playOptions}
-      <PlayOptions />
-    {/if}
-
-    <span class="flex">
-      <!-- DEFAULT CLOSE BUTTON ON EVERY MODAL -->
-      <button class="red-btn" onclick={() => ($showModal = false)}>
-        Close
-      </button>
-
-      <!-- SECOND OPTIONAL BUTTON IF NEEDED -->
-      {#if modal.button}
-        <button class={modal.buttonClass} onclick={modal.buttonFunc}>
-          {modal.button}
-        </button>
-      {/if}
-    </span>
-  </div>
+  {#if ActiveComponent}
+    <ActiveComponent {...renderedProps} />
+  {/if}
 </dialog>
 
 <style lang="scss">
@@ -93,33 +65,8 @@
   dialog {
     width: 90%;
 
-    & > div {
-      padding: 1.5rem;
-
-      span {
-        width: 100%;
-        flex-direction: column-reverse;
-
-        button {
-          width: 100%;
-          min-width: 10rem;
-        }
-      }
-    }
-
     @include respond-up(tablet) {
       width: clamp(250px, 75%, 60rem);
-
-      & > div {
-        span {
-          flex-flow: row wrap;
-          gap: 1.5rem;
-
-          button {
-            width: auto;
-          }
-        }
-      }
     }
   }
 </style>

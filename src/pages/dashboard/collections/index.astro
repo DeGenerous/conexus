@@ -1,0 +1,18 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import CollectionsPage from '@components/dashboard/collections/Collections.svelte';
+
+const meta = {
+  nav: 'Collections',
+  breadcrumbs: [
+    { label: 'Dashboard', href: '/dashboard' },
+    { label: 'Collections' },
+  ],
+  header: 'Collections',
+};
+---
+
+<Layout {...meta}>
+  <CollectionsPage client:only="svelte" />
+</Layout>

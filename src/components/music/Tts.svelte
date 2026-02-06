@@ -32,6 +32,9 @@
         audio.src = window.URL.createObjectURL(tts);
         audio.play();
         adjustTtsSpeed();
+      } else if ($story) {
+        // TTS was skipped (user was muted) - generate on-demand
+        $story.generateTTS();
       }
       sound.voice.restart = false;
     }

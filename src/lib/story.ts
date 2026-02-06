@@ -3,7 +3,8 @@ import { api_error } from '@errors/index';
 import StoryAPI from '@service/story';
 import { story, game } from '@stores/conexus.svelte';
 import { toastStore } from '@stores/toast.svelte';
-import openModal from '@stores/modal.svelte';
+import sound from '@stores/volumes.svelte';
+import { modal } from '@lib/modal-manager.svelte';
 import { getCurrentUser } from '@utils/route-guard';
 import { formatGameTextForSpeech } from '@utils/tts';
 
@@ -73,20 +74,26 @@ export default class CoNexus {
         const errorTitle = errorMessage[0];
         const nftLinks = errorMessage[1];
 
-        openModal(`
+        modal.alert(
+          '',
+          `
           <h4>${errorTitle}</h4>
           <p>${nftLinks}</p>
-        `);
+        `,
+        );
       } else if (message.match(ERROR_OUT_OF_CREDITS)) {
         const errorMessage: string[] = message.split(', ');
 
         const errorTitle = errorMessage[0];
         const outOfCredits = errorMessage[1];
 
-        openModal(`
+        modal.alert(
+          '',
+          `
           <h4>${errorTitle}</h4>
           <p>${outOfCredits.charAt(0).toUpperCase() + outOfCredits.slice(1)}</p>
-        `);
+        `,
+        );
       }
       api_error(message);
       return;
@@ -124,20 +131,26 @@ export default class CoNexus {
           const errorTitle = errorMessage[0];
           const nftLinks = errorMessage[1];
 
-          openModal(`
+          modal.alert(
+            '',
+            `
             <h4>${errorTitle}</h4>
             <p>${nftLinks}</p>
-          `);
+          `,
+          );
         } else if (message.match(ERROR_OUT_OF_CREDITS)) {
           const errorMessage: string[] = message.split(', ');
 
           const errorTitle = errorMessage[0];
           const outOfCredits = errorMessage[1];
 
-          openModal(`
+          modal.alert(
+            '',
+            `
             <h4>${errorTitle}</h4>
             <p>${outOfCredits.charAt(0).toUpperCase() + outOfCredits.slice(1)}</p>
-          `);
+          `,
+          );
         }
         api_error(message);
       }
@@ -453,6 +466,15 @@ export default class CoNexus {
     }
   }
 
+  /**
+   * Generate TTS on-demand for the current step.
+   * Used when user unmutes or clicks restart after TTS was skipped.
+   */
+  async generateTTS(): Promise<void> {
+    if (this.step_data.tts) return;
+    await this.#ttsInternal();
+  }
+
   /* Helper */
 
   #commitStepData(patch: Partial<GameData>) {
@@ -475,17 +497,18 @@ export default class CoNexus {
     await this.#setStepData(data.story, data.task_id, data.generate);
 
     if (data.generate) {
-      // await Promise.allSettled([this.#imageGenInternal(), this.#ttsInternal()]);
-      const results = await Promise.allSettled([
-        this.#imageGenInternal(),
-        this.#ttsInternal(),
-      ]);
+      const tasks: Promise<void>[] = [this.#imageGenInternal()];
+
+      // Only generate TTS if voice is not muted (saves API costs)
+      if (!sound.voice.muted) {
+        tasks.push(this.#ttsInternal());
+      }
+
+      const results = await Promise.allSettled(tasks);
       results.forEach((result, idx) => {
         if (result.status === 'rejected') {
-          console.error(
-            `Error in ${idx === 0 ? 'image generation' : 'TTS'}:`,
-            result.reason,
-          );
+          const taskName = idx === 0 ? 'image generation' : 'TTS';
+          console.error(`Error in ${taskName}:`, result.reason);
           toastStore.show(
             `Failed to generate ${idx === 0 ? 'image' : 'audio'} for this step.`,
             'error',
@@ -494,7 +517,11 @@ export default class CoNexus {
       });
     }
 
-    if (data.generate === false && data.task_id && data.task_id !== 'generate') {
+    if (
+      data.generate === false &&
+      data.task_id &&
+      data.task_id !== 'generate'
+    ) {
       await this.#generateImageStatus(data.task_id);
     }
   }

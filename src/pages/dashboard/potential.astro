@@ -8,7 +8,11 @@ import { NAV_ROUTES } from '@constants/routes';
 const meta = {
   header: 'Portrait',
   nav: 'Portrait',
-  arrow: NAV_ROUTES.OMNIHUB,
+  breadcrumbs: [
+    { label: 'Dashboard', href: NAV_ROUTES.DASHBOARD },
+    { label: 'OmniHub', href: NAV_ROUTES.OMNIHUB },
+    { label: 'Portrait' },
+  ],
 };
 ---
 

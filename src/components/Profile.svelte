@@ -31,7 +31,19 @@
   import DiscordBtn from '@components/icons/Discord.svelte';
   import LoadingSVG from '@components/icons/Loading.svelte';
 
-  let { activeTab = 'Dashboard' }: { activeTab: string } = $props();
+  let {
+    activeTab = 'Dashboard',
+    expanded = false,
+    onclick,
+    onpointerenter,
+    onpointerleave,
+  }: {
+    activeTab: string;
+    expanded?: boolean;
+    onclick?: () => void;
+    onpointerenter?: (event: PointerEvent) => void;
+    onpointerleave?: (event: PointerEvent) => void;
+  } = $props();
 
   const authentication: Authentication = new Authentication();
   const REFERRAL_CODE_DEBOUNCE_MS = 500;
@@ -46,11 +58,9 @@
   $effect(() => {
     if (!dialog) return;
     if ($showProfile) {
-      dialog.classList.remove('dialog-fade-out');
       dialog.showModal();
     } else {
-      dialog.classList.add('dialog-fade-out');
-      setTimeout(() => dialog?.close(), 300);
+      dialog?.close();
       resetAuthViewState();
     }
   });
@@ -231,7 +241,13 @@
 
 <svelte:window onkeypress={handleEnterKey} />
 
-<ProfileSVG {activeTab} />
+<ProfileSVG
+  {activeTab}
+  {expanded}
+  {onclick}
+  {onpointerenter}
+  {onpointerleave}
+/>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <dialog

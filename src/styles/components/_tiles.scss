@@ -49,15 +49,12 @@
   &.dashboard-collection-header {
     width: 100vw;
     flex-flow: row wrap;
-    margin-inline: -1.5rem;
     margin-bottom: -1.5rem;
     padding-block: 0.5rem;
     @include navy;
 
     @include respond-up(tablet) {
-      width: calc(100% + 3rem);
       justify-content: space-between;
-      margin-inline: 0;
     }
   }
 }
@@ -121,14 +118,6 @@
   }
 
   &.dashboard-collection {
-    width: 100vw;
-    margin-inline: -1.5rem;
-
-    @include respond-up(small-desktop) {
-      width: calc(100% + 3rem);
-      margin-inline: 0;
-    }
-
     .empty-title {
       width: 100%;
       height: 100%;

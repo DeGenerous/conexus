@@ -13,6 +13,7 @@ if (!topic_id) {
 }
 
 const storyName = topic_name?.replace(/%20/g, ' ');
+const sectionLabel = section_name?.replace(/%20/g, ' ');
 const storyImage = storyName?.toLocaleLowerCase().replace(/[^a-z0-9]/g, '');
 
 const meta = {
@@ -23,7 +24,10 @@ const meta = {
   url: `${import.meta.env.PUBLIC_FRONTEND}/s/${section_name}/${topic_id}?title=${topic_name}`,
   nav: storyName,
   header: storyName,
-  arrow: './',
+  breadcrumbs: [
+    { label: sectionLabel, href: `/s/${section_name}` },
+    { label: storyName },
+  ],
 };
 ---
 

@@ -180,7 +180,7 @@ a {
 
 html {
   text-align: center;
-  padding-block: 1.5rem 5.5rem;
+  padding-block: 5.5rem;
   letter-spacing: 0.025rem;
   word-spacing: 0.2em;
   background-color: black;
@@ -480,7 +480,7 @@ html {
 
   .dream-container {
     @extend .transparent-container;
-    width: 100%;
+    width: calc(100% - 3rem);
     max-width: 90rem;
 
     &,

@@ -83,10 +83,14 @@ class ImageService {
               return status.image;
             }
 
-            throw new Error(`${provider.name} model: ${ctx.model} image generation failed`);
+            throw new Error(
+              `${provider.name} model: ${ctx.model} image generation failed`,
+            );
           }
 
-          throw new Error(`${provider.name} model: ${ctx.model} image generation timed out`);
+          throw new Error(
+            `${provider.name} model: ${ctx.model} image generation timed out`,
+          );
         } catch (err) {
           throw err;
         }

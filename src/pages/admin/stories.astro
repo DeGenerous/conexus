@@ -1,0 +1,19 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import StoriesPage from '@components/admin/Stories.svelte';
+
+const meta = {
+  nav: 'Admin',
+  breadcrumbs: [
+    { label: 'Users', href: '/admin/users', active: false },
+    { label: 'Stories', href: '/admin/stories', active: true },
+    { label: 'Web3', href: '/admin/web3', active: false },
+  ],
+  header: 'Stories',
+};
+---
+
+<Layout {...meta}>
+  <StoriesPage client:only="svelte" />
+</Layout>

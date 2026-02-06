@@ -20,6 +20,8 @@
   class:cta
   class:void-btn={voidBtn}
   class:flex-row={voidBtn}
+  class:inside={state === 'inside'}
+  class:outside={state === 'outside'}
   type="button"
   {onclick}
   {disabled}
@@ -164,12 +166,24 @@
       svg {
         width: 1rem;
       }
+    }
 
+    &.outside {
       &:hover,
       &:active,
       &:focus-visible {
         @include red(1, text);
         @include red(0.1);
+        @include bright;
+      }
+    }
+
+    &.inside {
+      &:hover,
+      &:active,
+      &:focus-visible {
+        @include green(1, text);
+        @include green(0.1);
         @include bright;
       }
     }

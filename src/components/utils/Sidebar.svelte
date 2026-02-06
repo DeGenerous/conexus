@@ -2,9 +2,11 @@
   import { onMount } from 'svelte';
 
   import Authentication from '@lib/authentication.ts';
+  import Account from '@lib/account';
   import { user } from '@stores/account.svelte';
   import { sidebarOpen } from '@stores/navigation.svelte';
   import { showProfile } from '@stores/modal.svelte';
+  import { defaultPromptSettings } from '@stores/dream.svelte';
 
   import { modal } from '@lib/modal-manager.svelte';
 
@@ -20,9 +22,21 @@
   } = $props();
 
   const authentication: Authentication = new Authentication();
+  const account = new Account();
 
   const hasMainWallet = () =>
     Boolean($user?.wallets?.filter((wallet) => !wallet.faux).length);
+
+  const openPersonalSettings = async () => {
+    const accountSettings = await account.getPromptSettings();
+    modal.topicSettings({
+      mode: 'personal',
+      initialValues: accountSettings ?? defaultPromptSettings(),
+      onSave: async (settings) => {
+        await account.createOrUpdatePromptSettings(settings);
+      },
+    });
+  };
 
   let profilePath = $user ? `/c/${$user?.username ?? 'unknown'}` : '/dashboard';
 
@@ -59,7 +73,7 @@
     {
       name: 'Settings',
       intended: 'all',
-      onclick: () => modal.topicSettings(),
+      onclick: openPersonalSettings,
     },
     {
       name: 'OmniHub',
@@ -256,7 +270,7 @@
       max-height: 80vh;
       padding: 1rem;
       border-bottom-left-radius: 1rem;
-      transform: translateX(100%);
+      transform: translateX(101%);
       @include box-shadow;
 
       &.open {

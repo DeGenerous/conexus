@@ -15,6 +15,7 @@
     tablePrompt,
     clearAllData,
     currentDraft,
+    isPromptSettingsDefault,
   } from '@stores/dream.svelte';
   import { modal } from '@lib/modal-manager.svelte';
   import { user, isAdmin } from '@stores/account.svelte';
@@ -210,6 +211,16 @@
       confirmText: 'Create Dream',
     });
   };
+
+  const openStorySettings = () => {
+    modal.topicSettings({
+      mode: 'story-creation',
+      initialValues: $promptSettings,
+      onSave: async (settings) => {
+        promptSettings.set(settings);
+      },
+    });
+  };
 </script>
 
 {#if $user !== null}
@@ -232,7 +243,7 @@
   {/if}
 
   <!-- MAIN SETTINGS -->
-  <div class="flex-row">
+  <div class="flex-row flex-wrap">
     <button
       onclick={() => modal.draftsManager({ onRestore: updateLastSavedLabel })}
     >
@@ -243,7 +254,12 @@
     >
       Manage Categories
     </button>
-    <button onclick={() => modal.topicSettings()}> Story Settings </button>
+    <button
+      class:purple-btn={!isPromptSettingsDefault($promptSettings)}
+      onclick={openStorySettings}
+    >
+      Story Settings
+    </button>
   </div>
 {/if}
 
@@ -289,7 +305,7 @@
         </div>
       {/if}
 
-      <div class="input-container">
+      <div class="input-container gap-8">
         <label for="category">
           {#if loadingCategories}
             <p>Loading categories...</p>
@@ -300,52 +316,81 @@
           {/if}
         </label>
 
-        <select
-          id="category"
-          class:red-border={!$storyData.category_id && categories.length > 0}
-          bind:value={$storyData.category_id}
-          disabled={($isAdmin && !selectedSectionId) || !categories.length}
-        >
-          <option value="" disabled hidden>
-            {#if categories.length > 0}
-              Select category
-            {:else if $isAdmin && !selectedSectionId}
-              No section selected
-            {:else if !loadingCategories}
-              No categories found
-            {/if}
-          </option>
-          {#each categories as { id, name }}
-            <option value={id}>{name}</option>
-          {/each}
-        </select>
+        {#if !loadingCategories && !errorCategories && categories.length === 0 && !($isAdmin && !selectedSectionId)}
+          <div class="empty-category-state">
+            <p class="transparent-white-txt">
+              Stories live inside categories. Create your first category to get
+              started.
+            </p>
+            <button
+              class="green-btn"
+              onclick={() =>
+                modal.categoryManager({ onUpdate: refreshCategories })}
+            >
+              + Create Category
+            </button>
+          </div>
+        {:else}
+          <select
+            id="category"
+            class:red-border={!$storyData.category_id && categories.length > 0}
+            bind:value={$storyData.category_id}
+            disabled={($isAdmin && !selectedSectionId) || !categories.length}
+          >
+            <option value="" disabled hidden>
+              {#if categories.length > 0}
+                Select category
+              {:else if $isAdmin && !selectedSectionId}
+                No section selected
+              {:else if !loadingCategories}
+                No categories found
+              {/if}
+            </option>
+            {#each categories as { id, name }}
+              <option value={id}>{name}</option>
+            {/each}
+          </select>
+          {#if categories.length > 0}
+            <p class="transparent-white-txt caption-font">
+              Organize your stories into collections.
+            </p>
+          {/if}
+        {/if}
       </div>
     {/snippet}
   </CategoryFetcher>
 
   <hr />
 
-  <div class="input-container">
-    <label for="topic">Story</label>
+  <div class="input-container gap-8">
+    <label for="topic">Story Title</label>
     <input
       id="topic"
       class:red-border={!$storyData.name}
       type="text"
-      placeholder="Enter Story Name"
+      maxlength="32"
+      placeholder="e.g. &quot;The Last Cartographer&quot;"
       bind:value={$storyData.name}
     />
+    <p class="transparent-white-txt caption-font">
+      The name readers will see on the story card. Keep it memorable.
+    </p>
   </div>
 
-  <div class="input-container">
-    <label for="description">Description</label>
+  <div class="input-container gap-8">
+    <label for="description">Tagline (Front Page Teaser)</label>
     <textarea
       id="description"
       class:red-border={$storyData.description.length < 20 ||
         $storyData.description.length > 500}
-      placeholder="Describe the central premise, key themes, the main character's emotional journey ahead, and what kicks off the plot. Focus on what’s at stake, what makes the world unique, and why this story matters - make users want to see more."
+      placeholder="e.g. &quot;A detective chasing a serial killer discovers the truth might destroy everything he believes in.&quot;"
       rows="3"
       bind:value={$storyData.description}
     ></textarea>
+    <p class="transparent-white-txt caption-font">
+      A short hook shown on the story card. What is the story about, and why
+      should someone read it? (20–500 characters)
+    </p>
   </div>
 
   {#if $storyData.description && $storyData.description.length > 500}
@@ -356,65 +401,157 @@
   {/if}
 </div>
 
-<div class="dream-container">
-  <h4>Write up a scenario of Your Story</h4>
+<div class="dream-container gap-8">
+  <h4>Story Seed</h4>
   <textarea
     class:red-border={$tablePrompt.premise.length < 5}
     id="premise"
-    placeholder="Describe any scenario you want, and the AI will turn it into a story! Whether it's a thrilling mystery, an epic fantasy, or a hilarious adventure, your imagination sets the stage. You can be as detailed or vague as you like—every idea sparks a unique tale. E.g. Make a unique Sherlock Holmes story where during an investigation he ends up taking a new type of drug, deeply affecting him so he’ll lead a fight both versus himself and a serial killer."
+    placeholder="e.g. &quot;A Sherlock Holmes story where an investigation leads him to a new drug that clouds his mind, forcing him to fight both a serial killer and his own unraveling psyche.&quot;"
     rows="5"
     bind:value={$tablePrompt.premise}
   ></textarea>
+  <p class="transparent-white-txt caption-font">
+    Describe any scenario and the AI will build a story from it. Be as detailed
+    or as vague as you like.
+  </p>
 </div>
 
 {#if showWorld}
-  <World />
+  <section class="dream-container fade-in">
+    <span class="flex-row">
+      <h3>World</h3>
+      <button class="red-btn" onclick={() => (showWorld = false)}
+        >Collapse</button
+      >
+    </span>
+    <World />
+  </section>
 {/if}
 
 {#if showCharacters}
-  <Characters />
+  <section class="dream-container fade-in">
+    <span class="flex-row">
+      <h3>Characters</h3>
+      <button class="red-btn" onclick={() => (showCharacters = false)}
+        >Collapse</button
+      >
+    </span>
+    <Characters />
+  </section>
 {/if}
 
 {#if showScenario}
-  <Scenario />
+  <section class="dream-container fade-in">
+    <span class="flex-row">
+      <h3>Scenarios</h3>
+      <button class="red-btn" onclick={() => (showScenario = false)}
+        >Collapse</button
+      >
+    </span>
+    <Scenario />
+  </section>
 {/if}
 
 {#if showWritingStyle}
-  <WritingStyle />
+  <section class="dream-container fade-in">
+    <span class="flex-row">
+      <h3>Writing Style</h3>
+      <button class="red-btn" onclick={() => (showWritingStyle = false)}
+        >Collapse</button
+      >
+    </span>
+    <WritingStyle />
+  </section>
 {/if}
 
 {#if showAdditional}
-  <Additional />
+  <section class="dream-container fade-in">
+    <span class="flex-row">
+      <h3>Extras</h3>
+      <button class="red-btn" onclick={() => (showAdditional = false)}
+        >Collapse</button
+      >
+    </span>
+    <Additional />
+  </section>
 {/if}
 
 {#if $user !== null}
-  <div class="flex-row flex-wrap">
-    {#if !showWorld}
-      <button class="purple-btn" onclick={() => (showWorld = true)}>
-        + Add World
-      </button>
-    {/if}
-    {#if !showCharacters}
-      <button class="purple-btn" onclick={() => (showCharacters = true)}>
-        + Add Characters
-      </button>
-    {/if}
-    {#if !showScenario}
-      <button class="purple-btn" onclick={() => (showScenario = true)}>
-        + Add Scenarios
-      </button>
-    {/if}
-    {#if !showWritingStyle}
-      <button class="purple-btn" onclick={() => (showWritingStyle = true)}>
-        + Set Writing Style
-      </button>
-    {/if}
-    {#if !showAdditional}
-      <button class="purple-btn" onclick={() => (showAdditional = true)}>
-        + Add Additional Data
-      </button>
-    {/if}
-  </div>
+  <!-- Enhancement Zone -->
+  {#if !showWorld || !showCharacters || !showScenario || !showWritingStyle || !showAdditional}
+    <section class="enhancement dream-container">
+      <span class="flex gap-8">
+        <h4>Enhance Your Story</h4>
+        <p class="transparent-white-txt caption-font">
+          The seed above is enough to create a story. These optional sections
+          give the AI more to work with.
+        </p>
+      </span>
+
+      <div class="container">
+        {#if !showWorld}
+          <button
+            class="enhancement-card purple-btn"
+            onclick={() => (showWorld = true)}
+          >
+            World
+            <span class="enhancement-desc"
+              >Set the time, place, and backstory of your universe</span
+            >
+          </button>
+        {/if}
+
+        {#if !showCharacters}
+          <button
+            class="enhancement-card purple-btn"
+            onclick={() => (showCharacters = true)}
+          >
+            Characters
+            <span class="enhancement-desc"
+              >Define your cast — names, looks, personalities, and how they
+              relate</span
+            >
+          </button>
+        {/if}
+
+        {#if !showScenario}
+          <button
+            class="enhancement-card purple-btn"
+            onclick={() => (showScenario = true)}
+          >
+            Scenarios
+            <span class="enhancement-desc"
+              >Set win/lose conditions and key plot events the story should hit</span
+            >
+          </button>
+        {/if}
+
+        {#if !showWritingStyle}
+          <button
+            class="enhancement-card purple-btn"
+            onclick={() => (showWritingStyle = true)}
+          >
+            Writing Style
+            <span class="enhancement-desc"
+              >Control tense, pacing, point of view, and the emotional tone</span
+            >
+          </button>
+        {/if}
+
+        {#if !showAdditional}
+          <button
+            class="enhancement-card purple-btn"
+            onclick={() => (showAdditional = true)}
+          >
+            Extras
+            <span class="enhancement-desc"
+              >Add image style directions or any other details for the AI</span
+            >
+          </button>
+        {/if}
+      </div>
+    </section>
+  {/if}
 
   {#if !validation}
     <p class="validation">Fill all required fields</p>
@@ -464,11 +601,53 @@
     }
   }
 
+  #topic {
+    @include respond-up(small-desktop) {
+      width: 24rem;
+    }
+  }
+
+  .empty-category-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    @include gray(0.25);
+  }
+
   #premise {
     min-height: 25rem;
 
     @include respond-up(small-desktop) {
       min-height: 12vw;
     }
+  }
+
+  .enhancement > div {
+    flex-flow: row wrap;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  .enhancement-card {
+    flex-direction: column;
+    width: 100%;
+
+    @include respond-up(small-desktop) {
+      width: calc(50% - 1rem);
+    }
+
+    @include respond-up(full-hd) {
+      width: calc(33.33% - 1rem);
+    }
+  }
+
+  .enhancement-desc {
+    text-transform: none;
+    white-space: wrap;
+    @include font(caption);
   }
 </style>

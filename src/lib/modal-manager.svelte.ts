@@ -140,13 +140,22 @@ class ModalManager {
 
   /**
    * Opens the topic prompt settings modal.
+   * @param options.mode - Context mode: 'personal' | 'story-creation' | 'topic-edit'
+   * @param options.initialValues - Initial settings to edit
+   * @param options.onSave - Callback with edited settings
    */
-  topicSettings(options?: { onSave: () => Promise<void> }) {
+  topicSettings(options: {
+    mode: 'personal' | 'story-creation' | 'topic-edit';
+    initialValues: PromptSettings;
+    onSave?: (settings: PromptSettings) => Promise<void>;
+  }) {
     this.open(
       MODAL_KEYS.TOPIC_SETTINGS,
       {
-        onSave: async () => {
-          await options?.onSave();
+        mode: options.mode,
+        initialValues: options.initialValues,
+        onSave: async (settings: PromptSettings) => {
+          await options.onSave?.(settings);
           this.close();
         },
       },

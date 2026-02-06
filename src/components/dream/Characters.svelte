@@ -89,9 +89,9 @@
     newRelationship.connection[0] !== newRelationship.connection[1];
 </script>
 
-<section class="dream-container fade-in">
+<section class="flex">
   <div class="character-data flex">
-    <h3>Main Character</h3>
+    <h3 class="h4-font">Main Character</h3>
     {#if $tablePrompt.main_character}
       <NewCharacter bind:character={$tablePrompt.main_character} />
     {/if}
@@ -102,11 +102,14 @@
   <!-- SIDE CHARACTERS -->
 
   <div class="character-data flex">
-    <h3>
+    <h3 class="h4-font">
       Side Characters{$tablePrompt.side_characters?.length
         ? ': ' + $tablePrompt.side_characters.length
         : ''}
     </h3>
+    <p class="transparent-white-txt caption-font">
+      Supporting cast that populates your story's world.
+    </p>
     {#if $tablePrompt.side_characters && $tablePrompt.side_characters.length > 0}
       <ul class="side-characters flex-row">
         {#each $tablePrompt.side_characters as character, index}
@@ -152,6 +155,9 @@
   <!-- CHARACTERS RELATIONSHIPS -->
 
   <h3>Relationships</h3>
+  <p class="transparent-white-txt caption-font">
+    How characters feel about each other. Adds tension and depth.
+  </p>
   {#if $tablePrompt.relationships && $tablePrompt.relationships.length > 0}
     <ul class="relationships flex-row">
       {#each $tablePrompt.relationships as { type, details, connection }, index}
@@ -266,6 +272,10 @@
   @use '/src/styles/mixins' as *;
 
   // CHARACTERS
+
+  section {
+    width: 100%;
+  }
 
   .character-data {
     flex-direction: column;

@@ -1,38 +1,81 @@
 <script lang="ts">
-  import { get } from 'svelte/store';
-
   import {
-    promptSettings,
-    resetSettings,
-    isPromptSettingsDefault,
+    defaultPromptSettings,
     arePromptSettingsEqual,
   } from '@stores/dream.svelte';
   import dreamData from '@constants/dream';
   import countries from '@constants/countries.json';
   import Slider from '@components/utils/Slider.svelte';
 
-  let { onSave }: { onSave: () => Promise<void> } = $props();
+  type SettingsMode = 'personal' | 'story-creation' | 'topic-edit';
 
-  // Snapshot for change detection & rollback on close without save.
-  const initialSettings = structuredClone(get(promptSettings));
-  let didSave = false;
-
-  const hasChanges = $derived(
-    !arePromptSettingsEqual($promptSettings, initialSettings),
-  );
-
-  async function handleSave() {
-    await onSave();
-    didSave = true;
+  interface Props {
+    mode: SettingsMode;
+    initialValues: PromptSettings;
+    onSave?: (settings: PromptSettings) => Promise<void>;
   }
 
-  // Restore original settings if the modal closes without saving.
+  let { mode, initialValues, onSave }: Props = $props();
+
+  // Local editing state - not the global store
+  let settings = $state<PromptSettings>({ ...initialValues });
+
+  // Reset local state when mode changes (different context opened)
+  // This handles the case where Modal doesn't fully destroy/recreate the component
   $effect(() => {
-    return () => {
-      if (!didSave) {
-        promptSettings.set(initialSettings);
-      }
-    };
+    // Dependency on mode - when it changes, reset to new initialValues
+    mode;
+    settings = { ...initialValues };
+  });
+
+  const hasChanges = $derived(!arePromptSettingsEqual(settings, initialValues));
+
+  const isDefault = $derived(
+    arePromptSettingsEqual(settings, defaultPromptSettings()),
+  );
+
+  function handleReset() {
+    settings = defaultPromptSettings();
+  }
+
+  async function handleSave() {
+    if (onSave) {
+      await onSave(settings);
+    }
+  }
+
+  // Context-aware labels
+  const contextLabel = $derived.by(() => {
+    switch (mode) {
+      case 'personal':
+        return 'Your Default Settings';
+      case 'story-creation':
+        return 'Story Settings';
+      case 'topic-edit':
+        return 'Story Settings';
+    }
+  });
+
+  const contextDesc = $derived.by(() => {
+    switch (mode) {
+      case 'personal':
+        return 'These are saved to your profile and apply to all stories you play.';
+      case 'story-creation':
+        return 'Configure how this story will be generated.';
+      case 'topic-edit':
+        return 'Saved to this specific story. Players will use these by default.';
+    }
+  });
+
+  const saveButtonText = $derived.by(() => {
+    switch (mode) {
+      case 'personal':
+        return 'Save to Profile';
+      case 'story-creation':
+        return 'Apply';
+      case 'topic-edit':
+        return 'Save';
+    }
   });
 </script>
 
@@ -41,12 +84,17 @@
   onclick={(e) => e.stopPropagation()}
   role="presentation"
 >
+  <span class="flex gap-8">
+    <h5>{contextLabel}</h5>
+    <p class="soft-white-txt">{contextDesc}</p>
+  </span>
+
   <div class="flex-row">
     <h4>Content</h4>
     <div class="container">
       <div class="input-container">
         <label for="style">Visual style</label>
-        <select id="style" bind:value={$promptSettings.image_style}>
+        <select id="style" bind:value={settings.image_style}>
           {#each dreamData.imageStyle as option}
             <option value={option}>{option}</option>
           {/each}
@@ -55,7 +103,7 @@
 
       <div class="input-container">
         <label for="language">Language</label>
-        <select id="language" bind:value={$promptSettings.language}>
+        <select id="language" bind:value={settings.language}>
           {#each countries as { name }}
             <option value={name.toLocaleLowerCase()}>{name}</option>
           {/each}
@@ -69,13 +117,13 @@
     <div class="container">
       <div
         class="input-container"
-        class:disabled={$promptSettings.kids_mode !== 'off'}
+        class:disabled={settings.kids_mode !== 'off'}
       >
         <label for="frequency">Control</label>
         <select
           id="frequency"
-          bind:value={$promptSettings.interactivity}
-          disabled={$promptSettings.kids_mode !== 'off'}
+          bind:value={settings.interactivity}
+          disabled={settings.kids_mode !== 'off'}
         >
           {#each dreamData.min_max as option}
             <option value={option}>{option}</option>
@@ -85,13 +133,13 @@
 
       <div
         class="input-container"
-        class:disabled={$promptSettings.kids_mode !== 'off'}
+        class:disabled={settings.kids_mode !== 'off'}
       >
         <label for="difficulty">Difficulty</label>
         <select
           id="difficulty"
-          bind:value={$promptSettings.difficulty}
-          disabled={$promptSettings.kids_mode !== 'off'}
+          bind:value={settings.difficulty}
+          disabled={settings.kids_mode !== 'off'}
         >
           {#each dreamData.min_max as option}
             <option value={option}>{option}</option>
@@ -101,14 +149,14 @@
     </div>
   </div>
 
-  <div class="flex-row" class:disabled={$promptSettings.kids_mode !== 'off'}>
+  <div class="flex-row" class:disabled={settings.kids_mode !== 'off'}>
     <h4>Length</h4>
     <div class="container">
       <Slider
-        bind:sliderValue={$promptSettings.length}
+        bind:sliderValue={settings.length}
         parameters={dreamData.min_max}
         inputValue={2}
-        disabled={$promptSettings.kids_mode !== 'off'}
+        disabled={settings.kids_mode !== 'off'}
       />
     </div>
   </div>
@@ -118,13 +166,13 @@
     <div class="container">
       <div
         class="input-container"
-        class:disabled={$promptSettings.kids_mode !== 'off'}
+        class:disabled={settings.kids_mode !== 'off'}
       >
         <label for="reading-style">Reading style</label>
         <select
           id="reading-style"
-          bind:value={$promptSettings.reading_style}
-          disabled={$promptSettings.kids_mode !== 'off'}
+          bind:value={settings.reading_style}
+          disabled={settings.kids_mode !== 'off'}
         >
           {#each dreamData.readingStyle as option}
             <option value={option}>{option}</option>
@@ -135,11 +183,11 @@
       <!-- TODO: Enable the Kids Mode when available -->
       <div
         class="kids-mode input-container transition round-8 shad"
-        class:selected={$promptSettings.kids_mode}
+        class:selected={settings.kids_mode}
         style:opacity="0.5"
       >
         <label for="kids-mode transition">Kids mode</label>
-        <select id="kids-mode" bind:value={$promptSettings.kids_mode} disabled>
+        <select id="kids-mode" bind:value={settings.kids_mode} disabled>
           <!-- <option value="off">Off</option> -->
           <option value="off">Coming Soon</option>
           {#each dreamData.kidsMode as option}
@@ -153,17 +201,17 @@
   <div class="flex flex-row justify-center gap-md">
     <button
       class="btn-alert red-btn"
-      onclick={resetSettings}
-      disabled={isPromptSettingsDefault($promptSettings)}
+      onclick={handleReset}
+      disabled={isDefault}
     >
-      Reset
+      Reset to Default
     </button>
     <button
       class="btn-signal green-btn"
       onclick={handleSave}
-      disabled={!hasChanges}
+      disabled={!hasChanges && mode !== 'story-creation'}
     >
-      Save
+      {saveButtonText}
     </button>
   </div>
 </div>
@@ -215,11 +263,6 @@
         @include bright(150%);
       }
     }
-  }
-
-  .btn-alert,
-  .btn-signal {
-    cursor: pointer;
   }
 
   .justify-center {

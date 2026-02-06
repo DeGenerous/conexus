@@ -29,7 +29,7 @@
   };
 </script>
 
-<section class="dream-container fade-in">
+<div class="writing-style-content">
   <div class="flex-row">
     <h4>Tense</h4>
     <div class="container">
@@ -130,17 +130,26 @@
 
   <div class="flex-row">
     <h4>Point of View</h4>
-    <textarea
-      id="point-of-view"
-      placeholder="Specify the perspective of the story—first-person, second-person, or third-person—and whose eyes we experience the journey through. E.g. First-person, from the detective’s skeptical assistant, uncovering their mentor’s hidden dark secret."
-      rows="3"
-      bind:value={$tablePrompt.pov}
-    ></textarea>
+    <div class="container gap-8">
+      <textarea
+        id="point-of-view"
+        placeholder="e.g. &quot;First-person, through the detective's skeptical assistant&quot;"
+        rows="3"
+        bind:value={$tablePrompt.pov}
+      ></textarea>
+      <p class="transparent-white-txt caption-font">
+        Whose eyes does the reader see through? First-person (I), second-person
+        (you), or third-person (they).
+      </p>
+    </div>
   </div>
 
   <hr />
 
-  <h3>Story Tone</h3>
+  <h3 class="h4-font">Story Tone</h3>
+  <p class="transparent-white-txt caption-font tone-helper">
+    Adjust how much of each emotion runs through the narrative.
+  </p>
 
   {#each $tablePrompt.tone as { name, value, hints }}
     <span class="tone flex">
@@ -150,10 +159,17 @@
       </div>
     </span>
   {/each}
-</section>
+</div>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;
+
+  .writing-style-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
 
   .container {
     flex-direction: column;
@@ -168,6 +184,15 @@
       @include white-txt(0.5);
       @include font(caption);
     }
+
+    textarea {
+      width: 100%;
+    }
+  }
+
+  .tone-helper {
+    text-align: center;
+    margin-bottom: 0.5rem;
   }
 
   .tone {

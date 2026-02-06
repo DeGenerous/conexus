@@ -22,7 +22,7 @@
   <label for="name">Name</label>
   <input
     class="dream-input character-name"
-    placeholder="Enter character's name"
+    placeholder="e.g. &quot;Detective Mara Cole&quot;"
     value={character.name}
     oninput={(event) => updateCharacter('name', event.currentTarget.value)}
   />
@@ -32,34 +32,44 @@
   <label for="description">Description</label>
   <textarea
     class="dream-input"
-    placeholder="Provide an overview of the character’s role, background, or significance in the story. E.g. A fearless space explorer searching for a lost civilization, torn between duty and personal ambition."
+    placeholder="e.g. &quot;A burned-out space marine turned smuggler, haunted by a mission gone wrong&quot;"
     rows="3"
     value={character.description}
     oninput={(event) =>
       updateCharacter('description', event.currentTarget.value)}
   ></textarea>
+  <p class="transparent-white-txt caption-font">
+    Who is this character and what role do they play in the story?
+  </p>
 </div>
 
 <div class="input-container">
   <label for="physicality">Physicality</label>
   <textarea
     class="dream-input"
-    placeholder="Describe the character’s whole appearance in detail - face, body, hair, eyes, skin tone, vibe… Be specific with color, shape, and style. E.g. A medium-height teenage boy with wavy, messy dark brown hair, blue eyes, and light olive skin, usually wearing a hoodie and ripped jeans, soft facial features with a slightly tired but thoughtful expression."
+    placeholder="e.g. &quot;Tall, lean build. Short silver hair, dark brown eyes. Always wears a worn leather jacket.&quot;"
     rows="3"
     value={character.physicality ?? ''}
     oninput={(event) =>
       updateCharacter('physicality', event.currentTarget.value)}
   ></textarea>
+  <p class="transparent-white-txt caption-font">
+    What does this character look like? Be specific — this feeds image
+    generation.
+  </p>
 </div>
 
 <div class="input-container">
   <label for="psychology">Psychology</label>
   <textarea
     class="dream-input"
-    placeholder="Explore the character’s personality, motivations, and inner struggles. E.g. A brilliant but skeptical scientist who hides their emotions behind logic, driven by an obsession to prove the existence of extraterrestrial life."
+    placeholder="e.g. &quot;Outwardly cold and logical, but secretly terrified of being alone&quot;"
     rows="3"
     value={character.psychology ?? ''}
     oninput={(event) =>
       updateCharacter('psychology', event.currentTarget.value)}
   ></textarea>
+  <p class="transparent-white-txt caption-font">
+    What drives them? What are their strengths, flaws, and inner conflicts?
+  </p>
 </div>

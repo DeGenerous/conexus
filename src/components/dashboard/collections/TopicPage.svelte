@@ -11,9 +11,9 @@
   import { checkUserRoles, ensurePlayer } from '@utils/route-guard';
   import { isAdmin } from '@stores/account.svelte';
   import {
-    promptSettings,
     tablePrompt,
     defaultTablePrompt,
+    defaultPromptSettings,
   } from '@stores/dream.svelte';
   import PullToRefresh from '@components/utils/PullToRefresh.svelte';
 
@@ -74,22 +74,19 @@
   let promptDraft = $state<TablePrompt>({ premise: '' });
   let imagePromptDraft = $state<string>('');
 
-  const setUpSettings = (settings: PromptSettings) => {
-    if (!settings) return;
-    promptSettings.set({
-      image_style: settings.image_style,
-      language: settings.language,
-      interactivity: settings.interactivity,
-      difficulty: settings.difficulty,
-      length: settings.length,
-      reading_style: settings.reading_style,
-      kids_mode: settings.kids_mode,
-    });
-  };
+  let topic_prompt_settings = $derived<PromptSettings>(
+    topic?.topic_prompt_settings ?? defaultPromptSettings(),
+  );
 
-  const saveSettingsChanges = async () => {
-    await topicManager.editPromptSettings(topic_id, $promptSettings);
-    await refreshTopic();
+  const openTopicSettings = () => {
+    modal.topicSettings({
+      mode: 'topic-edit',
+      initialValues: topic_prompt_settings,
+      onSave: async (settings) => {
+        await topicManager.editPromptSettings(topic_id, settings);
+        await refreshTopic();
+      },
+    });
   };
 
   const hydrateTopic = async (refresh = false) => {
@@ -101,7 +98,6 @@
     }
 
     topic = next; // all $derived fields auto-update
-    setUpSettings(next.topic_prompt_settings);
 
     // Populate drafts for display (guarded so active edits aren't overwritten)
     if (!editingName) nameDraft = next.topic.name;
@@ -339,11 +335,7 @@
                 Export JSON
               </button>
             {/if}
-            <button
-              class="purple-btn"
-              onclick={() =>
-                modal.topicSettings({ onSave: saveSettingsChanges })}
-            >
+            <button class="purple-btn" onclick={openTopicSettings}>
               Story Settings
             </button>
             <a

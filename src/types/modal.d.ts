@@ -49,8 +49,12 @@ type ModalContract = {
 
   /** Topic prompt settings editor (language, difficulty, length, etc.) */
   topicSettings: {
-    /** Callback to persist the current $promptSettings to the backend */
-    onSave: () => Promise<void>;
+    /** Context mode determines UI labels and behavior */
+    mode: 'personal' | 'story-creation' | 'topic-edit';
+    /** Initial settings to edit (prevents global store contamination) */
+    initialValues: PromptSettings;
+    /** Callback to persist settings. Receives edited settings. */
+    onSave?: (settings: PromptSettings) => Promise<void>;
   };
 
   /** Category CRUD manager (add / delete categories). */

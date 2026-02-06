@@ -1,5 +1,39 @@
 import { writable, get } from 'svelte/store';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// SAVE STATE MANAGEMENT
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Suppression flag - true during programmatic state changes (restore, create, clear)
+// Prevents auto-save from queuing when we're setting stores programmatically
+export const draftSaveSuppress = writable<boolean>(false);
+
+// Save state - tracks saving status and last saved fingerprint for dirty checking
+export const draftSaveState = writable<{
+  isSaving: boolean;
+  lastSavedFingerprint: string | null;
+}>({
+  isSaving: false,
+  lastSavedFingerprint: null,
+});
+
+// Helper to wrap async state changes that should NOT trigger auto-save
+export async function withSuppressedAutoSave<T>(
+  fn: () => Promise<T>,
+): Promise<T> {
+  draftSaveSuppress.set(true);
+  try {
+    return await fn();
+  } finally {
+    // Use setTimeout(0) to ensure suppression covers any microtask store updates
+    setTimeout(() => draftSaveSuppress.set(false), 0);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AUTHORING STATE STORES
+// ─────────────────────────────────────────────────────────────────────────────
+
 // Authoring-state stores used by the Dream story creator (draft data + prompt settings)
 export const storyData = writable<StoryData>({
   name: '',
@@ -226,14 +260,20 @@ export const resetSettings = () => {
 };
 
 export const clearAllData = () => {
-  storyData.set({
-    name: '',
-    description: '',
-    image_prompt: '',
-    category_id: '',
-  });
-  resetSettings();
-  tablePrompt.set(defaultTablePrompt());
+  // Suppress auto-save during programmatic clear
+  draftSaveSuppress.set(true);
+  try {
+    storyData.set({
+      name: '',
+      description: '',
+      image_prompt: '',
+      category_id: '',
+    });
+    resetSettings();
+    tablePrompt.set(defaultTablePrompt());
+  } finally {
+    setTimeout(() => draftSaveSuppress.set(false), 0);
+  }
 };
 
 // COLLECT ALL DATA FROM STORES (for drafts)
@@ -248,8 +288,24 @@ export function collectState() {
   };
 }
 
+// Build a fingerprint string for dirty checking
+export function buildFingerprint(): string {
+  const state = collectState();
+  return JSON.stringify([
+    state.story_data,
+    state.prompt_settings,
+    state.table_prompt,
+  ]);
+}
+
 export function applyState(state: DraftPayload) {
-  storyData.set(state.story_data);
-  promptSettings.set(state.prompt_settings);
-  tablePrompt.set(state.table_prompt);
+  // Suppress auto-save during programmatic state restore
+  draftSaveSuppress.set(true);
+  try {
+    storyData.set(state.story_data);
+    promptSettings.set(state.prompt_settings);
+    tablePrompt.set(state.table_prompt);
+  } finally {
+    setTimeout(() => draftSaveSuppress.set(false), 0);
+  }
 }

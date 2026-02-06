@@ -184,6 +184,7 @@ class ModalManager {
       MODAL_KEYS.DRAFTS_MANAGER,
       {
         onRestore: options?.onRestore,
+        onCreate: options?.onCreate,
       },
       'lg',
     );

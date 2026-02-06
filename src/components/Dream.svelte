@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { derived } from 'svelte/store';
+  import { derived, get } from 'svelte/store';
 
   import { GetCache, CURRENT_DRAFT_KEY } from '@constants/cache';
   import {
@@ -16,6 +16,8 @@
     clearAllData,
     currentDraft,
     isPromptSettingsDefault,
+    draftSaveSuppress,
+    draftSaveState,
   } from '@stores/dream.svelte';
   import { modal } from '@lib/modal-manager.svelte';
   import { user, isAdmin } from '@stores/account.svelte';
@@ -42,9 +44,20 @@
   let showWritingStyle = $state<boolean>(false);
   let showAdditional = $state<boolean>(false);
 
-  $effect(() => {
-    if (selectedSectionId) $storyData.category_id = '';
-  });
+  const AUTO_SAVE_DELAY_MS = 90 * 1000; // 90 seconds
+  const LAST_SAVED_REFRESH_MS = 2000;
+
+  // fingerprint combines all draft sources so we can debounce autosaves when any piece of state changes
+  const fingerprint = derived(
+    [storyData, promptSettings, tablePrompt],
+    ([$s, $p, $t]) => JSON.stringify([$s, $p, $t]),
+  );
+
+  // Track save state for UI feedback
+  let isSaving = $derived($draftSaveState.isSaving);
+
+  // Track if there are unsaved changes (disable Save button when clean)
+  let isDirty = $derived($fingerprint !== $draftSaveState.lastSavedFingerprint);
 
   // minimal gating for the "Create" CTA: ensure we have base metadata and the prompt stays within limits
   let validation = $derived(
@@ -55,14 +68,9 @@
       $tablePrompt.premise.length >= 5,
   );
 
-  const AUTO_SAVE_DELAY_MS = 5 * 60 * 1000;
-  const LAST_SAVED_REFRESH_MS = 2000;
-
-  // fingerprint combines all draft sources so we can debounce autosaves when any piece of state changes
-  const fingerprint = derived(
-    [storyData, promptSettings, tablePrompt],
-    ([$s, $p, $t]) => JSON.stringify([$s, $p, $t]),
-  );
+  $effect(() => {
+    if (selectedSectionId) $storyData.category_id = '';
+  });
 
   let autoSaveTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -138,11 +146,15 @@
         return;
       }
 
+      // Skip auto-save during programmatic state changes (restore, create, clear)
+      if (get(draftSaveSuppress)) return;
+
       queueAutoSave();
     });
 
     const handleBeforeUnload = () => {
-      triggerSaveDraft();
+      // Use beacon for reliable save on page unload (queues request that survives page close)
+      Drafts.saveBeacon($currentDraft?.id);
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -185,18 +197,20 @@
       generatePrompt($storyData, $promptSettings, $tablePrompt),
     );
     if (!topic_id) return;
-    if ($currentDraft?.id) Drafts.delete($currentDraft.id);
 
     clearAutoSaveTimer();
-    const cachedDraftId = GetCache<string>(CURRENT_DRAFT_KEY);
-    if (cachedDraftId) await Drafts.delete(cachedDraftId);
+
+    // Single deletion - use currentDraft store as source of truth
+    const draftToDelete = $currentDraft?.id;
+    if (draftToDelete) await Drafts.delete(draftToDelete);
+
     currentDraft.set(null);
     clearAllData();
     lastSavedAgo = 'unsaved';
 
     await Drafts.create();
 
-    setTimeout(async () => {
+    setTimeout(() => {
       const storyLink = `/dashboard/collections/topic/${topic_id}`;
       modal.confirm('', openStoryManage, {
         onConfirm: () => (window.location.href = storyLink),
@@ -245,10 +259,14 @@
         <h5>
           📝 Working on draft: {$currentDraft.id?.split('-')[0]}
           <strong>
-            - Last saved: {lastSavedAgo}
+            - {#if isSaving}Saving...{:else}Last saved: {lastSavedAgo}{/if}
           </strong>
         </h5>
-        <SaveSVG onclick={triggerSaveDraft} text="Save Draft" />
+        <SaveSVG
+          onclick={triggerSaveDraft}
+          text={isSaving ? 'Saving...' : 'Save Draft'}
+          disabled={isSaving || !isDirty}
+        />
       {/if}
       <button
         class="rose-btn"

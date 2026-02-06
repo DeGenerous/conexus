@@ -4,6 +4,9 @@ import {
   currentDraft,
   collectState,
   applyState,
+  buildFingerprint,
+  draftSaveState,
+  withSuppressedAutoSave,
 } from '@stores/dream.svelte';
 import { toastStore } from '@stores/toast.svelte';
 import {
@@ -12,89 +15,171 @@ import {
   ClearCache,
   CURRENT_DRAFT_KEY,
 } from '@constants/cache';
+import { get } from 'svelte/store';
 
 let topic: Topic = new Topic();
 
 const shortenID = (id: string) => id?.split('-')[0];
 
+// Update fingerprint after successful save/create/restore
+const updateSavedFingerprint = () => {
+  draftSaveState.update((s) => ({
+    ...s,
+    lastSavedFingerprint: buildFingerprint(),
+  }));
+};
+
 const Drafts = {
   async create(): Promise<string | null> {
-    clearAllData();
+    return withSuppressedAutoSave(async () => {
+      clearAllData();
 
-    const draftData = collectState();
+      const draftData = collectState();
 
-    const draft: DraftPayload = {
-      title: draftData.story_data.name || 'Untitled',
-      ...draftData,
-    };
+      const draft: DraftPayload = {
+        title: draftData.story_data.name || 'Untitled',
+        ...draftData,
+      };
 
-    const id = await topic.saveNewTopicDraft(draft);
-    if (!id) {
-      toastStore.show('Failed to create draft', 'error');
-      return null;
-    }
-    draft.id = id;
-    SetCache(CURRENT_DRAFT_KEY, id);
+      const id = await topic.saveNewTopicDraft(draft);
+      if (!id) {
+        toastStore.show('Failed to create draft', 'error');
+        return null;
+      }
+      draft.id = id;
+      SetCache(CURRENT_DRAFT_KEY, id);
 
-    currentDraft.set(draft);
+      currentDraft.set(draft);
+      updateSavedFingerprint();
 
-    toastStore.show(
-      `You just began a new dream. Draft created: ${shortenID(id!)}`,
-    );
-    return id;
+      toastStore.show(
+        `You just began a new dream. Draft created: ${shortenID(id!)}`,
+      );
+      return id;
+    });
   },
 
-  async save(id?: string): Promise<void> {
-    if (typeof window === 'undefined') return;
+  async save(id?: string): Promise<boolean> {
+    if (typeof window === 'undefined') return false;
 
-    id ||= GetCache(CURRENT_DRAFT_KEY) || (await this.create()) || undefined;
-    const draft = await topic.getDraft(id!);
-    if (!draft || !id) {
-      toastStore.show(`Save unknown draft`, 'error');
-      return;
+    // Check save lock - prevent concurrent saves
+    const currentState = get(draftSaveState);
+    if (currentState.isSaving) {
+      return false;
     }
 
-    const draftData = collectState();
+    // Check dirty state - skip if unchanged
+    if (buildFingerprint() === currentState.lastSavedFingerprint) {
+      return true;
+    }
 
-    draft.story_data = draftData.story_data;
-    draft.prompt_settings = draftData.prompt_settings;
-    draft.table_prompt = draftData.table_prompt;
-    draft.title = draft.story_data.name || 'Untitled';
+    // Set saving state
+    draftSaveState.update((s) => ({ ...s, isSaving: true }));
 
-    currentDraft.set(draft);
+    try {
+      id ||= GetCache(CURRENT_DRAFT_KEY) || (await this.create()) || undefined;
+      if (!id) {
+        toastStore.show('No draft to save', 'error');
+        draftSaveState.update((s) => ({ ...s, isSaving: false }));
+        return false;
+      }
 
-    await topic.updateDraft(id, draft);
+      // Build payload entirely from local state - no fetch needed
+      const draftData = collectState();
+      const current = get(currentDraft);
 
-    // toastStore.show(`Draft saved: ${shortenID(id as string)} (${draft.title})`);
+      const draft: DraftPayload = {
+        ...current,
+        ...draftData,
+        id,
+        title: draftData.story_data.name || 'Untitled',
+      };
+
+      await topic.updateDraft(id, draft);
+
+      // Update local state with new timestamp after successful save
+      const now = new Date();
+      draft.updated_at = now;
+      currentDraft.set(draft);
+
+      // Capture fingerprint AFTER save to avoid race condition
+      draftSaveState.update((s) => ({
+        ...s,
+        isSaving: false,
+        lastSavedFingerprint: buildFingerprint(),
+      }));
+
+      return true;
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Save failed';
+      toastStore.show(`Draft save failed: ${errorMsg}`, 'error');
+      draftSaveState.update((s) => ({ ...s, isSaving: false }));
+      return false;
+    }
   },
 
   async restore(id: string): Promise<void> {
-    let draft: Nullable<DraftPayload>;
+    return withSuppressedAutoSave(async () => {
+      let draft: Nullable<DraftPayload>;
 
-    try {
-      draft = await topic.getDraft(id);
-    } catch (error) {
-      toastStore.show('Failed to restore draft', 'error');
-      ClearCache(CURRENT_DRAFT_KEY);
-      this.create();
-      return;
+      try {
+        draft = await topic.getDraft(id);
+      } catch {
+        toastStore.show('Failed to restore draft', 'error');
+        ClearCache(CURRENT_DRAFT_KEY);
+        await this.create();
+        return;
+      }
+
+      if (!draft) {
+        toastStore.show('Draft not found', 'error');
+        ClearCache(CURRENT_DRAFT_KEY);
+        await this.create();
+        return;
+      }
+
+      SetCache(CURRENT_DRAFT_KEY, id);
+      applyState(draft);
+
+      currentDraft.set(draft);
+      updateSavedFingerprint();
+
+      toastStore.show(
+        `Draft ${shortenID(id as string)} restored - you're back where you left off`,
+      );
+    });
+  },
+
+  // Synchronous beacon save for beforeunload - queues request that survives page close
+  saveBeacon(draftId?: string): boolean {
+    const id = draftId || GetCache<string>(CURRENT_DRAFT_KEY);
+    if (!id) return false;
+
+    // Check dirty state - skip if unchanged
+    const currentState = get(draftSaveState);
+    const currentFingerprint = buildFingerprint();
+    if (currentFingerprint === currentState.lastSavedFingerprint) {
+      return true;
     }
 
-    if (!draft) {
-      toastStore.show('Draft not found', 'error');
-      ClearCache(CURRENT_DRAFT_KEY);
-      this.create();
-      return;
-    }
+    const draft = get(currentDraft);
+    if (!draft) return false;
 
-    SetCache(CURRENT_DRAFT_KEY, id);
-    applyState(draft);
+    const draftData = collectState();
+    const payload = {
+      ...draft,
+      story_data: draftData.story_data,
+      prompt_settings: draftData.prompt_settings,
+      table_prompt: draftData.table_prompt,
+      title: draftData.story_data.name || 'Untitled',
+    };
 
-    currentDraft.set(draft);
+    const blob = new Blob([JSON.stringify(payload)], {
+      type: 'application/json',
+    });
+    const url = `${import.meta.env.PUBLIC_BACKEND}/topic/drafts/${id}`;
 
-    toastStore.show(
-      `Draft ${shortenID(id as string)} restored - you’re back where you left off`,
-    );
+    return navigator.sendBeacon(url, blob);
   },
 
   async delete(id: string) {

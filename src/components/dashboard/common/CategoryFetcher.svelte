@@ -4,7 +4,6 @@
 
   import CategoryView from '@lib/category';
   import AppView from '@lib/view';
-  import { checkUserRoles } from '@utils/route-guard';
   import { isAdmin, isPlayer } from '@stores/account.svelte';
 
   let {
@@ -77,8 +76,6 @@
 
   // Initial load
   onMount(async () => {
-    await checkUserRoles();
-
     if ($isAdmin) await fetchSections();
     else if ($isPlayer) await fetchCategoriesBase();
   });

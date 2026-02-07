@@ -339,7 +339,7 @@ export default class TopicAPI extends Fetcher {
    * @param new_prompt The new prompt for the topic
    * @returns The response from the API
    */
-  async editPrompt(topic_id: string, new_prompt: string) {
+  async editPrompt(topic_id: string, new_prompt: TablePrompt) {
     return this.request(`${this.group}/edit-prompt`, {
       method: 'PATCH',
       body: JSON.stringify({ topic_id, new_prompt }),
@@ -356,6 +356,42 @@ export default class TopicAPI extends Fetcher {
     return this.request(`${this.group}/edit-image-prompt`, {
       method: 'PATCH',
       body: JSON.stringify({ topic_id, new_image_prompt }),
+    });
+  }
+
+  /**
+   * Switch to a specific prompt version (stub — backend not yet implemented)
+   * @param topic_id The ID of the topic
+   * @param version_id The ID of the version to switch to
+   * @param prompt_intention The type of prompt ('text' or 'image')
+   * @returns The response from the API
+   */
+  async switchPromptVersion(
+    topic_id: string,
+    version_id: string,
+    prompt_intention: 'text' | 'image',
+  ) {
+    return this.request(`${this.group}/switch-prompt-version`, {
+      method: 'PATCH',
+      body: JSON.stringify({ topic_id, version_id, prompt_intention }),
+    });
+  }
+
+  /**
+   * Delete a specific prompt version (stub — backend not yet implemented)
+   * @param topic_id The ID of the topic
+   * @param version_id The ID of the version to delete
+   * @param prompt_intention The type of prompt ('text' or 'image')
+   * @returns The response from the API
+   */
+  async deletePromptVersion(
+    topic_id: string,
+    version_id: string,
+    prompt_intention: 'text' | 'image',
+  ) {
+    return this.request(`${this.group}/delete-prompt-version`, {
+      method: 'DELETE',
+      body: JSON.stringify({ topic_id, version_id, prompt_intention }),
     });
   }
 

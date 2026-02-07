@@ -14,7 +14,7 @@
   import Account from '@lib/account';
   import Authentication from '@lib/authentication';
   import { accountError, developerMode } from '@stores/account.svelte';
-  import openModal from '@stores/modal.svelte';
+  import { modal } from '@lib/modal-manager.svelte';
   import passwordVisible from '@stores/password-visibility.svelte';
   import { getCurrentUser } from '@utils/route-guard';
   import { referralActivationNotice } from '@constants/modal';
@@ -28,8 +28,7 @@
   import { getAvatarInitial } from '@utils/avatar';
   import { toAvif } from '@utils/avif-convert';
   import convertDate from '@utils/date-converter';
-  import { usePullRefreshContext } from '@utils/pull-refresh';
-
+  import PullToRefresh from '@components/utils/PullToRefresh.svelte';
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import Dropdown from '@components/utils/Dropdown.svelte';
   import FooterLinks from '@components/dashboard/common/FooterLinks.svelte';
@@ -65,24 +64,12 @@
   let avatarInputEl = $state<HTMLInputElement | undefined>();
   let avatarImage = $state<string>(blankImage);
   let avatarInitial = $state<string>('');
-  let detachPullRefresh: Nullable<() => void> = null;
-  const pullRefresh = usePullRefreshContext();
-
   const formatMiB = (bytes: number) =>
     `${(bytes / 1_048_576).toFixed(1).replace(/\.0$/, '')} MiB`;
 
   const checkSubscription = async () => {
     if (!user?.email) return;
     subscribedToNewsletter = await account.subscriptionStatus(user?.email);
-  };
-
-  // hook pull-to-refresh so users can force a fresh profile fetch
-  const installPullToRefresh = () => {
-    detachPullRefresh?.();
-    detachPullRefresh =
-      pullRefresh?.register(async () => {
-        await hydrateProfile(true);
-      }) ?? null;
   };
 
   // central loader that keeps user, roles, and subscription in sync
@@ -109,18 +96,7 @@
   }
 
   onMount(() => {
-    let cancelled = false;
-
-    (async () => {
-      await hydrateProfile();
-      if (!cancelled) installPullToRefresh();
-    })();
-
-    return () => {
-      cancelled = true;
-      detachPullRefresh?.();
-      detachPullRefresh = null;
-    };
+    hydrateProfile();
   });
 
   // Username
@@ -206,11 +182,10 @@
 
   const handleGenerateReferralCode = async () => {
     if (!user?.referred && !$developerMode) {
-      openModal(
-        referralActivationNotice,
-        'Proceed',
-        () => (window.location.href = '/referral'),
-      );
+      modal.confirm('', referralActivationNotice, {
+        onConfirm: () => (window.location.href = '/referral'),
+        confirmText: 'Proceed',
+      });
       return;
     }
     await account.generateReferralCode();
@@ -220,10 +195,10 @@
   // Web3 wallets
 
   const openSelectWalletModal = (wallet: string) => {
-    openModal(
+    modal.confirm(
+      '',
       ensureMessage('select this wallet as the main address for your account'),
-      'Select',
-      () => selectMainWallet(wallet),
+      { onConfirm: () => selectMainWallet(wallet), confirmText: 'Select' },
     );
   };
 
@@ -235,11 +210,10 @@
 
   const openRemoveWalletModal = (event: Event, wallet: string) => {
     event.stopPropagation();
-    openModal(
-      ensureMessage('unlink this wallet from your account'),
-      'Unlink',
-      () => unlinkWallet(wallet),
-    );
+    modal.confirm('', ensureMessage('unlink this wallet from your account'), {
+      onConfirm: () => unlinkWallet(wallet),
+      confirmText: 'Unlink',
+    });
   };
 
   const unlinkWallet = async (wallet: string) => {
@@ -336,218 +310,223 @@
 
   // Delete account
   const deleteAccount = async () => {
-    openModal(
+    modal.confirm(
+      '',
       ensureMessage(
         'delete your account permanently, without the possibility of recovery',
       ),
-      'Delete',
-      async () => {
-        try {
-          await account.deleteAccount();
-          await authentication.logout(); // TODO: remove it once deleteAccount handles logout internally
-        } catch (error) {
-          console.error('Failed to delete account:', error);
-        }
+      {
+        onConfirm: async () => {
+          try {
+            await account.deleteAccount();
+            await authentication.logout(); // TODO: remove it once deleteAccount handles logout internally
+          } catch (error) {
+            console.error('Failed to delete account:', error);
+          }
+        },
+        confirmText: 'Delete',
       },
     );
   };
 </script>
 
-{#if user}
-  {#if avatarFileId || avatarUrl}
-    <img class="pfp round" src={avatarImage} alt="PFP" />
-  {:else if avatarInitial}
-    <div class="pfp round avatar-initial" aria-label="Profile initial">
-      {avatarInitial}
-    </div>
-  {:else}
-    <img class="pfp round" src={avatarImage} alt="PFP" />
-  {/if}
-  {#if user.username}
-    <button
-      onclick={triggerAvatarPicker}
-      disabled={isUploadingAvatar}
-      aria-busy={isUploadingAvatar}
-    >
-      {#if isUploadingAvatar}
-        <LoadingSVG />
-        Uploading...
-      {:else}
-        Change Profile Picture
-      {/if}
-    </button>
-    <input
-      bind:this={avatarInputEl}
-      type="file"
-      accept="image/avif,image/jpeg,image/png,image/webp"
-      onchange={handleAvatarUpload}
-      style:display="none"
-    />
-  {:else}
-    <p class="validation">Please set a username</p>
-  {/if}
-
-  <div class="dream-container">
-    <div class="flex-row">
-      <h4>Username</h4>
-      <div class="container">
-        {#if editingUsername}
-          <CloseSVG onclick={resetUsername} />
-        {/if}
-        <input
-          bind:value={usernameInput}
-          type="text"
-          placeholder="Enter your username"
-          size={usernameInput.length + 1}
-          maxlength="50"
-          disabled={!editingUsername}
-        />
-        {#if editingUsername}
-          <SaveSVG
-            onclick={changeUsername}
-            disabled={user?.username === usernameInput}
-          />
+<PullToRefresh refresh={() => hydrateProfile(true)}>
+  {#if user}
+    {#if avatarFileId || avatarUrl}
+      <img class="pfp round" src={avatarImage} alt="PFP" />
+    {:else if avatarInitial}
+      <div class="pfp round avatar-initial" aria-label="Profile initial">
+        {avatarInitial}
+      </div>
+    {:else}
+      <img class="pfp round" src={avatarImage} alt="PFP" />
+    {/if}
+    {#if user.username}
+      <button
+        onclick={triggerAvatarPicker}
+        disabled={isUploadingAvatar}
+        aria-busy={isUploadingAvatar}
+      >
+        {#if isUploadingAvatar}
+          <LoadingSVG />
+          Uploading...
         {:else}
-          <EditSVG bind:editing={editingUsername} />
+          Change Profile Picture
         {/if}
-      </div>
-    </div>
+      </button>
+      <input
+        bind:this={avatarInputEl}
+        type="file"
+        accept="image/avif,image/jpeg,image/png,image/webp"
+        onchange={handleAvatarUpload}
+        style:display="none"
+      />
+    {:else}
+      <p class="validation">Please set a username</p>
+    {/if}
 
-    <div class="flex-row">
-      <h4>Credits</h4>
-      <div class="credits container">
-        <span class="flex">
-          <h5>
-            Monthly:
-            <strong>
-              {user.credits}
-              {#if userRole !== null && userRole !== undefined}
-                / {userRole.monthly_credits === -1
-                  ? '∞'
-                  : userRole.monthly_credits}
-              {/if}
-            </strong>
-          </h5>
-          <p class="caption">
-            Included each month. Resets in {user.credit_reset_in} days.
-          </p>
-        </span>
-        <span class="flex">
-          <h5>
-            Bonus: <strong>{user.bonus}</strong>
-          </h5>
-          <p class="caption">
-            Extra credits from referrals or promos. Never expires.
-          </p>
-        </span>
-      </div>
-    </div>
-
-    {#if user.email_confirmed || $developerMode}
+    <div class="dream-container">
       <div class="flex-row">
-        <h4>Referral Code</h4>
-        <div class="ref-code-wrapper container">
-          {#if refCode}
-            {#if refCode.usage_count >= refCode.max_usage}
-              <span class="flex">
-                <h5 class="text-glowing">
-                  🏆 You've unlocked all {refCode.max_usage} referrals 🚀
-                </h5>
-                <p class="text-glowing">
-                  Your early support won't go unnoticed. Stay tuned for updates.
-                </p>
-              </span>
-            {:else}
-              <span class="flex-row flex-wrap">
-                <h5>Referrals: {refCode.usage_count}</h5>
-                {#if editingRefCode}
-                  <CloseSVG onclick={resetRefCode} />
-                {/if}
-                <input
-                  bind:value={refCodeInput}
-                  type="text"
-                  placeholder="Enter referral code"
-                  size={refCodeInput.length + 1}
-                  minlength="3"
-                  maxlength="20"
-                  disabled={!editingRefCode}
-                />
-                {#if editingRefCode}
-                  <SaveSVG
-                    onclick={changeRefCode}
-                    disabled={refCode.code === refCodeInput ||
-                      refCodeInput.length < 3}
-                  />
-                {:else}
-                  <EditSVG bind:editing={editingRefCode} />
-                {/if}
-                <button
-                  class="void-btn flex"
-                  id={refCode.code}
-                  onclick={() => copyRefCode(refCode?.code!)}
-                  aria-label="Copy code {refCode.code}"
-                >
-                  <CopySVG />
-                </button>
-              </span>
-              {#if editingRefCode && refCodeInput.length < 3}
-                <p class="validation fade-in">
-                  Referral code should contain at least 3 characters
-                </p>
-              {/if}
-            {/if}
+        <h4>Username</h4>
+        <div class="container">
+          {#if editingUsername}
+            <CloseSVG onclick={resetUsername} />
+          {/if}
+          <input
+            bind:value={usernameInput}
+            type="text"
+            placeholder="Enter your username"
+            size={usernameInput.length + 1}
+            maxlength="50"
+            disabled={!editingUsername}
+          />
+          {#if editingUsername}
+            <SaveSVG
+              onclick={changeUsername}
+              disabled={user?.username === usernameInput}
+            />
           {:else}
-            <button class="green-btn" onclick={handleGenerateReferralCode}>
-              Generate referral code
-            </button>
+            <EditSVG bind:editing={editingUsername} />
           {/if}
         </div>
       </div>
-    {/if}
 
-    <div class="flex-row">
-      <span class="edit-wrapper flex">
-        <h4>Creator Bio</h4>
-        <span class="flex-row">
-          {#if editingBio}
-            <CloseSVG
-              onclick={() => {
-                editingBio = false;
-                bioInput = user?.avatar_bio || '';
-              }}
-            />
-            <SaveSVG
-              onclick={async () => {
-                if (user?.avatar_bio === bioInput) {
+      <div class="flex-row">
+        <h4>Credits</h4>
+        <div class="credits container">
+          <span class="flex">
+            <h5>
+              Monthly:
+              <strong>
+                {user.credits}
+                {#if userRole !== null && userRole !== undefined}
+                  / {userRole.monthly_credits === -1
+                    ? '∞'
+                    : userRole.monthly_credits}
+                {/if}
+              </strong>
+            </h5>
+            <p class="caption">
+              Included each month. Resets in {user.credit_reset_in} days.
+            </p>
+          </span>
+          <span class="flex">
+            <h5>
+              Bonus: <strong>{user.bonus}</strong>
+            </h5>
+            <p class="caption">
+              Extra credits from referrals or promos. Never expires.
+            </p>
+          </span>
+        </div>
+      </div>
+
+      {#if user.email_confirmed || $developerMode}
+        <div class="flex-row">
+          <h4>Referral Code</h4>
+          <div class="ref-code-wrapper container">
+            {#if refCode}
+              {#if refCode.usage_count >= refCode.max_usage}
+                <span class="flex">
+                  <h5 class="text-glowing">
+                    🏆 You've unlocked all {refCode.max_usage} referrals 🚀
+                  </h5>
+                  <p class="text-glowing">
+                    Your early support won't go unnoticed. Stay tuned for
+                    updates.
+                  </p>
+                </span>
+              {:else}
+                <span class="flex-row flex-wrap">
+                  <h5>Referrals: {refCode.usage_count}</h5>
+                  {#if editingRefCode}
+                    <CloseSVG onclick={resetRefCode} />
+                  {/if}
+                  <input
+                    bind:value={refCodeInput}
+                    type="text"
+                    placeholder="Enter referral code"
+                    size={refCodeInput.length + 1}
+                    minlength="3"
+                    maxlength="20"
+                    disabled={!editingRefCode}
+                  />
+                  {#if editingRefCode}
+                    <SaveSVG
+                      onclick={changeRefCode}
+                      disabled={refCode.code === refCodeInput ||
+                        refCodeInput.length < 3}
+                    />
+                  {:else}
+                    <EditSVG bind:editing={editingRefCode} />
+                  {/if}
+                  <button
+                    class="void-btn flex"
+                    id={refCode.code}
+                    onclick={() => copyRefCode(refCode?.code!)}
+                    aria-label="Copy code {refCode.code}"
+                  >
+                    <CopySVG />
+                  </button>
+                </span>
+                {#if editingRefCode && refCodeInput.length < 3}
+                  <p class="validation fade-in">
+                    Referral code should contain at least 3 characters
+                  </p>
+                {/if}
+              {/if}
+            {:else}
+              <button class="green-btn" onclick={handleGenerateReferralCode}>
+                Generate referral code
+              </button>
+            {/if}
+          </div>
+        </div>
+      {/if}
+
+      <div class="flex-row">
+        <span class="edit-wrapper flex">
+          <h4>Creator Bio</h4>
+          <span class="flex-row">
+            {#if editingBio}
+              <CloseSVG
+                onclick={() => {
                   editingBio = false;
-                  return;
-                }
-                await account.changeBio(bioInput);
-                editingBio = false;
-                await hydrateProfile(true);
-              }}
-              disabled={user?.avatar_bio === bioInput}
-            />
-          {:else}
-            <EditSVG bind:editing={editingBio} />
-          {/if}
+                  bioInput = user?.avatar_bio || '';
+                }}
+              />
+              <SaveSVG
+                onclick={async () => {
+                  if (user?.avatar_bio === bioInput) {
+                    editingBio = false;
+                    return;
+                  }
+                  await account.changeBio(bioInput);
+                  editingBio = false;
+                  await hydrateProfile(true);
+                }}
+                disabled={user?.avatar_bio === bioInput}
+              />
+            {:else}
+              <EditSVG bind:editing={editingBio} />
+            {/if}
+          </span>
         </span>
-      </span>
-      <textarea
-        id="description"
-        class="dream-input dream-textfield"
-        placeholder="Introduce yourself to the community..."
-        rows="3"
-        maxlength="300"
-        bind:value={bioInput}
-        disabled={!editingBio}
-      ></textarea>
+        <textarea
+          id="description"
+          class="dream-input dream-textfield"
+          placeholder="Introduce yourself to the community..."
+          rows="3"
+          maxlength="300"
+          bind:value={bioInput}
+          disabled={!editingBio}
+        ></textarea>
+      </div>
     </div>
-  </div>
 
-  {#if user.email && user.first_name}
-    <Dropdown name="Account">
-      <!-- {#if user.role_name === 'Admin'}
+    {#if user.email && user.first_name}
+      <Dropdown name="Account">
+        <!-- {#if user.role_name === 'Admin'}
         <h3 style:color="gold">👑 You are Admin 👑</h3>
       {/if}
       <ul class="user-roles flex-row flex-wrap">
@@ -575,227 +554,230 @@
         {/each}
       </ul> -->
 
-      <form class="flex">
-        <div class="input-container">
-          <label for="mail">Email</label>
-          <input id="mail" type="email" value={user.email} disabled />
-        </div>
-        {#if !user.email_confirmed && !user.is_oauth}
-          <p class="validation">Please check your inbox and confirm email</p>
-        {/if}
-        {#if user.first_name}
+        <form class="flex">
           <div class="input-container">
-            <label for="first-name">First name</label>
-            <input
-              id="first-name"
-              type="text"
-              value={user.first_name}
-              disabled={true}
-            />
+            <label for="mail">Email</label>
+            <input id="mail" type="email" value={user.email} disabled />
           </div>
-        {/if}
-        {#if user.last_name}
-          <div class="input-container">
-            <label for="last-name">Last name</label>
-            <input
-              id="last-name"
-              type="text"
-              value={user.last_name}
-              disabled={true}
-            />
-          </div>
-        {/if}
-
-        {#if editingPassword}
-          <div class="input-container">
-            <label for="password">Old password</label>
-            <input
-              id="password"
-              class:red-border={!editOldPassword}
-              type={passwordVisible.edit ? 'text' : 'password'}
-              placeholder="Enter old password"
-              name="current-password"
-              aria-label="Current password"
-              autocomplete="current-password"
-              bind:value={editOldPassword}
-            />
-          </div>
-
-          {#if !editOldPassword}
-            <p class="validation">Please enter your old password</p>
+          {#if !user.email_confirmed && !user.is_oauth}
+            <p class="validation">Please check your inbox and confirm email</p>
           {/if}
-
-          <div class="input-container">
-            <label for="new-password">New password</label>
-            <input
-              id="new-password"
-              class:red-border={!regexpPasswordValidation.test(editPassword)}
-              type={passwordVisible.edit ? 'text' : 'password'}
-              placeholder="Provide new password"
-              name="new-password"
-              aria-label="New password"
-              autocomplete="new-password"
-              bind:value={editPassword}
-            />
-            <EyeSVG visibility="edit" />
-          </div>
-          <input
-            class:red-border={!regexpPasswordValidation.test(editPassword) ||
-              editPassword !== editPasswordConfirm}
-            type={passwordVisible.edit ? 'text' : 'password'}
-            placeholder="Confirm new password"
-            id="confirm-new-password"
-            name="new-password-confirm"
-            aria-label="Confirm new password"
-            autocomplete="new-password"
-            bind:value={editPasswordConfirm}
-          />
-
-          {#if editPassword}
-            {#if !regexpRestrictedCharsCheck.test(editPassword)}
-              <p class="validation">
-                Password contains a restricted character!
-              </p>
-            {:else if !regexpLengthCheck.test(editPassword)}
-              <p class="validation">
-                Password should contain 8 - 24 characters
-              </p>
-            {/if}
-
-            {#if !regexpSpecialCharCheck.test(editPassword)}
-              <p class="validation">
-                Provide at least one special character: @ $ ! % * # ? & , .
-              </p>
-            {/if}
-
-            {#if !regexpCapitalLetterCheck.test(editPassword)}
-              <p class="validation">Provide at least one capital letter</p>
-            {/if}
-
-            {#if !regexpLowercaseLetterCheck.test(editPassword)}
-              <p class="validation">Provide at least one lowercase letter</p>
-            {/if}
-
-            {#if !regexpNumberCheck.test(editPassword)}
-              <p class="validation">Provide at least one number</p>
-            {/if}
-
-            {#if editPasswordConfirm && editPassword !== editPasswordConfirm}
-              <p class="validation">Passwords do not match!</p>
-            {/if}
-          {:else}
-            <p class="validation">Please enter new password</p>
-          {/if}
-
-          {#if $accountError && $accountError.changePassword}
-            <p class="validation">{$accountError.changePassword}</p>
-          {/if}
-        {/if}
-
-        {#if !user.is_oauth}
-          <div class="flex-row">
-            {#if editingPassword}
-              <button
-                class="red-btn"
-                type="button"
-                onclick={() => (editingPassword = false)}
-              >
-                Cancel
-              </button>
-              <SaveSVG
-                onclick={saveChangedPassword}
-                disabled={!editPassword ||
-                  !regexpPasswordValidation.test(editPassword) ||
-                  editPassword !== editPasswordConfirm}
+          {#if user.first_name}
+            <div class="input-container">
+              <label for="first-name">First name</label>
+              <input
+                id="first-name"
+                type="text"
+                value={user.first_name}
+                disabled={true}
               />
-            {:else}
-              <button type="button" onclick={() => (editingPassword = true)}>
-                Change password
-              </button>
+            </div>
+          {/if}
+          {#if user.last_name}
+            <div class="input-container">
+              <label for="last-name">Last name</label>
+              <input
+                id="last-name"
+                type="text"
+                value={user.last_name}
+                disabled={true}
+              />
+            </div>
+          {/if}
+
+          {#if editingPassword}
+            <div class="input-container">
+              <label for="password">Old password</label>
+              <input
+                id="password"
+                class:red-border={!editOldPassword}
+                type={passwordVisible.edit ? 'text' : 'password'}
+                placeholder="Enter old password"
+                name="current-password"
+                aria-label="Current password"
+                autocomplete="current-password"
+                bind:value={editOldPassword}
+              />
+            </div>
+
+            {#if !editOldPassword}
+              <p class="validation">Please enter your old password</p>
             {/if}
-          </div>
-        {/if}
-      </form>
 
-      {#if subscribedToNewsletter}
-        <button
-          class="unsubscribe-btn void-btn"
-          onclick={() => {
-            account
-              .unsubscribeNewsletter(user?.email!)
-              .then(() => checkSubscription());
-          }}
-        >
-          Unsubscribe from Newsletter
-        </button>
-      {:else}
-        <button
-          class="green-btn"
-          onclick={() => {
-            account
-              .subscribeNewsletter(user?.email!)
-              .then(() => checkSubscription());
-          }}
-        >
-          Subscribe to Newsletter
-        </button>
-      {/if}
+            <div class="input-container">
+              <label for="new-password">New password</label>
+              <input
+                id="new-password"
+                class:red-border={!regexpPasswordValidation.test(editPassword)}
+                type={passwordVisible.edit ? 'text' : 'password'}
+                placeholder="Provide new password"
+                name="new-password"
+                aria-label="New password"
+                autocomplete="new-password"
+                bind:value={editPassword}
+              />
+              <EyeSVG visibility="edit" />
+            </div>
+            <input
+              class:red-border={!regexpPasswordValidation.test(editPassword) ||
+                editPassword !== editPasswordConfirm}
+              type={passwordVisible.edit ? 'text' : 'password'}
+              placeholder="Confirm new password"
+              id="confirm-new-password"
+              name="new-password-confirm"
+              aria-label="Confirm new password"
+              autocomplete="new-password"
+              bind:value={editPasswordConfirm}
+            />
 
-      {#if user?.created_at}
-        <p class="transparent-white-txt">
-          Joined {convertDate(user.created_at, false)}
-        </p>
-      {/if}
+            {#if editPassword}
+              {#if !regexpRestrictedCharsCheck.test(editPassword)}
+                <p class="validation">
+                  Password contains a restricted character!
+                </p>
+              {:else if !regexpLengthCheck.test(editPassword)}
+                <p class="validation">
+                  Password should contain 8 - 24 characters
+                </p>
+              {/if}
 
-      <button class="red-btn" onclick={deleteAccount}> Delete Account </button>
-    </Dropdown>
-  {/if}
+              {#if !regexpSpecialCharCheck.test(editPassword)}
+                <p class="validation">
+                  Provide at least one special character: @ $ ! % * # ? & , .
+                </p>
+              {/if}
 
-  {#if user.wallets && user.wallets.filter((address) => !address.faux).length >= 1}
-    <Dropdown name="Connected Addresses">
-      <ul class="flex-row flex-wrap">
-        {#each user.wallets.filter((address) => !address.faux) as { wallet }, index}
+              {#if !regexpCapitalLetterCheck.test(editPassword)}
+                <p class="validation">Provide at least one capital letter</p>
+              {/if}
+
+              {#if !regexpLowercaseLetterCheck.test(editPassword)}
+                <p class="validation">Provide at least one lowercase letter</p>
+              {/if}
+
+              {#if !regexpNumberCheck.test(editPassword)}
+                <p class="validation">Provide at least one number</p>
+              {/if}
+
+              {#if editPasswordConfirm && editPassword !== editPasswordConfirm}
+                <p class="validation">Passwords do not match!</p>
+              {/if}
+            {:else}
+              <p class="validation">Please enter new password</p>
+            {/if}
+
+            {#if $accountError && $accountError.changePassword}
+              <p class="validation">{$accountError.changePassword}</p>
+            {/if}
+          {/if}
+
+          {#if !user.is_oauth}
+            <div class="flex-row">
+              {#if editingPassword}
+                <button
+                  class="red-btn"
+                  type="button"
+                  onclick={() => (editingPassword = false)}
+                >
+                  Cancel
+                </button>
+                <SaveSVG
+                  onclick={saveChangedPassword}
+                  disabled={!editPassword ||
+                    !regexpPasswordValidation.test(editPassword) ||
+                    editPassword !== editPasswordConfirm}
+                />
+              {:else}
+                <button type="button" onclick={() => (editingPassword = true)}>
+                  Change password
+                </button>
+              {/if}
+            </div>
+          {/if}
+        </form>
+
+        {#if subscribedToNewsletter}
           <button
-            class="wallet void-btn"
-            class:small-blue-tile={user.main_wallet !== wallet}
-            class:small-orange-tile={user.main_wallet === wallet}
+            class="unsubscribe-btn void-btn"
             onclick={() => {
-              if (wallet === user?.main_wallet) {
-                toastStore.show(
-                  'This wallet is already set as your main address',
-                );
-                return;
-              }
-              openSelectWalletModal(wallet!);
+              account
+                .unsubscribeNewsletter(user?.email!)
+                .then(() => checkSubscription());
             }}
           >
-            <h4>{index + 1}</h4>
-            <p class="pad-8 round-8 transparent-dark-bg soft-white-txt">
-              {wallet.slice(0, 6) + '...' + wallet.slice(-4)}
-            </p>
-            <CloseSVG
-              onclick={(event) => openRemoveWalletModal(event, wallet!)}
-              voidBtn={true}
-              dark={wallet === user.main_wallet}
-            />
+            Unsubscribe from Newsletter
           </button>
-        {/each}
-      </ul>
-      {#if user?.email && user?.first_name}
-        <WalletConnect linking={true} title={'Add another address'} />
-      {/if}
-    </Dropdown>
-  {:else}
-    <span class="dream-container flex-row flex-wrap gap">
-      <h5>For OmniHub access, extra features, and rewards:</h5>
-      <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
-    </span>
-  {/if}
-{:else}
-  <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
-{/if}
+        {:else}
+          <button
+            class="green-btn"
+            onclick={() => {
+              account
+                .subscribeNewsletter(user?.email!)
+                .then(() => checkSubscription());
+            }}
+          >
+            Subscribe to Newsletter
+          </button>
+        {/if}
 
-<FooterLinks legal={true} />
+        {#if user?.created_at}
+          <p class="transparent-white-txt">
+            Joined {convertDate(user.created_at, false)}
+          </p>
+        {/if}
+
+        <button class="red-btn" onclick={deleteAccount}>
+          Delete Account
+        </button>
+      </Dropdown>
+    {/if}
+
+    {#if user.wallets && user.wallets.filter((address) => !address.faux).length >= 1}
+      <Dropdown name="Connected Addresses">
+        <ul class="flex-row flex-wrap">
+          {#each user.wallets.filter((address) => !address.faux) as { wallet }, index}
+            <button
+              class="wallet void-btn"
+              class:small-blue-tile={user.main_wallet !== wallet}
+              class:small-orange-tile={user.main_wallet === wallet}
+              onclick={() => {
+                if (wallet === user?.main_wallet) {
+                  toastStore.show(
+                    'This wallet is already set as your main address',
+                  );
+                  return;
+                }
+                openSelectWalletModal(wallet!);
+              }}
+            >
+              <h4>{index + 1}</h4>
+              <p class="pad-8 round-8 transparent-dark-bg soft-white-txt">
+                {wallet.slice(0, 6) + '...' + wallet.slice(-4)}
+              </p>
+              <CloseSVG
+                onclick={(event) => openRemoveWalletModal(event, wallet!)}
+                voidBtn={true}
+                dark={wallet === user.main_wallet}
+              />
+            </button>
+          {/each}
+        </ul>
+        {#if user?.email && user?.first_name}
+          <WalletConnect linking={true} title={'Add another address'} />
+        {/if}
+      </Dropdown>
+    {:else}
+      <span class="dream-container flex-row flex-wrap gap">
+        <h5>For OmniHub access, extra features, and rewards:</h5>
+        <WalletConnect linking={true} title={'Connect Web3 Wallet'} />
+      </span>
+    {/if}
+  {:else}
+    <img class="loading-logo" src="/icons/loading.png" alt="Loading" />
+  {/if}
+
+  <FooterLinks legal={true} />
+</PullToRefresh>
 
 <style lang="scss">
   @use '/src/styles/mixins' as *;

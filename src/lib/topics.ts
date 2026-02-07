@@ -586,12 +586,62 @@ export default class Topic {
   }
 
   /**
+   * Switch the active prompt version for a topic.
+   * @param topic_id - The topic identifier.
+   * @param version_id - The version identifier to activate.
+   * @param prompt_intention - The type of prompt ('text' or 'image').
+   */
+  async switchPromptVersion(
+    topic_id: string,
+    version_id: string,
+    prompt_intention: 'text' | 'image',
+  ): Promise<void> {
+    const { status, message } = await this.api.switchPromptVersion(
+      topic_id,
+      version_id,
+      prompt_intention,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || 'Switched to version', 'info');
+  }
+
+  /**
+   * Delete a prompt version for a topic.
+   * @param topic_id - The topic identifier.
+   * @param version_id - The version identifier to delete.
+   * @param prompt_intention - The type of prompt ('text' or 'image').
+   */
+  async deletePromptVersion(
+    topic_id: string,
+    version_id: string,
+    prompt_intention: 'text' | 'image',
+  ): Promise<void> {
+    const { status, message } = await this.api.deletePromptVersion(
+      topic_id,
+      version_id,
+      prompt_intention,
+    );
+
+    if (status === 'error') {
+      api_error(message);
+      return;
+    }
+
+    toastStore.show(message || 'Version deleted', 'info');
+  }
+
+  /**
    * Update the text prompt for a topic.
    * @param topic_id - The topic identifier.
-   * @param prompt - The prompt text to store.
+   * @param new_prompt - The new prompt TablePrompt.
    */
-  async editPrompt(topic_id: string, prompt: string): Promise<void> {
-    const { status, message } = await this.api.editPrompt(topic_id, prompt);
+  async editPrompt(topic_id: string, new_prompt: TablePrompt): Promise<void> {
+    const { status, message } = await this.api.editPrompt(topic_id, new_prompt);
 
     if (status === 'error') {
       api_error(message);

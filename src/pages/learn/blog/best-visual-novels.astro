@@ -7,7 +7,11 @@ import { blogURL } from '@constants/media';
 const meta = {
   title: 'Blog | CoNexus',
   nav: 'Blog',
-  arrow: '/learn/blog',
+  breadcrumbs: [
+    { label: 'Learn', href: '/learn' },
+    { label: 'Blog', href: '/learn/blog' },
+    { label: 'Best Visual Novels' },
+  ],
   header: 'Best Visual Novels',
   subheading:
     'Looking for the best visual novels to play in 2025? Explore immersive, choice-driven stories across romance, mystery, fantasy, and more — available online and on all platforms.',

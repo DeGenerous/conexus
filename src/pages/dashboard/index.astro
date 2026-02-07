@@ -1,15 +1,14 @@
 ---
 import Layout from '@layouts/Layout.astro';
 
-import DashboardApp from '@components/dashboard/DashboardApp.svelte';
+import Home from '@components/dashboard/home/Home.svelte';
 
 const meta = {
   nav: 'Dashboard',
-  arrow: '/',
   header: 'CoNexus',
 };
 ---
 
 <Layout {...meta}>
-  <DashboardApp client:only="svelte" />
+  <Home client:only="svelte" />
 </Layout>

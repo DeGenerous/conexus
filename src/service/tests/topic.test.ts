@@ -177,10 +177,13 @@ describe('TopicAPI', () => {
   });
 
   it('edits prompts and settings', async () => {
-    await api.editPrompt('topic-1', 'Prompt');
+    await api.editPrompt('topic-1', { premise: 'Prompt' });
     expect(mockRequest).toHaveBeenCalledWith('/topic/edit-prompt', {
       method: 'PATCH',
-      body: JSON.stringify({ topic_id: 'topic-1', new_prompt: 'Prompt' }),
+      body: JSON.stringify({
+        topic_id: 'topic-1',
+        new_prompt: { premise: 'Prompt' },
+      }),
     });
 
     mockRequest.mockClear();

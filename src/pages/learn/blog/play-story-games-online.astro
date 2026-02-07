@@ -7,7 +7,11 @@ import { blogURL } from '@constants/media';
 const meta = {
   title: 'Blog | CoNexus',
   nav: 'Blog',
-  arrow: '/learn/blog',
+  breadcrumbs: [
+    { label: 'Learn', href: '/learn' },
+    { label: 'Blog', href: '/learn/blog' },
+    { label: 'Story Games' },
+  ],
   header: 'Play Story Games',
   subheading:
     'Looking for the best places to play story games online? Explore interactive fiction, choice-based adventures, and AI-powered story platforms you can try instantly in 2025.',

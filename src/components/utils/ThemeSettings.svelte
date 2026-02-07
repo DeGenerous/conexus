@@ -13,7 +13,7 @@
     STANDARD_THEME_COUNT,
   } from '@stores/customization.svelte';
   import { GetCache, THEMES_KEY } from '@constants/cache';
-  import openModal from '@stores/modal.svelte';
+  import { modal } from '@lib/modal-manager.svelte';
   import { ensureMessage } from '@constants/modal';
 
   import CloseSVG from '@components/icons/Close.svelte';
@@ -66,10 +66,13 @@
   };
 
   const handleDeleteTheme = (index: number) =>
-    openModal(ensureMessage('delete this theme?'), 'Delete', () => {
-      $customThemes.splice(index, 1);
-      $customThemes = $customThemes; // force re-render;
-      persistCustomThemesCache();
+    modal.confirm('', ensureMessage('delete this theme?'), {
+      onConfirm: () => {
+        $customThemes.splice(index, 1);
+        $customThemes = $customThemes; // force re-render;
+        persistCustomThemesCache();
+      },
+      confirmText: 'Delete',
     });
 
   // Check if current customization settings are similar to some THEME-object

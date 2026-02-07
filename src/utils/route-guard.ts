@@ -57,7 +57,7 @@ export async function userState(state: UserState = 'signed'): Promise<boolean> {
   return checks[state]();
 }
 
-export async function ensureSigned(path = '/'): Promise<void> {
+export async function ensureSigned(path = '/dashboard'): Promise<void> {
   if (!(await userState('signed'))) redirectTo(path);
 }
 

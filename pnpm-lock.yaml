@@ -92,9 +92,6 @@ importers:
       svelte-dnd-action:
         specifier: 0.9.64
         version: 0.9.64(svelte@5.38.1)
-      svelte-spa-router:
-        specifier: ^4.0.1
-        version: 4.0.1
       svelte-tippy:
         specifier: ^1.3.2
         version: 1.3.2
@@ -4295,10 +4292,6 @@ packages:
     resolution: {integrity: sha512-dYqgNSZbDwkaJ2ceRd9ojCGjBq+mOm9LmtXnAnEGyHhN/5R7iDW2TRw3h+o/jCFxus3P2LfWIIiwowAjANm7IA==}
     engines: {node: '>= 0.4'}
 
-  regexparam@2.0.2:
-    resolution: {integrity: sha512-A1PeDEYMrkLrfyOwv2jwihXbo9qxdGD3atBYQA9JJgreAx8/7rC6IUkWOw2NQlOxLp2wL0ifQbh1HuidDfYA6w==}
-    engines: {node: '>=8'}
-
   regexpu-core@6.3.1:
     resolution: {integrity: sha512-DzcswPr252wEr7Qz8AyAVbfyBDKLoYp6eRA1We2Fa9qirRFSdtkP5sHr3yglDKy2BbA0fd2T+j/CUSKes3FeVQ==}
     engines: {node: '>=4'}
@@ -4803,9 +4796,6 @@ packages:
     resolution: {integrity: sha512-kbbnOTuVc+VINheraVyEQ7K11jXdQii6JNTGpsyIuwUqmda030eT3rPpqckD8UVh1DuyYH3xqyJDTWb8S610Jg==}
     peerDependencies:
       svelte: '>=3.23.0 || ^5.0.0-next.0'
-
-  svelte-spa-router@4.0.1:
-    resolution: {integrity: sha512-2JkmUQ2f9jRluijL58LtdQBIpynSbem2eBGp4zXdi7aDY1znbR6yjw0KsonD0aq2QLwf4Yx4tBJQjxIjgjXHKg==}
 
   svelte-tippy@1.3.2:
     resolution: {integrity: sha512-41f+85hwhKBRqX0UNYrgFsi34Kk/KDvUkIZXYANxkWoA2NTVTCZbUC2J8hRNZ4TRVxObTshoZRjK2co5+i6LMw==}
@@ -11603,8 +11593,6 @@ snapshots:
       gopd: 1.2.0
       set-function-name: 2.0.2
 
-  regexparam@2.0.2: {}
-
   regexpu-core@6.3.1:
     dependencies:
       regenerate: 1.4.2
@@ -12262,10 +12250,6 @@ snapshots:
   svelte-dnd-action@0.9.64(svelte@5.38.1):
     dependencies:
       svelte: 5.38.1
-
-  svelte-spa-router@4.0.1:
-    dependencies:
-      regexparam: 2.0.2
 
   svelte-tippy@1.3.2:
     dependencies:

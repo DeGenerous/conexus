@@ -1,45 +1,4 @@
 import { writable } from 'svelte/store';
 
-export const showModal = writable<boolean>(false);
+// Temporary: showProfile stays until login is moved to a dedicated page.
 export const showProfile = writable<boolean>(false);
-export const playOptions = writable<boolean | 'dont_show_again'>(false);
-
-// MODAL HANDLING
-
-export const modal = $state<ConexusModal>({
-  content: '',
-  button: '',
-  buttonFunc: () => {},
-  buttonClass: '',
-});
-
-export const resetModal = () => {
-  modal.content = '';
-  modal.button = '';
-  modal.buttonFunc = () => {};
-  modal.buttonClass = '';
-  showModal.set(false);
-};
-
-const openModal = (
-  content: string,
-  btn: string = '',
-  btnFunc = () => {},
-  btnClass: string = '',
-) => {
-  modal.content = content;
-
-  if (btn) {
-    modal.button = btn;
-    modal.buttonFunc = () => {
-      btnFunc();
-      resetModal();
-    };
-
-    if (btnClass) modal.buttonClass = btnClass;
-  }
-
-  showModal.set(true);
-};
-
-export default openModal;

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import { showProfile } from '@stores/modal.svelte';
   import { user, approvedTester } from '@stores/account.svelte';
   import { blankImage, serveUrl } from '@constants/media';
@@ -55,6 +57,24 @@
       .catch(() => {
         avatarImage = blankImage;
       });
+  });
+
+  let currentHash = $state<string>('');
+
+  onMount(() => {
+    currentHash = window.location.hash;
+
+    const handleHashChange = () => {
+      currentHash = window.location.hash;
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleHashChange);
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handleHashChange);
+    };
   });
 </script>
 

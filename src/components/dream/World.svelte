@@ -34,7 +34,7 @@
   <label for="first-act">First Action</label>
   <textarea
     id="first-act"
-    placeholder="e.g. &quot;A distress signal wakes the captain from cryo-sleep — but the crew who sent it is gone&quot;"
+    placeholder="e.g. &quot;A distress signal wakes the captain from cryo-sleep. The crew who sent it is gone.&quot;"
     rows="2"
     bind:value={$tablePrompt.first_action}
   ></textarea>

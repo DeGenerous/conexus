@@ -4,7 +4,7 @@
 
 <div class="additional-content">
   <div class="input-container gap-8">
-    <h4>Image Generation Instructions</h4>
+    <h4>Art Direction</h4>
     <textarea
       id="image-prompts"
       class:red-border={$storyData.image_prompt.length > 5000}
@@ -13,13 +13,11 @@
       bind:value={$storyData.image_prompt}
     ></textarea>
     <p class="transparent-white-txt caption-font">
-      Describe the visual mood, lighting, and style for AI-generated story
-      images.
+      Describe the visual mood, lighting, and style for your story's imagery.
     </p>
     {#if $storyData.image_prompt && $storyData.image_prompt.length > 5000}
       <p class="validation">
-        Please shorten your message to 5000 characters or less, you've typed {$storyData
-          .image_prompt.length}
+        Too long. Max 5000 characters ({$storyData.image_prompt.length} used).
       </p>
     {/if}
   </div>
@@ -33,8 +31,7 @@
       bind:value={$tablePrompt.additional_data}
     ></textarea>
     <p class="transparent-white-txt caption-font">
-      Any extra instructions, references, or details you want the AI to
-      consider.
+      Any extra instructions, references, or details for CoNexus to consider.
     </p>
   </div>
 </div>

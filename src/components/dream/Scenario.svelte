@@ -137,7 +137,7 @@
       bind:value={newLosingScenario}
     />
     <p class="transparent-white-txt caption-font">
-      Ways the story could end badly. Creates real stakes.
+      Ways the story could end badly. Raises the stakes.
     </p>
     <button onclick={addLosingScenario} disabled={newLosingScenario === ''}>
       Add Losing Scenario

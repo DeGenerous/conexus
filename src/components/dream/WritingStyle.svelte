@@ -133,7 +133,7 @@
     <div class="container gap-8">
       <textarea
         id="point-of-view"
-        placeholder="e.g. &quot;First-person, through the detective's skeptical assistant&quot;"
+        placeholder="e.g. &quot;First-person, through the detective's partner&quot;"
         rows="3"
         bind:value={$tablePrompt.pov}
       ></textarea>

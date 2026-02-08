@@ -502,6 +502,9 @@
               </button>
             {/each}
           </div>
+          <p class="transparent-white-txt caption-font">
+            Only the 10 most recent versions are kept.
+          </p>
         {/if}
 
         <!-- Premise (always shown) -->

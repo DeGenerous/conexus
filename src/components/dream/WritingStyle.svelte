@@ -138,7 +138,7 @@
         bind:value={$tablePrompt.pov}
       ></textarea>
       <p class="transparent-white-txt caption-font">
-        Whose eyes does the reader see through? First-person (I), second-person
+        Whose eyes does the player see through? First-person (I), second-person
         (you), or third-person (they).
       </p>
     </div>

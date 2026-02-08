@@ -427,7 +427,7 @@
           <textarea
             id="description"
             class="dream-input dream-textfield"
-            placeholder="Describe the overall story, its key themes, and what kind of journey the main character will take. Is it an epic adventure, a gripping mystery, or a heartwarming romance? Keep it engaging and set the stage for the reader!"
+            placeholder="Describe the overall story, its key themes, and what kind of journey the main character will take. Is it an epic adventure, a gripping mystery, or a heartwarming romance? Keep it engaging and set the stage for the player!"
             rows="5"
             bind:value={descriptionDraft}
             disabled={!editingDescription}

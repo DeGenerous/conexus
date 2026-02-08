@@ -392,7 +392,7 @@
       bind:value={$storyData.name}
     />
     <p class="transparent-white-txt caption-font">
-      The name readers will see on the story card. Keep it memorable.
+      The name players will see on the story card. Keep it memorable.
     </p>
   </div>
 

@@ -25,7 +25,7 @@
     bind:value={$tablePrompt.exposition}
   ></textarea>
   <p class="transparent-white-txt caption-font">
-    What happened before the story begins? Key history the reader needs to
+    What happened before the story begins? Key history the player needs to
     understand.
   </p>
 </div>

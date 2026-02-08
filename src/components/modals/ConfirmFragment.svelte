@@ -22,7 +22,7 @@
     {#if title}
       <h2 id="modal-title" class="text-h3">{title}</h2>
     {/if}
-    <div class="body-content">{@html body}</div>
+    <div class="body-content flex">{@html body}</div>
 
     {#if cost > 0}
       <div
@@ -35,10 +35,10 @@
   </div>
 
   <div class="flex flex-row justify-center gap-md">
-    <button class="btn-alert" onclick={() => onCancel()}>
+    <button class="btn-alert red-btn" onclick={() => onCancel()}>
       {cancelText}
     </button>
-    <button class="btn-signal" onclick={onConfirm}>
+    <button class="btn-signal green-btn" onclick={onConfirm}>
       {confirmText}
     </button>
   </div>

@@ -335,47 +335,48 @@
           {/if}
         </label>
 
-        {#if !loadingCategories && !errorCategories && categories.length === 0 && !($isAdmin && !selectedSectionId)}
-          <div class="empty-category-state">
-            <p class="transparent-white-txt">
-              Stories live inside categories. Create your first category to get
-              started.
-            </p>
-            <button
-              class="green-btn"
-              onclick={() =>
-                modal.categoryManager({ onUpdate: refreshCategories })}
-            >
-              + Create Category
-            </button>
-          </div>
-        {:else}
-          <select
-            id="category"
-            class:red-border={!$storyData.category_id && categories.length > 0}
-            bind:value={$storyData.category_id}
-            disabled={($isAdmin && !selectedSectionId) || !categories.length}
-          >
-            <option value="" disabled hidden>
-              {#if categories.length > 0}
-                Select category
-              {:else if $isAdmin && !selectedSectionId}
-                No section selected
-              {:else if !loadingCategories}
-                No categories found
-              {/if}
-            </option>
-            {#each categories as { id, name }}
-              <option value={id}>{name}</option>
-            {/each}
-          </select>
-          {#if categories.length > 0}
-            <p class="transparent-white-txt caption-font">
-              Organize your stories into collections.
-            </p>
-          {/if}
+        <select
+          id="category"
+          class:red-border={!$storyData.category_id && categories.length > 0}
+          bind:value={$storyData.category_id}
+          disabled={($isAdmin && !selectedSectionId) || !categories.length}
+        >
+          <option value="" disabled hidden>
+            {#if categories.length > 0}
+              Select category
+            {:else if $isAdmin && !selectedSectionId}
+              No section selected
+            {:else if !loadingCategories}
+              No categories found
+            {/if}
+          </option>
+          {#each categories as { id, name }}
+            <option value={id}>{name}</option>
+          {/each}
+        </select>
+        {#if categories.length > 0}
+          <p class="transparent-white-txt caption-font">
+            Organize your stories into collections.
+          </p>
         {/if}
       </div>
+
+      {#if !loadingCategories && !errorCategories && categories.length === 0 && !($isAdmin && !selectedSectionId)}
+        <span class="flex gap-8">
+          <button
+            class="green-btn"
+            onclick={() =>
+              modal.categoryManager({ onUpdate: refreshCategories })}
+            disabled={!$user}
+          >
+            Create Category
+          </button>
+          <p class="transparent-white-txt caption-font">
+            Stories live inside categories. Create your first category to get
+            started.
+          </p>
+        </span>
+      {/if}
     {/snippet}
   </CategoryFetcher>
 
@@ -388,11 +389,11 @@
       class:red-border={!$storyData.name}
       type="text"
       maxlength="32"
-      placeholder="e.g. &quot;The Last Cartographer&quot;"
+      placeholder="e.g. &quot;The Last Horizon&quot;"
       bind:value={$storyData.name}
     />
     <p class="transparent-white-txt caption-font">
-      The name readers will see on the story card. Keep it memorable.
+      The name players will see on the story card. Keep it memorable.
     </p>
   </div>
 
@@ -402,20 +403,19 @@
       id="description"
       class:red-border={$storyData.description.length < 20 ||
         $storyData.description.length > 500}
-      placeholder="e.g. &quot;A detective chasing a serial killer discovers the truth might destroy everything he believes in.&quot;"
+      placeholder="e.g. &quot;A detective hunting a killer discovers a truth that could destroy everything.&quot;"
       rows="3"
       bind:value={$storyData.description}
     ></textarea>
     <p class="transparent-white-txt caption-font">
       A short hook shown on the story card. What is the story about, and why
-      should someone read it? (20–500 characters)
+      should someone explore it? (20–500 characters)
     </p>
   </div>
 
   {#if $storyData.description && $storyData.description.length > 500}
     <p class="validation">
-      Please shorten your message to 500 characters or less, you’ve typed {$storyData
-        .description.length}
+      Too long. Max 500 characters ({$storyData.description.length} used).
     </p>
   {/if}
 </div>
@@ -425,12 +425,12 @@
   <textarea
     class:red-border={$tablePrompt.premise.length < 5}
     id="premise"
-    placeholder="e.g. &quot;A Sherlock Holmes story where an investigation leads him to a new drug that clouds his mind, forcing him to fight both a serial killer and his own unraveling psyche.&quot;"
+    placeholder="e.g. &quot;A Sherlock Holmes mystery where a strange new drug clouds his mind. He must catch a killer while losing control of his own thoughts.&quot;"
     rows="5"
     bind:value={$tablePrompt.premise}
   ></textarea>
   <p class="transparent-white-txt caption-font">
-    Describe any scenario and the AI will build a story from it. Be as detailed
+    Describe any scenario and CoNexus will build a story from it. Be as detailed
     or as vague as you like.
   </p>
 </div>
@@ -503,7 +503,7 @@
         <h4>Enhance Your Story</h4>
         <p class="transparent-white-txt caption-font">
           The seed above is enough to create a story. These optional sections
-          give the AI more to work with.
+          give CoNexus more to work with.
         </p>
       </span>
 
@@ -527,8 +527,8 @@
           >
             Characters
             <span class="enhancement-desc"
-              >Define your cast — names, looks, personalities, and how they
-              relate</span
+              >Define your cast: names, looks, personalities, and how they
+              connect</span
             >
           </button>
         {/if}
@@ -540,7 +540,7 @@
           >
             Scenarios
             <span class="enhancement-desc"
-              >Set win/lose conditions and key plot events the story should hit</span
+              >Set win/lose conditions and key plot events for your story</span
             >
           </button>
         {/if}
@@ -564,7 +564,7 @@
           >
             Extras
             <span class="enhancement-desc"
-              >Add image style directions or any other details for the AI</span
+              >Add visual style notes or any other details for CoNexus</span
             >
           </button>
         {/if}
@@ -585,7 +585,7 @@
           confirmText: 'Reset',
         })}
     >
-      Reset Data
+      Reset
     </button>
     <button class="green-btn" onclick={createStory} disabled={!validation}>
       Create a DREAM: 10 Credits
@@ -623,17 +623,6 @@
     @include respond-up(small-desktop) {
       width: 24rem;
     }
-  }
-
-  .empty-category-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-    text-align: center;
-    @include gray(0.25);
   }
 
   #premise {

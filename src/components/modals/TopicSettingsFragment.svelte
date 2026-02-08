@@ -5,6 +5,8 @@
   } from '@stores/dream.svelte';
   import dreamData from '@constants/dream';
   import countries from '@constants/countries.json';
+  import { toastStore } from '@stores/toast.svelte';
+
   import Slider from '@components/utils/Slider.svelte';
 
   type SettingsMode = 'personal' | 'story-creation' | 'topic-edit';
@@ -39,9 +41,9 @@
   }
 
   async function handleSave() {
-    if (onSave) {
-      await onSave(settings);
-    }
+    if (onSave) await onSave(settings);
+    if (mode === 'story-creation')
+      toastStore.show('Settings applied successfully');
   }
 
   // Context-aware labels

@@ -54,8 +54,7 @@
       updateCharacter('physicality', event.currentTarget.value)}
   ></textarea>
   <p class="transparent-white-txt caption-font">
-    What does this character look like? Be specific — this feeds image
-    generation.
+    What does this character look like? Details here shape visual synthesis.
   </p>
 </div>
 

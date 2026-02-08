@@ -231,6 +231,7 @@
       {#if explorerImage !== blankImage}
         <img class="pfp round" src={explorerImage} alt="Creator PFP" />
       {/if}
+      <h3>{explorer.username}</h3>
       <p>{explorer.avatar_bio}</p>
     </div>
   {/if}

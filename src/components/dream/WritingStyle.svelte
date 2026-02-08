@@ -133,12 +133,12 @@
     <div class="container gap-8">
       <textarea
         id="point-of-view"
-        placeholder="e.g. &quot;First-person, through the detective's skeptical assistant&quot;"
+        placeholder="e.g. &quot;First-person, through the detective's partner&quot;"
         rows="3"
         bind:value={$tablePrompt.pov}
       ></textarea>
       <p class="transparent-white-txt caption-font">
-        Whose eyes does the reader see through? First-person (I), second-person
+        Whose eyes does the player see through? First-person (I), second-person
         (you), or third-person (they).
       </p>
     </div>

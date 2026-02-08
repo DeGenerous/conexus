@@ -335,47 +335,48 @@
           {/if}
         </label>
 
-        {#if !loadingCategories && !errorCategories && categories.length === 0 && !($isAdmin && !selectedSectionId)}
-          <div class="empty-category-state">
-            <p class="transparent-white-txt">
-              Stories live inside categories. Create your first category to get
-              started.
-            </p>
-            <button
-              class="green-btn"
-              onclick={() =>
-                modal.categoryManager({ onUpdate: refreshCategories })}
-            >
-              + Create Category
-            </button>
-          </div>
-        {:else}
-          <select
-            id="category"
-            class:red-border={!$storyData.category_id && categories.length > 0}
-            bind:value={$storyData.category_id}
-            disabled={($isAdmin && !selectedSectionId) || !categories.length}
-          >
-            <option value="" disabled hidden>
-              {#if categories.length > 0}
-                Select category
-              {:else if $isAdmin && !selectedSectionId}
-                No section selected
-              {:else if !loadingCategories}
-                No categories found
-              {/if}
-            </option>
-            {#each categories as { id, name }}
-              <option value={id}>{name}</option>
-            {/each}
-          </select>
-          {#if categories.length > 0}
-            <p class="transparent-white-txt caption-font">
-              Organize your stories into collections.
-            </p>
-          {/if}
+        <select
+          id="category"
+          class:red-border={!$storyData.category_id && categories.length > 0}
+          bind:value={$storyData.category_id}
+          disabled={($isAdmin && !selectedSectionId) || !categories.length}
+        >
+          <option value="" disabled hidden>
+            {#if categories.length > 0}
+              Select category
+            {:else if $isAdmin && !selectedSectionId}
+              No section selected
+            {:else if !loadingCategories}
+              No categories found
+            {/if}
+          </option>
+          {#each categories as { id, name }}
+            <option value={id}>{name}</option>
+          {/each}
+        </select>
+        {#if categories.length > 0}
+          <p class="transparent-white-txt caption-font">
+            Organize your stories into collections.
+          </p>
         {/if}
       </div>
+
+      {#if !loadingCategories && !errorCategories && categories.length === 0 && !($isAdmin && !selectedSectionId)}
+        <span class="flex gap-8">
+          <button
+            class="green-btn"
+            onclick={() =>
+              modal.categoryManager({ onUpdate: refreshCategories })}
+            disabled={!$user}
+          >
+            Create Category
+          </button>
+          <p class="transparent-white-txt caption-font">
+            Stories live inside categories. Create your first category to get
+            started.
+          </p>
+        </span>
+      {/if}
     {/snippet}
   </CategoryFetcher>
 
@@ -622,17 +623,6 @@
     @include respond-up(small-desktop) {
       width: 24rem;
     }
-  }
-
-  .empty-category-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-    text-align: center;
-    @include gray(0.25);
   }
 
   #premise {

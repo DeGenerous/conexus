@@ -9,6 +9,7 @@
   import { getCurrentUser } from '@utils/route-guard';
   import { isAdmin, isPlayer } from '@stores/account.svelte';
   import { modal } from '@lib/modal-manager.svelte';
+  import { NAV_ROUTES } from '@constants/routes';
 
   import CategoryBlock from '@components/dashboard/collections/CategoryBlock.svelte';
   import Dropdown from '@components/utils/Dropdown.svelte';
@@ -883,7 +884,20 @@
     {/if}
   {/if}
 
-  <button onclick={() => modal.categoryManager()}> Manage Categories </button>
+  <nav class="dream-container">
+    <p class="soft-white-txt">
+      Stories are created on the Dream page. Use categories here to organize
+      them.
+    </p>
+    <span class="flex-row flex-wrap">
+      <a class="button-anchor green-btn" href={NAV_ROUTES.DREAM}>
+        Create Story
+      </a>
+      <button onclick={() => modal.categoryManager()}>
+        Manage Categories
+      </button>
+    </span>
+  </nav>
 </PullToRefresh>
 
 <style lang="scss">

@@ -249,18 +249,13 @@
   </section>
 
   {#if (!$tablePrompt.side_characters || $tablePrompt.side_characters.length < 1) && (!$tablePrompt.main_character || !$tablePrompt.main_character.name)}
-    <p class="validation">There is no characters added</p>
+    <p class="validation">No characters added yet</p>
   {:else if !$tablePrompt.side_characters || $tablePrompt.side_characters.length < 1 || ($tablePrompt.side_characters && $tablePrompt.side_characters.length < 2 && (!$tablePrompt.main_character || !$tablePrompt.main_character.name))}
-    <p class="validation">
-      You must have at least 2 characters to set up a relationship
-    </p>
+    <p class="validation">Add at least 2 characters to create a relationship</p>
   {/if}
 
   {#if newRelationship.connection[0] && newRelationship.connection[1] && newRelationship.connection[0] == newRelationship.connection[1]}
-    <p class="validation">
-      A character cannot have a relationship with themselves, please select two
-      different characters
-    </p>
+    <p class="validation">Select two different characters</p>
   {/if}
 
   <button onclick={addRelationship} disabled={!relationsValidation}>

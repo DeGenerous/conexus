@@ -38,7 +38,7 @@
     });
   };
 
-  let profilePath = $user ? `/c/${$user?.username ?? 'unknown'}` : '/dashboard';
+  let profilePath = $user?.username ? `/c/${$user.username}` : '/dashboard';
 
   function isComponentItem(item: SidebarItem): item is SidebarComponentItem {
     return 'id' in item && 'component' in item;

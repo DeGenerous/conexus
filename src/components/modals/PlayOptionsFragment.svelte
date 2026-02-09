@@ -79,8 +79,10 @@
   </div>
 
   <div class="flex flex-row justify-center gap-md">
-    <button class="btn-alert" onclick={() => modal.close()}> Cancel </button>
-    <button class="btn-cta" onclick={handlePlay}>
+    <button class="btn-alert red-btn" onclick={() => modal.close()}>
+      Cancel
+    </button>
+    <button class="btn-cta cta" onclick={handlePlay}>
       {playMode === 'play_limited' ? 'Play: 1 credit' : 'Play: 3 credits'}
     </button>
   </div>

@@ -398,7 +398,7 @@
   </div>
 
   <div class="input-container gap-8">
-    <label for="description">Tagline (Front Page Teaser)</label>
+    <label for="description">Teaser</label>
     <textarea
       id="description"
       class:red-border={$storyData.description.length < 20 ||

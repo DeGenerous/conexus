@@ -1,20 +1,47 @@
 import { writable } from 'svelte/store';
 
-import { GetCache, SetCache, PERSONAL_SETUP_KEY } from '@constants/cache';
+import {
+  GetCache,
+  SetCache,
+  PERSONAL_SETUP_KEY,
+  USER_KEY,
+} from '@constants/cache';
 
 // Global account state flags shared across the dashboard UI
 
 export const accountError = writable<AccountError>(null);
 
-export const user = writable<Nullable<User>>(null);
+function getCachedUser(): Nullable<User> {
+  if (typeof window === 'undefined') return null;
+  try {
+    return GetCache<User>(USER_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function deriveInitialRoles(u: Nullable<User>) {
+  const role = u?.role_name ?? 'Guest';
+  return {
+    admin: role === 'Admin',
+    creator: role === 'Creator',
+    player: role === 'Creator' || role === 'Player',
+    guest: role === 'Guest',
+  };
+}
+
+const cachedUser = getCachedUser();
+const initialRoles = deriveInitialRoles(cachedUser);
+
+export const user = writable<Nullable<User>>(cachedUser);
 
 export const developerMode = writable<boolean>(false);
 export const approvedTester = writable<boolean>(true);
 
-export const isAdmin = writable<boolean>(false);
-export const isCreator = writable<boolean>(false);
-export const isPlayer = writable<boolean>(false);
-export const isGuest = writable<boolean>(false);
+export const isAdmin = writable<boolean>(initialRoles.admin);
+export const isCreator = writable<boolean>(initialRoles.creator);
+export const isPlayer = writable<boolean>(initialRoles.player);
+export const isGuest = writable<boolean>(initialRoles.guest);
 
 // Personal Settings & Theme & Play Mode
 

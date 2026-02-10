@@ -68,7 +68,7 @@ type ModalContract = {
     /** Called after a draft is restored so the parent can react (e.g. reset timer, update label). */
     onRestore?: () => void;
     /** Called when user clicks "Start new Draft" to create a fresh draft. */
-    onCreate?: () => void;
+    onCreate?: () => Promise<void> | void;
   };
 };
 

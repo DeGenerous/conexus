@@ -50,4 +50,9 @@
       }
     }
   }
+
+  :global(nav.disabled .home-pc, nav.disabled .home-mobile) {
+    opacity: 0.5;
+    pointer-events: none;
+  }
 </style>

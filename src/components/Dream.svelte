@@ -129,6 +129,9 @@
   };
 
   onMount(() => {
+    // Skip all draft operations for unauthenticated users
+    if (!$user) return;
+
     let destroyed = false;
     let isInitialFingerprintRun = true;
 
@@ -398,7 +401,7 @@
   </div>
 
   <div class="input-container gap-8">
-    <label for="description">Tagline (Front Page Teaser)</label>
+    <label for="description">Teaser</label>
     <textarea
       id="description"
       class:red-border={$storyData.description.length < 20 ||

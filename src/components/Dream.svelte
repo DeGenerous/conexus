@@ -129,6 +129,9 @@
   };
 
   onMount(() => {
+    // Skip all draft operations for unauthenticated users
+    if (!$user) return;
+
     let destroyed = false;
     let isInitialFingerprintRun = true;
 

@@ -13,7 +13,7 @@
     onCreate,
   }: {
     onRestore?: () => void;
-    onCreate: () => void;
+    onCreate?: () => Promise<void> | void;
   } = $props();
 
   const topic = new Topic();
@@ -59,11 +59,24 @@
 
       if ($currentDraft?.id === draft.id) {
         await Drafts.create();
+        drafts = await topic.getDrafts();
         onRestore?.();
       }
     } catch {
       error = `Failed to delete "${draft.title}".`;
     }
+  };
+
+  const handleCreate = async () => {
+    error = '';
+    inFlight = true;
+    try {
+      await onCreate?.();
+      drafts = await topic.getDrafts();
+    } catch {
+      error = 'Failed to create draft.';
+    }
+    inFlight = false;
   };
 </script>
 
@@ -79,8 +92,9 @@
     <div class="container">
       {#each drafts as draft (draft.id)}
         <button
-          class="void-btn small-tile small-rose-tile"
-          class:active={$currentDraft?.id === draft.id}
+          class="void-btn small-tile"
+          class:small-rose-tile={$currentDraft?.id !== draft.id}
+          class:small-green-tile={$currentDraft?.id == draft.id}
           onclick={() => restoreDraft(draft.id)}
         >
           <h5>{draft.title}</h5>
@@ -99,7 +113,7 @@
     <h4>No drafts yet</h4>
   {/if}
 
-  <button class="green-btn" onclick={onCreate}> Start new Draft </button>
+  <button class="green-btn" onclick={handleCreate}> Start new Draft </button>
 
   {#if error}
     <p class="validation">{error}</p>

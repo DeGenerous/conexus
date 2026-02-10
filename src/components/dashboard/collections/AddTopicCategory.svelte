@@ -1,6 +1,7 @@
 <script lang="ts">
   import { toastStore } from '@stores/toast.svelte';
   import { isAdmin } from '@stores/account.svelte';
+  import { modal } from '@lib/modal-manager.svelte';
 
   import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
@@ -140,6 +141,10 @@
 
       <button onclick={handleAddCategory} disabled={!selectedCategoryId}>
         Add Category
+      </button>
+
+      <button class="purple-btn" onclick={() => modal.categoryManager()}>
+        Manage Categories
       </button>
     {/snippet}
   </CategoryFetcher>

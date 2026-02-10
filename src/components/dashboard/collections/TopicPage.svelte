@@ -527,10 +527,10 @@
             <Scenario />
             <WritingStyle />
             <div class="flex-row">
-              <h4>Additional Data</h4>
+              <h4>Additional Notes</h4>
               <textarea
                 id="additional-data"
-                placeholder="Add any additional styling, references, details..."
+                placeholder="e.g. &quot;Focus on dialogue, external conflict, and fast-paced action. Include a plot twist if the protagonist drinks a potion.&quot;"
                 rows="2"
                 bind:value={$tablePrompt.additional_data}
               ></textarea>
@@ -589,7 +589,7 @@
         <!-- IMAGE-PROMPT -->
         <div class="flex-row box-header">
           <span class="edit-wrapper flex">
-            <h4>Image Generation Instructions</h4>
+            <h4>Art Direction</h4>
             <span class="flex-row">
               {#if editingImagePrompt}
                 <CloseSVG
@@ -621,7 +621,7 @@
           <textarea
             id="image-prompt"
             class="dream-input dream-textfield"
-            placeholder="E.g. A breathtaking cosmic landscape filled with swirling galaxies, ancient ruins, and a lone traveler standing at the edge of destiny."
+            placeholder="e.g. &quot;Dark, moody cyberpunk. Neon-lit rain, gritty textures, heavy shadows.&quot;"
             rows="5"
             bind:value={imagePromptDraft}
             disabled={!editingImagePrompt}

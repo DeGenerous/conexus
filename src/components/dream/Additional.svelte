@@ -26,7 +26,7 @@
     <h4>Additional Notes</h4>
     <textarea
       id="additional-notes"
-      placeholder="e.g. &quot;Include a plot twist involving time travel. Reference the visual style of Blade Runner.&quot;"
+      placeholder="e.g. &quot;Focus on dialogue, external conflict, and fast-paced action. Include a plot twist if the protagonist drinks a potion.&quot;"
       rows="2"
       bind:value={$tablePrompt.additional_data}
     ></textarea>

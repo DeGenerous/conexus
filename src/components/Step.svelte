@@ -311,14 +311,16 @@ a11y_no_noninteractive_element_interactions -->
           />
         {/if}
 
-        <article
-          class="vert-scrollbar"
-          class:text-only={$isGuest ||
-            step.task_id === '' ||
-            step.task_id === 'generate'}
-        >
-          {step.story}
-        </article>
+        {#key step.story}
+          <article
+            class="vert-scrollbar"
+            class:text-only={$isGuest ||
+              step.task_id === '' ||
+              step.task_id === 'generate'}
+          >
+            {step.story}
+          </article>
+        {/key}
       </span>
 
       {#if $story?.step_data?.ended}
@@ -566,9 +568,12 @@ a11y_no_noninteractive_element_interactions -->
   .step-wrapper {
     color: var(--theme-text);
     font-family: var(--theme-font, inherit);
+    margin-top: -6rem;
 
     @include respond-up(small-desktop) {
-      margin-block: -4rem 4rem;
+      min-height: calc(100dvh - 3.5rem);
+      margin-top: -4rem;
+      padding-bottom: 2.5rem;
     }
 
     * {

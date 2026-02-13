@@ -17,10 +17,10 @@
   } from '@stores/dream.svelte';
   import PullToRefresh from '@components/utils/PullToRefresh.svelte';
 
-  import ExploreCategory from '@components/dashboard/collections/AddTopicCategory.svelte';
-  import GenreTags from '@components/dashboard/collections/GenreTags.svelte';
-  import Gating from '@components/dashboard/collections/Gating.svelte';
-  import Media from '@components/dashboard/collections/Media.svelte';
+  import ExploreCategory from '@components/console/collections/AddTopicCategory.svelte';
+  import GenreTags from '@components/console/collections/GenreTags.svelte';
+  import Gating from '@components/console/collections/Gating.svelte';
+  import Media from '@components/console/collections/Media.svelte';
 
   import World from '@components/dream/World.svelte';
   import Characters from '@components/dream/Characters.svelte';
@@ -336,11 +336,11 @@
               </button>
             {/if}
             <button class="purple-btn" onclick={openTopicSettings}>
-              Story Settings
+              Story Controls
             </button>
             <a
               class="button-anchor cta"
-              href="/dashboard/collections/topic/{topic_id}/demo?demoID={topic_id}&demoName={topic_name}"
+              href="/console/my-stories/topic/{topic_id}/demo?demoID={topic_id}&demoName={topic_name}"
             >
               Play Now
             </a>
@@ -638,7 +638,7 @@
           modal.confirm('', ensureMessage('delete this story'), {
             onConfirm: async () => {
               await topicManager.deleteTopic(topic_id);
-              window.location.href = '/dashboard/collections';
+              window.location.href = '/console/my-stories';
             },
             confirmText: `Delete story: ${topic_name}`,
           })}

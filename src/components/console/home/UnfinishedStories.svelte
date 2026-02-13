@@ -6,13 +6,13 @@
   import {
     GetCache,
     SetCache,
-    FINISHED_STORIES_RANGE_KEY,
+    UNFINISHED_STORIES_RANGE_KEY,
   } from '@constants/cache';
   import { resolveRenderableImage } from '@utils/file-validation';
 
   let account: Account = new Account();
 
-  let finishedStories = $state<UserStoriesMetric[] | null>(null);
+  let unfinishedStories = $state<UserStoriesMetric[] | null>(null);
   let tileImages = $state<Record<string, string>>({});
 
   let timeRanges: DurationEnum[] = [
@@ -25,18 +25,18 @@
   ];
   let selectedRange = $state<DurationEnum | null>(null);
 
-  const fetchFinishedStories = async (range: DurationEnum) => {
-    SetCache(FINISHED_STORIES_RANGE_KEY, range);
-    finishedStories = await account.getUserStories(range, true);
+  const fetchUnfinishedStories = async (range: DurationEnum) => {
+    SetCache(UNFINISHED_STORIES_RANGE_KEY, range);
+    unfinishedStories = await account.getUserStories(range);
   };
 
   $effect(() => {
-    if (selectedRange) fetchFinishedStories(selectedRange);
+    if (selectedRange) fetchUnfinishedStories(selectedRange);
   });
 
-  // Map each topic to a verified tile URL so list renders stay safe
+  // Map unfinished topics to guarded preview URLs
   $effect(() => {
-    const topics = finishedStories;
+    const topics = unfinishedStories;
     if (!topics) {
       tileImages = {};
       return;
@@ -45,10 +45,11 @@
     let cancelled = false;
 
     tileImages = Object.fromEntries(
-      topics.map((topic) => [
-        String(topic.topic_id),
-        serveUrl(topic.tile_file_url),
-      ]),
+      topics.map((topic) => {
+        const key = String(topic.topic_id);
+        const candidate = serveUrl(topic.tile_file_url);
+        return [key, candidate] as const;
+      }),
     );
 
     (async () => {
@@ -81,19 +82,19 @@
   });
 
   onMount(() => {
-    const cachedRange = GetCache<DurationEnum>(FINISHED_STORIES_RANGE_KEY);
+    const cachedRange = GetCache<DurationEnum>(UNFINISHED_STORIES_RANGE_KEY);
     if (cachedRange && timeRanges.includes(cachedRange))
       selectedRange = cachedRange;
     else selectedRange = timeRanges[0];
   });
 </script>
 
-<div class="collection-header dashboard-collection-header blur">
-  <h4>Completed Runs</h4>
+<div class="collection-header console-collection-header">
+  <h4>Continue Shaping</h4>
 
   <div class="input-container">
-    <label for="finished-stories-timerange">Finished in</label>
-    <select id="finished-stories-timerange" bind:value={selectedRange}>
+    <label for="unfinished-stories-timerange">Unfinished for</label>
+    <select id="unfinished-stories-timerange" bind:value={selectedRange}>
       {#each timeRanges as range}
         <option value={range}>{range.toLocaleLowerCase()}</option>
       {/each}
@@ -101,15 +102,15 @@
   </div>
 </div>
 
-<div class="tiles-collection dashboard-collection">
-  {#if !finishedStories}
+<div class="tiles-collection console-collection">
+  {#if !unfinishedStories}
     <h5 class="empty-title flex soft-white-txt">
-      Your finished stories will be there
+      Your unfinished stories will be there
     </h5>
   {:else}
-    {#each finishedStories as topic}
+    {#each unfinishedStories as topic}
       <a
-        class="tile gray-tile"
+        class="tile"
         href="/{topic.creator
           ? 'c'
           : 's'}/{topic.route_name}/{topic.topic_id}?title={topic.name}"
@@ -134,12 +135,8 @@
 <style lang="scss">
   @use '/src/styles/mixins' as *;
 
-  .collection-header {
-    @include gray(0.25);
-  }
-
   .tiles-collection {
     animation: none;
-    @include gray(0.1);
+    @include blue(0.1);
   }
 </style>

@@ -53,22 +53,22 @@
   <h4>Play options</h4>
   <p>
     These choices are also
-    <a href="/dashboard/settings" target="_self"> in your profile. </a>
+    <a href="/console/preferences" target="_self"> in your profile. </a>
     Changes apply immediately.
   </p>
 
   <div class="transparent-container">
     <div class="flex-row flex-wrap">
-      <h5>Settings</h5>
+      <h5>Controls</h5>
       <select bind:value={preferredSettings}>
         <option value="personal">Personal</option>
         <option value="default">Default</option>
       </select>
       <p>
         {#if preferredSettings === 'personal'}
-          Use your profile settings.
+          Use your profile controls.
         {:else}
-          Use the author’s settings.
+          Use the author’s controls.
         {/if}
       </p>
     </div>

@@ -1,0 +1,15 @@
+---
+// LEGACY NAME: Collections
+import Layout from '@layouts/Layout.astro';
+
+import CollectionsPage from '@components/console/collections/Collections.svelte';
+
+const meta = {
+  nav: 'My Stories',
+  header: 'My Stories',
+};
+---
+
+<Layout {...meta}>
+  <CollectionsPage client:only="svelte" />
+</Layout>

@@ -57,17 +57,17 @@ export async function userState(state: UserState = 'signed'): Promise<boolean> {
   return checks[state]();
 }
 
-export async function ensureSigned(path = '/dashboard'): Promise<void> {
+export async function ensureSigned(path = '/console'): Promise<void> {
   if (!(await userState('signed'))) redirectTo(path);
 }
 
 // Check if route is protected for Admins
-export async function ensureAdmin(path = '/dashboard'): Promise<void> {
+export async function ensureAdmin(path = '/console'): Promise<void> {
   if (!(await userState('admin'))) redirectTo(path);
 }
 
 // Check if route is protected for Players
-export async function ensurePlayer(path = '/dashboard'): Promise<void> {
+export async function ensurePlayer(path = '/console'): Promise<void> {
   const [player, admin] = await Promise.all([
     userState('player'),
     userState('admin'),
@@ -79,12 +79,12 @@ export async function ensurePlayer(path = '/dashboard'): Promise<void> {
 }
 
 // Check if route is protected for Guests
-export async function restrictToGuest(path = '/dashboard'): Promise<void> {
+export async function restrictToGuest(path = '/console'): Promise<void> {
   if (await userState('guest')) redirectTo(path);
 }
 
 export async function checkUserRoles(
-  path = '/dashboard',
+  path = '/console',
 ): Promise<{ isAdmin: boolean; isPlayer: boolean; isGuest: boolean }> {
   const user = await getCurrentUser();
 

@@ -3,7 +3,7 @@
   import { isAdmin } from '@stores/account.svelte';
   import { toastStore } from '@stores/toast.svelte';
 
-  import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
+  import CategoryFetcher from '@components/console/common/CategoryFetcher.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
 
   let { onUpdate }: { onUpdate?: () => Promise<void> } = $props();

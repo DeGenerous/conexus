@@ -38,7 +38,7 @@
     });
   };
 
-  let profilePath = $user?.username ? `/c/${$user.username}` : '/dashboard';
+  let profilePath = $user?.username ? `/c/${$user.username}` : '/console';
 
   function isComponentItem(item: SidebarItem): item is SidebarComponentItem {
     return 'id' in item && 'component' in item;
@@ -51,33 +51,33 @@
       path: profilePath,
     },
     {
-      name: 'Collections',
+      name: 'My Stories',
       intended: 'player',
-      path: '/dashboard/collections',
+      path: '/console/my-stories',
     },
     {
       name: 'Bookmarks',
       intended: 'all',
-      path: '/dashboard/bookmarks',
+      path: '/console/bookmarks',
     },
     {
-      name: 'Account',
-      intended: 'all',
-      path: '/dashboard/account',
-    },
-    {
-      name: 'Preferences',
-      intended: 'all',
-      path: '/dashboard/preferences',
-    },
-    {
-      name: 'Settings',
+      name: 'Controls',
       intended: 'all',
       onclick: openPersonalSettings,
     },
     {
+      name: 'Preferences',
+      intended: 'all',
+      path: '/console/preferences',
+    },
+    {
+      name: 'Settings',
+      intended: 'all',
+      path: '/console/settings',
+    },
+    {
       name: 'OmniHub',
-      path: '/dashboard/omnihub',
+      path: '/console/omnihub',
       display: hasMainWallet,
     },
     {
@@ -198,7 +198,7 @@
 <section
   class="flex gap-8 vert-scrollbar"
   class:open={$sidebarOpen}
-  aria-label="Dashboard navigation"
+  aria-label="Console navigation"
   {onpointerenter}
   {onpointerleave}
 >

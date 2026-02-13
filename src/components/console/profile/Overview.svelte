@@ -31,7 +31,7 @@
   import PullToRefresh from '@components/utils/PullToRefresh.svelte';
   import WalletConnect from '@components/web3/WalletConnect.svelte';
   import Dropdown from '@components/utils/Dropdown.svelte';
-  import FooterLinks from '@components/dashboard/common/FooterLinks.svelte';
+  import FooterLinks from '@components/console/common/FooterLinks.svelte';
 
   import EyeSVG from '@components/icons/Eye.svelte';
   import CloseSVG from '@components/icons/Close.svelte';

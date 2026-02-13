@@ -46,8 +46,8 @@
       <div class="flex flex-col items-center gap-md">
         <label class="setting-label">
           SETTINGS: {preferredSettings === 'personal'
-            ? 'Use your profile settings'
-            : "Use the author's settings"}
+            ? 'Use your profile controls'
+            : "Use the author's controls"}
           <select bind:value={preferredSettings}>
             <option value="personal">Personal</option>
             <option value="default">Author's Default</option>

@@ -102,8 +102,8 @@ type UserStoriesFilter = {
   duration: DurationEnum;
 };
 
-/** Topic summary shown on the user dashboard. */
-type DashboardTopic = {
+/** Topic summary shown on the user console. */
+type ConsoleTopic = {
   topic_id?: string;
   name?: string;
   tile_file_url?: string;
@@ -141,14 +141,14 @@ type CreatorTile = {
 /** Actions that count toward a user's streak. */
 type StreakAction = 'login' | 'play';
 
-/** Per-topic story activity metric for the user dashboard. */
+/** Per-topic story activity metric for the user console. */
 type UserStoriesMetric = {
   story_count: number;
-  stories: DashboardStoryInfo[];
-} & DashboardTopic;
+  stories: ConsoleStoryInfo[];
+} & ConsoleTopic;
 
-/** Individual story progress entry within a dashboard metric. */
-type DashboardStoryInfo = {
+/** Individual story progress entry within a console metric. */
+type ConsoleStoryInfo = {
   story_id: string;
   total_steps: number;
   started_at: Date;

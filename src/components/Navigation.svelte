@@ -18,7 +18,7 @@
   import Sidebar from '@components/utils/Sidebar.svelte';
   import Home from '@components/icons/Home.svelte';
 
-  import BookSVG from '@components/icons/Book.svelte';
+  import PlayOutlineSVG from '@components/icons/PlayOutline.svelte';
   import PlaySVG from '@components/icons/Play.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
   import DreamSVG from '@components/icons/Dream.svelte';
@@ -100,7 +100,7 @@
       id: 'Stories',
       label: 'Stories',
       href: '/s/Community%20Picks',
-      icon: BookSVG,
+      icon: PlayOutlineSVG,
       active: activeSection,
     },
     {
@@ -111,11 +111,11 @@
       active: activeTab === 'Dream',
     },
     {
-      id: 'Dashboard',
-      label: 'Dashboard',
-      href: '/dashboard',
+      id: 'Console',
+      label: 'Console',
+      href: '/console',
       icon: GridSVG,
-      active: activeTab === 'Dashboard',
+      active: activeTab === 'Console',
     },
   ]);
 

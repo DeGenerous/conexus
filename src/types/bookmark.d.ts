@@ -10,7 +10,7 @@ type Bookmark = {
   topic_id: string;
   note?: string;
   sort_order?: number;
-} & DashboardTopic;
+} & ConsoleTopic;
 
 /** Named tag used for bookmark categorization. */
 type BookmarkTag = {

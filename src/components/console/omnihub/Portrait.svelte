@@ -13,7 +13,7 @@
   import { attributes } from '@constants/curation';
   import { NAV_ROUTES } from '@constants/routes';
 
-  import Votes from '@components/dashboard/omnihub/Votes.svelte';
+  import Votes from '@components/console/omnihub/Votes.svelte';
   import SwitchArrows from '@components/utils/SwitchArrows.svelte';
 
   let potential = $state<Nullable<NFT>>(null);

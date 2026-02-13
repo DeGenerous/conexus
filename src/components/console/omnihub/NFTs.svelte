@@ -6,7 +6,7 @@
     TTL_HOUR,
   } from '@constants/cache';
 
-  import Ranks from '@components/dashboard/omnihub/Ranks.svelte';
+  import Ranks from '@components/console/omnihub/Ranks.svelte';
 
   let {
     potentials,
@@ -38,7 +38,7 @@
   and personalization — all in one place.
 </p>
 
-<div class="collection-header dashboard-collection-header">
+<div class="collection-header console-collection-header">
   <div class="flex-row gap-8">
     <h4>Potentials:</h4>
     <span class="flex pad-8">{potentials.length}</span>
@@ -61,12 +61,12 @@
   {/if}
 </div>
 
-<div class="tiles-collection dashboard-collection">
+<div class="tiles-collection console-collection">
   {#if sortedPotentials.length}
     {#each sortedPotentials as nft}
       <a
         class="tile potential-tile"
-        href="/dashboard/potential"
+        href="/console/potential"
         onclick={() => {
           SetCache(POTENTIALS_KEY, potentials, TTL_HOUR);
           SetCache(SELECTED_POTENTIAL_KEY, nft, TTL_HOUR);

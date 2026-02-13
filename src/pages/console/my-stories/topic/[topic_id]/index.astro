@@ -1,7 +1,7 @@
 ---
 import Layout from '@layouts/Layout.astro';
 
-import TopicPage from '@components/dashboard/collections/TopicPage.svelte';
+import TopicPage from '@components/console/collections/TopicPage.svelte';
 
 import { NAV_ROUTES } from '@constants/routes';
 
@@ -15,7 +15,7 @@ const meta = {
   header: 'Refine & Enhance',
   nav: topic_id,
   breadcrumbs: [
-    { label: 'Collections', href: NAV_ROUTES.MANAGE },
+    { label: 'My Stories', href: NAV_ROUTES.MANAGE },
     { label: 'Refine & Enhance' },
   ],
 };

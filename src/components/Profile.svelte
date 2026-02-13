@@ -32,7 +32,7 @@
   import LoadingSVG from '@components/icons/Loading.svelte';
 
   let {
-    activeTab = 'Dashboard',
+    activeTab = 'Console',
     expanded = false,
     onclick,
     onpointerenter,

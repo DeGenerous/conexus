@@ -2,15 +2,15 @@
   import { user } from '@stores/account.svelte';
   import { showProfile } from '@stores/modal.svelte';
 
-  import UnfinishedStories from '@components/dashboard/home/UnfinishedStories.svelte';
-  import FinishedStories from '@components/dashboard/home/FinishedStories.svelte';
-  import FooterLinks from '@components/dashboard/common/FooterLinks.svelte';
+  import UnfinishedStories from '@components/console/home/UnfinishedStories.svelte';
+  import FinishedStories from '@components/console/home/FinishedStories.svelte';
+  import FooterLinks from '@components/console/common/FooterLinks.svelte';
 </script>
 
 {#if $user}
   <p>
     Your command center for CoNexus. Return to ongoing stories, scan recent
-    activity, and branch to resources and settings.
+    activity, and branch to resources and controls.
   </p>
 
   <UnfinishedStories />

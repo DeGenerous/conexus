@@ -43,18 +43,18 @@
   async function handleSave() {
     if (onSave) await onSave(settings);
     if (mode === 'story-creation')
-      toastStore.show('Settings applied successfully');
+      toastStore.show('Controls applied successfully');
   }
 
   // Context-aware labels
   const contextLabel = $derived.by(() => {
     switch (mode) {
       case 'personal':
-        return 'Your Default Settings';
+        return 'Your Default Controls';
       case 'story-creation':
-        return 'Story Settings';
+        return 'Story Controls';
       case 'topic-edit':
-        return 'Story Settings';
+        return 'Story Controls';
     }
   });
 

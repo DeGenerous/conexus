@@ -12,7 +12,7 @@
   import ThemeSettings from '@components/utils/ThemeSettings.svelte';
   import StylingController from '@components/utils/StylingController.svelte';
   import SelectorSVG from '@components/icons/Selector.svelte';
-  import FooterLinks from '@components/dashboard/common/FooterLinks.svelte';
+  import FooterLinks from '@components/console/common/FooterLinks.svelte';
 
   const account: Account = new Account();
 
@@ -108,7 +108,7 @@
 
 <section class="preferred-setup dream-container">
   <div class="flex-row">
-    <h4>Preferred Settings</h4>
+    <h4>Preferred Controls</h4>
     <div class="container">
       <span class="flex-row">
         <button
@@ -134,7 +134,7 @@
       </span>
       <p>
         {#if preferredSettings === 'personal'}
-          Use your profile’s settings, overriding the story’s defaults.
+          Use your profile’s controls, overriding the story’s defaults.
         {:else}
           Play with author defaults, personal preferences will not be applied.
         {/if}

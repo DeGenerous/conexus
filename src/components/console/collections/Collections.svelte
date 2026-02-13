@@ -11,7 +11,7 @@
   import { modal } from '@lib/modal-manager.svelte';
   import { NAV_ROUTES } from '@constants/routes';
 
-  import CategoryBlock from '@components/dashboard/collections/CategoryBlock.svelte';
+  import CategoryBlock from '@components/console/collections/CategoryBlock.svelte';
   import PullToRefresh from '@components/utils/PullToRefresh.svelte';
 
   const topicManager = new Topics();

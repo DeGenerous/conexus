@@ -3,7 +3,7 @@
   import { isAdmin } from '@stores/account.svelte';
   import { modal } from '@lib/modal-manager.svelte';
 
-  import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
+  import CategoryFetcher from '@components/console/common/CategoryFetcher.svelte';
   import CloseSVG from '@components/icons/Close.svelte';
 
   let {

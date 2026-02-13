@@ -288,7 +288,7 @@
 
 <!-- <h3>{openedTitle}</h3> -->
 
-<div class="tiles-collection dashboard-collection">
+<div class="tiles-collection console-collection">
   {#if topics.length === 0}
     <h5 class="empty-title flex text-glowing">
       {#if !folders.length}

@@ -25,7 +25,7 @@
 
   import SaveSVG from '@components/icons/Checkmark.svelte';
   import Drafts from '@utils/story-drafts';
-  import CategoryFetcher from '@components/dashboard/common/CategoryFetcher.svelte';
+  import CategoryFetcher from '@components/console/common/CategoryFetcher.svelte';
   import World from './dream/World.svelte';
   import Characters from '@components/dream/Characters.svelte';
   import Scenario from '@components/dream/Scenario.svelte';
@@ -214,7 +214,7 @@
     await Drafts.create();
 
     setTimeout(() => {
-      const storyLink = `/dashboard/collections/topic/${topic_id}`;
+      const storyLink = `/console/my-stories/topic/${topic_id}`;
       modal.confirm('', openStoryManage, {
         onConfirm: () => (window.location.href = storyLink),
         confirmText: 'Manage Story',
@@ -253,7 +253,7 @@
         class:purple-btn={!isPromptSettingsDefault($promptSettings)}
         onclick={openStorySettings}
       >
-        Story Settings
+        Story Controls
       </button>
     </span>
 
@@ -359,7 +359,7 @@
         </select>
         {#if categories.length > 0}
           <p class="transparent-white-txt caption-font">
-            Organize your stories into collections.
+            Organize your stories into categories.
           </p>
         {/if}
       </div>

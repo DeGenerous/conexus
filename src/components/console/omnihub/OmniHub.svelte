@@ -6,7 +6,7 @@
   import { normalizeMeta } from '@utils/potentials';
   import { POTENTIALS_COLLECTION_ID } from '@constants/curation';
   import PullToRefresh from '@components/utils/PullToRefresh.svelte';
-  import NFTSection from '@components/dashboard/omnihub/NFTs.svelte';
+  import NFTSection from '@components/console/omnihub/NFTs.svelte';
 
   const curation = new Curation();
 
@@ -94,7 +94,7 @@
             Connect a wallet to activate OmniHub and access your assets,
             identity, and tools
           </h5>
-          <button onclick={() => open('/dashboard/account', '_self')}>
+          <button onclick={() => open('/console/settings', '_self')}>
             Open Your Profile
           </button>
         {:else}
@@ -108,7 +108,7 @@
             If your Potential lies elsewhere, link the right access point
             through your profile
           </p>
-          <button onclick={() => open('/dashboard/account', '_self')}>
+          <button onclick={() => open('/console/settings', '_self')}>
             Connect Another Wallet
           </button>
 

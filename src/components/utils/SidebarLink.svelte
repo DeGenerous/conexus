@@ -1,5 +1,6 @@
 <script lang="ts">
   import { isAdmin, isPlayer } from '@stores/account.svelte';
+  import { sidebarOpen } from '@stores/navigation.svelte';
 
   import SidebarLink from '@components/utils/SidebarLink.svelte';
 
@@ -99,6 +100,7 @@
         class="standalone nohover-link"
         class:selected={activePath === item.path}
         title={item.name}
+        onclick={() => ($sidebarOpen = false)}
       >
         {item.name}
       </a>

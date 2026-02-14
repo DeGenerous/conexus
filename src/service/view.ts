@@ -261,7 +261,6 @@ export default class ViewAPI extends Fetcher {
    */
   async topicView(
     topic_id: string,
-    account_id?: string,
     category_id?: string,
     page: number = 1,
     pageSize: number = 5,
@@ -269,11 +268,6 @@ export default class ViewAPI extends Fetcher {
   ) {
     return this.request<{ topic: TopicPage; neighbors: TopicNeighbor[] }>(
       `${this.topicGroup}/view/${topic_id}?category_id=${category_id || ''}&page=${page}&page_size=${pageSize}&refresh=${refresh}`,
-      {
-        headers: {
-          'X-Requester-ID': account_id || '',
-        },
-      },
     );
   }
 

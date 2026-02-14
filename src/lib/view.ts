@@ -375,7 +375,6 @@ export default class AppView {
    */
   async getTopicPage(
     topic_id: string,
-    account_id?: string,
     category_id?: string,
     page: number = 1,
     pageSize: number = 5,
@@ -383,7 +382,6 @@ export default class AppView {
   ): Promise<{ topic: TopicPage | null; neighbors: TopicNeighbor[] }> {
     const { status, message, data } = await this.api.topicView(
       topic_id,
-      account_id,
       category_id,
       page,
       pageSize,

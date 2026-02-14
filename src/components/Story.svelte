@@ -132,7 +132,6 @@
       inFlight = true;
       const topicPageData = await view.getTopicPage(
         topic_id,
-        user_id,
         category_id,
         1,
         5,

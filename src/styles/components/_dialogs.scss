@@ -15,6 +15,10 @@ dialog {
 
   @include dark-blue(0.75);
 
+  @include mobile-only {
+    max-height: 70dvh;
+  }
+
   @include respond-up(tablet) {
     width: clamp(250px, 90%, 50rem);
   }

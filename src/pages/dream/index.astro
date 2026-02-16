@@ -1,0 +1,14 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import Dream from '@components/Dream.svelte';
+
+const meta = {
+  nav: 'Dream',
+  header: 'Dream',
+};
+---
+
+<Layout {...meta}>
+  <Dream client:only="svelte" />
+</Layout>

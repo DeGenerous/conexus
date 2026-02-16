@@ -9,13 +9,8 @@
   import CoNexusGame from '@lib/story';
   import CoNexusApp from '@lib/view';
   import { story, game } from '@stores/conexus.svelte';
-  import openModal, {
-    modal,
-    showModal,
-    showProfile,
-    playOptions,
-    resetModal,
-  } from '@stores/modal.svelte';
+  import { modal } from '@lib/modal-manager.svelte';
+  import { showProfile } from '@stores/modal.svelte';
   import detectIOS from '@utils/ios-device';
   import { getCurrentUser, userState } from '@utils/route-guard';
   import { getPersonalSetup, developerMode } from '@stores/account.svelte';
@@ -137,7 +132,6 @@
       inFlight = true;
       const topicPageData = await view.getTopicPage(
         topic_id,
-        user_id,
         category_id,
         1,
         5,
@@ -181,11 +175,10 @@
 
   const startGame = () => {
     if (!isReferred && !$developerMode) {
-      openModal(
-        referralWarning,
-        'Proceed',
-        () => (window.location.href = '/referral'),
-      );
+      modal.confirm('', referralWarning, {
+        onConfirm: () => (window.location.href = '/referral'),
+        confirmText: 'Proceed',
+      });
       return;
     }
 
@@ -195,19 +188,12 @@
       return;
     }
 
-    $showModal = true;
-    $playOptions = true;
-    modal.button =
-      retrievePlayMode() === 'play_limited'
-        ? 'Play: 1 credit'
-        : 'Play: 3 credits';
-    modal.buttonFunc = () => {
-      if ($playOptions === 'dont_show_again') {
-        SetCache(PLAY_OPTIONS_KEY, true);
-      }
-      launchStory();
-      resetModal();
-    };
+    modal.playOptions({
+      onPlay: (dontShowAgain) => {
+        if (dontShowAgain) SetCache(PLAY_OPTIONS_KEY, true);
+        launchStory();
+      },
+    });
   };
 
   const restartGame = () => {
@@ -360,11 +346,10 @@
                   <DeleteSVG
                     disabled={game.loading}
                     onclick={() => {
-                      openModal(
-                        ensureMessage('delete this story'),
-                        `Delete story: ${topic_name}`,
-                        () => DeleteStory(continuable.story_id),
-                      );
+                      modal.confirm('', ensureMessage('delete this story'), {
+                        onConfirm: () => DeleteStory(continuable.story_id),
+                        confirmText: `Delete story: ${topic_name}`,
+                      });
                     }}
                   />
                   <span class="flex">

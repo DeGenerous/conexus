@@ -1,0 +1,20 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import Portrait from '@components/console/omnihub/Portrait.svelte';
+
+import { NAV_ROUTES } from '@constants/routes';
+
+const meta = {
+  header: 'Portrait',
+  nav: 'Portrait',
+  breadcrumbs: [
+    { label: 'OmniHub', href: NAV_ROUTES.OMNIHUB },
+    { label: 'Portrait' },
+  ],
+};
+---
+
+<Layout {...meta}>
+  <Portrait client:idle />
+</Layout>

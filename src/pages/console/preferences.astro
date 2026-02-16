@@ -1,0 +1,14 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import PreferencesPage from '@components/console/profile/Preferences.svelte';
+
+const meta = {
+  nav: 'Preferences',
+  header: 'Preferences',
+};
+---
+
+<Layout {...meta}>
+  <PreferencesPage client:only="svelte" />
+</Layout>

@@ -1,0 +1,19 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import UsersPage from '@components/admin/Users.svelte';
+
+const meta = {
+  nav: 'Admin',
+  breadcrumbs: [
+    { label: 'Users', href: '/admin/users', active: true },
+    { label: 'Stories', href: '/admin/stories', active: false },
+    { label: 'Web3', href: '/admin/web3', active: false },
+  ],
+  header: 'Users',
+};
+---
+
+<Layout {...meta}>
+  <UsersPage client:only="svelte" />
+</Layout>

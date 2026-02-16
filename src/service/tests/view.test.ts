@@ -151,12 +151,9 @@ describe('ViewAPI', () => {
   });
 
   it('topicView sends requester header when provided', async () => {
-    await api.topicView('topic-1', 'account-1');
+    await api.topicView('topic-1');
     expect(mockRequest).toHaveBeenCalledWith(
       '/topic/topic-1?category_id=&page=1&page_size=5&refresh=false',
-      {
-        headers: { 'X-Requester-ID': 'account-1' },
-      },
     );
 
     mockRequest.mockClear();

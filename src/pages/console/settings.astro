@@ -1,0 +1,14 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import Overview from '@components/console/profile/Overview.svelte';
+
+const meta = {
+  nav: 'Settings',
+  header: 'Settings',
+};
+---
+
+<Layout {...meta}>
+  <Overview client:only="svelte" />
+</Layout>

@@ -1,0 +1,19 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import Web3Page from '@components/admin/Web3.svelte';
+
+const meta = {
+  nav: 'Admin',
+  breadcrumbs: [
+    { label: 'Users', href: '/admin/users', active: false },
+    { label: 'Stories', href: '/admin/stories', active: false },
+    { label: 'Web3', href: '/admin/web3', active: true },
+  ],
+  header: 'Web3',
+};
+---
+
+<Layout {...meta}>
+  <Web3Page client:only="svelte" />
+</Layout>

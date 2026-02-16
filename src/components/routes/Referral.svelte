@@ -51,7 +51,6 @@
       if (currentCode.length < 3 || currentCode.length > 20) return;
 
       try {
-        referralCodeValid = false;
         codeValidated = false;
 
         const validated = await auth.validateReferralCode(currentCode);

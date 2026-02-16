@@ -45,7 +45,11 @@ const meta = {
   url: `${import.meta.env.PUBLIC_FRONTEND}/s/${section_name}`,
   header: section_name,
   nav: section_name,
-  arrow: '/',
+  breadcrumbs: [
+    { label: 'Community Picks', href: '/s/Community%20Picks', active: sectionName === 'Community Picks' },
+    { label: 'Collabs', href: '/s/Collabs', active: sectionName === 'Collabs' },
+    { label: 'Dischordian Saga', href: '/s/Dischordian%20Saga', active: sectionName === 'Dischordian Saga' },
+  ],
   subheading,
 };
 ---

@@ -1,0 +1,14 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import Home from '@components/console/home/Home.svelte';
+
+const meta = {
+  nav: 'Console',
+  header: 'CoNexus',
+};
+---
+
+<Layout {...meta}>
+  <Home client:only="svelte" />
+</Layout>

@@ -11,9 +11,8 @@
     paperThemeFont,
     paperThemeStyling,
   } from '@constants/customization';
-  import openModal, { showModal } from '@stores/modal.svelte';
+  import { modal } from '@lib/modal-manager.svelte';
   import {
-    themeSettingsModal,
     customFont,
     customStyling,
     getStoredCustomization,
@@ -172,8 +171,7 @@
   });
 
   const openThemeSettings = () => {
-    $showModal = true;
-    $themeSettingsModal = true;
+    modal.themeSettings();
   };
 
   const applyQuickTheme = async (
@@ -246,9 +244,12 @@
       if (!dontShowInstructions) {
         setTimeout(
           () =>
-            openModal(gameRulesModal, "Don't show again", () => {
-              SetCache(GAME_INSTRUCTIONS_KEY, 'dont_show');
-              hideControlsAfterDelay();
+            modal.confirm('', gameRulesModal, {
+              onConfirm: () => {
+                SetCache(GAME_INSTRUCTIONS_KEY, 'dont_show');
+                hideControlsAfterDelay();
+              },
+              confirmText: "Don't show again",
             }),
           600,
         );
@@ -302,7 +303,7 @@ a11y_no_noninteractive_element_interactions -->
       </h4>
 
       <span class="description flex">
-        {#if !$isGuest && (step.task_id !== '' && step.task_id !== 'generate')}
+        {#if !$isGuest && step.task_id !== '' && step.task_id !== 'generate'}
           <ImageDisplay
             image={step.image}
             image_type={step.image_type}
@@ -310,12 +311,16 @@ a11y_no_noninteractive_element_interactions -->
           />
         {/if}
 
-        <article
-          class="vert-scrollbar"
-          class:text-only={$isGuest || step.task_id === '' || step.task_id === 'generate'}
-        >
-          {step.story}
-        </article>
+        {#key step.story}
+          <article
+            class="vert-scrollbar"
+            class:text-only={$isGuest ||
+              step.task_id === '' ||
+              step.task_id === 'generate'}
+          >
+            {step.story}
+          </article>
+        {/key}
       </span>
 
       {#if $story?.step_data?.ended}
@@ -502,7 +507,7 @@ a11y_no_noninteractive_element_interactions -->
       tabindex="-1"
     >
       <Slider type="music" style={themeStyles} />
-      {#if !$isGuest && (step.task_id !== '' && step.task_id !== 'generate')}
+      {#if !$isGuest && step.task_id !== '' && step.task_id !== 'generate'}
         <Slider type="voice" style={themeStyles} />
       {/if}
     </section>
@@ -563,9 +568,12 @@ a11y_no_noninteractive_element_interactions -->
   .step-wrapper {
     color: var(--theme-text);
     font-family: var(--theme-font, inherit);
+    margin-top: -6rem;
 
     @include respond-up(small-desktop) {
-      margin-block: -4rem 4rem;
+      min-height: calc(100dvh - 3.5rem);
+      margin-top: -4rem;
+      padding-bottom: 2.5rem;
     }
 
     * {

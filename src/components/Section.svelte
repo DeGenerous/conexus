@@ -32,6 +32,7 @@
   let loading = $state<boolean>(false);
   let allLoaded = $state<boolean>(false); // Prevent further requests when empty response
   let showNoCategoriesMessage = $state<boolean>(false);
+  let hydrated = $state<boolean>(false);
   let filtersResetKey = $state<number>(0);
 
   let explorerImage = $state<string>(blankImage);
@@ -110,6 +111,7 @@
   const hydrateSection = async (refresh = false) => {
     try {
       observer?.disconnect();
+      hydrated = false;
       categories = [];
       allLoaded = false;
       showNoCategoriesMessage = false;
@@ -134,6 +136,7 @@
 
       const data = await app.getGenres(refresh);
       genres = data.sort((a, b) => a.name.localeCompare(b.name));
+      hydrated = true;
 
       // Fallback message if no categories found
       setTimeout(() => {
@@ -217,7 +220,7 @@
 
   // When 1 or more categories visible - observe the last one
   $effect(() => {
-    if (categories.length > 0) setTimeout(observeLastCategory, 500);
+    if (hydrated && categories.length > 0) setTimeout(observeLastCategory, 500);
   });
 
   const refreshSection = async () => {
@@ -231,6 +234,7 @@
       {#if explorerImage !== blankImage}
         <img class="pfp round" src={explorerImage} alt="Creator PFP" />
       {/if}
+      <h3>{explorer.username}</h3>
       <p>{explorer.avatar_bio}</p>
     </div>
   {/if}

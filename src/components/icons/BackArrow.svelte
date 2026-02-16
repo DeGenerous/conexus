@@ -24,6 +24,10 @@
   @use '/src/styles/mixins' as *;
 
   a {
+    position: absolute;
+    left: 1rem;
+    top: 5.5rem;
+    z-index: 99;
     @include cyan(1, text);
 
     svg {
@@ -43,7 +47,7 @@
     }
 
     &.hidden {
-      visibility: hidden;
+      display: none;
     }
   }
 </style>

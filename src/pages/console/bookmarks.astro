@@ -1,0 +1,14 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import BookmarksPage from '@components/console/profile/Bookmarks.svelte';
+
+const meta = {
+  nav: 'Bookmarks',
+  header: 'Bookmarks',
+};
+---
+
+<Layout {...meta}>
+  <BookmarksPage client:only="svelte" />
+</Layout>

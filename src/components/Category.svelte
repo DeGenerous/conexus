@@ -18,7 +18,7 @@
 
   const view = new CoNexusApp();
 
-  let topics = $state<CategoryTopic[]>([]);
+  let topics = $state<CategoryTopic[]>(category?.topics ?? []);
 
   let isSorting = $state<boolean>(false);
   let sortedTopics = $state<CategoryTopic[]>([]);
@@ -34,11 +34,9 @@
 
     loading = true;
 
-    const response = await view.getCategoryTopics(
-      category.id,
-      Math.floor(topics.length / pageSize) + 1,
-      pageSize,
-    );
+    let page = Math.floor(topics.length / pageSize) + 1;
+
+    const response = await view.getCategoryTopics(category.id, page, pageSize);
 
     // if topics add the topics to the array
     if (response && response.length > 0) {

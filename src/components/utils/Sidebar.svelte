@@ -1,18 +1,119 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte';
-  import { location } from 'svelte-spa-router';
+  import { onMount } from 'svelte';
 
   import Authentication from '@lib/authentication.ts';
-  import { DASHBOARD_LINKS } from '@components/dashboard/routes';
+  import Account from '@lib/account';
+  import { user } from '@stores/account.svelte';
   import { sidebarOpen } from '@stores/navigation.svelte';
+  import { showProfile } from '@stores/modal.svelte';
+  import { defaultPromptSettings } from '@stores/dream.svelte';
+
+  import { modal } from '@lib/modal-manager.svelte';
 
   import SidebarLink from '@components/utils/SidebarLink.svelte';
   import DoorSVG from '@components/icons/Door.svelte';
 
+  let {
+    onpointerenter,
+    onpointerleave,
+  }: {
+    onpointerenter?: (event: PointerEvent) => void;
+    onpointerleave?: (event: PointerEvent) => void;
+  } = $props();
+
   const authentication: Authentication = new Authentication();
+  const account = new Account();
+
+  const hasMainWallet = () =>
+    Boolean($user?.wallets?.filter((wallet) => !wallet.faux).length);
+
+  const openPersonalSettings = async () => {
+    const accountSettings = await account.getPromptSettings();
+    modal.topicSettings({
+      mode: 'personal',
+      initialValues: accountSettings ?? defaultPromptSettings(),
+      onSave: async (settings) => {
+        await account.createOrUpdatePromptSettings(settings);
+      },
+    });
+  };
+
+  let profilePath = $user?.username ? `/c/${$user.username}` : '/console';
+
+  function isComponentItem(item: SidebarItem): item is SidebarComponentItem {
+    return 'id' in item && 'component' in item;
+  }
+
+  const sidebarItems: SidebarItem[] = [
+    {
+      name: 'My Profile',
+      intended: 'all',
+      path: profilePath,
+    },
+    {
+      name: 'My Stories',
+      intended: 'player',
+      path: '/console/my-stories',
+    },
+    {
+      name: 'Bookmarks',
+      intended: 'all',
+      path: '/console/bookmarks',
+    },
+    {
+      name: 'Controls',
+      intended: 'all',
+      onclick: openPersonalSettings,
+    },
+    {
+      name: 'Preferences',
+      intended: 'all',
+      path: '/console/preferences',
+    },
+    {
+      name: 'Settings',
+      intended: 'all',
+      path: '/console/settings',
+    },
+    {
+      name: 'OmniHub',
+      path: '/console/omnihub',
+      display: hasMainWallet,
+    },
+    {
+      name: 'Admin',
+      intended: 'admin',
+      children: [
+        {
+          name: 'Users',
+          path: '/admin/users',
+        },
+        {
+          name: 'Stories',
+          path: '/admin/stories',
+        },
+        {
+          name: 'Web3',
+          path: '/admin/web3',
+        },
+      ],
+    },
+    {
+      id: 'sign-out',
+      component: DoorSVG,
+      props: {
+        state: 'outside',
+        text: 'Sign Out',
+        onclick: () => authentication.logout(),
+        voidBtn: true,
+      },
+    },
+  ];
 
   let expanded = $state<Set<string>>(new Set());
-  let activePath = $state<string>('');
+  let activePath = $state<string>(
+    typeof window !== 'undefined' ? window.location.pathname : '',
+  );
 
   function hasChildren(
     link: Linking,
@@ -43,7 +144,10 @@
   }
 
   function ensureExpandedForPath(path: string) {
-    const chain = findParentChain(DASHBOARD_LINKS, path);
+    const linkItems = sidebarItems.filter(
+      (item): item is Linking => !isComponentItem(item),
+    );
+    const chain = findParentChain(linkItems, path);
     if (!chain || chain.length === 0) {
       return;
     }
@@ -63,25 +167,16 @@
     }
   }
 
-  function sanitizePath(path: string | null | undefined): string {
-    if (!path) {
-      return '';
-    }
+  onMount(() => {
+    ensureExpandedForPath(activePath);
 
-    const withoutHash = path.split('#')[0];
-    const [clean] = withoutHash.split('?');
-    return clean ?? '';
-  }
+    const handler = () => {
+      activePath = window.location.pathname;
+      ensureExpandedForPath(activePath);
+    };
 
-  const unsubscribe = location.subscribe((value) => {
-    const nextPath = sanitizePath(value);
-    activePath = nextPath;
-    ensureExpandedForPath(nextPath);
-    $sidebarOpen = false;
-  });
-
-  onDestroy(() => {
-    unsubscribe();
+    document.addEventListener('astro:page-load', handler);
+    return () => document.removeEventListener('astro:page-load', handler);
   });
 
   function toggleExpand(name: string) {
@@ -93,34 +188,38 @@
 
 {#if $sidebarOpen}
   <div
-    class="sidebar-scrim blur fade-in"
+    class="sidebar-scrim fade-in"
     role="presentation"
     aria-hidden="true"
     onclick={() => ($sidebarOpen = false)}
   ></div>
 {/if}
 
-<section class:open={$sidebarOpen} aria-label="Dashboard navigation">
-  <nav class="flex gap-8 vert-scrollbar">
-    <SidebarLink
-      item={{
-        name: 'Dashboard',
-        path: '/dashboard',
-      }}
-      {expanded}
-      {toggleExpand}
-      {activePath}
-    />
-    {#each DASHBOARD_LINKS as item}
-      <SidebarLink {item} {expanded} {toggleExpand} {activePath} />
+<section
+  class="flex gap-8 vert-scrollbar"
+  class:open={$sidebarOpen}
+  aria-label="Console navigation"
+  {onpointerenter}
+  {onpointerleave}
+>
+  {#if $user}
+    {#each sidebarItems as item}
+      {#if isComponentItem(item)}
+        <item.component {...item.props} />
+      {:else}
+        <SidebarLink {item} {expanded} {toggleExpand} {activePath} />
+      {/if}
     {/each}
+  {:else}
     <DoorSVG
-      state="outside"
-      text="Sign Out"
-      onclick={() => authentication.logout()}
+      state="inside"
+      text="Sign In"
+      onclick={() => {
+        $showProfile = true;
+      }}
       voidBtn={true}
     />
-  </nav>
+  {/if}
 </section>
 
 <style lang="scss">
@@ -134,55 +233,48 @@
     transform: none !important;
 
     @include respond-up(small-desktop) {
-      backdrop-filter: none;
-      -webkit-backdrop-filter: none;
+      display: none;
     }
   }
 
   section {
     position: fixed;
-    inset: 0;
     top: 4.5rem;
+    left: 0;
+    right: 0;
+    max-height: 60dvh;
     width: 100%;
-    height: 60dvh;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 0.5rem 1.5rem;
+    background-color: $dark-blue;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     z-index: 99;
+    opacity: 0;
     transform: translateY(-100%);
-    transition: transform 0.3s ease;
-    border-bottom: 1px solid $transparent-gray;
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease,
+      visibility 0.3s ease;
 
     &.open {
+      opacity: 1;
       transform: translateY(0);
     }
 
-    nav {
-      width: 100%;
-      height: 100%;
-      align-items: stretch;
-      justify-content: flex-start;
-      padding: 0.5rem 1.5rem;
-      background-color: $dark-blue;
-      border-right: 1px solid $transparent-gray;
-      overflow-y: auto;
-      overscroll-behavior: contain;
-    }
-
     @include respond-up(small-desktop) {
-      inset: unset;
-      transform: translateX(100%);
-      right: 0;
-      top: 4.5rem;
-      height: 100dvh;
-      width: 320px;
-      border-bottom: none;
+      left: unset;
+      width: auto;
+      min-width: 220px;
+      max-height: 80vh;
+      padding: 1rem;
+      border-bottom-left-radius: 1rem;
+      transform: translateX(101%);
+      @include box-shadow;
 
       &.open {
         transform: translateX(0);
-      }
-
-      nav {
-        padding-bottom: 6rem;
-        border: none;
-        box-shadow: 0.1rem 0 0.25rem rgba(0, 0, 0, 0.75);
       }
     }
   }

@@ -1,0 +1,14 @@
+---
+import Layout from '@layouts/Layout.astro';
+
+import OmniHub from '@components/console/omnihub/OmniHub.svelte';
+
+const meta = {
+  nav: 'OmniHub',
+  header: 'OmniHub',
+};
+---
+
+<Layout {...meta}>
+  <OmniHub client:only="svelte" />
+</Layout>

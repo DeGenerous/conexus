@@ -1,8 +1,6 @@
 <script lang="ts">
-  import { link } from 'svelte-spa-router';
-
   import { isAdmin, isPlayer } from '@stores/account.svelte';
-  import { redirectTo } from '@utils/route-guard';
+  import { sidebarOpen } from '@stores/navigation.svelte';
 
   import SidebarLink from '@components/utils/SidebarLink.svelte';
 
@@ -19,7 +17,6 @@
   } = $props();
 
   function shouldShow(item: Linking): boolean {
-    // If there's a custom display function, respect it first
     if (item.display && !item.display()) {
       return false;
     }
@@ -30,7 +27,6 @@
       }
 
       if (item.intended !== undefined) {
-        // Leaf link → check intended audience
         switch (item.intended) {
           case 'admin':
             return $isAdmin;
@@ -41,11 +37,9 @@
         }
       }
 
-      // Leaf link → only check display (already handled above)
       return true;
     }
 
-    // Parent link → check intended audience
     switch (item.intended) {
       case 'all':
         return true;
@@ -90,21 +84,23 @@
           {/each}
         </ul>
       {/if}
+    {:else if item.onclick}
+      <!-- Action -->
+      <button
+        class="void-btn standalone"
+        onclick={item.onclick}
+        title={item.name}
+      >
+        {item.name}
+      </button>
     {:else if item.path}
       <!-- Standalone -->
       <a
         href={item.path}
         class="standalone nohover-link"
         class:selected={activePath === item.path}
-        use:link
-        tabindex="0"
         title={item.name}
-        onclick={(event) => {
-          event.preventDefault();
-          redirectTo(
-            item.path ? `/dashboard#${item.path}` : '/dashboard#/dashboard',
-          );
-        }}
+        onclick={() => ($sidebarOpen = false)}
       >
         {item.name}
       </a>

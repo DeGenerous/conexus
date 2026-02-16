@@ -13,6 +13,10 @@ const PROVIDER_CONFIG = {
         id: 'fal-ai/flux-2',
         dimensionType: 'size' as const,
       },
+      flux2kleinbase: {
+        id: 'fal-ai/flux-2/klein/9b/base',
+        dimensionType: 'size' as const,
+      },
     },
   },
   LUMA: {

@@ -18,7 +18,7 @@
 
   const view = new CoNexusApp();
 
-  let topics = $state<CategoryTopic[]>(category?.topics ?? []);
+  let topics = $state<CategoryTopic[]>([]);
 
   let isSorting = $state<boolean>(false);
   let sortedTopics = $state<CategoryTopic[]>([]);
